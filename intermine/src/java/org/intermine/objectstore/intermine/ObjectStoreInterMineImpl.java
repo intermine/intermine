@@ -94,6 +94,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     // see generateSql()
     protected Map queryBagTables = new HashMap();
 
+    public static final String UNIQUE_INTEGER_SEQUENCE_NAME = "objectstore_unique_integer";
+
     /**
      * Constructs an ObjectStoreInterMineImpl.
      *
@@ -1036,10 +1038,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public int getUniqueInteger(Connection c) throws SQLException {
         Statement s = c.createStatement();
-        ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
+        ResultSet r = s.executeQuery("SELECT nextval('" + UNIQUE_INTEGER_SEQUENCE_NAME + "')");
         if (!r.next()) {
             throw new RuntimeException("No result while attempting to get a unique"
-                                       + " integer from " + SEQUENCE_NAME);
+                                       + " integer from " + UNIQUE_INTEGER_SEQUENCE_NAME);
         }
         return r.getInt(1);
     }
