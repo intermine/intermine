@@ -87,7 +87,6 @@ public abstract class QueryHelper
         removeConstraints(q, qc, true);
     }
 
-
     /**
      * Generate ConstraintSet of SimpleConstraints for a QueryClass from a map of field/value pairs
      *
@@ -112,7 +111,7 @@ public abstract class QueryHelper
             if (!"".equals(fieldValue)) {
                 String fieldName = (String) fieldEntry.getKey();
                 Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
-                fieldName = fieldName.substring(0, fieldName.indexOf("_"));
+                fieldName = fieldName.substring(0, fieldName.lastIndexOf("_"));
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
                 if (field instanceof AttributeDescriptor) {
