@@ -155,7 +155,9 @@ public class InitialiserPlugin implements PlugIn
     private void readExampleQueries(ServletContext servletContext) throws ServletException {
         InputStream exampleQueriesStream =
             servletContext.getResourceAsStream("/WEB-INF/example-queries.xml");
-
+        if (exampleQueriesStream == null) {
+            return;
+        }
         Reader exampleQueriesReader = new InputStreamReader(exampleQueriesStream);
         SavedQueryParser savedQueryParser = new SavedQueryParser();
         Map exampleQueries = null;
