@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;

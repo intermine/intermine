@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -140,15 +139,15 @@ public class InheritanceDotTask extends Task
                 maybeDo(clazz, done, out, false);
             }
         } catch (ClassNotFoundException e) {
-            System.err.println("Error handling class name " + className);
+            System .err.println("Error handling class name " + className);
             //e.printStackTrace(System.err);
             System.err.flush();
         } catch (ExceptionInInitializerError e) {
-            System.err.println("Error handling class name " + className);
+            System .err.println("Error handling class name " + className);
             //e.printStackTrace(System.err);
             System.err.flush();
         } catch (LinkageError e) {
-            System.err.println("Error handling class name " + className);
+            System .err.println("Error handling class name " + className);
             //e.printStackTrace(System.err);
             System.err.flush();
         }
@@ -158,7 +157,8 @@ public class InheritanceDotTask extends Task
         if (!done.contains(clazz)) {
             Class superClass = clazz.getSuperclass();
             Class[] interfaces = clazz.getInterfaces();
-            if (alwaysDo || (superClass == null) || (!boring.contains(superClass.getName())) || (interfaces.length > 0)) {
+            if (alwaysDo || (superClass == null) || (!boring.contains(superClass.getName()))
+                    || (interfaces.length > 0)) {
                 if ((superClass != null) && (!omit.contains(superClass.getName()))) {
                     maybeDo(superClass, done, out, true);
                 }
@@ -168,16 +168,27 @@ public class InheritanceDotTask extends Task
                     }
                 }
                 if (clazz.isInterface()) {
-                    out.println("\"" + clazz.getName() + "\"" + (clazz.getName().startsWith(packageName + ".") ? " [style=filled,fillcolor=green]" : (clazz.getName().startsWith("org") || clazz.getName().startsWith("junit.") || clazz.getName().startsWith("net.") ? " [style=filled,fillcolor=red]" : "")));
+                    out.println("\"" + clazz.getName() + "\"" + (clazz.getName()
+                                .startsWith(packageName + ".") ? " [style=filled,fillcolor=green]"
+                                : (clazz.getName().startsWith("org") || clazz.getName()
+                                    .startsWith("junit.") || clazz.getName().startsWith("net.")
+                                    ? " [style=filled,fillcolor=red]" : "")));
                 } else {
-                    out.println("\"" + clazz.getName() + "\" [shape=box" + (clazz.getName().startsWith(packageName + ".") ? ",style=filled,fillcolor=green" : (clazz.getName().startsWith("org.") || clazz.getName().startsWith("junit.") || clazz.getName().startsWith("net.") ? ",style=filled,fillcolor=red" : "")) + "]");
+                    out.println("\"" + clazz.getName() + "\" [shape=box"
+                            + (clazz.getName().startsWith(packageName + ".")
+                                ? ",style=filled,fillcolor=green" : (clazz.getName()
+                                    .startsWith("org.") || clazz.getName().startsWith("junit.")
+                                    || clazz.getName().startsWith("net.")
+                                    ? ",style=filled,fillcolor=red" : "")) + "]");
                 }
                 if ((superClass != null) && (!omit.contains(superClass.getName()))) {
-                    out.println("\"" + superClass.getName() + "\" -> \"" + clazz.getName() + "\" [arrowhead=none,arrowtail=normal]");
+                    out.println("\"" + superClass.getName() + "\" -> \"" + clazz.getName()
+                            + "\" [arrowhead=none,arrowtail=normal]");
                 }
                 for (int i = 0; i < interfaces.length; i++) {
                     if (!omit.contains(interfaces[i].getName())) {
-                        out.println("\"" + interfaces[i].getName() + "\" -> \"" + clazz.getName() + "\" [arrowhead=none,arrowtail=empty,style=dashed,color=purple]");
+                        out.println("\"" + interfaces[i].getName() + "\" -> \"" + clazz.getName()
+                                + "\" [arrowhead=none,arrowtail=empty,style=dashed,color=purple]");
                     }
                 }
                 done.add(clazz);
