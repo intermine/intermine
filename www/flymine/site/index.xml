@@ -1,107 +1,118 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
 <article>
-  <sect1>
-    <title>
-      Introduction
-    </title>
-    
-    <para>The FlyMine project is building an integrated database of genomic,
-      expression and protein data for <emphasis>Drosophila</emphasis> and
-      <emphasis>Anopheles</emphasis> and making this available to the worldwide
-      research community via web and bioinformatics interfaces.
-    </para>
-    
-    <para>
-      An initial release of the database is 
-      <ulink url="/begin.do">now accessible</ulink>, 
-      accompanied by full <ulink url="doc/index.xml">documentation</ulink>. 
-      For more information about
-      FlyMine please consult the more detailed
-      <ulink url="introduction.xml">introduction</ulink>.
-    </para>
-    
-    <para>
-      <ulink url="/begin.do">Start a query</ulink> using FlyMine.
-      See <ulink url="doc/manual/manualQuickstart.xml">quick start guide</ulink>
-      for more details.
-    </para>
+  <column>
+    <section>
+      <title>
+        Introduction
+      </title>
+      
+      <para>The FlyMine project is building an integrated database of genomic,
+        expression and protein data for <emphasis>Drosophila</emphasis> and
+        <emphasis>Anopheles</emphasis> and making this available to the worldwide
+        research community via web and bioinformatics interfaces.
+      </para>
+      
+      <para>
+        An initial release of the database is 
+        <ulink url="/begin.do">now accessible</ulink>, 
+        accompanied by full <ulink url="doc/index.xml">documentation</ulink>. 
+        For more information about
+        FlyMine please consult the more detailed
+        <ulink url="introduction.xml">introduction</ulink>.
+      </para>
+      
+      <para>
+        <ulink url="/begin.do">Start a query</ulink> using FlyMine.
+        See <ulink url="doc/manual/manualQuickstart.xml">quick start guide</ulink>
+        for more details.
+      </para>
+  
+    </section>
+  
+    <section>
+      <title>
+        Datasources
+      </title>
+      
+      
+      <para>
+        FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>, 
+        incorporating the following data sources:
+      
+      <itemizedlist>
+        <listitem>
+          <para>
+            Genome Annotation for D. melanogaster and A. gambiae from
+            <ulink url="http://www.ensembl.org">Ensembl</ulink>
+          </para>
+        </listitem>
+        
+        <listitem>
+          <para>Orthologues between D. melanogaster and A. gambiae from
+            <ulink url="http://www.ensembl.org">Ensembl</ulink>
+          </para>
+        </listitem>
+        
+        <listitem>
+          <para>
+            Orthologues and Paralogues between D. melanogaster and C. elegans
+            from <ulink url="http://inparanoid.cgb.ki.se/index.html">inParanoid</ulink>
+          </para>
+        </listitem>
+        
+        <listitem>
+          <para>2-hybrid protein-protein interactions for D. melanogaster: Curagen
+            set (Giot et al (2003) Science 302 1727-1736) and
+            <ulink url="http://pim.hybrigenics.com">Hybrigenics</ulink> set
+          </para>
+        </listitem>
+        
+        <listitem>
+          <para>2-hybrid protein-protein interactions for C. elegans (Li et al
+            (2004) Science 303 540-543)
+          </para>
+        </listitem>
+        
+        <listitem>
+          <para>
+            RNAi phenotypes for C. elegans from
+            <ulink url="http://www.wormbase.org">WormBase</ulink>
+          </para>
+        </listitem>
+        
+        <listitem>
+          <para>
+            <ulink url="http://www.geneontology.org">The Gene Ontology</ulink>
+          </para>
+        </listitem>
+      </itemizedlist>
+      </para>
+    </section>
+  </column>
+  
+  <column>
+    <section>
+      <title>
+        FlyMine News:
+      </title>
+      <para>
+        <news rss="/rss.xml" name="FlyMine news"/>
+      </para>
+    </section>
 
-  </sect1>
-
-  <sect1>
-    <title>
-      Datasources
-    </title>
+    <section>
+      <title>
+        Funding and contact details
+      </title>
+      <para>
+        The FlyMine project is based at the
+        <ulink url="http://www.gen.cam.ac.uk">Department of Genetics</ulink>,
+        <ulink url="http://www.cam.ac.uk">University of Cambridge</ulink> and is a
+        collaboration between the Genetics and
+        <ulink url="http://www.bioc.cam.ac.uk">Biochemistry</ulink> departments of the
+        University of Cambridge.
+      </para>
+    </section>
     
-    
-    <para>
-      FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>, 
-      incorporating the following data sources:
-    
-    <itemizedlist>
-      <listitem>
-        <para>
-          Genome Annotation for D. melanogaster and A. gambiae from
-          <ulink url="http://www.ensembl.org">Ensembl</ulink>
-        </para>
-      </listitem>
-      
-      <listitem>
-        <para>Orthologues between D. melanogaster and A. gambiae from
-          <ulink url="http://www.ensembl.org">Ensembl</ulink>
-        </para>
-      </listitem>
-      
-      <listitem>
-        <para>
-          Orthologues and Paralogues between D. melanogaster and C. elegans
-          from <ulink url="http://inparanoid.cgb.ki.se/index.html">inParanoid</ulink>
-        </para>
-      </listitem>
-      
-      <listitem>
-        <para>2-hybrid protein-protein interactions for D. melanogaster: Curagen
-          set (Giot et al (2003) Science 302 1727-1736) and
-          <ulink url="http://pim.hybrigenics.com">Hybrigenics</ulink> set
-        </para>
-      </listitem>
-      
-      <listitem>
-        <para>2-hybrid protein-protein interactions for C. elegans (Li et al
-          (2004) Science 303 540-543)
-        </para>
-      </listitem>
-      
-      <listitem>
-        <para>
-          RNAi phenotypes for C. elegans from
-          <ulink url="http://www.wormbase.org">WormBase</ulink>
-        </para>
-      </listitem>
-      
-      <listitem>
-        <para>
-          <ulink url="http://www.geneontology.org">The Gene Ontology</ulink>
-        </para>
-      </listitem>
-    </itemizedlist>
-    </para>
-  </sect1>
-
-  <sect1>
-    <title>
-      Funding and contact details
-    </title>
-    <para>
-      The FlyMine project is based at the
-      <ulink url="http://www.gen.cam.ac.uk">Department of Genetics</ulink>,
-      <ulink url="http://www.cam.ac.uk">University of Cambridge</ulink> and is a
-      collaboration between the Genetics and
-      <ulink url="http://www.bioc.cam.ac.uk">Biochemistry</ulink> departments of the
-      University of Cambridge.
-    </para>
-  </sect1>
-
+  </column>
 </article>
