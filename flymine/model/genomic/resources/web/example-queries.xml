@@ -7,7 +7,8 @@
       <constraint op="=" value="Drosophila melanogaster"/>
     </node>
   </query>
-  <query name="tutorial3" model="genomic" view="Orthologue.object.name Orthologue.subject.name Orthologue.evidence.analysis">
+  <query name="tutorial3" model="genomic" 
+         view="Orthologue.object.identifier Orthologue.subject.identifier Orthologue.evidence.analysis">
     <node path="Orthologue" type="Orthologue"/>
     <node path="Orthologue.object" type="BioEntity"/>
     <node path="Orthologue.object.organism" type="Organism"/>
