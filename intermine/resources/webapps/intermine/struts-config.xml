@@ -45,6 +45,10 @@
     <form-bean name="historyForm"
                type="org.intermine.web.HistoryForm"/>
 
+    <!-- bag build form bean -->
+    <form-bean name="buildBagForm"
+               type="org.intermine.web.BuildBagForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -111,6 +115,9 @@
       <forward name="beginpage" path="begin.page"/>
     </action>
 
+    <action path="/bagBuild"
+            forward="bagBuild.page"/>
+
     <action path="/index"
             forward="index.page"/>
 
@@ -175,6 +182,15 @@
     <action path="/viewBag"
             type="org.intermine.web.ViewBagAction">
       <forward name="details" path="/bagDetails.do"/>
+    </action>
+
+    <!-- Action to create a bag from a bunch of strings -->
+    <action path="/buildBag"
+            type="org.intermine.web.BuildBagAction"
+            name="buildBagForm"
+            scope="session"
+            parameter="action">
+      <forward name="bagDetails" path="/bagDetails.do"/>
     </action>
 
     <!-- Action to view a collection from an object -->
