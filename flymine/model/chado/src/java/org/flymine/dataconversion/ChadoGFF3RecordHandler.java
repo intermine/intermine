@@ -12,7 +12,9 @@ package org.flymine.dataconversion;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,9 +85,9 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
         String tgtNs = getTargetModel().getNameSpace().toString();
 
-        // TODO get alternative ids from dbxref_2nd
-        // TODO get synonyms - store if different
-        // TODO get synonyms_2nd - store if different
+        // TODO get alternative ids from dbxref_2nd??
+
+
 
 
         // set Gene.organismDbId
@@ -226,7 +228,49 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
         }
 
+        // TODO get synonyms - store if different
+        // TODO get synonyms_2nd - store if different
+        // make sure we have a set with all existing Synonyms and those that will
+        // be created by GFF3Converter
+        Set synonyms = new HashSet();
+        if (feature.hasAttribute("identifier")) {
+            synonyms.add(feature.getAttribute("identifier").getValue());
+        }
+        if (feature.hasAttribute("name")) {
+            synonyms.add(feature.getAttribute("name").getValue());
+        }
+        Iterator itemIter = getItems().iterator();
+        while (itemIter.hasNext()) {
+            Item item = (Item) itemIter.next();
+            if (item.getClassName().endsWith("Synonym")) {
+                synonyms.add(item.getAttribute("value").getValue());
+            }
+        }
+        List combined = new ArrayList();
 
+        List list = (List) record.getAttributes().get("synonym_2nd");
+        if (list != null) {
+            combined.addAll(list);
+        }
+        list = (List) record.getAttributes().get("synonym");
+        if (list != null) {
+            combined.addAll(list);
+        }
+
+        Iterator iter = combined.iterator();
+        while (iter.hasNext()) {
+            String synonym = (String) iter.next();
+            if (!synonyms.contains(synonym)) {
+                if (synonym.startsWith("CG") || synonym.startsWith("CR") || synonym.startsWith("FB")) {
+                    addItem(createSynonym(feature, "identifier", synonym, "FlyBase"));
+                } else {
+                    addItem(createSynonym(feature, "name", synonym, "FlyBase"));
+                }
+                synonyms.add(synonym);
+            }
+        }
+
+        // set references from parent relations
         setReferences(references);
     }
 
