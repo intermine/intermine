@@ -28,27 +28,18 @@ import org.flymine.xml.full.Attribute;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Reference;
 import org.flymine.xml.full.ReferenceList;
+import org.flymine.xml.full.ItemHelper;
 
 public class DataTranslatorTest extends TestCase
 {
     private String srcNs = "http://www.flymine.org/source#";
     private String tgtNs = "http://www.flymine.org/target#";
-    private ItemStore srcIs;
     private DataTranslator translator;
     private ObjectStoreWriter writer;
-
+    protected Map itemMap;
 
     public void setUp() throws Exception {
-        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.fulldatatest");
-        srcIs = new ItemStore(writer);
-    }
-
-    public void tearDown() throws Exception {
-        for (Iterator i = srcIs.getItems(); i.hasNext();) {
-            srcIs.delete((Item) i.next());
-        }
-        writer.close();
+        itemMap = new HashMap();
     }
 
     public void testTranslateItems() throws Exception {
@@ -62,9 +53,12 @@ public class DataTranslatorTest extends TestCase
         Item src3 = new Item();
         src3.setIdentifier("3");
         src3.setClassName(srcNs + "Department");
-        Collection srcItems = new ArrayList(Arrays.asList(new Object[] {src1, src2, src3}));
 
-        storeItems(srcItems);
+        Collection srcItems = new ArrayList();
+        srcItems.add(ItemHelper.convert(src1));
+        srcItems.add(ItemHelper.convert(src2));
+        srcItems.add(ItemHelper.convert(src3));
+        new MockItemWriter(itemMap).storeAll(srcItems);
 
         Item tgt1 = new Item();
         tgt1.setIdentifier("1");
@@ -78,10 +72,10 @@ public class DataTranslatorTest extends TestCase
         tgt3.setClassName(tgtNs + "Department");
         Set expected = new HashSet(Arrays.asList(new Object[] {tgt1, tgt2, tgt3}));
 
-        MockItemStore tgtIs = new MockItemStore();
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
-        assertEquals(expected, tgtIs.getItemSet());
+        assertEquals(expected, tgtIs.getItems());
     }
 
     public void testTranslateItemSimple() throws Exception {
@@ -95,10 +89,9 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
-        assertEquals(expected, translator.translateItem(src1));
+        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
-
 
     public void testTranslateItemAttributes() throws Exception {
         Item src1 = new Item();
@@ -119,8 +112,8 @@ public class DataTranslatorTest extends TestCase
         a2.setValue("testname");
         expected.addAttribute(a2);
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
-        assertEquals(expected, translator.translateItem(src1));
+        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemReferences() throws Exception {
@@ -145,8 +138,8 @@ public class DataTranslatorTest extends TestCase
         r2.setRefId("2");
         expected.addReference(r2);
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
-        assertEquals(expected, translator.translateItem(src1));
+        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemCollections() throws Exception {
@@ -171,8 +164,8 @@ public class DataTranslatorTest extends TestCase
         r2.addRefId("3");
         expected.addCollection(r2);
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
-        assertEquals(expected, translator.translateItem(src1));
+        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemRestrictedSubclassSingleLevel() throws Exception {
@@ -296,9 +289,12 @@ public class DataTranslatorTest extends TestCase
         a4.setName("organisationType");
         a4.setValue("other");
         src4.addAttribute(a4);
-        Collection srcItems = Arrays.asList(new Object[] {src1, src2, src3, src4});
-        storeItems(srcItems);
-
+        Collection srcItems = new ArrayList();
+        srcItems.add(ItemHelper.convert(src1));
+        srcItems.add(ItemHelper.convert(src2));
+        srcItems.add(ItemHelper.convert(src3));
+        srcItems.add(ItemHelper.convert(src4));
+        new MockItemWriter(itemMap).storeAll(srcItems);
 
         // expected items
         Item exp1 = new Item();
@@ -335,16 +331,16 @@ public class DataTranslatorTest extends TestCase
         exp4.addAttribute(ea4);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3, exp4}));
 
-        translator = new DataTranslator(srcIs, model, tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), model, tgtNs);
 
 //         System.out.println("templateMap: " + translator.templateMap.toString());
 //         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
 //         System.out.println("equivMap: " + translator.equivMap.toString());
 //         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
 
-        MockItemStore tgtIs = new MockItemStore();
+        MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
-        assertEquals(expected, tgtIs.getItemSet());
+        assertEquals(expected, tgtIs.getItems());
     }
 
     public void testGetRestrictionSubclassNested() throws Exception {
@@ -502,8 +498,13 @@ public class DataTranslatorTest extends TestCase
         src23.addAttribute(a23);
 
 
-        Collection srcItems = Arrays.asList(new Object[] {src11, src12, src21, src22, src23});
-        storeItems(srcItems);
+        Collection srcItems = new ArrayList();
+        srcItems.add(ItemHelper.convert(src11));
+        srcItems.add(ItemHelper.convert(src12));
+        srcItems.add(ItemHelper.convert(src21));
+        srcItems.add(ItemHelper.convert(src22));
+        srcItems.add(ItemHelper.convert(src23));
+        new MockItemWriter(itemMap).storeAll(srcItems);
 
         // expected items
         Item exp11 = new Item();
@@ -553,27 +554,30 @@ public class DataTranslatorTest extends TestCase
         exp22.addAttribute(ea22);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23}));
 
-        translator = new DataTranslator(srcIs, model, tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), model, tgtNs);
 
 //         System.out.println("templateMap: " + translator.templateMap.toString());
 //         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
 //         System.out.println("equivMap: " + translator.equivMap.toString());
 //         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
 
-        MockItemStore tgtIs = new MockItemStore();
+        MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
-        assertEquals(expected, tgtIs.getItemSet());
+        assertEquals(expected, tgtIs.getItems());
     }
 
 
     public void testBuildRestriction() throws Exception {
         Map srcItems = getSrcItems();
-        storeItems(srcItems.values());
+        ItemWriter itemWriter = new MockItemWriter(itemMap);
+        for (Iterator i = srcItems.values().iterator(); i.hasNext();) {
+            itemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
 
         String path = "Organisation.organisationType";
         StringTokenizer t = new StringTokenizer(path, ".");
         t.nextToken();
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
         assertEquals("business", translator.buildRestriction(t, (Item) srcItems.get("src1")));
 
         path = "Organisation.organisationType.type";
@@ -595,10 +599,13 @@ public class DataTranslatorTest extends TestCase
 
     public void testBuildSubclassRestriction() throws Exception {
         Map srcItems = getSrcItems();
-        storeItems(srcItems.values());
+        ItemWriter itemWriter = new MockItemWriter(itemMap);
+        for (Iterator i = srcItems.values().iterator(); i.hasNext();) {
+            itemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
 
         // model we use here is irrelevant
-        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
 
         SubclassRestriction template1 = new SubclassRestriction();
         template1.addRestriction("Organisation.organisationType", null);
@@ -734,13 +741,5 @@ public class DataTranslatorTest extends TestCase
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(new StringReader(owl), null, "N3");
         return ont;
-    }
-
-    private void storeItems(Collection items) throws Exception {
-        Iterator i = items.iterator();
-        while(i.hasNext()) {
-            Item item = (Item) i.next();
-            srcIs.store(item);
-        }
     }
 }

@@ -21,12 +21,14 @@ import java.io.*;
 
 import org.flymine.metadata.Model;
 import org.flymine.dataconversion.DataTranslator;
-import org.flymine.dataconversion.ItemStore;
-import org.flymine.dataconversion.MockItemStore;
+import org.flymine.dataconversion.ItemWriter;
+import org.flymine.dataconversion.MockItemWriter;
+import org.flymine.dataconversion.MockItemReader;
 import org.flymine.xml.full.Attribute;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Reference;
 import org.flymine.xml.full.ReferenceList;
+import org.flymine.xml.full.ItemHelper;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -44,6 +46,11 @@ public class DefinitiveOwlTest extends XMLTestCase
     private final String src1Ns = "http://www.flymine.org/model/source1#";
     private final String src2Ns = "http://www.flymine.org/model/source2#";
     private final String nullNs = "http://www.flymine.org/model/null#";
+    protected Map itemMap;
+
+    public void setUp() throws Exception {
+        itemMap = new HashMap();
+    }
 
     // restricted subclasses (must be on references not collections)
     // cannot change the name of properties in restricted subclasses
@@ -148,24 +155,22 @@ public class DefinitiveOwlTest extends XMLTestCase
 //     }
 
     public void testDataTranslatorSrc2() throws Exception {
-        Set src2Items = getSrc2Items();
-        ItemStore src2ItemStore = new MockItemStore();
-        storeItems(src2Items, src2ItemStore);
+        ItemWriter src2ItemWriter = new MockItemWriter(itemMap);
+        for (Iterator i = getSrc2Items().iterator(); i.hasNext();) {
+            src2ItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
 
-        Model model = generateFlyMineModel();
-        DataTranslator translator2 = new DataTranslator(src2ItemStore, runMergeOwl(), tgtNs);
+        DataTranslator translator2 = new DataTranslator(new MockItemReader(itemMap), runMergeOwl(), tgtNs);
 
 //         System.out.println("templateMap: " + translator2.templateMap.toString());
 //         System.out.println("restrictionMap: " + translator2.restrictionMap.toString());
 //         System.out.println("equivMap: " + translator2.equivMap.toString());
 //         System.out.println("clsPropMap: " + translator2.clsPropMap.toString());
 
-        MockItemStore tgtItemStore = new MockItemStore();
-        translator2.translate(tgtItemStore);
-
-        Set expected = getSrc2TgtItems();
-        assertEquals(expected, tgtItemStore.getItemSet());
-
+        MockItemWriter tgtItemWriter = new MockItemWriter(new HashMap());
+        translator2.translate(tgtItemWriter);
+        
+        assertEquals(getSrc2TgtItems(), tgtItemWriter.getItems());
     }
 
 
@@ -383,15 +388,6 @@ public class DefinitiveOwlTest extends XMLTestCase
 
         return owl;
     }
-
-    private void storeItems(Collection items, ItemStore is) throws Exception {
-        Iterator i = items.iterator();
-        while(i.hasNext()) {
-            Item item = (Item) i.next();
-            is.store(item);
-        }
-    }
-
 
     private Set getSrc2Items() {
 

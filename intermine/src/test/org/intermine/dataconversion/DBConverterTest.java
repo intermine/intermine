@@ -21,12 +21,13 @@ import java.sql.ResultSetMetaData;
 import java.util.Map;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
@@ -45,15 +46,18 @@ import org.flymine.xml.full.ItemHelper;
 
 public class DBConverterTest extends TestCase {
     private Model model;
+    private MockItemWriter itemWriter;
     private DBConverter converter;
-    private ArrayList blank = new ArrayList();
-    private Collection items = new ArrayList();
-    private Map map = new HashMap();
+    private ArrayList blank;
+    private Map map;
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        converter = new MockDBConverter(model, db, new MockDBReader(), new MockItemWriter());
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new MockDBConverter(model, db, new MockDBReader(), itemWriter);
+        blank = new ArrayList();
+        map = new HashMap();
     }
 
     public void testAttribute() throws Exception {
@@ -70,15 +74,15 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
         Item item = new Item();
-        item.setClassName(model.getNameSpace() + "Department");
         item.setIdentifier(converter.alias("Department") + "_12");
+        item.setClassName(model.getNameSpace() + "Department");
         Attribute attr = new Attribute();
         attr.setName("name");
         attr.setValue("DepartmentA1");
         item.addAttribute(attr);
 
         converter.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
     public void testReference() throws Exception {
@@ -102,7 +106,7 @@ public class DBConverterTest extends TestCase {
         item.addReference(ref);
 
         converter.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
     public void test1NCollection() throws Exception {
@@ -132,7 +136,7 @@ public class DBConverterTest extends TestCase {
         item.addCollection(refs);
 
         converter.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
     public void testMNCollection() throws Exception {
@@ -169,7 +173,7 @@ public class DBConverterTest extends TestCase {
         item.addCollection(refs);
 
         converter.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
     public void testUnidirectional() throws Exception {
@@ -192,7 +196,7 @@ public class DBConverterTest extends TestCase {
         item.addReference(ref);
 
         converter.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
     public void testMultipleInstances() throws Exception {
@@ -228,7 +232,10 @@ public class DBConverterTest extends TestCase {
         item2.addAttribute(attr2);
 
         converter.processClassDescriptor(cld);
-        assertEquals(Arrays.asList(new Object[] {item, item2}), items);
+        Set expected = new HashSet();
+        expected.add(item);
+        expected.add(item2);
+        assertEquals(expected, itemWriter.getItems());
     }
 
     public void testMultipleClasses() throws Exception {
@@ -268,7 +275,10 @@ public class DBConverterTest extends TestCase {
         item2.setIdentifier(converter.alias("Company") + "_13");
 
         converter.process();
-        assertEquals(Arrays.asList(new Object[] {item, item2}), items);
+        Set expected = new HashSet();
+        expected .add(item);
+        expected.add(item2);
+        assertEquals(expected, itemWriter.getItems());
     }
 
     protected List rowify(String[] names, Object[] values) {
@@ -285,14 +295,6 @@ public class DBConverterTest extends TestCase {
             rows.add(rowify(names, values[i]).get(0));
         }
         return rows;
-    }
-
-    class MockItemWriter implements ItemWriter {
-        public void store(org.flymine.model.fulldata.Item item) throws ObjectStoreException {
-            items.add(ItemHelper.convert(item));
-        }
-        public void storeAll(Collection items) throws ObjectStoreException {}
-        public void close() throws ObjectStoreException {}
     }
 
     class MockDBConverter extends DBConverter {
