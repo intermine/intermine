@@ -20,6 +20,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.FieldDescriptor;
@@ -96,8 +97,9 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(500);
         return res.iterator();
     }
 
@@ -131,8 +133,9 @@ public class PostProcessUtil
         cs.addConstraint(cc1);
         q.setConstraint(cs);
 
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(500);
         return res.iterator();
     }
 
@@ -195,8 +198,9 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(500);
 
         return res.iterator();
     }
@@ -235,8 +239,9 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(500);
         return res.iterator();
     }
 
@@ -256,7 +261,7 @@ public class PostProcessUtil
         q.addToSelect(qc);
         q.addFrom(qc);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(500);
         return res.iterator();
     }
 
@@ -277,7 +282,7 @@ public class PostProcessUtil
         // TODO check objectCls and subjectCls assignable to BioEntity
 
         Query q = new Query();
-        q.setDistinct(true);
+        q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
         QueryField qfObj = new QueryField(qcObj, "id");
         q.addFrom(qcObj);
@@ -301,12 +306,12 @@ public class PostProcessUtil
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
+
         q.setConstraint(cs);
-// temporarily disabled - causes query failures because of missing precomputed tables
-//        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
 
-        res.setBatchSize(5000);
+        res.setBatchSize(500);
 
         return res;
     }
