@@ -279,7 +279,10 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                             } else {
                                                 throw new ObjectStoreException("Couldn't find"
                                                         + " object with id " + idToAdd
-                                                        + " but we don't want to proxy it");
+                                                        + " but we don't want to proxy it"
+                                                        + "(populating object id:" + objToPopulate.getId() + ","
+                                                        + "collection name: " + collectionName + ","
+                                                        + "contents: " + contents + ")");
                                             }
                                         }
                                         substituteCollection.add(objToAdd);
