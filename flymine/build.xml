@@ -69,6 +69,14 @@
 
   <!-- Compilation targets -->
 
+  <target name="compile-main" depends="prepare"
+          description="compile the java source" >
+    <javac destdir="${build.java}" listfiles="yes">
+      <classpath refid="project.class.path"/>
+      <src path="${src.java}" />
+    </javac>
+  </target>
+
   <!-- Unit tests -->
 
   <!-- Functional tests -->
