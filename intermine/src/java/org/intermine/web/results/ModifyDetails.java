@@ -114,11 +114,11 @@ public class ModifyDetails extends DispatchAction
          //where Company.departments contains a and Company.id=24000006;
          //i.e. select qc1 from qc1, qc2 where cc and sc
          Set clds = (Set) new ArrayList(collection.getClasses().keySet()).get(index);
-         Set types = new HashSet();
+         Set collectionTypes = new HashSet();
          for (Iterator i = clds.iterator(); i.hasNext();) {
-             types.add(((ClassDescriptor) i.next()).getType());
+             collectionTypes.add(((ClassDescriptor) i.next()).getType());
          }
-         QueryClass qc1 = new QueryClass(types);
+         QueryClass qc1 = new QueryClass(collectionTypes);
 
          ClassDescriptor cld = cldContainingField(object.getClds(), fieldName);
          QueryClass qc2 = new QueryClass(cld.getType());
