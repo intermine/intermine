@@ -448,6 +448,9 @@ null:analysis__gff_feature a owl:DatatypeProperty ;
 :Synonym__subject a owl:ObjectProperty ;
     owl:equivalentProperty e:exon_stable_id__exon, e:gene_stable_id__gene, e:translation_stable_id__translation, e:transcript_stable_id__transcript, e:marker_synonym__marker  .
 
+null:marker_synonym__source a owl:DatatypeProperty;
+     owl:equivalentProperty e:marker_synonym__source.
+
 null:exon_stable_id__version a owl:DatatypeProperty ;
     owl:equivalentProperty e:exon_stable_id__version .
 
