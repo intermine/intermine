@@ -366,7 +366,7 @@
 
 :Database__url a owl:DatatypeProperty;
     rdfs:domain :Database;
-    rdfs:range xsd:anyURI .
+    rdfs:range xsd:string .
 
 # Organism will map to a phylogeny when that data is available
 :Organism a owl:Class .
