@@ -139,6 +139,9 @@ public class PsiDataTranslator extends DataTranslator
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
                     }
+                    if (srcItem.getAttribute("sequence") != null) {
+                        result.add(createSequence(srcItem, tgtItem));
+                    }
                 } else if ("Source_Entry_EntrySet".equals(className)) {
                     tgtItem.setIdentifier(getDb().getIdentifier());
                     tgtItem.addAttribute(new Attribute("title",
@@ -207,6 +210,15 @@ public class PsiDataTranslator extends DataTranslator
 
         addReferencedItem(interaction, getDb(), "evidence", true, "", false);
         return interaction;
+    }
+
+    // srcItem = ProteinInteractorType
+    // tgtItem = Protein
+    private Item createSequence(Item srcItem, Item tgtItem) {
+        Item seq = createItem(tgtNs + "Sequence", "");
+        seq.addAttribute(new Attribute("sequence", srcItem.getAttribute("sequence").getValue()));
+        tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
+        return seq;
     }
 
     // find a publication for the experiment - if no experiment return null

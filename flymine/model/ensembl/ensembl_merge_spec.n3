@@ -13,14 +13,6 @@
 # ---------------------------------------------------------------------------- #
 
 
-# temporarily define a residues field in so:LocatedSequenceFeature
-# this should normally com from chado
-:LocatedSequenceFeature a owl:Class.
-
-:LocatedSequenceFeature__residues a owl:DatatypeProperty;
-    rdfs:domain :LocatedSequenceFeature;
-    rdfs:range xsd:string.
-
 :Exon a owl:Class ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:exon .
@@ -81,8 +73,7 @@ null:gene__display_xref a owl:DatatypeProperty ;
 null:gene_description a owl:Class ;
     owl:equivalentClass e:gene_description .
 
-# contig has reference to dna object, this becomes residues field
-# EnsemblConverter to sort out
+# contig has reference to dna object, this becomes Sequence
 
 :Contig a owl:Class ;
     rdfs:subClassOf :BioEntity ;
@@ -94,17 +85,27 @@ null:gene_description a owl:Class ;
     rdfs:range xsd:string;
     owl:equivalentProperty e:contig__name.    
 
+:Contig__sequence a owl:ObjectProperty ;
+    rdfs:domain :Contig;
+    rdfs:range :Sequence;
+    rdfs:subPropertyOf :LocatedSequenceFeature__sequence;
+    owl:equivalentProperty e:contig__dna .
+
+# need to define here also
+:LocatedSequenceFeature__sequence a owl:ObjectProperty;
+    rdfs:domain :LocatedSequenceFeature;
+    rdfs:range :Sequence.
+
 null:contig__embl_offset a owl:DatatypeProperty ;
     owl:equivalentProperty e:contig__embl_offset .
     
-null:contig__dna a owl:ObjectProperty ;
-    owl:equivalentProperty e:contig__dna .
  
-# dna object becomes part of contig
+# dna object -> Sequence
+:Sequence a owl:Class;
+    owl:equivalentClass e:dna.
 
-null:dna a owl:Class ;
-    owl:equivalentClass e:dna .
-
+null:dna__created a owl:DatatypeProperty;
+    owl:equivalentProperty e:dna__created.
 
 # EnsemblConverter needs to move embl_acc to :Synonym
 

@@ -58,6 +58,7 @@
         <xref>
           <primaryRef db="uniprot" id="P14734" secondary="fkh_drome" version=""/>
         </xref>
+        <sequence>TAGCAT</sequence>
         <organism ncbiTaxId="7227">
           <names>
             <shortLabel>drome</shortLabel>
@@ -73,6 +74,7 @@
         <xref>
           <primaryRef db="uniprot" id="Q9VI89" secondary="q9vi89" version=""/>
         </xref>
+        <sequence>CATTAG</sequence>
         <organism ncbiTaxId="7227">
           <names>
             <shortLabel>drome</shortLabel>
