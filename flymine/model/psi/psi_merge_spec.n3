@@ -90,7 +90,7 @@ null:Confidence_InteractionElementType a owl:Class;
     owl:equivalentClass psi:ExperimentType.
 
 null:ExperimentType__identifier a owl:DatatypeProperty;
-    owl:equivalentProperty psi:ExperimentType__identifer.
+    owl:equivalentProperty psi:ExperimentType__identifier.
 
 :ProteinInteractionExperiment__confidence a owl:DatatypeProperty;
     rdfs:domain :ProteinInteractionExperiment;
