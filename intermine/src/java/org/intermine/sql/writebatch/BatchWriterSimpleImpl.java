@@ -401,7 +401,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     + this.activity + " --> tableSize = " + tableSize + ", activity = "
                     + (this.activity + activity) + "    - Activity of " + activity + " rows");
             this.activity += activity;
-            return activity > tableSize + 1000;
+            return this.activity > tableSize + 1000;
         }
 
         public void setTableSize(int tableSize) {

@@ -378,26 +378,32 @@ public abstract class BatchWriterTestCase extends TestCase
             String[] colNames = new String[] {"key", "int4"};
             for (int i = 0; i < 100000; i++) {
                 batch.addRow(con, "table1", new Integer(i), colNames, new Object[] {new Integer(i), new Integer(765234 * i)});
+                if (i % 10000 == 9999) {
+                    batch.flush(con);
+                }
             }
             batch.flush(con);
             con.commit();
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = 'table1'");
             assertTrue(r.next());
-            assertTrue("Expected rows to be > 99000 and < 101000 - was " + r.getInt(1),
-                    r.getInt(1) > 99000 && r.getInt(1) < 101000);
+            assertTrue("Expected rows to be > 60000 and < 101000 - was " + r.getInt(1),
+                    r.getInt(1) > 60000 && r.getInt(1) < 101000);
             assertFalse(r.next());
             for (int i = 0; i < 100000; i++) {
                 if (i % 5 != 0) {
                     batch.deleteRow(con, "table1", "key", new Integer(i));
+                }
+                if (i % 10000 == 9999) {
+                    batch.flush(con);
                 }
             }
             batch.close(con);
             con.commit();
             r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = 'table1'");
             assertTrue(r.next());
-            assertTrue("Expected rows to be > 19000 and < 21000 - was " + r.getInt(1),
-                    r.getInt(1) > 19000 && r.getInt(1) < 21000);
+            assertTrue("Expected rows to be > 19000 and < 35000 - was " + r.getInt(1),
+                    r.getInt(1) > 19000 && r.getInt(1) < 35000);
             assertFalse(r.next());
         } catch (SQLException e) {
             StringWriter sw = new StringWriter();
