@@ -104,7 +104,7 @@ public class Owl2FlyMine
                 }
                 String superClassList = null;
                 if (superClasses.length() != 0) {
-                    superClassList = superClasses.toString();
+                    superClassList = superClasses.toString().trim();
                 }
                 classes.add(new ClassDescriptor(clsName, superClassList, true,
                                                 getFieldSetForClass(attributes, cls.getLocalName()),
