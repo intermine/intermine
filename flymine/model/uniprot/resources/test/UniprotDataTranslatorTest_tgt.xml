@@ -113,7 +113,7 @@
 <reference name="source" ref_id="-1_9"/>
 </item>
 <item id="-1_29" class="http://www.flymine.org/model/genomic#Database">
-<attribute name="title" value="FlyMine"/>
+<attribute name="title" value="FlyBase"/>
 </item>
 <item id="-1_17" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="synonym"/>

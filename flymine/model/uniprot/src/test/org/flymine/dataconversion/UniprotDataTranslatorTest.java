@@ -90,6 +90,38 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
     }
 
 
+    public void testDuplicateGeneIdentifiers() throws Exception {
+        storeItems(getSrcItems("test/UniprotDataTranslatorTest_duplicates_src.xml"));
+
+        ObjectStore os = (osw.getObjectStore());
+        ItemReader srcItemReader = new ObjectStoreItemReader(os);
+
+        // uncomment to generate a new source items file from some uniprot xml
+        //retrieveFromUniprotExample("test/UniprotSrc_duplicates.xml", new File("generatedSrcItems_duplicates.xml"));
+
+        DataTranslator translator = new UniprotDataTranslator(srcItemReader, tgtNs);
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        // uncomment to write out a new target items file
+        //FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
+        //fw.write(FullRenderer.render(tgtIw.getItems()));
+        //fw.close();
+
+        // print differences
+        //String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems("test/UniprotDataTranslatorTest_duplicates_tgt.xml")), tgtIw.getItems());
+        //String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems("test/UniprotDataTranslatorTest_duplicates_tgt.xml")));
+
+        //if (expectedNotActual.length() > 25) {
+        //    System.out.println(expectedNotActual);
+        //    System.out.println(actualNotExpected);
+        //}
+
+        assertEquals(new HashSet(getExpectedItems("test/UniprotDataTranslatorTest_duplicates_tgt.xml")), tgtIw.getItems());
+
+
+    }
+
     private void retrieveFromUniprotExample(String uniprot, File output) throws Exception {
         Model model = getModel();
         Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream(uniprot)));
@@ -133,11 +165,19 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
     }
 
     protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UniprotDataTranslatorTest_tgt.xml"));
+        return getExpectedItems("test/UniprotDataTranslatorTest_tgt.xml");
     }
 
     protected Collection getSrcItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UniprotDataTranslatorTest_src.xml"));
+        return getSrcItems("test/UniprotDataTranslatorTest_src.xml");
+    }
+
+    protected Collection getExpectedItems(String filename) throws Exception {
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream(filename));
+    }
+
+    protected Collection getSrcItems(String filename) throws Exception {
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream(filename));
     }
 
     protected OntModel getOwlModel() {
