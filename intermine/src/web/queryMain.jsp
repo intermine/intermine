@@ -3,7 +3,6 @@
 <!-- queryMain.jsp -->
 <tiles:get name="queryErrorMessage"/>
 <tiles:get name="querySelectBuild"/>
-<tiles:get name="runQuery"/>
 <tiles:get name="loadQuery"/>
 <tiles:get name="restartQuery"/>
 <!-- /queryMain.jsp -->
