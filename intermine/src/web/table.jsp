@@ -146,7 +146,6 @@
                 </c:choose>
               </c:forEach>
             </tr>
-            <c:set var="prevrow" value="${row}"/>
           </c:forEach>
         </c:if>
       </table>
