@@ -119,7 +119,7 @@ public class Dag2Owl
     protected static String filter(String s) {
         String filtered = s;
          StringBuffer sb = new StringBuffer();
-         for (StringTokenizer st = new StringTokenizer(filtered, " _"); st.hasMoreTokens();) {
+         for (StringTokenizer st = new StringTokenizer(filtered, " _-"); st.hasMoreTokens();) {
              sb.append(StringUtil.capitalise(st.nextToken().replaceAll("\\W", "")));
          }
          filtered = sb.toString();
