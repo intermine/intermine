@@ -20,6 +20,24 @@ public class ExplainResult
     protected long estimatedRows;
 
     /**
+     * Constructs an instance of ExplainResult for a given query String and
+     * database Connection.
+     *
+     * @param query    the String query to be explained
+     * @param database a java.sql.Connection by which to access the
+     *        database. The particular subclass of ExplainResult returned
+     *        depends on the type of this Connection
+     * @return an instance of ExplainResult
+     * @throws SQLException if the query cannot be explained by that database
+     */
+    public static ExplainResult getInstance(String query, Connection database) throws SQLException {
+        if (database == null) {
+            return new DummyExplainResult(new Query(query));
+        }
+        return new PostgresExplainResult(query, database);
+    }
+
+    /**
      * Constructs an instance of ExplainResult for a given Query and
      * database Connection.
      *

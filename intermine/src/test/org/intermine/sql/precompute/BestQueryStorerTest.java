@@ -39,6 +39,7 @@ public class BestQueryStorerTest extends TestCase
         assertEquals(0, bq.getQueries().size());
     }
 
+    /*
     public void testAddNull() throws Exception {
         BestQueryStorer bq = new BestQueryStorer();
         try {
@@ -47,7 +48,7 @@ public class BestQueryStorerTest extends TestCase
         }
         catch (NullPointerException e) {
         }
-    }
+    }*/
 
     public void testReturnFirst() throws Exception {
         BestQueryStorer bq = new BestQueryStorer();

@@ -33,16 +33,28 @@ public class PostgresExplainResult extends ExplainResult
      * @throws NullPointerException if either query or database are null
      */
     public PostgresExplainResult(Query query, Connection database) throws SQLException {
+        this(query.getSQLString(), database);
+    }
+
+    /**
+     * Constructs an instance of PostgresExplainResult for a given Query String and database
+     * Connection.
+     *
+     * @param query the String query to be explained
+     * @param database a java.sql.Connection by which to access the database
+     * @throws SQLException if a database error occurs
+     * @throws NullPointerException if either query or database are null
+     */
+    public PostgresExplainResult(String query, Connection database) throws SQLException {
         if ((query == null) || (database == null)) {
             throw new NullPointerException("Arguments cannot be null");
         }
 
         Statement s = database.createStatement();
-        String queryString = query.getSQLString();
-        if (!query.isExplain()) {
-            queryString = "explain " + queryString;
+        if (!query.toUpperCase().startsWith("EXPLAIN ")) {
+            query = "explain " + query;
         }
-        s.execute(queryString);
+        s.execute(query);
         Exception warning = database.getWarnings();
         database.clearWarnings();
         String text = warning.toString();
@@ -109,14 +121,14 @@ public class PostgresExplainResult extends ExplainResult
             throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"..\""));
         }
         start = Long.parseLong(text.substring(0, text.indexOf('.'))
-                               + text.substring(text.indexOf('.') + 1, nextToken));
+                               + text.substring(text.indexOf('.') + 1, nextToken)) / 10;
         text = text.substring(nextToken + 2);
         nextToken = text.indexOf(" rows=");
         if (nextToken < 0) {
             throw (new IllegalArgumentException("Invalid EXPLAIN string: no \" rows=\""));
         }
         complete = Long.parseLong(text.substring(0, text.indexOf('.'))
-                                  + text.substring(text.indexOf('.') + 1, nextToken));
+                                  + text.substring(text.indexOf('.') + 1, nextToken)) / 10;
         text = text.substring(nextToken + 6);
         nextToken = text.indexOf(" width=");
         if (nextToken < 0) {

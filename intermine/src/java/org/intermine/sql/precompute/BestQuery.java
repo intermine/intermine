@@ -20,4 +20,13 @@ public abstract class BestQuery
      * @throws SQLException if error occurs in the underlying database
      */
     public abstract void add(Query q) throws BestQueryException, SQLException;
+
+    /**
+     * Allows a Query to be added to this tracker.
+     *
+     * @param q a query String to be added to the tracker
+     * @throws BestQueryException when adding should stop
+     * @throws SQLException if error occurs in the underlying database
+     */
+    public abstract void add(String q) throws BestQueryException, SQLException;
 }

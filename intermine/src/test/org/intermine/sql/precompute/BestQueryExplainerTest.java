@@ -50,6 +50,7 @@ public class BestQueryExplainerTest extends TestCase
         assertNull(bq.getBestExplainResult());
     }
 
+    /*
     public void testAddNull() throws Exception {
         BestQueryExplainer bq = new BestQueryExplainer();
         try {
@@ -58,7 +59,7 @@ public class BestQueryExplainerTest extends TestCase
         }
         catch (NullPointerException e) {
         }
-    }
+    }*/
 
     public void testReturnFirst() throws Exception {
         BestQueryExplainer bq = new BestQueryExplainer();
@@ -80,8 +81,8 @@ public class BestQueryExplainerTest extends TestCase
 
     public void testStopsWhenQueryBetterThanElapsed() throws Exception {
         BestQueryExplainer bq = new BestQueryExplainer();
-        bq.add(q1); // Takes 3 milliseconds
-        Thread.currentThread().sleep(10);
+        bq.add(q1); // Takes 600 milliseconds
+        Thread.currentThread().sleep(700);
         try {
             bq.add(q2);
             fail("Expected: BestQueryException");

@@ -38,8 +38,8 @@ public class DummyExplainResultTest extends TestCase
     public void testTime() throws Exception {
         ExplainResult d1 = ExplainResult.getInstance(q1, null);
         ExplainResult d2 = ExplainResult.getInstance(q2, null);
-        assertEquals(2, d1.getTime());
-        assertEquals(4, d2.getTime());
+        assertEquals(600, d1.getTime());
+        assertEquals(1200, d2.getTime());
     }
 
 }

@@ -24,7 +24,7 @@ public class DummyExplainResult extends ExplainResult
      *
      */
     public DummyExplainResult(Query q) {
-        time = q.getFrom().size() + q.getWhere().size();
+        time = 300 * (q.getFrom().size() + q.getWhere().size());
     }
 
     /**

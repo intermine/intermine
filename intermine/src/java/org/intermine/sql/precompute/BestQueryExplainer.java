@@ -13,7 +13,10 @@ import java.util.Date;
  */
 public class BestQueryExplainer extends BestQuery
 {
+    private static final int OVERHEAD = 300;
+
     protected Query bestQuery;
+    protected String bestQueryString;
     protected ExplainResult bestExplainResult;
     protected Connection con;
     protected Date start = new Date();
@@ -50,21 +53,57 @@ public class BestQueryExplainer extends BestQuery
         ExplainResult er = ExplainResult.getInstance(q, con);
 
         // store if this is the first we have seen
-        if (bestQuery == null) {
+        if ((bestQuery == null) && (bestQueryString == null)) {
             bestQuery = q;
+            bestQueryString = null;
             bestExplainResult = er;
         }
 
         // store if better than anything we have already seen
         if (er.getTime() < bestExplainResult.getTime()) {
             bestQuery = q;
+            bestQueryString = null;
             bestExplainResult = er;
         }
 
         // throw BestQueryException if the bestQuery is will take less time to run than the
         // amount of time we have spent optimising so far
         Date elapsed = new Date();
-        if (bestExplainResult.getTime() < (elapsed.getTime() - start.getTime())) {
+        if (bestExplainResult.getTime() < (elapsed.getTime() + OVERHEAD - start.getTime())) {
+            throw (new BestQueryException("Explain time: " + bestExplainResult.getTime()
+                        + ", elapsed time: " + (elapsed.getTime() - start.getTime())));
+        }
+    }
+
+    /**
+     * Allows a Query to be added to this tracker.
+     *
+     * @param q a query String to be added to the tracker
+     * @throws BestQueryException if the current best Query is the best we think we are going to get
+     * @throws SQLException if error occurs in the underlying database
+     */
+    public void add(String q) throws BestQueryException, SQLException {
+
+        ExplainResult er = ExplainResult.getInstance(q, con);
+
+        // store if this is the first we have seen
+        if ((bestQuery == null) && (bestQueryString == null)) {
+            bestQuery = null;
+            bestQueryString = q;
+            bestExplainResult = er;
+        }
+
+        // store if better than anything we have already seen
+        if (er.getTime() < bestExplainResult.getTime()) {
+            bestQuery = null;
+            bestQueryString = q;
+            bestExplainResult = er;
+        }
+
+        // throw BestQueryException if the bestQuery is will take less time to run than the
+        // amount of time we have spent optimising so far
+        Date elapsed = new Date();
+        if (bestExplainResult.getTime() < (elapsed.getTime() + OVERHEAD - start.getTime())) {
             throw (new BestQueryException());
         }
     }
@@ -75,7 +114,16 @@ public class BestQueryExplainer extends BestQuery
      * @return the best Query, or null if no Queries added to this object
      */
     public Query getBestQuery() {
-        return bestQuery;
+        return (bestQueryString == null ? bestQuery : new Query(bestQueryString));
+    }
+
+    /**
+     * Gets the best query String found so far
+     *
+     * @return the best Query, or null if no Queries added to this object
+     */
+    public String getBestQueryString() {
+        return (bestQuery == null ? bestQueryString : bestQuery.getSQLString());
     }
 
     /**
@@ -86,6 +134,4 @@ public class BestQueryExplainer extends BestQuery
     public ExplainResult getBestExplainResult() {
         return bestExplainResult;
     }
-
-
 }
