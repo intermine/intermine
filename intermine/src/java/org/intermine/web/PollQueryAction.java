@@ -103,8 +103,13 @@ public class PollQueryAction extends InterMineAction
                 request.setAttribute("POLL_REFRESH_SECONDS",
                                             new Integer(Constants.POLL_REFRESH_SECONDS));
             }
-            int numdots = (controller.getTickleCount() % 3) + 1;
-            request.setAttribute("dots", StringUtils.repeat(".", numdots));
+            int imgnum = ((controller.getTickleCount()+1) % 4) + 1;
+            if (controller.getTickleCount() < 4) {
+                request.setAttribute("imgnum", new Integer(1));
+            } else {
+                request.setAttribute("imgnum", new Integer(imgnum));
+            }
+            
             // there are different action mappings for different kinds of
             // query (portal, template, query builder) so we have to refresh
             // to the correct path
