@@ -257,7 +257,7 @@
                       </table>
                       <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
                         <div class="refSummary">
-                          [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+                          [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;size=25&amp;trail=${param.trail}">
                             <fmt:message key="results.showall"/>
                           </html:link>]
                         </div>
