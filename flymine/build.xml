@@ -961,7 +961,7 @@
   <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="production-build" depends="create-production-model, jar-genomic,
+  <target name="production-build" depends="compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
