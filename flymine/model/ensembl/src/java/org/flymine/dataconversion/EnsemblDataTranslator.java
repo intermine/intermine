@@ -442,7 +442,15 @@ public class EnsemblDataTranslator extends DataTranslator
         return synonyms;
     }
 
-    private Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs)
+    /**
+     * Find external database accession numbers in ensembl to set as Synonyms
+     * @param srcItem it in source format ensembl:gene
+     * @param tgtItem translate item flymine:Gene
+     * @param srcNs namespace of source model
+     * @return a set of Synonyms
+     * @throws ObjectStoreException if problem retrieving items
+     */
+    protected Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs)
         throws ObjectStoreException {
         // additional gene information is in xref table only accessible via translation
         Set synonyms = new HashSet();
@@ -471,10 +479,13 @@ public class EnsemblDataTranslator extends DataTranslator
             if (xref != null) {
                 if (xref.hasAttribute("dbprimary_acc")) {
                     accession = xref.getAttribute("dbprimary_acc").getValue();
-                    Item externalDb = ItemHelper.convert(srcItemReader
-                            .getItemById(xref.getReference("external_db").getRefId()));
-                    if (externalDb != null) {
-                        dbname =  externalDb.getAttribute("db_name").getValue();
+                    Reference dbRef = xref.getReference("external_db");
+                    if (dbRef != null && dbRef.getRefId() != null) {
+                        Item externalDb = ItemHelper.convert(srcItemReader
+                                                             .getItemById(dbRef.getRefId()));
+                        if (externalDb != null) {
+                            dbname =  externalDb.getAttribute("db_name").getValue();
+                        }
                     }
                 }
             }
