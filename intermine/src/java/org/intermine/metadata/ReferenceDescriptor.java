@@ -92,7 +92,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
 
         // find ReferenceDescriptor for the reverse reference
-        if (reverseRefName != null && reverseRefName != "") {
+        if (reverseRefName != null && !reverseRefName.equals("")) {
             reverseRefDesc = referencedClassDesc
                 .getReferenceDescriptorByName(reverseRefName);
             if (reverseRefDesc == null) {
