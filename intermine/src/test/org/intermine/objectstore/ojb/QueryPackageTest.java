@@ -24,8 +24,8 @@ public class QueryPackageTest extends TestCase
 
     public void setUp() {
         fq = new Query();
-        fq.addClass(new QueryClass(Department.class));
-        fq.addClass(new QueryClass(Employee.class));
+        fq.addFrom(new QueryClass(Department.class));
+        fq.addFrom(new QueryClass(Employee.class));
         assertNotNull("Problem creating Query instance", fq);
 
         // need a DescriptorRepository to construct ClassDescriptors

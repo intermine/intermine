@@ -59,7 +59,6 @@ import org.apache.ojb.broker.accesslayer.JdbcAccessImpl;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.accesslayer.ResultSetAndStatement;
-import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.accesslayer.ConnectionManagerIF;
 
 import java.sql.Connection;
@@ -96,14 +95,10 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      * @return the JDBC ResultSet and Statement
      * @throws PersistenceBrokerException if anything goes worong
      */
-    public ResultSetAndStatement executeQuery(Query query)
+    public ResultSetAndStatement executeQuery(QueryPackage query)
         throws PersistenceBrokerException {
         if (logger.isDebugEnabled()) {
             logger.safeDebug("executeQuery", query);
-        }
-
-        if (!(query instanceof QueryPackage)) {
-            throw (new IllegalArgumentException("must pass a QueryPackage object"));
         }
 
         ResultSetAndStatement retval =

@@ -18,12 +18,12 @@ public class QueryTest extends TestCase
     }
 
     public  void testAddClass() {
-        query.addClass(new QueryClass(Department.class));
+        query.addFrom(new QueryClass(Department.class));
     }
 
     public  void testAddNull() {
         try {
-            query.addClass(null);
+            query.addFrom(null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -47,8 +47,8 @@ public class QueryTest extends TestCase
     public void testAddTwoSimilarClasses() throws Exception {
         QueryClass qn1 = new QueryClass(Department.class);
         QueryClass qn2 = new QueryClass(Department.class);
-        query.addClass(qn1);
-        query.addClass(qn2);
+        query.addFrom(qn1);
+        query.addFrom(qn2);
         assertEquals("a1_", (String) query.getAliases().get(qn1));
         assertEquals("a2_", (String) query.getAliases().get(qn2));
     }
@@ -66,7 +66,7 @@ public class QueryTest extends TestCase
         QueryClass qn1 = new QueryClass(Department.class);
         QueryClass qn2 = new QueryClass(Department.class);
         query.addToSelect(qn1);
-        query.addClass(qn2);
+        query.addFrom(qn2);
         assertEquals("a1_", (String) query.getAliases().get(qn1));
         assertEquals("a2_", (String) query.getAliases().get(qn2));
     }
@@ -74,8 +74,8 @@ public class QueryTest extends TestCase
     public void testAddTwoSimilarClassesToBoth1() throws Exception {
         QueryClass qn1 = new QueryClass(Department.class);
         QueryClass qn2 = new QueryClass(Department.class);
-        query.addClass(qn1);
-        query.addClass(qn2);
+        query.addFrom(qn1);
+        query.addFrom(qn2);
         query.addToSelect(qn1);
         query.addToSelect(qn2);
         assertEquals("a1_", (String) query.getAliases().get(qn1));
@@ -87,8 +87,8 @@ public class QueryTest extends TestCase
         QueryClass qn2 = new QueryClass(Department.class);
         query.addToSelect(qn1);
         query.addToSelect(qn2);
-        query.addClass(qn1);
-        query.addClass(qn2);
+        query.addFrom(qn1);
+        query.addFrom(qn2);
         assertEquals("a1_", (String) query.getAliases().get(qn1));
         assertEquals("a2_", (String) query.getAliases().get(qn2));
     }
@@ -97,7 +97,7 @@ public class QueryTest extends TestCase
         QueryClass qn1 = new QueryClass(Department.class);
         QueryField qf1 = new QueryField(qn1, "name");
         QueryField qf2 = new QueryField(qn1, "name");
-        query.addClass(qn1);
+        query.addFrom(qn1);
         query.addToSelect(qf1);
         query.addToSelect(qf2);
         assertEquals("a1_", (String) query.getAliases().get(qn1));

@@ -14,12 +14,12 @@ import java.util.Collections;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class Query
+public class Query implements FromElement
 {
     private boolean distinct = true;
     private int maxResults = -1;
     private Constraint constraint = null;
-    private Set queryClasses = new HashSet(); // @element-type QueryClass
+    private Set queryClasses = new HashSet(); // @element-type FromElement
     private List select = new ArrayList(); // @element-type QueryNode
     private List orderBy = new ArrayList(); // @element-type QueryNode
     private Set groupBy = new HashSet(); // @element-type QueryNode
@@ -28,12 +28,12 @@ public class Query
     private int alias = 1;
 
     /**
-     * Adds a QueryClass to the FROM clause of this Query
+     * Adds a FromElement to the FROM clause of this Query
      *
-     * @param cls the QueryClass to be added
+     * @param cls the FromElement to be added
      * @return the updated Query
      */
-    public Query addClass(QueryClass cls) {
+    public Query addFrom(FromElement cls) {
         if (cls == null) {
             throw new NullPointerException("cls must not be null");
         }
@@ -45,23 +45,23 @@ public class Query
     }
 
     /**
-     * Remove a QueryClass from the FROM clause
+     * Remove a FromElement from the FROM clause
      *
-     * @param cls the QueryClass to remove
+     * @param cls the FromElement to remove
      * @return the updated Query
      */
-    public Query deleteClass(QueryClass cls) {
+    public Query deleteFrom(FromElement cls) {
         queryClasses.remove(cls);
         return this;
     }
 
 
     /**
-     * Returns all QueryClasses in the FROM clause
+     * Returns all FromElements in the FROM clause
      *
-     * @return list of QueryClasses
+     * @return list of FromElements
      */
-    public Set getClasses() {
+    public Set getFrom() {
         return Collections.unmodifiableSet(queryClasses);
     }
 

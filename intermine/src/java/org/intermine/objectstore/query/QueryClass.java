@@ -6,7 +6,7 @@ package org.flymine.objectstore.query;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class QueryClass implements QueryNode 
+public class QueryClass implements QueryNode, FromElement
 {
     private Class type;
     

@@ -56,8 +56,9 @@ package org.flymine.objectstore.ojb;
 
 import org.flymine.objectstore.query.QueryClass;
 
-import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
+import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.Query;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -75,7 +76,7 @@ import java.util.Iterator;
  * @author Richard Smith
  */
 
-public class QueryPackage extends org.apache.ojb.broker.query.AbstractQueryImpl
+public class QueryPackage extends org.apache.ojb.broker.query.AbstractQueryImpl implements Query
 {
 
     private org.flymine.objectstore.query.Query passengerQuery;
@@ -99,7 +100,7 @@ public class QueryPackage extends org.apache.ojb.broker.query.AbstractQueryImpl
         }
 
         // check that there is a ClassDescriptor for each class type in FROM clause
-        HashSet from = new HashSet(query.getClasses());
+        HashSet from = new HashSet(query.getFrom());
         Iterator fromIter = from.iterator();
         HashSet classes = new HashSet();
 
@@ -151,7 +152,7 @@ public class QueryPackage extends org.apache.ojb.broker.query.AbstractQueryImpl
     }
 
 
-    /**** empty implementations for abstract mehtods ****/
+    /**** empty implementations for abstract methods ****/
 
     /**
      * Method declaration
@@ -168,7 +169,6 @@ public class QueryPackage extends org.apache.ojb.broker.query.AbstractQueryImpl
      * Method declaration
      *
      * @return an object
-     *
      */
     public java.lang.Object getExampleObject() {
         throw (new UnsupportedOperationException("This is a dummy OJB Query  "
@@ -179,14 +179,21 @@ public class QueryPackage extends org.apache.ojb.broker.query.AbstractQueryImpl
      * Method declaration
      *
      * @return a class
-     *
      */
     public Class getSearchClass() {
         throw (new UnsupportedOperationException("This is a dummy OJB Query "
                                                  + "used to pass a FlyMine query between classes"));
     }
 
-
+    /**
+     * Method declaration
+     *
+     * @return a boolean
+     */
+    public boolean isDistinct() {
+        throw (new UnsupportedOperationException("This is a dummy OJB Query "
+                                                 + "used to pass a FlyMine query between classes"));
+    }
 }
 
 

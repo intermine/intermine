@@ -247,7 +247,10 @@ public class FlymineSqlSelectStatement implements SqlStatement
         }
     }
 
-    private void buildFromComponent() {
+    private String buildFromComponent() {
+        String retval = "";
+        boolean needComma = false;
+        return "nothing";
     }
 
     /**
@@ -256,7 +259,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @return sql statement as a string
      */
     public String getStatement() {
-        return "SELECT " + buildSelectComponent() + " from nowhere";
+        return "SELECT " + buildSelectComponent() + " FROM " + buildFromComponent();
     }
 
 }
