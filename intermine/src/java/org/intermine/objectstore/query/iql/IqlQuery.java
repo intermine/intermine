@@ -25,7 +25,7 @@ import org.flymine.objectstore.query.*;
  */
 public class FqlQuery
 {
-    private String query;
+    private String queryString;
     private String packageName;
     private List parameters = new ArrayList();;
 
@@ -33,22 +33,22 @@ public class FqlQuery
      * Construct an FQL query from a String.
      * NOTE: The query string is not validated on construction
      *
-     * @param query the string-based query
+     * @param queryString the string-based query
      * @param packageName the package name with which to qualify unqualified classnames. Note that
      * this can be null if every class name is fully qualified
-     * @throws NullPointerException if query is null
+     * @throws NullPointerException if queryString is null
      */
-    public FqlQuery(String query, String packageName) {
-        if (query == null) {
-            throw new NullPointerException("query should not be null");
+    public FqlQuery(String queryString, String packageName) {
+        if (queryString == null) {
+            throw new NullPointerException("queryString should not be null");
         }
-        if ("".equals(query)) {
-            throw new IllegalArgumentException("query should not be empty");
+        if ("".equals(queryString)) {
+            throw new IllegalArgumentException("queryString should not be empty");
         }
         if ("".equals(packageName)) {
             throw new IllegalArgumentException("packageName should not be empty");
         }
-        this.query = query;
+        this.queryString = queryString;
         this.packageName = packageName;
     }
 
@@ -125,7 +125,7 @@ public class FqlQuery
                 retval += nodeToString(q, qn);
             }
         }
-        this.query = retval;
+        queryString = retval;
     }
 
     private String nodeToString(Query q, QueryNode qn) {
@@ -277,7 +277,7 @@ public class FqlQuery
      * @return the query String
      */
     public String getQueryString() {
-        return query;
+        return queryString;
     }
 
     /**
@@ -295,7 +295,7 @@ public class FqlQuery
      * @return the parameters
      */
     public List getParameters() {
-        return this.parameters;
+        return parameters;
     }
 
     /**
@@ -313,7 +313,7 @@ public class FqlQuery
      * @return a String version of the query
      */
     public String toString() {
-        StringBuffer ret = new StringBuffer(query);
+        StringBuffer ret = new StringBuffer(queryString);
         Iterator iter = parameters.iterator();
         int i = 0;
         while (iter.hasNext()) {
