@@ -67,13 +67,17 @@
     <action path="/buildquery"
             forward="query.page"/>
 
+    <action path="/buildfqlquery"
+            forward="fqlquery.page"/>
+
     <action path="/query"
             input="buildquery"
             type="org.flymine.web.QueryBuildAction"
             name="queryBuildForm"
             parameter="action">
-      <forward name="buildquery" path="query.page"/>
       <forward name="runquery" path="/runQuery.do"/>
+      <forward name="buildquery" path="query.page"/>
+      <forward name="buildfqlquery" path="fqlquery.page"/>
     </action>
 
     <action path="/changequery"
@@ -86,11 +90,11 @@
     <action path="/fqlquery"
             type="org.flymine.web.FqlQueryAction"
             name="fqlQueryForm"
-            scope="request"
-            input="query"
+            input="buildfqlquery"
             parameter="action">
       <forward name="runquery" path="/runQuery.do"/>
       <forward name="buildquery" path="query.page"/>
+      <forward name="buildfqlquery" path="fqlquery.page"/>
     </action>
 
     <!-- Select a QueryClass -->
