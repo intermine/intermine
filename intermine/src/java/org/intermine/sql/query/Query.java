@@ -16,7 +16,7 @@ import java.util.*;
 import java.io.*;
 
 import antlr.collections.AST;
-import antlr.debug.misc.ASTFrame;
+//import antlr.debug.misc.ASTFrame;
 
 import org.flymine.util.ConsistentSet;
 
@@ -1029,8 +1029,8 @@ public class Query implements SQLStringable
             out.println("\n==> Dump of AST <==");
             visitor.visit(ast);
 
-            ASTFrame frame = new ASTFrame("AST JTree Example", ast);
-            frame.setVisible(true);
+            //ASTFrame frame = new ASTFrame("AST JTree Example", ast);
+            //frame.setVisible(true);
 
             oldAst = ast;
             SqlTreeParser treeparser = new SqlTreeParser();
@@ -1042,7 +1042,7 @@ public class Query implements SQLStringable
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
             throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
         }
-        Query q = new Query();
+        Query q = new Query(new HashMap());
         q.processSqlStatementAST(ast);
 
         out.println("\n" + q.getSQLString());
