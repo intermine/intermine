@@ -382,17 +382,20 @@ public class PrecomputedTableManager
         Statement stmt = con.createStatement();
         ResultSet res = stmt.executeQuery("SELECT * FROM " + TABLE_INDEX);
 
+        int failedCount = 0;
         while (res.next()) {
             String tableName = res.getString(1);
             String queryString = res.getString(2);
             try {
-                precomputedTables.add(new PrecomputedTable(new Query(queryString), tableName, con));
+                precomputedTables.add(new PrecomputedTable(new Query(queryString, false),
+                            tableName, con));
             } catch (IllegalArgumentException e) {
                 // This would be a poor query string in the TABLE_INDEX
+                failedCount++;
             }
         }
-        LOG.info("Loaded " + precomputedTables.size() + " precomputed table descriptions in "
-                + (System.currentTimeMillis() - start) + " ms");
+        LOG.info("Loaded " + precomputedTables.size() + " precomputed table descriptions (plus "
+                + failedCount + " failed) in " + (System.currentTimeMillis() - start) + " ms");
     }
 
     /**
