@@ -105,8 +105,9 @@ public class PortalQuery extends TemplateAction
         Map collapsed = SessionMethods.getCollapsedMap(session);
         collapsed.put("fields", Boolean.TRUE);
         collapsed.put("further", Boolean.TRUE);
-        collapsed.put("other", Boolean.TRUE);
         collapsed.put("summary", Boolean.FALSE);
+
+        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
         ActionForward forward = handleTemplateQuery(mapping, request, response, true, false);
         if (StringUtils.equals(forward.getName(), "results")) {
