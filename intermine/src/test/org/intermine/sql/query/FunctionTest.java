@@ -4,7 +4,7 @@ import junit.framework.*;
 
 public class FunctionTest extends TestCase
 {
-    private Function f1, f2, f3, f4, f5, f6, f7;
+    private Function f1, f2, f3, f4, f5, f6, f7, f8, f9;
     
     public FunctionTest(String arg1) {
         super(arg1);
@@ -34,6 +34,13 @@ public class FunctionTest extends TestCase
         f6.add(c1);
         f7 = new Function(Function.MAX);
         f7.add(c2);
+        f8 = new Function(Function.PLUS);
+        f8.add(c1);
+        f8.add(c1);
+        f9 = new Function(Function.PLUS);
+        f9.add(c1);
+        f9.add(c1);
+        f9.add(c1);
     }
 
     public void testArrayList() throws Exception {
@@ -62,6 +69,7 @@ public class FunctionTest extends TestCase
         assertTrue("Expected f3 to not equal f5", !f3.equals(f5));
         assertTrue("Expected f5 to not equal f6", !f5.equals(f6));
         assertEquals(f2, f7);
+        assertTrue("Expected f8 to not equal f9", !f8.equals(f9));
     }
 
     public void testHashCode() throws Exception {
@@ -73,6 +81,7 @@ public class FunctionTest extends TestCase
         assertTrue("Expected f3 hashcode not to equal f5 hashcode", f3.hashCode() != f5.hashCode());
         assertTrue("Expected f5 hashcode not to equal f6 hashcode", f5.hashCode() != f6.hashCode());
         assertEquals(f2.hashCode(), f7.hashCode());
+        assertTrue("Expected f8 hashcode not to equal f9 hashcode", f8.hashCode() != f9.hashCode());
     }
 
     public void testTooManyOperands() throws Exception {

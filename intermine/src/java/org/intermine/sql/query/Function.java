@@ -163,8 +163,28 @@ public class Function extends AbstractValue
         if (obj instanceof Function) {
             Function objF = (Function) obj;
             if ((operation == PLUS) || (operation == MULTIPLY)) {
-                Set a = new HashSet(operands);
-                Set b = new HashSet(objF.operands);
+                Map a = new HashMap();
+                Iterator opIter = operands.iterator();
+                while (opIter.hasNext()) {
+                    Object operand = opIter.next();
+                    if (!a.containsKey(operand)) {
+                        a.put(operand, new Integer(1));
+                    } else {
+                        Integer i = (Integer) a.get(operand);
+                        a.put(operand, new Integer(1 + i.intValue()));
+                    }
+                }
+                Map b = new HashMap();
+                opIter = objF.operands.iterator();
+                while (opIter.hasNext()) {
+                    Object operand = opIter.next();
+                    if (!b.containsKey(operand)) {
+                        b.put(operand, new Integer(1));
+                    } else {
+                        Integer i = (Integer) b.get(operand);
+                        b.put(operand, new Integer(1 + i.intValue()));
+                    }
+                }
                 return (operation == objF.operation) && (a.equals(b));
             } else {
                 return (operation == objF.operation) && (operands.equals(objF.operands));
