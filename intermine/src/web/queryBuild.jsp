@@ -31,7 +31,7 @@
 
         <c:choose>
 
-          <c:when test="${allFieldNames != null}">
+          <c:when test="${!empty allFieldNames}">
           <div class="queryBuildQueryClasses">
             <table>
             <c:forEach items="${queryClass.constraintNames}" var="constraintName">
