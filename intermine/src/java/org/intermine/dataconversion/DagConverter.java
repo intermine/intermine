@@ -37,7 +37,8 @@ import org.intermine.xml.full.ReferenceList;
 public class DagConverter extends DataConverter
 {
     protected String dagFilename;
-    protected String namespace;
+    protected String termClass;
+    protected String relationClass;
     protected int uniqueId = 0;
     protected Map nameToTerm = new HashMap();
 
@@ -46,12 +47,14 @@ public class DagConverter extends DataConverter
      *
      * @param writer an ItemWriter used to handle the resultant Items
      * @param dagFilename the name of the DAG file
-     * @param namespace the namespace of the model (including the trailing hash symbol)
+     * @param termClass the class of the Term
+     * @param relationClass the class of the relation
      */
-    public DagConverter(ItemWriter writer, String dagFilename, String namespace) {
+    public DagConverter(ItemWriter writer, String dagFilename, String termClass, String relationClass) {
         super(writer);
         this.dagFilename = dagFilename;
-        this.namespace = namespace;
+        this.termClass = termClass;
+        this.relationClass = relationClass;
     }
 
     /**
@@ -108,7 +111,7 @@ public class DagConverter extends DataConverter
         if (item == null) {
             item = new Item();
             item.setIdentifier("0_" + (uniqueId++));
-            item.setClassName(namespace + "DagTerm");
+            item.setClassName(termClass);
             item.setImplementations("");
             item.addAttribute(new Attribute("name", term.getName()));
             if (term.getId() != null) {
@@ -158,7 +161,7 @@ public class DagConverter extends DataConverter
     protected void relate(Item item, Item subItem, String type) throws ObjectStoreException {
         Item relation = new Item();
         relation.setIdentifier("0_" + (uniqueId++));
-        relation.setClassName(namespace + "DagRelation");
+        relation.setClassName(relationClass);
         relation.setImplementations("");
         relation.addAttribute(new Attribute("type", type));
         relation.addReference(new Reference("childTerm", subItem.getIdentifier()));

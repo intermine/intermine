@@ -35,7 +35,8 @@ public class DagConverterTask extends Task
 
     protected String file;
     protected String osName;
-    protected String namespace;
+    protected String termClass;
+    protected String relationClass;
 
     /**
      * Set the input file name
@@ -54,12 +55,21 @@ public class DagConverterTask extends Task
     }
 
     /**
-     * Set the namespace
+     * Set the term class name
      *
-     * @param namespace the namespace
+     * @param termClass the class of the term
      */
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
+    public void setTermClass(String termClass) {
+        this.termClass = termClass;
+    }
+
+    /**
+     * Set the relation class name
+     *
+     * @param relationClass the class of the relation
+     */
+    public void setRelationClass(String relationClass) {
+        this.relationClass = relationClass;
     }
 
     /**
@@ -73,15 +83,18 @@ public class DagConverterTask extends Task
         if (osName == null) {
             throw new BuildException("model attribute is not set");
         }
-        if (namespace == null) {
-            throw new BuildException("namespace attribute is not set");
+        if (termClass == null) {
+            throw new BuildException("termClass attribute is not set");
+        }
+        if (relationClass == null) {
+            throw new BuildException("relationClass attribute is not set");
         }
 
         try {
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             ItemWriter writer = new ObjectStoreItemWriter(osw);
 
-            DagConverter converter = new DagConverter(writer, file, namespace);
+            DagConverter converter = new DagConverter(writer, file, termClass, relationClass);
             converter.process();
         } catch (Exception e) {
             throw new BuildException(e);

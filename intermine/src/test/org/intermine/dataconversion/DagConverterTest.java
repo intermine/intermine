@@ -41,7 +41,7 @@ public class DagConverterTest extends TestCase {
     }
 
     public void test1() throws Exception {
-        DagConverter converter = new DagConverter(itemWriter, "", "namespace#");
+        DagConverter converter = new DagConverter(itemWriter, "", "namespace#DagTerm", "namespace#DagRelation");
         DagTerm a = new DagTerm("SO:42", "parent");
         DagTerm b = new DagTerm("SO:43", "child");
         DagTerm c = new DagTerm("SO:44", "partof");
