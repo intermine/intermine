@@ -276,7 +276,8 @@ queries were particularly complicated in themselves, but you could
 specify how far removed from one object you wanted to allow when
 showing links. Said it takes 4 weeks to load data into an empty
 database, but was doing incremental updates after that.
-
+</para>
+<para>
 [R] Again doesn't actually pull data into a single database but I think it
 could.  Current implementation just integrates indexes/pointers to 
 remote sources - i.e. integration scheme is held locally, queries are
@@ -284,7 +285,7 @@ run over net.  Still appears to be fully integrated and seems to run fast.
 Huge amount of source data.  Integration is done by a curator who works 
 through a GUI to solve conflicts.  Once a conflict/match is solved it is
 stored in a thesaurus for re-use.
- </para>
+</para>
 
 <para>
 [A] Did set me wondering whether we should kick-start FlyMine with a
