@@ -26,9 +26,6 @@ public class MergeOwlTest extends TestCase
     private final String tgtNamespace = "http://www.flymine.org/target/";
     private final String src1Namespace = "http://www.flymine.org/source1/";
     private final String src2Namespace = "http://www.flymine.org/source2/";
-    private final String owlNamespace = "http:://www.w3.org/2002/07/owl#";
-    private final String rdfNamespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    private final String rdfsNamespace = "http://www.w3.org/2000/01/rdf-schema#>";
 
     public MergeOwlTest(String arg) {
         super(arg);
@@ -42,13 +39,36 @@ public class MergeOwlTest extends TestCase
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
     }
 
-    public void testMergeByEquivalenceClass() throws Exception {
+    public void testAddToTargetOwl() throws Exception {
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+
+        // add multiple sources
+        merger.addToTargetOwl(new StringReader(getSrc1()), src1Namespace, "N3");
+        merger.addToTargetOwl(new StringReader(getSrc2()), src2Namespace, "N3");
+
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Address"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "corpNumber"));
+    }
+
+
+    public void testAddToTargetOwlFormat() throws Exception {
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+        try {
+            merger.addToTargetOwl(new StringReader(getSrc1()), src1Namespace, "wrong");
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testMergeByEquivalenceRdfType() throws Exception {
         MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
 
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(getSrc1()), null, "N3");
 
-        // merge first source
         merger.mergeByEquivalence(src1, src1Namespace);
 
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
@@ -60,73 +80,13 @@ public class MergeOwlTest extends TestCase
         assertNull(merger.tgtModel.getOntProperty(tgtNamespace + "compName"));
 
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber"));
-
-
-        // merge second source
-        OntModel src2 = ModelFactory.createOntologyModel();
-        src2.read(new StringReader(getSrc2()), null, "N3");
-
-        merger.mergeByEquivalence(src2, src2Namespace);
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "corpNumber"));
-
     }
 
 
-    public void testMergeByEquivalenceSimpleClass() throws Exception {
-        String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
-            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL
-            + ":Company a owl:Class ;" + ENDL
-            + "           owl:equivalentClass src1:LtdCompany ." + ENDL;
 
-        String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL
-            + ":LtdCompany a owl:Class ." + ENDL
-            + ":Address a owl:Class ." + ENDL;
-
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
-        OntModel src1 = ModelFactory.createOntologyModel();
-        src1.read(new StringReader(src1Str), null, "N3");
-
-        merger.mergeByEquivalence(src1, src1Namespace);
-
-        // classes: LtdCompany -> Company, Address -> Address.  check owl:equivalentClass
-        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
-        assertNull(merger.tgtModel.getOntClass(src1Namespace + "LtdCompany"));
-        assertNull(merger.tgtModel.getOntClass(tgtNamespace + "LtdCompany"));
-        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Address"));
-        assertNull(merger.tgtModel.getOntClass(src1Namespace + "Address"));
-
-        OntClass tgtCompany = merger.tgtModel.getOntClass(tgtNamespace + "Company");
-        OntClass srcLtdCompany = src1.getOntClass(src1Namespace + "LtdCompany");
-        OntClass tgtAddress = merger.tgtModel.getOntClass(tgtNamespace + "Address");
-        OntClass srcAddress = src1.getOntClass(src1Namespace + "Address");
-        assertTrue(hasStatement(merger.tgtModel, tgtCompany, "equivalentClass", srcLtdCompany));
-        assertTrue(hasStatement(merger.tgtModel, tgtAddress, "equivalentClass", srcAddress));
-    }
-
-
-    public void testMergeByEquivalenceProperty() throws Exception {
-        String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
-            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL
-            + ":Company a owl:Class ;" + ENDL
-            + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-            + ":name a rdf:Property ;" + ENDL
-            + "      rdfs:domain :Company ;" + ENDL
-            + "      owl:equivalentProperty src1:companyName ." + ENDL;
+    // getTargetResource() should find resource from equiv Map
+    public void testGetTargetResourceExists() throws Exception {
+        String mergeSpec = getMergeSpec();
 
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
@@ -135,50 +95,27 @@ public class MergeOwlTest extends TestCase
             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
             + ENDL
-            + ":LtdCompany a owl:Class ." + ENDL
-            + ":Address a owl:Class ." + ENDL
-            + ":companyName a rdf:Property ;" + ENDL
-            + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":vatNumber a rdf:Property ;" + ENDL
-            + "           rdfs:domain :LtdCompany ." + ENDL;
-
+            + ":Test a owl:Class ." + ENDL;
 
         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(src1Str), null, "N3");
 
-        merger.mergeByEquivalence(src1, src1Namespace);
+        merger.equiv = new HashMap();
+        merger.equiv.put(src1.getOntClass(src1Namespace + "Test").getURI(),
+                            merger.tgtModel.createClass(tgtNamespace + "Test"));
+        // create tgtNamesapce:Test in src1 to compare, has same URI as desired target
+        // Resource so will be .equals()
+        src1.createClass(tgtNamespace + "Test");
 
-        // properties: companyName -> Name, vatNumber -> vatNumber, check owl:equivalentProperty
-        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
-        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "name"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber"));
-        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "vatNumber"));
-
-        OntProperty tgtName = merger.tgtModel.getOntProperty(tgtNamespace + "name");
-        OntProperty srcCompanyName = src1.getOntProperty(src1Namespace + "companyName");
-        OntProperty tgtvatNumber = merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber");
-        OntProperty srcvatNumber = src1.getOntProperty(src1Namespace + "vatNumber");
-        assertTrue(hasStatement(merger.tgtModel, tgtName, "equivalentProperty", srcCompanyName));
-        assertTrue(hasStatement(merger.tgtModel, tgtvatNumber, "equivalentProperty", srcvatNumber));
+        Resource test = merger.getTargetResource(src1.getOntClass(src1Namespace + "Test"), src1Namespace);
+        assertTrue(src1.getOntClass(tgtNamespace + "Test").equals(test));
     }
 
-
-    public void testMergeByEquivalencePropertyDomains() throws Exception {
-
-        String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
-            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL
-            + ":Company a owl:Class ;" + ENDL
-            + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-            + ":name a rdf:Property ;" + ENDL
-            + "      rdfs:domain :Company ;" + ENDL
-            + "      owl:equivalentProperty src1:companyName ." + ENDL;
+    // getTargetResource() should create new Class in tgtModel
+    public void testGetTargetResourceNotExists() throws Exception {
+        String mergeSpec = getMergeSpec();
 
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
@@ -187,152 +124,25 @@ public class MergeOwlTest extends TestCase
             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
             + ENDL
-            + ":LtdCompany a owl:Class ." + ENDL
-            + ":Address a owl:Class ." + ENDL
-            + ":companyName a rdf:Property ;" + ENDL
-            + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":vatNumber a rdf:Property ;" + ENDL
-            + "           rdfs:domain :LtdCompany ." + ENDL
-            + ":postcode a rdf:Property ;" + ENDL
-            + "          rdfs:domain :Address ." + ENDL;
+            + ":Test a owl:Class ." + ENDL;
 
         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        merger.equiv = new HashMap();
+
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(src1Str), null, "N3");
 
-        merger.mergeByEquivalence(src1, src1Namespace);
+        // create tgtNamesapce:Test in src1 to compare, has same URI as desired target
+        // Resource so will be .equals()
+        src1.createClass(tgtNamespace + "Test");
 
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "postcode"));
-
-        // Name has domain that has changed (LtdCompany -> Company), postcode unchanged (Address)
-        OntProperty name = merger.tgtModel.getOntProperty(tgtNamespace + "name");
-        assertTrue(name.getDomain().equals((OntResource) merger.tgtModel
-                                           .getOntClass(tgtNamespace + "Company")));
-        OntProperty postcode = merger.tgtModel.getOntProperty(tgtNamespace + "postcode");
-        assertTrue(postcode.getDomain().equals((OntResource) merger.tgtModel
-                                           .getOntClass(tgtNamespace + "Address")));
+        Resource test = merger.getTargetResource(src1.getOntClass(src1Namespace + "Test"), src1Namespace);
+        assertTrue(src1.getOntClass(tgtNamespace + "Test").equals(test));
     }
-
-
-    public void testMergeByEquivalenceLabels() throws Exception {
-        String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
-            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL;
-
-        String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL
-            + ":LtdCompany a owl:Class ;" + ENDL
-            + "            rdfs:label \"company label\" ." + ENDL
-            + ":Address a owl:Class ." + ENDL
-            + ":companyName a rdf:Property ;" + ENDL
-            + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":vatNumber a rdf:Property ;" + ENDL
-            + "           rdfs:domain :LtdCompany ;" + ENDL
-            + "           rdfs:label \"vat number label\" ." + ENDL;
-
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
-        OntModel src1 = ModelFactory.createOntologyModel();
-        src1.read(new StringReader(src1Str), null, "N3");
-
-        merger.mergeByEquivalence(src1, src1Namespace);
-
-        OntClass ltdCompany = merger.tgtModel.getOntClass(tgtNamespace + "LtdCompany");
-        assertTrue(ltdCompany.getLabel(null).equals("company label"));
-        OntClass address = merger.tgtModel.getOntClass(tgtNamespace + "Address");
-        assertFalse(address.listLabels(null).hasNext());
-        OntProperty companyName = merger.tgtModel.getOntProperty(tgtNamespace + "companyName");
-        assertFalse(companyName.listLabels(null).hasNext());
-        OntProperty vatNumber = merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber");
-        assertTrue(vatNumber.getLabel(null).equals("vat number label"));
-
-    }
-
-
-    private boolean hasStatement(OntModel model, OntResource tgt, String predicate, OntResource src) {
-        Iterator stmtIter = model.listStatements();
-        while (stmtIter.hasNext()) {
-            Statement stmt = (Statement) stmtIter.next();
-            if (stmt.getSubject().equals(tgt)
-                && stmt.getPredicate().getLocalName().equals(predicate)) {
-
-                Resource res = stmt.getResource();
-                if (res.equals((Resource) src)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-//     public void testWriteTargetModel() throws Exception {
-
-
-//         String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
-//             + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-//             + ENDL
-//             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-//             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-//             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-//             + ENDL
-//             + ":Company a owl:Class ;" + ENDL
-//             + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-//             + ":name a rdf:Property ;" + ENDL
-//             + "      rdfs:domain :Company ;" + ENDL
-//             + "      owl:equivalentProperty src1:companyName ." + ENDL;
-
-
-//         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
-//             + ENDL
-//             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-//             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-//             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-//             + ENDL
-//             + ":LtdCompany rdf:type owl:Class ." + ENDL
-//             + ":Address rdf:type owl:Class ." + ENDL
-//             + ":companyName rdf:type rdf:Property ;" + ENDL
-//             + "             rdfs:domain :LtdCompany ." + ENDL
-//             + ":postcode rdf:type rdf:Property ;" + ENDL
-//             + "          rdfs:domain :Address ." + ENDL;
-
-
-
-//         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
-//         OntModel src1 = ModelFactory.createOntologyModel();
-//         //src1.read(new StringReader(getSrc1()), null, "N3");
-//         src1.read(new StringReader(src1Str), null, "N3");
-
-//         merger.mergeByEquivalence(src1, src1Namespace);
-//         File out = new File("/home/rns/tgt.owl");
-
-//         OntModel tgtModel = merger.getTargetModel();
-//         tgtModel.write(new BufferedWriter(new FileWriter(out)), "N3");
-//     }
 
 
     public void testEquivMap() throws Exception {
-        String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
-            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
-            + ENDL
-            + ":Company a owl:Class ;" + ENDL
-            + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-            + ":name a rdf:Property ;" + ENDL
-            + "      rdfs:domain :Company ;" + ENDL
-            + "      owl:equivalentProperty src1:companyName ." + ENDL;
-
+        String mergeSpec = getMergeSpec();
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
@@ -366,14 +176,145 @@ public class MergeOwlTest extends TestCase
     }
 
 
-    public String getMergeSpec() {
-        return "@prefix : <" + tgtNamespace + "> ." + ENDL
-            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
-            + "@prefix src2: <" + src2Namespace + "> ." + ENDL
+    public void testAddEquivalenceStatement() throws Exception {
+        String mergeSpec = getMergeSpec();
+
+
+        String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + ENDL
+            + ":TestClass rdf:type owl:Class ." + ENDL
+            + ":testProperty a rdf:Property ;" + ENDL
+            + "              rdfs:domain :TestClass ." + ENDL
+            + ":testIndividual a owl:Individual ." + ENDL;
+
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        OntModel src1 = ModelFactory.createOntologyModel();
+        src1.read(new StringReader(src1Str), null, "N3");
+
+        // test equivalentClass statement added
+        Resource subject = src1.getOntClass(src1Namespace + "TestClass");
+        Resource target = merger.tgtModel.createClass(tgtNamespace + "TestClass");
+        Resource object = src1.getResource(MergeOwl.OWL_NAMESPACE + "Class");
+
+        ArrayList statements = new ArrayList();
+
+        merger.addEquivalenceStatement(target, object, subject, statements);
+        assertTrue(statements.size() == 1);
+        Statement s = (Statement) statements.get(0);
+        assertTrue(s.getSubject().equals(target));
+        assertTrue(s.getPredicate().getURI().equals(MergeOwl.OWL_NAMESPACE + "equivalentClass"));
+        assertTrue(s.getResource().equals(subject));
+
+
+        // test equivalentProperty statement added
+        subject = src1.getProperty(src1Namespace + "testProperty");
+        target = merger.tgtModel.createProperty(tgtNamespace + "testProperty");
+        object = src1.getResource(MergeOwl.RDF_NAMESPACE + "Property");
+        statements = new ArrayList();
+
+        merger.addEquivalenceStatement(target, object, subject, statements);
+        assertTrue(statements.size() == 1);
+        s = (Statement) statements.get(0);
+        assertTrue(s.getSubject().equals(target));
+        assertTrue(s.getPredicate().getURI().equals(MergeOwl.OWL_NAMESPACE + "equivalentProperty"));
+        assertTrue(s.getResource().equals(subject));
+
+        // test sameAs statement added
+        subject = src1.getProperty(src1Namespace + "testIndicidual");
+        target = merger.tgtModel.createProperty(tgtNamespace + "testIndividual");
+        object = src1.getResource(MergeOwl.OWL_NAMESPACE + "Individual");
+        statements = new ArrayList();
+
+        merger.addEquivalenceStatement(target, object, subject, statements);
+        assertTrue(statements.size() == 1);
+        s = (Statement) statements.get(0);
+        assertTrue(s.getSubject().equals(target));
+        assertTrue(s.getPredicate().getURI().equals(MergeOwl.OWL_NAMESPACE + "sameAs"));
+        assertTrue(s.getResource().equals(subject));
+    }
+
+    // =================================================================================
+
+//     public void testWriteTargetModel() throws Exception {
+//         String mergeSpec = getMergeSpec();
+
+//         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
+//             + ENDL
+//             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
+//             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
+//             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+//             + ENDL
+//             + ":LtdCompany rdf:type owl:Class ." + ENDL
+//             + ":Address rdf:type owl:Class ." + ENDL
+//             + ":companyName rdf:type rdf:Property ;" + ENDL
+//             + "             rdfs:domain :LtdCompany ." + ENDL
+//             + ":postcode rdf:type rdf:Property ;" + ENDL
+//             + "          rdfs:domain :Address ." + ENDL;
+
+
+//         String owl = "<?xml version=\"1.0\"?>" + ENDL
+//             + "<!DOCTYPE rdf:RDF [" + ENDL
+//             + "<!ENTITY rdf  \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" >" + ENDL
+//             + "<!ENTITY rdfs \"http://www.w3.org/2000/01/rdf-schema#\" >" + ENDL
+//             + "<!ENTITY owl  \"http://www.w3.org/2002/07/owl#\" >" + ENDL
+//             + "]>" + ENDL
+//             + "<rdf:RDF" + ENDL
+//             + "xmlns     =\"&owl;\"" + ENDL
+//             + "xmlns:owl =\"&owl;\"" + ENDL
+//             + "xml:base  =\"http://www.w3.org/2002/07/owl\"" + ENDL
+//             + "xmlns:rdf =\"&rdf;\"" + ENDL
+//             + "xmlns:rdfs=\"&rdfs;\">" + ENDL
+//             + ENDL
+//             + "<owl:class rdf:ID=\"Company\">" + ENDL
+//             + "  <rdfs:subClassOf>" + ENDL
+//             + "    <owl:restriction>" + ENDL
+//             + "      <owl:onProperty rdf:resource=\"goalie\"/>" + ENDL
+//             + "      <owl:cardinality>1</owl:cardinality>" + ENDL
+//             + "    </owl:restriction>" + ENDL
+//             + "  </rdfs:subClassOf>" + ENDL
+//             + "</owl:class>" + ENDL
+//             + "</rdf:RDF>" + ENDL;
+
+//         //MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+//         OntModel owlModel = ModelFactory.createOntologyModel();
+//         //src1.read(new StringReader(getSrc1()), null, "N3");
+//         owlModel.read(new StringReader(owl), null, "RDF/XML");
+
+//         //merger.mergeByEquivalence(src1, src1Namespace);
+//         File out = new File("/home/rns/tgt.owl");
+
+//         //OntModel tgtModel = merger.getTargetModel();
+//         owlModel.write(new BufferedWriter(new FileWriter(out)), "N3");
+//     }
+
+    private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {
+        Iterator stmtIter = model.listStatements();
+        while (stmtIter.hasNext()) {
+            Statement stmt = (Statement) stmtIter.next();
+            if (stmt.getSubject().equals(subject)
+                && stmt.getPredicate().getLocalName().equals(predicate)) {
+
+                Resource res = stmt.getResource();
+                if (res.equals((Resource) object)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private String getMergeSpec() {
+        return "@prefix : <" + tgtNamespace + "> ." + ENDL
+            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
+            + "@prefix src2: <" + src2Namespace + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + MergeOwl.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + MergeOwl.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + MergeOwl.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "           owl:equivalentClass src1:LtdCompany ;" + ENDL
@@ -385,12 +326,13 @@ public class MergeOwlTest extends TestCase
             + "        owl:equivalentProperty src2:corpName ." + ENDL;
     }
 
-    public String getSrc1() {
+
+    private String getSrc1() {
         return "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + "@prefix rdf:  <" + MergeOwl.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + MergeOwl.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + MergeOwl.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
             + ":companyName a rdf:Property ;" + ENDL
@@ -400,12 +342,12 @@ public class MergeOwlTest extends TestCase
             + ":Address a owl:Class ." + ENDL;
     }
 
-    public String getSrc2() {
+    private String getSrc2() {
         return "@prefix : <" + src2Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + "@prefix rdf:  <" + MergeOwl.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + MergeOwl.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + MergeOwl.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Corporation a owl:Class ." + ENDL
             + ":corpName a rdf:Property ;" + ENDL
@@ -413,6 +355,4 @@ public class MergeOwlTest extends TestCase
             + ":corpNumber a rdf:Property ;" + ENDL
             + "            rdfs:domain :Corporation ." + ENDL;
     }
-
-
 }

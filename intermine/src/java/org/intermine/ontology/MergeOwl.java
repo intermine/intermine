@@ -37,7 +37,18 @@ public class MergeOwl
 {
     protected OntModel tgtModel = null;
     private final String tgtNamespace;
-    private final String owlNamespace = "http://www.w3.org/2002/07/owl#";
+    /**
+     * OWL namespace.
+     */
+    public static final String OWL_NAMESPACE = "http://www.w3.org/2002/07/owl#";
+    /**
+     * RDF namespace.
+     */
+    public static final String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    /**
+     * RDFS namespace
+     */
+    public static final String RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
     protected Map equiv;
 
     /**
@@ -65,10 +76,15 @@ public class MergeOwl
      * Add a source OWL ontology to the target OWL ontology.
      * @param sourceOwl a Reader pointing to the source OWL document
      * @param srcNamespace string represencting the URI namespace of source OWL document
+     * @param format the format of sourceOwl, must be: RDF/XML, N-TRIPLE or N3
      */
-    protected void addToTargetOwl(Reader sourceOwl, String srcNamespace) {
+    protected void addToTargetOwl(Reader sourceOwl, String srcNamespace, String format) {
+        if (!(format.equals("RDF/XML") || format.equals("N-TRIPLE") || format.equals("N3"))) {
+            throw new IllegalArgumentException(" format must be one of: RDF/XML. N-TRIPLE or N3."
+                                               + "(was: " + format + ")");
+        }
         OntModel source = ModelFactory.createOntologyModel();
-        source.read(sourceOwl, null, "RDF/XML");
+        source.read(sourceOwl, null, format);
         mergeByEquivalence(source, srcNamespace);
     }
 
@@ -100,7 +116,7 @@ public class MergeOwl
             }
         }
 
-        // adding statements to Jena model by batch method supposedly faster
+        // adding statements to Jena model by batch method is supposedly faster
         List statements = new ArrayList();
 
         // transfer statements to target namespace
@@ -109,7 +125,8 @@ public class MergeOwl
             Statement stmt = (Statement) stmtIter.next();
             Resource subject = stmt.getSubject();
             if (subject.getNameSpace().equals(srcNamespace)) {
-                if (stmt.getPredicate().getLocalName().equals("type")) {
+                if (stmt.getPredicate().getNameSpace().equals(RDF_NAMESPACE)
+                    && stmt.getPredicate().getLocalName().equals("type")) {
                     if (!equiv.containsKey(subject.getURI())) {
                         Resource target = tgtModel.createResource(tgtNamespace
                                                                   + subject.getLocalName());
@@ -120,7 +137,7 @@ public class MergeOwl
                     }
                 } else {
                     subject = getTargetResource(subject, srcNamespace);
-                    RDFNode object = stmt.getObject();
+                    RDFNode object = stmt.getObject();  // RDFNode can be Resource or literal
                     if (object instanceof Resource) {
                         object = getTargetResource((Resource) object, srcNamespace);
                     }
@@ -152,25 +169,27 @@ public class MergeOwl
      * in the target namespace and the name in the source namespace.  owl:equivalentClass,
      * owl:equivalentProperty or owl:sameAs selected depending on type of object.
      * @param target resource created in target namespace
-     * @param object object of the triple in source OWL - i.e. what the rdf:type actually is
+     * @param obj object of the triple in source OWL - i.e. what the rdf:type actually is
      * @param original resource in source namespace to point equivalence statement at
      * @param statements the list of statements generated for target model
      */
-    protected void addEquivalenceStatement(Resource target, Resource object, Resource original,
+    protected void addEquivalenceStatement(Resource target, Resource obj, Resource original,
                                            List statements) {
-        if (object.getLocalName().equals("Class")) {
+        if (obj.getNameSpace().equals(OWL_NAMESPACE) && obj.getLocalName().equals("Class")) {
             statements.add(tgtModel.createStatement(target,
-                                                    tgtModel.createProperty(owlNamespace,
+                                                    tgtModel.createProperty(OWL_NAMESPACE,
                                                                             "equivalentClass"),
                                                     original));
-        } else if (object.getLocalName().equals("Property")) {
+        } else if (obj.getNameSpace().equals(RDF_NAMESPACE)
+                   && obj.getLocalName().equals("Property")) {
             statements.add(tgtModel.createStatement(target,
-                                                    tgtModel.createProperty(owlNamespace,
+                                                    tgtModel.createProperty(OWL_NAMESPACE,
                                                                             "equivalentProperty"),
                                                     original));
-        } else if (object.getLocalName().equals("Individual")) {
+        } else if (obj.getNameSpace().equals(OWL_NAMESPACE)
+                   && obj.getLocalName().equals("Individual")) {
             statements.add(tgtModel.createStatement(target,
-                                                    tgtModel.createProperty(owlNamespace,
+                                                    tgtModel.createProperty(OWL_NAMESPACE,
                                                                             "sameAs"),
                                                     original));
         }
