@@ -374,7 +374,8 @@
             type="org.intermine.web.results.ObjectViewController"/>
 
     <action path="/initCollectionDetails"
-            type="org.intermine.web.results.CollectionDetailsController"/>
+            type="org.intermine.web.results.CollectionDetailsController"
+            name="changeResultsForm"/>
 
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
