@@ -111,7 +111,7 @@ public class TreeAction extends DispatchAction
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         String className = (String) request.getParameter("node");
 
-        QueryBuildController.addClass(queryClasses, className);
+        QueryBuildHelper.addClass(queryClasses, className);
 
         return mapping.findForward("buildquery");
     }

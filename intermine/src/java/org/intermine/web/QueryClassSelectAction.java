@@ -61,7 +61,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
 
         //in this case it's possible that someone hasn't selected a class from the list
         if (className != null) {
-            QueryBuildController.addClass(queryClasses, className);
+            QueryBuildHelper.addClass(queryClasses, className);
         }
 
         return mapping.findForward("buildquery");

@@ -226,49 +226,5 @@ public class QueryBuildController extends TilesAction
 
         return d;
     }
-
-    /**
-     * Give a class name a unique alias given the existing aliases (eg Company -> Company_3)
-     * @param existingAliases the Collection of existing aliases
-     * @param type the class name
-     * @return a new alias
-     */
-    protected static String aliasClass(Collection existingAliases, String type) {
-        String prefix = toAlias(type);
-        int max = 0;
-        for (Iterator i = existingAliases.iterator(); i.hasNext();) {
-            String alias = (String) i.next();
-            if (alias.substring(0, alias.lastIndexOf("_")).equals(prefix)) {
-                int suffix = Integer.valueOf(alias.substring(alias.lastIndexOf("_") + 1))
-                    .intValue();
-                if (suffix >= max) {
-                    max = suffix + 1;
-                }
-            }
-        }
-        return prefix + "_" + max;
-    }
-
-    /**
-     * Convert a class name to a alias prefix
-     * @param type the class name
-     * @return a suitable prefix for an alias
-     */
-    protected static String toAlias(String type) {
-        return TypeUtil.unqualifiedName(type);
-    }
-
-    /**
-     * Add a new DisplayQueryClass of type className to the current query
-     * @param queryClasses the exiting queryClasses
-     * @param className the class name
-     */
-    protected static void addClass(Map queryClasses, String className) {
-        DisplayQueryClass d = new DisplayQueryClass();
-        d.setType(className);
-
-        String alias = aliasClass(queryClasses.keySet(), className);
-        queryClasses.put(alias, d);
-    }
 }
 
