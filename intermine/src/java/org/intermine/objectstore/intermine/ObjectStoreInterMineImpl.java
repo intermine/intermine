@@ -47,6 +47,10 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintHelper;
+import org.intermine.objectstore.query.ConstraintWalkAction;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.PrecomputedTable;
@@ -58,6 +62,7 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -85,6 +90,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected String logTableName = null;
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"optimise", "estimated",
         "execute", "permitted", "convert", "iql", "sql"};
+
+    // see generateSql()
+    protected Map queryBagTables = new HashMap();
 
     /**
      * Constructs an ObjectStoreInterMineImpl.
@@ -396,7 +404,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
         requestId.set(null);
     }
-    
+
     private WeakHashMap cancelRegistry = new WeakHashMap();
     private static final String BLACKLISTED = "Blacklisted";
 
@@ -535,7 +543,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         checkStartLimit(start, limit);
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
-        String sql = SqlGenerator.generate(q, start, limit, schema, db);
+        String sql = generateSql(q, start, limit);
         try {
             long estimatedTime = 0;
             long startOptimiseTime = System.currentTimeMillis();
@@ -619,9 +627,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
                     if ((lastObj != null) && (thisObj != null) && !lastObj.equals(thisObj)) {
                         done = true;
+                        Object value = (thisObj instanceof InterMineObject
+                                        ? ((InterMineObject) thisObj).getId() : thisObj);
                         SqlGenerator.registerOffset(q, start + rowNo + 1, schema, db,
-                                (thisObj instanceof InterMineObject
-                                    ? ((InterMineObject) thisObj).getId() : thisObj));
+                                                    value, (Map) queryBagTables.get(q));
                     }
                     rowNo--;
                 }
@@ -629,6 +638,92 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             return objResults;
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);
+        }
+    }
+
+    /**
+     * Create temporary tables for the bag in the BagConstraints of the given Query, then call
+     * SqlGenerator.generate().  A Map of BagConstraint -> table name is created for Query and saved
+     * in the queryBagTables Map.
+     * @param q the Query
+     * @param start the start row number (inclusive, from zero)
+     * @param limit maximum number of rows to return
+     * @return the SQL for the Query
+     */
+    private String generateSql(Query q, int start, int limit)
+        throws ObjectStoreException {
+
+        Map bagTableNames = new HashMap();
+
+        if (queryBagTables.get(q) == null) {
+            createTempBagTables(q, bagTableNames, SqlGenerator.MAX_BAG_INLINE_SIZE);
+
+            queryBagTables.put(q, bagTableNames);
+        }
+
+        return SqlGenerator.generate(q, start, limit, schema, db, bagTableNames);
+    }
+
+    /**
+     * Create temporary tables for use with Query that use bags.  Each BagConstraint in the Query is
+     * examined and a temporary table containing values of the appropriate type from the bag is
+     * created.  The new table names will be the values of the bagTableNames Map and the
+     * BagConstraint references will be the keys.
+     * @param q the Query
+     * @param bagTableNames a Map from BagConstraint to temporary table name
+     * @param minBagSize no table will be created if the bag size is less than this parameter (small
+     *        bag are likely to be more effiently handled by not creating the temp table)
+     * @throws ObjectStoreException if the is a error in the ObjectStore
+     */
+    protected void createTempBagTables(Query q, Map bagTableNames, int minBagSize)
+        throws ObjectStoreException {
+
+        final List bagConstraints = new ArrayList();
+
+        ConstraintHelper.walkConstraints(q.getConstraint(), new ConstraintWalkAction() {
+            public void apply(Constraint constraint) {
+                if (constraint instanceof BagConstraint) {
+                    BagConstraint bagConstraint = (BagConstraint) constraint;
+                    bagConstraints.add(bagConstraint);
+                }
+            }
+        });
+
+        Iterator bagConstraintIterator = bagConstraints.iterator();
+
+        Connection con = null;
+
+        try {
+            con = getDatabase().getConnection();
+
+            con.setAutoCommit(false);
+
+            while (bagConstraintIterator.hasNext()) {
+                BagConstraint bagConstraint = (BagConstraint) bagConstraintIterator.next();
+                Collection bag = bagConstraint.getBag();
+
+                if (bag.size () < minBagSize) {
+                    continue;
+                }
+
+                Class type = bagConstraint.getQueryNode().getType();
+                String tableName =
+                    TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger();
+                DatabaseUtil.createBagTable(db, con, tableName, bag, type);
+                bagTableNames.put(bagConstraint, tableName);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("database error while creating temporary "
+                                           + "table for bag", e);
+        } finally {
+            if (con != null) {
+                try {
+                    con.commit();
+                    con.close();
+                } catch (SQLException e) {
+                    LOG.error("Could not close Connection to database: " + e);
+                }
+            }
         }
     }
 
@@ -657,7 +752,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected ResultsInfo estimateWithConnection(Connection c,
             Query q) throws ObjectStoreException {
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
+                                           (Map) queryBagTables.get(q));
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -704,7 +800,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             int sequence) throws ObjectStoreException {
         checkSequence(sequence, q, "COUNT ");
 
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
+        String sql =
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, (Map) queryBagTables.get(q));
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -841,7 +938,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public String precompute(Query q) throws ObjectStoreException {
         return precompute(q, null);
     }
- 
+
     /**
      * Creates a precomputed table for the given query.
      *
@@ -876,28 +973,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Collection indexes) throws ObjectStoreException {
         QueryNode qn = null;
         try {
-            int tableNumber = -1;
-            try {
-                Statement s = c.createStatement();
-                ResultSet r = s.executeQuery("SELECT nextval('precomputedtablenumber')");
-                if (!r.next()) {
-                    throw new ObjectStoreException("No result while attempting to get a unique"
-                            + " precomputed table name");
-                }
-                tableNumber = r.getInt(1);
-            } catch (SQLException e) {
-                Statement s = c.createStatement();
-                s.execute("CREATE SEQUENCE precomputedtablenumber");
-                ResultSet r = s.executeQuery("SELECT nextval('precomputedtablenumber')");
-                if (!r.next()) {
-                    throw new ObjectStoreException("No result while attempting to get a unique"
-                            + " precomputed table name");
-                }
-                tableNumber = r.getInt(1);
-            }
-            String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
+            int tableNumber = getUniqueInteger();
+            String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
+                                               (Map) queryBagTables.get(q));
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
-                    "pt_" + tableNumber, c);
+                    "precomputed_table_" + tableNumber, c);
             Set stringIndexes = null;
             if (indexes != null) {
                 Map aliases = q.getAliases();
@@ -930,5 +1010,49 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
         }
+    }
+
+    static final String SEQUENCE_NAME = "objectstore_unique_integer";
+
+    /**
+     * Return a unique integer from a SEQUENCE in the database.
+     * @return an integer that is unique in this database
+     * @throws SQLException if something goes wrong
+     */
+    public int getUniqueInteger() throws SQLException {
+        int returnInteger;
+
+        Connection con = null;
+
+        try {
+            con = getDatabase().getConnection();
+            try {
+                Statement s = con.createStatement();
+                ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
+                if (!r.next()) {
+                    throw new RuntimeException("No result while attempting to get a unique"
+                                               + " integer from " + SEQUENCE_NAME);
+                }
+                returnInteger = r.getInt(1);
+            } catch (SQLException e) {
+                Statement s = con.createStatement();
+                s.execute("CREATE SEQUENCE " + SEQUENCE_NAME);
+                ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
+                if (!r.next()) {
+                    throw new RuntimeException("No result while attempting to get a unique"
+                                               + " integer from " + SEQUENCE_NAME);
+                }
+                returnInteger = r.getInt(1);
+            }
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    LOG.error("Could not close Connection to database: " + e);
+                }
+            }
+        }
+        return returnInteger;
     }
 }
