@@ -71,6 +71,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryNode;
 
+import org.apache.ojb.broker.util.logging.LoggerFactory;
 
 /**
  * An extension to RsIterator that can be used to retrieve multiple
@@ -97,7 +98,7 @@ public class MultiObjectRsIterator extends RsIterator
      * @param limit the maximum number of rows to return
      */
     public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker, int start, int limit) {
-        //?TODO uncomment this
+        logger = LoggerFactory.getLogger(this.getClass());
         m_rsAndStmt = ((JdbcAccessFlymineImpl) broker.serviceJdbcAccess()).executeQuery(query,
                 start, limit);
         m_row = new HashMap();
@@ -126,11 +127,10 @@ public class MultiObjectRsIterator extends RsIterator
                 for (int i = 0; i < results.length; i++) {
                     Object obj = null;
                     QueryNode node = (QueryNode) query.getSelect().get(i);
-                    m_rsAndStmt.m_rs = getUnaliasedColumns(rsTemp, (String) query.getAliases()
-                                                           .get(node));
-                    
+                    String alias = (String) query.getAliases().get(node);
                     if (node instanceof QueryClass) {
-                        m_cld = dr.getDescriptorFor(((QueryClass) node).getType());
+                        m_rsAndStmt.m_rs = getUnaliasedColumns(rsTemp, alias);
+                        m_cld = dr.getDescriptorFor(node.getType());
                         itemProxyClass = m_cld.getProxyClass();
                         itemExtentClass = null;
                         
@@ -138,8 +138,9 @@ public class MultiObjectRsIterator extends RsIterator
                         // Invoke events on PersistenceBrokerAware instances and listeners
                         m_broker.fireBrokerEvent(obj, PersistenceBrokerImpl.EVENT_AFTER_LOOKUP);
                     } else {
-                        int jdbcType = m_rsAndStmt.m_rs.getMetaData().getColumnType(1);
-                        obj = SqlHelper.getObjectFromColumn(m_rsAndStmt.m_rs, jdbcType, 1);
+                        int columnIndex = m_rsAndStmt.m_rs.findColumn(alias);
+                        int jdbcType = m_rsAndStmt.m_rs.getMetaData().getColumnType(columnIndex);
+                        obj = SqlHelper.getObjectFromColumn(m_rsAndStmt.m_rs, jdbcType, alias);
                     }
                     results[i] = obj;
                 }
@@ -171,11 +172,11 @@ public class MultiObjectRsIterator extends RsIterator
         ResultSetMetaData md = rs.getMetaData();
         Map map = new HashMap();
 
-        for (int i = 0; i < md.getColumnCount(); i++) {
+        for (int i = 1; i <= md.getColumnCount(); i++) {
             String colName = md.getColumnName(i);
             if (colName.startsWith(alias)) {
-                int jdbcType = md.getColumnType(i + 1);
-                Object obj = SqlHelper.getObjectFromColumn(rs, jdbcType, i + 1);
+                int jdbcType = md.getColumnType(i);
+                Object obj = SqlHelper.getObjectFromColumn(rs, jdbcType, i);
                 String s = colName.substring(alias.length());
                 map.put(s, obj);
             }
