@@ -132,11 +132,15 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
                     return false;
                 }
                 int valLen = value.length();
-                if ((id + " ").equals(value.substring(0, idLen + 1))) {
+                if (valLen < idLen) {
+                    return false;
+                } else if (id.equals(value.substring(0, idLen)) && (valLen == idLen
+                                     || Character.isWhitespace(value.charAt(idLen)))) {
                     return true;
                 } else if (value.indexOf(" " + id + " ") != -1) {
                     return true;
-                } else if ((" " + id).equals(value.substring(valLen - idLen - 1))) {
+                } else if ((valLen > idLen)
+                           && (" " + id).equals(value.substring(valLen - idLen - 1))) {
                     return true;
                 }
                 return false;
