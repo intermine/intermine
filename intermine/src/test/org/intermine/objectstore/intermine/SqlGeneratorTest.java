@@ -137,7 +137,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
-        String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, writer.getModel());
+        String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
         Object expected = results.get(type);
         if (expected instanceof String) {
             assertEquals(type + " has failed", results.get(type), generated);

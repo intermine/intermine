@@ -18,7 +18,7 @@ import org.flymine.objectstore.ObjectStoreFactory;
 public class ObjectStoreFlyMineImplTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
+        os = (ObjectStoreFlyMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 

@@ -18,7 +18,7 @@ import org.flymine.objectstore.ObjectStoreWriterFactory;
 public class ObjectStoreWriterFlyMineImplTest extends ObjectStoreWriterTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         ObjectStoreWriterTestCase.oneTimeSetUp();
     }
 

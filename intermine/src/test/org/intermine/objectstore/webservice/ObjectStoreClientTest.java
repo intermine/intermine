@@ -22,7 +22,7 @@ import org.flymine.objectstore.safe.ObjectStoreSafeImpl;
 public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        osai = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest-client");
+        osai = (ObjectStoreClient) ObjectStoreFactory.getObjectStore("os.unittest-client");
         os = new ObjectStoreSafeImpl(osai);
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
