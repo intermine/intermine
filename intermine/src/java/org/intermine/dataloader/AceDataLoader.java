@@ -10,6 +10,8 @@ package org.flymine.dataloader;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,6 +37,7 @@ import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.modelproduction.acedb.AceModelParser;
+import org.flymine.objectstore.ObjectStoreException;
 
 import org.apache.log4j.Logger;
 
@@ -55,6 +58,9 @@ public class AceDataLoader extends DataLoader
 
     protected String pkgName; //as ace namespace is flat, assume all classes in same package
     protected String dateType, floatType, intType, textType;
+
+    private static final int COMMIT_INTERVAL = 5000;
+    private int commitCount = COMMIT_INTERVAL - 1;
 
     /**
      * Constructor for testing purposes
@@ -100,26 +106,70 @@ public class AceDataLoader extends DataLoader
             // that class
 
             Iterator clsIter = model.getClassNames().iterator();
+            //String skippedClass;
+            //while (clsIter.hasNext() && (!"org.flymine.model.acedb.Peptide".equals(skippedClass
+            //        = (String) clsIter.next()))) {
+            //    LOG.error("Skipping class " + skippedClass);
+            //}
+            //LOG.error("Skipping class " + skippedClass);
+
+            iw.beginTransaction();
+            
             WorkSource workSource = new WorkSource(clsIter, source);
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 45; i++) {
                 (new ServiceThread(workSource, this)).start();
             }
-            WorkItem todo = workSource.next();
-            while (todo != null) {
-                try {
-                    AceObject aceObj = (AceObject) todo.getFetched().retrieve(todo.getName());
-                    synchronized (this) {
-                        store(processAceObject(aceObj));
-                    }
-                } catch (Exception e) {
-                    LOG.error("Object not retrievable: " + e.getMessage());
-                }
-                todo = workSource.next();
-            }
+            mainLoop(workSource);
+
+            LOG.error("Committing transaction");
+            iw.commitTransaction();
         } catch (Exception e) {
             throw new FlyMineException(e);
         }
     }
+
+    private void mainLoop(WorkSource workSource) throws AceException, ObjectStoreException {
+        WorkItem todo = workSource.next();
+        while (todo != null) {
+            try {
+                AceSet aceSet = todo.getFetched();
+                String name = todo.getName();
+                if (aceSet == null) {
+                    throw new NullPointerException("aceSet is null");
+                }
+                if (name == null) {
+                    throw new NullPointerException("name is null");
+                }
+                AceObject aceObj = (AceObject) aceSet.retrieve(name);
+                synchronized (this) {
+                    try {
+                        store(processAceObject(aceObj));
+                    } catch (Exception e) {
+                        commitCount = 0;
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        e.printStackTrace(pw);
+                        pw.flush();
+                        sw.flush();
+                        LOG.error("Object " + todo.getName() + " not retrievable: "
+                                + e.getMessage() + "\n" + sw);
+                    } finally {
+                        if (commitCount <= 0) {
+                            LOG.error("Committing transaction");
+                            iw.commitTransaction();
+                            iw.beginTransaction();
+                            commitCount = COMMIT_INTERVAL;
+                        }
+                        commitCount--;
+                    }
+                }
+            } catch (Exception e) {
+                LOG.error("Object " + todo.getName() + " not retrievable: " + e.getMessage());
+            }
+            todo = workSource.next();
+        }
+    }
+
     
     /**
      * Process an AceObject. This will create a new instance of the
@@ -411,6 +461,7 @@ public class AceDataLoader extends DataLoader
         private AceSet fetchedAceObjects;
         private Iterator nameIter;
         private AceURL source;
+        private int thisClassCount = 0;
 
         public WorkSource(Iterator classIter, AceURL source) {
             this.classIter = classIter;
@@ -420,7 +471,9 @@ public class AceDataLoader extends DataLoader
         }
 
         public synchronized WorkItem next() throws AceException {
-            while (((nameIter == null) || (!nameIter.hasNext())) && classIter.hasNext()) {
+            while (((nameIter == null) || (!nameIter.hasNext())
+                        || (thisClassCount >= 1000000000)) && classIter.hasNext()) {
+                thisClassCount = 0;
                 String className = (String) classIter.next();
                 String aceClazzName = AceModelParser
                     .unformatAceName(TypeUtil.unqualifiedName(className));
@@ -430,11 +483,17 @@ public class AceDataLoader extends DataLoader
                     LOG.error("Processing " + fetchedAceObjects.size() + " "
                               + aceClazzName + " objects...");
                     nameIter = fetchedAceObjects.nameIterator();
+                } else {
+                    nameIter = null;
                 }
             }
             if ((nameIter == null) || (!nameIter.hasNext())) {
                 return null;
             }
+            if (fetchedAceObjects == null) {
+                throw new NullPointerException("fetchedAceObjects has become null");
+            }
+            thisClassCount++;
             return new WorkItem((String) nameIter.next(), fetchedAceObjects);
         }
     }
@@ -471,18 +530,7 @@ public class AceDataLoader extends DataLoader
         
         public void run() {
             try {
-                WorkItem todo = workSource.next();
-                while (todo != null) {
-                    try {
-                        AceObject aceObj = (AceObject) todo.getFetched().retrieve(todo.getName());
-                        synchronized (loader) {
-                            loader.store(loader.processAceObject(aceObj));
-                        }
-                    } catch (Exception e) {
-                        LOG.error("Object not retrievable: " + e.getMessage());
-                    }
-                    todo = workSource.next();
-                }
+                loader.mainLoop(workSource);
             } catch (Exception e) {
                 LOG.error("Ace data loader sub-thread died because of " + e);
             }
