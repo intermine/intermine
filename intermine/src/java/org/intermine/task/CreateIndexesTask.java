@@ -240,9 +240,9 @@ public class CreateIndexesTask extends Task
             }
 
             String indexName = tableName + "__"  + att.getName();
+            LOG.info("creating index: " + indexName);
             dropIndex(indexName);
             createIndex(indexName, tableName, fieldName + ", id");
-            LOG.info("created index: " + indexName);
         }
     }
 
