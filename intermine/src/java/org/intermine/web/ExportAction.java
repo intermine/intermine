@@ -129,7 +129,7 @@ public class ExportAction extends DispatchAction
         HttpSession session = request.getSession();
 
         response.setContentType("text/comma-separated-values");
-        response.setHeader("Content-Disposition ", "inline; filename=results-table.txt");
+        response.setHeader("Content-Disposition ", "inline; filename=results-table.csv");
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
@@ -158,7 +158,7 @@ public class ExportAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        response.setContentType("text/comma-separated-values");
+        response.setContentType("text/tab-separated-values");
         response.setHeader("Content-Disposition ", "inline; filename=results-table.txt");
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
