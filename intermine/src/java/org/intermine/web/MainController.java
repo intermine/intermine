@@ -113,6 +113,7 @@ public class MainController extends TilesAction
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         request.setAttribute("viewPaths", listToMap(query.getView()));
         request.setAttribute("viewPathTypes", getViewPathTypes(query));
+        request.setAttribute("viewPathLinkPaths", getViewPathLinkPaths(query));
 
         // set up the navigation links (eg. Department > employees > department)
         String prefix = (String) session.getAttribute("prefix");
@@ -181,6 +182,30 @@ public class MainController extends TilesAction
         }
 
         return viewPathTypes;
+    }
+    
+    /**
+     * Return a Map from path to path/subpath pointing to the nearest not attribute for each
+     * path on the select list.
+     * practise this results in the same path or the path with an attribute name chopped off
+     * the end.
+     * @param pathquery the path query
+     * @return mapping from select list path to non-attribute path
+     */
+    protected static Map getViewPathLinkPaths(PathQuery pathquery) {
+        Map linkPaths = new HashMap();
+        Iterator iter = pathquery.getView().iterator();
+
+        while (iter.hasNext()) {
+            String path = (String) iter.next();
+            if (MainHelper.isPathAttribute(path, pathquery)) {
+                linkPaths.put(path, path.substring(0, path.lastIndexOf(".")));
+            } else {
+                linkPaths.put(path, path);
+            }
+        }
+        
+        return linkPaths;
     }
 
     /**

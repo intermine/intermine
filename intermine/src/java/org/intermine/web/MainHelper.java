@@ -400,7 +400,19 @@ public class MainHelper
             return Class.forName("java.lang." + className).getName();
         }
     }
-
+    
+    /**
+     * Given a path, find out whether it represents an attribute or a reference/collection.
+     * 
+     * @param path the path
+     * @param pathQuery the path query
+     * @return true if path ends with an attribute, false if not
+     */
+    public static boolean isPathAttribute(String path, PathQuery pathQuery) {
+        String classname = getTypeForPath(path, pathQuery);
+        return !classname.startsWith(pathQuery.getModel().getPackageName());
+    }
+    
     /**
      * Return the fully qualified type of the last node in the given path.
      * @param path the path
