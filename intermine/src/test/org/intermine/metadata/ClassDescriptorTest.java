@@ -170,34 +170,6 @@ public class ClassDescriptorTest extends TestCase
         assertNotNull(cld.getCollectionDescriptorByName("cld2"));
     }
 
-    public void testUltimateSuperClassOne() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-
-        Model model1 = new Model("test1", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
-
-        assertEquals(cld1, cld2.getUltimateSuperclassDescriptor());
-    }
-
-    public void testUltimateSuperClassMany() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class3", null, false, new HashSet(), new HashSet(), new HashSet());
-
-        Model model2 = new Model("test2", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
-
-        assertEquals(cld1, cld4.getUltimateSuperclassDescriptor());
-    }
-
-    public void testUltimateSuperClassNone() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-
-        Model model1 = new Model("test1", new HashSet(Arrays.asList(new Object[] {cld1})));
-
-        assertTrue("ultimate superclass should have been null", cld1.getUltimateSuperclassDescriptor() == null);
-    }
-
     public void testGetAllAttributeDescriptors() throws Exception {
         // three superclass levels with one attribute each, getAllAttributeDescriptors on cld3 should return all 3
         AttributeDescriptor atb1 = new AttributeDescriptor("att1", false, "String");

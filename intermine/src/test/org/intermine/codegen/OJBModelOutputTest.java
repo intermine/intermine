@@ -397,22 +397,6 @@ public class OJBModelOutputTest extends TestCase
         assertEquals(parents, mo.getParents(cld3));
     }
 
-    public void testGenerateSqlCompatibleName() throws Exception {
-        assertEquals("finish", mo.generateSqlCompatibleName("end"));
-        assertEquals("identifier", mo.generateSqlCompatibleName("id"));
-        assertEquals("indx", mo.generateSqlCompatibleName("index"));
-        assertEquals("ordr", mo.generateSqlCompatibleName("order"));
-        assertEquals("complete", mo.generateSqlCompatibleName("full"));
-        assertEquals("offst", mo.generateSqlCompatibleName("offset"));
-        assertEquals("some_string", mo.generateSqlCompatibleName("some_string"));
-
-        try {
-            mo.generateOJBSqlType(null);
-            fail("Expected NullPointerException");
-        } catch (NullPointerException e) {
-        }
-    }
-
     public void testGenerateOJBSqlType() throws Exception {
         assertEquals("INTEGER", mo.generateOJBSqlType("int"));
         assertEquals("INTEGER", mo.generateOJBSqlType("java.lang.Integer"));

@@ -17,9 +17,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.*;
+import org.flymine.util.DatabaseUtil;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.metadata.CollectionDescriptor;
 
 /**
  * Maps FlyMine metadata to an OJB repository file
@@ -78,16 +82,6 @@ public class OJBModelOutput extends ModelOutput
         references = new StringBuffer();
         collections = new StringBuffer();
 
-        String tableName = null;
-        if (!cld.isInterface()) {
-            if (cld.getSuperclassDescriptor() == null) {
-                tableName = TypeUtil.unqualifiedName(cld.getClassName());
-            } else {
-                tableName = TypeUtil.unqualifiedName(cld.getUltimateSuperclassDescriptor()
-                                                     .getClassName());
-            }
-        }
-
         ClassDescriptor parentCld = cld.getSuperclassDescriptor();
 
         StringBuffer sb = new StringBuffer ();
@@ -97,7 +91,7 @@ public class OJBModelOutput extends ModelOutput
             .append("\"")
             .append(parentCld == null ? "" : " extends=\""
                     + parentCld.getClassName() + "\"")
-            .append(cld.isInterface() ? "" : " table=\"" + tableName + "\"")
+            .append(cld.isInterface() ? "" : " table=\"" + DatabaseUtil.getTableName(cld) + "\"")
             .append(">" + ENDL);
 
         Collection extent = cld.isInterface()
@@ -155,7 +149,7 @@ public class OJBModelOutput extends ModelOutput
             .append("<field-descriptor name=\"")
             .append(attr.getName())
             .append("\" column=\"")
-            .append(generateSqlCompatibleName(attr.getName()))
+            .append(DatabaseUtil.getColumnName(attr))
             .append("\" jdbc-type=\"")
             .append(generateOJBSqlType(attr.getType()))
             .append("\"/>" + ENDL);
@@ -171,8 +165,8 @@ public class OJBModelOutput extends ModelOutput
             .append("<field-descriptor name=\"")
             .append(ref.getName())
             .append("Id\" column=\"")
-            .append(ref.getName())
-            .append("Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL);
+            .append(DatabaseUtil.getColumnName(ref))
+            .append("\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL);
         references.append(INDENT + INDENT)
             .append("<reference-descriptor name=\"")
             .append(ref.getName())
@@ -196,13 +190,7 @@ public class OJBModelOutput extends ModelOutput
     protected String generate(CollectionDescriptor col) {
         StringBuffer sb = new StringBuffer();
         ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
-        if (rd == null || rd instanceof CollectionDescriptor) { //many:many
-            String cldName = col.getClassDescriptor().getClassName();
-            String name1 = StringUtil.capitalise(rd == null 
-                                                 ? TypeUtil.unqualifiedName(cldName)
-                                                 : rd.getName());
-            String name2 = StringUtil.capitalise(col.getName());
-            String joiningTableName = name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
+        if (FieldDescriptor.M_N_RELATION == col.relationType()) { //many:many
             collections.append(INDENT + INDENT)
                 .append("<collection-descriptor name=\"")
                 .append(col.getName())
@@ -212,18 +200,18 @@ public class OJBModelOutput extends ModelOutput
                 .append(col.getCollectionClass().getName())
                 .append("\" proxy=\"true\"")
                 .append(" indirection-table=\"")
-                .append(joiningTableName)
+                .append(DatabaseUtil.getIndirectionTableName(col))
                 .append("\">" + ENDL)
                 .append(INDENT + INDENT + INDENT)
                 .append("<fk-pointing-to-this-class column=\"")
                 // Name of this class's primary key in linkage table
-                .append(TypeUtil.unqualifiedName(cldName))
-                .append("Id\"/>" + ENDL)
+                .append(DatabaseUtil.getInwardIndirectionColumnName(col)) 
+                .append("\"/>" + ENDL)
                 .append(INDENT + INDENT + INDENT)
                 .append("<fk-pointing-to-element-class column=\"")
                 // Name of related class's primary key in linkage table
-                .append(TypeUtil.unqualifiedName(col.getReferencedClassDescriptor().getClassName()))
-                .append("Id\"/>" + ENDL)
+                .append(DatabaseUtil.getOutwardIndirectionColumnName(col))
+                .append("\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
         } else { //many:one
@@ -292,35 +280,6 @@ public class OJBModelOutput extends ModelOutput
         while (iter.hasNext()) {
             sb.append(generate((CollectionDescriptor) iter.next()));
         }
-    }
-
-    /**
-     * Convert any sql keywords to valid names for tables/columns.
-     * @param n the string to convert
-     * @return a valid sql name
-     */
-    protected String generateSqlCompatibleName(String n) {
-        //n should start with a lower case letter
-        if (n.equalsIgnoreCase("end")) {
-            return StringUtil.toSameInitialCase("finish", n);
-        }
-        if (n.equalsIgnoreCase("id")) {
-            return StringUtil.toSameInitialCase("identifier", n);
-        }
-        if (n.equalsIgnoreCase("index")) {
-            return StringUtil.toSameInitialCase("indx", n);
-        }
-        if (n.equalsIgnoreCase("order")) {
-            return StringUtil.toSameInitialCase("ordr", n);
-        }
-        if (n.equalsIgnoreCase("full")) {
-            return StringUtil.toSameInitialCase("complete", n);
-        }
-        if (n.equalsIgnoreCase("offset")) {
-            return StringUtil.toSameInitialCase("offst", n);
-        }
-        return n;
-
     }
 
     /**
