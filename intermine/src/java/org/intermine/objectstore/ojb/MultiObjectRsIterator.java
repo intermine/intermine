@@ -69,18 +69,11 @@ import org.apache.ojb.broker.accesslayer.*;
 import org.flymine.objectstore.query.Query;
 
 /**
- * RsIterator can be used to iterate over a jdbc ResultSet to retrieve
- * persistent objects step-by-step and not all at once.
- * In fact the PersistenceBroker::getCollectionByQuery(...) method
- * uses a RsIterator internally to build up a Collection of objects
+ * An extension to RsIterator that can be used to retrieve multiple
+ * objects from a single row of a JDBC ResultSet.
  *
- * NOTE: this code uses features that only JDBC 2.0 compliant Drivers
- * support. It will NOT work with JDBC 1.0 Drivers (e.g. SUN's JdbcOdbcDriver)
- * If you are forced to use such a driver, you can use code from
- * the 0.1.30 release.
- *
- * @author <a href="mailto:thma@apache.org">Thomas Mahler<a>
- * @author <a href="mailto:mattbaird@yahoo.com">Matthew Baird<a>
+ * @author Mark Woodbridge
+ * @author Andrew Varley
  */
 public class MultiObjectRsIterator extends RsIterator
 {
@@ -164,7 +157,7 @@ public class MultiObjectRsIterator extends RsIterator
      * Searches the specified ResultSet for column names starting with alias.
      * Matching columns have their values placed in a new result set.
      * Columns in the new set have the same names, minus the alias prefix.
-     * The resulting ResultSet with therefore be the same size or smaller than the input.
+     * The resulting ResultSet will therefore be the same size or smaller than the input.
      * @param rs the input ResultSet
      * @param alias the column prefix to search for
      * @return the ResultSet containing the matching columns
