@@ -2,6 +2,8 @@ package org.flymine.dataloader;
 
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.acedb.Ace;
 import org.acedb.AceException;
@@ -46,19 +48,47 @@ public class AceDataLoader extends AbstractDataLoader
             // Go through each class in the model and get a dump of the objects of
             // that class
 
-            String clazzName = "Sequence";
+            Collection clazzNames = model.getNames();
+            Iterator clazzIter = clazzNames.iterator();
+            while (clazzIter.hasNext()) {
+                String clazzName = (String) clazzIter.next();
 
-            AceURL objURL = source.relativeURL(clazzName);
-            AceSet fetchedObjects = (AceSet) Ace.fetch(objURL);
+                AceURL objURL = source.relativeURL(clazzName);
+                AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
 
-            Iterator objIter = fetchedObjects.iterator();
-            while (objIter.hasNext()) {
-                processAceObject((AceObject) objIter.next(), null);
+                Collection objects = processAceObjects(fetchedAceObjects, model);
+                Iterator objIter = objects.iterator();
+                while (objIter.hasNext()) {
+                    // Now store that object
+                    store(objIter.next(), iw);
+                }
             }
 
         } catch (Exception e) {
             throw new FlyMineException(e);
         }
+    }
+
+    /**
+     * Process a set of Ace objects
+     *
+     * @param set the set of Ace objects to process
+     * @param the model they belong to
+     * @return a set of Java objects
+     *
+     * @throws AceException if an error occurs with the Ace data
+     * @throws FlyMineException if an object cannot be instantiated
+     */
+    protected static Set processAceObjects(AceSet set, Model model)
+        throws AceException, FlyMineException {
+        HashSet ret = new HashSet();
+        Iterator aceObjIter = set.iterator();
+        while (aceObjIter.hasNext()) {
+            // Convert to Java object
+            Object obj = processAceObject((AceObject) aceObjIter.next(), null);
+            ret.add(obj);
+        }
+        return ret;
     }
 
     /**
@@ -260,7 +290,7 @@ public class AceDataLoader extends AbstractDataLoader
         // URL _dbURL = new URL("acedb://" + host + ":" + port);
         // AceURL dbURL = new AceURL(_dbURL, user, passwd, null);
         AceURL dbURL = new AceURL("acedb://" + user + ':' + passwd + '@' + host + ':' + port);
-        AceDataLoader adl = new AceDataLoader();
-        adl.processAce(null, null, dbURL);
+        Model model = new Model(null, null);
+        processAce(model, null, dbURL);
     }
 }
