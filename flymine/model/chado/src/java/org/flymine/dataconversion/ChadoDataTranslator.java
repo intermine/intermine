@@ -34,7 +34,6 @@ import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.dataconversion.BufferedItemWriter;
 import org.intermine.dataconversion.DataTranslator;
 
 import org.apache.log4j.Logger;
@@ -107,7 +106,7 @@ public class ChadoDataTranslator extends DataTranslator
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new BufferedItemWriter(new ObjectStoreItemWriter(oswTgt));
+        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
