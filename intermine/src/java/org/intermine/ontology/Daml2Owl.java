@@ -71,7 +71,10 @@ public class Daml2Owl extends URL2Model
             line = line.replaceAll("daml:UnambiguousProperty", "owl:InverseFunctionalProperty");
             line = line.replaceAll("daml:UniqueProperty", "owl:FunctionalProperty");
             line = line.replaceAll("daml:", "owl:");
-            sb.append(line + ENDL);
+            if (!line.startsWith("<oiled:creationDate>", line.indexOf('<'))
+                && !line.startsWith("<oiled:creator>", line.indexOf('<'))) {
+                sb.append(line + ENDL);
+            }
         }
         reader.close();
         OntModel ontModel = ModelFactory.createOntologyModel();
