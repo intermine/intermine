@@ -970,6 +970,7 @@
 
     <convert-file clsName="org.flymine.dataconversion.OrthologueConverter"
                   osName="osw.ensembl-orthologue-tgt-items"
+                  model="genomic"
                   param1="AG"
                   param2="DM">
        <fileset dir="/shared/data/orthologues/ensembl" includes="orthologues.AG-DM"/>
@@ -1013,7 +1014,7 @@
     </taskdef>
 
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
-                  osName="osw.inparanoid-orthologue-tgt-items">
+                  osName="osw.inparanoid-orthologue-tgt-items" model="genomic">
       <fileset dir="/shared/data/orthologues/inparanoid" includes="orthologues.*"/>
     </convert-file>
 
@@ -1045,7 +1046,11 @@
   <!-- Build RNAi src items database -->
 
   <!-- retrieve rnai data into src items database -->
-  <target name="retrieve-rnai" depends="compile-rnai-java">
+  <path id="rnai.class.path">
+    <path refid="models.class.path"/>
+    <pathelement location="${model}/rnai/resources"/>
+  </path>
+  <target name="retrieve-rnai" depends="prepare, compile-rnai-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1054,11 +1059,11 @@
     </ant>
     
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="rnai.class.path"/>
     </taskdef>
 
     <convert-file clsName="org.flymine.dataconversion.RNAiConverter"
-                  osName="osw.rnai-src-items">
+                  osName="osw.rnai-src-items" model="rnai">
       <fileset dir="/shared/data/RNAi" includes="*Set.txt"/>
     </convert-file>
 
@@ -1279,7 +1284,7 @@
     </taskdef>
 
     <convert-file clsName="org.flymine.dataconversion.TaxonomyConverter"
-                  osName="osw.taxonomy-tgt-items">
+                  osName="osw.taxonomy-tgt-items" model="genomic">
       <fileset dir="/shared/data/taxonomy" includes="taxonomy.dat"/>
     </convert-file>
     
@@ -1332,7 +1337,7 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter">
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -1476,7 +1481,7 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter">
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
       <fileset dir="/shared/data/go-annotation">
         <include name="gene_association.*"/>
       </fileset>
