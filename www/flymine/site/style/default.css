@@ -1,30 +1,30 @@
 html, body
 {
-	/* font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif; */
+    /* font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif; */
     font-size: 100%; /* NN4 */
     margin: 0;
     padding: 0;
-    color: #000000; 
-	background-color: #F5F0FF;
+    color: #000000;
+    background-color: #F5F0FF;
 }
 
-a 
+a
 {
     color: #7C00C5;
-	text-decoration: none;
-/*	font-family: sans-serif; */
+    text-decoration: none;
+/*  font-family: sans-serif; */
 }
 
 a:hover
 {
-	text-decoration: underline
+    text-decoration: underline
 }
 
 .openoffice
 {
     padding-right: 21px;
     background: url(openoffice.gif) right center no-repeat;
-    
+
 }
 
 span.fly
@@ -36,12 +36,12 @@ span.fly
 
 #header
 {
-	font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     background: #F5F0FF;
     padding: 7px;
     border-bottom: ridge black 3px;
 }
-	
+
 #header h1
 {
     font-size: 1.6em;
@@ -63,48 +63,48 @@ span.fly
 
 #nav
 {
-	width: 160px;
-	float: left;
-	margin-left: -1px; /* NN4 - Thx to http://www.realworldstyle.com/2col.html */
-	padding: 20px;
+    width: 160px;
+    float: left;
+    margin-left: -1px; /* NN4 - Thx to http://www.realworldstyle.com/2col.html */
+    padding: 20px;
 }
-	
+
 #sidebar
 {
     padding: 0;
-	float: left;
+    float: left;
     border/**/: solid #808080 1px; /* Mac IE Hack*/
- 	font-size: 0.8em;
+    font-size: 0.8em;
 }
 
 #sidebar ul
 {
-	margin: 0;
- 	padding: 0;
- 	list-style-type: none;
- 	font-family: arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    font-family: arial, Helvetica, sans-serif;
 }
 
 #sidebar a
 {
- 	display: block;
- 	padding: 5px 10px 5px 10px;
- 	color: #750054;
- 	background: #E5E5E5;
- 	text-decoration: none;
- 	font-weight: bold;
- 	border-top: solid 1px #FFFFFF;
- 	border-bottom: solid 1px #CCCCCC;
-	width: 140px !important;
-	width: 160px;   /* Win IE Hack :-( */
+    display: block;
+    padding: 5px 10px 5px 10px;
+    color: #750054;
+    background: #E5E5E5;
+    text-decoration: none;
+    font-weight: bold;
+    border-top: solid 1px #FFFFFF;
+    border-bottom: solid 1px #CCCCCC;
+    width: 140px !important;
+    width: 160px;   /* Win IE Hack :-( */
 }
 
 #sidebar a:hover
 {
- 	color: #FFFFFF;
- 	background: #BC00F0;
- 	border-top: solid 1px #D86BFF;
- 	border-bottom: solid 1px #336699;
+    color: #FFFFFF;
+    background: #BC00F0;
+    border-top: solid 1px #D86BFF;
+    border-bottom: solid 1px #336699;
 }
 
 #current a:hover
@@ -119,14 +119,14 @@ span.fly
 
 #sidebar ul ul a
 {
- 	padding-left: 20px;
- 	color: #210075;
- 	background: #F5F5F5;
- 	text-decoration: none;
- 	font-weight: normal;
- 	border-bottom: 1px solid #E5E5E5;
-	width: 130px !important;
-	width: 160px;   /* Win IE Hack :-( */
+    padding-left: 20px;
+    color: #210075;
+    background: #F5F5F5;
+    text-decoration: none;
+    font-weight: normal;
+    border-bottom: 1px solid #E5E5E5;
+    width: 130px !important;
+    width: 160px;   /* Win IE Hack :-( */
 }
 
 #current a
@@ -143,16 +143,16 @@ ul ul li#current a
 
 #content
 {
-	background: #F5F0FF;
-	padding: 10px;
-	margin-left: 200px;
+    background: #F5F0FF;
+    padding: 10px;
+    margin-left: 200px;
     margin-right: 20px;
 }
 
 #content ul
 {
- 	list-style-type:none;
- 	list-style-image: url(blkpearl.gif);
+      list-style-type:none;
+      list-style-image: url(blkpearl.gif);
 }
 
 
@@ -174,13 +174,13 @@ ul ul li#current a
 #content ul ul
 {
     margin-bottom: 35px;
- 	list-style-image: none;
- 	list-style-type: disc;
+    list-style-image: none;
+    list-style-type: disc;
 }
 
 #content ul ul li
 {
- 	font-family: times, serif;
+    font-family: times, serif;
     font-size: 1em;
     font-weight: normal;
     margin: 5px 0 0 0;
@@ -200,9 +200,9 @@ ul ul li#current a
 #footer
 {
     position: absolute; /* For Safari */
-	font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-	background-color: #FFFFFF;
-	clear: both;
+    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+    background-color: #FFFFFF;
+    clear: both;
     border-top: ridge black 3px;
     margin-top: 8em;
     padding: 5px 2em 1em 2em;
@@ -254,7 +254,7 @@ p
     padding: 0;
     background: white;
     border: solid black 1px;
-	margin: 20px 20px;
+    margin: 20px 20px;
 }
 
 .inlinegraphic-center
@@ -263,8 +263,8 @@ p
     padding: 0;
     background: white;
     border: solid black 1px;
-	text-align: center;
-	margin: 20px auto;
+    text-align: center;
+    margin: 20px auto;
 }
 
 /**************************************/
