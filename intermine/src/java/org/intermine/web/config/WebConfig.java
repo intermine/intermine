@@ -1,7 +1,7 @@
 package org.intermine.web.config;
 
 /*
- * Copyright (C) 2002-2004 FlyMine
+ * Copyright (C) 2002-2003 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -58,6 +58,14 @@ public class WebConfig
         digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/longdisplayers/displayer", "src", "src");
         digester.addSetNext("webconfig/class/longdisplayers/displayer", "addLongDisplayer");
+
+        digester.addCallMethod("webconfig/class/longdisplayers/displayer/param", "addParam", 2);
+        digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
+        digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
+
+        digester.addCallMethod("webconfig/class/shortdisplayers/displayer/param", "addParam", 2);
+        digester.addCallParam("webconfig/class/shortdisplayers/displayer/param", 0, "name");
+        digester.addCallParam("webconfig/class/shortdisplayers/displayer/param", 1, "value");
 
         digester.addSetNext("webconfig/class", "addType");
 
