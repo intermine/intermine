@@ -86,7 +86,7 @@ Full details:<br/><br/>
       <html:link action="/objectDetails?id=${reference.id}"><b>${entry.key}</b></html:link>
 
       <span class="type">
-        - <c:forEach items="${reference.clds}" var="cld">${cld.unqualifiedName} </c:forEach>
+        - ${reference.cld.unqualifiedName}
       </span>
       <br/>
       <c:if test="${verbose}">
