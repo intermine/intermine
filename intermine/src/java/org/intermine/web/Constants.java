@@ -42,6 +42,11 @@ public interface Constants
      * TemplateQuerys.
      */
     public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
+
+    /**
+     * ServletContext attribute - global instance of TemplateRepository.
+     */
+    public static final String TEMPLATE_REPOSITORY = "TEMPLATE_REPOSITORY";
     
     /**
      * ServletContext attribute maps a class name to a Map of template names to simple expressions -
@@ -162,6 +167,12 @@ public interface Constants
      * The name of the property to look up to find the maximum size of an inline table.
      */
     public static final String INLINE_TABLE_SIZE = "inline.table.size";
+    
+    /**
+     * Servlet context attribute that is a reference to a lucene Directory object containing
+     * the template query index.
+     */
+    public static final String TEMPLATE_INDEX_DIR = "TEMPLATE_INDEX_DIR";
     
     /**
      * Period of time to wait for client to poll a running query before cancelling the query.
