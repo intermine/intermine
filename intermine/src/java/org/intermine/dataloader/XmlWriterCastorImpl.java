@@ -37,7 +37,7 @@ public class XmlWriterCastorImpl implements XmlWriter
     public XmlWriterCastorImpl(String model) throws FlyMineException {
         try {
             String mapFile = "castor_xml_" + model.toLowerCase() + ".xml";
-            URL mapUrl = XmlDataLoader.class.getClassLoader().getResource(mapFile);
+            URL mapUrl = XmlWriterCastorImpl.class.getClassLoader().getResource(mapFile);
             map = new Mapping();
             map.loadMapping(mapUrl);
         } catch (IOException e) {
