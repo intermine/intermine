@@ -9,9 +9,17 @@
 <table class="query" width="100%" cellspacing="0">
   <tr>
     <td rowspan="2" valign="top" width="50%">
-      Current class:<br/>
+      <fmt:message key="query.currentclass"/><br/>
       <br/>
-
+      <c:if test="${!empty navigation}">
+        <c:forEach items="${navigation}" var="entry" varStatus="status">
+          <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY[entry.value].type}">
+            <c:out value="${entry.key}"/>
+          </html:link>
+          <c:if test="${!status.last}">&gt;</c:if>
+        </c:forEach>
+        <br/><br/>
+      </c:if>
       <c:forEach var="node" items="${nodes}">
         <c:if test="${node.indentation > 0}">
           <c:forEach begin="1" end="${node.indentation}">
@@ -43,15 +51,17 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-        <span class="type"><c:out value="${node.type}"/><c:if test="${node.collection}"><c:out value=" collection"/></c:if></span>
-        <html:link action="/mainChange?method=addToView&path=${node.path}">view</html:link>
+        <span class="type"><c:out value="${node.type}"/><c:if test="${node.collection}"> collection</c:if></span>
+        <html:link action="/mainChange?method=addToView&path=${node.path}">
+          <fmt:message key="query.addtoview"/>
+        </html:link>
         <br/>
       </c:forEach>
       
       
     </td>
     <td valign="top">
-      Current query:<br/>
+      <fmt:message key="query.currentquery"/><br/>
       <br/>
       
       
@@ -76,15 +86,21 @@
             </c:otherwise>
           </c:choose>
         </span>
-        <html:link action="/mainChange?method=addConstraint&path=${node.path}">constrain</html:link>
+        <html:link action="/mainChange?method=addConstraint&path=${node.path}">
+          <fmt:message key="query.addconstraint"/>
+        </html:link>
         <c:if test="${node.indentation > 0}">
-          <html:link action="/mainChange?method=removeNode&path=${node.path}">remove</html:link>
+          <html:link action="/mainChange?method=removeNode&path=${node.path}">
+            <fmt:message key="query.removenode"/>
+          </html:link>
         </c:if>
         <br/>
         <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
           <c:forEach begin="0" end="${node.indentation}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
           <span class="constraint"><c:out value="${constraint.op} ${constraint.value}"/></span>
-          <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}">remove</html:link>
+          <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}">
+            <fmt:message key="query.removeConstraint"/>
+          </html:link>
           <br/>
         </c:forEach>
       </c:forEach>
@@ -99,8 +115,11 @@
       <td valign="top">
         Constrain
         <span class="metadata"><c:out value="${editingNode.fieldName}"/></span>
-        <span class="type"><c:out value="${editingNode.type}"/></span>:
-        <br/>
+        <span class="type">
+          <c:out value="${editingNode.type}"/>
+          <c:if test="${node.collection}"> collection</c:if>:
+        </span>
+        <br/><br/>
         <html:form action="/mainAction">
           <html:hidden property="path" value="${editingNode.path}"/>
           <c:choose>

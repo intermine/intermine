@@ -17,6 +17,8 @@ import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -101,6 +103,18 @@ public class MainController extends TilesAction
                 }
             }
         }
+
+        String prefix = (String) session.getAttribute("prefix");
+        String current = null;
+        Map navigation = new LinkedHashMap();
+        if (prefix != null) {
+            for (StringTokenizer st = new StringTokenizer(prefix, "."); st.hasMoreTokens();) {
+                String token = st.nextToken();
+                current = (current == null ? token : current + "." + token);
+                navigation.put(token, current);
+            }
+        }
+        request.setAttribute("navigation", navigation);
 
         return null;
     }
