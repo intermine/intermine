@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,6 +15,8 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 
+import org.flymine.task.ClassPathTask;
+
 /**
  * Uses an IntegrationWriterWriter to insert XML data from a file
  *
@@ -22,7 +24,6 @@ import org.apache.tools.ant.BuildException;
  */
 public class InsertXmlDataTask extends ClassPathTask
 {
-
     protected String integrationWriter;
     protected File file;
 

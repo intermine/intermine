@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,10 +13,6 @@ package org.flymine.task;
 import org.apache.tools.ant.BuildException;
 
 import org.acedb.AceURL;
-
-import org.flymine.dataloader.AceDataLoader;
-import org.flymine.dataloader.IntegrationWriter;
-import org.flymine.dataloader.IntegrationWriterFactory;
 
 /**
  * Class that actually loads Ace data

@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,10 +16,6 @@ import org.apache.tools.ant.BuildException;
 import java.io.File;
 
 import org.flymine.metadata.Model;
-import org.flymine.codegen.JavaModelOutput;
-import org.flymine.codegen.ModelOutput;
-import org.flymine.codegen.CastorModelOutput;
-import org.flymine.codegen.FlyMineTorqueModelOutput;
 
 /**
  * Creates and runs a ModelOutput process to generate java or config files.

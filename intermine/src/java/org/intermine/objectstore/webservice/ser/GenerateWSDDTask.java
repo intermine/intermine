@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,8 +22,6 @@ import org.apache.axis.client.Service;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
-
-import org.flymine.objectstore.webservice.ser.SerializationUtil;
 
 import org.apache.log4j.Logger;
 

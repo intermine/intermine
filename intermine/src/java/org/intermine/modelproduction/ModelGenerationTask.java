@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.modelproduction;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.uml.XmiParser;
 import org.flymine.modelproduction.acedb.AceModelParser;
 import org.flymine.metadata.Model;

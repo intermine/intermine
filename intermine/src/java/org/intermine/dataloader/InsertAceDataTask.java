@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,6 +15,8 @@ import java.lang.reflect.Method;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import org.flymine.task.ClassPathTask;
+
 /**
  * Uses an ObjectStoreWriter to insert data from an Ace dataase server
  *
@@ -22,7 +24,6 @@ import org.apache.tools.ant.Project;
  */
 public class InsertAceDataTask extends ClassPathTask
 {
-
     protected String integrationWriter;
     protected String user;
     protected String password;

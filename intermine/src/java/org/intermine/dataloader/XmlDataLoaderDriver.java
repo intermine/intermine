@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,10 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.apache.tools.ant.BuildException;
-
-import org.flymine.dataloader.XmlDataLoader;
-import org.flymine.dataloader.IntegrationWriter;
-import org.flymine.dataloader.IntegrationWriterFactory;
 
 /**
  * Class that actually loads XML data

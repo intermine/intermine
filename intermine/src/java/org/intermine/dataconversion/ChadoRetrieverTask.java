@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.flymine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,7 +16,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.flymine.dataconversion.ChadoConvertor;
 import org.flymine.xml.full.FullRenderer;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
