@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.InputStreamReader;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -164,6 +165,101 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         exp1.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
         assertEquals(Collections.singleton(exp1), translator.translateItem(gene));
     }
+
+    public void testMergeProteins() throws Exception {
+        String srcNs = "http://www.flymine.org/model/ensembl#";
+        Item transcript1 = createItem(srcNs + "transcript", "1_1", "");
+        Item translation1 = createItem(srcNs + "translation", "1_2", "");
+        transcript1.addReference(new Reference("translation", "1_2"));
+        Item stableId1 = createItem(srcNs + "translation_stable_id", "1_6", "");
+        stableId1.addAttribute(new Attribute("stable_id", "TRANSLATION1"));
+        stableId1.addReference(new Reference("translation", "1_1"));
+
+        Item objectXref1 = createItem(srcNs + "object_xref", "1_3", "");
+        Item xref1 = createItem(srcNs + "xref", "1_4", "");
+        Item externalDb1 = createItem(srcNs + "external_db", "1_5", "");
+        objectXref1.addReference(new Reference("ensembl", "1_2"));
+        objectXref1.addReference(new Reference("xref", "1_4"));
+        xref1.addAttribute(new Attribute("dbprimary_acc", "Q1001"));
+        xref1.addReference(new Reference("external_db", "1_5"));
+        externalDb1.addAttribute(new Attribute("db_name", "SWISSPROT"));
+
+
+        Item transcript2 = createItem(srcNs + "transcript", "2_1", "");
+        Item translation2 = createItem(srcNs + "translation", "2_2", "");
+        transcript2.addReference(new Reference("translation", "2_2"));
+        Item stableId2 = createItem(srcNs + "translation_stable_id", "2_6", "");
+        stableId2.addAttribute(new Attribute("stable_id", "TRANSLATION2"));
+        stableId2.addReference(new Reference("translation", "2_2"));
+
+        Item objectXref2 = createItem(srcNs + "object_xref", "2_3", "");
+        Item xref2 = createItem(srcNs + "xref", "2_4", "");
+        Item externalDb2 = createItem(srcNs + "external_db", "2_5", "");
+        objectXref2.addReference(new Reference("ensembl", "2_2"));
+        objectXref2.addReference(new Reference("xref", "2_4"));
+        xref2.addAttribute(new Attribute("dbprimary_acc", "Q1001"));
+        xref2.addReference(new Reference("external_db", "2_5"));
+        externalDb2.addAttribute(new Attribute("db_name", "SWISSPROT"));
+
+
+        Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {transcript1, translation1, objectXref1, xref1, stableId1, externalDb1, transcript2, translation2, objectXref2, xref2, externalDb2, stableId2})));
+        EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
+                                                                      getOwlModel(), tgtNs, "WB");
+
+
+        Item protein = createItem(tgtNs + "Protein", "-1_7", "");
+        //protein.addAttribute(new Attribute("idenitifer", "Q1001"));
+        protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
+        protein.addReference(new Reference("organism", "-1_1"));
+        protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_8"))));
+        Item synonym0 = createItem(tgtNs + "Synonym", "-1_8", "");
+        synonym0.addAttribute(new Attribute("type", "accession"));
+        synonym0.addAttribute(new Attribute("value", "Q1001"));
+        synonym0.addReference(new Reference("subject", "-1_7"));
+        synonym0.addReference(new Reference("source", "-1_5"));
+
+        Item trans1 = createItem(tgtNs + "Transcript", "1_1", "");
+        trans1.addAttribute(new Attribute("identifier", "1_1"));
+        trans1.addReference(new Reference("protein", "-1_7"));
+        trans1.addReference(new Reference("organism", "-1_1"));
+        trans1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_6"))));
+        trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
+        Item synonym1 = createItem(tgtNs + "Synonym", "1_6", "");
+        synonym1.addAttribute(new Attribute("type", "accession"));
+        synonym1.addAttribute(new Attribute("value", "TRANSLATION1"));
+        synonym1.addReference(new Reference("subject", "1_1"));
+        synonym1.addReference(new Reference("source", "-1_2"));
+
+        Item trans2 = createItem(tgtNs + "Transcript", "2_1", "");
+        trans2.addAttribute(new Attribute("identifier", "2_1"));
+        trans2.addReference(new Reference("protein", "-1_7"));
+        trans2.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_12"))));
+        trans2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_13"))));
+        trans2.addReference(new Reference("organism", "-1_1"));
+        Item synonym2 = createItem(tgtNs + "Synonym", "2_6", "");
+        synonym2.addAttribute(new Attribute("type", "accession"));
+        synonym2.addAttribute(new Attribute("value", "TRANSLATION2"));
+        synonym2.addReference(new Reference("subject", "2_2"));
+        synonym2.addReference(new Reference("source", "-1_2"));
+
+
+        Set expected = new HashSet(Arrays.asList(new Object[] {protein, trans1, trans2, synonym0, synonym1, synonym2}));
+
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+        Set result = new HashSet();
+        Iterator resIter = tgtIw.getItems().iterator();
+        while (resIter.hasNext()) {
+            Item item = (Item) resIter.next();
+            if (!(item.getClassName().equals(tgtNs + "Database")|| item.getClassName().equals(tgtNs + "SimpleRelation") || item.getClassName().equals(tgtNs + "Organism"))) {
+                result.add(item);
+            }
+        }
+        assertEquals(expected, result);
+    }
+
+
 
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
