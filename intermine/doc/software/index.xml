@@ -1,19 +1,75 @@
 <menu>
   <section>
-    <heading>System Documentation</heading>
-    <item><ulink url="query_spec/spec">Graphical Query specification</ulink></item>
-    <item><ulink url="query_spec/fql">FQL text-based Query specification</ulink></item>
-    <item><ulink url="architecture/FlyMineArchitecture">System architecture</ulink></item>
-    <item><ulink url="architecture/FlyMineArchObjectStore">ObjectStore Architecture</ulink></item>
-    <item><ulink url="architecture/OJB-details">Details of O/R mapping layer</ulink></item>
-    <item><ulink url="class_diagram/FlyMineApplication.zargo">Class diagram</ulink></item>
-    <item><ulink url="sql_optimisation">SQL query optimisation</ulink></item>
-    <item><ulink url="sql_gen_notes">SQL generation notes</ulink></item>
-    <item><ulink url="architecture/ResultsToJdbc">How a results object accesses JDBC (directly through ObjectStoreOjbImpl)</ulink></item>
-    <item><ulink url="polymorphism_and_sql_generation">Polymorphism and SQL generation</ulink></item>
-    <item><ulink url="query_explain">Explain plans for FlyMine queries</ulink></item>
-	<item><ulink url="results_prefetch">Prefetch in the Results object</ulink></item>
-    <item><ulink url="dataloader/">The dataloader store() method</ulink></item>
-    <item><ulink url="proxies">Reference and collection proxies</ulink></item>
+    <heading>Overall system documentation</heading>
+    <item><ulink url="getting-started">***Getting started</ulink></item>
+    <item><ulink url="overview">***Technical overview</ulink></item>
+    <item><ulink url="FlyMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
+    <item><ulink url="FlyMineArchitecture">System architecture</ulink></item>
   </section>
+
+  <section>
+    <heading>Obtaining and building FlyMine</heading>
+    <item><ulink url="building">Downloading and building FlyMine</ulink></item>
+    <item><ulink url="cvs-user">Obtaining source code via anonymous CVS</ulink></item>
+  </section>
+
+  <section>
+    <heading>Using FlyMine models</heading>
+    <item><ulink url="models/creating">***Creating a FlyMine model</ulink></item>
+  </section>
+
+  <section>
+    <heading>Graphical query interface</heading>
+    <item><ulink url="graphical_query/spec">Specification</ulink></item>
+  </section>
+
+  <section>
+    <heading>OQL-like query interface</heading>
+    <item><ulink url="fql_query/tutorial">***User tutorial</ulink></item>
+    <item><ulink url="fql_query/specification">Specification (for developers)</ulink></item>
+  </section>
+
+  <section>
+    <heading>Java query interface</heading>
+    <item><ulink url="java_query/tutorial">***Tutorial</ulink></item>
+  </section>
+
+  <section>
+    <heading>ObjectStore</heading>
+    <item><ulink url="objectstore/FlyMineArchObjectStore">ObjectStore Architecture</ulink></item>
+    <item><ulink url="objectstore/proxies">Reference and collection proxies</ulink></item>
+    <item><ulink url="objectstore/results_prefetch">Results prefetching</ulink></item>
+    <item><ulink url="objectstore/query_explain">Explain plans for FlyMine queries</ulink></item>
+    <section>
+      <heading>OJB implemetation</heading>
+      <item><ulink url="objectstore/ojb/OJB-details">Details of O/R mapping layer</ulink></item>
+      <item><ulink url="objectstore/ojb/ResultsToJdbc">How a results object accesses JDBC (directly through ObjectStoreOjbImpl)</ulink></item>
+      <item><ulink url="objectstore/ojb/sql_gen_notes">SQL generation notes</ulink></item>
+      <item><ulink url="objectstore/ojb/polymorphism_and_sql_generation">Polymorphism and SQL generation</ulink></item>    
+    </section>
+  </section>
+
+  <section>
+    <heading>Data loading and integration</heading>
+    <item><ulink url="dataloader/">The dataloader store() method</ulink></item>
+  </section>
+
+  <section>
+    <heading>SQL query optimiser</heading>
+    <item><ulink url="sql_optimisation/using-query-optimiser">Using the SQL query optimiser in other projects</ulink></item>
+  </section>
+
+  <section>
+    <heading>Presentations</heading>
+    <item><ulink url="presentations/BOSC2003.sxi">BOSC 2003</ulink></item>
+    <item><ulink url="presentations/BOSC2003.sxi">ISMB 2003 (poster)</ulink></item>
+  </section>
+
+  <section>
+    <heading>Contributing code to FlyMine</heading>
+    <item><ulink url="contributing">Introduction</ulink></item>
+    <item><ulink url="coding-standards">Coding standards</ulink></item>
+    <item><ulink url="cvs-developer">Writable CVS access for developers</ulink></item>
+  </section>
+
 </menu>
