@@ -326,7 +326,7 @@ A.bred            { color: #FFFFFF;
 /* Link Styles */
 
 a.webapplink , a.webapplink:link, a.webapplink:visited, a.webapplink:active, a.webapplink:hover {
-  background: url(images/intlink.gif) right center no-repeat;
+  background: url(../images/intlink.gif) right center no-repeat;
   padding-right: 15px;
 }
 
