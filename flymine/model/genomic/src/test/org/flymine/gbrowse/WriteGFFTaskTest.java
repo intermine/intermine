@@ -100,14 +100,10 @@ public class WriteGFFTaskTest extends TestCase
     }
 
     public void testWriteGFF() throws Exception {
-        try {
-            TransferSequences ts = new TransferSequences(osw);
-            ts.transferToLocatedSequenceFeatures();
-            WriteGFFTask task = new WriteGFFTask();
-            task.writeGFF(osw.getObjectStore(), new File("build/gbrowse/data"));
-        } catch (Exception e) {
-            org.intermine.web.LogMe.log("i", e);
-        }
+        TransferSequences ts = new TransferSequences(osw);
+        ts.transferToLocatedSequenceFeatures();
+        WriteGFFTask task = new WriteGFFTask();
+        task.writeGFF(osw.getObjectStore(), new File("build/gbrowse/data"));
     }
 
     private void createData() throws Exception {
