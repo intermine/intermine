@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStore;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
@@ -73,8 +74,10 @@ public class CreateReferences
                          Transcript.class, "chromosome");
 
         insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
-        insertReferences(Gene.class, ProteinInteraction.class, "subjects", "interactions");
-        insertReferences(Gene.class, ProteinInteraction.class, "objects", "interactions");
+        insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
+        insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
+
+        insertGeneAnnotationReferences();
 
         insertReferences(Gene.class, GOTerm.class, "GOTerms");
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
@@ -343,7 +346,7 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            LOG.error("next results....");
+            LOG.info("next results....");
             ResultsRow rr = (ResultsRow) resIter.next();
             InterMineObject thisObject = (InterMineObject) rr.get(0);
             InterMineObject thisProperty = (InterMineObject) rr.get(1);
@@ -365,7 +368,7 @@ public class CreateReferences
                 }
 
                 newCollection = new ArrayList();
-                LOG.error("newCollection: " + newCollection);
+                LOG.info("newCollection: " + newCollection);
             }
 
             newCollection.add(thisProperty);
@@ -377,7 +380,7 @@ public class CreateReferences
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
             try {
-                LOG.error("set " + newCollectionName + " to " + newCollection);
+                LOG.info("set " + newCollectionName + " to " + newCollection);
                 TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
                 count += newCollection.size();
                 osw.store(tempObject);
@@ -386,7 +389,7 @@ public class CreateReferences
                           + " has no " + newCollectionName + " field");
             }
         }
-        LOG.info("Created " + count + newCollectionName + " collections in "
+        LOG.info("Created " + count + " " + newCollectionName + " collections in "
                  + entityClass.getName() + " of " + propertyClass.getName());
         osw.commitTransaction();
 
@@ -398,5 +401,95 @@ public class CreateReferences
         }
     }
 
+    /**
+     * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertGeneAnnotationReferences()
+        throws Exception {
+        LOG.info("Beginning insertGeneAnnotationReferences()");
 
+        osw.beginTransaction();
+
+        Iterator resIter = findProteinProperties();
+
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Gene thisGene = (Gene) rr.get(0);
+            Protein thisProtein = (Protein) rr.get(1);
+            Annotation thisAnnotation = (Annotation) rr.get(2);
+
+            Annotation tempAnnotation =
+                (Annotation) PostProcessUtil.cloneInterMineObject(thisAnnotation);
+            tempAnnotation.setSubject(thisGene);
+            osw.store(tempAnnotation);
+
+            count++;
+        }
+
+        LOG.info("Created " + count + " new Annotations on Genes");
+        osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(Annotation.class.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
+    /**
+     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene, Protein and
+     * GOTerm.
+     */
+    private Iterator findProteinProperties() {
+        Query q = new Query();
+
+        q.setDistinct(false);
+
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        q.addToOrderBy(qcGene);
+
+        QueryClass qcProtein = new QueryClass(Protein.class);
+        q.addFrom(qcProtein);
+        q.addToSelect(qcProtein);
+
+        QueryClass qcAnnotation = new QueryClass(Annotation.class);
+        q.addFrom(qcAnnotation);
+        q.addToSelect(qcAnnotation);
+
+        QueryClass qcGOTerm = new QueryClass(GOTerm.class);
+        q.addFrom(qcGOTerm);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
+        ContainsConstraint geneProtConstraint =
+            new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene);
+        cs.addConstraint(geneProtConstraint);
+
+        QueryCollectionReference protAnnRef =
+            new QueryCollectionReference(qcProtein, "annotations");
+        ContainsConstraint protAnnConstraint =
+            new ContainsConstraint(protAnnRef, ConstraintOp.CONTAINS, qcAnnotation);
+
+        QueryObjectReference annPropertyRef =
+            new QueryObjectReference(qcAnnotation, "property");
+        ContainsConstraint annPropertyConstraint =
+            new ContainsConstraint(annPropertyRef, ConstraintOp.CONTAINS, qcGOTerm);
+        cs.addConstraint(annPropertyConstraint);
+
+        q.setConstraint(cs);
+
+        ObjectStore os = osw.getObjectStore();
+
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(10000);
+
+        return res.iterator();
+    }
 }
