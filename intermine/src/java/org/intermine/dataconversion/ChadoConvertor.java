@@ -85,7 +85,10 @@ public class ChadoConvertor
         try {
             c = db.getConnection();
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
-                processClassDescriptor((ClassDescriptor) cldIter.next());
+                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+                    processClassDescriptor(cld);
+                }
             }
         } finally {
             if (c != null) {
@@ -104,7 +107,8 @@ public class ChadoConvertor
     protected void processClassDescriptor(ClassDescriptor cld) throws SQLException, IOException {
         List items = new ArrayList();
         String clsName = TypeUtil.unqualifiedName(cld.getName());
-        ResultSet r = executeQuery(c, "SELECT * FROM " + clsName);
+        ResultSet r = executeQuery(c, "SELECT * FROM " + clsName
+                                   + " ORDER BY " + clsName + "_id LIMIT 1");
         while (r.next()) {
             String clsId = r.getObject(clsName + "_id").toString();
             Item item = new Item();
@@ -158,6 +162,9 @@ public class ChadoConvertor
                 }
             }
             processItem(item);
+            r.close();
+            r = executeQuery(c, "SELECT * FROM " + clsName + " WHERE " + clsName + "_id > " + clsId
+                             + " ORDER BY " + clsName + "_id LIMIT 1");
         }
     }
 

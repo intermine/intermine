@@ -64,7 +64,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Department_id", "name", "company_id", "manager_id"},
                                    new Object[] {new Integer(12), "DepartmentA1", null, null});
 
-        map.put("SELECT * FROM Department", mrs);
+        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", blank);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
@@ -89,7 +90,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Department_id", "name", "company_id", "manager_id"},
                                    new Object[] {new Integer(12), null, new Integer(14), null});
 
-        map.put("SELECT * FROM Department", mrs);
+        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", blank);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
@@ -114,7 +116,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Department_id", "name", "company_id", "manager_id"},
                                    new Object[] {new Integer(12), null, null, null});
 
-        map.put("SELECT * FROM Department", msrs);
+        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", msrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", blank);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
 
@@ -145,7 +148,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
                                    new Object[] {new Integer(12), null, null, null});
 
-        map.put("SELECT * FROM Company", msrs);
+        map.put("SELECT * FROM Company ORDER BY Company_id LIMIT 1", msrs);
+        map.put("SELECT * FROM Company WHERE Company_id > 12 ORDER BY Company_id LIMIT 1", blank);
 
         map.put("SELECT Department_id FROM Department WHERE company_id = 12", blank);
         //map.put("SELECT Contractor_id FROM oldComs_oldContracts WHERE Company_id = 12", blank);
@@ -177,7 +181,8 @@ public class ChadoConvertorTest extends TestCase {
                                     new String[] {"Contractor_id", "personalAddress_id", "businessAddress_id"},
                                     new Object[] {new Integer(12), new Integer(14), null});
 
-        map.put("SELECT * FROM Contractor", msrs);
+        map.put("SELECT * FROM Contractor ORDER BY Contractor_id LIMIT 1", msrs);
+        map.put("SELECT * FROM Contractor WHERE Contractor_id > 12 ORDER BY Contractor_id LIMIT 1", blank);
         
         map.put("SELECT Company_id FROM Contractor_Company WHERE Contractor_id = 12", blank);
 
@@ -202,7 +207,9 @@ public class ChadoConvertorTest extends TestCase {
             {new Integer(12), "DepartmentA1", null, null},
             {new Integer(13), "DepartmentA2", null, null}});
 
-        map.put("SELECT * FROM Department", mrs);
+        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 13 ORDER BY Department_id LIMIT 1", mrs);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 13", blank);
@@ -231,8 +238,8 @@ public class ChadoConvertorTest extends TestCase {
 
     public void testMultipleClasses() throws Exception {
         for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
-            String clsName = (String) iter.next();
-            map.put("SELECT * FROM " + TypeUtil.unqualifiedName(clsName), blank);
+            String clsName = TypeUtil.unqualifiedName((String) iter.next());
+            map.put("SELECT * FROM " +clsName + " ORDER BY " + clsName + "_id LIMIT 1", blank);
         }
 
         MockSingleRowResultSet mrs = new MockSingleRowResultSet();
@@ -240,7 +247,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Department_id", "name", "company_id", "manager_id"},
                                    new Object[] {new Integer(12), "DepartmentA1", null, null});
 
-        map.put("SELECT * FROM Department", mrs);
+        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", mrs);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
@@ -258,7 +266,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
                                    new Object[] {new Integer(13), null, null, null});
 
-        map.put("SELECT * FROM Company", mrs2);
+        map.put("SELECT * FROM Company ORDER BY Company_id LIMIT 1", mrs2);
+        map.put("SELECT * FROM Company WHERE Company_id > 13 ORDER BY Company_id LIMIT 1", mrs2);
 
         map.put("SELECT Department_id FROM Department WHERE company_id = 13", blank);
         map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 13", blank);
@@ -273,8 +282,8 @@ public class ChadoConvertorTest extends TestCase {
 
     public void testProcessWriter() throws Exception {
         for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
-            String clsName = (String) iter.next();
-            map.put("SELECT * FROM " + TypeUtil.unqualifiedName(clsName), blank);
+            String clsName = TypeUtil.unqualifiedName((String) iter.next());
+            map.put("SELECT * FROM " +clsName + " ORDER BY " + clsName + "_id LIMIT 1", blank);
         }
 
         MockSingleRowResultSet mrs = new MockSingleRowResultSet();
@@ -282,7 +291,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Department_id", "name", "company_id", "manager_id"},
                                    new Object[] {new Integer(12), "DepartmentA1", null, null});
 
-        map.put("SELECT * FROM Department", mrs);
+        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", mrs);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
@@ -300,7 +310,8 @@ public class ChadoConvertorTest extends TestCase {
                                    new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
                                    new Object[] {new Integer(13), null, null, null});
 
-        map.put("SELECT * FROM Company", mrs2);
+        map.put("SELECT * FROM Company ORDER BY Company_id LIMIT 1", mrs2);
+        map.put("SELECT * FROM Company WHERE Company_id > 13 ORDER BY Company_id LIMIT 1", mrs2);
 
         map.put("SELECT Department_id FROM Department WHERE company_id = 13", blank);
         map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 13", blank);
