@@ -89,12 +89,20 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Connection logTableConnection = null;
     protected Batch logTableBatch = null;
     protected String logTableName = null;
+
+    // don't use a table to represent bags if the bag is smaller than this value
+    protected int minBagTableSize = -1;
+
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"optimise", "estimated",
         "execute", "permitted", "convert", "iql", "sql"};
 
     // see generateSql()
     protected Map queryBagTables = new CacheMap();
 
+    /**
+     * The name of the SEQUENCE in the database to use when generating unique integers in
+     * getUniqueInteger().
+     */
     public static final String UNIQUE_INTEGER_SEQUENCE_NAME = "objectstore_unique_integer";
 
     /**
@@ -213,6 +221,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String logfile = props.getProperty("logfile");
         String truncatedClassesString = props.getProperty("truncatedClasses");
         String logTable = props.getProperty("logTable");
+        String minBagTableSizeString = props.getProperty("minBagTableSize");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -277,6 +286,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + e);
                     }
                 }
+                if (minBagTableSizeString != null) {
+                    try {
+                        int minBagTableSize = Integer.parseInt(minBagTableSizeString);
+                        os.setMinBagTableSize(minBagTableSize);
+                    } catch (NumberFormatException e) {
+                        LOG.error("Error setting minBagTableSize: " + e);
+                    }
+                }
                 instances.put(osAlias, os);
             }
             return os;
@@ -333,6 +350,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             logTableName = null;
             throw e;
         }
+    }
+
+    /**
+     * Set the cutoff value used to decide if a bag should be put in a table.
+     * @param minBagTableSize don't use a table to represent bags if the bag is smaller than this
+     * value
+     */
+    public void setMinBagTableSize(int minBagTableSize) {
+        this.minBagTableSize = minBagTableSize;
     }
 
     /**
@@ -667,10 +693,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
         Map bagTableNames = new CacheMap();
 
-        if (queryBagTables.get(q) == null) {
-            createTempBagTables(c, q, bagTableNames, SqlGenerator.MAX_BAG_INLINE_SIZE);
+        if (minBagTableSize != -1) {
+            if (queryBagTables.get(q) == null) {
+                createTempBagTables(c, q, bagTableNames, minBagTableSize);
 
-            queryBagTables.put(q, bagTableNames);
+                queryBagTables.put(q, bagTableNames);
+            }
         }
 
         return SqlGenerator.generate(q, start, limit, schema, db, bagTableNames);
