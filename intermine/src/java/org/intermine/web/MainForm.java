@@ -227,7 +227,7 @@ public class MainForm extends ActionForm
         }
 
         if (errors.size() > 0) {
-            request.setAttribute("editingNode", query.getNodes().get(path));
+            session.setAttribute("editingNode", query.getNodes().get(path));
         }
         
         return errors;
