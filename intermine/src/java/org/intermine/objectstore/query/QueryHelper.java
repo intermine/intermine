@@ -210,6 +210,7 @@ public class QueryHelper
      *
      * @param obj the Object to query for
      * @return a Query that will retrieve this object from the data store
+     * @throws IllegalArgumentException if any primary key fields are not set in obj
      */
 
     public static Query createQueryForExampleObject(Object obj) {
@@ -243,6 +244,7 @@ public class QueryHelper
      * @param q the Query to be added
      * @param qc the QueryClass that represents obj in the Query
      * @param obj the Object that is to have its primary keys added
+     * @throws IllegalArgumentException if any primary key fields are not set
      *
      */
     protected static void addKeysToQuery(Query q, QueryClass qc, Object obj) {
@@ -265,6 +267,7 @@ public class QueryHelper
      * @param qc the QueryClass that represents obj in the Query
      * @param obj the Object that is to have one of its primary key fields added
      * @param field the field in qc to be constrained in the Query
+     * @throws IllegalArgumentException if any primary key fields are not set
      *
      */
     protected static void addKeyToQuery(Query q, QueryClass qc, Object obj, String field) {
@@ -287,6 +290,10 @@ public class QueryHelper
                 QueryReference qr = new QueryObjectReference(qc, field);
 
                 Object otherObject = TypeUtil.getFieldValue(obj, field);
+
+                if (otherObject == null) {
+                    throw new IllegalArgumentException("All primary key fields must be set");
+                }
 
                 otherQueryClass = new QueryClass(otherClass);
                 q.addFrom(otherQueryClass);
