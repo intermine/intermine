@@ -207,10 +207,6 @@ public class EnsemblDataTranslator extends DataTranslator
 
                 } else if ("contig".equals(className)) {
                     tgtItem.addReference(getOrgRef());
-                    Item relation = createItem(tgtNs + "SimpleRelation", "");
-                    addReferencedItem(tgtItem, relation, "subjects", true, "object", false);
-                    moveField(srcItem, relation, "clone", "subject");
-                    result.add(relation);
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(getOrgRef());
 
@@ -246,16 +242,6 @@ public class EnsemblDataTranslator extends DataTranslator
                         tgtItem.addReference(getEnsemblRef());
                         tgtItem.addAttribute(new Attribute("type", "accession"));
                     }
-                } else if ("clone".equals(className)) {
-                    // clone embl_acc needs to be a synonym in embl database
-
-                    tgtItem.addReference(getOrgRef());
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    moveField(srcItem, synonym, "embl_acc", "value");
-                    synonym.addAttribute(new Attribute("type", "accession"));
-                    synonym.addReference(getEmblRef());
-                    result.add(synonym);
                 } else if ("chromosome".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                 } else if ("translation".equals(className)) {

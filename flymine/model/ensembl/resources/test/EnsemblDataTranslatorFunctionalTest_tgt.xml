@@ -1,14 +1,6 @@
 <?xml version="1.0"?>
 <items>
-  <item id="13_8847" class="http://www.flymine.org/model/genomic#Clone">
-    <attribute name="htgPhase" value="2"/>
-    <attribute name="identifier" value="AAAB01008846"/>
-    <reference name="organism" ref_id="-1_1"/>
-    <collection name="synonyms">
-      <reference ref_id="-1_14"/>
-    </collection>
-  </item>
-  <item id="-1_27" class="http://www.flymine.org/model/genomic#SimpleRelation">
+  <item id="-1_24" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="5_1"/>
     <reference name="subject" ref_id="3_1"/>
   </item>
@@ -23,10 +15,6 @@
   <item id="-1_7" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="FlyBase"/>
     <attribute name="url" value="http://www.flybase.org"/>
-  </item>
-  <item id="-1_32" class="http://www.flymine.org/model/genomic#SimpleRelation">
-    <reference name="object" ref_id="1_11169"/>
-    <reference name="subject" ref_id="13_8848"/>
   </item>
   <item id="-1_10" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="score" value="23.0"/>
@@ -47,48 +35,36 @@
     <reference name="contig" ref_id="1_11167"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_25"/>
+      <reference ref_id="-1_22"/>
       <reference ref_id="-1_2"/>
     </collection>
     <collection name="objects">
-      <reference ref_id="-1_26"/>
+      <reference ref_id="-1_23"/>
     </collection>
   </item>
-  <item id="13_8846" class="http://www.flymine.org/model/genomic#Clone">
-    <attribute name="htgPhase" value="3"/>
-    <attribute name="identifier" value="AAAB01008846"/>
-    <reference name="organism" ref_id="-1_1"/>
-    <collection name="synonyms">
-      <reference ref_id="-1_13"/>
-    </collection>
-  </item>
-  <item id="-1_19" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_16" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="9382499"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9357480"/>
     <attribute name="startIsPartial" value="false"/>
     <attribute name="strand" value="-1"/>
-    <reference name="object" ref_id="-1_16"/>
+    <reference name="object" ref_id="-1_13"/>
     <reference name="subject" ref_id="1_11168"/>
   </item>
-  <item id="-1_17" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_14" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="2001395"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="1926335"/>
     <attribute name="startIsPartial" value="false"/>
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="18_1"/>
-    <reference name="subject" ref_id="-1_16"/>
+    <reference name="subject" ref_id="-1_13"/>
   </item>
   <item id="1_11169" class="http://www.flymine.org/model/genomic#Contig">
     <attribute name="length" value="25020"/>
     <attribute name="identifier" value="AAAB01008846_377"/>
-    <reference name="clone" ref_id="13_8848"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="sequence" ref_id="12_11169"/>
-    <collection name="subjects">
-      <reference ref_id="-1_32"/>
-    </collection>
   </item>
   <item id="12_11169" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
@@ -105,11 +81,11 @@
     <reference name="source" ref_id="-1_7"/>
     <reference name="subject" ref_id="5_1"/>
   </item>
-  <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="-1_20" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="TP1234"/>
     <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_4"/>
-    <reference name="subject" ref_id="-1_21"/>
+    <reference name="subject" ref_id="-1_18"/>
   </item>
   <item id="11_36" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="ensembl"/>
@@ -121,18 +97,14 @@
       <reference ref_id="-1_2"/>
     </collection>
     <collection name="objects">
-      <reference ref_id="-1_29"/>
+      <reference ref_id="-1_26"/>
     </collection>
   </item>
   <item id="1_11167" class="http://www.flymine.org/model/genomic#Contig">
     <attribute name="length" value="25020"/>
     <attribute name="identifier" value="AAAB01008846_375"/>
-    <reference name="clone" ref_id="13_8846"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="sequence" ref_id="12_11167"/>
-    <collection name="subjects">
-      <reference ref_id="-1_30"/>
-    </collection>
   </item>
   <item id="12_11167" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
@@ -147,7 +119,7 @@
       <reference ref_id="-1_12"/>
     </collection>
   </item>
-  <item id="-1_21" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="-1_18" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="QP1234"/>
     <attribute name="translationEnd" value="489"/>
     <attribute name="translationStart" value="1"/>
@@ -155,17 +127,17 @@
     <reference name="organism" ref_id="-1_1"/>
     <reference name="startExon" ref_id="0_1"/>
     <collection name="synonyms">
-      <reference ref_id="-1_22"/>
-      <reference ref_id="-1_23"/>
-      <reference ref_id="-1_24"/>
+      <reference ref_id="-1_19"/>
+      <reference ref_id="-1_20"/>
+      <reference ref_id="-1_21"/>
     </collection>
   </item>
   <item id="11_4" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="tRNAscan"/>
   </item>
-  <item id="-1_28" class="http://www.flymine.org/model/genomic#SimpleRelation">
+  <item id="-1_25" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="3_1"/>
-    <reference name="subject" ref_id="-1_21"/>
+    <reference name="subject" ref_id="-1_18"/>
   </item>
   <item id="-1_11" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="472"/>
@@ -205,39 +177,29 @@
       <reference ref_id="-1_8"/>
     </collection>
   </item>
-  <item id="-1_14" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="value" value="AAAB01008846"/>
-    <attribute name="type" value="accession"/>
-    <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="13_8847"/>
-  </item>
   <item id="-1_2" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="ensembl"/>
     <attribute name="url" value="http://www.ensembl.org"/>
   </item>
-  <item id="-1_30" class="http://www.flymine.org/model/genomic#SimpleRelation">
-    <reference name="object" ref_id="1_11167"/>
-    <reference name="subject" ref_id="13_8846"/>
-  </item>
-  <item id="-1_16" class="http://www.flymine.org/model/genomic#Supercontig">
+  <item id="-1_13" class="http://www.flymine.org/model/genomic#Supercontig">
     <attribute name="identifier" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="objects">
-      <reference ref_id="-1_17"/>
+      <reference ref_id="-1_14"/>
     </collection>
     <collection name="subjects">
-      <reference ref_id="-1_18"/>
-      <reference ref_id="-1_19"/>
-      <reference ref_id="-1_20"/>
+      <reference ref_id="-1_15"/>
+      <reference ref_id="-1_16"/>
+      <reference ref_id="-1_17"/>
     </collection>
   </item>
-  <item id="-1_20" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_17" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="9382499"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9357480"/>
     <attribute name="startIsPartial" value="false"/>
     <attribute name="strand" value="-1"/>
-    <reference name="object" ref_id="-1_16"/>
+    <reference name="object" ref_id="-1_13"/>
     <reference name="subject" ref_id="1_11169"/>
   </item>
   <item id="8_2" class="http://www.flymine.org/model/genomic#RankedRelation">
@@ -254,29 +216,19 @@
     <attribute name="identifier" value="ENSANGT00000019935"/>
     <reference name="gene" ref_id="5_1"/>
     <reference name="organism" ref_id="-1_1"/>
-    <reference name="protein" ref_id="-1_21"/>
+    <reference name="protein" ref_id="-1_18"/>
     <collection name="objects">
-      <reference ref_id="-1_27"/>
+      <reference ref_id="-1_24"/>
     </collection>
     <collection name="subjects">
-      <reference ref_id="-1_28"/>
+      <reference ref_id="-1_25"/>
     </collection>
   </item>
-  <item id="-1_15" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="value" value="AAAB01008846"/>
-    <attribute name="type" value="accession"/>
-    <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="13_8848"/>
-  </item>
-  <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="-1_21" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="EAA1234"/>
     <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="-1_21"/>
-  </item>
-  <item id="-1_31" class="http://www.flymine.org/model/genomic#SimpleRelation">
-    <reference name="object" ref_id="1_11168"/>
-    <reference name="subject" ref_id="13_8847"/>
+    <reference name="subject" ref_id="-1_18"/>
   </item>
   <item id="11_5" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="CpG"/>
@@ -301,7 +253,7 @@
     <reference name="object" ref_id="1_11167"/>
     <reference name="subject" ref_id="0_1"/>
   </item>
-  <item id="-1_33" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_27" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="7000"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="endPhase" value="0"/>
@@ -312,7 +264,7 @@
     <reference name="object" ref_id="1_11169"/>
     <reference name="subject" ref_id="0_101"/>
   </item>
-  <item id="-1_26" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_23" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="9253"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9172"/>
@@ -320,20 +272,6 @@
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="1_11167"/>
     <reference name="subject" ref_id="14_2077"/>
-  </item>
-  <item id="-1_13" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="value" value="AAAB01008846"/>
-    <attribute name="type" value="accession"/>
-    <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="13_8846"/>
-  </item>
-  <item id="13_8848" class="http://www.flymine.org/model/genomic#Clone">
-    <attribute name="htgPhase" value="1"/>
-    <attribute name="identifier" value="AAAB01008846"/>
-    <reference name="organism" ref_id="-1_1"/>
-    <collection name="synonyms">
-      <reference ref_id="-1_15"/>
-    </collection>
   </item>
   <item id="-1_4" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="TrEMBL"/>
@@ -345,12 +283,12 @@
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="3_1"/>
   </item>
-  <item id="-1_25" class="http://www.flymine.org/model/genomic#ComputationalResult">
+  <item id="-1_22" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="score" value="86.41"/>
     <reference name="analysis" ref_id="11_4"/>
     <reference name="source" ref_id="-1_2"/>
   </item>
-  <item id="-1_35" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_29" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="25020"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="endPhase" value="0"/>
@@ -361,7 +299,7 @@
     <reference name="object" ref_id="1_11168"/>
     <reference name="subject" ref_id="0_101"/>
   </item>
-  <item id="-1_34" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_28" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="25020"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="endPhase" value="0"/>
@@ -372,13 +310,13 @@
     <reference name="object" ref_id="1_11168"/>
     <reference name="subject" ref_id="0_101"/>
   </item>
-  <item id="-1_18" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_15" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="9382499"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9357480"/>
     <attribute name="startIsPartial" value="false"/>
     <attribute name="strand" value="-1"/>
-    <reference name="object" ref_id="-1_16"/>
+    <reference name="object" ref_id="-1_13"/>
     <reference name="subject" ref_id="1_11167"/>
   </item>
   <item id="-1_1" class="http://www.flymine.org/model/genomic#Organism">
@@ -390,9 +328,9 @@
       <reference ref_id="-1_2"/>
     </collection>
     <collection name="objects">
-      <reference ref_id="-1_33"/>
-      <reference ref_id="-1_35"/>
-      <reference ref_id="-1_34"/>
+      <reference ref_id="-1_28"/>
+      <reference ref_id="-1_29"/>
+      <reference ref_id="-1_27"/>
     </collection>
   </item>
   <item id="-1_5" class="http://www.flymine.org/model/genomic#Database">
@@ -410,7 +348,7 @@
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="0_1"/>
   </item>
-  <item id="-1_29" class="http://www.flymine.org/model/genomic#Location">
+  <item id="-1_26" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="9746"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="endPhase" value="0"/>
@@ -424,12 +362,8 @@
   <item id="1_11168" class="http://www.flymine.org/model/genomic#Contig">
     <attribute name="length" value="25020"/>
     <attribute name="identifier" value="AAAB01008846_376"/>
-    <reference name="clone" ref_id="13_8847"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="sequence" ref_id="12_11168"/>
-    <collection name="subjects">
-      <reference ref_id="-1_31"/>
-    </collection>
   </item>
   <item id="12_11168" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
@@ -440,11 +374,11 @@
     <reference name="source" ref_id="-1_7"/>
     <reference name="subject" ref_id="5_1"/>
   </item>
-  <item id="-1_22" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="-1_19" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="QP1234"/>
     <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_5"/>
-    <reference name="subject" ref_id="-1_21"/>
+    <reference name="subject" ref_id="-1_18"/>
   </item>
   <item id="22_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="ENSANGG00000017446"/>
