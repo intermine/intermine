@@ -8,6 +8,7 @@
 
 <tiles:importAttribute/>
 
+<!-- allFields.jsp -->
 <c:forEach var="field" items="${cld.allFieldDescriptors}" varStatus="status">
   <c:choose>
     <c:when test="${field.attribute}">
@@ -23,7 +24,6 @@
       <c:set var="thisprefix" value="${prefix}" scope="page"/>
       <c:set var="thiscld" value="${cld}" scope="page"/>
       <c:set var="thisobject" value="${object}" scope="page"/>
-
       <c:set var="prefix" value="${prefix}${field.name}." scope="request"/>
       <c:set var="cld" value="${field.referencedClassDescriptor}" scope="request"/>
       <c:set var="object" value="${object[field.name]}" scope="request"/>
@@ -33,8 +33,8 @@
       <c:set var="object" value="${thisobject}" scope="request"/>
     </c:when>
     <c:otherwise>
-
     </c:otherwise>
   </c:choose>
   <br/>
 </c:forEach>
+<!-- /allFields.jsp -->
