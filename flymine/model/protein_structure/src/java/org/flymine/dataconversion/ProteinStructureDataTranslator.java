@@ -86,14 +86,14 @@ public class ProteinStructureDataTranslator extends DataTranslator
             Item protein = createItem(tgtNs + "Protein", "");
             protein.addAttribute(new Attribute("primaryAccession", modelledRegion
                                                .getAttribute("uniprot_id").getValue()));
+            proteinRegion.addReference(new Reference("protein", protein.getIdentifier()));
             Item location = createItem(tgtNs + "Location", "");
             location.addAttribute(new Attribute("start", modelledRegion
                                                 .getAttribute("begin").getValue()));
             location.addAttribute(new Attribute("end", modelledRegion
                                                 .getAttribute("end").getValue()));
-            location.addReference(new Reference("subject", protein.getIdentifier()));
-            location.addReference(new Reference("object", proteinRegion.getIdentifier()));
-
+            location.addReference(new Reference("object", protein.getIdentifier()));
+            location.addReference(new Reference("subject", proteinRegion.getIdentifier()));
 
             location.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier()})));
@@ -123,7 +123,9 @@ public class ProteinStructureDataTranslator extends DataTranslator
                 throw new InterMineException(e);
             }
             modelledProteinStructure.addAttribute(new Attribute("atm", atm.toString()));
-            
+            modelledProteinStructure.addReference(new Reference("region",
+                                                                proteinRegion.getIdentifier()));
+
             // link proteinRegion and modelledProteinStructure using annotation
             Item annotation = createItem(tgtNs + "Annotation", "");
             annotation.addReference(new Reference("subject", proteinRegion.getIdentifier()));
