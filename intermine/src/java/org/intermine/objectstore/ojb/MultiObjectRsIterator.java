@@ -56,7 +56,7 @@ package org.flymine.objectstore.ojb;
 
 import org.apache.ojb.broker.accesslayer.*;
 
-import org.apache.ojb.broker.metadata.ClassDescriptor;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
 import org.apache.ojb.broker.util.SqlHelper;
 
@@ -68,6 +68,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryNode;
+
 
 /**
  * An extension to RsIterator that can be used to retrieve multiple
@@ -78,8 +81,7 @@ import org.flymine.objectstore.query.Query;
  */
 public class MultiObjectRsIterator extends RsIterator
 {
-    private Query query = null;
-    private ClassDescriptor[] clds;
+    private Query query;
 
     /**
      * No-argument MultiObjectRsIterator constructor
@@ -89,15 +91,15 @@ public class MultiObjectRsIterator extends RsIterator
 
     /**
      * MultiObjectRsIterator constructor
-     * @param queryPackage the QueryPackage (objectstore query + class descriptors) we should use
+     * @param query the ObjectStore query we should use
      * @param broker the broker we should use.
      */
-    public MultiObjectRsIterator(QueryPackage queryPackage, PersistenceBrokerImpl broker) {
-        //m_rsAndStmt = broker.serviceJdbcAccess().executeQuery(queryPackage);
+    public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker) {
+        //TODO uncomment this
+        //m_rsAndStmt = broker.serviceJdbcAccess().executeQuery(query);
         m_row = new HashMap();
-        query = queryPackage.getQuery();
+        this.query = query;
         m_broker = broker;
-        clds = queryPackage.getDescriptors();
         //prefetchRelationships(query);
     }
 
@@ -115,34 +117,36 @@ public class MultiObjectRsIterator extends RsIterator
             hasCalledCheck = false;
             if (hasNext) {
                 // for each cld: set m_rsAndStmt, call getObjectFromResultSet, put in results array
-                    ResultSet rsTemp = m_rsAndStmt.m_rs;
-                    Object[] results = new Object[clds.length];
-                    for (int i = 0; i < clds.length; i++) {
-                        Object obj = null;
-                        m_rsAndStmt.m_rs = getUnaliasedColumns(rsTemp, (String) query.getAliases()
-                                                               .get(query.getSelect().get(i)));
-
-                        if (clds[i] != null) {
-                            m_cld = clds[i];
-                            itemProxyClass = m_cld.getProxyClass();
-                            itemExtentClass = null;
-
-                            obj = getObjectFromResultSet();
-                            // Invoke events on PersistenceBrokerAware instances and listeners
-                            m_broker.fireBrokerEvent(obj, PersistenceBrokerImpl.EVENT_AFTER_LOOKUP);
-                        } else {
-                            int jdbcType = m_rsAndStmt.m_rs.getMetaData().getColumnType(1);
-                            obj = SqlHelper.getObjectFromColumn(m_rsAndStmt.m_rs, jdbcType, 1);
-                        }
-                        results[i] = obj;
+                DescriptorRepository dr = m_broker.getDescriptorRepository();
+                ResultSet rsTemp = m_rsAndStmt.m_rs;
+                Object[] results = new Object[query.getSelect().size()];
+                for (int i = 0; i < results.length; i++) {
+                    Object obj = null;
+                    QueryNode node = (QueryNode) query.getSelect().get(i);
+                    m_rsAndStmt.m_rs = getUnaliasedColumns(rsTemp, (String) query.getAliases()
+                                                           .get(node));
+                    
+                    if (node instanceof QueryClass) {
+                        m_cld = dr.getDescriptorFor(((QueryClass) node).getType());
+                        itemProxyClass = m_cld.getProxyClass();
+                        itemExtentClass = null;
+                        
+                        obj = getObjectFromResultSet();
+                        // Invoke events on PersistenceBrokerAware instances and listeners
+                        m_broker.fireBrokerEvent(obj, PersistenceBrokerImpl.EVENT_AFTER_LOOKUP);
+                    } else {
+                        int jdbcType = m_rsAndStmt.m_rs.getMetaData().getColumnType(1);
+                        obj = SqlHelper.getObjectFromColumn(m_rsAndStmt.m_rs, jdbcType, 1);
                     }
-                    m_rsAndStmt.m_rs = rsTemp;
-                    m_current_row++;
-
-                    return results;
-                } else {
-                    throw new NoSuchElementException();
+                    results[i] = obj;
                 }
+                m_rsAndStmt.m_rs = rsTemp;
+                m_current_row++;
+
+                return results;
+            } else {
+                throw new NoSuchElementException();
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             logger.error(ex);
