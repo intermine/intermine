@@ -147,16 +147,19 @@ public class UniprotDataTranslator extends DataTranslator
             // Caenorhabditis elegans 6239
             // Anopheles gambiae = 7165
             Item organism = (Item) organismIter.next();
-            Item dbReference = ItemHelper.convert(srcItemReader.getItemById(organism
-                                                   .getReference("dbReference").getRefId()));
-            String type = getAttributeValue(dbReference, "type");
-            if ("NCBI Taxonomy".equals(type)) {
-                String taxonString = getAttributeValue(dbReference, "id");
-                if (taxonId != 0) {
-                    throw new IllegalStateException("Attempting to set taxon id to "
-                                          + taxonString + " when it is already " + taxonId);
+            Iterator dbRefIter = getItemsInCollection(
+                                      organism.getCollection("dbReferences")).iterator();
+            while (dbRefIter.hasNext()) {
+                Item dbReference = (Item) dbRefIter.next();
+                String type = getAttributeValue(dbReference, "type");
+                if ("NCBI Taxonomy".equals(type)) {
+                    String taxonString = getAttributeValue(dbReference, "id");
+                    if (taxonId != 0) {
+                        throw new IllegalStateException("Attempting to set taxon id to "
+                                             + taxonString + " when it is already " + taxonId);
+                    }
+                    taxonId = Integer.parseInt(taxonString);
                 }
-                taxonId = Integer.parseInt(taxonString);
             }
         }
 
@@ -167,7 +170,10 @@ public class UniprotDataTranslator extends DataTranslator
             // 1. create Protein, same for all organisms
             // <entry>
             Item protein = createItem(tgtNs + "Protein", "");
-            String proteinName = getAttributeValue(srcItem, "name");
+
+            // find name and set all names as synonyms
+            List proteinNames = getItemsInCollection(srcItem.getCollection("names"));
+            String proteinName = (String) getAttributeValue((Item) proteinNames.get(0), "name");
 
             protein.addAttribute(new Attribute("identifier", proteinName));
             protein.addReference(organismReference);
@@ -193,7 +199,6 @@ public class UniprotDataTranslator extends DataTranslator
                     retval.add(createSynonym(protein.getIdentifier(), "accession",
                                              srcAccessionString, getDbId("UniProt")));
                 }
-
             }
             // add UniProt Database to evidence collection
             ReferenceList evidence = new ReferenceList("evidence", new ArrayList());
