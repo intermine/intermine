@@ -27,4 +27,15 @@
         <heading>Reports</heading>
         <item><ulink url="/internal/reports/ismb2002">ISMB 2002</ulink></item>
     </section>
+    <section>
+        <heading>Prototype</heading>
+        <item><ulink url="/internal/prototype/overview">Overview</ulink></item>
+        <item><ulink url="/internal/prototype/data_model">Data model</ulink></item>
+        <item><ulink url="/internal/prototype/objectstore_interface">ObjectStore interface</ulink></item>
+        <item><ulink url="/internal/prototype/objectstore_impl">ObjectStore implementation</ulink></item>
+        <item><ulink url="/internal/prototype/sql_optimisation">SQL Optimisation</ulink></item>
+        <item><ulink url="/internal/prototype/xml_binding">Loading XML data</ulink></item>
+        <item><ulink url="/internal/prototype/flychip_data">Loading FlyChip data</ulink></item>
+    </section>
+
 </menu>
