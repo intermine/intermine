@@ -99,6 +99,22 @@
           </proteinParticipant>
           <proteinParticipant>
             <proteinInteractorRef ref="EBI-87512"/>
+ <featureList>
+                            <feature>
+                            <featureDescription>
+                                <names>
+                                    <shortLabel>binding site</shortLabel>
+                                </names>
+                                <xref>
+                                    <primaryRef db="PSI-MI" id="MI:0117" />
+                                </xref>
+                            </featureDescription>
+                                <location>
+                                    <begin position="103" />
+                                    <end position="346" />
+                                </location>
+                            </feature>
+                        </featureList>
             <role>prey</role>
           </proteinParticipant>
         </participantList>
