@@ -25,7 +25,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.FieldDescriptor;
 
-
 import org.flymine.model.genomic.Annotation;
 import org.flymine.model.genomic.Location;
 
@@ -41,9 +40,24 @@ public class PostProcessUtil
      * Create a clone of given InterMineObject including the id
      * @param obj object to clone
      * @return the cloned object
-     * @throws Exception if problems with reflection
+     * @throws IllegalAccessException if problems with reflection
      */
-    public static InterMineObject cloneInterMineObject(InterMineObject obj) throws Exception {
+    public static InterMineObject cloneInterMineObject(InterMineObject obj)
+        throws IllegalAccessException {
+        InterMineObject newObj = copyInterMineObject(obj);
+        newObj.setId(obj.getId());
+        return newObj;
+    }
+
+
+    /**
+     * Create a copy of given InterMineObject with *no* id set
+     * @param obj object to copy
+     * @return the copied object
+     * @throws IllegalAccessException if problems with reflection
+     */
+    public static InterMineObject copyInterMineObject(InterMineObject obj)
+        throws IllegalAccessException {
         InterMineObject newObj = (InterMineObject)
             DynamicUtil.createObject(DynamicUtil.decomposeClass(obj.getClass()));
         Map fieldInfos = new HashMap();
@@ -55,11 +69,14 @@ public class PostProcessUtil
         Iterator fieldIter = fieldInfos.keySet().iterator();
         while (fieldIter.hasNext()) {
             String fieldName = (String) fieldIter.next();
-            TypeUtil.setFieldValue(newObj, fieldName,
-                                   TypeUtil.getFieldProxy(obj, fieldName));
+            if (!fieldName.equals("id")) {
+                TypeUtil.setFieldValue(newObj, fieldName,
+                                       TypeUtil.getFieldProxy(obj, fieldName));
+            }
         }
         return newObj;
     }
+
 
     /**
      * Query ObjectStore for all Relation objects (or specified subclass)
@@ -152,6 +169,7 @@ public class PostProcessUtil
      * destinationClass
      * @param destinationClass the class referred to by
      * connectingClass.connectingClassFieldName
+     * @param orderBySource if true query will be ordered by sourceClass
      * @return an iterator over the results - (Gene, Exon) pairs
      * @throws ObjectStoreException if problem reading ObjectStore
      * @throws IllegalAccessException if one of the field names doesn't exist in the corresponding
