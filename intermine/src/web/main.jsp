@@ -76,7 +76,9 @@
           </c:choose>
         </span>
         <html:link action="/mainChange?method=addConstraint&path=${node.path}">constrain</html:link>
-        <html:link action="/mainChange?method=removeNode&path=${node.path}">remove</html:link>
+        <c:if test="${node.indentation > 0}">
+          <html:link action="/mainChange?method=removeNode&path=${node.path}">remove</html:link>
+        </c:if>
         <br/>
         <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
           <c:forEach begin="0" end="${node.indentation}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
@@ -146,4 +148,5 @@
   
 
 </table>
+<br/>
 <!-- /main.jsp -->

@@ -7,7 +7,6 @@
 
 <!-- view.jsp -->
 <c:if test="${!empty VIEW}">
-  <br/>
   Current view:<br/>
   <br/>
   <table class="results" cellspacing="0">

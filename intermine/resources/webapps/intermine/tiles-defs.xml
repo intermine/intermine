@@ -102,11 +102,7 @@
               controllerUrl="/initQueryClassSelect.do"/>
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
   <definition name="queryStatistics.tile" path="/queryStatistics.jsp"/>
-  <definition name="resultsView.tile" path="/results.jsp">
-    <put name="table" value="table.jsp"/>
-    <put name="queryName" value="queryName.jsp"/>
-    <put name="saveQuery" value="saveQuery.tile"/>
-  </definition>
+  <definition name="resultsView.tile" path="/table.jsp"/>
   <definition name="templates.tile" path="/templates.jsp"/>
   <definition name="help.tile" path="/help.jsp"/>
   <definition name="export.tile" path="/export.jsp"/>
