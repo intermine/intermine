@@ -33,6 +33,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -46,7 +47,6 @@ public class NotXmlParser
 {
     private static final Logger LOG = Logger.getLogger(NotXmlParser.class);
     protected static final String DELIM = "$_^";
-    protected static final String ESCAPED_DELIM = "\\$_\\^";
     protected static final String ENCODED_DELIM = "d";
 
     /**
@@ -59,7 +59,7 @@ public class NotXmlParser
      */
     public static InterMineObject parse(String xml, ObjectStore os) throws ClassNotFoundException {
         try {
-            String a[] = xml.split(ESCAPED_DELIM);
+            String a[] = StringUtil.split(xml, DELIM);
 
             Set classes = new HashSet();
             if (!"".equals(a[0])) {
