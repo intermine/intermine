@@ -11,16 +11,16 @@ a:hover {
   text-decoration: underline
 }
 
-.sidebar, .links, .footer {
+.links, .footer {
   font-size: small;
   background-color: #ccaaff;
+  border: solid 1px;
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 .links .menu-item {
   padding-right: 1em;
   padding-left: 1em;
-}
-.footer {
-  width: 100%;
 }
 .menu-heading {
   font-weight: bold;
@@ -54,6 +54,9 @@ table.query th, table.query td, table.results th, table.results td {
 }
 table.results td td {
   border:none;
+}
+table.results {
+  font-size: small;
 }
 div.view {
   border: solid 1px;
