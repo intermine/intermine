@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.beans.IntrospectionException;
 
 /**
  * Provides utility methods for working with Java types and reflection
@@ -29,6 +33,21 @@ public class TypeUtil
         Field f  = getField(o.getClass(), fieldName);
         f.setAccessible(true);
         return f.get(o);
+    }
+
+    /**
+     * Sets the value of a public or protected Field of an Object given the field name
+     *
+     * @param o the Object
+     * @param fieldName the name of the relevant Field
+     * @param fieldValue the value of the Field
+     * @throws IllegalAccessException if the field is inaccessible
+     */ 
+    public static void setFieldValue(Object o, String fieldName, Object fieldValue) 
+        throws IllegalAccessException {
+        Field f  = getField(o.getClass(), fieldName);
+        f.setAccessible(true);
+        f.set(o, fieldValue);
     }
 
     /**
@@ -66,6 +85,25 @@ public class TypeUtil
             }
         } while ((c = c.getSuperclass()) != null);
         return fields;
+    }
+    
+    /**
+     * Gets the getter methods for the bean properties of a class
+     *
+     * @param c the Class
+     * @return an array of the getter methods
+     * @throws IntrospectionException if an error occurs
+     */
+    public static Method[] getGetters(Class c) throws IntrospectionException {
+        PropertyDescriptor[] pd = Introspector.getBeanInfo(c).getPropertyDescriptors();
+        Collection getters = new HashSet();
+        for (int i = 0; i < pd.length; i++) {
+            Method getter = pd[i].getReadMethod();
+            if (!getter.getName().equals("getClass")) {
+                getters.add(getter);
+            }
+        }
+        return (Method[]) getters.toArray(new Method[] {});
     }
 
     /**
