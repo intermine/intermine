@@ -593,7 +593,6 @@
     </java>
   </target>
 
-
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
@@ -1091,16 +1090,88 @@
     <analyse-db database="db.common-tgt-items"/>
   </target>
 
-
   <target name="load-psi-dag">
     <taskdef name="load-psi-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-psi-dag integrationWriter="integration.production" source="os.psi-dag-translated" sourceName="psi"/>
+    <load-psi-dag integrationWriter="integration.production" source="os.psi-dag-translated" sourceName="psi-dag"/>
   </target>
 
-  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag"/>
+  <target name="retrieve-psi" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.psi-src-items-std"/>
+    </ant>
+
+    <taskdef name="convert-xml" classname="org.intermine.task.XmlConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <convert-xml schema="${model}/psi/psi.xsd"
+                  model="psi"
+                  osName="osw.psi-src-items">
+      <fileset dir="/shared/data/ProteinInteractions">
+        <include name="caeel*.xml"/>
+        <include name="drome*.xml"/>
+        <include name="droso*.xml"/>
+      </fileset>
+    </convert-xml>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+    </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.common-src-items"/>
+  </target>
+
+ <target name="translate-psi" depends="prepare-build-model, compile-psi-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.psi-tgt-items-std"/>
+    </ant>
+    <java classname="org.flymine.dataconversion.PsiDataTranslator" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.psi-src-items" />
+      <arg value="osw.psi-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.common-tgt-items"/>
+  </target>
+
+  <target name="load-psi">
+    <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi" ignoreDuplicates="true"/>
+  </target>
+
+  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi, translate-psi, load-psi"/>
 
 
   <!-- GO PIPELINE -->
@@ -1205,6 +1276,7 @@
   <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
+                                           build-psi-production,
                                            build-orthologues-production,
                                            build-rnai-production,
                                            build-phenotype-production,
@@ -1262,6 +1334,15 @@
     </ant>
   </target>
 
+    <target name="build-db-fulldatatest" depends="prepare-build-model, prepare-test">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.fulldatatest"/>
+      <property name="objectstore.name" value="os.fulldatatest"/>
+    </ant>
+  </target>
+
   <target name="compile-ensembl-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
@@ -1270,7 +1351,7 @@
     </ant>
   </target>
 
-  <target name="ensembl-test" depends="prepare-test, convert-ensembl, jar-genomic">
+  <target name="ensembl-test" depends="prepare-test, convert-ensembl, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
       <property name="model.src" value="${model}/ensembl"/>
@@ -1318,7 +1399,7 @@
     </ant>
   </target>
 
-  <target name="orthologue-test" depends ="prepare-build-model, prepare-test">
+  <target name="orthologue-test" depends ="prepare-build-model, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
       <property name="model.src" value="${model}/orthologue"/>
@@ -1350,7 +1431,7 @@
     </ant>
   </target>
 
-  <target name="psi-test" depends="prepare-build-model, psi-to-owl">
+  <target name="psi-test" depends="prepare-test, prepare-build-model, build-db-fulldatatest">
     <copy file="${model}/psi/psi.xsd" toDir="${build.model}/psi"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="psi"/>
@@ -1407,7 +1488,6 @@
           depends="create-production-model, compile-genomic-model, orthologue-test, mage-test, ensembl-test, rnai-test">
     <antcall target="test-report"/>
   </target>
-
 
   <target name="fulltest" depends="clean, test-models-full"
           description="do an incremental test and fail if there are any errors">
@@ -1662,14 +1742,11 @@
     </delete>
   </target>
 
-
   <!-- ANTDOC TARGET -->
-
-  <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
-    <classpath refid="base.class.path"/>
-  </taskdef>
-
-   <target name="ant-doc">
-     <AntDoc destination="${results.antdoc}" buildfile="${ant.file}"/>
-   </target>
+  <target name="ant-doc">
+    <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
+      <classpath refid="base.class.path"/>
+    </taskdef>
+    <AntDoc destination="${results.antdoc}" buildfile="${ant.file}"/>
+  </target>
 </project>

@@ -10,30 +10,38 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
 
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.dataconversion.ObjectStoreItemReader;
+import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.ontology.OntologyUtil;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
 
 /**
- * DataTranslator specific to Protein Interacion data in PSI XML format.
+ * DataTranslator specific to Protein Interaction data in PSI XML format.
  *
  * @author Richard Smith
  * @author Andrew Varley
  */
-
 public class PsiDataTranslator extends DataTranslator
 {
     private Item db = null;
@@ -71,13 +79,13 @@ public class PsiDataTranslator extends DataTranslator
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
+                String tgtClassName =  OntologyUtil.getFragmentFromURI(tgtItem.getClassName());
                 if ("ExperimentType".equals(className)) {
                     Item pub = createPublication(srcItem);
                     if (pub != null) {
                         tgtItem.addReference(new Reference("publication", pub.getIdentifier()));
+                        result.add(pub);
                     }
-                    result.add(pub);
-
                     // no confidence values in current data set
                 } else if ("InteractionElementType".equals(className)) {
                     // create ProteinInteraction relation
@@ -91,22 +99,24 @@ public class PsiDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "analysis", "experimentList", "experimentRef");
 
                     // set confidence from attributeList
-                    Iterator iter = ItemHelper.convert(srcItemReader
-                                 .getItemById(srcItem.getReference("attributeList").getRefId()))
-                        .getCollection("attributes").getRefIds().iterator();
-                    while (iter.hasNext()) {
-                        Item attribute = ItemHelper.convert(srcItemReader
-                                                            .getItemById((String) iter.next()));
-                        String value = attribute.getAttribute("attribute").getValue().trim();
-                        String name = attribute.getAttribute("name").getValue().trim();
-                        if (Character.isDigit(value.charAt(0))
-                            && name.equals("author-confidence")) {
-                            tgtItem.addAttribute(new Attribute("confidence", value));
+                    if (srcItem.getReference("attributeList") != null) {
+                        Iterator iter = ItemHelper.convert(srcItemReader.getItemById(srcItem
+                                                         .getReference("attributeList").getRefId()))
+                            .getCollection("attributes").getRefIds().iterator();
+                        while (iter.hasNext()) {
+                            Item attribute = ItemHelper.convert(srcItemReader
+                                                                .getItemById((String) iter.next()));
+                            String value = attribute.getAttribute("attribute").getValue().trim();
+                            String name = attribute.getAttribute("name").getValue().trim();
+                            if (Character.isDigit(value.charAt(0))
+                                && name.equals("author-confidence")) {
+                                tgtItem.addAttribute(new Attribute("confidence", value));
+                            }
                         }
                     }
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
-                    // protein needs swissport id set and synonym to swissprot
+                    // protein needs swissprot id set and synonym to swissprot
                     Item xref = ItemHelper.convert(srcItemReader
                                   .getItemById(srcItem.getReference("xref").getRefId()));
                     Item dbXref = ItemHelper.convert(srcItemReader
@@ -121,14 +131,21 @@ public class PsiDataTranslator extends DataTranslator
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
                     }
-
-
                 } else if ("Source_Entry_EntrySet".equals(className)) {
                     tgtItem.setIdentifier(getDb().getIdentifier());
                     tgtItem.addAttribute(new Attribute("title",
                             ItemHelper.convert(srcItemReader
                                  .getItemById(srcItem.getReference("names").getRefId()))
                                                  .getAttribute("shortLabel").getValue()));
+                } else if ("ProteinInteractionTerm".equals(tgtClassName)) {
+                    Item xref = ItemHelper.convert(srcItemReader
+                                                   .getItemById(srcItem.getReference("xref")
+                                                                .getRefId()));
+                    Item dbXref = ItemHelper.convert(srcItemReader
+                                                     .getItemById(xref.getReference("primaryRef")
+                                                                  .getRefId())); 
+                    tgtItem.addAttribute(new Attribute("identifier",
+                                                       dbXref.getAttribute("id").getValue()));
                 }
                 result.add(tgtItem);
             }
@@ -184,10 +201,35 @@ public class PsiDataTranslator extends DataTranslator
     }
 
     private Item getSwissProt() {
-        if (this.swissProt == null) {
+        if (swissProt == null) {
             swissProt = createItem(tgtNs + "Database", "");
             swissProt.addAttribute(new Attribute("title", "Swiss-Prot"));
         }
         return swissProt;
+    }
+
+    /**
+     * Main method
+     * @param args command line arguments
+     * @throws Exception if something goes wrong
+     */
+    public static void main (String[] args) throws Exception {
+        String srcOsName = args[0];
+        String tgtOswName = args[1];
+        String modelName = args[2];
+        String format = args[3];
+        String namespace = args[4];
+
+        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
+        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
+        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
+        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new FileReader(new File(modelName)), null, format);
+        PsiDataTranslator dt = new PsiDataTranslator(srcItemReader, model, namespace);
+        model = null;
+        dt.translate(tgtItemWriter);
+        tgtItemWriter.close();
     }
 }

@@ -47,7 +47,6 @@ public class PsiDataTranslatorTest extends DataConversionTestCase {
         modelName = "genomic";
     }
 
-
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
         Map itemMap = writeItems(srcItems);
@@ -69,8 +68,8 @@ public class PsiDataTranslatorTest extends DataConversionTestCase {
         MockItemWriter mockIw = new MockItemWriter(new HashMap());
         Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("psi.xsd"));
 
-        XmlConverter converter = new XmlConverter(psiModel, srcReader, xsdReader, mockIw);
-        converter.process();
+        XmlConverter converter = new XmlConverter(psiModel, xsdReader, mockIw);
+        converter.process(srcReader);
 
         return mockIw.getItems();
     }
@@ -86,5 +85,4 @@ public class PsiDataTranslatorTest extends DataConversionTestCase {
         ont.read(reader, null, "N3");
         return ont;
     }
-
 }
