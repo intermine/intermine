@@ -1000,9 +1000,12 @@ public class Query implements SQLStringable
                     case SqlTokenTypes.LITERAL_like:
                         op = Constraint.LIKE;
                         break;
+                    case SqlTokenTypes.GORNULL:
+                        op = Constraint.GORNULL;
+                        break;
                     default:
-                        throw (new IllegalArgumentException("Unknown AST node: " + ast.getText()
-                                    + " [" + ast.getType() + "]"));
+                        throw (new IllegalArgumentException("Unknown AST node: " + subAST.getText()
+                                    + " [" + subAST.getType() + "]"));
                 }
                 subAST = subAST.getNextSibling();
                 AbstractValue right = processNewAbstractValue(subAST);

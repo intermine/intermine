@@ -931,11 +931,11 @@ public class QueryOptimiser
             right = reconstructAbstractValue(right, precomputedSqlTable, valueMap, tableSet,
                     groupBy);
             int operation = ((Constraint) oldConstraint).getOperation();
-            if (right.equals(firstPrecompOrderBy) && (operation == Constraint.LT)
-                    && (left instanceof Constant)) {
-                String value = ((Constant) left).toString();
+            if (left.equals(firstPrecompOrderBy) && (operation == Constraint.GORNULL)
+                    && (right instanceof Constant)) {
+                String value = ((Constant) right).toString();
                 for (int i = 1; i < precompOrderBySize; i++) {
-                    value += "99999999999999999999";
+                    value += "50000000000000000000";
                 }
                 return new Constraint(new Constant(value), Constraint.LT,
                         orderByField);

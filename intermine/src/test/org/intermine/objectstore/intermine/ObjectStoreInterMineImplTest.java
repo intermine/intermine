@@ -331,8 +331,53 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         o = (InterMineObject) row.get(2);
         assertEquals("Expected " + t1.toString() + " but got " + o.toString(), t1.getId(), o.getId());
 
+        q.setConstraint(new SimpleConstraint(into, ConstraintOp.GREATER_THAN, new QueryValue(new Integer(100000))));
+        q = QueryCloner.cloneQuery(q);
+        r = os.execute(q);
+        r.setBatchSize(10);
+        
+        row = (ResultsRow) r.get(0);
+        o = (InterMineObject) row.get(2);
+        assertEquals("Expected " + t2.toString() + " but got " + o.toString(), t2.getId(), o.getId());
+        assertEquals(1, r.size());
+
         storeDataWriter.delete(t1);
         storeDataWriter.delete(t2);
+    }
+
+    public void testPrecomputeWithNegatives() throws Exception {
+        Types t1 = new Types();
+        t1.setLongObjType(new Long(-765187651234L));
+        t1.setIntObjType(new Integer(278652));
+        t1.setName("Fred");
+        storeDataWriter.store(t1);
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Types.class);
+        QueryField into = new QueryField(qc, "intObjType");
+        QueryField longo = new QueryField(qc, "longObjType");
+        q.addFrom(qc);
+        q.addToSelect(into);
+        q.addToSelect(longo);
+        q.addToSelect(qc);
+        q.setDistinct(false);
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+
+        Results r = os.execute(q);
+        r.setBatchSize(1);
+        SqlGenerator.registerOffset(q, 1, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, new Integer(278651), new HashMap());
+        
+        ResultsRow row = (ResultsRow) r.get(1);
+        InterMineObject o = (InterMineObject) row.get(2);
+        assertEquals("Expected " + t1.toString() + " but got " + o.toString(), t1.getId(), o.getId());
+        try {
+            r.get(2);
+            fail("Expected size to be 2");
+        } catch (Exception e) {
+        }
+        assertEquals(2, r.size());
+
+        storeDataWriter.delete(t1);
     }
 
     public void testCancelMethods1() throws Exception {

@@ -31,6 +31,11 @@ public class Constraint extends AbstractConstraint
      * right.
      */
     public static final int LIKE = 3;
+    /**
+     * An operation for this constraint indicating that the left is greater than the right, or
+     * the left is null.
+     */
+    public static final int GORNULL = 4;
     
     
     protected AbstractValue left;
@@ -51,7 +56,7 @@ public class Constraint extends AbstractConstraint
     public Constraint(AbstractValue left, int operation, AbstractValue right) {
         this.left = left;
         this.right = right;
-        if ((operation < 1) || (operation > 3)) {
+        if ((operation < 1) || (operation > 4)) {
             throw (new IllegalArgumentException("Invalid value for operation: " + operation));
         }
         this.operation = operation;
@@ -66,6 +71,9 @@ public class Constraint extends AbstractConstraint
     public String getSQLString() {
         if (right.getSQLString().equals("null")) {
             return left.getSQLString() + " IS NULL";
+        } else if (operation == GORNULL) {
+            return "(" + left.getSQLString() + " > " + right.getSQLString() + " OR "
+                + left.getSQLString() + " IS NULL)";
         } else {
             String op = null;
             switch (operation) {
@@ -129,8 +137,6 @@ public class Constraint extends AbstractConstraint
                             } else {
                                 return INDEPENDENT;
                             }
-                        case LIKE:
-                            return INDEPENDENT;
                     }
                     break;
                 case LT:
@@ -194,19 +200,25 @@ public class Constraint extends AbstractConstraint
                                 }
                             }
                             break;
-                        case LIKE:
-                            return INDEPENDENT;
                     }
                     break;
                 case LIKE:
-                    switch (objC.operation) {
-                        case EQ:
-                        case LT:
-                            return INDEPENDENT;
-                        case LIKE:
-                            return (left.equals(objC.left)
-                                    && right.equals(objC.right)
-                                    ? EQUAL : INDEPENDENT);
+                    if (objC.operation == LIKE) {
+                        return (left.equals(objC.left) && right.equals(objC.right)
+                                ? EQUAL : INDEPENDENT);
+                    }
+                    break;
+                case GORNULL:
+                    if (objC.operation == GORNULL) {
+                        if (left.equals(objC.left)) {
+                            if (right.equals(objC.right)) {
+                                return EQUAL;
+                            } else if (right.lessThan(objC.right)) {
+                                return IMPLIED_BY;
+                            } else if (right.greaterThan(objC.right)) {
+                                return IMPLIES;
+                            }
+                        }
                     }
                     break;
             }
@@ -216,7 +228,7 @@ public class Constraint extends AbstractConstraint
         } else if (obj instanceof ConstraintSet) {
             return alterComparisonSwitch(obj.compare(this));
         }
-        // TODO: we shouldn't ever reach this bit of the code. Log?
+        // We reach this bit of code if we see unmatched LIKEs or GORNULLs
         return INDEPENDENT;
     }
 
