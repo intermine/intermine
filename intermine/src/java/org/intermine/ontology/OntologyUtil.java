@@ -95,6 +95,17 @@ public class OntologyUtil
         return domain.getLocalName() + "__" + propName;
     }
 
+     /**
+     * Generate a name for a property given namespace, clasname and property name strings
+     * <namespace>#<classname>__<propertyname>.
+     * @param ns namespace
+     * @param domain the domain name of this property
+     * @param prop the property name
+     * @return the new property name
+     */
+    public static String generatePropertyName(String ns, String domain, String prop) {
+        return correctNamespace(ns) + domain + "__" + prop;
+    }
 
 
     /**
