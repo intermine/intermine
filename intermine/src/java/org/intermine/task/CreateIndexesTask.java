@@ -126,7 +126,7 @@ public class CreateIndexesTask extends Task
             String tableName = DatabaseUtil.getTableName(cld);
             dropIndex(tableName + "__" + keyName);
             createIndex(tableName + "__" + keyName, tableName,
-                        StringUtil.join(fieldNames, ", "));
+                        StringUtil.join(fieldNames, ", ") + ", id");
             doneFieldNames.add(fieldNames.get(0));
         }
 
@@ -141,7 +141,7 @@ public class CreateIndexesTask extends Task
                 if (!doneFieldNames.contains(fieldName)) {
                     dropIndex(tableName + "__"  + ref.getName());
                     createIndex(tableName + "__"  + ref.getName(), tableName,
-                                fieldName);
+                                fieldName + ", id");
                 }
             }
         }
@@ -153,8 +153,16 @@ public class CreateIndexesTask extends Task
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 String tableName = DatabaseUtil.getIndirectionTableName(col);
                 String columnName = DatabaseUtil.getInwardIndirectionColumnName(col);
-                dropIndex(tableName + "__"  + columnName);
-                createIndex(tableName + "__"  + columnName, tableName, columnName);
+                String columnName2 = DatabaseUtil.getOutwardIndirectionColumnName(col);
+                if ((columnName.compareTo(columnName2) < 0)
+                        || (col.getReverseReferenceDescriptor() == null)) {
+                    dropIndex(tableName + "__"  + columnName);
+                    dropIndex(tableName + "__"  + columnName2);
+                    createIndex(tableName + "__"  + columnName, tableName,
+                            columnName + ", " + columnName2);
+                    createIndex(tableName + "__"  + columnName2, tableName,
+                            columnName2 + ", " + columnName);
+                }
             }
         }
     }
