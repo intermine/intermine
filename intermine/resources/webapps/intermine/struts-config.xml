@@ -9,10 +9,10 @@
      using the proposed new syntax.
 -->
 
-
 <struts-config>
 
   <!-- ========== Form Bean Definitions =================================== -->
+
   <form-beans>
 
     <!-- Query form bean -->
@@ -29,25 +29,30 @@
 
   </form-beans>
 
+  <!-- ========== Exceptions Configuration ================================ -->
+
+  <global-exceptions>
+    <exception type="java.lang.Exception"
+               key="exception.message"
+               path="error.page"
+               handler="org.flymine.web.FlyMineExceptionHandler"/>
+  </global-exceptions>
 
   <!-- ========== Global Forward Definitions ============================== -->
+
   <global-forwards>
     <forward   name="error"              path="error.page"/>
   </global-forwards>
-
 
   <!-- ========== Action Mapping Definitions ============================== -->
   <action-mappings>
 
     <!-- Input a query -->
-    <action    path="/query"
-               type="org.flymine.web.QueryAction"
-               name="queryForm"
-              scope="request"
-              input="query"
-              parameter="action">
-      <forward name="results"              path="results.page"/>
-      <forward name="buildquery"           path="query.page"/>
+    <action path="/query"
+                   type="org.flymine.web.QueryAction"
+                   name="queryForm"
+                   parameter="action">
+      <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Input an fql query -->
@@ -82,7 +87,6 @@
     <action path="/initQuery" type="org.flymine.web.QueryInitAction"> 
     </action>
 
-
   </action-mappings>
 
   <!-- ========== Controller Configuration ================================ -->
@@ -93,20 +97,9 @@
     <set-property property="inputForward" value="true"/>
   </controller>
 
-
   <!-- ========== Message Resources Definitions =========================== -->
 
-  <message-resources
-    parameter="FlyMineWebApp"/>
-
-
-  <!-- ========== Exceptions Configuration ================================ -->
-  <global-exceptions>
-    <exception type="java.lang.Exception"
-               key="exception.message"
-               path="error.page"
-               handler="org.flymine.web.FlyMineExceptionHandler"/>
-  </global-exceptions>
+  <message-resources parameter="FlyMineWebApp"/>
 
   <!-- ========== Plug Ins Configuration ================================== -->
 
