@@ -21,10 +21,12 @@ import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -33,6 +35,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.iql.IqlQueryParser;
+import org.intermine.util.DynamicUtil;
 
 import org.intermine.model.testmodel.*;
 
@@ -389,7 +392,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         Query q = QueryCloner.cloneQuery((Query) queries.get("ContainsDuplicatesMN"));
         q.setDistinct(false);
         int count = os.count(q, os.getSequence());
-        assertEquals(8, count);
+        assertEquals(4, count);
     }
 
     public void testCountNoGroupByDistinct() throws Exception {
@@ -576,6 +579,45 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         assertTrue(b == c);
         assertEquals(a, b);
         assertTrue(a == b);
+    }
+
+    public void testIndirectionTableMultipleCopies() throws Exception {
+        Contractor c1 = new Contractor();
+        c1.setName("Clippy");
+        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c2.setName("Übersoft");
+        c2.addContractors(c1);
+        c1.addCompanys(c2);
+
+        storeDataWriter.store(c1);
+        storeDataWriter.store(c2);
+
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Contractor.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc1, "name"), ConstraintOp.EQUALS, new QueryValue("Clippy"));
+        ContainsConstraint cc = new ContainsConstraint(new QueryCollectionReference(qc1, "companys"), ConstraintOp.CONTAINS, qc2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(sc);
+        cs.addConstraint(cc);
+        q1.setConstraint(cs);
+        q1.setDistinct(false);
+
+        try {
+            Results r1 = os.execute(q1);
+            assertEquals(1, r1.size());
+            
+            storeDataWriter.store(c1);
+            Results r2 = os.execute(q1);
+            assertEquals(1, r1.size());
+        } finally {
+            storeDataWriter.delete(c1);
+            storeDataWriter.delete(c2);
+        }
     }
 
     // helper method

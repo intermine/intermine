@@ -42,8 +42,12 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
-            TableBatch table = (TableBatch) tableEntry.getValue();
-            doDeletes(name, table);
+            Table table = (Table) tableEntry.getValue();
+            if (table instanceof TableBatch) {
+                doDeletes(name, (TableBatch) table);
+            } else {
+                doIndirectionDeletes(name, (IndirectionTableBatch) table);
+            }
         }
         if (simpleBatchSize > 0) {
             retval.add(new FlushJobStatementBatchImpl(simpleBatch));
@@ -53,8 +57,13 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
-            TableBatch table = (TableBatch) tableEntry.getValue();
-            doInserts(name, table);
+            Table table = (Table) tableEntry.getValue();
+            if (table instanceof TableBatch) {
+                doInserts(name, (TableBatch) table);
+            } else {
+                doIndirectionInserts(name, (IndirectionTableBatch) table);
+            }
+            table.clear();
         }
         return retval;
     }
@@ -104,7 +113,26 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                 }
             }
             retval.add(new FlushJobStatementBatchImpl(prepS));
-            table.getIdsToInsert().clear();
+        }
+    }
+
+    /**
+     * @see BatchWriterSimpleImpl#doIndirectionInserts
+     */
+    protected void doIndirectionInserts(String name,
+            IndirectionTableBatch table) throws SQLException {
+        if (!table.getRowsToInsert().isEmpty()) {
+            String sql = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
+                + table.getRightColName() + ") VALUES (?, ?)";
+            PreparedStatement prepS = con.prepareStatement(sql);
+            Iterator insertIter = table.getRowsToInsert().iterator();
+            while (insertIter.hasNext()) {
+                Row row = (Row) insertIter.next();
+                prepS.setInt(1, row.getLeft());
+                prepS.setInt(2, row.getRight());
+                prepS.addBatch();
+            }
+            retval.add(new FlushJobStatementBatchImpl(prepS));
         }
     }
 }

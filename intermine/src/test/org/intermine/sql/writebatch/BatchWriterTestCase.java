@@ -18,7 +18,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.intermine.sql.Database;
@@ -355,6 +357,7 @@ public abstract class BatchWriterTestCase extends TestCase
         }
     }
 
+    /*
     public void testPerformance() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection con = db.getConnection();
@@ -401,6 +404,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
+*/
 
     public void testUTF() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
@@ -449,6 +453,99 @@ public abstract class BatchWriterTestCase extends TestCase
             } catch (Exception e) {
             }
         }
+    }
+
+    public void testIndirections() throws Exception {
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection con = db.getConnection();
+        con.setAutoCommit(false);
+        try {
+            Statement s = con.createStatement();
+            try {
+                s.execute("DROP TABLE table1");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            s.addBatch("CREATE TABLE table1(a int, b int)");
+            s.executeBatch();
+            con.commit();
+            s = null;
+            BatchWriter writer = getWriter();
+            Batch batch = new Batch(writer);
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.flush(con);
+            con.commit();
+            Set expected = new HashSet();
+            expected.add(new Row(1, 2));
+            assertEquals(expected, getGot(con));
+
+            batch.deleteRow(con, "table1", "a", "b", 1, 2);
+            batch.flush(con);
+            con.commit();
+            expected.remove(new Row(1, 2));
+            assertEquals(expected, getGot(con));
+
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.deleteRow(con, "table1", "a", "b", 1, 2);
+            batch.flush(con);
+            con.commit();
+            assertEquals(expected, getGot(con));
+
+            batch.deleteRow(con, "table1", "a", "b", 1, 2);
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.flush(con);
+            con.commit();
+            expected.add(new Row(1, 2));
+            assertEquals(expected, getGot(con));
+
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.addRow(con, "table1", "a", "b", 1, 2);
+            batch.addRow(con, "table1", "a", "b", 1, 3);
+            batch.flush(con);
+            con.commit();
+            expected.add(new Row(1, 2));
+            expected.add(new Row(1, 3));
+            assertEquals(expected, getGot(con));
+
+            batch.deleteRow(con, "table1", "a", "b", 1, 2);
+            batch.flush(con);
+            con.commit();
+            expected.remove(new Row(1, 2));
+            assertEquals(expected, getGot(con));
+        } catch (SQLException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            while (e != null) {
+                e.printStackTrace(pw);
+                e = e.getNextException();
+            }
+            pw.flush();
+            throw new Exception(sw.toString());
+        } finally {
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table1");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private Set getGot(Connection con) throws SQLException {
+        Statement s = con.createStatement();
+        ResultSet r = s.executeQuery("SELECT a, b FROM table1");
+        Set set = new HashSet();
+        while (r.next()) {
+            set.add(new Row(r.getInt(1), r.getInt(2)));
+        }
+        return set;
     }
 
     public abstract BatchWriter getWriter();

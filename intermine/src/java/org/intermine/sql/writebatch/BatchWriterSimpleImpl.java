@@ -13,10 +13,12 @@ package org.intermine.sql.writebatch;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.util.DatabaseUtil;
 
@@ -49,9 +51,15 @@ public class BatchWriterSimpleImpl implements BatchWriter
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
-            TableBatch table = (TableBatch) tableEntry.getValue();
-            doDeletes(name, table);
-            doInserts(name, table);
+            Table table = (Table) tableEntry.getValue();
+            if (table instanceof TableBatch) {
+                doDeletes(name, (TableBatch) table);
+                doInserts(name, (TableBatch) table);
+            } else {
+                doIndirectionDeletes(name, (IndirectionTableBatch) table);
+                doIndirectionInserts(name, (IndirectionTableBatch) table);
+            }
+            table.clear();
         }
         if (simpleBatchSize > 0) {
             retval.add(new FlushJobStatementBatchImpl(simpleBatch));
@@ -94,7 +102,6 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     }
                 }
             }
-            table.getIdsToInsert().clear();
         }
     }
 
@@ -135,7 +142,57 @@ public class BatchWriterSimpleImpl implements BatchWriter
             }
             sqlBuffer.append(")");
             addToSimpleBatch(sqlBuffer.toString());
-            table.getIdsToDelete().clear();
+        }
+    }
+
+    /**
+     * Performs all the delete operations for the given IndirectionTableBatch and name.
+     *
+     * @param name the name of the table
+     * @param table the IndirectionTableBatch
+     * @throws SQLException if an error occurs
+     */
+    protected void doIndirectionDeletes(String name,
+            IndirectionTableBatch table) throws SQLException {
+        Set rows = new CombinedSet(table.getRowsToDelete(), table.getRowsToInsert());
+        if (!rows.isEmpty()) {
+            StringBuffer sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
+            boolean needComma = false;
+            Iterator dIter = rows.iterator();
+            while (dIter.hasNext()) {
+                Row row = (Row) dIter.next();
+                if (needComma) {
+                    sql.append(" OR ");
+                }
+                sql.append("(").append(table.getLeftColName()).append(" = ")
+                    .append(row.getLeft()).append(" AND ").append(table.getRightColName()).append(" = ")
+                    .append(row.getRight()).append(")");
+                needComma = true;
+            }
+            sql.append(")");
+            addToSimpleBatch(sql.toString());
+        }
+    }
+
+    /**
+     * Performs all the insert operations for the given IndirectionTableBatch and name.
+     *
+     * @param name the name of the table
+     * @param table the IndirectionTableBatch
+     * @throws SQLException if an error occurs
+     */
+    protected void doIndirectionInserts(String name,
+            IndirectionTableBatch table) throws SQLException {
+        if (!table.getRowsToInsert().isEmpty()) {
+            String preamble = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
+                + table.getRightColName() + ") VALUES (";
+            Iterator insertIter = table.getRowsToInsert().iterator();
+            while (insertIter.hasNext()) {
+                Row row = (Row) insertIter.next();
+                StringBuffer sql = new StringBuffer(preamble).append(row.getLeft()).append(", ")
+                    .append(row.getRight()).append(")");
+                addToSimpleBatch(sql.toString());
+            }
         }
     }
 
@@ -152,6 +209,55 @@ public class BatchWriterSimpleImpl implements BatchWriter
         if (simpleBatchSize > 10000000) {
             retval.add(new FlushJobStatementBatchImpl(simpleBatch));
             simpleBatchSize = 0;
+        }
+    }
+
+    private static class CombinedSet extends AbstractSet
+    {
+        private Set setA, setB;
+
+        public CombinedSet(Set setA, Set setB) {
+            this.setA = setA;
+            this.setB = setB;
+        }
+
+        public int size() {
+            return setA.size() + setB.size();
+        }
+
+        public Iterator iterator() {
+            return new CombinedIterator();
+        }
+
+        private class CombinedIterator implements Iterator
+        {
+            private boolean state = true;
+            private Iterator iter = setA.iterator();
+
+            public boolean hasNext() {
+                if (state) {
+                    if (iter.hasNext()) {
+                        return true;
+                    } else {
+                        state = false;
+                        iter = setB.iterator();
+                        return iter.hasNext();
+                    }
+                } else {
+                    return iter.hasNext();
+                }
+            }
+            
+            public Object next() {
+                if (state && (!iter.hasNext())) {
+                    iter = setB.iterator();
+                }
+                return iter.next();
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
         }
     }
 }

@@ -44,8 +44,6 @@ import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.TypeUtil;
-//import org.intermine.xml.lite.LiteParser;
-//import org.intermine.xml.lite.LiteRenderer;
 
 import org.apache.log4j.Logger;
 
@@ -463,11 +461,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             while (collIter.hasNext()) {
                                 InterMineObject inCollection = (InterMineObject)
                                     collIter.next();
-                                Object indirValues[] = new Object[2];
-                                indirValues[0] = (swap ? o.getId() : inCollection.getId());
-                                indirValues[1] = (swap ? inCollection.getId() : o.getId());
-                                batch.addRow(c, indirectTableName, null, indirColNames,
-                                        indirValues);
+                                batch.addRow(c, indirectTableName, indirColNames[0],
+                                        indirColNames[1],
+                                        (swap ? o.getId() : inCollection.getId()).intValue(),
+                                        (swap ? inCollection.getId() : o.getId()).intValue());
                             }
                         }
                     }

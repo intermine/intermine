@@ -90,6 +90,30 @@ public class Batch
     }
 
     /**
+     * Adds a row to the batch for a given indirection table.
+     *
+     * @param con a Connection for writing to the database
+     * @param name the name of the indirection table
+     * @param leftColName the name of the left-hand field
+     * @param rightColName the name of the right-hand field
+     * @param left the int value of the left field
+     * @param right the int value of the right field
+     * @throws SQLException if a flush occurs, and an error occurs while flushing
+     */
+    public void addRow(Connection con, String name, String leftColName, String rightColName,
+            int left, int right) throws SQLException {
+        IndirectionTableBatch table = (IndirectionTableBatch) tables.get(name);
+        if (table == null) {
+            table = new IndirectionTableBatch(leftColName, rightColName);
+            tables.put(name, table);
+        }
+        batchSize += table.addRow(left, right);
+        if (batchSize > MAX_BATCH_SIZE) {
+            backgroundFlush(con);
+        }
+    }
+
+    /**
      * Deletes a row from the batch for a given table. This action will override any previously
      * added rows. If the batch already shows that row to be in a deleted state (by idField), then
      * no further action is taken. If the table if not set up, then it will be set up with an
@@ -114,6 +138,30 @@ public class Batch
             tables.put(name, table);
         }
         batchSize += table.deleteRow(idField, idValue);
+        if (batchSize > MAX_BATCH_SIZE) {
+            backgroundFlush(con);
+        }
+    }
+
+    /**
+     * Deletes a row from the batch for a given indirection table.
+     *
+     * @param con a Connection for writing to the database
+     * @param name the name of the indirection table
+     * @param leftColName the name of the left-hand field
+     * @param rightColName the name of the right-hand field
+     * @param left the int value of the left field
+     * @param right the int value of the right field
+     * @throws SQLException if a flush occurs, and an error occurs while flushing
+     */
+    public void deleteRow(Connection con, String name, String leftColName, String rightColName,
+            int left, int right) throws SQLException {
+        IndirectionTableBatch table = (IndirectionTableBatch) tables.get(name);
+        if (table == null) {
+            table = new IndirectionTableBatch(leftColName, rightColName);
+            tables.put(name, table);
+        }
+        batchSize += table.deleteRow(left, right);
         if (batchSize > MAX_BATCH_SIZE) {
             backgroundFlush(con);
         }
@@ -164,13 +212,8 @@ public class Batch
         Iterator iter = tables.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            TableBatch table = (TableBatch) entry.getValue();
-            if (table.getIdsToInsert() != null) {
-                table.getIdsToInsert().clear();
-            }
-            if (table.getIdsToDelete() != null) {
-                table.getIdsToDelete().clear();
-            }
+            Table table = (Table) entry.getValue();
+            table.clear();
         }
         batchSize = 0;
         waitForFreeConnection();
