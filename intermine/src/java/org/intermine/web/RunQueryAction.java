@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionMapping;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryCloner;
 import org.flymine.objectstore.query.Results;
 import org.flymine.util.PropertiesUtil;
 
@@ -59,14 +60,6 @@ public class RunQueryAction extends Action
 
         HttpSession session = request.getSession();
 
-        // Remove any previous results from the session
-        if (session.getAttribute("results") != null) {
-            session.removeAttribute("results");
-        }
-        // Remove any previous displayableresults from the session
-        if (session.getAttribute("resultsTable") != null) {
-            session.removeAttribute("resultsTable");
-        }
         Query q = (Query) session.getAttribute("query");
 
         Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
@@ -74,7 +67,7 @@ public class RunQueryAction extends Action
         String osAlias = props.getProperty("os");
         ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-        Results results = os.execute(q);
+        Results results = os.execute(QueryCloner.cloneQuery(q));
         session.setAttribute("results", results);
 
         return (mapping.findForward("results"));
