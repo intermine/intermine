@@ -60,21 +60,6 @@ public class LazyInitializer implements MethodInterceptor
             this.os = (ObjectStore) args[0];
             return null;
         }
-        if (method.getName().equals("equals")) {
-            Object o = args[0];
-            if (o == null) {
-                return null;
-            }
-            java.lang.reflect.Field f = o.getClass().getDeclaredField("id");
-            f.setAccessible(true);
-            int otherId = f.getInt(o);
-            if (otherId != 0) {
-                return new Boolean(id.intValue() == otherId);
-            }
-        }
-        if (method.getName().equals("hashCode")) {
-            return id;
-        }
         if (realSubject == null) {
             if (os == null) {
                 throw new Exception(method.getName() + ": ObjectStore is null");
@@ -85,7 +70,7 @@ public class LazyInitializer implements MethodInterceptor
                 throw new Exception(method.getName() + ": Materialization problem: " + e);
             }
             if (realSubject == null) {
-                throw new Exception(method.getName() + "realSubject is still null");
+                throw new Exception(method.getName() + ": realSubject is still null");
             }
         }
         return method.invoke(realSubject, args);
