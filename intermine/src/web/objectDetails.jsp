@@ -15,15 +15,14 @@
 <table width="100%">
 <tr>
   <td valign="top" width="30%">
-<div class="heading">
-<nobr>Summary for selected
+<im:heading id="summary">
+Summary for selected
 <c:forEach items="${object.clds}" var="cld">
   ${cld.unqualifiedName}
 </c:forEach>
-</nobr>
-</div>
+</im:heading>
 
-<div class="body">
+<im:body id="summary">
 <table cellpadding="5" rules="all">
   <c:forEach items="${object.keyAttributes}" var="attributeName">
     <tr>
@@ -54,12 +53,12 @@
     </c:forEach>
   </c:forEach>
 </table>
-</div>
+</im:body>
 
 
 <c:if test="${!empty object.attributes}">
-  <div class="heading">Fields</div>
-  <div class="body">
+  <im:heading id="fields">Fields</im:heading>
+  <im:body id="fields">
     <table>
     <c:forEach items="${object.attributes}" var="entry">
       <tr>
@@ -83,15 +82,15 @@
       </tr>
     </c:forEach>
     </table>
-  </div>
+  </im:body>
 </c:if>
 
 <c:forEach items="${object.clds}" var="cld">
   <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
-    <div class="heading">
+    <im:heading id="further">
       <nobr>Further information for this ${cld.unqualifiedName}</nobr>
-    </div>
-    <div class="body">
+    </im:heading>
+    <im:body id="further">
       <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
         <c:set var="object_bak" value="${object}"/>
         <c:set var="object" value="${object.object}" scope="request"/>
@@ -99,15 +98,15 @@
         <tiles:insert beanName="displayer" beanProperty="src"/><br/>
         <c:set var="object" value="${object_bak}"/>
       </c:forEach>
-    </div>
+    </im:body>
   </c:if>
 </c:forEach>
 
 </td>
 
 <td valign="top" width="66%">
-<div class="heading"><nobr>Other Information</nobr></div>
-<div class="body">
+<im:heading id="other"><nobr>Other Information</nobr></im:heading>
+<im:body id="other">
 <table>
   <c:if test="${!empty object.refsAndCollections}">
     <c:forEach items="${object.refsAndCollections}" var="entry">
@@ -216,7 +215,7 @@
     </c:forEach>
   </c:if>
 </table>
-</div>
+</im:body>
 
 </td>
 </tr>
