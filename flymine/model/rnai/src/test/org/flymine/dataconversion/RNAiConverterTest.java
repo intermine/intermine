@@ -12,7 +12,6 @@ package org.flymine.dataconversion;
 
 import junit.framework.TestCase;
 
-import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
@@ -20,6 +19,7 @@ import java.util.HashSet;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.FileConverter;
 
 public class RNAiConverterTest extends TestCase
 {
@@ -35,9 +35,10 @@ public class RNAiConverterTest extends TestCase
         input = input.replaceAll(",", "\t"); //just used commas for readibility
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        new RNAiConverter(new BufferedReader(new StringReader(input)), itemWriter).process();
+        FileConverter converter = new RNAiConverter(itemWriter);
+        converter.process(new StringReader(input));
+        converter.close();
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/RNAiConverterTest.xml")));
-        System.out.println(itemWriter.getItems());
         assertEquals(expected, itemWriter.getItems());
     }
 }

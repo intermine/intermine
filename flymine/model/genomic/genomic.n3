@@ -57,6 +57,10 @@
         owl:maxCardinality "1" ;
         owl:onProperty :Annotation__property ] .
 
+:Annotation__qualifier a owl:DatatypeProperty ;
+    rdfs:domain :Annotation;
+    rdfs:range xsd:string .
+
 :Annotation__subject a owl:ObjectProperty ;
     rdfs:domain :Annotation ;
     rdfs:range :BioEntity .

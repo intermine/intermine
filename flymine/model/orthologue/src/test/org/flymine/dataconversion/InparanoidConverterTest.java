@@ -25,6 +25,7 @@ import java.util.HashSet;
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.TargetItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.FileConverter;
 
 public class InparanoidConverterTest extends TargetItemsTestCase
 {
@@ -48,7 +49,9 @@ public class InparanoidConverterTest extends TargetItemsTestCase
             + "14\t1217\tSC\t0.566\tTOR1_YEAST" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        new InparanoidConverter(new BufferedReader(new StringReader(input)), itemWriter).process();
+        FileConverter converter = new InparanoidConverter(itemWriter);
+        converter.process(new StringReader(input));
+        converter.close();
 
         assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
     }

@@ -42,10 +42,10 @@ public class OrthologueConverterTest extends TargetItemsTestCase
         String input = "Title" + ENDL + "GENE1\tGENE2\tSEED\tBRH\tBest Reciprocal Hit\tEnsembl Database" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        OrthologueConverter converter = new OrthologueConverter(new BufferedReader(new StringReader(input)), itemWriter);
+        OrthologueConverter converter = new OrthologueConverter(itemWriter);
         converter.setParam1("ORG1");
         converter.setParam2("ORG2");
-        converter.process();
+        converter.process(new StringReader(input));
 
         Set expected = new HashSet(getExpectedItems());
         assertEquals(expected, itemWriter.getItems());

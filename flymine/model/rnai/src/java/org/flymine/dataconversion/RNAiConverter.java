@@ -10,6 +10,7 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,57 +44,48 @@ public class RNAiConverter extends FileConverter
 
     /**
      * Constructor
-     * @param reader Reader of input data in tab delimited format
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public RNAiConverter(BufferedReader reader, ItemWriter writer)
-        throws ObjectStoreException {
-        super(reader, writer);
+    public RNAiConverter(ItemWriter writer) throws ObjectStoreException {
+        super(writer);
         setupItems();
     }
 
     /**
      * @see DataConverter#process
      */
-    public void process() throws Exception {
-        try {
-            //intentionally throw away first line
-            String line = reader.readLine();
+    public void process(Reader reader) throws Exception {
+        BufferedReader br = new BufferedReader(reader);
+        //intentionally throw away first line
+        String line = br.readLine();
 
-            while ((line = reader.readLine()) != null) {
-                String[] array = line.split("\t", -1); //keep trailing empty Strings
-                Item gene = newGene(array[3], array[6], array[2],
-                        (array.length > 13 ? array[13] : null),
-                        (array.length > 14 ? array[14] : null));
-                String pubMedId;
-                if (array[7].startsWith("pmid:")) {
-                    pubMedId = array[7].substring(5);
-                } else if (array[7].startsWith("pmid")) {
-                    pubMedId = array[7].substring(4);
-                } else {
-                    throw new IllegalArgumentException("pubMedId does not start with \"pmid:\""
-                        + " or \"pmid\": " + array[7]);
-                }
-                newAnnotation(gene,
-                        getPhenotype(array[4]),
-                        getExperimentalResult(pubMedId).getIdentifier());
+        while ((line = br.readLine()) != null) {
+            String[] array = line.split("\t", -1); //keep trailing empty Strings
+            Item gene = newGene(array[3], array[6], array[2],
+                                (array.length > 13 ? array[13] : null),
+                                (array.length > 14 ? array[14] : null));
+            String pubMedId;
+            if (array[7].startsWith("pmid:")) {
+                pubMedId = array[7].substring(5);
+            } else if (array[7].startsWith("pmid")) {
+                pubMedId = array[7].substring(4);
+            } else {
+                throw new IllegalArgumentException("pubMedId does not start with \"pmid:\""
+                                                   + " or \"pmid\": " + array[7]);
             }
-
-            for (Iterator i = genes.values().iterator(); i.hasNext();) {
-                writer.store(ItemHelper.convert((Item) i.next()));
-            }
-            for (Iterator i = annotations.values().iterator(); i.hasNext();) {
-                writer.store(ItemHelper.convert((Item) i.next()));
-            }
-            for (Iterator i = phenotypes.values().iterator(); i.hasNext();) {
-                writer.store(ItemHelper.convert((Item) i.next()));
-            }
-        } finally {
-            writer.close();
+            newAnnotation(gene,
+                          getPhenotype(array[4]),
+                          getExperimentalResult(pubMedId).getIdentifier());
         }
     }
 
+    public void close() throws ObjectStoreException {
+        store(genes.values());
+        store(annotations.values());
+        store(phenotypes.values());
+    }
+    
     private Map annotationEvidence = new HashMap();
     private Map geneAnnotation = new HashMap();
     private Map phenotypeAnnotation = new HashMap();

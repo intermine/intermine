@@ -10,6 +10,7 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -42,75 +43,70 @@ public class InparanoidConverter extends FileConverter
 
     /**
      * Constructor
-     * @param reader Reader of input data in 5-column tab delimited format
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public InparanoidConverter(BufferedReader reader, ItemWriter writer)
-        throws ObjectStoreException {
-        super(reader, writer);
+    public InparanoidConverter(ItemWriter writer) throws ObjectStoreException {
+        super(writer);
         setupItems();
     }
 
     /**
      * @see DataConverter#process
      */
-    public void process() throws Exception {
-        try {
-            String line, species = null, oldIndex = null;
-            Item protein = null;
+    public void process(Reader reader) throws Exception {
+        String line, species = null, oldIndex = null;
+        Item protein = null;
 
-            while ((line = reader.readLine()) != null) {
-                String[] array = line.split("\t");
-                String index = array[0];
-                if (!index.equals(oldIndex)) {
-                    oldIndex = index;
-                    species = array[2];
-                    protein = newProtein(array[4], species);
-                    continue;
-                }
-
-                Item organism = getOrganism(species);
-                Item newProtein = newProtein(array[4], species);
-                Item result = newResult(array[3]);
-
-                // create two organisms with subjects and objects reversed
-                Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-                item.addReference(new Reference("subject", newProtein.getIdentifier()));
-                item.addReference(new Reference("object", protein.getIdentifier()));
-                item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                    {db.getIdentifier(), result.getIdentifier()})));
-                addToCollection(newProtein, "objects", item.getIdentifier());
-                addToCollection(protein, "subjects", item.getIdentifier());
-                writer.store(ItemHelper.convert(item));
-
-                item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-                item.addReference(new Reference("subject", protein.getIdentifier()));
-                item.addReference(new Reference("object", newProtein.getIdentifier()));
-                item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                    {db.getIdentifier(), result.getIdentifier()})));
-                addToCollection(newProtein, "subjects", item.getIdentifier());
-                addToCollection(protein, "objects", item.getIdentifier());
-                writer.store(ItemHelper.convert(item));
-
-                if (!species.equals(array[2])) {
-                    species = array[2];
-                    protein = newProtein;
-                }
+        BufferedReader br = new BufferedReader(reader);
+        while ((line = br.readLine()) != null) {
+            String[] array = line.split("\t");
+            String index = array[0];
+            if (!index.equals(oldIndex)) {
+                oldIndex = index;
+                species = array[2];
+                protein = newProtein(array[4], species);
+                continue;
             }
-            Iterator iter = organisms.values().iterator();
-            while (iter.hasNext()) {
-                writer.store(ItemHelper.convert((Item) iter.next()));
+
+            Item organism = getOrganism(species);
+            Item newProtein = newProtein(array[4], species);
+            Item result = newResult(array[3]);
+
+            // create two organisms with subjects and objects reversed
+            Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
+            item.addReference(new Reference("subject", newProtein.getIdentifier()));
+            item.addReference(new Reference("object", protein.getIdentifier()));
+            item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {db.getIdentifier(), result.getIdentifier()})));
+            addToCollection(newProtein, "objects", item.getIdentifier());
+            addToCollection(protein, "subjects", item.getIdentifier());
+            writer.store(ItemHelper.convert(item));
+
+            item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
+            item.addReference(new Reference("subject", protein.getIdentifier()));
+            item.addReference(new Reference("object", newProtein.getIdentifier()));
+            item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {db.getIdentifier(), result.getIdentifier()})));
+            addToCollection(newProtein, "subjects", item.getIdentifier());
+            addToCollection(protein, "objects", item.getIdentifier());
+            writer.store(ItemHelper.convert(item));
+
+            if (!species.equals(array[2])) {
+                species = array[2];
+                protein = newProtein;
             }
-            iter = proteins.values().iterator();
-            while (iter.hasNext()) {
-                writer.store(ItemHelper.convert((Item) iter.next()));
-            }
-        } finally {
-            writer.close();
         }
     }
 
+    /**
+     * @see FileConverter#close
+     */
+    public void close() throws ObjectStoreException {
+        store(organisms.values());
+        store(proteins.values());
+    }
+    
     /**
      * Convenience method for creating a new Item
      * @param className the name of the class
