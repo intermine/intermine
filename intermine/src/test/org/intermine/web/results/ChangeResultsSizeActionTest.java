@@ -17,7 +17,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import servletunit.struts.MockStrutsTestCase;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.objectstore.ObjectStore;
@@ -39,6 +42,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     }
 
     private DisplayableResults dr;
+    private Results results;
 
     private Company company1, company2, company3;
     private Department department1, department2, department3;
@@ -48,7 +52,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
         FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d", "org.flymine.model.testmodel");
-        Results results = os.execute(fq.toQuery());
+        results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(5);
 
@@ -84,17 +88,19 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         row.add(company3);
         row.add(department3);
         os.addRow(row);
-
     }
 
     public void testChangePageSize1() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("pageSize","25");
         addRequestParameter("action", "Change");
 
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+        ChangeResultsForm form = new ChangeResultsForm();
+        form.setPageSize("25");
+        setActionForm(form);
 
         dr.setStart(0);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+
         actionPerform();
 
         verifyForward("results");
@@ -105,12 +111,15 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testChangePageSize2() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("pageSize","10");
         addRequestParameter("action", "Change");
 
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+        ChangeResultsForm form = new ChangeResultsForm();
+        form.setPageSize("10");
+        setActionForm(form);
 
         dr.setStart(12);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+
         actionPerform();
 
         verifyForward("results");
@@ -119,91 +128,99 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         assertEquals(10, dr.getPageSize());
     }
 
-//     public void testSaveNewBag() throws Exception {
-//         setRequestPathInfo("/changeResultsSize");
-//         // selectedObjects format: column,row
-//         addRequestParameter("selectedObjects", new String[] {"0,0", "1,2"});
-//         addRequestParameter("newBagName","testBag1");
-//         addRequestParameter("action", "Save selections in new collection");
-//         getSession().setAttribute("results", results);
-//         getSession().setAttribute("savedBags", new HashMap());
+    public void testSaveNewBag() throws Exception {
+        setRequestPathInfo("/changeResultsSize");
+        addRequestParameter("action", "Save selections in new collection");
+        getSession().setAttribute("results", results);
 
-//         actionPerform();
-//         verifyForward("results");
-//         verifyNoActionErrors();
+        ChangeResultsForm form = new MockChangeResultsForm();
+        form.setSelectedObjects(new String[] {"0,0", "1,2"});
+        form.setNewBagName("testBag1");
+        setActionForm(form);
 
-//         Map savedBags = (Map) getSession().getAttribute("savedBags");
-//         Collection objs = (Collection) savedBags.get("testBag1");
+        actionPerform();
 
-//         assertEquals(2, objs.size());
-//         Iterator iter = objs.iterator();
-//         assertEquals(company1, iter.next());
-//         assertEquals(department3, iter.next());
+        verifyForward("results");
+        verifyNoActionErrors();
+        
+        Map savedBags = (Map) getSession().getAttribute(Constants.SAVED_BAGS);
+        Collection objs = (Collection) savedBags.get("testBag1");
+        assertEquals(2, objs.size());
+        Iterator iter = objs.iterator();
+        assertEquals(company1, iter.next());
+        assertEquals(department3, iter.next());
+    }
 
-//     }
+    public void testAddToExistingBag() throws Exception {
+        setRequestPathInfo("/changeResultsSize");
+        addRequestParameter("action", "Add selections to existing collection");
+        getSession().setAttribute("results", results);
 
-//     public void testAddToExistingBag() throws Exception {
-//         setRequestPathInfo("/changeResultsSize");
-//         // selectedObjects format: column,row
-//         addRequestParameter("selectedObjects", new String[] {"0,1", "1,1"});
-//         addRequestParameter("bagName","testBag1");
-//         addRequestParameter("action", "Add selections to existing collection");
-//         getSession().setAttribute("results", results);
+        ChangeResultsForm form = new MockChangeResultsForm();
+        form.setSelectedObjects(new String[] {"0,1", "1,1"});
+        form.setBagName("testBag1");
+        setActionForm(form);
 
-//         Map savedBags = new HashMap();
-//         getSession().setAttribute("savedBags", savedBags);
+        Collection objs = new LinkedHashSet();
+        objs.add(company1);
+        objs.add(department3);
 
-//         Collection objs = new LinkedHashSet();
-//         objs.add(company1);
-//         objs.add(department3);
+        Map savedBags = new HashMap();
+        savedBags.put("testBag1", objs);
+        getSession().setAttribute(Constants.SAVED_BAGS, savedBags);
 
-//         savedBags.put("testBag1", objs);
+        actionPerform();
 
-//         actionPerform();
-//         verifyForward("results");
-//         verifyNoActionErrors();
+        verifyForward("results");
+        verifyNoActionErrors();
 
-//         savedBags = (Map) getSession().getAttribute("savedBags");
-//         objs = (Collection) savedBags.get("testBag1");
+        savedBags = (Map) getSession().getAttribute(Constants.SAVED_BAGS);
+        objs = (Collection) savedBags.get("testBag1");
 
-//         assertEquals(4, objs.size());
-//         Iterator iter = objs.iterator();
-//         assertEquals(company1, iter.next());
-//         assertEquals(department3, iter.next());
-//         assertEquals(company2, iter.next());
-//         assertEquals(department2, iter.next());
+        assertEquals(4, objs.size());
+        Iterator iter = objs.iterator();
+        assertEquals(company1, iter.next());
+        assertEquals(department3, iter.next());
+        assertEquals(company2, iter.next());
+        assertEquals(department2, iter.next());
+    }
 
-//     }
+    public void testAddSameToExistingBag() throws Exception {
+        setRequestPathInfo("/changeResultsSize");
+        addRequestParameter("action", "Add selections to existing collection");
+        getSession().setAttribute("results", results);
 
-//     public void testAddSameToExistingBag() throws Exception {
-//         setRequestPathInfo("/changeResultsSize");
-//         // selectedObjects format: column,row
-//         addRequestParameter("selectedObjects", new String[] {"0,1", "1,1"});
-//         addRequestParameter("bagName","testBag1");
-//         addRequestParameter("action", "Add selections to existing collection");
-//         getSession().setAttribute("results", results);
+        ChangeResultsForm form = new MockChangeResultsForm();
+        form.setSelectedObjects(new String[] {"0,1", "1,1"});
+        form.setBagName("testBag1");
+        setActionForm(form);
 
-//         Map savedBags = new HashMap();
-//         getSession().setAttribute("savedBags", savedBags);
+        Collection objs = new LinkedHashSet();
+        objs.add(company1);
+        objs.add(department2);
 
-//         Collection objs = new LinkedHashSet();
-//         objs.add(company1);
-//         objs.add(department2);
+        Map savedBags = new HashMap();
+        getSession().setAttribute(Constants.SAVED_BAGS, savedBags);
+        savedBags.put("testBag1", objs);
 
-//         savedBags.put("testBag1", objs);
+        actionPerform();
 
-//         actionPerform();
-//         verifyForward("results");
-//         verifyNoActionErrors();
+        verifyForward("results");
+        verifyNoActionErrors();
 
-//         savedBags = (Map) getSession().getAttribute("savedBags");
-//         objs = (Collection) savedBags.get("testBag1");
+        savedBags = (Map) getSession().getAttribute(Constants.SAVED_BAGS);
+        objs = (Collection) savedBags.get("testBag1");
 
-//         assertEquals(3, objs.size());
-//         Iterator iter = objs.iterator();
-//         assertEquals(company1, iter.next());
-//         assertEquals(department2, iter.next());
-//         assertEquals(company2, iter.next());
-//     }
+        assertEquals(3, objs.size());
+        Iterator iter = objs.iterator();
+        assertEquals(company1, iter.next());
+        assertEquals(department2, iter.next());
+        assertEquals(company2, iter.next());
+    }
 
+    class MockChangeResultsForm extends ChangeResultsForm
+    {
+        public void reset(ActionMapping mapping, HttpServletRequest request) {
+        }
+    }
 }
