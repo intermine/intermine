@@ -409,20 +409,9 @@
 
   <!-- RNAi MODEL GENERATION -->
 
-  <!-- convert RNAi OWL to InterMine model -->
-  <target name="convert-rnai" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="generate-model-from-owl" inheritRefs="true">
-      <property name="model.name" value="rnai"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
   <!-- merge rnai model with current genomic model owl -->
   <target name="merge-rnai-model" depends="prepare-genomic-model">
     <copy file="${model}/rnai/rnai_merge_spec.n3" todir="${build.model}/rnai/"/>
-    <copy file="${model}/rnai/rnai.n3" todir="${build.model}/rnai/"/>
-
-    <!-- combine the rnai merge_spec with current genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
           maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
@@ -430,18 +419,6 @@
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="${build.model}/rnai/rnai_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="N3" />
-      <arg value="n" />
-    </java>
-
-    <!-- merge rnai model with target genomic model -->
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-          maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/rnai/rnai.n3" />
-      <arg value="http://www.flymine.org/model/rnai#" />
       <arg value="N3" />
       <arg value="n" />
     </java>
@@ -1059,70 +1036,37 @@
     <path refid="models.class.path"/>
     <pathelement location="${model}/rnai/resources"/>
   </path>
+
   <target name="retrieve-rnai" depends="prepare, compile-rnai-java">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-src-items"/>
-      <property name="objectstore.name" value="os.rnai-src-items-std"/>
-    </ant>
-
-    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
-      <classpath refid="rnai.class.path"/>
-    </taskdef>
-
-    <convert-file clsName="org.flymine.dataconversion.RNAiConverter"
-                  osName="osw.rnai-src-items" model="rnai">
-      <fileset dir="/shared/data/RNAi" includes="*Set.txt"/>
-    </convert-file>
-
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.rnai-src-items-std"/>
-    </ant>
-  </target>
-
-  <target name="translate-rnai" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.rnai-tgt-items-std"/>
     </ant>
-    <java classname="org.intermine.dataconversion.DataTranslator" fork="true"
-          maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="os.rnai-src-items" />
-      <arg value="osw.rnai-tgt-items" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="N3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-    </java>
-
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="rnai.class.path"/>
+    </taskdef>
+    <convert-file clsName="org.flymine.dataconversion.RNAiConverter"
+                  osName="osw.rnai-tgt-items" model="rnai">
+      <fileset dir="/shared/data/RNAi" includes="*Set.txt"/>
+    </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="os.alias" value="os.rnai-tgt-items-std"/>
     </ant>
-
-    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.common-tgt-items"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
   </target>
 
-  <!-- Load data from rnai-tgt-items into production -->
   <target name="load-rnai">
     <taskdef name="load-rnai" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
     <load-rnai integrationWriter="integration.production" source="os.rnai-translated" sourceName="rnai"/>
   </target>
 
   <!-- load RNAI into production -->
-  <target name="build-rnai-production" depends="retrieve-rnai, translate-rnai, load-rnai"/>
+  <target name="build-rnai-production" depends="retrieve-rnai, load-rnai"/>
 
 
   <!-- PHENOTYPE PIPELINE -->
@@ -1937,7 +1881,7 @@
     </ant>
   </target>
 
-  <target name="rnai-test" depends="prepare-build-model, prepare-test, convert-rnai">
+  <target name="rnai-test" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
       <reference torefid="class.path" refid="test.class.path"/>

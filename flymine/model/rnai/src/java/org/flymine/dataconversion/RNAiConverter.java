@@ -32,12 +32,18 @@ import org.intermine.dataconversion.ItemWriter;
  */
 public class RNAiConverter extends FileConverter
 {
-    protected static final String RNAI_NS = "http://www.flymine.org/model/rnai#";
+    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     protected Map genes = new HashMap();
     protected Map synonyms = new HashMap();
     protected Map annotations = new HashMap();
     protected Map phenotypes = new HashMap();
+    protected Map experimentalResults = new HashMap();
+    protected Map organisms = new HashMap();
+    protected Map annotationEvidence = new HashMap();
+    protected Map geneAnnotation = new HashMap();
+    protected Map phenotypeAnnotation = new HashMap();
+
     protected Item db;
     protected int id = 0;
 
@@ -48,7 +54,10 @@ public class RNAiConverter extends FileConverter
      */
     public RNAiConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
-        setupItems();
+
+        db = newItem("Database");
+        db.addAttribute(new Attribute("title", "WormBase"));
+        writer.store(ItemHelper.convert(db));
     }
 
     /**
@@ -87,10 +96,6 @@ public class RNAiConverter extends FileConverter
         store(annotations.values());
         store(phenotypes.values());
     }
-
-    private Map annotationEvidence = new HashMap();
-    private Map geneAnnotation = new HashMap();
-    private Map phenotypeAnnotation = new HashMap();
 
     /**
      * Creates an Annotation, and puts it into a map for future reference.
@@ -170,7 +175,7 @@ public class RNAiConverter extends FileConverter
             item = newItem("Gene");
             item.addAttribute(new Attribute("organismDbId", sequenceName));
             if ((commonName != null) && (!"".equals(commonName))) {
-                item.addAttribute(new Attribute("commonName", commonName));
+                item.addAttribute(new Attribute("name", commonName));
             }
             item.addReference(new Reference("organism", getOrganism(taxonId).getIdentifier()));
             if ((synonym1 != null) && (!"".equals(synonym1))) {
@@ -210,18 +215,6 @@ public class RNAiConverter extends FileConverter
     }
 
     /**
-     * Convenience method to create common Items
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected void setupItems() throws ObjectStoreException {
-        db = newItem("Database");
-        db.addAttribute(new Attribute("title", "WormBase"));
-        writer.store(ItemHelper.convert(db));
-    }
-
-    private Map experimentalResults = new HashMap();
-
-    /**
      * Sets up a ExperimentalResult, Experiment, and Publication for a pubMedId, and puts them into
      * a Map for future use, and stores them in the default writer.
      *
@@ -237,7 +230,7 @@ public class RNAiConverter extends FileConverter
             Item experiment = newItem("RNAiExperiment");
             experiment.addReference(new Reference("publication", pub.getIdentifier()));
             experimentalResult = newItem("ExperimentalResult");
-            experimentalResult.addReference(new Reference("experiment",
+            experimentalResult.addReference(new Reference("analysis",
                                                           experiment.getIdentifier()));
 
             experimentalResults.put(pubMedId, experimentalResult);
@@ -247,8 +240,6 @@ public class RNAiConverter extends FileConverter
         }
         return experimentalResult;
     }
-
-    private Map organisms = new HashMap();
 
     /**
      * Sets up a organism for a taxonId, and puts it into a Map of organisms for future use,
@@ -284,7 +275,7 @@ public class RNAiConverter extends FileConverter
         Item phenotype = (Item) phenotypes.get(code);
         if (phenotype == null) {
             phenotype = newItem("Phenotype");
-            phenotype.addAttribute(new Attribute("code", code));
+            phenotype.addAttribute(new Attribute("RNAiCode", code));
             ReferenceList annotationCollection = new ReferenceList();
             annotationCollection.setName("annotations");
             phenotype.addCollection(annotationCollection);
@@ -302,7 +293,7 @@ public class RNAiConverter extends FileConverter
     protected Item newItem(String className) {
         Item item = new Item();
         item.setIdentifier(alias(className) + "_" + (id++));
-        item.setClassName(RNAI_NS + className);
+        item.setClassName(GENOMIC_NS + className);
         item.setImplementations("");
         return item;
     }

@@ -1,56 +1,25 @@
 @prefix :     <http://www.flymine.org/model/genomic#>.
-@prefix rnai: <http://www.flymine.org/model/rnai#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix owl:  <http://www.w3.org/2002/07/owl#>.
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
-@prefix null:	 <http://www.flymine.org/model/null#>.
 
-:Gene a owl:Class;
-    rdfs:subClassOf :BioEntity.
-
+:Gene a owl :Class;
+   rdfs:subClassOf :BioEntity.
+   
 :Gene__name a owl:DatatypeProperty;
-    owl:equivalentProperty rnai:Gene__commonName.
+   rdfs:domain :Gene;
+   rdfs:range xsd:string.
 
-:BioEntity__annotations a owl:ObjectProperty;
-    owl:equivalentProperty rnai:Gene__annotations .
-
-# need to make subProperty relationships explicit
-
-:Gene__synonyms a owl:ObjectProperty;
-    rdfs:domain :Gene;
-    rdfs:range :Synonym;
-    rdfs:subPropertyOf :BioEntity__synonyms .
-
-:Gene__organism a owl:ObjectProperty;
-    rdfs:domain :Gene;
-    rdfs:range :Organism;
-    rdfs:subPropertyOf :BioEntity__organism.
+:Gene__organismDbId a owl:DatatypeProperty;
+   rdfs:domain :Gene;
+   rdfs:range xsd:string.
 
 :RNAiExperiment a owl:Class;
-    rdfs:subClassOf :Experiment.
-
-:RNAiExperiment__publication a owl:ObjectProperty ;
-    rdfs:domain :RNAiExperiment ;
-    rdfs:range :Publication ;
-    rdfs:subPropertyOf :Analysis__publication .
-
-:Phenotype__RNAiCode a owl:DatatypeProperty;
-    owl:equivalentProperty rnai:Phenotype__code.
+   rdfs:subClassOf :Experiment.
 
 :Phenotype a owl:Class;
-    rdfs:subClassOf :BioProperty .
+   rdfs:subClassOf :BioProperty.
 
-:BioProperty__annotations a owl:ObjectProperty;
-    owl:equivalentProperty rnai:Phenotype__annotations .
-
-:Phenotype__evidence a owl:ObjectProperty;
-    rdfs:domain :Phenotype;
-    rdfs:range :RNAiExperiment;
-    rdfs:subPropertyOf :BioProperty__evidence.
-
-:ExperimentalResult__analysis a owl:ObjectProperty ;
-    owl:equivalentProperty rnai:ExperimentalResult__experiment ;
-    rdfs:domain :ExperimentalResult ;
-    rdfs:range :Analysis ;
-    rdfs:subPropertyOf :AnalysisResult__analysis .
+:Phenotype__RNAiCode a owl:DatatypeProperty;
+   rdfs:domain :Phenotype;
+   rdfs:range xsd:string.
