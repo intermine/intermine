@@ -72,9 +72,18 @@ public class LoginForm extends ActionForm
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
 
         ActionErrors errors = new ActionErrors();
-
-        if (pm.hasProfile(username) && !pm.validPassword(username, password)) {
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("login.wrongpassword"));
+        
+        if (username.equals("")) {
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("login.emptyusername"));
+        } else {
+            if (pm.hasProfile(username)) {
+                if (!pm.validPassword(username, password)) {
+                    errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("login.wrongpassword"));
+                }
+            } else {
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                           new ActionError("login.invalidusername", username));
+            }
         }
         
         return errors;

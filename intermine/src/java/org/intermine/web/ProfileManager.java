@@ -13,12 +13,10 @@ package org.intermine.web;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.model.userprofile.SavedBag;
@@ -30,16 +28,12 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.StringUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * Class to manage and persist user profile data such as saved bags
  * @author Mark Woodbridge
  */
 public class ProfileManager
 {
-    private static final Logger LOG = Logger.getLogger(ProfileManager.class);
-
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
 
@@ -87,6 +81,17 @@ public class ProfileManager
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Get a user's password
+     * A check should be made prior to this call to ensure a Profile exists
+     * @param username the username
+     * @return password the password
+     */
+    public String getPassword(String username) {
+        UserProfile userProfile = getProfile(username);
+        return userProfile.getPassword();
     }
 
     /**
@@ -141,8 +146,9 @@ public class ProfileManager
                 for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     String bagName = (String) entry.getKey();
+                    InterMineBag bag = (InterMineBag) entry.getValue();
                     SavedBag savedBag = new SavedBag();
-                    savedBag.setBag(toString((InterMineBag) entry.getValue(), bagName));
+                    savedBag.setBag(toXml(bag, bagName));
                     savedBag.setUserProfile(userProfile);
                     osw.store(savedBag);
                 }
@@ -152,10 +158,7 @@ public class ProfileManager
                     String queryName = (String) entry.getKey();
                     PathQuery query = (PathQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(toString(query.getNodes(),
-                                                 query.getView(),
-                                                 os.getModel(),
-                                                 queryName));
+                    savedQuery.setQuery(toXml(query, queryName, os.getModel().getName()));
                     savedQuery.setUserProfile(userProfile);
                     osw.store(savedQuery);
                 }
@@ -191,7 +194,7 @@ public class ProfileManager
      * @param bagName the name of the bag
      * @return the corresponding XML String
      */
-    protected static String toString(InterMineBag bag, String bagName) {
+    protected static String toXml(InterMineBag bag, String bagName) {
         StringBuffer sb = new StringBuffer();
         sb.append("<bag name='" + bagName + "'>");
         for (Iterator j = bag.iterator(); j.hasNext();) {
@@ -212,17 +215,16 @@ public class ProfileManager
 
     /**
      * Convert a query to XML
-     * @param qNodes the query nodes
-     * @param view the query view
-     * @param model the model
+     * @param query the PathQuery
      * @param queryName the name of the query
+     * @param modelName the model name
      * @return the corresponding XML String
      */
-    protected static String toString(Map qNodes, List view, Model model, String queryName) {
+    protected static String toXml(PathQuery query, String queryName, String modelName) {
         StringBuffer sb = new StringBuffer();
-        sb.append("<query name='" + queryName + "' model='" + model.getName()
-                  + "' view='" + StringUtil.join(view, " ") + "'>");
-        for (Iterator j = qNodes.values().iterator(); j.hasNext();) {
+        sb.append("<query name='" + queryName + "' model='" + modelName
+                  + "' view='" + StringUtil.join(query.getView(), " ") + "'>");
+        for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
             PathNode node = (PathNode) j.next();
             if (node.getConstraints().size() > 0) {
                 sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");

@@ -49,8 +49,7 @@ form {
   color: red;
 }
 .messages {
-  color: black;
-  font-weight: bold;
+  color: green;
 }
 
 table.query, table.results {

@@ -19,6 +19,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 
 import java.util.HashMap;
 
@@ -57,6 +59,11 @@ public class LoginAction extends Action
             pm.setPassword(lf.getUsername(), lf.getPassword());
         }
         session.setAttribute(Constants.PROFILE, profile);
+
+        ActionMessages messages = new ActionMessages();
+        messages.add(ActionMessages.GLOBAL_MESSAGE,
+                     new ActionMessage("login.loggedin", lf.getUsername()));
+        saveMessages(request, messages);
 
         return mapping.findForward("history");
     }

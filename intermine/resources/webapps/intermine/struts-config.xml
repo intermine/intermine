@@ -40,6 +40,9 @@
     <form-bean name="buildBagForm"
                type="org.intermine.web.BuildBagForm"/>
 
+    <form-bean name="requestPasswordForm"
+               type="org.intermine.web.RequestPasswordForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -228,6 +231,15 @@
     <action path="/loginAction"
             type="org.intermine.web.LoginAction"
             name="loginForm"
+            input="login"
+            parameter="action">
+      <forward name="login" path="login.page"/>
+      <forward name="history" path="history.page"/>
+    </action>
+
+    <action path="/requestPasswordAction"
+            type="org.intermine.web.RequestPasswordAction"
+            name="requestPasswordForm"
             input="login"
             parameter="action">
       <forward name="login" path="login.page"/>
