@@ -72,10 +72,9 @@ public class InitialiserPlugin implements PlugIn
         
         loadClassDescriptions(servletContext);
         loadWebProperties(servletContext);
-        loadTemplateQueries(servletContext);
         loadExampleQueries(servletContext);
         loadWebConfig(servletContext);
-
+        
         ObjectStore os = null;
         try {
             os = ObjectStoreFactory.getObjectStore();
@@ -90,6 +89,11 @@ public class InitialiserPlugin implements PlugIn
         processWebConfig(servletContext, os);
         summarizeObjectStore(servletContext, os);
         createProfileManager(servletContext, os);
+        // Loading shared template queries requires profile manager
+        loadSuperUserDetails(servletContext);
+        // Load default templates if required
+        loadDefaultGlobalTemplateQueries(servletContext);
+        loadGlobalTemplateQueries(servletContext);
     }
 
     /**
@@ -207,10 +211,12 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Read the template queries into the TEMPLATE_QUERIES servlet context attribute and create
-     * CATEGORY_TEMPLATES servlet context attribute that maps category name to list of templates.
+     * Loads the default template queries into the superuser's account.
+     *
+     * @param servletContext  current servlet context
      */
-    private void loadTemplateQueries(ServletContext servletContext) throws ServletException {
+    private void loadDefaultGlobalTemplateQueries(ServletContext servletContext)
+        throws ServletException {
         InputStream templateQueriesStream =
             servletContext.getResourceAsStream("/WEB-INF/template-queries.xml");
         if (templateQueriesStream == null) {
@@ -218,32 +224,82 @@ public class InitialiserPlugin implements PlugIn
         }
         Reader templateQueriesReader = new InputStreamReader(templateQueriesStream);
         Map templateQueries = null;
-        Map categoryTemplates = new HashMap();
         try {
-            templateQueries = new PathQueryBinding().unmarshal(templateQueriesReader);
+            templateQueries = new TemplateQueryBinding().unmarshal(templateQueriesReader);
         } catch (Exception e) {
             throw new ServletException("Unable to parse template-queries.xml", e);
         }
-        Properties modelProperties = new Properties();
-        InputStream modelPropertiesStream =
-            servletContext.getResourceAsStream("/WEB-INF/classes/model.properties");
+        // Add them to superuser profile
+        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        if (superuser == null) {
+            LOG.warn("no superuser account specified");
+            return;
+        }
+        if (!pm.hasProfile(superuser)) {
+            LOG.warn("no profile for superuser " + superuser);
+            return;
+        }
+        Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
+        if (profile != null && profile.getSavedTemplates().size() == 0) {
+            Iterator iter = templateQueries.values().iterator();
+            while (iter.hasNext()) {
+                TemplateQuery template = (TemplateQuery) iter.next();
+                profile.saveTemplate(template.getName(), template);
+            }
+        }
+    }
+    
+    /**
+     * Load superuser account name into servlet context attribute SUPERUSER_ACCOUNT
+     *
+     * @param servetContext  servlet context in which to place attribute
+     */
+    private void loadSuperUserDetails(ServletContext servletContext)
+        throws ServletException {
+        Properties properties = new Properties();
+        InputStream propertiesStream =
+            servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
         try {
-            modelProperties.load(modelPropertiesStream);
+            properties.load(propertiesStream);
         } catch (Exception e) {
             throw new ServletException("Unable to find model.properties", e);
         }
-
-        for (Iterator i = templateQueries.keySet().iterator(); i.hasNext();) {
-            String queryName = (String) i.next();
-            String msgKey = "templateQuery." + queryName + ".description";
-            String catKey = "templateQuery." + queryName + ".category";
-            PathQuery query = (PathQuery) templateQueries.get(queryName);
-            TemplateQuery template = new TemplateQuery(queryName,
-                                                       modelProperties.getProperty(msgKey),
-                                                       modelProperties.getProperty(catKey),
-                                                       query);
-            templateQueries.put(queryName, template);
-            // Now add to list of templates associated with category
+        
+        String superuser = properties.getProperty("superuser.account");
+        servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
+    }
+    
+    /**
+     * Read the template queries into the GLOBAL_TEMPLATE_QUERIES servlet context attribute.
+     * This is also called when the superuser updates his or her templates.
+     *
+     * @param servletContext  servlet context in which to place template map
+     * @throws ServletException if something goes wrong
+     */
+    public static void loadGlobalTemplateQueries(ServletContext servletContext)
+        throws ServletException {   
+        Map templateMap = Collections.synchronizedMap(new HashMap());
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        
+        if (superuser != null && pm.hasProfile(superuser)) {
+            Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
+            if (profile != null) {
+                templateMap = Collections.synchronizedMap(new HashMap(profile.getSavedTemplates()));
+            } else {
+                LOG.warn("failed to getch profile for superuser " + superuser);
+            }
+        } else {
+            LOG.warn("superuser.account not specified");
+        }
+        servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_QUERIES, templateMap);
+        
+        // Sort into categories
+        Map categoryTemplates = new HashMap();
+        Iterator iter = templateMap.values().iterator();
+        while (iter.hasNext()) {
+            TemplateQuery template = (TemplateQuery) iter.next();
             List list = (List) categoryTemplates.get(template.getCategory());
             if (list == null) {
                 list = new ArrayList();
@@ -251,7 +307,6 @@ public class InitialiserPlugin implements PlugIn
             }
             list.add(template);
         }
-        servletContext.setAttribute(Constants.TEMPLATE_QUERIES, templateQueries);
         servletContext.setAttribute(Constants.CATEGORY_TEMPLATES, categoryTemplates);
     }
     
@@ -269,6 +324,9 @@ public class InitialiserPlugin implements PlugIn
      *
      * If a specified class cannot be found in the model, the class is ignored and not added to
      * the category.
+     *
+     * @param servletContext  the servlet context
+     * @param os              the main object store
      */
     private void loadClassCategories(ServletContext servletContext, ObjectStore os)
                                                                        throws ServletException {
@@ -316,6 +374,9 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Create the DISPLAYERS ServletContext attribute by looking at the model and the WebConfig.
+     *
+     * @param servletContext  the servlet context
+     * @param os              the main object store
      */
     private void processWebConfig(ServletContext servletContext, ObjectStore os)
         throws ServletException {
@@ -359,6 +420,9 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
+    /**
+     * Create the profile manager and place it into to the servlet context.
+     */
     private void createProfileManager(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         try {
