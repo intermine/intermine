@@ -38,12 +38,30 @@
                     </td>
                 </tr>
             </c:forEach>
+
+            <c:forEach var="field" items="${cld.referenceDescriptors}">
+                <tr>
+                    <td>
+                        <c:out value="${field.name}"/>
+                    </td>
+                    <td>
+                        <html:select property="fieldOp(${field.name})">
+                            <c:forEach items="${ops[field.name]}" var="entry">
+                                <html:option value="${entry.key}"><c:out value="${entry.value}"/></html:option>
+                            </c:forEach>
+                        </html:select>
+                    </td>
+                    <td>
+                        <html:select property="fieldValue(${field.name})">
+                            <c:forEach items="${aliases[field.name]}" var="alias">
+                                <html:option value="${alias}"><c:out value="${alias}"/></html:option>
+                            </c:forEach>
+                        </html:select>
+                    </td>
+                </tr>
+            </c:forEach>
       
-      <%--        <c:forEach var="field" items="${cld.referenceDescriptors}">
-        <tr><td><c:out value="${field.name}"/></td>
-          <td><html:text property="fieldValue(field.name)"/></td></tr>
-      </c:forEach>
-      
+                  <%--
       <c:forEach var="field" items="${cld.collectionDescriptors}">
         <tr><td><c:out value="${field.name}"/></td>
           <td><html:text property="fieldValue(field.name)"/></td></tr>

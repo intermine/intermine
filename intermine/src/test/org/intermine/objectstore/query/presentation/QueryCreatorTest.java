@@ -19,12 +19,20 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import org.flymine.objectstore.query.*;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
 import org.flymine.model.testmodel.Employee;
 
 public class QueryCreatorTest extends TestCase
 {
+    Model model;
+
     public QueryCreatorTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() throws Exception {
+        model = Model.getInstanceByName("testmodel");
     }
 
     public void testAddToQuery() throws Exception {
@@ -37,7 +45,8 @@ public class QueryCreatorTest extends TestCase
         ops.put("fullTime", String.valueOf(SimpleConstraint.EQUALS));
 
         Query q = new Query();
-        QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", fields, ops);
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+        QueryCreator.addToQuery(q, cld, fields, ops);
 
         ArrayList from = new ArrayList(q.getFrom());
         assertEquals(Employee.class, ((QueryClass) from.get(0)).getType());
@@ -58,9 +67,10 @@ public class QueryCreatorTest extends TestCase
 
     public void testAddToQueryNullParameters() throws Exception {
         Query q = new Query();
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
 
         try {
-            QueryCreator.addToQuery(null, "org.flymine.model.testmodel.Employee", new HashMap(), new HashMap());
+            QueryCreator.addToQuery(null, cld, new HashMap(), new HashMap());
             fail("Expected NullPointerException, q parameter null");
         } catch (NullPointerException e) {
         }
@@ -72,13 +82,13 @@ public class QueryCreatorTest extends TestCase
         }
 
         try {
-            QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", null, new HashMap());
+            QueryCreator.addToQuery(q, cld, null, new HashMap());
             fail("Expected NullPointerException, fields parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", new HashMap(), null);
+            QueryCreator.addToQuery(q, cld, new HashMap(), null);
             fail("Expected NullPointerException, ops parameter null");
         } catch (NullPointerException e) {
         }
@@ -94,8 +104,9 @@ public class QueryCreatorTest extends TestCase
         ops.put("fullTime", String.valueOf(SimpleConstraint.EQUALS));
 
         QueryClass qc = new QueryClass(Employee.class);
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
 
-        ConstraintSet c = QueryCreator.generateConstraints(qc, fields, ops);
+        ConstraintSet c = QueryCreator.generateConstraints(qc, fields, ops, new HashMap(), cld);
         ArrayList list = new ArrayList(c.getConstraints());
         SimpleConstraint res1 = (SimpleConstraint) list.get(0);
         assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());

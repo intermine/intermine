@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import org.flymine.objectstore.query.*;
+import org.flymine.metadata.*;
 import org.flymine.FlyMineException;
 
 /**
@@ -33,18 +34,18 @@ public class QueryCreator
      * generated from a map of fields/values.
      *
      * @param q a query to add QueryClass and constraints to
-     * @param clsName name of class to add to query
+     * @param cld ClassDescriptor for class to add to query
      * @param fieldValues map of fieldname/value to build constraints from
      * @param fieldOps map of fieldname/operation to build constraints from
      * @throws FlyMineException if an error occurs
      * @throws NullPointerException if any of the parameters are null
      */
-    public static void addToQuery(Query q, String clsName, Map fieldValues, Map fieldOps)
+    public static void addToQuery(Query q, ClassDescriptor cld, Map fieldValues, Map fieldOps)
         throws FlyMineException {
         if (q == null) {
             throw new NullPointerException("Query parameter is null");
-        } else if (clsName == null || clsName.equals("")) {
-            throw new NullPointerException("clsName parameter is null");
+        } else if (cld == null) {
+            throw new NullPointerException("cld parameter is null");
         } else if (fieldValues == null) {
             throw new NullPointerException("fieldValues parameter is null");
         } else if (fieldOps == null) {
@@ -52,11 +53,12 @@ public class QueryCreator
         } 
 
         try {
-            QueryClass qc = new QueryClass(Class.forName(clsName));
+            QueryClass qc = new QueryClass(Class.forName(cld.getName()));
             q.addFrom(qc);
-            addConstraint(q, generateConstraints(qc, fieldValues, fieldOps));
+            addConstraint(q, generateConstraints(qc, fieldValues, fieldOps, q.getReverseAliases(),
+                                                 cld));
         } catch (Exception e) {
-            throw new FlyMineException("Problem occurred adding class (" + clsName
+            throw new FlyMineException("Problem occurred adding class (" + cld.getName()
                                 + ") to query: " + e);
         }
     }
@@ -67,11 +69,14 @@ public class QueryCreator
      * @param qc QueryClass to constrain
      * @param fieldValues map of fieldname/value to build constraints from
      * @param fieldOps map of fieldname/operation to build constraints from
+     * @param aliases map of aliases to QueryNodes and FromElements
+     * @param cld ClassDescriptor for the QueryClass Java type
      * @return a populated ConstraintSet
      * @throws Exception if it goes wrong
      */
     protected static ConstraintSet generateConstraints(QueryClass qc, Map fieldValues,
-                                                       Map fieldOps) throws Exception {
+                                                       Map fieldOps, Map aliases,
+                                                       ClassDescriptor cld) throws Exception {
         ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
         Iterator iter = fieldValues.entrySet().iterator();
         while (iter.hasNext()) {
@@ -80,10 +85,20 @@ public class QueryCreator
             if (!"".equals(fieldValue)) {
                 String fieldName = (String) fieldEntry.getKey();
                 int fieldOp = Integer.parseInt((String) fieldOps.get(fieldName));
-                QueryField qf = new QueryField(qc, fieldName);
-                QueryValue qv = createQueryValue(qf.getType(), fieldValue);
-                SimpleConstraint sc = new SimpleConstraint(qf, fieldOp, qv);
-                constraints.addConstraint(sc);
+
+                Constraint c = null;
+
+                FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
+                if (field instanceof AttributeDescriptor) {
+                    QueryField qf = new QueryField(qc, fieldName);
+                    QueryValue qv = createQueryValue(qf.getType(), fieldValue);
+                    c = new SimpleConstraint(qf, fieldOp, qv);
+                } else if (field instanceof ReferenceDescriptor) {
+                    QueryReference qr = new QueryObjectReference(qc, fieldName);
+                    // queryclass implements fromelement and querynode
+                    c = new ContainsConstraint(qr, fieldOp, (QueryClass) aliases.get(fieldValue));
+                }
+                constraints.addConstraint(c);
             }
         }
         return constraints;

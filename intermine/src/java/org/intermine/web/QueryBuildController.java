@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +28,17 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.Constraint;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.QueryField;
+import org.flymine.objectstore.query.QueryNode;
+import org.flymine.objectstore.query.FromElement;
 
 import org.flymine.objectstore.query.presentation.ConstraintListCreator;
 import org.flymine.objectstore.query.presentation.AssociatedConstraint;
@@ -60,7 +65,11 @@ public class QueryBuildController extends TilesAction
 
         ClassDescriptor cld = (ClassDescriptor) session.getAttribute("cld");
         if (cld != null) {
-            request.getSession().setAttribute("ops", getOps(cld));
+            session.setAttribute("ops", getOps(cld));
+            Query query = (Query) session.getAttribute("query");
+            if (query != null) {
+                session.setAttribute("aliases", getAliases(cld, query));
+            }
         }
 
         form.reset(mapping, request);
@@ -123,6 +132,48 @@ public class QueryBuildController extends TilesAction
             }
             fieldOps.put(attr.getName(), opString);
         }
+        iter = cld.getReferenceDescriptors().iterator();
+        while (iter.hasNext()) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) iter.next();
+            Map opString = new LinkedHashMap();
+            int[] ops = ContainsConstraint.validOperators();
+            for (int i = 0; i < ops.length; i++) {
+                opString.put(new Integer(ops[i]), ContainsConstraint.getOpString(ops[i]));
+            }
+            fieldOps.put(ref.getName(), opString);
+        }
         return fieldOps;
+    }
+    
+    /**
+     * This method returns a map from field names (for fields that are references) to a list of
+     * aliases of relevant QueryNodes in the select list. It does this by iterating over the
+     * relevant fields and then finding all the QueryNodes that of the same Java type in the
+     * Query, adding their aliases to list.
+     * @param cld the ClassDescriptor to be inspected
+     * @param query the query so far
+     * @return the map
+     */
+    protected Map getAliases(ClassDescriptor cld, Query query) {
+        Map fieldAliases = new HashMap();
+        Iterator iter = cld.getReferenceDescriptors().iterator();
+        while (iter.hasNext()) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) iter.next();
+            String referencedType = ref.getReferencedClassDescriptor().getName();
+            List aliases = new ArrayList();
+            aliases.add("");
+            Iterator fromIter = query.getAliases().keySet().iterator();
+            while (fromIter.hasNext()) {
+                FromElement fromElem = (FromElement) fromIter.next();
+                if (fromElem instanceof QueryNode) { // could be a Query
+                    QueryNode qn = (QueryNode) fromElem;
+                    if (qn.getType().getName().equals(referencedType)) {
+                        aliases.add(query.getAliases().get(qn));
+                    }
+                }
+            }
+            fieldAliases.put(ref.getName(), aliases);
+        }
+        return fieldAliases;
     }
 }
