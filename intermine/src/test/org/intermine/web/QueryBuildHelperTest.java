@@ -27,7 +27,6 @@ import org.flymine.testing.OneTimeTestCase;
 import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Employee;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 
 public class QueryBuildHelperTest extends QueryTestCase
@@ -223,6 +222,30 @@ public class QueryBuildHelperTest extends QueryTestCase
         d.getFieldValues().put("name_0", "Frank");
 
         assertEquals(d, QueryBuildHelper.toDisplayable(qc, q, new HashMap()));
+    }
+    
+    public void testGetValidAliases() throws Exception {
+        DisplayQueryClass d1 = new DisplayQueryClass();
+        d1.setType("org.flymine.model.testmodel.Company");
+        DisplayQueryClass d2 = new DisplayQueryClass();
+        d2.setType("org.flymine.model.testmodel.Company");
+        DisplayQueryClass d3 = new DisplayQueryClass();
+        d3.setType("org.flymine.model.testmodel.Employee");
+
+        Map queryClasses = new HashMap();
+        queryClasses.put("Company_0", d1);
+        queryClasses.put("Company_1", d2);
+        queryClasses.put("Employee_0", d3);
+        
+        Map expected = new HashMap();
+        expected.put("manager", new ArrayList());
+        expected.put("company", Arrays.asList(new Object[] {"Company_0", "Company_1"}));
+        expected.put("employees", Arrays.asList(new Object[] {"Employee_0"}));
+        expected.put("rejectedEmployee", Arrays.asList(new Object[] {"Employee_0"}));
+        
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
+
+        assertEquals(expected, QueryBuildHelper.getValidAliases(cld, queryClasses));
     }
 
     public void testToDisplayableWithBag() throws Exception {
