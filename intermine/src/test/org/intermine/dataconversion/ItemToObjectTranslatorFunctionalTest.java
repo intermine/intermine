@@ -18,6 +18,7 @@ import java.util.List;
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.query.Query;
@@ -28,12 +29,12 @@ import org.flymine.objectstore.translating.ObjectStoreTranslatingImpl;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.FullRenderer;
 import org.flymine.xml.full.FullParser;
+import org.flymine.xml.full.ItemHelper;
 
 import junit.framework.TestCase;
 
 public class ItemToObjectTranslatorFunctionalTest extends TestCase
 {
-    ObjectStoreWriter osw;
     List items;
     
     public ItemToObjectTranslatorFunctionalTest(String arg) {
@@ -43,11 +44,12 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
     public void setUp() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
         items = FullParser.parse(is);
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
-        ItemStore itemStore = new ItemStore(osw);
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
+        ObjectStoreItemWriter itemWriter = new ObjectStoreItemWriter(osw);
         for (Iterator i = items.iterator(); i.hasNext();) {
-            itemStore.store((Item) i.next());
+            itemWriter.store(ItemHelper.convert((Item) i.next()));
         }
+        itemWriter.close();
     }
 
     public void tearDown() throws Exception {
@@ -55,6 +57,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
                 .getSequence());
         Iterator iter = toDelete.iterator();
@@ -71,7 +74,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
     public void testTranslation() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         Translator translator = new ItemToObjectTranslator(model);
-        ObjectStore os = new ObjectStoreTranslatingImpl(model, osw, translator);
+        ObjectStore os = new ObjectStoreTranslatingImpl(model, ObjectStoreFactory.getObjectStore("os.unittest"), translator);
 
         Query q = new Query();
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
