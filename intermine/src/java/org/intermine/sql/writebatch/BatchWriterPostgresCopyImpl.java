@@ -54,7 +54,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     copyManager = ((PGConnection) con).getCopyAPI();
                 }
                 if (copyManager == null) {
-                    LOG.warn("Database is incompatible with the PostgreSQL COPY command - falling"
+                    LOG.warn("Database with Connection " + con.getClass().getName()
+                            + " is incompatible with the PostgreSQL COPY command - falling"
                             + " back to prepared statements");
                     super.doInserts(name, table);
                 } else {
