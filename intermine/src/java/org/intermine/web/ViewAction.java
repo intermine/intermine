@@ -49,8 +49,12 @@ public class ViewAction extends InterMineAction
         if (resultsForm != null) {
             resultsForm.reset(mapping, request);
         }
-
-        if (SessionMethods.runQuery (session, request)) {
+        
+        if (session.getAttribute("displayObjects") != null) {
+            session.removeAttribute("displayObjects");
+        }
+        
+        if (SessionMethods.runQuery (session, request, true)) {
             return mapping.findForward ("results");
         } else {
             return mapping.findForward("query");
