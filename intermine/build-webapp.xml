@@ -58,8 +58,9 @@
     <copy todir="${build.webapp}/intermine/images">
       <fileset dir="${resources}/webapps/intermine/images"/>
     </copy>
-    <copy todir="${build.webapp}/intermine/WEB-INF">
-      <fileset dir="${resources}/webapps/intermine" 
+    <filter token="SITE_PREFIX" value="${www.location}"/>
+    <copy todir="${build.webapp}/intermine/WEB-INF" filtering="true">
+      <fileset dir="${resources}/webapps/intermine"
                excludes="web.xml images/** InterMineWebApp*.properties default.intermine.properties intermine.css"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF/lib">
@@ -72,7 +73,6 @@
       <fileset dir="${resources}/webapps/intermine"
                includes="InterMineWebApp*.properties default.intermine.properties"/>
     </copy>
-    
   </target>
   
   <target name="build-webapp" depends="prepare-webapp"

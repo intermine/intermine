@@ -13,7 +13,7 @@
 
   <head>
     <html:base/>
-    <link rel="stylesheet" type="text/css" href="/style/flymine2.css"/>
+    <link rel="stylesheet" type="text/css" href="${WEB_PROPERTIES['project.sitePrefix']}/style/flymine2.css"/>
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>

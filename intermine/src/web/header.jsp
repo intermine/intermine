@@ -4,7 +4,7 @@
 <!-- header.jsp -->
 <div id="header">
   <h1>
-    <html:link href="${WEB_PROPERTIES['project.titleURL']}">
+    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}">
       <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
     </html:link>
   </h1>
