@@ -1,21 +1,30 @@
 #!/bin/bash
 
+# The following environment variables need to be set
+# FLYMINE: location of local flymine installation
+
 cd $FLYMINE
 
-export CLASSPATH=/software/noarch/junit/junit.jar:/software/noarch/antlr/antlr.jar:$FLYMINE/build/java:$FLYMINE/build/resources:$FLYMINE/build/test:$FLYMINE/build/model/testmodel
+CP=$CLASSPATH
 
 for i in $FLYMINE/lib/*.jar ; do
-    export CLASSPATH=$CLASSPATH:$i
+    CP=$CP:$i
 done
 
+for i in $FLYMINE/dist/*.jar ; do
+    CP=$CP:$i
+done
+
+CP=$CP:.
+
 if test -z "$LD_LIBRARY_PATH" ; then
-    export LD_LIBRARY_PATH=/usr/lib
+    export LD_LIBRARY_PATH=/usr/lib:/lib
 else
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/lib
 fi
 
-echo "Using classpath: $CLASSPATH"
+echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-java org.flymine.objectstore.query.Query
+java -cp $CP org.flymine.objectstore.query.Query $*
 
