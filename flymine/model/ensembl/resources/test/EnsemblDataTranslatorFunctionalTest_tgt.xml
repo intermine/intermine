@@ -14,7 +14,6 @@
   </item>
   <item id="-1_7" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="FlyBase"/>
-    <attribute name="url" value="http://www.flybase.org"/>
   </item>
   <item id="-1_12" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="score" value="23.0"/>
@@ -216,7 +215,6 @@
   </item>
   <item id="-1_2" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="ensembl"/>
-    <attribute name="url" value="http://www.ensembl.org"/>
   </item>
   <item id="-1_15" class="http://www.flymine.org/model/genomic#Supercontig">
     <attribute name="identifier" value="AAAB01008846"/>
@@ -258,7 +256,6 @@
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="embl"/>
-    <attribute name="url" value="http://www.ebi.ac.uk/embl"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Transcript">
     <attribute name="exonCount" value="2"/>
@@ -327,7 +324,6 @@
   </item>
   <item id="-1_4" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="TrEMBL"/>
-    <attribute name="url" value="http://ca.expasy.org/sprot/"/>
   </item>
   <item id="7_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="ENSANGT00000019935"/>
@@ -387,7 +383,6 @@
   </item>
   <item id="-1_5" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="Swiss-Prot"/>
-    <attribute name="url" value="http://ca.expasy.org/sprot/"/>
   </item>
   <item id="18_1" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="length" value="22145176"/>

@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -29,12 +28,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.dataconversion.ObjectStoreItemReader;
-import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
@@ -59,8 +52,6 @@ public class ProteinStructureDataTranslator extends DataTranslator
                                           String dataLocation) {
         super(srcItemReader, model, ns);
         this.dataLocation = dataLocation;
-        db = createItem(tgtNs + "Database", "");
-        db.addAttribute(new Attribute("title", "Pfam"));
     }
 
     /**
@@ -68,7 +59,11 @@ public class ProteinStructureDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
+
+        db = createItem(tgtNs + "Database", "");
+        db.addAttribute(new Attribute("title", "Pfam"));
         tgtItemWriter.store(ItemHelper.convert(db));
+
         super.translate(tgtItemWriter);
     }
 
@@ -84,7 +79,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
 
             // modelledRegion -> proteinRegion
             // link proteinRegion to protein using relation
-            Item modelledRegion = getReferencedItem(srcItem, "modelled_region");
+            Item modelledRegion = getReference(srcItem, "modelled_region");
             Item proteinRegion = createItem(tgtNs + "ProteinRegion", "");
             Item protein = createItem(tgtNs + "Protein", "");
             protein.addAttribute(new Attribute("primaryAccession", modelledRegion
@@ -102,7 +97,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
                 {db.getIdentifier()})));
 
             // model -> modelledProteinStructure
-            Item model = getReferencedItem(srcItem, "model");
+            Item model = getReference(srcItem, "model");
             
             Item modelledProteinStructure = createItem(tgtNs + "ModelledProteinStructure", "");
             modelledProteinStructure.addAttribute(new Attribute("QScore", model
@@ -136,7 +131,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
                                                                 proteinRegion.getIdentifier()));
 
             // sequenceFamily -> proteinSequenceFamily
-            Item sequenceFamily = getReferencedItem(srcItem, "sequence_family");
+            Item sequenceFamily = getReference(srcItem, "sequence_family");
             String name = sequenceFamily.getAttribute("pfam_id").getValue();
             Item proteinSequenceFamily = (Item) proteinSequenceFamilies.get(name);
             if (proteinSequenceFamily == null) {
@@ -165,44 +160,5 @@ public class ProteinStructureDataTranslator extends DataTranslator
         }
 
         return result;
-    }
-
-    /**
-     * Retrieve, convert and return a referenced item
-     * @param srcItem the source item
-     * @param fieldName the field name
-     * @return the referenced item
-     * @throws ObjectStoreException if the reference can't be retrieved
-     */
-    protected Item getReferencedItem(Item srcItem, String fieldName) throws ObjectStoreException {
-        return ItemHelper.convert(srcItemReader.getItemById(srcItem.getReference(fieldName)
-                                                            .getRefId()));
-    }
-
-    /**
-     * Main method
-     * @param args command line arguments
-     * @throws Exception if something goes wrong
-     */
-    public static void main (String[] args) throws Exception {
-        String srcOsName = args[0];
-        String tgtOswName = args[1];
-        String modelName = args[2];
-        String format = args[3];
-        String namespace = args[4];
-        String dataLocation = args[5];
-
-        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
-
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new FileReader(new File(modelName)), null, format);
-        ProteinStructureDataTranslator dt =
-            new ProteinStructureDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace,
-                                               dataLocation);
-        model = null;
-        dt.translate(tgtItemWriter);
-        tgtItemWriter.close();
     }
 }

@@ -20,11 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.io.File;
-import java.io.FileReader;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.InterMineException;
 import org.intermine.util.XmlUtil;
@@ -34,15 +31,9 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.intermine.dataconversion.ItemReader;
-import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
@@ -50,7 +41,6 @@ import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.FieldNameAndValue;
 
 import org.apache.log4j.Logger;
-
 
 /**
  * Convert MAGE data in fulldata Item format conforming to a source OWL definition
@@ -107,7 +97,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map maer2Material =  new HashMap();
     protected Map maer2Gene =  new HashMap();
     protected Set cdnaSet = new HashSet();
-    protected Map geneMap =  new HashMap(); //organisamDbId, geneItem
+    protected Map geneMap =  new HashMap(); //organismDbId, geneItem
     protected Set assaySet = new HashSet();
     protected Map sample2LabeledExtract = new HashMap();
     protected Set labeledExractSet = new HashSet();
@@ -552,7 +542,6 @@ public class MageDataTranslator extends DataTranslator
             if (surfaceType.hasAttribute("value")) {
                 tgtItem.addAttribute(new Attribute("surfaceType",
                                                surfaceType.getAttribute("value").getValue()));
-
             }
         }
 
@@ -565,10 +554,7 @@ public class MageDataTranslator extends DataTranslator
             tgtItem.addAttribute(new Attribute("name",
                                                srcItem.getAttribute("name").getValue()));
          }
-
     }
-
-
 
     /**
      * @param srcItem = mage:Experiment
@@ -904,7 +890,6 @@ public class MageDataTranslator extends DataTranslator
         return synonym;
     }
 
-
     /**
      * @param srcItem = mage:LabeledExtract
      * @param tgtItem = flymine:LabeledExtract
@@ -1230,7 +1215,6 @@ public class MageDataTranslator extends DataTranslator
         }
         return results;
     }
-
 
     /**
      * BioAssayDatum  mage:FeatureId -> flymine:MAEResultId (MicroArrayExperimentalResults)
@@ -1780,16 +1764,9 @@ public class MageDataTranslator extends DataTranslator
     }
 
     /**
-     * main method
-     * @param args command line arguments
-     * @throws Exception if something goes wrong
+     * @see DataTranslatorTask#execute
      */
-    public static void main (String[] args) throws Exception {
-        String srcOsName = args[0];
-        String tgtOswName = args[1];
-        String modelName = args[2];
-        String format = args[3];
-        String namespace = args[4];
+    public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
         HashSet descSet = new HashSet();
 
@@ -2099,22 +2076,9 @@ public class MageDataTranslator extends DataTranslator
 
         paths.put("http://www.flymine.org/model/mage#DerivedBioAssay",
                   Collections.singleton(desc1));
-
-
-
-        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
-        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
-
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new MageDataTranslator(srcItemReader, model, namespace);
-        model = null;
-        dt.translate(tgtItemWriter);
-        tgtItemWriter.close();
+        
+        return paths;
     }
-
 }
 
 
