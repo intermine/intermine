@@ -41,10 +41,6 @@ import org.intermine.xml.full.FullRenderer;
 public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
         // print out source items XML - result of running XmlConverter on PSI XML
@@ -59,6 +55,14 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
+    protected String getModelName() {
+        return "genomic";
+    }
+
+    protected Collection getExpectedItems() throws Exception {
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/PsiDataTranslatorTest_tgt.xml"));
+    }
+
     protected Collection getSrcItems() throws Exception {
         Model psiModel = Model.getInstanceByName("psi");
         Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/PsiDataTranslatorTest_src.xml")));
@@ -71,19 +75,11 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         return mockIw.getItems();
     }
 
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/PsiDataTranslatorTest_tgt.xml"));
-    }
-
     protected OntModel getOwlModel() {
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
 
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(reader, null, "N3");
         return ont;
-    }
-
-    protected String getModelName() {
-        return "genomic";
     }
 }
