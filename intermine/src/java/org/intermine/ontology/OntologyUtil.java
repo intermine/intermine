@@ -39,6 +39,8 @@ import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * General purpose ontology methods.
  *
@@ -64,6 +66,7 @@ public class OntologyUtil
      */
     public static final String RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
 
+    private static final Logger LOG = Logger.getLogger(OntologyUtil.class);
 
     private OntologyUtil() {
     }
@@ -312,7 +315,9 @@ public class OntologyUtil
      * @return restricted subclass map
      */
     public static Map getRestrictedSubclassMap(OntModel model) {
+        long time = System.currentTimeMillis();
 
+        // find all hasValue restrictions in model
         Set restrictions = new HashSet();
         ExtendedIterator resIter = model.listRestrictions();
         while (resIter.hasNext()) {
@@ -322,7 +327,11 @@ public class OntologyUtil
             }
         }
         resIter.close();
+        LOG.info("built restrictions set in " + (System.currentTimeMillis() - time) + " ms, size = "
+                 + restrictions.size());
+        time = System.currentTimeMillis();
 
+        // find all classes that subclass a hasValue restriction
         Set hasValueClasses = new HashSet();
         ExtendedIterator clsIter = model.listClasses();
         while (clsIter.hasNext()) {
@@ -340,7 +349,12 @@ public class OntologyUtil
             }
         }
         clsIter.close();
+        LOG.info("built hasValueClasses set in " + (System.currentTimeMillis() - time)
+                 + " ms, size = " + hasValueClasses.size());
+        time = System.currentTimeMillis();
 
+        // candidates for restricted subclasses are superclasses of classes
+        // that also subclass a hasValue restriction
         Set candidates = new HashSet();
         Iterator candIter = hasValueClasses.iterator();
         while (candIter.hasNext()) {
@@ -349,11 +363,15 @@ public class OntologyUtil
             while (superIter.hasNext()) {
                 Resource candidate = (Resource) superIter.next();
                 if (!candidate.isAnon() && candidate.canAs(OntClass.class)) {
+                    // faster - correct? && !cls.getNameSpace().equals(candidate.getNameSpace())) {
                     candidates.add((OntClass) candidate.as(OntClass.class));
                 }
             }
             superIter.close();
         }
+        LOG.info("built candidates set in " + (System.currentTimeMillis() - time) + " ms, size = "
+                 + candidates.size());
+        time = System.currentTimeMillis();
 
         Map classesMap = new HashMap();
         Iterator i = candidates.iterator();
@@ -364,6 +382,8 @@ public class OntologyUtil
                 classesMap.put(cls, subs);
             }
         }
+        LOG.info("found restricted subclasses in " + (System.currentTimeMillis() - time)
+                 + " ms, size = " + classesMap.keySet().size());
         return classesMap;
     }
 
