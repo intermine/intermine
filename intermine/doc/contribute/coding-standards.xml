@@ -133,7 +133,7 @@ file.</listitem>
 require any external jar files or binaries (apart from Ant and the
 JDK!!). Any dependent jar files must be in CVS in the lib directory
 and be mentioned in the appropriate section in the
-<filename>build.xml</filename> file..</listitem>
+<filename>build.xml</filename> file.</listitem>
 
 <listitem>Any files no longer used should be removed using the command
 <command>cvs rm</command>.</listitem>
