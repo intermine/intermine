@@ -128,8 +128,8 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         Map savedBagsInverse =
             (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         Results results = (Results) session.getAttribute("results");
-        String[] selectedObjects = changeResultsForm.getSelectedObjects();
-
+        String[] selectedObjects = changeResultsForm.getSelectedObjects()
+;
         Collection bag = (Collection) savedBags.get(bagName);
 
         if (bag == null) {

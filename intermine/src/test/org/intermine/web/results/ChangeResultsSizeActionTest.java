@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
@@ -31,6 +30,7 @@ import org.flymine.objectstore.query.ResultsRow;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.util.DynamicUtil;
+import org.flymine.web.Constants;
 
 public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 {
@@ -38,7 +38,6 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         super(arg1);
     }
 
-    private Results results;
     private DisplayableResults dr;
 
     private Company company1, company2, company3;
@@ -49,7 +48,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
         FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d", "org.flymine.model.testmodel");
-        results = os.execute(fq.toQuery());
+        Results results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(5);
 
@@ -88,14 +87,12 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     }
 
-
     public void testChangePageSize1() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("pageSize","25");
         addRequestParameter("action", "Change");
 
-        getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
         dr.setStart(0);
         actionPerform();
@@ -111,8 +108,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         addRequestParameter("pageSize","10");
         addRequestParameter("action", "Change");
 
-        getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
         dr.setStart(12);
         actionPerform();
