@@ -125,7 +125,7 @@ public class MainHelper
         //first merge the query and the view
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
-            if (path.indexOf(".") != -1 && !qNodes.containsKey(path)) {
+            if (!qNodes.containsKey(path)) {
                 query2.addNode(path);
             }
         }
