@@ -193,7 +193,7 @@ public class JavaModelOutput extends ModelOutput
         }
 
         if (OJB && (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m))) {
-            sb.append(INDENT + "protected int ")
+            sb.append(INDENT + "protected Integer ")
                 .append(generateNoncapitalName(name) + "Id;\n");
         }
 
@@ -358,7 +358,7 @@ public class JavaModelOutput extends ModelOutput
 
     private String generateEquals(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
-        
+
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
             sb.append(INDENT + "public boolean equals(Object o) {\n")
@@ -395,7 +395,7 @@ public class JavaModelOutput extends ModelOutput
         }
         return sb.toString();
     }
-        
+
     private String generateHashCode(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
 
@@ -407,7 +407,7 @@ public class JavaModelOutput extends ModelOutput
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
-                if (getAllAttributes(cls).containsKey(field) 
+                if (getAllAttributes(cls).containsKey(field)
                     && isPrimitive(((MAttribute)
                                     getAllAttributes(cls).get(field)).getType().getName())) {
                     if (((MAttribute)
@@ -663,7 +663,7 @@ public class JavaModelOutput extends ModelOutput
         }
         return null;
     }
-    
+
     private Collection getKeys(MClassifier cls) {
         Set keyFields = new LinkedHashSet();
         Collection tvs = cls.getTaggedValues();
