@@ -257,6 +257,14 @@ version="1.0">
 <code><xsl:apply-templates/></code>
 </xsl:template>
 
+<xsl:template match="function">
+<code><xsl:apply-templates/></code>
+</xsl:template>
+
+<xsl:template match="classname">
+<code><xsl:apply-templates/></code>
+</xsl:template>
+
 <xsl:template match="pubdate">
 <xsl:variable name="releaseinfo"><xsl:value-of select="/article/artheader/releaseinfo"/></xsl:variable>
 <p align="right">
