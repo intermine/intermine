@@ -148,15 +148,17 @@
       <fileset dir="${model}/${model.name}/src/web/images"/>
       <fileset file="${model}/${model.name}/resources/web/model.css"/>
     </copy>
-    
-  
+
+    <!-- Make a copy in order to rename file -->
+    <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
+
     <war destfile="${war}" update="true">
       <fileset dir="${build.webapp}/intermine" includes="model/**/*" excludes="*.properties"/>
       <webinf file="${build.tmp}/WEB-INF/struts-config.xml"/>
       <webinf dir="${model}/${model.name}/resources/web" excludes="model.properties"/>
       <lib dir="${dist}" includes="intermine-${model.name}.jar"/>
       <classes file="${model}/${model.name}/resources/web/model.properties"/>
-      <classes file="${runtime.properties.local}"/>
+      <classes file="${build.tmp}/WEB-INF/intermine.properties" />
       <classes dir="${build.model}/${model.name}" includes="**/web/*.class"/>
     </war>
 
