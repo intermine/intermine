@@ -115,14 +115,16 @@
               <html:text property="constraintValue"/>
             </c:when>
             <c:otherwise>
-              <fmt:message key="query.subclassconstraint"/>
-              <html:select property="subclass">
-                <c:forEach items="${subclasses}" var="subclass">
-                  <html:option value="${subclass}">
-                    <c:out value="${subclass}"/>
-                  </html:option>
-                </c:forEach>
-              </html:select>
+              <c:if test="${editingNode.indentation != 0}">
+                <fmt:message key="query.subclassconstraint"/>
+                <html:select property="subclass">
+                  <c:forEach items="${subclasses}" var="subclass">
+                    <html:option value="${subclass}">
+                      <c:out value="${subclass}"/>
+                    </html:option>
+                  </c:forEach>
+                </html:select>
+              </c:if>
               <c:if test="${!empty SAVED_BAGS}">
                 <br/>
                 <fmt:message key="query.bagconstraint"/>
