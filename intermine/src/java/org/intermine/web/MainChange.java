@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Action to handle links on main tile
@@ -124,7 +125,8 @@ public class MainChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");

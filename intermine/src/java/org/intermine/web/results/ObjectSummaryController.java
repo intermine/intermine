@@ -29,6 +29,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.Constants;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -62,7 +63,8 @@ public class ObjectSummaryController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
         Object o = request.getAttribute("object");
 
         if (o instanceof InterMineObject) {

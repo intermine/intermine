@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Perform initialisation steps for displaying a tree
@@ -61,7 +62,8 @@ public class TreeController extends TilesAction
             rootClass = "org.intermine.model.InterMineObject";
         }
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
         Map classCounts = (Map) servletContext.getAttribute("classCounts");

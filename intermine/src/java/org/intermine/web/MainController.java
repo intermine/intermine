@@ -36,6 +36,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -55,7 +56,8 @@ public class MainController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
 
         //set up the path-based query
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);

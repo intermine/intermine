@@ -28,11 +28,6 @@ public interface Constants
     public static final String OBJECTSTORE = "OBJECTSTORE";
 
     /**
-     * ServletContext attribute used to store the Model
-     */
-    public static final String MODEL = "MODEL";
-
-    /**
      * Session attribute used to store saved bags
      */
     public static final String SAVED_BAGS = "SAVED_BAGS";

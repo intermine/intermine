@@ -32,6 +32,7 @@ import org.apache.struts.Globals;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -95,7 +96,8 @@ public class SaveQueryAction extends Action
                                  ResultsInfo resultsInfo) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
         if (savedQueries == null) {

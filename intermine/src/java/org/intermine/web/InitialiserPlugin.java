@@ -65,7 +65,6 @@ public class InitialiserPlugin implements PlugIn
             ObjectStoreSummary oss = new ObjectStoreSummary(os);
 
             servletContext.setAttribute(Constants.OBJECTSTORE, os);
-            servletContext.setAttribute(Constants.MODEL, model);
             servletContext.setAttribute("webconfig", wc);
 
             Properties webProperties = new Properties();
