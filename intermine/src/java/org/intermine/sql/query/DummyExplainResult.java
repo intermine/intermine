@@ -10,8 +10,6 @@ package org.intermine.sql.query;
  *
  */
 
-import java.sql.*;
-
 /**
  * Subclass of ExplainResult not associated with a database. The amount of
  * time this query will take is the number of tables plus the number of constraints

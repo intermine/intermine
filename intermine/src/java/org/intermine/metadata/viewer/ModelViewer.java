@@ -11,7 +11,6 @@ package org.intermine.metadata.viewer;
  */
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;

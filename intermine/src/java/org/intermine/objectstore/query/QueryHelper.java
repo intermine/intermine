@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.intermine.metadata.*;
-
 /**
  * Static methods to assist with query generation from front end.
  *
