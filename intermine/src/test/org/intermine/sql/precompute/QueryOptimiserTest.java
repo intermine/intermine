@@ -1,9 +1,13 @@
 package org.flymine.sql.precompute;
 
 import junit.framework.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import org.flymine.sql.query.*;
 
 public class QueryOptimiserTest extends TestCase
@@ -162,33 +166,239 @@ public class QueryOptimiserTest extends TestCase
         AbstractTable t4 = new Table("table1", "alias4");
         AbstractTable t5 = new Table("table2", "alias5");
         AbstractTable t6 = new Table("table3", "alias6");
+        AbstractTable t7 = new Table("table4", "alias1");
 
         Map map = new HashMap();
         map.put(t1, t4);
         map.put(t2, t5);
         map.put(t3, t6);
 
-        QueryOptimiser.remapAliases(map);
+        Set tables = new HashSet();
+        tables.add(t4);
+        tables.add(t5);
+        tables.add(t6);
+        tables.add(t7);
+
+        QueryOptimiser.remapAliases(map, tables);
 
         assertEquals(t1, map.get(t1));
         assertEquals(t2, map.get(t2));
         assertEquals(t3, map.get(t3));
-
+        assertTrue(!"alias1".equals(t7.getAlias()));
     }
 
     public void testCompareConstraints() throws Exception {
+        Set equalsSet = new HashSet();
         assertTrue(QueryOptimiser.compareConstraints(twoSameTableQuery.getWhere(),
-                                                     twoSameTableQuery.getWhere()));
+                                                     twoSameTableQuery.getWhere(), equalsSet));
+        assertEquals(twoSameTableQuery.getWhere(), equalsSet);
+        equalsSet = new HashSet();
         assertTrue(QueryOptimiser.compareConstraints(singleTableQueryNoConstraints.getWhere(),
-                                                     singleTableQuery.getWhere()));
+                                                     singleTableQuery.getWhere(), equalsSet));
+        assertEquals(singleTableQueryNoConstraints.getWhere(), equalsSet);
+        equalsSet = new HashSet();
         assertTrue(QueryOptimiser.compareConstraints(singleTableQueryWithTableAlias.getWhere(),
-                                                     twoSameTableQuery.getWhere()));
+                                                     twoSameTableQuery.getWhere(), equalsSet));
+        assertEquals(singleTableQueryWithTableAlias.getWhere(), equalsSet);
 
+        equalsSet = new HashSet();
         assertFalse(QueryOptimiser.compareConstraints(singleTableQuery.getWhere(),
-                                                      singleTableQueryNoConstraints.getWhere()));
+                                                      singleTableQueryNoConstraints.getWhere(),
+                                                      equalsSet));
+        // equalsSet is now undefined.
+        equalsSet = new HashSet();
         assertFalse(QueryOptimiser.compareConstraints(twoSameTableQuery.getWhere(),
-                                                      singleTableQueryWithTableAlias.getWhere()));
+                                                      singleTableQueryWithTableAlias.getWhere(),
+                                                      equalsSet));
+        // equalsSet is now undefined.
     }
 
+    public void testCompareSelectLists() throws Exception {
+        SelectValue v1 = new SelectValue(new Constant("hello"), "alias1");
+        SelectValue v2 = new SelectValue(new Constant("hello"), "alias2");
+        SelectValue v3 = new SelectValue(new Constant("a"), "alias3");
+        SelectValue v4 = new SelectValue(new Constant("a"), "alias4");
+        SelectValue v5 = new SelectValue(new Constant("a"), "alias5");
+        SelectValue v6 = new SelectValue(new Constant("flibble"), "alias6");
 
+        List l1 = new ArrayList();
+        l1.add(v1);
+        l1.add(v3);
+        List l2 = new ArrayList();
+        l2.add(v2);
+        l2.add(v4);
+        l2.add(v5);
+        List l3 = new ArrayList();
+        l3.add(v2);
+        l3.add(v4);
+        l3.add(v6);
+        List l4 = new ArrayList();
+
+        assertTrue(QueryOptimiser.compareSelectLists(l1, l2));
+        assertTrue(QueryOptimiser.compareSelectLists(l2, l1));
+        assertTrue(QueryOptimiser.compareSelectLists(l1, l1));
+        assertTrue(QueryOptimiser.compareSelectLists(l1, l3));
+        assertFalse(QueryOptimiser.compareSelectLists(l3, l1));
+        assertTrue(QueryOptimiser.compareSelectLists(l4, l1));
+        assertFalse(QueryOptimiser.compareSelectLists(l1, l4));
+        assertTrue(QueryOptimiser.compareSelectLists(l4, l4));
+    }
+
+    public void testFindTableForAlias() throws Exception {
+        Set set = new HashSet();
+        Table t1 = new Table("table1", "alias1");
+        Table t2 = new Table("table2", "alias2");
+        Table t3 = new Table("table2", "alias3");
+        set.add(t1);
+        set.add(t2);
+        set.add(t3);
+
+        assertEquals(t1, QueryOptimiser.findTableForAlias("alias1", set));
+        assertEquals(t2, QueryOptimiser.findTableForAlias("alias2", set));
+        assertEquals(t3, QueryOptimiser.findTableForAlias("alias3", set));
+        assertNull(QueryOptimiser.findTableForAlias("alias4", set));
+    }
+
+    public void testCreateValueMap() throws Exception {
+        Collection values = new HashSet();
+        AbstractValue v1 = new Constant("c1");
+        AbstractValue v2 = new Constant("c2");
+        AbstractValue v3 = new Constant("c3");
+        SelectValue s1 = new SelectValue(v1, "alias1");
+        SelectValue s2 = new SelectValue(v2, "alias2");
+        SelectValue s3 = new SelectValue(v3, "alias3");
+        values.add(s1);
+        values.add(s2);
+        values.add(s3);
+
+        Map result = new HashMap();
+        result.put(v1, s1);
+        result.put(v2, s2);
+        result.put(v3, s3);
+
+        assertEquals(result, QueryOptimiser.createValueMap(values));
+    }
+
+    public void testReconstructAbstractValue() throws Exception {
+        Collection values = new HashSet();
+        Table t1 = new Table("table1", "tablealias1");
+        Table t2 = new Table("table2", "tablealias2");
+        AbstractValue v1 = new Constant("c1");
+        AbstractValue v2 = new Field("field1", t1);
+        Function v3 = new Function(Function.PLUS);
+        v3.add(v1);
+        v3.add(v2);
+        AbstractValue v4 = new Constant("c4");
+        Function v6 = new Function(Function.MINUS);
+        v6.add(v1);
+        v6.add(v2);
+        Function v7 = new Function(Function.MAX);
+        v7.add(v2);
+        AbstractValue v8 = new Function(Function.COUNT);
+        AbstractValue v9 = new Field("field2", t1);
+        AbstractValue v10 = new Field("field3", t2);
+        Function v11 = new Function(Function.MULTIPLY);
+        v11.add(v9);
+        v11.add(v10);
+        SelectValue s1 = new SelectValue(v1, "alias1");
+        SelectValue s2 = new SelectValue(v2, "alias2");
+        SelectValue s3 = new SelectValue(v3, "alias3");
+        Map valueMap = new HashMap();
+        valueMap.put(v1, s1);
+        valueMap.put(v2, s2);
+        valueMap.put(v3, s3);
+
+        Table precomputedSqlTable = new Table("precomp1", "precompalias1");
+        Set tableSet = new HashSet();
+        tableSet.add(t1);
+
+        assertEquals(new Field("alias1", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v1, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(new Field("alias1", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v1, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(new Field("alias2", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v2, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(new Field("alias2", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v2, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(new Field("alias3", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v3, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(new Field("alias3", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v3, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(v4, QueryOptimiser.reconstructAbstractValue(v4, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(v4, QueryOptimiser.reconstructAbstractValue(v4, precomputedSqlTable, valueMap, tableSet, false));
+        Function ev6 = new Function(Function.MINUS);
+        ev6.add(new Field("alias1", precomputedSqlTable));
+        ev6.add(new Field("alias2", precomputedSqlTable));
+        assertEquals(ev6, QueryOptimiser.reconstructAbstractValue(v6, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(ev6, QueryOptimiser.reconstructAbstractValue(v6, precomputedSqlTable, valueMap, tableSet, false));
+        try {
+            QueryOptimiser.reconstructAbstractValue(v7, precomputedSqlTable, valueMap, tableSet, true);
+            fail("Expected QueryOptimiserException");
+        } catch (QueryOptimiserException e) {
+        }
+        Function ev7 = new Function(Function.MAX);
+        ev7.add(new Field("alias2", precomputedSqlTable));
+        assertEquals(ev7, QueryOptimiser.reconstructAbstractValue(v7, precomputedSqlTable, valueMap, tableSet, false));
+        try {
+            QueryOptimiser.reconstructAbstractValue(v8, precomputedSqlTable, valueMap, tableSet, true);
+            fail("Expected QueryOptimiserException");
+        } catch (QueryOptimiserException e) {
+        }
+        AbstractValue ev8 = new Function(Function.COUNT);
+        assertEquals(ev8, QueryOptimiser.reconstructAbstractValue(v8, precomputedSqlTable, valueMap, tableSet, false));
+        try {
+            QueryOptimiser.reconstructAbstractValue(v9, precomputedSqlTable, valueMap, tableSet, true);
+            fail("Expected QueryOptimiserException");
+        } catch (QueryOptimiserException e) {
+        }
+        try {
+            QueryOptimiser.reconstructAbstractValue(v9, precomputedSqlTable, valueMap, tableSet, false);
+            fail("Expected QueryOptimiserException");
+        } catch (QueryOptimiserException e) {
+        }
+        assertEquals(v10, QueryOptimiser.reconstructAbstractValue(v10, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(v10, QueryOptimiser.reconstructAbstractValue(v10, precomputedSqlTable, valueMap, tableSet, false));
+        try {
+            QueryOptimiser.reconstructAbstractValue(v11, precomputedSqlTable, valueMap, tableSet, true);
+            fail("Expected QueryOptimiserException");
+        } catch (QueryOptimiserException e) {
+        }
+        try {
+            QueryOptimiser.reconstructAbstractValue(v11, precomputedSqlTable, valueMap, tableSet, false);
+            fail("Expected QueryOptimiserException");
+        } catch (QueryOptimiserException e) {
+        }
+    }
+
+    public void testReconstructSelectValues() throws Exception {
+        Collection values = new HashSet();
+        AbstractValue v1 = new Constant("c1");
+        AbstractValue v2 = new Constant("c2");
+        AbstractValue v3 = new Constant("c3");
+        AbstractValue v4 = new Constant("c4");
+        SelectValue sq1 = new SelectValue(v1, "queryalias1");
+        SelectValue sq2 = new SelectValue(v2, "queryalias2");
+        SelectValue sq3 = new SelectValue(v3, "queryalias3");
+        SelectValue sq4 = new SelectValue(v4, "queryalias4");
+        SelectValue sp1 = new SelectValue(v1, "precompalias1");
+        SelectValue sp2 = new SelectValue(v2, "precompalias2");
+        Map valueMap = new HashMap();
+        valueMap.put(v1, sp1);
+        valueMap.put(v2, sp2);
+        List oldSelect = new ArrayList();
+        oldSelect.add(sq1);
+        oldSelect.add(sq2);
+        oldSelect.add(sq3);
+        oldSelect.add(sq4);
+        Query newQuery = new Query();
+        Table precomputedSqlTable = new Table("precomp1", "precomptablealias1");
+        Set tableSet = new HashSet();
+        QueryOptimiser.reconstructSelectValues(oldSelect, precomputedSqlTable, valueMap, tableSet, true, newQuery);
+
+        SelectValue se1 = new SelectValue(new Field("precompalias1", precomputedSqlTable), "queryalias1");
+        SelectValue se2 = new SelectValue(new Field("precompalias2", precomputedSqlTable), "queryalias2");
+        SelectValue se3 = new SelectValue(v3, "queryalias3");
+        SelectValue se4 = new SelectValue(v4, "queryalias4");
+        List expectedSelect = new ArrayList();
+        expectedSelect.add(se1);
+        expectedSelect.add(se2);
+        expectedSelect.add(se3);
+        expectedSelect.add(se4);
+
+        assertEquals(expectedSelect, newQuery.getSelect());
+    }
 }
