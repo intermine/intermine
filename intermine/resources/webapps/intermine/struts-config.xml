@@ -247,9 +247,6 @@
     </action>
 
     <!-- Controllers -->
-    <action path="/initBegin"
-            type="org.intermine.web.BeginController"/>
-    
     <action path="/initMain"
             type="org.intermine.web.MainController"/>
 
