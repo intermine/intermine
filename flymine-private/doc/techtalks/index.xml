@@ -10,9 +10,9 @@
         <table>
           <tbody>
             <row>
-              <entry>25th April 2003</entry>
-              <entry>Mark</entry>
-              <entry>Demystifying XML</entry>
+              <entry>2nd June 2003</entry>
+              <entry>François</entry>
+              <entry>Firewalls</entry>
             </row>
           </tbody>
         </table>
@@ -21,6 +21,11 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>25th April 2003</entry>
+              <entry>Mark</entry>
+              <entry><ulink url="XML_demystified.sxi">XML demystified</ulink></entry>
+            </row>
             <row>
               <entry>28th March 2003</entry>
               <entry>Matthew</entry>
