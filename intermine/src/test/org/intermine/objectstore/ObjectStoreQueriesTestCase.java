@@ -195,6 +195,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Substring2", substring2());
         queries.put("OrderByReference", orderByReference());
         queries.put("FailDistinctOrder", failDistinctOrder());
+        queries.put("LargeBagConstraint", largeBagConstraint());
     }
 
     /*
@@ -1272,6 +1273,24 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(new QueryField(qc, "name"));
         q.addToOrderBy(new QueryField(qc, "age"));
         q.setDistinct(true);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.name IN (...)
+     */
+    public static Query largeBagConstraint() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Set bag = new HashSet();
+        bag.add("EmployeeA1");
+        bag.add("EmployeeB2");
+        for (int i = 0; i < 20000; i++) {
+            bag.add("a" + i);
+        }
+        q.setConstraint(new BagConstraint(new QueryField(qc, "name"), ConstraintOp.IN, bag));
         return q;
     }
 }

@@ -10,6 +10,8 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -122,9 +124,9 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("EmptyNandConstraintSet", Collections.singleton("InterMineObject"));
         results.put("EmptyNorConstraintSet", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND true ORDER BY a1_.id");
         results2.put("EmptyNorConstraintSet", Collections.singleton("InterMineObject"));
-        results.put("BagConstraint", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.name = 'CompanyA' OR Company.name = 'goodbye' OR Company.name = 'hello') ORDER BY Company.id");
+        results.put("BagConstraint", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.name IN ('CompanyA', 'goodbye', 'hello')) ORDER BY Company.id");
         results2.put("BagConstraint", Collections.singleton("InterMineObject"));
-        results.put("BagConstraint2", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.id = " + id2 + ") ORDER BY Company.id");
+        results.put("BagConstraint2", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.id IN (" + id2 + ")) ORDER BY Company.id");
         results2.put("BagConstraint2", Collections.singleton("InterMineObject"));
         results.put("InterfaceField", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employable' AND a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results2.put("InterfaceField", Collections.singleton("InterMineObject"));
@@ -187,6 +189,9 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("Substring2", Collections.singleton("InterMineObject"));
         results.put("OrderByReference", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", Collections.singleton("InterMineObject"));
+        String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/truncatedLargeBag.sql"))).readLine();
+        results.put("LargeBagConstraint", largeBagConstraintText);
+        results2.put("LargeBagConstraint", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

@@ -12,6 +12,8 @@ package org.intermine.objectstore.intermine;
 
 import junit.framework.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -145,9 +147,9 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("EmptyNandConstraintSet", Collections.singleton("Company"));
         results.put("EmptyNorConstraintSet", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE true ORDER BY a1_.id");
         results2.put("EmptyNorConstraintSet", Collections.singleton("Company"));
-        results.put("BagConstraint", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.name = 'CompanyA' OR Company.name = 'goodbye' OR Company.name = 'hello') ORDER BY Company.id");
+        results.put("BagConstraint", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.name IN ('CompanyA', 'goodbye', 'hello')) ORDER BY Company.id");
         results2.put("BagConstraint", Collections.singleton("Company"));
-        results.put("BagConstraint2", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.id = " + id2 + ") ORDER BY Company.id");
+        results.put("BagConstraint2", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.id IN (" + id2 + ")) ORDER BY Company.id");
         results2.put("BagConstraint2", Collections.singleton("Company"));
         results.put("InterfaceField", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employable AS a1_ WHERE a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results2.put("InterfaceField", Collections.singleton("Employable"));
@@ -209,11 +211,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("OrderByReference", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", Collections.singleton("Employee"));
         results.put("FailDistinctOrder", new Failure(ObjectStoreException.class, "Field a1_.age in the ORDER BY list must be in the SELECT list, or the whole QueryClass org.intermine.model.testmodel.Employee must be in the SELECT list, or the query made non-distinct"));
+        String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/largeBag.sql"))).readLine();
+        results.put("LargeBagConstraint", largeBagConstraintText);
+        results2.put("LargeBagConstraint", Collections.singleton("Employee"));
     }
 
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
         Object expected = results.get(type);
+        if ("LargeBagConstraint".equals(type)) {
+            System.out.println("LargeBagConstraint: " + expected);
+        }
         if (expected instanceof Failure) {
             try {
                 SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
@@ -240,7 +248,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
 
             // TODO: extend sql so that it can represent these
-            if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty"))) {
+            if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty") || type.startsWith("BagConstraint") || "LargeBagConstraint".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
             }
