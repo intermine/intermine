@@ -1,10 +1,10 @@
 <menu>
     <section>
-        <heading><ulink url="project">Project</ulink></heading>
+        <heading><ulink url="/project">Project</ulink></heading>
         <item><ulink url="/index">About</ulink></item>
         <item><ulink url="/project/team">Team</ulink></item>
         <item><ulink url="/project/funding">Funding</ulink></item>
-        <item><ulink url="/project">Presentations</ulink></item>
+        <item><ulink url="/project/#presentations">Presentations</ulink></item>
     </section>
     <section>
         <heading>Documentation</heading>
