@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.Collection;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
@@ -45,8 +45,8 @@ public class UpdatePublicationsTest extends TestCase
         protected List objects = new ArrayList();
         protected int id = 0;
 
-        public TestUpdatePublications(ObjectStoreWriter osw) {
-            super(osw);
+        public TestUpdatePublications(IntegrationWriter iw) {
+            super(iw);
         }
 
         protected List getPublications() {
