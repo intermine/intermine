@@ -3,8 +3,8 @@
 
 <!-- layout.jsp -->
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <html:html locale="true" xhtml="true">
@@ -13,14 +13,14 @@
 
   <head>
     <html:base/>
-    <link rel="stylesheet" type="text/css" href="http://intermine.org/style/intermine.css"/>
-    <link rel="stylesheet" type="text/css" href="intermine.css"/>
+    <link rel="stylesheet" type="text/css" href="<html:rewrite href='${WEB_PROPERTIES["project.sitePrefix"]}/style/default.css'/>"/>
+    <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
-    <script src="/style/footer.js" type="text/javascript">;</script>
+    <script src="<html:rewrite href='${WEB_PROPERTIES["project.sitePrefix"]}/style/footer.js'/>" type="text/javascript">;</script>
     <title>
       <fmt:message key="${pageName}.title" var="pageTitle"/>
       <c:out value="${WEB_PROPERTIES['project.title']} - ${pageTitle}" escapeXml="false"/>
