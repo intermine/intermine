@@ -35,6 +35,15 @@ null:exon__end_phase a owl:DatatypeProperty ;
 null:exon__sticky_rank a owl:DatatypeProperty ;
     owl:equivalentProperty e:exon__sticky_rank .
 
+null:exon__contig a owl:ObjectProperty ;
+    owl:equivalentProperty e:exon__contig .
+
+# need exon_contig (reference) to becom Exon__contigs (a collection)
+# must be done in EnsemblDataTranslator
+:Exon__contigs a owl:ObjectProperty ;
+    rdfs:domain :Exon ;
+    rdfs:range :Contig .
+
 
 
 # not all genes are named, those that are have name in xref table
