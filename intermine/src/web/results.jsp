@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <tiles:importAttribute/>
 
@@ -13,7 +13,7 @@
 <table border="1px" width="90%">
   <%-- The headers --%>
   <tr>
-    <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
+    <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">
       <th colspan=2 align="center" class="resultsHeader">
         <c:out value="${column.alias}"/>
 
@@ -54,8 +54,8 @@
   <%-- The data --%>
 
   <%-- Row --%>
-  <c:if test="${resultsTable.size > 0}">
-    <c:forEach var="row" items="${resultsTable.results}" varStatus="status" begin="${resultsTable.start}" end="${resultsTable.end}">
+  <c:if test="${RESULTS_TABLE.size > 0}">
+    <c:forEach var="row" items="${RESULTS_TABLE.results}" varStatus="status" begin="${RESULTS_TABLE.start}" end="${RESULTS_TABLE.end}">
 
       <c:set var="rowClass">
         <c:choose>
@@ -66,7 +66,7 @@
 
       <tr class="<c:out value="${rowClass}"/>">
 
-        <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
+        <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status2">
           <c:choose>
             <c:when test="${column.visible}">
               <c:choose>
@@ -102,42 +102,42 @@
 
   <%-- "Displaying xxx to xxx of xxx rows" messages --%>
   <c:choose>
-    <c:when test="${resultsTable.size == 0}">
+    <c:when test="${RESULTS_TABLE.size == 0}">
       <bean:message key="results.pageinfo.empty"/>
     </c:when>
-    <c:when test="${resultsTable.sizeEstimate}">
+    <c:when test="${RESULTS_TABLE.sizeEstimate}">
       <bean:message key="results.pageinfo.estimate"
-                    arg0="${resultsTable.start+1}"
-                    arg1="${resultsTable.end+1}"
-                    arg2="${resultsTable.size}"/>
+                    arg0="${RESULTS_TABLE.start+1}"
+                    arg1="${RESULTS_TABLE.end+1}"
+                    arg2="${RESULTS_TABLE.size}"/>
     </c:when>
     <c:otherwise>
       <bean:message key="results.pageinfo.exact"
-                    arg0="${resultsTable.start+1}"
-                    arg1="${resultsTable.end+1}"
-                    arg2="${resultsTable.size}"/>
+                    arg0="${RESULTS_TABLE.start+1}"
+                    arg1="${RESULTS_TABLE.end+1}"
+                    arg2="${RESULTS_TABLE.size}"/>
     </c:otherwise>
 
   </c:choose>
   <br/>
 
   <%-- Paging controls --%>
-  <c:if test="${resultsTable.start > 0}">
+  <c:if test="${RESULTS_TABLE.start > 0}">
     <html:link action="/changeResults?method=first">
       <bean:message key="results.first"/>
     </html:link>
   </c:if>
-  <c:if test="${resultsTable.previousButton}">
+  <c:if test="${RESULTS_TABLE.previousButton}">
     <html:link action="/changeResults?method=previous">
       <bean:message key="results.previous"/>
     </html:link>
   </c:if>
-  <c:if test="${resultsTable.nextButton}">
+  <c:if test="${RESULTS_TABLE.nextButton}">
     <html:link action="/changeResults?method=next">
       <bean:message key="results.next"/>
     </html:link>
   </c:if>
-  <c:if test="${resultsTable.sizeEstimate || (resultsTable.end != resultsTable.size - 1)}">
+  <c:if test="${RESULTS_TABLE.sizeEstimate || (RESULTS_TABLE.end != RESULTS_TABLE.size - 1)}">
     <html:link action="/changeResults?method=last">
       <bean:message key="results.last"/>
     </html:link>
@@ -161,11 +161,11 @@
 
   <%-- Save bag controls --%>
   <br/>
-  <c:if test="${resultsTable.size > 0}">
-    <c:if test="${!empty savedBags}">
+  <c:if test="${RESULTS_TABLE.size > 0}">
+    <c:if test="${!empty SAVED_BAGS}">
       <html:select property="bagName">
 
-        <c:forEach items="${savedBags}" var="entry">
+        <c:forEach items="${SAVED_BAGS}" var="entry">
           <html:option value="${entry.key}"/>
         </c:forEach>
       </html:select>
