@@ -3,7 +3,7 @@ package org.flymine.objectstore.query;
 import java.util.Date;
 
 /**
- *
+ * Represents a constant in a Query
  *
  * @author Mark Woodbridge
  * @author Richard Smith
@@ -13,30 +13,18 @@ public class QueryValue implements QueryEvaluable, QueryNode
     private Object value;
 
     /**
-     * @param value the initial numeric value of this QueryValue
-     */    
-    public QueryValue(Number value) {
-        this.value = value;
-    }
-    
-    /**
-     * @param value this initial string value of this QueryValue
-     */    
-    public QueryValue(String value) {
-        this.value = value;
-    }
-    
-    /**
-     * @param value the initial boolean value of this QueryValue
-     */    
-    public QueryValue(Boolean value) {
-        this.value = value;
-    }
-    
-    /**
-     * @param value the initial date value of this QueryValue
-     */    
-    public QueryValue(Date value) {
+     * Construct a QueryValue
+     *
+     * @param value the value of this QueryValue
+     * @throws IllegalArgumentException if value is not a Number, String, Boolean or Date
+     */
+    public QueryValue(Object value) {
+        if (!((value instanceof Number) ||
+              (value instanceof String) ||
+              (value instanceof Boolean) ||
+              (value instanceof Date))) {
+            throw new IllegalArgumentException("value must be a Number, String, Boolean or Date");
+        }
         this.value = value;
     }
 
