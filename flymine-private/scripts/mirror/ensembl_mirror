@@ -34,7 +34,7 @@ SOURCE_VERSION=`cat .listing |awk '/core/ {print $9}'|sed 's/^[^0-9]*_//'`
 echo "Source version is $SOURCE_VERSION"
 
 # See whether we have this database on the server
-DBNAME="ensembl-${ORGANISM}-${SOURCE_VERSION}"
+DBNAME="ensembl_${ORGANISM}_${SOURCE_VERSION}"
 CURRENT_VERSION=`mysql -h$DBHOST -u$DBUSER -p$DBPASSWD mysql -e "show databases"| awk "/${DBNAME}/ {print}"`
 
 if [ "$CURRENT_VERSION" = "" ]; then
