@@ -2,23 +2,53 @@ package org.flymine.metadata;
 
 import junit.framework.TestCase;
 
-import java.util.HashSet;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 
-public class ModelTest extends TestCase {
+public class ModelTest extends TestCase
+{
+    Model m1, m2, m3, m4, m5;
 
     public ModelTest(String arg) {
         super(arg);
     }
 
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
+        m1 = new Model("flibble", new HashSet());
+        m2 = new Model("flibble", new HashSet());
+        m3 = new Model("flobble", new HashSet());
+        m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet())));
+        m5 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet())));
     }
 
-    public void tearDown() {
+    public void testEquals1() throws Exception {
+        assertEquals(m1, m2);
+        assertEquals(m1.hashCode(), m2.hashCode());
+        assertTrue(!m1.equals(m3));
+        assertTrue(m1.hashCode() != m3.hashCode());
     }
+
+    public void testEquals2() throws Exception {
+        assertTrue(!m1.equals(m4));
+        assertTrue(m1.hashCode() != m4.hashCode());
+        assertEquals(m4, m5);
+        assertEquals(m4.hashCode(), m5.hashCode());
+    }
+
+    /*
+     * TODO
+    public void testEquals3() throws Exception {
+        AceModelParser amp = new AceModelParser();
+        Model lm1 = amp.readerToModel(new BufferedReader(new FileReader("models.wrm")));
+        Model lm2 = amp.readerToModel(new BufferedReader(new FileReader("models.wrm")));
+        assertTrue(lm1.equals(lm2));
+    }
+    */
 
     public void testGetInstanceByWrongName() throws Exception {
         try {

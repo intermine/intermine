@@ -84,12 +84,16 @@ public class AceModelParser implements ModelParser
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.Float"));
         l.add(new ClassDescriptor(PACKAGE + "Float", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "int"));
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.Integer"));
         l.add(new ClassDescriptor(PACKAGE + "Int", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
+        refs = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        //refs.add(new ReferenceDescriptor("Quoted_in", false, "org.flymine.model.acedb.Paper",
+        //            null));
         l.add(new ClassDescriptor(PACKAGE + "Keyword", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
+        refs = Collections.EMPTY_SET;
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("text", false, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "LongText", null, null, false, atts, refs, cols));
@@ -100,6 +104,9 @@ public class AceModelParser implements ModelParser
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "Text", null, null, false, atts, refs, cols));
+        atts = new LinkedHashSet();
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "Comment", null, null, false, atts, refs, cols));
     }
 
     /**
@@ -321,9 +328,9 @@ public class AceModelParser implements ModelParser
         } else if ("Text".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, false, "java.lang.String"));
         } else if ("Float".equals(type)) {
-            atts.add(new AttributeDescriptor(fieldName, false, "float"));
+            atts.add(new AttributeDescriptor(fieldName, false, "java.lang.Float"));
         } else if ("Int".equals(type)) {
-            atts.add(new AttributeDescriptor(fieldName, false, "int"));
+            atts.add(new AttributeDescriptor(fieldName, false, "java.lang.Integer"));
         } else if ("DateType".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, false, "java.util.Date"));
         } else {

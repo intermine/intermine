@@ -52,4 +52,23 @@ public class AttributeDescriptor extends FieldDescriptor
         return "<attribute name=\"" + name + "\" type=\"" + type + "\" primary-key=\""
             + primaryKey + "\"/>";
     }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof AttributeDescriptor) {
+            AttributeDescriptor a = (AttributeDescriptor) obj;
+            return name.equals(a.name) && (primaryKey == a.primaryKey)
+                && type.equals(a.type);
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return (3 * name.hashCode()) + (primaryKey ? 5 : 0) + (7 * type.hashCode());
+    }
 }

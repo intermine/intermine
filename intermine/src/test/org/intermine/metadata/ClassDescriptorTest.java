@@ -290,6 +290,27 @@ public class ClassDescriptorTest extends TestCase {
         assertEquals(impls, cld1.getImplementorDescriptors());
     }
 
+    public void testEquals1() throws Exception {
+        ClassDescriptor c1 = new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c2 = new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c3 = new ClassDescriptor("class1", null, null, true, Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.EMPTY_SET);
+        ClassDescriptor c4 = new ClassDescriptor("class2", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c5 = new ClassDescriptor("class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c6 = new ClassDescriptor("class1", "flibble", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c7 = new ClassDescriptor("class1", null, "flibble", true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c8 = new ClassDescriptor("class1", null, null, false, Collections.singleton(new AttributeDescriptor("field", false, "java.lang.String")), new HashSet(), new HashSet());
+        ClassDescriptor c9 = new ClassDescriptor("class1", null, null, false, Collections.singleton(new AttributeDescriptor("field", false, "java.lang.String")), new HashSet(), new HashSet());
+        
+        assertEquals(c1, c2);
+        assertEquals(c1, c3);
+        assertTrue(!c1.equals(c4));
+        assertTrue(!c1.equals(c5));
+        assertTrue(!c1.equals(c6));
+        assertTrue(!c1.equals(c7));
+        assertTrue(!c5.equals(c8));
+        assertEquals(c8, c9);
+    }
+
     public void testToString() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", "Class2", "Interface1", false, new HashSet(), new HashSet(), new HashSet());
         String expected = "<class name=\"Class1\" extends=\"Class2\" implements=\"Interface1\" is-interface=\"false\">"
@@ -328,6 +349,4 @@ public class ClassDescriptorTest extends TestCase {
         collections.add(cld2);
         return collections;
     }
-
-
 }

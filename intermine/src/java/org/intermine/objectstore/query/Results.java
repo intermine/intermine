@@ -382,8 +382,17 @@ public class Results extends AbstractList
 
                         if (fieldVal instanceof LazyCollection) {
                             Query query = ((LazyCollection) fieldVal).getQuery();
-                            Method setter = (Method) fieldToSetter.get(field);
-                            setter.invoke(obj, new Object[] {new SingletonResults(query, os)});
+                            Object singletonResult = new SingletonResults(query, os);
+                            try {
+                                Method setter = (Method) fieldToSetter.get(field);
+                                setter.invoke(obj, new Object[] {new SingletonResults(query, os)});
+                            } catch (IllegalArgumentException e) {
+                                throw new IllegalArgumentException("Error setting field "
+                                        + field.getDeclaringClass().getName() + "."
+                                        + field.getName() + " ( a " + field.getType().getName()
+                                        + ") to object " + singletonResult + " (a "
+                                        + singletonResult.getClass().getName() + ")");
+                            }
                         } else if (fieldVal instanceof LazyReference) {
                             ((LazyReference) fieldVal).setObjectStore(os);
                         }

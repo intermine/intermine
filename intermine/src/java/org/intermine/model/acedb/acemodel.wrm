@@ -424,7 +424,7 @@
 		Y_remark ?Text
 		PCR_remark ?Text
 	Position  Map ?Map XREF Clone #Map_position
-        	  pMap UNIQUE  ?Contig XREF Clone  UNIQUE Int UNIQUE Int 
+        	  Pmap UNIQUE  ?Contig XREF Clone  UNIQUE Int UNIQUE Int 
 						// pMap units are bands
 		  Clone_left_end ?Sequence	// filled by XREF
 		  Clone_right_end ?Sequence	// filled by XREF
@@ -463,8 +463,8 @@
 		Autopos
 	Expression_construct	Pattern ?Text	// archaic
   	Reference ?Paper XREF Clone
-        cDNA_group Contains ?Clone XREF Contains Text
-                   Contained_in ?Clone XREF Contained_in
+        cDNA_group //Contains ?Clone XREF Contains Text
+                   //Contained_in ?Clone XREF Contained_in
                    Best_match UNIQUE ?Text
 	Expr_pattern ?Expr_pattern XREF Clone
         Sequence_status	Shotgun	UNIQUE DateType
@@ -505,8 +505,8 @@
 ?Mixed_grid_row UNIQUE Clone UNIQUE ?Clone XREF Gridded #Mixed_grid_row
 
 ?Contig Map ?Map XREF Contig #Map_position
-        pMap UNIQUE Int UNIQUE Int         // extremities in pMap units
-	Clone ?Clone XREF pMap
+        Pmap UNIQUE Int UNIQUE Int         // extremities in pMap units
+	Clone ?Clone XREF Pmap
 
 ?Species Common_name ?Text
          Phylogeny Kingdom UNIQUE Text
@@ -823,7 +823,7 @@
 		  	Clone ?Clone XREF Sequence 
           	        Locus_genomic_seq ?Locus XREF Genomic_sequence   // Split genomic and other Locus XREFs
 			Locus_other_seq ?Locus XREF Other_sequence       // dl 001128
-		        Related_DNA ?Sequence XREF Related_DNA
+		        //Related_DNA ?Sequence XREF Related_DNA
 			Paired_read ?Sequence XREF Paired_read          // dl 020110
 			Orthologue ?Sequence XREF Orthologue ?Species #Evidence  // dl 030304
 			Remark ?Text #Evidence
@@ -1039,7 +1039,7 @@
 	    Homol DNA_homol ?Sequence XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		  Pep_homol ?Protein XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		  Motif_homol ?Motif XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
-		  Homol_homol ?Homol_data XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		  //Homol_homol ?Homol_data XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 	    // keep the standard model structure, so same code works
 
 ?Feature_data SMap S_Parent Sequence UNIQUE ?Sequence
@@ -1069,7 +1069,7 @@
 //            STS2 UNIQUE ?STS XREF Oligo2
         OSP  Score UNIQUE Float
              Tm UNIQUE Float
-             Pairwise_scores ?Oligo XREF Pairwise_scores UNIQUE Float Float // score and Tm
+             //Pairwise_scores ?Oligo XREF Pairwise_scores UNIQUE Float Float // score and Tm
         In_sequence ?Sequence XREF Oligo
 	PCR_product ?PCR_product XREF Oligo //added 15/02/2002 krb
 
@@ -1115,7 +1115,7 @@
 ?Motif	Match_sequence  UNIQUE Text	// Text is the DNA or protein sequence
 	Num_mismatch UNIQUE Int		// Allowed number of mismatches when matching
 					// (default 0)
-	Restriction     Isoschizomer ?Motif XREF Isoschizomer
+	Restriction     //Isoschizomer ?Motif XREF Isoschizomer
 		        Offset UNIQUE Int   
 			Cleavage UNIQUE Text  // will show the cleavage points ex: G_ACGT'C
 		        Overhang UNIQUE Int
@@ -1453,7 +1453,7 @@
 				     	       Other_integration_method	Text 
 		Location ?Laboratory #Lab_Location //Which Labs have the transgene.
 		Strain ?Strain XREF Transgene //All strains in CGC with the transgene.
-		Map ?Map  #Map_position 
+		Map ?Map XREF Transgene #Map_position 
 		Mapping_data 2_point ?2_point_data 
 			     Multi_point ?Multi_pt_data
 		Phenotype	?Text	//Phenotype should be described as "Unc. With other ..."
@@ -1515,8 +1515,8 @@
            Remark ?Text #Evidence
            Related_phenotypes Specialisation_of ?Phenotype XREF Generalisation_of
                               Generalisation_of ?Phenotype XREF Specialisation_of
-                              Equivalent_to ?Phenotype XREF Equivalent_to
-                              Similar_to ?Phenotype XREF Similar_to
+                              //Equivalent_to ?Phenotype XREF Equivalent_to
+                              //Similar_to ?Phenotype XREF Similar_to
            Attribute_of       RNAi ?RNAi XREF Phenotype
                               Locus ?Locus XREF Controlled_phenotype
 			      GO_term ?GO_term XREF Phenotype ?GO_code #Evidence  // added for Erich, [020128 dl]

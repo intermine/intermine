@@ -189,4 +189,29 @@ public class Model
         sb.append("</model>");
         return sb.toString();
     }
+
+    /**
+     * Overrides Object.
+     *
+     * @param obj another object to compare to
+     * @return true if they are equal
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof Model) {
+            Model m = (Model) obj;
+            return name.equals(m.name) && cldMap.equals(m.cldMap)
+                && subclassMap.equals(m.subclassMap) && implementorsMap.equals(m.implementorsMap);
+        }
+        return false;
+    }
+
+    /**
+     * Overrides Object.
+     *
+     * @return an integer built from the contents of the object
+     */
+    public int hashCode() {
+        return (3 * name.hashCode()) + (5 * cldMap.hashCode()) + (7 * subclassMap.hashCode())
+            + (11 * implementorsMap.hashCode());
+    }
 }

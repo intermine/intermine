@@ -84,8 +84,15 @@ public class TypeUtil
     public static void setFieldValue(Object o, String fieldName, Object fieldValue)
         throws IllegalAccessException {
         Field f  = getField(o.getClass(), fieldName);
-        f.setAccessible(true);
-        f.set(o, fieldValue);
+        try {
+            f.setAccessible(true);
+            f.set(o, fieldValue);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Couldn't set field \""
+                    + f.getDeclaringClass().getName() + "." + f.getName() + "\" (a "
+                    + f.getType().getName() + ") to \"" + fieldValue + "\" (a "
+                    + fieldValue.getClass().getName() + ")");
+        }
     }
 
     /**

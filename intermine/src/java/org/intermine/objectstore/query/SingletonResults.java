@@ -3,6 +3,7 @@ package org.flymine.objectstore.query;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
@@ -14,7 +15,7 @@ import org.flymine.objectstore.ObjectStoreException;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class SingletonResults extends Results
+public class SingletonResults extends Results implements Set
 {
 
     /**
