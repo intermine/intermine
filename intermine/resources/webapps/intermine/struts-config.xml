@@ -176,13 +176,13 @@
     <action path="/mainChange"
             type="org.intermine.web.MainChange"
             parameter="method">
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <action path="/viewChange"
             type="org.intermine.web.ViewChange"
             parameter="method">
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <action path="/exportAction"

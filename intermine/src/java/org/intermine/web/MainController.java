@@ -71,8 +71,10 @@ public class MainController extends TilesAction
                              MainHelper.makeNodes((String) session.getAttribute("path"), model));
 
         //set up the node on which we are editing constraints
-        if (request.getAttribute("editingNode") != null) {
-            PathNode node = (PathNode) request.getAttribute("editingNode");
+        if (session.getAttribute("editingNode") != null) {
+            PathNode node = (PathNode) session.getAttribute("editingNode");
+            session.removeAttribute("editingNode");
+            request.setAttribute("editingNode", node);
             if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
                 Class type = MainHelper.getClass(node.getType());
                 Map attributeOps = MainHelper.mapOps(SimpleConstraint.validOps(type));

@@ -83,7 +83,7 @@ public class MainChange extends DispatchAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
-        request.setAttribute("editingNode", query.getNodes().get(path));
+        session.setAttribute("editingNode", query.getNodes().get(path));
 
         return mapping.findForward("query");
     }
@@ -134,7 +134,7 @@ public class MainChange extends DispatchAction
         path = toPath(prefix, path);
         Node node = query.addNode(path);
         //automatically start editing node
-        request.setAttribute("editingNode", node);
+        session.setAttribute("editingNode", node);
         //and change metadata view if relevant
         if (!node.isAttribute()) {
             session.setAttribute("prefix", path);
