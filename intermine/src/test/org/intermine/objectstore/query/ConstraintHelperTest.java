@@ -173,8 +173,8 @@ public class ConstraintHelperTest extends TestCase
         List got = ConstraintHelper.createList(q);
 
         assertEquals(expectedAll, ConstraintHelper.createList(q));
-        assertEquals(expected1, ConstraintHelper.filter(got, qc1));
-        assertEquals(expected2, ConstraintHelper.filter(got, qc2));
+        assertEquals(expected1, ConstraintHelper.filter(got, qc1, false));
+        assertEquals(expected2, ConstraintHelper.filter(got, qc2, false));
     }
 
 
@@ -230,6 +230,36 @@ public class ConstraintHelperTest extends TestCase
 
         // single argument constraint
         assertTrue(ConstraintHelper.isAssociatedWith(simpleConstraint7, qc1));
+    }
+
+    public void testIsRelatedTo() throws Exception {
+        // both sides of ClassConstraint
+        assertTrue(ConstraintHelper.isRelatedTo(classConstraint1, qc2));
+        assertTrue(ConstraintHelper.isRelatedTo(classConstraint1, qc3));
+        assertTrue(ConstraintHelper.isRelatedTo(classConstraint2, qc2));
+
+        // both sides of ContainsConstraint
+        assertTrue(ConstraintHelper.isRelatedTo(containsConstraint1, qc1));
+        assertTrue(ConstraintHelper.isRelatedTo(containsConstraint1, qc2));
+
+        // both sides oc SubqueryConstraint
+        assertTrue(ConstraintHelper.isRelatedTo(subqueryConstraint1, qc2));
+        assertTrue(ConstraintHelper.isRelatedTo(subqueryConstraint2, qc1));
+        assertTrue(ConstraintHelper.isRelatedTo(subqueryConstraint1, subquery1));
+
+        // SimpleConstraints
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint1, qc1));
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint4, qc1));
+        // cross-reference constraint
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint2, qc2));
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint2, qc3));
+
+        // QueryExpression & QueryFunction
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint5, qc2));
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint6, qc1));
+
+        // single argument constraint
+        assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint7, qc1));
     }
 
 

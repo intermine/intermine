@@ -59,9 +59,19 @@ public class ConstraintHelper
      * @return a List of Constraint objects
      */
     public static List createList(Query query, FromElement fromElement) {
-        return filter(createList(query), fromElement);
+        return filter(createList(query), fromElement, false);
     }
 
+    /**
+     * Return a List of Constraint objects that relate to the given FromElement.
+     *
+     * @param query a Query object to to list contraints for
+     * @param fromElement a FromElement that returned constraints relate to
+     * @return a List of Constraint objects
+     */
+    public static List listRelatedConstraints(Query query, FromElement fromElement) {
+        return filter(createList(query), fromElement, true);
+    }
 
     /**
      * Return a subset of the given List that contains only Constraints
@@ -70,19 +80,33 @@ public class ConstraintHelper
      *
      * @param list a list of Constraints to filter
      * @param fromElement a fromElement that returned constraints relate to
+     * @param related if tru list all releted constraints, otherwise just associated
      * @return a List of Constraint objects
      */
-    public static List filter(List list, FromElement fromElement) {
+    public static List filter(List list, FromElement fromElement, boolean related) {
         List filtered = new ArrayList();
         Iterator iter = list.iterator();
-        while (iter.hasNext()) {
-            Constraint c = (Constraint) iter.next();
-            if (fromElement != null) {
-                if (isAssociatedWith(c, fromElement)) {
+        if (related) {
+            while (iter.hasNext()) {
+                Constraint c = (Constraint) iter.next();
+                if (fromElement != null) {
+                    if (isRelatedTo(c, fromElement)) {
+                        filtered.add(c);
+                    }
+                } else if (isRelatedToNothing(c)) {
                     filtered.add(c);
                 }
-            } else if (isAssociatedWithNothing(c)) {
-                filtered.add(c);
+            }
+        } else {
+            while (iter.hasNext()) {
+                Constraint c = (Constraint) iter.next();
+                if (fromElement != null) {
+                    if (isAssociatedWith(c, fromElement)) {
+                        filtered.add(c);
+                    }
+                } else if (isAssociatedWithNothing(c)) {
+                    filtered.add(c);
+                }
             }
         }
         return filtered;
@@ -133,7 +157,7 @@ public class ConstraintHelper
         // ignore cross-references
         if (left instanceof QueryEvaluable && !(isCrossReference(constraint))) {
             // not a cross-reference -> at most one QueryClass.  find it.
-            QueryClass qc = null;
+            QueryClass qc = null;  // TODO test for a bug here? left not assoc by right is
             if (getQueryFields((QueryEvaluable) left).iterator().hasNext()) {
                 QueryField qf = (QueryField) getQueryFields((QueryEvaluable) left)
                     .iterator().next();
@@ -193,23 +217,31 @@ public class ConstraintHelper
      * @return true if associated
      */
     public static boolean isRelatedTo(Constraint constraint, FromElement fromElement) {
+        if (isAssociatedWith(constraint, fromElement)) {
+            return true;
+        }
 
-        // TODO: QueryEvaluables and QueryFunctions can relate to QueryFields...
+        // also want to find out if this is referred to in a Contains or Subquery
+        // constratint that is associated with another fromElement.
 
-        Object left = getLeftArgument(constraint);
-        Object right = getRightArgument(constraint);
-        if (left instanceof QueryField) {
-            return (fromElement == ((QueryField) left).getFromElement());
-        } else if (right instanceof QueryField) {
-            return (fromElement == ((QueryField) right).getFromElement());
-        } else if (left instanceof QueryClass) {
-            return (fromElement == left);
-        } else if (right instanceof QueryClass) {
-            return (fromElement == right);
-        } else if (left instanceof QueryReference) {
-            return (fromElement == ((QueryReference) left).getQueryClass());
-        } else if (right instanceof Query) {
-            return (fromElement == right);
+        if (constraint instanceof ContainsConstraint) {
+            if (fromElement == ((ContainsConstraint) constraint).getQueryClass()) {
+                return true;
+            }
+        } else if (constraint instanceof SubqueryConstraint) {
+            if (fromElement == ((SubqueryConstraint) constraint).getQuery()) {
+                return true;
+            }
+        } else if (constraint instanceof SimpleConstraint) {
+            SimpleConstraint sc = (SimpleConstraint) constraint;
+            Set qFields = (getQueryFields(sc.getArg1()));
+            qFields.addAll(getQueryFields(sc.getArg2()));
+            Iterator iter = qFields.iterator();
+            while (iter.hasNext()) {
+                if (fromElement == ((QueryField) iter.next()).getFromElement()) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -220,22 +252,8 @@ public class ConstraintHelper
      * @param c the constraint to examine
      * @return true if constraint is not associated with a FromElement
     */
-    public boolean isRelatedToNothing(Constraint c) {
-        Object left = getLeftArgument(c);
-        Object right = getRightArgument(c);
-
-        // TODO: QueryEvaluables and QueryFunctions can relate to QueryFields...
-
-        if (left instanceof QueryField || right instanceof QueryField) {
-            return false;
-        } else if (left instanceof QueryClass || right instanceof QueryClass) {
-            return false;
-        } else if (left instanceof QueryReference) {
-            return false;
-        } else if (right instanceof Query) {
-            return false;
-        }
-        return true;
+    public static boolean isRelatedToNothing(Constraint c) {
+        return false;
     }
 
 
