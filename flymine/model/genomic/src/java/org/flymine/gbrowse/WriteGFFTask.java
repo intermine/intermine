@@ -13,13 +13,11 @@ package org.flymine.gbrowse;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.io.File;
-import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.io.FileOutputStream;
@@ -97,9 +95,19 @@ public class WriteGFFTask extends Task
         }
     }
 
+    /**
+     * Create a GFF and FASTA files for the objects in the given ObjectStore, suitable for reading
+     * by GBrowse.
+     * @param os the ObjectStore to read from
+     * @param destinationDirectory the directory to write the GFF and FASTA files into
+     * @throws IllegalSymbolException if any of the residues in a LocatedSequenceFeature can't be
+     * turned into DNA symbols.
+     * @throws ObjectStoreException if the is a problem with the ObjectStore
+     * @throws IOException if there is a problem while writing
+     
+     */
     void writeGFF(ObjectStore os, File destinationDirectory)
-        throws ObjectStoreException, IOException, ChangeVetoException, IllegalArgumentException,
-               IllegalSymbolException {
+        throws ObjectStoreException, IOException, IllegalSymbolException {
         Results results =
             PostProcessUtil.findLocations(os, Chromosome.class, BioEntity.class, false);
 
@@ -336,15 +344,19 @@ public class WriteGFFTask extends Task
     }
 
     private void writeChromosomeFasta(File destinationDirectory, Chromosome chr)
-        throws IOException, ChangeVetoException, IllegalArgumentException, IllegalSymbolException {
+        throws IOException, IllegalArgumentException, IllegalSymbolException {
         FileOutputStream outputStream =
             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
         
         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
         
         if (sequence != null) {
-            sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                 chromosomeFileNamePrefix(chr));
+            try {
+                sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                                     chromosomeFileNamePrefix(chr));
+            } catch (ChangeVetoException e) {
+                throw new RuntimeException("failed to set a property", e);
+            }
             SeqIOTools.writeFasta(outputStream, sequence);
         }
 
