@@ -234,4 +234,25 @@ public class SimpleConstraint extends Constraint
         }
         return null;
     }
+    
+    /**
+     * For an argument type which an enumerated value set, return the list of
+     * operators for which it makes sense only to provide the enumerated values
+     * and not allow the user to enter an arbitrary string.
+     *
+     * @return  constraint operators that will only accept an enumerated value
+     */
+    public static List fixedEnumOps(Class arg) {
+        if (Number.class.isAssignableFrom(arg)) {
+            return NUMBER_OPS;
+        } else if (String.class.equals(arg)) {
+            return BOOLEAN_OPS;
+        } else if (Boolean.class.equals(arg)) {
+            return BOOLEAN_OPS;
+        } else if (Date.class.equals(arg)) {
+            return DATE_OPS;
+        } else {
+            return ALL_OPS;
+        }
+    }
 }
