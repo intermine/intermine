@@ -164,14 +164,25 @@ public class ChangeResultsSizeAction extends Action
         }
 
         // Go through the selected items and add to the set
-        for (Iterator i =  Arrays.asList(selectedObjects).iterator(); i.hasNext();) {
-            String selectedObject = (String) i.next();
-            // selectedObject is of the form column,row - we use those
-            // to pick out the object from PagedTable
+        for (Iterator itemIterator = Arrays.asList(selectedObjects).iterator();
+             itemIterator.hasNext();) {
+            String selectedObject = (String) itemIterator.next();
+            // selectedObject is of the form "column,row" or "column"
             int commaIndex = selectedObject.indexOf(",");
-            int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
-            int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-            bag.add(((List) pt.getList().get(row)).get(column));
+            if (commaIndex == -1) {
+                int column = Integer.parseInt(selectedObject);
+
+                for (Iterator rowIterator = pt.getList().iterator();
+                     rowIterator.hasNext();) {
+                    List thisRow = (List) rowIterator.next();
+                    bag.add(thisRow.get(column));
+                }
+            } else {
+                // use the column,row to pick out the object from PagedTable
+                int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
+                int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
+                bag.add(((List) pt.getList().get(row)).get(column));
+            }
         }
     }
 
