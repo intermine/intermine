@@ -34,11 +34,11 @@ import servletunit.struts.MockStrutsTestCase;
 /**
  * Tests for DisplayObjectCache
  */
-public class DisplayObjectCacheTest extends MockStrutsTestCase
+public class DisplayObjectFactoryTest extends MockStrutsTestCase
 {
     ObjectStore os;
 
-    public DisplayObjectCacheTest(String arg) {
+    public DisplayObjectFactoryTest(String arg) {
         super(arg);
     }
 
@@ -60,8 +60,8 @@ public class DisplayObjectCacheTest extends MockStrutsTestCase
         WebConfig webConfig = new WebConfig();
         getSession().getServletContext().setAttribute(Constants.WEBCONFIG, webConfig);
 
-        DisplayObjectCache doc = new DisplayObjectCache(getSession());
-
+        DisplayObjectFactory doc = new DisplayObjectFactory(getSession());
+        
         Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company1");
         company1.setId(new Integer(1));
