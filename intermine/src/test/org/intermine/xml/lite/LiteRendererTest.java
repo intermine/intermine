@@ -17,9 +17,17 @@ import java.util.Date;
 
 import org.flymine.util.TypeUtil;
 import org.flymine.model.testmodel.*;
+import org.flymine.metadata.Model;
 
 public class LiteRendererTest extends TestCase
 {
+
+    Model model;
+
+    public void setUp() throws Exception {
+        model = Model.getInstanceByName("testmodel");
+    }
+
     public void testRender() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
@@ -36,7 +44,7 @@ public class LiteRendererTest extends TestCase
             + "<reference name=\"department\" value=\"5678\"/>"
             + "</object>";
 
-        assertEquals(expected, LiteRenderer.render(e));
+        assertEquals(expected, LiteRenderer.render(e, model));
     }
 
     public void testRenderTypes() throws Exception {
@@ -69,6 +77,6 @@ public class LiteRendererTest extends TestCase
             + "<field name=\"dateObjType\" value=\"7777777777\"/>"
             + "</object>";
 
-        assertEquals(expected, LiteRenderer.render(t));
+        assertEquals(expected, LiteRenderer.render(t, model));
     }
 }

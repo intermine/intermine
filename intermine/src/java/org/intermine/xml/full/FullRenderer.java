@@ -21,6 +21,7 @@ import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.xml.XmlHelper;
 
 import org.apache.log4j.Logger;
 
@@ -71,9 +72,12 @@ public class FullRenderer
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
 
+        String className = XmlHelper.getClassName(obj, model);
+
         StringBuffer sb = new StringBuffer();
         sb.append("<object xml_id=\"" + obj.getId() + "\" class=\"")
-            .append(getClassName(obj, model))
+            .append(className == "" ? "" : model.getNameSpace() + "#"
+                     + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)))
             .append("\" implements=\"")
             .append(getImplements(obj, model))
             .append("\">" + ENDL)
@@ -107,23 +111,6 @@ public class FullRenderer
         return sb.toString().trim();
     }
 
-    /**
-     * Get the class name if object represents a material class in model.
-     *
-     * @param obj the object
-     * @param model the parent model
-     * @return class name
-     */
-    protected static String getClassName(FlyMineBusinessObject obj, Model model) {
-        StringBuffer sb = new StringBuffer();
-
-        ClassDescriptor cld = model.getClassDescriptorByName(obj.getClass().getName());
-        if (cld != null && !cld.isInterface()) {
-            sb.append(model.getNameSpace() + "#"
-                      + TypeUtil.unqualifiedName(obj.getClass().getName()));
-        }
-        return sb.toString();
-    }
 
     /**
      * Get all fields of an object.
@@ -195,7 +182,6 @@ public class FullRenderer
      */
     static class SimpleComparator implements Comparator
     {
-
         /**
          * Compare two Class objects by name.
          * @param a an object to compare

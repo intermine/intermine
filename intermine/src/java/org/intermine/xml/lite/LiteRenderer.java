@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.flymine.util.TypeUtil;
+import org.flymine.xml.XmlHelper;
+import org.flymine.metadata.Model;
 
 import org.apache.log4j.Logger;
 
@@ -40,13 +42,14 @@ public class LiteRenderer
      * Render the given object as XML in FlyMine Lite format
      *
      * @param obj the object to render
+     * @param model the parent model
      * @return the XML for that object
      */
-    public static String render(Object obj) {
+    public static String render(Object obj, Model model) {
         StringBuffer sb = new StringBuffer();
 
         sb.append("<object class=\"")
-            .append(getClassName(obj))
+            .append(XmlHelper.getClassName(obj, model))
             .append("\" implements=\"")
             .append(getImplements(obj))
             .append("\">")
