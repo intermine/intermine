@@ -17,4 +17,11 @@ public interface LazyReference
      * @param os the ObjectStore
      */
     public void setObjectStore(ObjectStore os);
+
+    /**
+     * check whether the proxy has been materialised
+     *
+     * @return true if the proxy has been materialised
+     */
+    public boolean isMaterialised();
 }
