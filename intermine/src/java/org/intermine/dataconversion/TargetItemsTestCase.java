@@ -78,8 +78,6 @@ public abstract class TargetItemsTestCase extends TestCase
      * @throws Exception if anything goes wrong
      */
     public void testItemToObject() throws Exception {
-        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.fulldatatest");
         ItemWriter iw = new ObjectStoreItemWriter(osw);
 
         // store items

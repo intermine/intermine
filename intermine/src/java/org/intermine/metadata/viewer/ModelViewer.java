@@ -194,8 +194,8 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
         //        javax.swing.SwingUtilities.invokeLater(new Runnable() {
         //    public void run() {
         InterMineModelParser parser = new InterMineModelParser();
-        Model model = parser.process(new FileReader(new File(fileName)));
-        createAndShowGUI(model);
+        Model dataModel = parser.process(new FileReader(new File(fileName)));
+        createAndShowGUI(dataModel);
                 //    }
                 //});
     }

@@ -186,9 +186,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
                 .get(objectStoreDescription);
             if (os == null) {
-                Database db;
+                Database database;
                 try {
-                    db = DatabaseFactory.getDatabase(dbAlias);
+                    database = DatabaseFactory.getDatabase(dbAlias);
                 } catch (Exception e) {
                     throw new ObjectStoreException("Unable to get database for InterMine"
                             + " ObjectStore", e);
@@ -201,14 +201,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                             .getClassDescriptorByName(classes[i]);
                         if (truncatedClassDescriptor == null) {
                             throw new ObjectStoreException("Truncated class " + classes[i]
-                                    + " does not exist in the model");
+                                                           + " does not exist in the model");
                         }
                         truncatedClasses.add(truncatedClassDescriptor);
                     }
-                    os = new ObjectStoreInterMineImpl(db, new DatabaseSchema(model,
+                    os = new ObjectStoreInterMineImpl(database, new DatabaseSchema(model,
                                 truncatedClasses));
                 } else {
-                    os = new ObjectStoreInterMineImpl(db, model);
+                    os = new ObjectStoreInterMineImpl(database, model);
                 }
                 if (missingTablesString != null) {
                     String tables[] = missingTablesString.split(",");

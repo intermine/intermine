@@ -76,14 +76,14 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
             throw new IllegalArgumentException("No 'os' property specified for FastCollections"
                     + " objectstore");
         }
-        ObjectStore os;
+        ObjectStore objectStore;
         try {
-            os = ObjectStoreFactory.getObjectStore(osAlias);
+            objectStore = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
             throw new IllegalArgumentException("ObjectStore '" + osAlias + "' not found in"
                     + " properties");
         }
-        return new ObjectStoreFastCollectionsImpl(os);
+        return new ObjectStoreFastCollectionsImpl(objectStore);
     }
 
     /**
