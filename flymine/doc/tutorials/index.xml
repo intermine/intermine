@@ -15,7 +15,6 @@
              <listitem><ulink url="queryTutorial1.xml">Selecting all the objects in a particlular class</ulink></listitem>
              <listitem><ulink url="queryTutorial2.xml">Constraining the objects of a particular class</ulink></listitem>
              <listitem><ulink url="queryTutorial3.xml">Combining and constraining objects from 2 classes</ulink></listitem>
-             <listitem><ulink url="queryTutorial4.xml">Constraining a class to a subclass</ulink></listitem>
           </orderedlist>
         </para>
 

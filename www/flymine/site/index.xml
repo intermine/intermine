@@ -18,7 +18,7 @@
 <index>
 <section id = "frontPageIntroduction">
      <heading>The FlyMine database project</heading>
-        <item><ulink url = "manual.xml">Introduction </ulink>to the project</item>
+        <item><ulink url = "manual/manual.xml">Introduction </ulink>to the project</item>
         <item>New Users:<ulink url = "manual/manualQuickstart.xml"> quick start guide</ulink></item> 
 
 </section>
@@ -47,13 +47,13 @@
     <section>
       <heading>Help</heading>
       <item>
-        FlyMine <ulink url="manualQuickstart.xml">quick start guide</ulink>
+        FlyMine <ulink url="manual/manualQuickstart.xml">quick start guide</ulink>
       </item>
       <item>
         <ulink url="tutorials/tutorialIndex.xml">Tutorials</ulink> - step-by-step guide to queries
       </item>
       <item>
-        <ulink url="examples.do">Query examples</ulink>
+        <ulink url="/query/examples.do">Query examples</ulink>
       </item>
       <item>
         <ulink url="manual/manualIndex.xml">User Manual</ulink>
@@ -84,7 +84,7 @@
       <item>
         2-hybrid protein-protein interactions for D. melanogaster:  Curagen
         set (Giot et al (2003) Science 302 1727-1736) and Hybrigenics set
-        (<ulink url= "http://pim/hyrigenics/pimrider/nologin/prhome.html"></ulink>)
+        (<ulink url= "http://pim.hybrigenics.com/pimrider/nologin/prhome.html"></ulink>)
       </item>
 
       <item>
