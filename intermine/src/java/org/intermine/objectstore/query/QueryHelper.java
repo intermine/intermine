@@ -279,6 +279,9 @@ public class QueryHelper
             if (type == ModelUtil.ATTRIBUTE) {
                 QueryField qf = new QueryField(qc, field);
                 QueryValue value = new QueryValue(TypeUtil.getFieldValue(obj, field));
+                if (value == null) {
+                    throw new IllegalArgumentException("All primary key fields must be set");
+                }
                 Constraint c = new SimpleConstraint(qf, SimpleConstraint.EQUALS, value);
                 ((ConstraintSet) q.getConstraint()).addConstraint(c);
 
