@@ -281,49 +281,53 @@
         <!--
         
         var fixedOps = new Array();
-        
-        <c:forEach items="${fixedOptionsOps}" var="op" varStatus="status">
-          fixedOps[${status.count}] = "<c:out value="${op}"/>";
-        </c:forEach>
-        
        
         /***********************************************************
          * Called when user chooses a constraint operator. If the
          * user picks an operator contained in fixedOptionsOps then
          * the input box is hidden and the user can only choose
          **********************************************************/
-        function updateConstraintForm(form)
+        function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
         {
-          if (form.attributeOptions == null)
+          if (attrOptsElement == null)
             return;
         
-          for (var i=0 ; i<fixedOps.length ; i++)
+          for (var i=0 ; i<fixedOps[index].length ; i++)
           {
-            if (form.attributeOp.value == fixedOps[i])
+            if (attrOpElement.value == fixedOps[index][i])
             {
-              document.getElementById("operandEditSpan").style.display="none";
-              //form.attributeValue.style.visibility='hidden';
-              form.attributeValue.value = form.attributeOptions.value; // constrain value
+              document.getElementById("operandEditSpan" + index).style.display = "none";
+              attrValElement.value = attrOptsElement.value; // constrain value
               return;
             }
           }
           
-          document.getElementById("operandEditSpan").style.display="";
-          //form.attributeValue.style.visibility='visible';
+          document.getElementById("operandEditSpan" + index).style.display = "";
         }
         
         /***********************************************************
          * Init attribute value with selected item and hide input box if
          * required
          **********************************************************/
-        function initConstraintForm(form)
+        function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
         {
-          if (form.attributeOptions == null)
+          if (attrOptsElement == null)
             return;
           
-          form.attributeValue.value = form.attributeOptions.value;
-          updateConstraintForm(form);
+          attrValElement.value = attrOptsElement.value;
+          updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
         }
+        
+        //-->
+        </script>
+        
+        <script type="text/javascript">
+        <!--
+        
+        fixedOps[0] = new Array();
+        <c:forEach items="${fixedOptionsOps}" var="op" varStatus="status">
+          fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
+        </c:forEach>
         
         //-->
         </script>
@@ -344,7 +348,7 @@
                     </c:when>
                     <c:otherwise>
                       <td valign="top">
-                        <html:select property="attributeOp" onchange="updateConstraintForm(this.form)">
+                        <html:select property="attributeOp" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue)">
                           <c:forEach items="${attributeOps}" var="attributeOp">
                             <html:option value="${attributeOp.key}">
                               <c:out value="${attributeOp.value}"/>
@@ -353,7 +357,7 @@
                         </html:select>
                       </td>
                       <td valign="top" align="center">
-                        <span id="operandEditSpan">
+                        <span id="operandEditSpan0">
                           <html:text property="attributeValue"/><br/>
                           <%-- might want to show up arrow --%>
                           <c:if test="${!empty attributeOptions}">
@@ -459,7 +463,7 @@
         
         <script type="text/javascript">
         <!--
-        initConstraintForm(document.mainForm);
+        initConstraintForm(0, document.mainForm.attributeOp, document.mainForm.attributeOptions, document.mainForm.attributeValue);
         //-->
         </script>
         </div>
