@@ -16,7 +16,7 @@
   <!-- used by build-model.xml -->
   <property name="packagename" value="org.flymine.model"/>
 
-  <property name="intermine.dist.path" location="../intermine/dist"/>
+  <property name="intermine.dist.path" location="../intermine-clean/dist"/>
   <property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/>
   <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
 
@@ -288,7 +288,7 @@
   </target>
 
 
- <target name="translate-ensembl-anopheles" depends="build-db-ensembl-anoph-tgt-items">
+ <target name="translate-ensembl-anopheles" depends="prepare-build-model, compile-ensembl-java, build-db-ensembl-anoph-tgt-items">
     <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
@@ -319,7 +319,7 @@
     </ant>
   </target>
 
- <target name="translate-ensembl-drosophila" depends="build-db-ensembl-dros-tgt-items">
+ <target name="translate-ensembl-drosophila" depends="compile-ensembl-java, build-db-ensembl-dros-tgt-items">
     <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
@@ -358,15 +358,15 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
-
-  <target name="orthologue-test" depends="build-orthologue">
+-->
+  <target name="orthologue-test" depends ="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
       <property name="model.src" value="${model}/orthologue"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
--->
+
   <target name="mage-test" depends="prepare-build-model, convert-mage">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
@@ -374,6 +374,16 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
+
+
+  <target name="compile-ensembl-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="ensembl"/>
+      <property name="model.src" value="${model}/ensembl"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
 
   <target name="ensembl-test" depends="prepare-build-model, convert-ensembl, jar-genomic">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
@@ -477,7 +487,7 @@
     <load-anoph integrationWriter="integration.ensembl-anoph-test" source="os.anoph-translated" sourceName="ensembl"/>
   </target>
 
-  <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
+  <!-- Load data from ensembl-dros-tgt-items into dros-test -->
   <target name="load-ensembl-drosophila-test" depends="prepare-build-model, build-db-dros-test, create-indexes-dros-test">
     <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
@@ -549,6 +559,27 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-src-items"/>
+    </ant>
+  </target>
+
+  <!-- retrieve ensembl orthologue/paralogue data -->
+  <target name="retrieve-orthologues-ensembl" depends="build-db-orthologue-tgt-items">
+    <taskdef name="retrieve-orthologue" classname="org.intermine.dataconversion.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <concat destfile="${build.tmp}/orthologues">
+      <path>
+        <fileset dir="/shared/data/orthologues" includes="orthologues.*"/>
+      </path>
+    </concat>
+
+    <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-tgt-items"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.orthologue-tgt-items"/>
     </ant>
   </target>
 

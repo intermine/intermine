@@ -1,7 +1,7 @@
 package org.flymine.dataconversion;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,8 +12,12 @@ package org.flymine.dataconversion;
 
 import java.io.BufferedReader;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -23,6 +27,8 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
 
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
@@ -32,10 +38,13 @@ public class OrthologueConverter extends FileConverter
 {
     protected static final String ORTHOLOGUE_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Map proteins = new HashMap();
-    protected Item db, analysis;
     protected int id = 0;
-    
+    protected Map sources = new HashMap();
+    protected Map analyses = new HashMap();
+    protected Map ids = new HashMap();
+    protected Item organism1;
+    protected Item organism2;
+
     /**
      * Constructor
      * @param reader Reader of input data in 5-column tab delimited format
@@ -45,7 +54,20 @@ public class OrthologueConverter extends FileConverter
     protected OrthologueConverter(BufferedReader reader, ItemWriter writer)
         throws ObjectStoreException {
         super(reader, writer);
-        setupItems();
+    }
+
+    public void setOrganism1(String name) {
+        organism1 = createOrganism(name);
+    }
+
+    public void setOrganism2(String name) {
+        organism2 = createOrganism(name);
+    }
+
+    private Item createOrganism(String name) {
+        Item organism = newItem("Organism");
+        organism.addAttribute(new Attribute("name", name));
+        return organism;
     }
 
     /**
@@ -53,33 +75,44 @@ public class OrthologueConverter extends FileConverter
      */
     public void process() throws Exception {
         try {
-            String line, species = null, oldIndex = null;
-            Item protein = null;
-
+            String line;
+            // throw an exception if organisms not set
             while ((line = reader.readLine()) != null) {
                 String[] array = line.split("\t");
-                String index = array[0];
-                if (!index.equals(oldIndex)) {
-                    oldIndex = index;
-                    species = array[2];
-                    protein = newProtein(array[4]);
-                    continue;
-                }
+                Set items = new HashSet();
 
-                Item newProtein = newProtein(array[4]);
+                Item gene1 = createGene(array[0], organism1);
+                Item gene2 = createGene(array[1], organism2);
+                Item result = createResult(getAnalysis(array[2], array[3]), getSource(array[4]));
+                items.add(ItemHelper.convert(result));
+                Item orth1 = createOrthologue(gene1, gene2, result, getSource(array[4]));
+                items.add(ItemHelper.convert(orth1));
+                Item orth2 = createOrthologue(gene2, gene1, result, getSource(array[4]));
+                items.add(ItemHelper.convert(orth2));
+                gene1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton(orth2.getIdentifier()))));
+                gene1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton(orth1.getIdentifier()))));
+                gene2.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton(orth1.getIdentifier()))));
+                gene2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton(orth2.getIdentifier()))));
 
-                Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-                item.addReference(new Reference("subject", newProtein.getIdentifier()));
-                item.addReference(new Reference("object", protein.getIdentifier()));
-                item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                    {db.getIdentifier(), newResult(array[3]).getIdentifier()})));
-                writer.store(ItemHelper.convert(item));
-            
-                if (!species.equals(array[2])) {
-                    species = array[2];
-                    protein = newProtein;
-                }
+                items.add(ItemHelper.convert(gene1));
+                items.add(ItemHelper.convert(gene2));
+
+                writer.storeAll(items);
             }
+
+            Set extras = new HashSet();
+            Iterator iter = sources.values().iterator();
+            while (iter.hasNext()) {
+                extras.add(ItemHelper.convert((Item) iter.next()));
+            }
+            iter = analyses.values().iterator();
+            while (iter.hasNext()) {
+                extras.add(ItemHelper.convert((Item) iter.next()));
+            }
+            extras.add(ItemHelper.convert(organism1));
+            extras.add(ItemHelper.convert(organism2));
+            writer.storeAll(extras);
+
         } finally {
             writer.close();
         }
@@ -92,82 +125,67 @@ public class OrthologueConverter extends FileConverter
      */
     protected Item newItem(String className) {
         Item item = new Item();
-        item.setIdentifier(alias(className) + "_" + (id++));
+        item.setIdentifier(alias(className) + "_" + newId(className));
         item.setClassName(ORTHOLOGUE_NS + className);
         item.setImplementations("");
         return item;
     }
-    
-    /**
-     * Convenience method to create and cache proteins by SwissProt id
-     * @param swissProtId SwissProt identifier for the new Protein
-     * @return a new protein Item
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected Item newProtein(String swissProtId) throws ObjectStoreException {
-        if (proteins.containsKey(swissProtId)) {
-            return (Item) proteins.get(swissProtId);
+    private String newId(String className) {
+        Integer id = (Integer) ids.get(className);
+        if (id == null) {
+            id = new Integer(0);
+            ids.put(className, id);
         }
-        Item item = newItem("Protein");
-        item.addAttribute(new Attribute("swissprotId", swissProtId));
-        writer.store(ItemHelper.convert(item));
-        proteins.put(swissProtId, item);
-        return item;
+        id = new Integer(id.intValue() + 1);
+        ids.put(className, id);
+        return id.toString();
     }
 
-    /**
-     * Convenience method to create a new analysis result
-     * @param confidence the INPARANOID confidence for the result
-     * @return a new INPARANOIDResult Item
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected Item newResult(String confidence) throws ObjectStoreException {
-        Item item = newItem("INPARANOIDResult");
-        item.addAttribute(new Attribute("confidence", confidence));
-        item.addReference(new Reference("analysis", analysis.getIdentifier()));
-        writer.store(ItemHelper.convert(item));
-        return item;
+    private Item createOrthologue(Item gene1, Item gene2, Item result, Item source) {
+        Item orth = newItem("Orthologue");
+        orth.addReference(new Reference("object", gene1.getIdentifier()));
+        orth.addReference(new Reference("subject", gene2.getIdentifier()));
+        orth.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(
+                                 new Object[] {result.getIdentifier(), source.getIdentifier()}))));
+        return orth;
     }
 
-    /**
-     * Set up the items that are common to all orthologues/paralogues
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected void setupItems() throws ObjectStoreException {
-        Item pub = newItem("Publication");
-        pub.addAttribute(new Attribute("title", "Automatic clustering of orthologs and "
-                                        + "in-paralogs from pairwise species comparisons"));
-        pub.addAttribute(new Attribute("journal", "Journal of Molecular Biology"));
-        pub.addAttribute(new Attribute("volume", "314"));
-        pub.addAttribute(new Attribute("issue", "5"));
-        pub.addAttribute(new Attribute("year", "2001"));
-        pub.addAttribute(new Attribute("pages", "1041-1052"));
-        pub.addAttribute(new Attribute("pubMedId", "11743721"));
-        Item author1 = newItem("Author"), author2 = newItem("Author"), author3 = newItem("Author");
-        ReferenceList publications = new ReferenceList("publications", Arrays.asList(new Object[]
-            {pub.getIdentifier()}));
-        author1.addAttribute(new Attribute("name", "Remm, Maido"));
-        author1.addCollection(publications);
-        author2.addAttribute(new Attribute("name", "Storm, Christian E. V."));
-        author2.addCollection(publications);
-        author3.addAttribute(new Attribute("name", "Sonnhammer, Erik L. L."));
-        author3.addCollection(publications);
-        ReferenceList authors = new ReferenceList("authors", Arrays.asList(new Object[]
-            {author1.getIdentifier(), author2.getIdentifier(), author3.getIdentifier()}));
-        pub.addCollection(authors);
+    private Item createGene(String name, Item organism) {
+        Item gene = newItem("Gene");
+        gene.addAttribute(new Attribute("name", name));
+        gene.addReference(new Reference("organism", organism.getIdentifier()));
+        return gene;
+    }
 
-        analysis = newItem("INPARANOIDAnalysis");
-        analysis.addAttribute(new Attribute("algorithm", "INPARANOID"));
-        analysis.addReference(new Reference("publication", pub.getIdentifier()));
-        
-        db = newItem("Database");
-        db.addAttribute(new Attribute("title", "INPARANOID"));
-        db.addAttribute(new Attribute("url", "http://inparanoid.cgb.ki.se"));
-        
-        List toStore = Arrays.asList(new Object[] {db, analysis, author1, author2, author3, pub});
-        for (Iterator i = toStore.iterator(); i.hasNext();) {
-            writer.store(ItemHelper.convert((Item) i.next()));
+    private Item getAnalysis(String type, String method) {
+        Item analysis = (Item) analyses.get(method);
+        if (analysis == null) {
+            analysis = newItem("ComputationalAnalysis");
+            analysis.addAttribute(new Attribute("description", method));
+            analyses.put(method, analysis);
         }
+        return analysis;
     }
+
+    private Item getSource(String name) {
+        if (name.equals("Ensembl Database")) {
+            name = "Ensembl";
+        }
+        Item source = (Item) sources.get(name);
+        if (source == null) {
+            source = newItem("Database");
+            source.addAttribute(new Attribute("title", name));
+            sources.put(name, source);
+        }
+        return source;
+    }
+
+    private Item createResult(Item analysis, Item source) {
+        Item result = newItem("ComputationalResult");
+        result.addReference(new Reference("analysis", analysis.getIdentifier()));
+        result.addReference(new Reference("source", source.getIdentifier()));
+        return result;
+    }
+
 }
 
