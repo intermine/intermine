@@ -135,12 +135,24 @@ public class ClassDescriptor
 
 
     /**
-     * Get a list of primary key FieldDescriptors for this Class.  Could be a combination
-     * of attributes and references.
+     * Get a list of primary key FieldDescriptors for this Class and all its superclasses.
+     * Could be a combination of attributes and references (and collections).
      * @return list of primary key fields
+     * @throws IllegalStateException if model has not been set
      */
     public List getPkFieldDescriptors() {
-        return this.pkFields;
+        if (!modelSet) {
+            throw new IllegalStateException("This ClassDescriptor has not yet been added "
+                                            + "to a model.");
+        }
+        List allPkFields = new ArrayList(this.pkFields);
+        List supers = getAllSuperclassDescriptors();
+        Iterator superIter = supers.iterator();
+        while (superIter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) superIter.next();
+            allPkFields.addAll(cld.pkFields);
+        }
+        return allPkFields;
     }
 
     /**
@@ -303,9 +315,21 @@ public class ClassDescriptor
      * Return a List of AttributeDescriptors for all attribtes of this class and
      * all super classes.
      * @return list of AttributeDescriptors
+     * @throws IllegalStateException if model has not been set
      */
     public List getAllAttributeDescriptors() {
-        return new ArrayList();
+        if (!modelSet) {
+            throw new IllegalStateException("This ClassDescriptor has not yet been added "
+                                            + "to a model.");
+        }
+        List atts = new ArrayList(this.attDescriptors);
+        List supers = getAllSuperclassDescriptors();
+        Iterator superIter = supers.iterator();
+        while (superIter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) superIter.next();
+            atts.addAll(cld.getAttributeDescriptors());
+        }
+        return atts;
     }
 
     /**
@@ -379,10 +403,21 @@ public class ClassDescriptor
         // ReferenceDescriptors need to find a ClassDescriptor for their referenced class
         Iterator colIter = colDescriptors.iterator();
         while (colIter.hasNext()) {
-            CollectionDescriptor cod = (CollectionDescriptor) refIter.next();
+            CollectionDescriptor cod = (CollectionDescriptor) colIter.next();
             cod.findReferencedDescriptor();
         }
 
+    }
+
+    // build a list of the superclass chain for this class
+    private List getAllSuperclassDescriptors() {
+        List supers = new ArrayList();
+        ClassDescriptor cld = this;
+        while (cld.getSuperclassDescriptor() != null) {
+            cld = cld.getSuperclassDescriptor();
+            supers.add(cld);
+        }
+        return supers;
     }
 
 }
