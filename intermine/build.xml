@@ -1598,6 +1598,7 @@
       <fileset dir="${lib}">
         <patternset refid="lib.common"/>
         <patternset refid="lib.antlr"/>
+        <patternset refid="lib.uml"/>
       </fileset>
       <fileset dir="${dist}" includes="flymine.jar"/>
     </copy>
