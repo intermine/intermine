@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <tiles:importAttribute/>
 
@@ -114,6 +115,7 @@
               <html:text property="constraintValue"/>
             </c:when>
             <c:otherwise>
+              <fmt:message key="query.subclassconstraint"/>
               <html:select property="subclass">
                 <c:forEach items="${subclasses}" var="subclass">
                   <html:option value="${subclass}">
@@ -123,6 +125,7 @@
               </html:select>
               <c:if test="${!empty SAVED_BAGS}">
                 <br/>
+                <fmt:message key="query.bagconstraint"/>
                 <html:select property="constraintOp">
                   <c:forEach items="${validOps}" var="validOp">
                     <html:option value="${validOp.key}">
