@@ -34,4 +34,14 @@ public interface BatchWriter
      * @throws SQLException if there is an underlying DB problem
      */
     public List write(Connection con, Map tables, Set filter) throws SQLException;
+
+    /**
+     * Updates the per-table statistics held in this object, and may tell the SQL database to
+     * update its statistics using the supplied Connection.
+     *
+     * @param activity a Map from table name to the amount of activity (in rows) as an Integer
+     * @param con a Connection, over which to talk to the database
+     * @throws SQLException if there is an underlying DB problem
+     */
+    public void updateStatistics(Map activity, Connection con) throws SQLException;
 }

@@ -11,10 +11,13 @@ package org.intermine.sql.writebatch;
  */
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,24 +50,32 @@ public class BatchWriterSimpleImpl implements BatchWriter
         this.con = con;
         simpleBatch = con.createStatement();
         simpleBatchSize = 0;
+        Map activityMap = new HashMap();
         Iterator tableIter = tables.entrySet().iterator();
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
             if ((filter == null) || filter.contains(name)) {
+                int activity = 0;
                 Table table = (Table) tableEntry.getValue();
                 if (table instanceof TableBatch) {
-                    doDeletes(name, (TableBatch) table);
-                    doInserts(name, (TableBatch) table);
+                    activity += 2 * doDeletes(name, (TableBatch) table);
+                    activity += doInserts(name, (TableBatch) table);
                 } else {
-                    doIndirectionDeletes(name, (IndirectionTableBatch) table);
-                    doIndirectionInserts(name, (IndirectionTableBatch) table);
+                    activity += 2 * doIndirectionDeletes(name, (IndirectionTableBatch) table);
+                    activity += doIndirectionInserts(name, (IndirectionTableBatch) table);
                 }
                 table.clear();
+                if (activity > 0) {
+                    activityMap.put(name, new Integer(activity));
+                }
             }
         }
         if (simpleBatchSize > 0) {
             retval.add(new FlushJobStatementBatchImpl(simpleBatch));
+        }
+        if (!activityMap.isEmpty()) {
+            retval.add(new FlushJobUpdateStatistics(activityMap, this, con));
         }
         simpleBatch = null;
         return retval;
@@ -75,9 +86,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
      *
      * @param name the name of the table
      * @param table the table batch
+     * @return the number of rows inserted
      * @throws SQLException if an error occurs
      */
-    protected void doInserts(String name, TableBatch table) throws SQLException {
+    protected int doInserts(String name, TableBatch table) throws SQLException {
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer preambleBuffer = new StringBuffer("INSERT INTO ").append(name)
@@ -104,7 +116,9 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     }
                 }
             }
+            return table.getIdsToInsert().size();
         }
+        return 0;
     }
 
     private static String insertString(String preamble, int colCount, Object values[]) {
@@ -125,9 +139,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
      *
      * @param name the name of the table
      * @param table the table batch
+     * @return the number of rows deleted
      * @throws SQLException if an error occurs
      */
-    protected void doDeletes(String name, TableBatch table) throws SQLException {
+    protected int doDeletes(String name, TableBatch table) throws SQLException {
         String idField = table.getIdField();
         if ((idField != null) && (!table.getIdsToDelete().isEmpty())) {
             StringBuffer sqlBuffer = new StringBuffer("DELETE FROM ").append(name).append(" WHERE ")
@@ -156,7 +171,9 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 sqlBuffer.append(")");
                 addToSimpleBatch(sqlBuffer.toString());
             }
+            return table.getIdsToDelete().size();
         }
+        return 0;
     }
 
     /**
@@ -164,9 +181,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
      *
      * @param name the name of the table
      * @param table the IndirectionTableBatch
+     * @return the number of rows deleted
      * @throws SQLException if an error occurs
      */
-    protected void doIndirectionDeletes(String name,
+    protected int doIndirectionDeletes(String name,
             IndirectionTableBatch table) throws SQLException {
         Set rows = new CombinedSet(table.getRowsToDelete(), table.getRowsToInsert());
         if (!rows.isEmpty()) {
@@ -197,6 +215,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 addToSimpleBatch(sql.toString());
             }
         }
+        return table.getRowsToDelete().size();
     }
 
     /**
@@ -204,9 +223,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
      *
      * @param name the name of the table
      * @param table the IndirectionTableBatch
+     * @return the number of rows inserted
      * @throws SQLException if an error occurs
      */
-    protected void doIndirectionInserts(String name,
+    protected int doIndirectionInserts(String name,
             IndirectionTableBatch table) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             String preamble = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
@@ -219,6 +239,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 addToSimpleBatch(sql.toString());
             }
         }
+        return table.getRowsToInsert().size();
     }
 
     /**
@@ -283,6 +304,112 @@ public class BatchWriterSimpleImpl implements BatchWriter
             public void remove() {
                 throw new UnsupportedOperationException();
             }
+        }
+    }
+
+    /*
+     * All code above this comment is called by the thread that calls into the Batch.
+     * All code below this comment is called by the Batch writer thread.
+     * They do not access any common instance variables, so they need no synchronisation.
+     */
+
+    protected Map stats = new HashMap();
+
+    /**
+     * @see BatchWriter#updateStatistics
+     */
+    public void updateStatistics(Map activity, Connection conn) throws SQLException {
+        Iterator iter = activity.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String name = (String) entry.getKey();
+            int amount = ((Integer) entry.getValue()).intValue();
+            Statistic stat = (Statistic) stats.get(name);
+            if (stat == null) {
+                stat = new Statistic(name, getTableSize(name, conn), amount);
+                stats.put(name, stat);
+            }
+            boolean doAnalyse = stat.addActivity(amount);
+            if (doAnalyse) {
+                doAnalyse(name, conn);
+                stat.setTableSize(getTableSize(name, conn));
+            }
+        }
+    }
+
+    /**
+     * Returns the approximate number of rows in a table.
+     *
+     * @param name the name of the table
+     * @param conn a Connection to use
+     * @return an int
+     * @throws SQLException if there is a problem
+     */
+    protected int getTableSize(String name, Connection conn) throws SQLException {
+        long start = System.currentTimeMillis();
+        Statement s = conn.createStatement();
+        ResultSet r = s.executeQuery("SELECT COUNT(*) FROM " + name);
+        if (r.next()) {
+            int retval = r.getInt(1);
+            if (r.next()) {
+                throw new SQLException("Too many results");
+            }
+            long end = System.currentTimeMillis();
+            LOG.info("Finding size of table " + name + " (" + retval + ") took " + (end - start)
+                    + "ms");
+            return retval;
+        } else {
+            throw new SQLException("No results");
+        }
+    }
+
+    /**
+     * Performs an ANALYSE of a table.
+     *
+     * @param name the name of the table
+     * @param conn a Connection to use
+     * @throws SQLException if something goes wrong
+     */
+    protected void doAnalyse(String name, Connection conn) throws SQLException {
+        long start = System.currentTimeMillis();
+        Statement s = conn.createStatement();
+        s.execute("ANALYSE VERBOSE " + name);
+        long end = System.currentTimeMillis();
+        LOG.info("Analysing table " + name + " took " + (end - start) + "ms");
+        SQLWarning e = s.getWarnings();
+        while (e != null) {
+            LOG.info("ANALYSE WARNING: " + e.toString());
+            e = e.getNextWarning();
+        }
+    }
+
+    private static class Statistic
+    {
+        private String name;
+        private int tableSize, activity;
+
+        public Statistic(String name, int tableSize, int activity) {
+            this.name = name;
+            this.tableSize = tableSize - activity; // Yes, this is a hack. It works.
+            this.activity = 0;
+            LOG.debug("Statistics: " + name + " created: tableSize = " + tableSize
+                    + " (hacked down to " + this.tableSize + " for unaccounted-for activity)");
+        }
+
+        public boolean addActivity(int activity) {
+            LOG.debug("Statistics: " + name + ", tableSize = " + tableSize + ", activity "
+                    + this.activity + " --> tableSize = " + tableSize + ", activity = "
+                    + (this.activity + activity) + "    - Activity of " + activity + " rows");
+            this.activity += activity;
+            return activity > tableSize + 1000;
+        }
+
+        public void setTableSize(int tableSize) {
+            LOG.debug("Statistics: " + name + ", tableSize = " + this.tableSize + ", activity "
+                    + this.activity + " --> tableSize = " + tableSize
+                    + ", activity = 0   - New table size");
+            this.tableSize = tableSize;
+            this.activity = 0;
         }
     }
 }

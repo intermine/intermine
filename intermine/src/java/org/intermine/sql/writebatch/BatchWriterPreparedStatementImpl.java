@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,16 +40,21 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
         this.con = con;
         simpleBatch = con.createStatement();
         simpleBatchSize = 0;
+        Map activityMap = new HashMap();
         Iterator tableIter = tables.entrySet().iterator();
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
             if ((filter == null) || filter.contains(name)) {
+                int activity;
                 Table table = (Table) tableEntry.getValue();
                 if (table instanceof TableBatch) {
-                    doDeletes(name, (TableBatch) table);
+                    activity = 2 * doDeletes(name, (TableBatch) table);
                 } else {
-                    doIndirectionDeletes(name, (IndirectionTableBatch) table);
+                    activity = 2 * doIndirectionDeletes(name, (IndirectionTableBatch) table);
+                }
+                if (activity > 0) {
+                    activityMap.put(name, new Integer(activity));
                 }
             }
         }
@@ -61,14 +67,25 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
             if ((filter == null) || filter.contains(name)) {
+                int activity;
                 Table table = (Table) tableEntry.getValue();
                 if (table instanceof TableBatch) {
-                    doInserts(name, (TableBatch) table);
+                    activity = doInserts(name, (TableBatch) table);
                 } else {
-                    doIndirectionInserts(name, (IndirectionTableBatch) table);
+                    activity = doIndirectionInserts(name, (IndirectionTableBatch) table);
                 }
                 table.clear();
+                if (activity > 0) {
+                    Integer oldActivity = (Integer) activityMap.get(name);
+                    if (oldActivity != null) {
+                        activity += oldActivity.intValue();
+                    }
+                    activityMap.put(name, new Integer(activity));
+                }
             }
+        }
+        if (!activityMap.isEmpty()) {
+            retval.add(new FlushJobUpdateStatistics(activityMap, this, con));
         }
         return retval;
     }
@@ -76,7 +93,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     /**
      * @see BatchWriterSimpleImpl#doInserts
      */
-    protected void doInserts(String name, TableBatch table) throws SQLException {
+    protected int doInserts(String name, TableBatch table) throws SQLException {
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer sqlBuffer = new StringBuffer("INSERT INTO ").append(name).append(" (");
@@ -118,13 +135,15 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                 }
             }
             retval.add(new FlushJobStatementBatchImpl(prepS));
+            return table.getIdsToInsert().size();
         }
+        return 0;
     }
 
     /**
      * @see BatchWriterSimpleImpl#doIndirectionInserts
      */
-    protected void doIndirectionInserts(String name,
+    protected int doIndirectionInserts(String name,
             IndirectionTableBatch table) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             String sql = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
@@ -139,5 +158,6 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             }
             retval.add(new FlushJobStatementBatchImpl(prepS));
         }
+        return table.getRowsToInsert().size();
     }
 }

@@ -356,8 +356,8 @@ public abstract class BatchWriterTestCase extends TestCase
         }
     }
 
-    /*
-    public void testPerformance() throws Exception {
+    //*
+    public void testPerformanceAndAnalyse() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection con = db.getConnection();
         con.setAutoCommit(false);
@@ -369,6 +369,7 @@ public abstract class BatchWriterTestCase extends TestCase
                 con.rollback();
             }
             s.addBatch("CREATE TABLE table1(key int, int4 int)");
+            s.addBatch("CREATE INDEX table1_key ON table1(key)");
             s.executeBatch();
             con.commit();
             s = null;
@@ -378,8 +379,26 @@ public abstract class BatchWriterTestCase extends TestCase
             for (int i = 0; i < 100000; i++) {
                 batch.addRow(con, "table1", new Integer(i), colNames, new Object[] {new Integer(i), new Integer(765234 * i)});
             }
+            batch.flush(con);
+            con.commit();
+            s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = 'table1'");
+            assertTrue(r.next());
+            assertTrue("Expected rows to be > 99000 and < 101000 - was " + r.getInt(1),
+                    r.getInt(1) > 99000 && r.getInt(1) < 101000);
+            assertFalse(r.next());
+            for (int i = 0; i < 100000; i++) {
+                if (i % 5 != 0) {
+                    batch.deleteRow(con, "table1", "key", new Integer(i));
+                }
+            }
             batch.close(con);
             con.commit();
+            r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = 'table1'");
+            assertTrue(r.next());
+            assertTrue("Expected rows to be > 19000 and < 21000 - was " + r.getInt(1),
+                    r.getInt(1) > 19000 && r.getInt(1) < 21000);
+            assertFalse(r.next());
         } catch (SQLException e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -403,7 +422,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
-*/
+//*/
 
     public void testUTF() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
