@@ -7,7 +7,8 @@
   </query>
   <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
     <node path="Employee.department.manager.age">
-      <constraint op=">" value="10" description="age is greater than 10" identifier="age_gt_10"/>
+      <constraint op=">" value="10" editable="false" 
+                  description="age is greater than 10" identifier="age_gt_10"/>
     </node>
   </query>
   <query name="vatNumberInBag" model="testmodel" view="Company">
