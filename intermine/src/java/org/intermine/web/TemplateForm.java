@@ -126,21 +126,28 @@ public class TemplateForm extends ActionForm
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-        Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
         String queryName = (String) session.getAttribute("queryName");
+        String templateType = (String) session.getAttribute("templateType");
         
-        TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
+        TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         
         ActionErrors errors = new ActionErrors();
         
-        for (Iterator i = attributeValues.keySet().iterator(); i.hasNext();) {
-            String j = (String) i.next();
-            PathNode node = (PathNode) template.getNodes().get(Integer.parseInt(j) - 1);
-            Class fieldClass = MainHelper.getClass(node.getType());
-            ConstraintOp constraintOp =
-                     ConstraintOp.getOpForIndex(Integer.valueOf((String) getAttributeOps(j)));
-            parsedAttributeValues.put(j, MainForm.parseValue((String) attributeValues.get(j),
-                                                 fieldClass, constraintOp, locale, errors));
+        int j = 0;
+        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
+                Constraint c = (Constraint) ci.next();
+                
+                String key = "" + (j + 1);
+                Class fieldClass = MainHelper.getClass(node.getType());
+                Integer opIndex = Integer.valueOf((String) getAttributeOps(key));
+                ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
+                Object parseVal = MainForm.parseValue((String) attributeValues.get(key),
+                                                    fieldClass, constraintOp, locale, errors);
+                parsedAttributeValues.put(key, parseVal);
+                j++;
+            }
         }
 
         return errors;
