@@ -69,12 +69,12 @@ public class QueryViewController extends TilesAction
                 Set fromSet = new HashSet();
                 perFromConstraints.put(fromElement, fromSet);
 
-                Iterator conIter = ConstraintHelper.filter(clist, fromElement).iterator();
+                Iterator conIter = ConstraintHelper.filter(clist, fromElement, false).iterator();
                 while (conIter.hasNext()) {
                     fromSet.add(new PrintableConstraint(query, (Constraint) conIter.next()));
                 }
             }
-            Iterator conIter = ConstraintHelper.filter(clist, null).iterator();
+            Iterator conIter = ConstraintHelper.filter(clist, null, false).iterator();
             while (conIter.hasNext()) {
                 noFromConstraints.add(new PrintableConstraint(query, (Constraint) conIter.next()));
             }

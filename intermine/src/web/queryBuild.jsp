@@ -88,6 +88,13 @@
           <bean:message key="button.submit"/>
         </html:submit>
         </td>
+        <c:if test="${!empty aliasStr}">
+          <td>
+            <html:submit property="action">
+              <bean:message key="button.remove"/>
+            </html:submit>
+          </td>
+         </c:if>
       </tr>
     </table>    
 
