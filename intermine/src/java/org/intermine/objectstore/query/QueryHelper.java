@@ -8,8 +8,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.flymine.util.ModelUtil;
 import org.flymine.util.TypeUtil;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.metadata.CollectionDescriptor;
 
 /**
  * Class that helps build queries or parts of queries for common situations.
@@ -18,7 +23,6 @@ import org.flymine.util.TypeUtil;
  */
 public class QueryHelper
 {
-
     protected static final Logger LOG = Logger.getLogger(QueryHelper.class);
 
     /**
@@ -61,10 +65,10 @@ public class QueryHelper
      * </pre>
      *
      * @param orig the set of Objects to query for
+     * @param model the metadata used to build the query
      * @return a Query that will retrieve these objects from the data store
      */
-
-    public static Query createQueryForExampleSet(Set orig) {
+    public static Query createQueryForExampleSet(Set orig, Model model) {
 
         Set collectionClasses = new HashSet();
         Map referenceQueryClasses = new HashMap();
@@ -75,7 +79,6 @@ public class QueryHelper
 
         // Find out what class we are dealing with
         Class clazz = TypeUtil.getElementType(orig);
-        Set keys = ModelUtil.getKey(clazz);
         QueryClass qc = new QueryClass(clazz);
 
         Query q = new Query();
@@ -102,57 +105,55 @@ public class QueryHelper
             }
 
             // Get the primary keys for this object
-            Iterator keysIter = keys.iterator();
+            ClassDescriptor cld = model.getClassDescriptorByName(clazz.getName());
+            Iterator keyIter = cld.getPkFieldDescriptors().iterator();
 
-            while (keysIter.hasNext()) {
-                String key = (String) keysIter.next();
-                int type = ModelUtil.getFieldType(clazz, key);
-
+            while (keyIter.hasNext()) {
+                FieldDescriptor field = (FieldDescriptor) keyIter.next();
+                String fieldName = field.getName();
                 try {
-
-                    if (type == ModelUtil.ATTRIBUTE) {
-                        QueryField qf = new QueryField(qc, key);
-                        QueryValue value = new QueryValue(TypeUtil.getFieldValue(obj, key));
+                    if (field instanceof CollectionDescriptor) {
+                        throw new UnsupportedOperationException("Collections are not "
+                                                                + "supported in primary keys");
+                    } else if (field instanceof AttributeDescriptor) {
+                        QueryField qf = new QueryField(qc, fieldName);
+                        QueryValue value = new QueryValue(TypeUtil.getFieldValue(obj, fieldName));
                         Constraint c = new SimpleConstraint(qf, SimpleConstraint.EQUALS, value);
                         csThisObject.addConstraint(c);
-                    } else if (type == ModelUtil.REFERENCE) {
+                    } else if (field instanceof ReferenceDescriptor) {
                         // Get the class that this reference refers to
-                        Class otherClass = TypeUtil.getField(clazz, key).getType();
+                        Class otherClass = TypeUtil.getField(clazz, fieldName).getType();
 
                         QueryClass otherQueryClass;
-                        QueryReference qr = new QueryObjectReference(qc, key);
+                        QueryReference qr = new QueryObjectReference(qc, fieldName);
 
-                        Object otherObject = TypeUtil.getFieldValue(obj, key);
+                        Object otherObject = TypeUtil.getFieldValue(obj, fieldName);
 
                         // Add this to the from list of the query (if it is not already there)
-                        if (!referenceQueryClasses.containsKey(key)) {
+                        if (!referenceQueryClasses.containsKey(fieldName)) {
                             otherQueryClass = new QueryClass(otherClass);
-                            referenceQueryClasses.put(key, otherQueryClass);
+                            referenceQueryClasses.put(fieldName, otherQueryClass);
                             q.addFrom(otherQueryClass);
                             // And add a ClassConstraint for it
                             csCombining.addConstraint(new ContainsConstraint(qr,
                                     ContainsConstraint.CONTAINS, otherQueryClass));
                         } else {
-                            otherQueryClass = (QueryClass) referenceQueryClasses.get(key);
+                            otherQueryClass = (QueryClass) referenceQueryClasses.get(fieldName);
                         }
 
                         // Add the constraint for this object
                         Constraint c = new ClassConstraint(otherQueryClass,
                                                            ClassConstraint.EQUALS, otherObject);
                         csThisObject.addConstraint(c);
-                    } else if (type == ModelUtil.COLLECTION) {
-                        throw new UnsupportedOperationException("Collections are not "
-                                                                + "supported in primary keys");
                     }
                 } catch (NoSuchFieldException e) {
-                    LOG.error("No such field " + key + " in class " + qc.getType().getName());
+                    LOG.error("No such field " + fieldName + " in class " + qc.getType().getName());
                     return null;
-                } catch (IllegalAccessException e) {
-                    LOG.error("Cannot access field " + key + " in object " + obj.toString());
+                }  catch (IllegalAccessException e) {
+                    LOG.error("No access field " + fieldName + " in object " + obj.toString());
                     return null;
                 }
             }
-
             csOr.addConstraint(csThisObject);
         }
         csCombining.addConstraint(csOr);
@@ -209,11 +210,12 @@ public class QueryHelper
      * </pre>
      *
      * @param obj the Object to query for
+     * @param model the metadata used to build the query
      * @return a Query that will retrieve this object from the data store
      * @throws IllegalArgumentException if any primary key fields are not set in obj
      */
 
-    public static Query createQueryForExampleObject(Object obj) {
+    public static Query createQueryForExampleObject(Object obj, Model model) {
 
         if (obj == null) {
             throw new NullPointerException("obj cannot be null");
@@ -233,7 +235,7 @@ public class QueryHelper
         // AND together the constraints combining QueryClasses in the FROM list
         ConstraintSet csCombining = new ConstraintSet(ConstraintSet.AND);
         q.setConstraint(csCombining);
-        addKeysToQuery(q, qc, obj);
+        addKeysToQuery(q, qc, obj, model);
         return q;
     }
 
@@ -244,19 +246,15 @@ public class QueryHelper
      * @param q the Query to be added
      * @param qc the QueryClass that represents obj in the Query
      * @param obj the Object that is to have its primary keys added
+     * @param model the metadata used to build the query
      * @throws IllegalArgumentException if any primary key fields are not set
      *
      */
-    protected static void addKeysToQuery(Query q, QueryClass qc, Object obj) {
-        // Get the primary keys for this object
-        Class clazz = obj.getClass();
-        Set keys = ModelUtil.getKey(clazz);
-        Iterator keysIter = keys.iterator();
-
-        while (keysIter.hasNext()) {
-            String key = (String) keysIter.next();
-
-            addKeyToQuery(q, qc, obj, key);
+    protected static void addKeysToQuery(Query q, QueryClass qc, Object obj, Model model) {
+        ClassDescriptor cld = model.getClassDescriptorByName(obj.getClass().getName());
+        Iterator keyIter = cld.getPkFieldDescriptors().iterator();
+        while (keyIter.hasNext()) {
+            addKeyToQuery(q, qc, obj, (FieldDescriptor) keyIter.next(), model);
         }
     }
 
@@ -267,57 +265,49 @@ public class QueryHelper
      * @param qc the QueryClass that represents obj in the Query
      * @param obj the Object that is to have one of its primary key fields added
      * @param field the field in qc to be constrained in the Query
+     * @param model the metadata used to build the query
      * @throws IllegalArgumentException if any primary key fields are not set
      *
      */
-    protected static void addKeyToQuery(Query q, QueryClass qc, Object obj, String field) {
-
+    protected static void addKeyToQuery(Query q, QueryClass qc, Object obj,
+                                        FieldDescriptor field, Model model) {
         try {
-            Class clazz = obj.getClass();
-            int type = ModelUtil.getFieldType(clazz, field);
-
-            if (type == ModelUtil.ATTRIBUTE) {
-                QueryField qf = new QueryField(qc, field);
-                QueryValue value = new QueryValue(TypeUtil.getFieldValue(obj, field));
+            if (field instanceof CollectionDescriptor) {
+                throw new UnsupportedOperationException("Collections are not "
+                                                        + "supported in primary keys");
+            } else if (field instanceof AttributeDescriptor) {
+                QueryField qf = new QueryField(qc, field.getName());
+                QueryValue value = new QueryValue(TypeUtil.getFieldValue(obj, field.getName()));
                 if (value == null) {
                     throw new IllegalArgumentException("All primary key fields must be set");
                 }
                 Constraint c = new SimpleConstraint(qf, SimpleConstraint.EQUALS, value);
                 ((ConstraintSet) q.getConstraint()).addConstraint(c);
-
-            } else if (type == ModelUtil.REFERENCE) {
-                // Get the class that this reference refers to
-                Class otherClass = TypeUtil.getField(clazz, field).getType();
-
-                QueryClass otherQueryClass;
-                QueryReference qr = new QueryObjectReference(qc, field);
-
-                Object otherObject = TypeUtil.getFieldValue(obj, field);
-
+            
+            } else if (field instanceof ReferenceDescriptor) {
+            
+                Object otherObject = TypeUtil.getFieldValue(obj, field.getName());            
                 if (otherObject == null) {
                     throw new IllegalArgumentException("All primary key fields must be set");
                 }
-
-                otherQueryClass = new QueryClass(otherClass);
+            
+                QueryReference qr = new QueryObjectReference(qc, field.getName());
+                Class otherClass = TypeUtil.getField(obj.getClass(), field.getName()).getType();
+                QueryClass otherQueryClass = new QueryClass(otherClass);
                 q.addFrom(otherQueryClass);
                 // And add a ClassConstraint for it
-                ((ConstraintSet) q.getConstraint()).addConstraint(new ContainsConstraint(qr,
-                                          ContainsConstraint.CONTAINS, otherQueryClass));
-
+                ((ConstraintSet) q.getConstraint())
+                    .addConstraint(new ContainsConstraint(qr, ContainsConstraint.CONTAINS, 
+                                                          otherQueryClass));
+                
                 // Add the keys of the other object
-                addKeysToQuery(q, otherQueryClass, otherObject);
-
-            } else if (type == ModelUtil.COLLECTION) {
-                throw new UnsupportedOperationException("Collections are not "
-                                                        + "supported in primary keys");
+                addKeysToQuery(q, otherQueryClass, otherObject, model);
             }
-
         } catch (NoSuchFieldException e) {
             LOG.error("No such field " + field + " in class " + qc.getType().getName());
-            return;
         } catch (IllegalAccessException e) {
             LOG.error("Cannot access field " + field + " in object " + obj.toString());
-            return;
-        }
+         }
+
     }
 }

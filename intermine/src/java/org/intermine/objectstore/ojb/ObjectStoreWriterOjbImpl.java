@@ -13,6 +13,8 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.MetaDataException;
 import org.flymine.util.ModelUtil;
 
 /**
@@ -137,9 +139,18 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * @see ObjectStoreWriter#getObjectByExample
      */
     public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        Query q = QueryHelper.createQueryForExampleObject(obj);
+        Model model;
+        try {
+            model = Model.getInstance();
+            if (model == null) {
+                throw new MetaDataException();
+            }
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
+        }
+        Query q = QueryHelper.createQueryForExampleObject(obj, model);
         Results res = os.execute(q);
-
+        
         if (res.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
                                                + "this primary key");

@@ -38,18 +38,21 @@ public class Model
         if (model != null) {
             return model;
         }
-        Properties props = PropertiesUtil.getPropertiesStartingWith("model");
-         if (props.size() == 0) {
-             throw new MetaDataException("No 'model' properties were found"
-                                         + " (check properties file)");
-         }
-         props = PropertiesUtil.stripStart("model", props);
-         String modelName = props.getProperty("name");
-         if (modelName == null) {
-             throw new MetaDataException("'model' does not have a name specified"
-                                         + " (check properties file)");
-         }
-         return getInstanceByName(props.getProperty("name"));
+//         Properties props = PropertiesUtil.getPropertiesStartingWith("model");
+//          if (props.size() == 0) {
+//              throw new MetaDataException("No 'model' properties were found"
+//                                          + " (check properties file)");
+//          }
+//          props = PropertiesUtil.stripStart("model", props);
+//          String modelName = props.getProperty("name");
+//          if (modelName == null) {
+//              throw new MetaDataException("'model' does not have a name specified"
+//                                          + " (check properties file)");
+//          }
+//          return getInstanceByName(props.getProperty("name"));
+        Properties props = PropertiesUtil.getPropertiesStartingWith("os.unittest.ojb");
+        props = PropertiesUtil.stripStart("os.unittest.ojb", props);
+        return getInstanceByName(props.getProperty("model"));
     }
 
     /**
