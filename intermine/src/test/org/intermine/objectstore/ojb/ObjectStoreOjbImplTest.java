@@ -2,43 +2,38 @@ package org.flymine.objectstore.ojb;
 
 import junit.framework.TestCase;
 
-import org.flymine.objectstore.*;
+import java.util.List;
+import java.util.ArrayList;
+
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.query.*;
 
 import org.flymine.model.testmodel.*;
 
-public class ObjectStoreOjbImplTest extends PersistenceBrokerFlyMineImplTest
+public class ObjectStoreOjbImplTest extends QueryTestCase
 {
+    private ObjectStore os;
+
     public ObjectStoreOjbImplTest(String arg) {
         super(arg);
     }
 
-    private ObjectStore os;
-
-    public void testNullConstructor() throws Exception {
-        try {
-            new ObjectStoreOjbImpl(null);
-            fail("Expected: NullPointerException");
-        } catch (NullPointerException e) {
-        }
-    }
-
-    public void testGetInstance() throws Exception {
+    public void setUp() throws Exception {
+        setUpData();
+        super.setUp();
         os = ObjectStoreOjbImpl.getInstance(db);
-        ObjectStore os2 = ObjectStoreOjbImpl.getInstance(db);
-        assertSame(os, os2);
     }
 
-    public void testQuery() throws Exception {
-        Query query = new Query();
-        QueryClass company = new QueryClass(Company.class);
-        query.addFrom(company);
-        query.addToSelect(company);
-        //assertEquals(2, os.execute(query).size());
-        //assertEquals(companys.get(0), os.execute(query).get(0));
-        assertTrue(true);
+    public void tearDown() throws Exception {
+        tearDownData();
+    }
+    
+    public void setUpResults() throws Exception {
+    }
+
+    public void executeTest(String type) throws Exception {
+        assertEquals(results.get(type), os.execute((Query)queries.get(type), 0, 1));
     }
 }
