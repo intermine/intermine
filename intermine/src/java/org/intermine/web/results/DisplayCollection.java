@@ -10,8 +10,6 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Collection;
@@ -40,17 +38,17 @@ public class DisplayCollection
     public DisplayCollection(Collection c, ClassDescriptor cld, Model model) throws Exception {
         this.cld = cld;
         size = c.size();
-        for (Iterator i = c.iterator(); i.hasNext();) {
-            Set clds = ObjectViewController.getLeafClds(i.next().getClass(), model);
-            if (clds.size() == 1 && clds.iterator().next().equals(cld)) {
-                break;
-            }
-            if (classes.containsKey(clds)) {
-                classes.put(clds, new Integer(((Integer) classes.get(clds)).intValue() + 1));
-            } else {
-                classes.put(clds, new Integer(1));
-            }
-        }
+//         for (Iterator i = c.iterator(); i.hasNext();) {
+//             Set clds = ObjectViewController.getLeafClds(i.next().getClass(), model);
+//             if (clds.size() == 1 && clds.iterator().next().equals(cld)) {
+//                 break;
+//             }
+//             if (classes.containsKey(clds)) {
+//                 classes.put(clds, new Integer(((Integer) classes.get(clds)).intValue() + 1));
+//             } else {
+//                 classes.put(clds, new Integer(1));
+//             }
+//         }
     }
 
     /**
