@@ -77,6 +77,16 @@ if [ "${FLYMINE_PRIVATE:-unset}" = "unset" ]; then
     fi
 fi
 
+# Location that all logs will be written to
+if [ "${LOG:-unset}" = "unset" ]; then
+    if [ -w /shared/log ]; then
+	LOG=/shared/log; export LOG
+    else
+	if [ "${HOME:+set}" = "set" ] && [ -d $HOME/log ]; then
+	    LOG=${HOME}/log; export LOG
+	fi
+    fi
+fi
 
 # Aliases for working with the private CVS tree
 
