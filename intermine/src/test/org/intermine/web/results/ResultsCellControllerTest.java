@@ -48,6 +48,7 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
 
         getRequest().setAttribute("object", "test string");
         actionPerform();
-        assertEquals(0, ((List) context.getAttribute("leafClds")).size());
+
+        assertEquals(null, context.getAttribute("leafClds"));
     }
 }
