@@ -82,12 +82,6 @@
       <forward name="buildquery" path="query.page"/>
     </action>
 
-    <action path="/changealias"
-            type="org.flymine.web.QueryAliasChangeAction"
-            parameter="method">
-      <forward name="buildquery" path="query.page"/>
-    </action>
-
     <!-- Input an fql query -->
     <action path="/fqlquery"
             type="org.flymine.web.FqlQueryAction"
@@ -108,13 +102,6 @@
             parameter="action">
       <forward name="buildquery" path="query.page"/>
       <forward name="tree" path="tree.page"/>
-    </action>
-
-    <!-- Change an existing alias -->
-    <action path="/queryAliasChange"
-            type="org.flymine.web.QueryAliasChangeAction"
-            parameter="method">
-      <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to run a query for a Query object on the session -->

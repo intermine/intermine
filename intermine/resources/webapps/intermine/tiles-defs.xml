@@ -49,9 +49,6 @@
   
   <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
   
-  <definition name="aliasChange.tile" path="/queryAliasChange.jsp" 
-              controllerUrl="/initQueryView.do"/>
-  
   <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
   
   <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
