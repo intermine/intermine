@@ -85,6 +85,16 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
 
 
     /**
+     * Runs a COUNT(*) on the given query
+     *
+     * @param query the query Object
+     * @return count of rows produced by the query
+     */
+    public int count(Query query) {
+        return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).countQuery(query);
+    }
+
+    /**
      * Generate a flymine Results object to act as proxy to a collection.  The Results object
      * pages the contents of the collection.
      * Build an org.flymine.objectstore.query that will return all elements of the collection

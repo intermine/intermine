@@ -66,7 +66,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
     }
 
     /**
-     * Gets the PersistenceBroker used by this ObjectStoreOjbImpl. 
+     * Gets the PersistenceBroker used by this ObjectStoreOjbImpl.
      * This should only be used in testing - if a broker pool is in use then these brokers
      * are neither deleted or returned to the pool, which is wasteful.
      * Besides, usage presumes that OJB is the underlying mapping tool.
@@ -195,5 +195,20 @@ public class ObjectStoreOjbImpl implements ObjectStore
         pb.close();
         return result;
     }
+
+
+    /**
+     * Execute a COUNT(*) on a query, returns the number of row the query will produce
+     *
+     * @param q Flymine Query on which to run COUNT(*)
+     * @return the number of row to be produced by query
+     */
+    public int count(Query q) {
+        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
+        int count = pb.count(q);
+        pb.close();
+        return count;
+    }
+
 }
 
