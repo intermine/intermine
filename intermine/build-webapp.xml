@@ -51,10 +51,10 @@
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <tomcat-deploy url="${webapp.baseurl}/manager"
+    <tomcat-deploy url="${webapp.deploy.url}/manager"
                    username="${webapp.manager}" 
                    password="${webapp.password}"
-                   path="${webapp.path}" 
+                   path="/${webapp.path}" 
                    war="file://${war}"/>
   </target>
 
@@ -63,10 +63,10 @@
     <taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <tomcat-undeploy url="${webapp.baseurl}/manager"
+    <tomcat-undeploy url="${webapp.deploy.url}/manager"
                      username="${webapp.manager}" 
                      password="${webapp.password}"
-                     path="${webapp.path}"/>
+                     path="/${webapp.path}"/>
   </target>
 
   <target name="release-webservice"
