@@ -1,0 +1,10 @@
+<menu>
+    <section>
+        <heading>Project</heading>
+        <item><ulink url="index">About</ulink></item>
+        <item><ulink url="team">Team</ulink></item>
+    </section>
+    <section>
+        <heading><ulink url="http://mailman.flymine.org/listinfo/">Mailing lists</ulink></heading>
+    </section>
+</menu>
