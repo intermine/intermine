@@ -17,19 +17,19 @@
 
 <table cellpadding="10" border="0" width="100%" align="center">
   <tr>
-    <td valign="bottom" align="left" colspan="2"><tiles:insert attribute="header" /></td>
+    <td valign="bottom" align="left" colspan="2"><tiles:get name="header" /></td>
   </tr>
   <tr>
     <td valign="top" align="left" width="5%" height="10%" class="sidebar">
-      <tiles:insert attribute='menu' />
+      <tiles:get name='menu' />
     </td>
-    <td rowspan="2" valign="top" align="left" class="main"> <tiles:insert attribute='body' /> </td>
+    <td rowspan="2" valign="top" align="left" class="main"> <tiles:get name='body' /> </td>
   </tr>
   <tr>
     <td />
   </tr>
   <tr>
-    <td colspan="2" align="center" class="footer"> <tiles:insert attribute="footer" /> </td>
+    <td colspan="2" align="center" class="footer"> <tiles:get name="footer" /> </td>
   </tr>
 </table>
 

@@ -13,7 +13,9 @@ package org.flymine.web;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.struts.action.Action;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -22,6 +24,7 @@ import org.apache.struts.util.MessageResources;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 
 /**
@@ -30,7 +33,7 @@ import org.flymine.objectstore.query.Results;
  * @author Andrew Varley
  */
 
-public class QueryAction extends Action
+public class QueryAction extends LookupDispatchAction
 {
 
     /**
@@ -49,7 +52,7 @@ public class QueryAction extends Action
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
+    public ActionForward submit(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -67,7 +70,8 @@ public class QueryAction extends Action
             Results results = os.execute(new FqlQuery(queryform.getQuerystring(),
                                                   "org.flymine.model.testmodel").toQuery());
             request.setAttribute("results", results);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);
             return (mapping.findForward("error"));
         }
 
@@ -75,5 +79,58 @@ public class QueryAction extends Action
 
     }
 
+    /**
+     * Process the specified HTTP request, and create the corresponding HTTP
+     * response (or forward to another web component that will create it).
+     * Return an <code>ActionForward</code> instance describing where and how
+     * control should be forwarded, or <code>null</code> if the response has
+     * already been completed.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward view(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
+
+        // Extract attributes we will need
+        MessageResources messages = getResources(request);
+        HttpSession session = request.getSession();
+
+        QueryForm queryform = (QueryForm) form;
+
+        try {
+            Query q = new FqlQuery(queryform.getQuerystring(), "org.flymine.model.testmodel")
+                .toQuery();
+            request.setAttribute("query", q);
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);
+            return (mapping.findForward("error"));
+        }
+
+        return (mapping.findForward("buildquery"));
+
+    }
+
+    /**
+     * Distributes the actions to the necessary methods, by providing a Map from action to
+     * the name of a method.
+     *
+     * @return a Map
+     */
+    protected Map getKeyMethodMap() {
+        Map map = new HashMap();
+        map.put("button.submit", "submit");
+        map.put("button.view", "view");
+        return map;
+    }
 
 }

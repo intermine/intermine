@@ -36,9 +36,11 @@
                type="org.flymine.web.QueryAction"
                name="queryForm"
               scope="request"
-              input="query">
+              input="query"
+              parameter="action">
       <forward name="results"              path="results.page"/>
       <forward name="error"                path="error.page"/>
+      <forward name="buildquery"           path="query.page"/>
     </action>
 
     <action    path="/buildquery"

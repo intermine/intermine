@@ -657,6 +657,7 @@
       </webinf>
       <lib dir="${lib}">
         <patternset refid="lib.common" />
+        <patternset refid="lib.antlr" />
         <patternset refid="lib.webapp.flymine" />
       </lib>
       <lib dir="${dist}">
@@ -678,6 +679,7 @@
       </webinf>
       <lib dir="${lib}">
         <patternset refid="lib.common" />
+        <patternset refid="lib.antlr" />
         <patternset refid="lib.webapp.flymine" />
         <patternset refid="lib.webapptest" />
       </lib>

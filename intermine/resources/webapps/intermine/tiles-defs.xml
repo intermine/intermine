@@ -4,7 +4,7 @@
 
 <tiles-definitions>
 <definition 
-    name="layout" 
+    name="layout.template" 
     path="/layout.jsp">
     <put name="title" value="FlyMine" />
     <put name="header" value="/header.jsp"/>
@@ -12,30 +12,27 @@
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
 </definition>
-<definition name="index.page" extends="layout">
-    <put 
-        name="body" 
-        value="/index.jsp"/>
+<definition name="index.page" extends="layout.template">
+    <put name="body" value="/index.jsp"/>
 </definition>
-<definition name="query.page" extends="layout">
-    <put 
-        name="body" 
-        value="/query.jsp"/>
+<definition name="query.page" extends="layout.template">
+    <put name="body" value="query.tile"/>
 </definition>
-<definition name="results.page" extends="layout">
-    <put 
-        name="body" 
-        value="/results.jsp"/>
+<definition name="results.page" extends="layout.template">
+    <put name="body" value="/results.jsp"/>
 </definition>
-<definition name="error.page" extends="layout">
-    <put 
-        name="body" 
-        value="/error.jsp"/>
+<definition name="error.page" extends="layout.template">
+    <put name="body" value="/error.jsp"/>
 </definition>
-<definition name="documentation.page" extends="layout">
-    <put 
-        name="body" 
-        value="/docbook.jsp"/>
+<definition name="documentation.page" extends="layout.template">
+    <put name="body" value="/docbook.jsp"/>
+</definition>
+<definition name="tribody.template" path="/tribody.jsp">
+</definition>
+<definition name="query.tile" extends="tribody.template">
+    <put name="left" value="/model.jsp"/>
+    <put name="top" value="/query.jsp"/>
+    <put name="bottom" value="/queryView.jsp"/>
 </definition>
 </tiles-definitions>
 

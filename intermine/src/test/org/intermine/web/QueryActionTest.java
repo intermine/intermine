@@ -14,6 +14,8 @@ import java.util.List;
 
 import servletunit.struts.MockStrutsTestCase;
 
+import org.flymine.objectstore.query.Query;
+
 public class QueryActionTest extends MockStrutsTestCase {
 
     public QueryActionTest(String testName) {
@@ -28,28 +30,59 @@ public class QueryActionTest extends MockStrutsTestCase {
         super.tearDown();
     }
 
-    public void testSuccessfulQuery() {
-       setRequestPathInfo("/query");
-       addRequestParameter("querystring","select a1_ from Company as a1_");
-       actionPerform();
-       verifyForward("results");
-       assertNotNull((List) getRequest().getAttribute("results"));
-       verifyNoActionErrors();
+    public void testSubmitSuccessfulQuery() {
+        setRequestPathInfo("/query");
+        addRequestParameter("querystring","select a1_ from Company as a1_");
+        addRequestParameter("action", "Submit");
+        actionPerform();
+        verifyForward("results");
+        assertNotNull((List) getRequest().getAttribute("results"));
+        verifyNoActionErrors();
     }
 
-    public void testEmptyQuery() {
+    public void testSubmitEmptyQuery() {
         setRequestPathInfo("/query");
         addRequestParameter("querystring","");
+        addRequestParameter("action", "Submit");
         actionPerform();
         verifyForward("error");
         assertNull((String) getRequest().getAttribute("results"));
     }
 
-    public void testRubbishQuery() {
+    public void testSubmitRubbishQuery() {
         setRequestPathInfo("/query");
         addRequestParameter("querystring","some rubbish");
+        addRequestParameter("action", "Submit");
         actionPerform();
         verifyForward("error");
         assertNull((String) getRequest().getAttribute("results"));
+    }
+
+    public void testViewSuccessfulQuery() {
+        setRequestPathInfo("/query");
+        addRequestParameter("querystring","select a1_ from Company as a1_");
+        addRequestParameter("action", "View");
+        actionPerform();
+        verifyForward("buildquery");
+        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getRequest().getAttribute("query")).toString());
+        verifyNoActionErrors();
+    }
+
+    public void testViewEmptyQuery() {
+        setRequestPathInfo("/query");
+        addRequestParameter("querystring","");
+        addRequestParameter("action", "View");
+        actionPerform();
+        verifyForward("error");
+        assertNull((String) getRequest().getAttribute("query"));
+    }
+
+    public void testViewRubbishQuery() {
+        setRequestPathInfo("/query");
+        addRequestParameter("querystring","some rubbish");
+        addRequestParameter("action", "View");
+        actionPerform();
+        verifyForward("error");
+        assertNull((String) getRequest().getAttribute("query"));
     }
 }

@@ -7,6 +7,7 @@
          onsubmit="return validateQueryForm(this);">
 <table border="0" width="100%">
 
+
   <tr>
     <td align="right">
       <bean:message key="prompt.querystring"/>:
@@ -18,11 +19,14 @@
 
   <tr>
     <td align="right">
-      <html:submit>
+      <html:submit property="action">
         <bean:message key="button.submit"/>
       </html:submit>
     </td>
     <td align="left">
+      <html:submit property="action">
+        <bean:message key="button.view"/>
+      </html:submit>
       <html:reset>
         <bean:message key="button.reset"/>
       </html:reset>
