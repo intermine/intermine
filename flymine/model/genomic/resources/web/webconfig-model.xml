@@ -1,5 +1,5 @@
 <webconfig>
-  <class name="org.flymine.model.genomic.Database">
+  <class className="org.flymine.model.genomic.Database">
     <shortdisplayers>
       <displayer src="/model/database.jsp"/>
       <displayer src="/objectFields.jsp"/>
@@ -9,7 +9,7 @@
       <displayer src="/objectFields.jsp"/>
     </longdisplayers>
   </class>
-  <class name="org.flymine.model.genomic.Organism">
+  <class className="org.flymine.model.genomic.Organism">
     <shortdisplayers>
       <displayer src="/model/organism.jsp"/>
       <displayer src="/objectFields.jsp"/>
@@ -19,7 +19,7 @@
       <displayer src="/objectFields.jsp"/>
     </longdisplayers>
   </class>
-  <class name="org.flymine.model.genomic.Gene">
+  <class className="org.flymine.model.genomic.Gene">
     <shortdisplayers>
       <displayer src="/model/geneShort.jsp"/>
       <displayer src="/objectFields.jsp"/>
