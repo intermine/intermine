@@ -7,6 +7,8 @@
     <property name="build.www" location="build"/>
     <property name="dist.www" location="dist"/>
 
+  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
+
 <target name="prepare">
     <copy todir="${build.www}">
         <fileset dir="${src.www}">
