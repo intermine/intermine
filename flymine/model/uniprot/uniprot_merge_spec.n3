@@ -54,32 +54,6 @@
     owl:inverseOf :Comment__subject.
 
 #    owl:equivalentClass uniprot:CommentType;
-:Comment a owl:Class;
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :Comment__source ] ;
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :Comment__subject ] .
-
-:Comment__type a owl:DatatypeProperty;
-    rdfs:domain :Comment;
-    rdfs:range xsd:string.
-
-:Comment__text a owl:DatatypeProperty;
-    rdfs:domain :Comment;
-    rdfs:range xsd:string.
-
-# This subject field needs to point to a BioEntity object. This will need to be performed in code in the translator.
-:Comment__subject a owl:ObjectProperty;
-    rdfs:domain :Comment;
-    rdfs:range :BioEntity.
-
-:Comment__source a owl:ObjectProperty;
-    rdfs:domain :Comment;
-    rdfs:range :InfoSource.
 
 # Need to null out all the other comment fields - TODO: maybe do this properly later
 #null:Comment__method a owl:DataTypeProperty;
