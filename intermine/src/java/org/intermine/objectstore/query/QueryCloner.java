@@ -11,6 +11,7 @@ package org.flymine.objectstore.query;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -176,7 +177,7 @@ public class QueryCloner
         } else if (orig instanceof BagConstraint) {
             BagConstraint origC = (BagConstraint) orig;
             return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(), fromElementMap),
-                    origC.getOp(), origC.getBag());
+                                     origC.getOp(), new HashSet(origC.getBag()));
         }
         throw new IllegalArgumentException("Unknown object type: " + orig);
     }
