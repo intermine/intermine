@@ -51,7 +51,7 @@ public class XmlDataLoader extends DataLoader
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                store((FlyMineBusinessObject) iter.next());
+                iw.store((FlyMineBusinessObject) iter.next());
             }
         } catch (ObjectStoreException e) {
             throw new FlyMineException("Problem with store method", e);
