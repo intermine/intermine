@@ -99,6 +99,7 @@ public class MultiObjectRsIterator extends RsIterator
      */
     public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker, int start, int limit) {
         logger = LoggerFactory.getLogger(this.getClass());
+        cache = broker.serviceObjectCache();
         m_rsAndStmt = ((JdbcAccessFlymineImpl) broker.serviceJdbcAccess()).executeQuery(query,
                 start, limit);
         m_row = new HashMap();
