@@ -55,7 +55,7 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
         boolean valid = false;
         try {
             valid = ModelUtil.hasValidKey(o);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new ObjectStoreException("Error in checking primary key fields:" + e);
         }
         if (!valid) {
