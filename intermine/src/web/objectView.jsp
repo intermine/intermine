@@ -27,7 +27,7 @@
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
         </c:forEach>
-        [<html:link action="/objectDetails?id=${object.id}">
+        [<html:link action="/objectDetails?id=${object.id}&trail=${param.trail}_${object.id}">
           <fmt:message key="results.details"/>
         </html:link>]
       </nobr>

@@ -12,6 +12,8 @@
 <im:box helpUrl="${helpUrl}"
         titleKey="objectDetails.heading.details">
 
+<tiles:get name="objectTrail.tile"/>
+        
 <c:if test="${!empty object}">
         
   <table width="100%">
@@ -41,7 +43,7 @@
                 <tr>
                   <c:if test="${status.first}">
                     <td rowspan="${fn:length(object.references[referenceName].keyAttributes)}">
-                      <html:link action="/objectDetails?id=${object.references[referenceName].id}">
+                      <html:link action="/objectDetails?id=${object.references[referenceName].id}&trail=${param.trail}_${object.id}">
                         <span class="referenceField">${referenceName}</span>
                       </html:link>
                     </td>
@@ -121,13 +123,13 @@
                     <nobr>
                       <c:choose>
                         <c:when test="${verbose}">
-                          <html:link action="/modifyDetails?method=unverbosify&field=${fieldName}">
+                          <html:link action="/modifyDetails?method=unverbosify&field=${fieldName}&id=${object.id}&trail=${param.trail}">
                             <img border="0" src="images/minus.gif" alt="-"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
                         </c:when>
                         <c:when test="${collection.size > 0}">
-                          <html:link action="/modifyDetails?method=verbosify&field=${fieldName}">
+                          <html:link action="/modifyDetails?method=verbosify&field=${fieldName}&id=${object.id}&trail=${param.trail}">
                             <img border="0" src="images/plus.gif" alt="+"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
@@ -143,7 +145,7 @@
                       ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
                     </span>
                     <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
-                      [<html:link action="/objectDetails?id=${collection.table.ids[0]}">
+                      [<html:link action="/objectDetails?id=${collection.table.ids[0]}&trail=${param.trail}_${collection.table.ids[0]}">
                         <fmt:message key="results.details"/>
                       </html:link>]
                     </c:if>
@@ -200,7 +202,7 @@
                                     </td>
                                   </c:forEach>
                                   <td width="10px">
-                                    [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}">
+                                    [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&trail=${param.trail}_${collection.table.ids[status.index]}">
                                       <fmt:message key="results.details"/>
                                     </html:link>]
                                   </td>
@@ -212,7 +214,7 @@
                       </table>
                       <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
                         <div class="refSummary">
-                          [<html:link action="/collectionDetails?id=${object.id}&field=${fieldName}&pageSize=25">
+                          [<html:link action="/collectionDetails?id=${object.id}&field=${fieldName}&pageSize=25&trail=${param.trail}">
                             <fmt:message key="results.showall"/>
                           </html:link>]
                         </div>
