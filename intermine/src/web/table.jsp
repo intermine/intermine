@@ -119,12 +119,13 @@ function unselectColumnCheckbox(column) {
                     </td>
                   </c:when>
                   <c:otherwise>
-                    <td colspan=2/>
+                    <%-- add a space so that IE renders the borders --%>
+                    <td colspan="2">&nbsp;</td>
                   </c:otherwise>
                 </c:choose>
               </c:when>
               <c:otherwise>
-                <td colspan=2></td>
+                <td colspan="2">&nbsp;</td>
               </c:otherwise>
             </c:choose>
           </c:forEach>
