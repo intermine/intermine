@@ -35,18 +35,29 @@
 
    <section>
       <heading>Constraints</heading>
-      <item>To select the subset of objects you want from a particular class
-      you apply a constraint to the appropriate field.  For example if you
+      <item>
+      To select the subset of objects you want from a particular class
+      you apply a constraint to the appropriate field.  For example, if you
       want objects from the Gene class which have a particular name, you
-      constrain the gene name field.  If you want objects from the Gene class
-      which have a certain sequence length or range of sequence length, you
-      constrain the seqLen field. If you are constraining a class field you
+      constrain the gene name field. If you are constraining a class field you
       will be given the option to constrain that class to any of the
       subclasses of that class.  e.g. The transcript class can be constrained
       to a number of subclasses of Transcript (e.g. primary transcript,
-      processed transcript, tRNA etc.).</item> 
+      processed transcript, tRNA etc).
+      </item> 
 
    </section>
+
+
+    <section>
+       <heading>Fields for output</heading>
+       <item>
+       The fields you wish to display in the output must be selected from the model browser.
+       If any of the fields selected do not contain
+       </item>
+    </section>
+
+
 
 
 
