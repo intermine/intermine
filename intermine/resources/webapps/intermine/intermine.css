@@ -10,6 +10,9 @@ a {
 a:hover {
   text-decoration: underline
 }
+img { 
+  border: none;
+}
 
 .links, .footer {
   font-size: small;
@@ -43,6 +46,7 @@ a:hover {
   color: black;
   font-weight: bold;
 }
+
 table.query, table.results {
   border-left: solid 1px black;
   border-top: solid 1px black;
@@ -77,6 +81,4 @@ tr.even {
 .metadata {
   color: green;
 }
-.arrow {
-  border: solid 0px;
-}
+
