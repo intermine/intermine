@@ -220,23 +220,20 @@ public class CreateIndexesTask extends Task
                 }
             }
 
-            try {
-                dropIndex(tableName + "__"  + att.getName());
-            } catch (SQLException e) {
-                // ignore - mostly the exception will happen if there is no table
-                // if there is a serious problem the createIndex() will throw an exception.
-            }
+            dropIndex(tableName + "__"  + att.getName());
             createIndex(tableName + "__"  + att.getName(), tableName, fieldName + ", id");
         }
     }
 
     /**
-     * Drop an index by name
+     * Drop an index by name, ignoring any resulting errors
      * @param indexName the index name
-     * @throws SQLException if there is a problem while dropping the table
     */
-    protected void dropIndex(String indexName) throws SQLException {
-        execute("drop index " + indexName);
+    protected void dropIndex(String indexName) {
+        try {
+            execute("drop index " + indexName);
+        } catch (SQLException e) {
+        }
     }
 
     /**
@@ -244,11 +241,14 @@ public class CreateIndexesTask extends Task
      * @param indexName the index name
      * @param tableName the table name
      * @param columnNames the column names
-     * @throws SQLException if there is a problem while creating the table
      */
-    protected void createIndex(String indexName, String tableName, String columnNames)
-        throws SQLException {
-        execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
+    protected void createIndex(String indexName, String tableName, String columnNames) {
+        try {
+            execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
+        } catch (SQLException e) {
+            System.
+                err.println("Failed to create index: " + e);
+        }
     }
 
     /**
