@@ -38,7 +38,6 @@
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="querySelectBuild" value="querySelectBuild.tile"/>
     <put name="loadQuery" value="loadQuery.jsp"/>
-    <put name="restartQuery" value="restartQuery.jsp"/>
   </definition>
   
   <definition name="querySelectBuild.tile" path="querySelectBuild.jsp">
