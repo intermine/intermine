@@ -32,7 +32,7 @@
 
   <!-- ========== Global Forward Definitions ============================== -->
   <global-forwards>
-    <forward   name="success"              path="/mainMenu.jsp"/>
+    <forward   name="error"              path="error.page"/>
   </global-forwards>
 
 
@@ -47,7 +47,6 @@
               input="query"
               parameter="action">
       <forward name="results"              path="results.page"/>
-      <forward name="error"                path="error.page"/>
       <forward name="buildquery"           path="query.page"/>
     </action>
 
@@ -59,7 +58,6 @@
               input="query"
               parameter="action">
       <forward name="results"              path="results.page"/>
-      <forward name="error"                path="error.page"/>
       <forward name="buildquery"           path="query.page"/>
     </action>
 
@@ -70,7 +68,6 @@
               scope="request"
               input="query"
               parameter="action">
-      <forward name="error"                path="error.page"/>
       <forward name="buildquery"           path="query.page"/>
     </action>
 
@@ -88,7 +85,6 @@
 
   </action-mappings>
 
-
   <!-- ========== Controller Configuration ================================ -->
 
   <controller>
@@ -103,6 +99,14 @@
   <message-resources
     parameter="FlyMineWebApp"/>
 
+
+  <!-- ========== Exceptions Configuration ================================ -->
+  <global-exceptions>
+    <exception type="java.lang.Exception"
+               key="exception.message"
+               path="error.page"
+               handler="org.flymine.web.FlyMineExceptionHandler"/>
+  </global-exceptions>
 
   <!-- ========== Plug Ins Configuration ================================== -->
 
