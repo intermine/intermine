@@ -695,8 +695,8 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-       merge-ensembl-model, merge-phenotype-model, merge-go-model, merge-so-model,
-       merge-uniprot-model, merge-mage-model">
+       merge-ensembl-model, merge-phenotype-model, merge-go-model, merge-uniprot-model,
+       merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
   
@@ -1687,7 +1687,6 @@
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
-                                           build-protein_structure-production,
                                            analyse-db-production,
                                            grant-db-production"/>
 
