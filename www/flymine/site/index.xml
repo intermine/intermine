@@ -19,7 +19,7 @@
 <section id = "frontPageIntroduction">
      <heading>The FlyMine database project</heading>
         <item><ulink url = "introduction.xml">Introduction </ulink>to the project</item>
-        <item>New Users:<ulink url = "manual/manualQuickstart.xml"> quick start guide</ulink></item> 
+        <item>New Users:<ulink url = "doc/manual/manualQuickstart.xml"> quick start guide</ulink></item> 
 
 </section>
 
@@ -47,16 +47,16 @@
     <section>
       <heading>Help</heading>
       <item>
-        FlyMine <ulink url="manual/manualQuickstart.xml">quick start guide</ulink>
+        FlyMine <ulink url="doc/manual/manualQuickstart.xml">quick start guide</ulink>
       </item>
       <item>
-        <ulink url="tutorials/tutorialIndex.xml">Tutorials</ulink> - step-by-step guide to queries
+        <ulink url="doc/tutorials/tutorialIndex.xml">Tutorials</ulink> - step-by-step guide to queries
       </item>
       <item>
         <ulink url="examples.do">Query examples</ulink>
       </item>
       <item>
-        <ulink url="manual/manualIndex.xml">User Manual</ulink>
+        <ulink url="doc/manual/manualIndex.xml">User Manual</ulink>
       </item>
     </section>
 
