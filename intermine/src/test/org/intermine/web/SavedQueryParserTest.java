@@ -10,26 +10,62 @@ package org.intermine.web;
  *
  */
 
-import java.io.*;
+import junit.framework.TestCase;
 
-import servletunit.struts.MockStrutsTestCase;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ArrayList;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Tests for the SavedQueryParser class
  *
  * @author Kim Rutherford
  */
-public class SavedQueryParserTest extends MockStrutsTestCase
+public class SavedQueryParserTest extends TestCase
 {
     public SavedQueryParserTest(String arg) {
         super(arg);
     }
 
     public void testProcess() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/example-queries.xml");
-        Reader reader = new InputStreamReader(is);
-        assertTrue(true);
-//         assertEquals("{allCompanies=QueryInfo <query={}, view=[Company], resultsInfo=null>, employeesNamesAndAges=QueryInfo <query={}, view=[Employee.name, Employee.age], resultsInfo=null>, employeesWithOldManagers=QueryInfo <query={Employee=Employee:Employee [], Employee.department=Employee.department:Department [], Employee.department.manager=Employee.department.manager:Manager [], Employee.department.manager.age=Employee.department.manager.age:int [> 10]}, view=[Employee.name, Employee.age, Employee.department.name, Employee.department.manager.age], resultsInfo=null>}",
-//                      "" + new SavedQueryParser().process(reader));
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test/SavedQueryParserTest.xml");
+        Map savedQueries = new SavedQueryParser().process(new InputStreamReader(is));
+        Map expected = new LinkedHashMap();
+
+        //allCompanies
+        PathQuery allCompanies = new PathQuery(Model.getInstanceByName("testmodel"));
+        List view = new ArrayList();
+        view.add("Company");
+        allCompanies.setView(view);
+        expected.put("allCompanies", allCompanies);
+
+        //employeesNamesAndAges
+        PathQuery employeesNamesAndAges = new PathQuery(Model.getInstanceByName("testmodel"));
+        view = new ArrayList();
+        view.add("Employee.name");
+        view.add("Employee.age");
+        employeesNamesAndAges.setView(view);
+        expected.put("employeesNamesAndAges", employeesNamesAndAges);
+
+        //employeesWithOldManagers
+        PathQuery employeesWithOldManagers = new PathQuery(Model.getInstanceByName("testmodel"));
+        view = new ArrayList();
+        view.add("Employee.name");
+        view.add("Employee.age");
+        view.add("Employee.department.name");
+        view.add("Employee.department.manager.age");
+        employeesWithOldManagers.setView(view);
+        PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
+        age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10)));
+        expected.put("employeesWithOldManagers", employeesWithOldManagers);
+
+        assertEquals(expected, savedQueries);
     }
 }
