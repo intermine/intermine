@@ -25,6 +25,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.*;
@@ -515,6 +516,22 @@ public class CalculateLocations
     public void createSpanningLocations(Class parentClass, Class childClass, String refField)
         throws ObjectStoreException {
 
+        Query parentIdQuery =
+            new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
+                         + parentClass.getName() + " AS a1_, org.flymine.model.genomic.Location "
+                         + "AS a2_, org.flymine.model.genomic.Chromosome as a3_"
+                         + " WHERE (a1_.objects CONTAINS a2_ and a3_.subjects CONTAINS a2_)",
+                         null).toQuery();
+
+        Results parentIdResults = os.execute(parentIdQuery);
+        Set locatedParents = new HashSet();
+        Iterator parentIdIter = parentIdResults.iterator();
+
+        while (parentIdIter.hasNext()) {
+            Object parentId = ((ResultsRow) parentIdIter.next()).get(0);
+            locatedParents.add(parentId);
+        }
+
         Iterator resIter = findCollections(os, parentClass, childClass, refField);
 
         // Map of location.objects to Maps from parent objects to a to their (new) start and end
@@ -531,6 +548,12 @@ public class CalculateLocations
 
             // the object that childObject is located on
             BioEntity locatedOnObject = (BioEntity) rr.get(3);
+
+            // ignore objects that already have locations on Chromosomes
+            if (locatedOnObject instanceof Chromosome
+                && locatedParents.contains(parentObject.getId())) {
+                continue;
+            }
 
             Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject.getId());
 
