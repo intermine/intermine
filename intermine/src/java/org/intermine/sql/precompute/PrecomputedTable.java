@@ -48,6 +48,15 @@ public class PrecomputedTable
     }
 
     /**
+     * Get a "CREATE TABLE" SQL statement for this PrecomputedTable
+     *
+     * @return this PrecomputedTable as an SQL statement
+     */
+    public String getSQLString() {
+        return "CREATE TABLE " + name + " AS " + q.getSQLString();
+    }
+
+    /**
      * Overrides Object.equals().
      *
      * @param obj an Object to compare to
