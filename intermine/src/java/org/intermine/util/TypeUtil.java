@@ -233,11 +233,17 @@ public class TypeUtil
     /**
      * Make all nested objects top-level in returned collection
      *
-     * @param c a collection of top-level objects
-     * @return a (larger) set of objects
+     * @param obj a top-level object or collection of such objects
+     * @return a set of objects
      * @throws Exception if a problem occurred during flattening
      */
-    public static List flatten(Collection c) throws Exception {
+    public static List flatten(Object obj) throws Exception {
+        Collection c;
+        if (obj instanceof Collection) {
+            c = (Collection) obj;
+        } else {
+            c = Arrays.asList(new Object[] {obj});
+        }
         try {
             List toStore = new ArrayList();
             Iterator i = c.iterator();
@@ -246,7 +252,7 @@ public class TypeUtil
             }
             return toStore;
         } catch (Exception e) {
-            throw new Exception("Problem occurred flattening collection. ", e);
+            throw new Exception("Problem occurred flattening object", e);
         }
     }
 
