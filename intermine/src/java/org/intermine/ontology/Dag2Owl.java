@@ -13,6 +13,7 @@ package org.flymine.ontology;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringTokenizer;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -97,7 +98,7 @@ public class Dag2Owl
      * @return the generated class name
      */
     public String generateClassName(DagTerm term) {
-        return namespace + filter(term.getId());
+        return namespace + filter(term.getName());
     }
 
     /**
@@ -107,7 +108,7 @@ public class Dag2Owl
      * @return the generated property name
      */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
-        return namespace + filter(domain.getId() + "_" + range.getId());
+        return namespace + filter(domain.getName()) + "_" + filter(range.getName());
     }
 
     /**
@@ -115,8 +116,14 @@ public class Dag2Owl
      * @param s the relevant string
      * @return the filtered string
      */
-    public String filter(String s) {
-        return s.replaceAll(":", "_");
+    protected static String filter(String s) {
+        String filtered = new String(s);
+         StringBuffer sb = new StringBuffer();
+         for (StringTokenizer st = new StringTokenizer(filtered, " _"); st.hasMoreTokens();) {
+             sb.append(StringUtil.capitalise(st.nextToken().replaceAll("\\W", "")));
+         }
+         filtered = sb.toString();
+         return filtered;
     }
 
     /**
