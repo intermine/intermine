@@ -20,7 +20,7 @@ function enterPath(path)
 
 function exitPath(path)
 {
-  setStyle(path, "#f5f0ff");
+  setStyle(path, "#E7F1FB");
 }
 
 function setStyle(path, style)

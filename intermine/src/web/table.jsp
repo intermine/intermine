@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute/>
@@ -72,7 +73,7 @@
 
             <th align="center">
               <div style="white-space:nowrap">
-                <c:out value="${column.name}"/>
+                <c:out value="${fn:replace(column.name, '.', ' > ')}"/>
               </div>
               <div style="white-space:nowrap">
                 <%-- right/left --%>
