@@ -255,12 +255,12 @@ public class Owl2FlyMine
                 HashSet rfds = getFieldSetForClass(references, domain.getLocalName());
                 rfds.add(rfd);
             } else {
-                // TODO collection - cannot handle ordered
+                // TODO collection - cannot handle unordered
                 CollectionDescriptor cod
                     = new CollectionDescriptor(OntologyUtil.generateFieldName(prop, domain),
                                                referencedType,
                                                reverseRef,
-                                               false);
+                                               true);
                 HashSet cods = getFieldSetForClass(collections, domain.getLocalName());
                 cods.add(cod);
             }
