@@ -70,7 +70,6 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderItems() throws Exception {
         String generated = FullRenderer.render(getExampleItems());
-        org.intermine.Logger.log(generated);
         InputStream expected = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
