@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
-
-import com.hp.hpl.jena.ontology.OntModel;
+import java.util.Properties;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -37,6 +36,7 @@ import org.intermine.dataconversion.FieldNameAndValue;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
+import org.intermine.metadata.Model;
 import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
@@ -93,9 +93,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#DataTranslator
      */
-    public EnsemblHumanDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
-                                      String orgAbbrev) {
-        super(srcItemReader, model, ns);
+    public EnsemblHumanDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                                      Model tgtModel, String orgAbbrev) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
         this.orgAbbrev = orgAbbrev;
     }
 
@@ -1006,6 +1006,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
+        String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
+        String classname = ObjectStoreItemPathFollowingImpl.CLASSNAME;
+
         String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
         String classname = ObjectStoreItemPathFollowingImpl.CLASSNAME;
 

@@ -29,9 +29,6 @@ import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileWriter;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
@@ -47,6 +44,7 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.XmlConverter;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ObjectStoreItemReader;
+import org.intermine.metadata.Model;
 
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.ModelParser;
@@ -54,6 +52,10 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 
 public class UniprotDataTranslatorTest extends DataTranslatorTestCase
 {
+    public UniprotDataTranslatorTest(String arg) {
+        super(arg);
+    }
+
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
     public void setUp() throws Exception {
@@ -69,7 +71,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         // uncomment to generate a new source items file from some uniprot xml
         //retrieveFromUniprotExample("test/UniprotSrc.xml", new File("generatedSrcItems.xml"));
 
-        DataTranslator translator = new UniprotDataTranslator(srcItemReader, tgtNs);
+        DataTranslator translator = new UniprotDataTranslator(srcItemReader, mapping, srcModel, getTargetModel(tgtNs));
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -120,7 +122,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         // check that exons collection comes back in the same order
         ObjectStore os = osw.getObjectStore();
         ItemReader srcItemReader = new ObjectStoreItemReader(os);
-        UniprotDataTranslator translator = new UniprotDataTranslator(srcItemReader, tgtNs);
+        UniprotDataTranslator translator = new UniprotDataTranslator(srcItemReader, mapping, srcModel, getTargetModel(tgtNs));
 
         List exonList = new ArrayList(Arrays.asList(new Object[] {exon2, exon1, exon3}));
         List resExons = translator.getItemsInCollection(exons);
@@ -140,16 +142,12 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UniprotDataTranslatorTest_src.xml"));
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
-    }
-
     protected String getModelName() {
         return "genomic";
+    }
+
+    protected String getSrcModelName() {
+        return "uniprot";
     }
 
     private Item createItem(String className, String identifier) {

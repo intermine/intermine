@@ -13,6 +13,7 @@ package org.flymine.dataconversion;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.metadata.Model;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.FieldNameAndValue;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
@@ -72,8 +74,9 @@ public class UniprotDataTranslator extends DataTranslator
     /**
      * @see DataTranslator
      */
-    public UniprotDataTranslator(ItemReader srcItemReader, String tgtNs) {
-        //super(srcItemReader, model, tgtNs);
+    public UniprotDataTranslator(ItemReader srcItemReader, Properties mapping,
+                                 Model srcModel, Model tgtModel) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
         this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
     }

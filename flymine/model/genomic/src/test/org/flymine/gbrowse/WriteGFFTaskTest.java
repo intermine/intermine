@@ -38,6 +38,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 
 import org.flymine.postprocess.*;
 import org.flymine.model.genomic.*;
@@ -66,6 +67,7 @@ public class WriteGFFTaskTest extends TestCase
     private Location storedTranscript1Location = null;
     private Location storedTranscript2Location = null;
     private Location storedGeneLocation = null;
+    private ItemFactory itemFactory;
 
     private static final Logger LOG = Logger.getLogger(WriteGFFTaskTest.class);
 
@@ -73,6 +75,7 @@ public class WriteGFFTaskTest extends TestCase
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
         osw.getObjectStore().flushObjectById();
         model = Model.getInstanceByName("genomic");
+        itemFactory = new ItemFactory(model);
         createData();
     }
 
@@ -248,11 +251,11 @@ public class WriteGFFTaskTest extends TestCase
         LOG.info("committed transaction in createData()");
     }
 
-    private Item toItem(InterMineObject o) {
+    private Item makeItem(InterMineObject o) {
         if (o.getId() == null) {
             o.setId(new Integer(0));
         }
-        Item item = FullRenderer.toItem(o, model);
+        Item item = itemFactory.makeItem(o);
         return item;
     }
 }

@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.InputStreamReader;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
@@ -40,14 +37,19 @@ import org.intermine.dataconversion.MockItemWriter;
 public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
+    public ProteinStructureDataTranslatorTest(String arg) {
+        super(arg);
+    }
+
     public void setUp() throws Exception {
         super.setUp();
     }
 
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
-        DataTranslator translator = new ProteinStructureDataTranslator(new MockItemReader(itemMap),
-                                                                       getOwlModel(), tgtNs, "");
+        DataTranslator translator =
+            new ProteinStructureDataTranslator(new MockItemReader(itemMap),
+                                               mapping, srcModel, getTargetModel(tgtNs), "");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
@@ -61,23 +63,11 @@ public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/ProteinStructureDataTranslatorFunctionalTest_src.xml"));
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
-    }
-
     protected String getModelName() {
         return "genomic";
     }
 
-    private Item createItem(String clsName, String identifier, String imps) {
-        Item item = new Item();
-        item.setClassName(clsName);
-        item.setIdentifier(identifier);
-        item.setImplementations(imps);
-        return item;
+    protected String getSrcModelName() {
+        return "protein_structure";
     }
 }

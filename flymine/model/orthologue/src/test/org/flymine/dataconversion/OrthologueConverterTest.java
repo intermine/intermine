@@ -31,6 +31,10 @@ public class OrthologueConverterTest extends TargetItemsTestCase
 {
     private String ENDL = System.getProperty("line.separator");
 
+    public OrthologueConverterTest(String arg) {
+        super(arg);
+    }
+
     public void setUp() throws Exception {
         super.setUp();
     }

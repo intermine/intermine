@@ -19,9 +19,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.StringTokenizer;
-
-import com.hp.hpl.jena.ontology.OntModel;
 
 import org.intermine.InterMineException;
 import org.intermine.util.XmlUtil;
@@ -39,6 +38,7 @@ import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.FieldNameAndValue;
+import org.intermine.metadata.Model;
 
 import org.apache.log4j.Logger;
 
@@ -106,8 +106,9 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#DataTranslator
      */
-    public MageDataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
-        super(srcItemReader, model, ns);
+    public MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                              Model tgtModel) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
     }
 
     /**
@@ -1032,7 +1033,6 @@ public class MageDataTranslator extends DataTranslator
         }
 
         bioSource.add(tgtItem);
-
     }
 
     /**
@@ -2076,7 +2076,7 @@ public class MageDataTranslator extends DataTranslator
 
         paths.put("http://www.flymine.org/model/mage#DerivedBioAssay",
                   Collections.singleton(desc1));
-        
+
         return paths;
     }
 }

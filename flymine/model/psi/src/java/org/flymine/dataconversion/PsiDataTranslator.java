@@ -18,8 +18,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
-
-import com.hp.hpl.jena.ontology.OntModel;
+import java.util.Properties;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -35,6 +34,7 @@ import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.util.XmlUtil;
+import org.intermine.metadata.Model;
 
 /**
  * DataTranslator specific to Protein Interaction data in PSI XML format.
@@ -50,8 +50,9 @@ public class PsiDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#DataTranslator
      */
-    public PsiDataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
-        super(srcItemReader, model, ns);
+    public PsiDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                             Model tgtModel) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
     }
 
     /**
@@ -105,7 +106,7 @@ public class PsiDataTranslator extends DataTranslator
                     }
                 } else if ("InteractionElementType".equals(className)) {
                     addReferencedItem(tgtItem, db, "source", false, "", false);
-                    
+
                     Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
                                                          "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
@@ -163,7 +164,7 @@ public class PsiDataTranslator extends DataTranslator
         }
         return result;
     }
-    
+
     private Item createProteinInteraction(Item intElType, Collection result)
         throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
@@ -195,7 +196,7 @@ public class PsiDataTranslator extends DataTranslator
                                                interaction.getReference("bait").getRefId()));
         return interaction;
     }
-    
+
     private void createProteinRegion(Item participant, Collection result)
         throws ObjectStoreException {
         Item featureList = getReference(participant, "featureList");
@@ -219,7 +220,7 @@ public class PsiDataTranslator extends DataTranslator
                                                    .getReference("proteinInteractorRef")
                                                    .getRefId()));
             tgtLocation.addReference(new Reference("subject", tgtProteinRegion.getIdentifier()));
-            
+
             tgtLocation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier()})));
             Item tgtTerm = createItem("ProteinInteractionTerm");
@@ -297,7 +298,7 @@ public class PsiDataTranslator extends DataTranslator
 
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("InteractionElementType.experimentList");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("experimentList", 
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("experimentList",
                                                       ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("InteractionElementType.attributeList");
@@ -325,7 +326,7 @@ public class PsiDataTranslator extends DataTranslator
                                                       ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         paths.put("http://www.flymine.org/model/psi#Source_Entry_EntrySet",
                   Collections.singleton(desc));
-        
+
         desc = new ItemPrefetchDescriptor("CvType.xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("xref",
                                                       ObjectStoreItemPathFollowingImpl.IDENTIFIER));

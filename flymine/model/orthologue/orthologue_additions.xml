@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.Orthologue" extends="org.flymine.model.genomic.Relation" is-interface="true">
+  <reference name="objectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
+  <reference name="subjectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
+</class>
+<class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <attribute name="primaryAccession" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.Paralogue" extends="org.flymine.model.genomic.Relation" is-interface="true">
+  <reference name="objectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
+  <reference name="subjectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
+</class>
+</classes>

@@ -26,9 +26,6 @@ import java.io.FileWriter;
 import java.io.Reader;
 import java.io.FileReader;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
@@ -42,6 +39,10 @@ import org.intermine.xml.full.FullRenderer;
 public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
+    public PsiDataTranslatorTest(String arg) {
+        super(arg);
+    }
+
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
 
@@ -51,7 +52,7 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 //         writer.close();
 
         DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
-                                                              getOwlModel(), tgtNs);
+                                                          mapping, srcModel, getTargetModel(tgtNs));
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -61,6 +62,10 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
     protected String getModelName() {
         return "genomic";
+    }
+
+    protected String getSrcModelName() {
+        return "psi";
     }
 
     protected Collection getExpectedItems() throws Exception {
@@ -80,13 +85,5 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 //         fw.flush();
 //         fw.close();
         return mockIw.getItems();
-    }
-
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
     }
 }

@@ -28,6 +28,10 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class TaxonomyConverterTest extends TargetItemsTestCase
 {
+    public TaxonomyConverterTest(String arg) {
+        super(arg);
+    }
+
     public void testTranslate() throws Exception {
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/TaxonomyConverterTest_src.txt"));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());

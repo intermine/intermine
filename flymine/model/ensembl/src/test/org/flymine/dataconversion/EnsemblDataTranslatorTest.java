@@ -22,23 +22,35 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 import java.io.InputStreamReader;
-
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.intermine.metadata.Model;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 
+import java.io.FileWriter;
+import java.io.File;
+
 public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
+    private ItemFactory ensemblItemFactory;
+    private ItemFactory genomicItemFactory;
+
+    public EnsemblDataTranslatorTest(String arg) throws Exception {
+        super(arg);
+        ensemblItemFactory = new ItemFactory(Model.getInstanceByName("ensembl"));
+        genomicItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+    }
 
     public void setUp() throws Exception {
         super.setUp();
@@ -47,9 +59,15 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
         DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs, "WB");
+                                                              mapping, srcModel,
+                                                              getTargetModel(tgtNs), "WB");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
+
+//         FileWriter fw = new FileWriter(new File("ensembl_tgt.xml"));
+//         fw.write(tgtIw.getItems().toString());
+//         fw.flush();
+//         fw.close();
 
         String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
         String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
@@ -58,7 +76,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
             System.out.println(expectedNotActual);
             System.out.println(actualNotExpected);
         }
-        
+
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
@@ -66,16 +84,16 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         String srcNs = "http://www.flymine.org/model/ensembl#";
 
         // transcript - gene, transcript - translation
-        Item gene = createItem(srcNs + "gene", "1_1", "");
-        Item transcript = createItem(srcNs + "transcript", "1_2", "");
-        Item translation = createItem(srcNs + "translation", "1_3", "");
+        Item gene = createSrcItem(srcNs + "gene", "1_1", "");
+        Item transcript = createSrcItem(srcNs + "transcript", "1_2", "");
+        Item translation = createSrcItem(srcNs + "translation", "1_3", "");
         transcript.addReference(new Reference("gene", "1_1"));
         transcript.addReference(new Reference("translation", "1_3"));
-        
+
         // objectXref - translation, objectXref - xref(dbprimary_acc) - external_db(flybase_gene)
-        Item objectXref = createItem(srcNs + "object_xref", "1_4", "");
-        Item xref = createItem(srcNs + "xref", "1_5", "");
-        Item externalDb = createItem(srcNs + "external_db", "1_6", "");
+        Item objectXref = createSrcItem(srcNs + "object_xref", "1_4", "");
+        Item xref = createSrcItem(srcNs + "xref", "1_5", "");
+        Item externalDb = createSrcItem(srcNs + "external_db", "1_6", "");
         objectXref.addReference(new Reference("ensembl", "1_3"));
         objectXref.addReference(new Reference("xref", "1_5"));
         xref.addAttribute(new Attribute("dbprimary_acc", "FBgn1001"));
@@ -84,16 +102,17 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, transcript, translation, objectXref, xref, externalDb})));
         EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                                      getOwlModel(), tgtNs, "WB");
+                                                                     mapping, srcModel,
+                                                                     getTargetModel(tgtNs), "WB");
 
-        Item exp1 = createItem(tgtNs + "Synonym", "-1_6", "");
+        Item exp1 = createTgtItem(tgtNs + "Synonym", "-1_6", "");
         exp1.addAttribute(new Attribute("value", "FBgn1001"));
         exp1.addAttribute(new Attribute("type", "identifier"));
         exp1.addReference(new Reference("source", "-1_7"));
         exp1.addReference(new Reference("subject", "1_1"));
 
         Set expected = new HashSet(Collections.singleton(exp1));
-        Item tgtItem = createItem(tgtNs + "Gene", "1_1", "");
+        Item tgtItem = createTgtItem(tgtNs + "Gene", "1_1", "");
         assertEquals(expected, translator.setGeneSynonyms(gene, tgtItem, srcNs));
     }
 
@@ -101,30 +120,30 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     // _flymine_1 on the end of organismDbId
     public void testDuplicatedFlyBaseIds() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";
-        Item gene = createItem(srcNs + "gene", "1_1", "");
-        Item transcript = createItem(srcNs + "transcript", "1_2", "");
-        Item translation = createItem(srcNs + "translation", "1_3", "");
+        Item gene = createSrcItem(srcNs + "gene", "1_1", "");
+        Item transcript = createSrcItem(srcNs + "transcript", "1_2", "");
+        Item translation = createSrcItem(srcNs + "translation", "1_3", "");
         transcript.addReference(new Reference("gene", "1_1"));
         transcript.addReference(new Reference("translation", "1_3"));
 
-        Item objectXref = createItem(srcNs + "object_xref", "1_4", "");
-        Item xref = createItem(srcNs + "xref", "1_5", "");
-        Item externalDb = createItem(srcNs + "external_db", "1_6", "");
+        Item objectXref = createSrcItem(srcNs + "object_xref", "1_4", "");
+        Item xref = createSrcItem(srcNs + "xref", "1_5", "");
+        Item externalDb = createSrcItem(srcNs + "external_db", "1_6", "");
         objectXref.addReference(new Reference("ensembl", "1_3"));
         objectXref.addReference(new Reference("xref", "1_5"));
         xref.addAttribute(new Attribute("dbprimary_acc", "FBgn1001"));
         xref.addReference(new Reference("external_db", "1_6"));
         externalDb.addAttribute(new Attribute("db_name", "flybase_gene"));
 
-        Item gene2 = createItem(srcNs + "gene", "2_1", "");
-        Item transcript2 = createItem(srcNs + "transcript", "2_2", "");
-        Item translation2 = createItem(srcNs + "translation", "2_3", "");
+        Item gene2 = createSrcItem(srcNs + "gene", "2_1", "");
+        Item transcript2 = createSrcItem(srcNs + "transcript", "2_2", "");
+        Item translation2 = createSrcItem(srcNs + "translation", "2_3", "");
         transcript2.addReference(new Reference("gene", "2_1"));
         transcript2.addReference(new Reference("translation", "2_3"));
 
-        Item objectXref2 = createItem(srcNs + "object_xref", "2_4", "");
-        Item xref2 = createItem(srcNs + "xref", "2_5", "");
-        Item externalDb2 = createItem(srcNs + "external_db", "2_6", "");
+        Item objectXref2 = createSrcItem(srcNs + "object_xref", "2_4", "");
+        Item xref2 = createSrcItem(srcNs + "xref", "2_5", "");
+        Item externalDb2 = createSrcItem(srcNs + "external_db", "2_6", "");
         objectXref2.addReference(new Reference("ensembl", "2_3"));
         objectXref2.addReference(new Reference("xref", "2_5"));
         xref2.addAttribute(new Attribute("dbprimary_acc", "FBgn1001"));
@@ -133,22 +152,22 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, transcript, translation, objectXref, xref, externalDb, gene2, transcript2, translation2, objectXref2, xref2, externalDb2})));
         EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                                      getOwlModel(), tgtNs, "WB");
+                                                                     mapping, srcModel,
+                                                                     getTargetModel(tgtNs), "WB");
 
-
-        Item exp1 = createItem(tgtNs + "Gene", "1_1", "");
+        Item exp1 = createTgtItem(tgtNs + "Gene", "1_1", "");
         exp1.addAttribute(new Attribute("organismDbId", "FBgn1001"));
         ReferenceList rl1 = new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_6")));
         exp1.addCollection(rl1);
-        Item tgtItem1 = createItem(tgtNs + "Gene", "1_1", "");
+        Item tgtItem1 = createTgtItem(tgtNs + "Gene", "1_1", "");
         translator.setGeneSynonyms(gene, tgtItem1, srcNs);
         assertEquals(exp1, tgtItem1);
 
-        Item exp2 = createItem(tgtNs + "Gene", "2_1", "");
+        Item exp2 = createTgtItem(tgtNs + "Gene", "2_1", "");
         exp2.addAttribute(new Attribute("organismDbId", "FBgn1001_flymine_1"));
         ReferenceList rl2 = new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_8")));
         exp2.addCollection(rl2);
-        Item tgtItem2 = createItem(tgtNs + "Gene", "2_1", "");
+        Item tgtItem2 = createTgtItem(tgtNs + "Gene", "2_1", "");
         translator.setGeneSynonyms(gene2, tgtItem2, srcNs);
         assertEquals(exp2, tgtItem2);
     }
@@ -156,19 +175,20 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testSetOrganismDbId() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";
-        Item gene = createItem(srcNs + "gene", "1_1", "");
-        Item transcript = createItem(srcNs + "transcript", "2_1", "");
+        Item gene = createSrcItem(srcNs + "gene", "1_1", "");
+        Item transcript = createSrcItem(srcNs + "transcript", "2_1", "");
         transcript.addReference(new Reference("gene", "1_1"));
         transcript.addReference(new Reference("translation", "4_1"));
-        Item stableId = createItem(srcNs + "gene_stable_id", "3_1", "");
+        Item stableId = createSrcItem(srcNs + "gene_stable_id", "3_1", "");
         stableId.addAttribute(new Attribute("stable_id", "FBgn1001"));
         stableId.addReference(new Reference("gene", "1_1"));
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, stableId, transcript})));
         EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                                     getOwlModel(), tgtNs, "WB");
+                                                                     mapping, srcModel,
+                                                                     getTargetModel(tgtNs), "WB");
 
-        Item exp1 = createItem(tgtNs + "Gene", "1_1", "");
+        Item exp1 = createTgtItem(tgtNs + "Gene", "1_1", "");
         exp1.addAttribute(new Attribute("organismDbId", "FBgn1001"));
         exp1.addAttribute(new Attribute("identifier", "FBgn1001"));
         exp1.addReference(new Reference("organism", "-1_1"));
@@ -178,16 +198,16 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testMergeProteins() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";
-        Item transcript1 = createItem(srcNs + "transcript", "1_1", "");
-        Item translation1 = createItem(srcNs + "translation", "1_2", "");
+        Item transcript1 = createSrcItem(srcNs + "transcript", "1_1", "");
+        Item translation1 = createSrcItem(srcNs + "translation", "1_2", "");
         transcript1.addReference(new Reference("translation", "1_2"));
-        Item stableId1 = createItem(srcNs + "translation_stable_id", "1_6", "");
+        Item stableId1 = createSrcItem(srcNs + "translation_stable_id", "1_6", "");
         stableId1.addAttribute(new Attribute("stable_id", "TRANSLATION1"));
         stableId1.addReference(new Reference("translation", "1_1"));
 
-        Item objectXref1 = createItem(srcNs + "object_xref", "1_3", "");
-        Item xref1 = createItem(srcNs + "xref", "1_4", "");
-        Item externalDb1 = createItem(srcNs + "external_db", "1_5", "");
+        Item objectXref1 = createSrcItem(srcNs + "object_xref", "1_3", "");
+        Item xref1 = createSrcItem(srcNs + "xref", "1_4", "");
+        Item externalDb1 = createSrcItem(srcNs + "external_db", "1_5", "");
         objectXref1.addReference(new Reference("ensembl", "1_2"));
         objectXref1.addReference(new Reference("xref", "1_4"));
         xref1.addAttribute(new Attribute("dbprimary_acc", "Q1001"));
@@ -195,16 +215,16 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         externalDb1.addAttribute(new Attribute("db_name", "SWISSPROT"));
 
 
-        Item transcript2 = createItem(srcNs + "transcript", "2_1", "");
-        Item translation2 = createItem(srcNs + "translation", "2_2", "");
+        Item transcript2 = createSrcItem(srcNs + "transcript", "2_1", "");
+        Item translation2 = createSrcItem(srcNs + "translation", "2_2", "");
         transcript2.addReference(new Reference("translation", "2_2"));
-        Item stableId2 = createItem(srcNs + "translation_stable_id", "2_6", "");
+        Item stableId2 = createSrcItem(srcNs + "translation_stable_id", "2_6", "");
         stableId2.addAttribute(new Attribute("stable_id", "TRANSLATION2"));
         stableId2.addReference(new Reference("translation", "2_2"));
 
-        Item objectXref2 = createItem(srcNs + "object_xref", "2_3", "");
-        Item xref2 = createItem(srcNs + "xref", "2_4", "");
-        Item externalDb2 = createItem(srcNs + "external_db", "2_5", "");
+        Item objectXref2 = createSrcItem(srcNs + "object_xref", "2_3", "");
+        Item xref2 = createSrcItem(srcNs + "xref", "2_4", "");
+        Item externalDb2 = createSrcItem(srcNs + "external_db", "2_5", "");
         objectXref2.addReference(new Reference("ensembl", "2_2"));
         objectXref2.addReference(new Reference("xref", "2_4"));
         xref2.addAttribute(new Attribute("dbprimary_acc", "Q1001"));
@@ -214,22 +234,23 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {transcript1, translation1, objectXref1, xref1, stableId1, externalDb1, transcript2, translation2, objectXref2, xref2, externalDb2, stableId2})));
         EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                                      getOwlModel(), tgtNs, "WB");
+                                                                     mapping, srcModel,
+                                                                     getTargetModel(tgtNs), "WB");
 
 
-        Item protein = createItem(tgtNs + "Protein", "-1_7", "");
+        Item protein = createTgtItem(tgtNs + "Protein", "-1_7", "");
         //protein.addAttribute(new Attribute("idenitifer", "Q1001"));
         protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
         protein.addReference(new Reference("organism", "-1_1"));
         protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_8"))));
         protein.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
-        Item synonym0 = createItem(tgtNs + "Synonym", "-1_8", "");
+        Item synonym0 = createTgtItem(tgtNs + "Synonym", "-1_8", "");
         synonym0.addAttribute(new Attribute("type", "accession"));
         synonym0.addAttribute(new Attribute("value", "Q1001"));
         synonym0.addReference(new Reference("subject", "-1_7"));
         synonym0.addReference(new Reference("source", "-1_5"));
 
-        Item trans1 = createItem(tgtNs + "Transcript", "1_1", "");
+        Item trans1 = createTgtItem(tgtNs + "Transcript", "1_1", "");
         trans1.addAttribute(new Attribute("identifier", "1_1"));
         trans1.addReference(new Reference("protein", "-1_7"));
         trans1.addReference(new Reference("organism", "-1_1"));
@@ -237,7 +258,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
         trans1.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
 
-        Item trans2 = createItem(tgtNs + "Transcript", "2_1", "");
+        Item trans2 = createTgtItem(tgtNs + "Transcript", "2_1", "");
         trans2.addAttribute(new Attribute("identifier", "2_1"));
         trans2.addReference(new Reference("protein", "-1_7"));
         trans2.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_12"))));
@@ -263,16 +284,16 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testMergeProteinEmblOnly() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";
-        Item transcript1 = createItem(srcNs + "transcript", "1_1", "");
-        Item translation1 = createItem(srcNs + "translation", "1_2", "");
+        Item transcript1 = createSrcItem(srcNs + "transcript", "1_1", "");
+        Item translation1 = createSrcItem(srcNs + "translation", "1_2", "");
         transcript1.addReference(new Reference("translation", "1_2"));
-        Item stableId1 = createItem(srcNs + "translation_stable_id", "1_6", "");
+        Item stableId1 = createSrcItem(srcNs + "translation_stable_id", "1_6", "");
         stableId1.addAttribute(new Attribute("stable_id", "TRANSLATION1"));
         stableId1.addReference(new Reference("translation", "1_1"));
 
-        Item objectXref1 = createItem(srcNs + "object_xref", "1_3", "");
-        Item xref1 = createItem(srcNs + "xref", "1_4", "");
-        Item externalDb1 = createItem(srcNs + "external_db", "1_5", "");
+        Item objectXref1 = createSrcItem(srcNs + "object_xref", "1_3", "");
+        Item xref1 = createSrcItem(srcNs + "xref", "1_4", "");
+        Item externalDb1 = createSrcItem(srcNs + "external_db", "1_5", "");
         objectXref1.addReference(new Reference("ensembl", "1_2"));
         objectXref1.addReference(new Reference("xref", "1_4"));
         xref1.addAttribute(new Attribute("dbprimary_acc", "Q1001"));
@@ -282,10 +303,10 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {transcript1, translation1, objectXref1, xref1, stableId1, externalDb1})));
         EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                                      getOwlModel(), tgtNs, "WB");
+                                                                     mapping, srcModel,
+                                                                     getTargetModel(tgtNs), "WB");
 
-
-        Item trans1 = createItem(tgtNs + "Transcript", "1_1", "");
+        Item trans1 = createTgtItem(tgtNs + "Transcript", "1_1", "");
         trans1.addAttribute(new Attribute("identifier", "1_1"));
         trans1.addReference(new Reference("organism", "-1_1"));
         trans1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_8"))));
@@ -316,20 +337,24 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_src.xml"));
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
-    }
-
     protected String getModelName() {
         return "genomic";
     }
 
-    private Item createItem(String clsName, String identifier, String imps) {
-        Item item = new Item();
+    protected String getSrcModelName() {
+        return "ensembl";
+    }
+
+    private Item createSrcItem(String clsName, String identifier, String imps) {
+        Item item = ensemblItemFactory.makeItem(identifier, clsName, imps);
+        item.setClassName(clsName);
+        item.setIdentifier(identifier);
+        item.setImplementations(imps);
+        return item;
+    }
+    
+    private Item createTgtItem(String clsName, String identifier, String imps) {
+        Item item = genomicItemFactory.makeItem(identifier, clsName, imps);
         item.setClassName(clsName);
         item.setIdentifier(identifier);
         item.setImplementations(imps);

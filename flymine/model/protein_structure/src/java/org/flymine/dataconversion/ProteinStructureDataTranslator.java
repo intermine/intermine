@@ -19,8 +19,7 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
-
-import com.hp.hpl.jena.ontology.OntModel;
+import java.util.Properties;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -32,6 +31,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
+import org.intermine.metadata.Model;
 import org.intermine.util.XmlUtil;
 
 /**
@@ -48,9 +48,9 @@ public class ProteinStructureDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#DataTranslator
      */
-    public ProteinStructureDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
-                                          String dataLocation) {
-        super(srcItemReader, model, ns);
+    public ProteinStructureDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                                          Model tgtModel, String dataLocation) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
         this.dataLocation = dataLocation;
     }
 
@@ -98,7 +98,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
 
             // model -> modelledProteinStructure
             Item model = getReference(srcItem, "model");
-            
+
             Item modelledProteinStructure = createItem(tgtNs + "ModelledProteinStructure", "");
             modelledProteinStructure.addAttribute(new Attribute("QScore", model
                                                                 .getAttribute("prosa_q_score")
