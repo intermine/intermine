@@ -233,7 +233,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem.addAttribute(new Attribute("name", "P10005"));
         expectedItem.addAttribute(new Attribute("description", "experiment description"));
         expectedItem.addReference(new Reference("publication", "62_751"));
-        expectedItem.addCollection(new ReferenceList("assays", new ArrayList(Arrays.asList(new Object[]{"57_709"}))));
+        //expectedItem.addCollection(new ReferenceList("assays", new ArrayList(Arrays.asList(new Object[]{"57_709"}))));
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
 
         assertEquals(expected, translator.translateItem(srcItem));
@@ -276,10 +276,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item expectedItem = createItem(tgtNs+"MicroArrayAssay", "57_709", "");
         //expectedItem.addCollection(new ReferenceList("results", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744", "58_755"}))));
-        expectedItem.addCollection(new ReferenceList("tissues", new ArrayList(Arrays.asList(new Object[]{"23_78", "23_146"}))));
+        //expectedItem.addCollection(new ReferenceList("tissues", new ArrayList(Arrays.asList(new Object[]{"23_78", "23_146"}))));
+        expectedItem.addReference(new Reference("experiment", "61_748"));
 
         Item expectedItem2 =createItem(tgtNs+"MicroArrayExperiment", "61_748", "");
-        expectedItem2.addCollection(new ReferenceList("assays", new ArrayList(Arrays.asList(new Object[]{"57_709"}))));
+        //expectedItem2.addCollection(new ReferenceList("assays", new ArrayList(Arrays.asList(new Object[]{"57_709"}))));
 
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2}));
 
@@ -474,6 +475,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item expectedItem13 = createItem(tgtNs+"Reporter", "12_50", "");
         expectedItem13.addReference(new Reference("material", "0_11"));
+        expectedItem13.addReference(new Reference("location", "7_46"));
 
         Item expectedItem14 = createItem(tgtNs+"MicroArraySlideDesign", "20_69", "");
 
