@@ -464,6 +464,17 @@
   </target>   
 
 
+  <!-- Distributing targets -->
+
+  <target name="dist" depends="compile-main"
+    description="Makes a JAR file of all the classes and configuration files">
+    <jar destfile="${dist}/flymine.jar">
+      <fileset dir="${build.java}" />
+      <fileset dir="${build.resources}"/>
+    </jar>
+  </target>
+
+
   <!-- Releasing targets -->
 
   <target name="release-www" depends="dist-www"
