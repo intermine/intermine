@@ -209,12 +209,10 @@
     
     <!-- Actions invoked from begin.jsp browse form -->
     <action path="/browseAction"
-            type="org.intermine.web.TemplateAction"
+            type="org.intermine.web.BrowseAction"
             name="templateForm"
-            parameter="action"
             input="begin">
       <forward name="begin" path="begin.page"/>
-      <forward name="query" path="query.page"/>
       <forward name="results" path="results.page"/>
       <forward name="failure" path="begin.page"/>
     </action>
