@@ -56,7 +56,7 @@ public class DisplayClassDescriptor
      * @return the AttributeDescriptors
      */
     public Set getAttributeDescriptors() {
-        return cld.getAttributeDescriptors();
+        return cld.getAllAttributeDescriptors();
     }
 
     /**
@@ -65,7 +65,7 @@ public class DisplayClassDescriptor
      * @return the ReferenceDescriptors
      */
     public Set getReferenceDescriptors() {
-        return cld.getReferenceDescriptors();
+        return cld.getAllReferenceDescriptors();
     }
 
     /**
@@ -74,7 +74,7 @@ public class DisplayClassDescriptor
      * @return the CollectionDescriptors
      */
     public Set getCollectionDescriptors() {
-        return cld.getCollectionDescriptors();
+        return cld.getAllCollectionDescriptors();
     }
 
 }
