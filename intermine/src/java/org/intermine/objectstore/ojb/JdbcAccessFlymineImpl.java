@@ -56,16 +56,21 @@ package org.flymine.objectstore.ojb;
 
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.PersistenceBrokerException;
+import org.apache.ojb.broker.PersistenceBrokerSQLException;
 import org.apache.ojb.broker.accesslayer.JdbcAccessImpl;
 import org.apache.ojb.broker.accesslayer.ResultSetAndStatement;
 import org.apache.ojb.broker.accesslayer.ConnectionManagerIF;
+import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.flymine.objectstore.query.Query;
+
 
 /**
  * This Implementation of JdbcAccess overrides executeQuery to
@@ -130,10 +135,25 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
             retval.m_rs = rs;
             retval.m_stmt = stmt;
 
-        } catch (Exception e) {
-            // what exceptions?  Do something.
+        } catch (PersistenceBrokerException e) {
+            logger.error("PersistenceBrokerException during the execution of the query: "
+                         + e.getMessage(), e);
+            // ResultSetAndStatement opened before try, must be released if a problem
+            if (retval != null) {
+                retval.close();
+            }
+            throw e;
+        } catch (SQLException e) {
+            logger.error("SQLException during the execution of the query: " + e.getMessage(), e);
+            // ResultSetAndStatement opened before try, must be released if a problem
+            if (retval != null) {
+                retval.close();
+            }
+            throw new PersistenceBrokerSQLException(e);
+        } catch (LookupException e) {
+            throw new PersistenceBrokerException(
+                    "ConnectionManager instance could not obtain a connection", e);
         }
-
         return retval;
     }
 }
