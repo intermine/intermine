@@ -84,3 +84,9 @@ a:hover {color: #220077;
 .queryErrorMessage { 
   color: red;
 }
+.queryBuildCell {
+  width: 3em;
+}
+.queryBuildCurrentQuery {
+  margin-left: 1em;
+}
