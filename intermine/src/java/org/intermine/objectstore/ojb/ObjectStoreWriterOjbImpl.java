@@ -45,6 +45,15 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
             throw new ObjectStoreException(e);
         }
     }
+    
+    /**
+     * close the persistence broker so that it is returned to pool
+     */
+    protected void finalize() {
+        if (pb != null) {
+            pb.close();
+        }
+    }
 
     /**
      * @see ObjectStoreWriter#store
