@@ -268,7 +268,7 @@
     <create-indexes database="${db.name}" model="${model.name}"/>
   </target>
 
-  <target name="add-model-to-webapp" depends="compile-webapp-java"
+  <target name="add-model-to-webapp" depends="compile-java, compile-webapp-java"
           description="Add a model to the webapp">
     <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
     <unwar src="${war}" dest="${build.tmp}">   
@@ -292,10 +292,9 @@
       <fileset dir="${build.webapp}/intermine" includes="model/**/*" excludes="*.properties"/>
       <webinf file="${build.tmp}/WEB-INF/struts-config.xml"/>
       <webinf dir="${model}/${model.name}/resources/web" excludes="model.properties"/>
-      <lib dir="${dist}" includes="intermine-${model.name}.jar"/>
       <classes file="${model}/${model.name}/resources/web/model.properties"/>
       <classes file="${build.tmp}/WEB-INF/intermine.properties" />
-      <classes dir="${build.model}/${model.name}" includes="**/web/*.class"/>
+      <classes dir="${build.model}/${model.name}"/>
     </war>
   </target>
 </project>
