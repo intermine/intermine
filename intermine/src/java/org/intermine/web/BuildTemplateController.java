@@ -22,9 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * Controller for the template building page. Adds the required
- * <code>constraintDisplayValues</code> request attribute because the
- * form displays constraint values.
+ * Controller for the template building page.
  *
  * @author Thomas Riley
  */
@@ -51,7 +49,15 @@ public class BuildTemplateController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        BuildTemplateForm tf = (BuildTemplateForm) form;
         PathQuery query = (PathQuery) session.getAttribute(Constants.TEMPLATE_PATHQUERY);
+        TemplateQuery template = (TemplateQuery) session.getAttribute(Constants.EDITING_TEMPLATE);
+        
+        // avoid initialising the form bean when the preview button is pressed
+        if (template != null && request.getParameter("preview") == null) {
+            tf.initFromTemplate(template);
+        }
+        
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         return null;
     }
