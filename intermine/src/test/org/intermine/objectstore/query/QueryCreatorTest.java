@@ -69,11 +69,11 @@ public class QueryCreatorTest extends QueryTestCase
         QueryClass qc = new QueryClass(Address.class);
         expected.addToSelect(qc);
         expected.addFrom(qc);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
         QueryField qf = new QueryField(qc, "address");
-        cs3.addConstraint(new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        cs3.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("1 The Street")));
         cs2.addConstraint(cs3);
         cs1.addConstraint(cs2);
         expected.setConstraint(cs1);
@@ -95,16 +95,16 @@ public class QueryCreatorTest extends QueryTestCase
         QueryClass qc = new QueryClass(Address.class);
         expected.addToSelect(qc);
         expected.addFrom(qc);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs4 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs4 = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf = new QueryField(qc, "address");
-        cs3.addConstraint(new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        cs3.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("1 The Street")));
         cs2.addConstraint(cs3);
 
-        cs4.addConstraint(new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("2 The Street")));
+        cs4.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("2 The Street")));
         cs2.addConstraint(cs4);
 
         cs1.addConstraint(cs2);
@@ -132,17 +132,17 @@ public class QueryCreatorTest extends QueryTestCase
         expected.addToSelect(qcEmployee);
         expected.addFrom(qcEmployee);
         expected.addFrom(qcAddress);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
         QueryReference qr1 = new QueryObjectReference(qcEmployee, "address");
-        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress));
+        cs1.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcAddress));
 
         QueryField qf1 = new QueryField(qcEmployee, "name");
-        cs3.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
+        cs3.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Employee 1")));
 
         QueryField qf2 = new QueryField(qcEmployee, "age");
-        cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
+        cs3.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue(new Integer(20))));
 
         cs3.addConstraint(new ClassConstraint(qcAddress, ConstraintOp.EQUALS, a));
 
@@ -181,25 +181,25 @@ public class QueryCreatorTest extends QueryTestCase
         expected.addToSelect(qcEmployee);
         expected.addFrom(qcEmployee);
         expected.addFrom(qcAddress);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs4 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs4 = new ConstraintSet(ConstraintOp.AND);
         QueryReference qr1 = new QueryObjectReference(qcEmployee, "address");
-        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress));
+        cs1.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcAddress));
 
         QueryField qf1 = new QueryField(qcEmployee, "name");
         QueryField qf2 = new QueryField(qcEmployee, "age");
 
         // First Employee
-        cs3.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
-        cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
+        cs3.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Employee 1")));
+        cs3.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue(new Integer(20))));
         cs3.addConstraint(new ClassConstraint(qcAddress, ConstraintOp.EQUALS, a1));
         cs2.addConstraint(cs3);
 
         // Second Employee
-        cs4.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 2")));
-        cs4.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(30))));
+        cs4.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Employee 2")));
+        cs4.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue(new Integer(30))));
         cs4.addConstraint(new ClassConstraint(qcAddress, ConstraintOp.EQUALS, a2));
         cs2.addConstraint(cs4);
 
@@ -227,9 +227,9 @@ public class QueryCreatorTest extends QueryTestCase
         QueryClass qc = new QueryClass(Address.class);
         expected.addToSelect(qc);
         expected.addFrom(qc);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         QueryField qf = new QueryField(qc, "address");
-        cs1.addConstraint(new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        cs1.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("1 The Street")));
         expected.setConstraint(cs1);
 
         assertEquals(expected, q);
@@ -254,19 +254,19 @@ public class QueryCreatorTest extends QueryTestCase
         expected.addToSelect(qcEmployee);
         expected.addFrom(qcEmployee);
         expected.addFrom(qcAddress);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf1 = new QueryField(qcEmployee, "name");
-        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
+        cs1.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Employee 1")));
 
         QueryField qf2 = new QueryField(qcEmployee, "age");
-        cs1.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
+        cs1.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue(new Integer(20))));
 
         QueryReference qr1 = new QueryObjectReference(qcEmployee, "address");
-        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress));
+        cs1.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcAddress));
 
         QueryField qf3 = new QueryField(qcAddress, "address");
-        cs1.addConstraint(new SimpleConstraint(qf3, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        cs1.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, new QueryValue("1 The Street")));
 
         expected.setConstraint(cs1);
 
@@ -295,22 +295,22 @@ public class QueryCreatorTest extends QueryTestCase
         expected.addFrom(qcContractor);
         expected.addFrom(qcAddress1);
         expected.addFrom(qcAddress2);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf1 = new QueryField(qcContractor, "name");
-        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Contractor 1")));
+        cs1.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Contractor 1")));
 
         QueryReference qr1 = new QueryObjectReference(qcContractor, "personalAddress");
-        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress1));
+        cs1.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcAddress1));
 
         QueryField qf2 = new QueryField(qcAddress1, "address");
-        cs1.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        cs1.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("1 The Street")));
 
         QueryReference qr2 = new QueryObjectReference(qcContractor, "businessAddress");
-        cs1.addConstraint(new ContainsConstraint(qr2, ContainsConstraint.CONTAINS, qcAddress2));
+        cs1.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcAddress2));
 
         QueryField qf3 = new QueryField(qcAddress2, "address");
-        cs1.addConstraint(new SimpleConstraint(qf3, SimpleConstraint.EQUALS, new QueryValue("2 The Street")));
+        cs1.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, new QueryValue("2 The Street")));
 
         expected.setConstraint(cs1);
 
@@ -336,19 +336,19 @@ public class QueryCreatorTest extends QueryTestCase
         expected.addToSelect(qcEmployee);
         expected.addFrom(qcEmployee);
         expected.addFrom(qcAddress);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf1 = new QueryField(qcEmployee, "name");
-        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
+        cs1.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Employee 1")));
 
         QueryField qf2 = new QueryField(qcEmployee, "age");
-        cs1.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
+        cs1.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue(new Integer(20))));
 
         QueryReference qr1 = new QueryObjectReference(qcEmployee, "address");
-        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress));
+        cs1.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcAddress));
 
         QueryField qf3 = new QueryField(qcAddress, "address");
-        cs1.addConstraint(new SimpleConstraint(qf3, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        cs1.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, new QueryValue("1 The Street")));
 
         expected.setConstraint(cs1);
 
@@ -397,10 +397,10 @@ public class QueryCreatorTest extends QueryTestCase
         QueryField qf1 = new QueryField(qcCompany, "name");
         QueryReference qr1 = new QueryCollectionReference(qcCompany, "departments");
 
-        Constraint c1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcDepartment);
-        Constraint c2 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+        Constraint c1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcDepartment);
+        Constraint c2 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Company1"));
 
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         cs1.addConstraint(c1);
         cs1.addConstraint(c2);
 
@@ -419,10 +419,10 @@ public class QueryCreatorTest extends QueryTestCase
         QueryField qf1Expected = new QueryField(qcCompanyExpected, "name");
         QueryReference qr1Expected = new QueryCollectionReference(qcCompanyExpected, "departments");
 
-        Constraint c1Expected = new ContainsConstraint(qr1Expected, ContainsConstraint.CONTAINS, qcDepartmentExpected);
-        Constraint c2Expected = new SimpleConstraint(qf1Expected, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+        Constraint c1Expected = new ContainsConstraint(qr1Expected, ConstraintOp.CONTAINS, qcDepartmentExpected);
+        Constraint c2Expected = new SimpleConstraint(qf1Expected, ConstraintOp.EQUALS, new QueryValue("Company1"));
 
-        ConstraintSet cs1Expected = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1Expected = new ConstraintSet(ConstraintOp.AND);
         cs1Expected.addConstraint(c1Expected);
         cs1Expected.addConstraint(c2Expected);
 
@@ -455,10 +455,10 @@ public class QueryCreatorTest extends QueryTestCase
         QueryField qf1 = new QueryField(qcCompany, "name");
         QueryReference qr1 = new QueryCollectionReference(qcCompany, "departments");
 
-        Constraint c1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcDepartment);
-        Constraint c2 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+        Constraint c1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcDepartment);
+        Constraint c2 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Company1"));
 
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         cs1.addConstraint(c1);
         cs1.addConstraint(c2);
 
@@ -477,10 +477,10 @@ public class QueryCreatorTest extends QueryTestCase
         QueryField qf1Expected = new QueryField(qcCompanyExpected, "name");
         QueryReference qr1Expected = new QueryCollectionReference(qcCompanyExpected, "departments");
 
-        Constraint c1Expected = new ContainsConstraint(qr1Expected, ContainsConstraint.CONTAINS, qcDepartmentExpected);
-        Constraint c2Expected = new SimpleConstraint(qf1Expected, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+        Constraint c1Expected = new ContainsConstraint(qr1Expected, ConstraintOp.CONTAINS, qcDepartmentExpected);
+        Constraint c2Expected = new SimpleConstraint(qf1Expected, ConstraintOp.EQUALS, new QueryValue("Company1"));
 
-        ConstraintSet cs1Expected = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1Expected = new ConstraintSet(ConstraintOp.AND);
         cs1Expected.addConstraint(c1Expected);
         cs1Expected.addConstraint(c2Expected);
 
@@ -502,9 +502,5 @@ public class QueryCreatorTest extends QueryTestCase
         assertTrue(ret != orig);
         // Test that the expected query is produced
         assertEquals("Wanted " + expected.toString() + ", got " + ret.toString(), expected, ret);
-
-
     }
-
-
 }

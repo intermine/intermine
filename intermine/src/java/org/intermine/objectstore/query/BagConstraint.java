@@ -10,8 +10,10 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,29 +30,25 @@ public class BagConstraint extends Constraint
      * Construct a BagConstraint.
      *
      * @param qn the QueryNode to compare to the bag
+     * @param op the operation
      * @param bag a Collection that represents the bag
      */
-    public BagConstraint(QueryNode qn, Collection bag) {
-        this(qn, bag, false);
-    }
-
-    /**
-     * Construct a BagConstraint.
-     *
-     * @param qn the QueryNode to compare to the bag
-     * @param bag a Collection that represents the bag
-     * @param negated reverse the constraint logic if true
-     */
-    public BagConstraint(QueryNode qn, Collection bag, boolean negated) {
+    public BagConstraint(QueryNode qn, ConstraintOp op, Collection bag) {
         if (qn == null) {
             throw new NullPointerException("qe cannot be null");
+        }
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
+        }
+        if (!VALID_OPS.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
         }
         if (bag == null) {
             throw new NullPointerException("bag cannot be null");
         }
         this.qn = qn;
+        this.op = op;
         this.bag = new HashSet(bag);
-        this.negated = negated;
     }
 
     /**
@@ -78,7 +76,6 @@ public class BagConstraint extends Constraint
         if (obj instanceof BagConstraint) {
             BagConstraint bc = (BagConstraint) obj;
             return bag.equals(bc.bag)
-                && negated == bc.negated
                 && qn.equals(bc.qn);
         }
         return false;
@@ -88,6 +85,9 @@ public class BagConstraint extends Constraint
      * @see Object#hashCode
      */
     public int hashCode() {
-        return bag.hashCode() + (negated ? 3 : 0) + 5 * qn.hashCode();
+        return bag.hashCode() + 5 * qn.hashCode();
     }
+
+    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
+        ConstraintOp.NOT_IN});
 }

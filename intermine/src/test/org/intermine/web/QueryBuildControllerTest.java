@@ -59,11 +59,11 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
         assertEquals(3, form.getFieldValues().size());
         assertEquals(3, form.getFieldOps().size());
         assertEquals("name1", (String) form.getFieldValues().get("name#0"));
-        assertEquals(sc1.getType().getIndex(), (Integer) form.getFieldOps().get("name#0"));
+        assertEquals(sc1.getOp().getIndex(), (Integer) form.getFieldOps().get("name#0"));
         assertEquals("name2", (String) form.getFieldValues().get("name#1"));
-        assertEquals(sc2.getType().getIndex(), (Integer) form.getFieldOps().get("name#1"));
+        assertEquals(sc2.getOp().getIndex(), (Integer) form.getFieldOps().get("name#1"));
         assertEquals("qc2", (String) form.getFieldValues().get("departments#0"));
-        assertEquals(cc1.getType().getIndex(), (Integer) form.getFieldOps().get("departments#0"));
+        assertEquals(cc1.getOp().getIndex(), (Integer) form.getFieldOps().get("departments#0"));
 
     }
 

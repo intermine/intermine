@@ -35,7 +35,7 @@ public class QueryTest extends TestCase
             QueryField qf2 = new QueryField(qc1, "vatNumber");
             QueryFunction f1 = new QueryFunction();  // count(*)
             QueryValue qv1 = new QueryValue("CompanyA");
-            SimpleConstraint sc1 = new SimpleConstraint(qf1, SimpleConstraint.NOT_EQUALS, qv1);
+            SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.NOT_EQUALS, qv1);
 
             q1 = new Query();
             q1.addToSelect(qc1);

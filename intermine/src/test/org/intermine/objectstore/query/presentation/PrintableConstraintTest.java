@@ -63,7 +63,7 @@ public class PrintableConstraintTest extends TestCase
         q.addFrom(qc1, "company1");
         q.addFrom(qc2, "department1");
         q.addFrom(qc3, "department2");
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         SimpleConstraint simpleConstraint1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, value1);
         cs1.addConstraint(simpleConstraint1);
         SimpleConstraint simpleConstraint2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, qf3);
@@ -74,7 +74,7 @@ public class PrintableConstraintTest extends TestCase
         cs1.addConstraint(classConstraint2);
         ContainsConstraint containsConstraint1 = new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qc2);
         cs1.addConstraint(containsConstraint1);
-        SubqueryConstraint subqueryConstraint1 = new SubqueryConstraint(subquery, ConstraintOp.CONTAINS, qc2);
+        SubqueryConstraint subqueryConstraint1 = new SubqueryConstraint(qc2, ConstraintOp.IN, subquery);
         cs1.addConstraint(subqueryConstraint1);
         SimpleConstraint simpleConstraint3 = new SimpleConstraint(expr1, ConstraintOp.EQUALS, expr2);
         cs1.addConstraint(simpleConstraint1);
@@ -125,8 +125,8 @@ public class PrintableConstraintTest extends TestCase
     public void testEquals() {
         Query q1 = new Query();
         Query q2 = new Query();
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
 
         pc1 = new PrintableConstraint(q1, cs1);
         pc2 = new PrintableConstraint(q1, cs1);
@@ -143,8 +143,8 @@ public class PrintableConstraintTest extends TestCase
     public void testHashCode() {
         Query q1 = new Query();
         Query q2 = new Query();
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
 
         pc1 = new PrintableConstraint(q1, cs1);
         pc2 = new PrintableConstraint(q1, cs1);

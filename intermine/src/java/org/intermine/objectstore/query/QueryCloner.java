@@ -118,19 +118,18 @@ public class QueryCloner
             }
         } else if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
-            if ((origC.getType() == ConstraintOp.IS_NULL)
-                    || (origC.getType() == ConstraintOp.IS_NOT_NULL)) {
+            if ((origC.getOp() == ConstraintOp.IS_NULL)
+                    || (origC.getOp() == ConstraintOp.IS_NOT_NULL)) {
                 return new SimpleConstraint((QueryEvaluable) cloneThing(origC.getArg1(),
-                            fromElementMap), origC.getType(), origC.isNegated());
+                            fromElementMap), origC.getOp());
             } else {
                 return new SimpleConstraint((QueryEvaluable) cloneThing(origC.getArg1(),
-                            fromElementMap), origC.getType(),
-                        (QueryEvaluable) cloneThing(origC.getArg2(), fromElementMap),
-                        origC.isNegated());
+                            fromElementMap), origC.getOp(),
+                        (QueryEvaluable) cloneThing(origC.getArg2(), fromElementMap));
             }
         } else if (orig instanceof ConstraintSet) {
             ConstraintSet origC = (ConstraintSet) orig;
-            ConstraintSet newC = new ConstraintSet(origC.getDisjunctive(), origC.isNegated());
+            ConstraintSet newC = new ConstraintSet(origC.getOp());
             Iterator conIter = origC.getConstraints().iterator();
             while (conIter.hasNext()) {
                 newC.addConstraint((Constraint) cloneThing(conIter.next(), fromElementMap));
@@ -139,35 +138,33 @@ public class QueryCloner
         } else if (orig instanceof ContainsConstraint) {
             ContainsConstraint origC = (ContainsConstraint) orig;
             return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
-                        fromElementMap), origC.getType(),
-                    (QueryClass) cloneThing(origC.getQueryClass(), fromElementMap),
-                    origC.isNegated());
+                        fromElementMap), origC.getOp(),
+                    (QueryClass) cloneThing(origC.getQueryClass(), fromElementMap));
         } else if (orig instanceof ClassConstraint) {
             ClassConstraint origC = (ClassConstraint) orig;
             if (origC.getArg2QueryClass() == null) {
                 return new ClassConstraint((QueryClass) fromElementMap.get(origC.getArg1()),
-                        origC.getType(), origC.getArg2Object(), origC.isNegated());
+                        origC.getOp(), origC.getArg2Object());
             } else {
                 return new ClassConstraint((QueryClass) fromElementMap.get(origC.getArg1()),
-                        origC.getType(),
-                        (QueryClass) fromElementMap.get(origC.getArg2QueryClass()),
-                        origC.isNegated());
+                        origC.getOp(),
+                        (QueryClass) fromElementMap.get(origC.getArg2QueryClass()));
             }
         } else if (orig instanceof SubqueryConstraint) {
             SubqueryConstraint origC = (SubqueryConstraint) orig;
             if (origC.getQueryEvaluable() == null) {
-                return new SubqueryConstraint(cloneQuery(origC.getQuery()), origC.getType(),
-                        (QueryClass) fromElementMap.get(origC.getQueryClass()),
-                        origC.isNegated());
+                return new SubqueryConstraint((QueryClass)
+                        fromElementMap.get(origC.getQueryClass()), origC.getOp(),
+                        cloneQuery(origC.getQuery()));
             } else {
-                return new SubqueryConstraint(cloneQuery(origC.getQuery()), origC.getType(),
+                return new SubqueryConstraint(
                         (QueryEvaluable) cloneThing(origC.getQueryEvaluable(), fromElementMap),
-                        origC.isNegated());
+                        origC.getOp(), cloneQuery(origC.getQuery()));
             }
         } else if (orig instanceof BagConstraint) {
             BagConstraint origC = (BagConstraint) orig;
             return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(), fromElementMap),
-                    origC.getBag(), origC.isNegated());
+                    origC.getOp(), origC.getBag());
         }
         throw new IllegalArgumentException("Unknown object type: " + orig);
     }

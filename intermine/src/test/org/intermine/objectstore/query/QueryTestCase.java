@@ -160,6 +160,7 @@ public class QueryTestCase extends OneTimeTestCase
 
         // Check that the Constraints are the same class
         assertEquals(msg + ": Constraints are not the same class", c1.getClass(), c2.getClass());
+        assertEquals(msg + ": Constraints don't have the same op", c1.getOp(), c2.getOp());
 
         if (c1 instanceof ConstraintSet) {
             ConstraintSet cs1 = (ConstraintSet) c1;
@@ -177,16 +178,11 @@ public class QueryTestCase extends OneTimeTestCase
                 Constraint con2 = (Constraint) i2.next();
                 checkConstraints(msg, con1, con2, q1, q2);
             }
-            // Check that they are the same type of ConstraintSet
-            assertEquals(msg + ": constraint sets are not the same type", cs1.getDisjunctive(), cs2.getDisjunctive());
-            // Check that they are the same type of ConstraintSet
-            assertEquals(msg + ": constraint sets are not the same type", cs1.isNegated(), cs2.isNegated());
         } else if (c1 instanceof SimpleConstraint) {
             SimpleConstraint sc1 = (SimpleConstraint) c1;
             SimpleConstraint sc2 = (SimpleConstraint) c2;
             checkQueryNodes(msg + ": first QueryEvaluables are not equal", sc1.getArg1(), sc2.getArg1(), q1, q2);
             checkQueryNodes(msg + ": first QueryEvaluables are not equal", sc1.getArg2(), sc2.getArg2(), q1, q2);
-            assertEquals(msg + ": types are not equal", sc1.getRealType(), sc2.getRealType());
         } else if (c1 instanceof ClassConstraint) {
             ClassConstraint cc1 = (ClassConstraint) c1;
             ClassConstraint cc2 = (ClassConstraint) c2;
@@ -199,15 +195,11 @@ public class QueryTestCase extends OneTimeTestCase
                 assertEquals(msg + ": second objects in ClassConstraint not equal",
                              cc1.getArg2Object(), cc2.getArg2Object());
             }
-            assertEquals(msg, cc1.isNotEqual(), cc2.isNotEqual());
-
         } else if (c1 instanceof ContainsConstraint) {
             ContainsConstraint cc1 = (ContainsConstraint) c1;
             ContainsConstraint cc2 = (ContainsConstraint) c2;
             checkQueryReferences(msg + ": QueryReferences are not equal", cc1.getReference(), cc2.getReference(), q1, q2);
             checkQueryNodes(msg + ": QueryClasses are not equal", cc1.getQueryClass(), cc2.getQueryClass(), q1, q2);
-            assertEquals(msg + ": types are not equal", cc1.isNotContains(), cc2.isNotContains());
-
         } else if (c1 instanceof SubqueryConstraint) {
             SubqueryConstraint cc1 = (SubqueryConstraint) c1;
             SubqueryConstraint cc2 = (SubqueryConstraint) c2;
@@ -227,12 +219,9 @@ public class QueryTestCase extends OneTimeTestCase
             BagConstraint cc2 = (BagConstraint) c2;
             checkQueryNodes(msg + ": BagConstraint nodes are not equal", cc1.getQueryNode(), cc2.getQueryNode(), q1, q2);
             assertEquals(msg + ": Bags are not equal", cc1.getBag(), cc2.getBag());
-            assertEquals(msg + ": Negation is not equal", cc1.isNegated(), cc2.isNegated());
         } else {
             fail(msg + ": non-supported object in Query");
         }
-
-
     }
 
     protected void checkQueryReferences(String msg, QueryReference qr1, QueryReference qr2, Query q1, Query q2) {

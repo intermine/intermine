@@ -123,8 +123,7 @@ public class ConstraintHelper
     public static void addToList(List list, Constraint constraint) {
         if (constraint != null) {
             if (constraint instanceof ConstraintSet) {
-                if ((!((ConstraintSet) constraint).getDisjunctive())
-                        && (!((ConstraintSet) constraint).isNegated())) {
+                if (((ConstraintSet) constraint).getOp() == ConstraintOp.AND) {
                     Set constraints = ((ConstraintSet) constraint).getConstraints();
                     Iterator conIter = constraints.iterator();
                     while (conIter.hasNext()) {

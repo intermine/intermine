@@ -24,43 +24,31 @@ import org.flymine.util.Util;
  * @author Richard Smith
  * @author Mark Woodbridge
  * @author Andrew Varley
+ * @author Matthew Wakeling
  */
 public class ClassConstraint extends Constraint
 {
     protected QueryClass qc1, qc2;
-    protected ConstraintOp type;
     protected Object obj;
 
     /**
      * Construct ClassConstraint
      *
      * @param qc1 first QueryClass for comparison
-     * @param type define EQUALS or NOT_EQUALS
+     * @param op define EQUALS or NOT_EQUALS
      * @param qc2 second QueryClass for comparison
      */
-    public ClassConstraint(QueryClass qc1, ConstraintOp type, QueryClass qc2) {
-        this(qc1, type, qc2, false);
-    }
-
-    /**
-     * Construct ClassConstraint
-     *
-     * @param qc1 first QueryClass for comparison
-     * @param type define EQUALS or NOT_EQUALS
-     * @param qc2 second QueryClass for comparison
-     * @param negated reverse the constraint logic if true
-     */
-    public ClassConstraint(QueryClass qc1, ConstraintOp type, QueryClass qc2, boolean negated) {
+    public ClassConstraint(QueryClass qc1, ConstraintOp op, QueryClass qc2) {
         if (qc1 == null) {
             throw new NullPointerException("qc1 cannot be null");
         }
 
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
         
-        if (!validOps().contains(type)) {
-            throw new IllegalArgumentException("type cannot be " + type);
+        if (!VALID_OPS.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
         }
 
         if (qc2 == null) {
@@ -71,73 +59,50 @@ public class ClassConstraint extends Constraint
               || qc2.getType().isAssignableFrom(qc1.getType()))) {
             throw new IllegalArgumentException("Invalid constraint: "
                                                + qc1.getType()
-                                               + " " + type
+                                               + " " + op
                                                + " " + qc2.getType());
         }
         
         this.qc1 = qc1;
-        this.type = type;
+        this.op = op;
         this.qc2 = qc2;
-        this.negated = negated;
     }
 
     /**
      * Construct ClassConstraint
      *
      * @param qc QueryClass for comparison
-     * @param type define EQUALS or NOT_EQUALS
+     * @param op define EQUALS or NOT_EQUALS
      * @param obj example object
      */
-    public ClassConstraint(QueryClass qc, ConstraintOp type, Object obj) {
-        this(qc, type, obj, false);
-    }
-
-    /**
-     * Construct ClassConstraint
-     *
-     * @param qc1 QueryClass for comparison
-     * @param type define EQUALS or NOT_EQUALS
-     * @param obj example object
-     * @param negated reverse the constraint logic if true
-     */
-    public ClassConstraint(QueryClass qc1, ConstraintOp type, Object obj, boolean negated) {
-        if (qc1 == null) {
-            throw new NullPointerException("obj cannot be null");
+    public ClassConstraint(QueryClass qc, ConstraintOp op, Object obj) {
+        if (qc == null) {
+            throw new NullPointerException("qc cannot be null");
         }
 
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
 
-        if (!validOps().contains(type)) {
-            throw new NullPointerException("type cannot be " + type);
+        if (!VALID_OPS.contains(op)) {
+            throw new NullPointerException("op cannot be " + op);
         }
 
         if (obj == null) {
             throw new NullPointerException("obj cannot be null");
         }
 
-        if (!(qc1.getType().isAssignableFrom(obj.getClass())
-              || obj.getClass().isAssignableFrom(qc1.getType()))) {
+        if (!(qc.getType().isAssignableFrom(obj.getClass())
+              || obj.getClass().isAssignableFrom(qc.getType()))) {
               throw new IllegalArgumentException("Invalid constraint: "
-                                               + qc1.getType()
-                                               + " " + type
+                                               + qc.getType()
+                                               + " " + op
                                                + " " + obj.getClass());
         }
         
-        this.qc1 = qc1;
-        this.type = type;
+        this.qc1 = qc;
+        this.op = op;
         this.obj = obj;
-        this.negated = negated;
-    }
-
-    /**
-     * Return the operation type
-     *
-     * @return the operation type
-     */
-    public ConstraintOp getType() {
-        return type;
     }
 
     /**
@@ -177,8 +142,7 @@ public class ClassConstraint extends Constraint
         if (o instanceof ClassConstraint) {
             ClassConstraint cc = (ClassConstraint) o;
             return  qc1.equals(cc.qc1)
-                && type == cc.type
-                && negated == cc.negated
+                && op == cc.op
                 && Util.equals(cc.qc2, qc2)
                 && Util.equals(cc.obj, obj);
         }
@@ -192,41 +156,11 @@ public class ClassConstraint extends Constraint
      */
     public int hashCode() {
         return qc1.hashCode()
-            + 3 * type.hashCode()
+            + 3 * op.hashCode()
             + 5 * Util.hashCode(qc2)
-            + 7 * Util.hashCode(obj)
-            + 11 * (negated ? 1 : 0);
+            + 7 * Util.hashCode(obj);
     }
 
-    /**
-     * Returns a boolean whether or not the constraint is effectively "NOT EQUALS", rather than
-     * "EQUALS".
-     *
-     * @return true if the the query is NOT EQUALS
-     */
-    public boolean isNotEqual() {
-        return (type == EQUALS ? negated : !negated);
-    }
-
-    //-------------------------------------------------------------------------
-    
-    /**
-     * Classes are equal to one another
-     */
-    protected static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
-    
-    /**
-     * Classes are not equal to one another
-     */
-    protected static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
-
-    protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {EQUALS, NOT_EQUALS};
-
-    /**
-     * Return a list of the valid operations for constructing a constraint of this type
-     * @return a List of operation codes
-     */
-    public static List validOps() {
-        return Arrays.asList(VALID_OPS);
-    }
+    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EQUALS,
+        ConstraintOp.NOT_EQUALS});
 }

@@ -606,13 +606,13 @@ public class FqlQueryParser
      * ConstraintSet.
      *
      * @param ast an AST node to process
-     * @param andOr true if ConstraintSet is AND
+     * @param op AND, OR, NAND, or NOR
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
      * @param iterator an iterator through the list of parameters of the FqlQuery
      * @return a Constraint corresponding to the input
      */
-    private static Constraint processConstraintSet(AST ast, boolean andOr,
+    private static Constraint processConstraintSet(AST ast, ConstraintOp op,
                                                    Query q, String modelPackage,
                                                    Iterator iterator) {
         Constraint retval = null;
@@ -623,7 +623,7 @@ public class FqlQueryParser
                 retval = temp;
             } else if (!isSet) {
                 Constraint temp2 = retval;
-                retval = new ConstraintSet(andOr);
+                retval = new ConstraintSet(op);
                 ((ConstraintSet) retval).addConstraint(temp2);
                 ((ConstraintSet) retval).addConstraint(temp);
                 isSet = true;
@@ -649,15 +649,15 @@ public class FqlQueryParser
         AST subAST;
         switch (ast.getType()) {
             case FqlTokenTypes.AND_CONSTRAINT_SET:
-                return processConstraintSet(ast.getFirstChild(), ConstraintSet.AND,
+                return processConstraintSet(ast.getFirstChild(), ConstraintOp.AND,
                                             q, modelPackage, iterator);
             case FqlTokenTypes.OR_CONSTRAINT_SET:
-                return processConstraintSet(ast.getFirstChild(), ConstraintSet.OR,
+                return processConstraintSet(ast.getFirstChild(), ConstraintOp.OR,
                                             q, modelPackage, iterator);
             case FqlTokenTypes.LITERAL_true:
-                return new ConstraintSet(ConstraintSet.AND);
+                return new ConstraintSet(ConstraintOp.AND);
             case FqlTokenTypes.LITERAL_false:
-                return new ConstraintSet(ConstraintSet.OR);
+                return new ConstraintSet(ConstraintOp.OR);
             case FqlTokenTypes.CONSTRAINT:
                 return processSimpleConstraint(ast, q, iterator);
             case FqlTokenTypes.SUBQUERY_CONSTRAINT:
@@ -671,11 +671,11 @@ public class FqlQueryParser
                 rightb.setDistinct(false);
                 processFqlStatementAST(subAST, rightb, modelPackage, iterator);
                 if (leftb instanceof QueryClass) {
-                    return new SubqueryConstraint(rightb, ConstraintOp.CONTAINS,
-                            (QueryClass) leftb);
+                    return new SubqueryConstraint((QueryClass) leftb, ConstraintOp.IN,
+                            rightb);
                 } else {
-                    return new SubqueryConstraint(rightb, ConstraintOp.CONTAINS,
-                            (QueryEvaluable) leftb);
+                    return new SubqueryConstraint((QueryEvaluable) leftb, ConstraintOp.IN,
+                            rightb);
                 }
             case FqlTokenTypes.CONTAINS_CONSTRAINT:
                 subAST = ast.getFirstChild();
@@ -750,11 +750,11 @@ public class FqlQueryParser
                 if (!(nextParam instanceof Collection)) {
                     throw new ClassCastException("Parameter " + nextParam + " not a Collection");
                 }
-                return new BagConstraint(leftd, (Collection) nextParam);
+                return new BagConstraint(leftd, ConstraintOp.IN, (Collection) nextParam);
             case FqlTokenTypes.NOT_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 Constraint retval = processConstraint(subAST, q, modelPackage, iterator);
-                retval.setNegated(!retval.isNegated());
+                retval.negate();
                 return retval;
             default:
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["

@@ -25,41 +25,27 @@ import org.flymine.util.Util;
 public class SubqueryConstraint extends Constraint
 {
     protected Query subquery;
-    protected ConstraintOp type;
     protected QueryEvaluable qe;
     protected QueryClass cls;    
 
     /**
      * Construct a SubqueryConstraint with a QueryEvaluable
      *
-     * @param query the subquery in question
-     * @param type required type of constraint
      * @param qe item to match against subquery select
-     */
-    public SubqueryConstraint(Query query, ConstraintOp type, QueryEvaluable qe) {
-        this(query, type, qe, false);
-    }
-
-    /**
-     * Construct a SubqueryConstraint with a QueryEvaluable
-     *
+     * @param op required op of constraint
      * @param query the subquery in question
-     * @param type required type of constraint
-     * @param qe item to match against subquery select
-     * @param negated reverse the constraint logic if true
      */
-    public SubqueryConstraint(Query query, ConstraintOp type, QueryEvaluable qe, boolean negated) {
-
+    public SubqueryConstraint(QueryEvaluable qe, ConstraintOp op, Query query) {
         if (query == null) {
             throw new NullPointerException("query cannot be null");
         }
   
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
 
-        if (!validOps().contains(type)) {
-            throw new IllegalArgumentException("type cannot be " + type);
+        if (!VALID_OPS.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
         }
 
         if (qe == null) {
@@ -92,41 +78,28 @@ public class SubqueryConstraint extends Constraint
         }
 
         this.subquery = query;
-        this.type = type;
+        this.op = op;
         this.qe = qe;
-        this.negated = negated;
     }
 
     /**
      * Construct a SubqueryConstraint with a QueryClass
      *
-     * @param query the subquery in question
-     * @param type required type of constraint
      * @param cls item to match against subquery select
-     */
-    public SubqueryConstraint(Query query, ConstraintOp type, QueryClass cls) {
-        this(query, type, cls, false);
-    }
-
-    /**
-     * Construct a SubqueryConstraint with a QueryClass
-     *
+     * @param op required op of constraint
      * @param query the subquery in question
-     * @param type required type of constraint
-     * @param cls item to match against subquery select
-     * @param negated reverse the constraint logic if true
      */
-    public SubqueryConstraint(Query query, ConstraintOp type, QueryClass cls, boolean negated) {
+    public SubqueryConstraint(QueryClass cls, ConstraintOp op, Query query) {
         if (query == null) {
             throw new NullPointerException("query cannot be null");
         }
 
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
 
-        if (!validOps().contains(type)) {
-            throw new NullPointerException("type cannot be " + type);
+        if (!VALID_OPS.contains(op)) {
+            throw new NullPointerException("op cannot be " + op);
         }
 
         if (cls == null) {
@@ -158,18 +131,8 @@ public class SubqueryConstraint extends Constraint
         }
 
         this.subquery = query;
-        this.type = type;
+        this.op = op;
         this.cls = cls;
-        this.negated = negated;
-    }
-
-    /**
-     * Get type of operation (i.e. contains or does not contain)
-     *
-     * @return type of operation
-     */
-    public ConstraintOp getType() {
-        return type;
     }
 
     /**
@@ -200,15 +163,6 @@ public class SubqueryConstraint extends Constraint
     }
 
     /**
-     * Returns a boolean whether or not the constraint is effectively "NOT IN", rather than "IN".
-     *
-     * @return true if the query is NOT IN
-     */
-    public boolean isNotIn() {
-        return (type == CONTAINS ? negated : !negated);
-    }
-
-    /**
      * Test whether two SubqueryConstraints are equal, overrides Object.equals()
      *
      * @param obj the object to compare with
@@ -218,8 +172,7 @@ public class SubqueryConstraint extends Constraint
         if (obj instanceof SubqueryConstraint) {
             SubqueryConstraint sc = (SubqueryConstraint) obj;
             return subquery.equals(sc.subquery)
-                && type == sc.type
-                && negated == sc.negated
+                && op == sc.op
                 && Util.equals(sc.qe, qe)
                 && Util.equals(sc.cls, cls);
         }
@@ -233,32 +186,13 @@ public class SubqueryConstraint extends Constraint
      */
     public int hashCode() {
         return subquery.hashCode()
-            + 3 * type.hashCode()
-            + 5 * (negated ? 1 : 0)
+            + 3 * op.hashCode()
             + 7 * Util.hashCode(qe)
             + 11 * Util.hashCode(cls);
     }
 
     //-------------------------------------------------------------------------
     
-    /**
-     * require that argument is contained within select of subquery
-     */
-    protected static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
-
-    /**
-     * require that argument is not contained in select of subquery
-     */
-    protected static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
-
-    protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {CONTAINS,
-                                                                          DOES_NOT_CONTAIN};
-
-    /**
-     * Return a list of the valid operations for constructing a constraint of this type
-     * @return a List of operation codes
-     */
-    public static List validOps() {
-        return Arrays.asList(VALID_OPS);
-    }
+    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
+        ConstraintOp.NOT_IN});
 }

@@ -137,7 +137,7 @@ public class QueryBuildController extends TilesAction
                     ((HashSet) fieldMap.get(fieldName)).add(fieldNameNum);
 
                     form.setFieldValue(fieldNameNum, ((QueryValue) sc.getArg2()).getValue());
-                    form.setFieldOp(fieldNameNum, sc.getType().getIndex());
+                    form.setFieldOp(fieldNameNum, sc.getOp().getIndex());
                 }
             } else if (c instanceof ContainsConstraint) {
                 ContainsConstraint cc = (ContainsConstraint) c;
@@ -148,7 +148,7 @@ public class QueryBuildController extends TilesAction
                 ((HashSet) fieldMap.get(fieldName)).add(fieldNameNum);
 
                 form.setFieldValue(fieldNameNum, (String) aliasMap.get(cc.getQueryClass()));
-                form.setFieldOp(fieldNameNum, cc.getType().getIndex());
+                form.setFieldOp(fieldNameNum, cc.getOp().getIndex());
             }
         }
         return fieldMap;
@@ -177,7 +177,7 @@ public class QueryBuildController extends TilesAction
         }
 
         Map opString = new LinkedHashMap();
-        Iterator opIter = ContainsConstraint.validOps().iterator();
+        Iterator opIter = ContainsConstraint.VALID_OPS.iterator();
         while (opIter.hasNext()) {
             ConstraintOp op = (ConstraintOp) opIter.next();
             opString.put(op.getIndex(), op.toString());

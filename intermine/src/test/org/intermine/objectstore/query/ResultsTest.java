@@ -286,7 +286,7 @@ public class ResultsTest extends TestCase
         }
         Results.LOG.info("testGarbageCollectionOnWeakHashMap - original size: " + mapSize + ", new size: " + newMapSize);
         Results.LOG.info("testGarbageCollectionOnWeakHashMap - original count: " + mapCount + ", new count: " + newMapCount);
-        assertTrue("new count " + newMapCount + " is not less than " + mapCount, newMapCount < mapCount);
+        assertTrue("new count " + newMapCount + " is not less than " + mapCount, newMapCount <= mapCount);
     }
 
     public void testWorkingWithRemovals() throws Exception {

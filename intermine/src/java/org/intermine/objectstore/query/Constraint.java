@@ -19,24 +19,22 @@ package org.flymine.objectstore.query;
 
 public abstract class Constraint 
 {
-    protected boolean negated;
+    protected ConstraintOp op;
 
     /**
-     * Set whether constraint is negated.  Negated reverses the logic of the constraint
-     * i.e equals be becomes not equals.
-     *
-     * @param negated true if constraint logic to be reversed
+     * Negate this constraint. i.e equals becomes not equals.
      */
-    public void setNegated(boolean negated) {
-        this.negated = negated;
+    public void negate() {
+        op = op.negate();
     }
 
     /**
-     * Test if constraint logic has been reversed
+     * Get op of constraint
      *
-     * @return true if constraint is negated
+     * @return operation type
      */
-    public boolean isNegated() {
-        return negated;
+    public ConstraintOp getOp() {
+        return op;
     }
+        
 }

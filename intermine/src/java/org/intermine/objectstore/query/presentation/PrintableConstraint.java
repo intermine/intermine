@@ -83,19 +83,7 @@ public class PrintableConstraint
      * @return a String
      */
     public String getOp() {
-        if (constraint instanceof ConstraintSet) {
-            return null;
-        } else if (constraint instanceof ClassConstraint) {
-            return (((ClassConstraint) constraint).isNotEqual() ? "!=" : "=");
-        } else if (constraint instanceof ContainsConstraint) {
-            return (((ContainsConstraint) constraint).isNotContains() ? "DOES NOT CONTAIN"
-                    : "CONTAINS");
-        } else if (constraint instanceof SimpleConstraint) {
-            return ((SimpleConstraint) constraint).getType().toString();
-        } else if (constraint instanceof SubqueryConstraint) {
-            return (((SubqueryConstraint) constraint).isNotIn() ? "IS NOT IN" : "IN");
-        }
-        throw new IllegalArgumentException("Unknown Constraint type");
+        return constraint.getOp().toString();
     }
 
 

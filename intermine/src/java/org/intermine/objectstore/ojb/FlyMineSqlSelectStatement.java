@@ -37,6 +37,7 @@ import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.FromElement;
 import org.flymine.objectstore.query.Constraint;
+import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SubqueryConstraint;
@@ -503,22 +504,25 @@ public class FlyMineSqlSelectStatement implements SqlStatement
      * @return the converted String
      */
     protected String constraintSetToString(ConstraintSet cs) {
+        ConstraintOp op = cs.getOp();
+        boolean negate = (op == ConstraintOp.NAND) || (op == ConstraintOp.NOR);
+        boolean disjunctive = (op == ConstraintOp.OR) || (op == ConstraintOp.NOR);
         if (cs.getConstraints().isEmpty()) {
-            return ((cs.getDisjunctive() ? cs.isNegated() : !cs.isNegated()) ? "true" : "false");
+            return ((disjunctive ? negate : !negate) ? "true" : "false");
         } else {
-            String retval = (cs.isNegated() ? "( NOT (" : "(");
+            String retval = (negate ? "( NOT (" : "(");
             boolean needComma = false;
             Set constraints = cs.getConstraints();
             Iterator constraintIter = constraints.iterator();
             while (constraintIter.hasNext()) {
                 Constraint subC = (Constraint) constraintIter.next();
                 if (needComma) {
-                    retval +=  (cs.getDisjunctive() ? " OR " : " AND ");
+                    retval +=  (disjunctive ? " OR " : " AND ");
                 }
                 needComma = true;
                 retval += constraintToString(subC);
             }
-            return retval + (cs.isNegated() ? "))" : ")");
+            return retval + (negate ? "))" : ")");
         }
     }
 
@@ -530,9 +534,9 @@ public class FlyMineSqlSelectStatement implements SqlStatement
      */
     protected String simpleConstraintToString(SimpleConstraint sc) {
         if (sc.getArg2() == null) {
-            return queryEvaluableToString(sc.getArg1()) + " " + sc.getOpString();
+            return queryEvaluableToString(sc.getArg1()) + " " + sc.getOp().toString();
         }
-        return queryEvaluableToString(sc.getArg1()) + " " + sc.getOpString()
+        return queryEvaluableToString(sc.getArg1()) + " " + sc.getOp().toString()
             + " " + queryEvaluableToString(sc.getArg2());
     }
 
@@ -547,10 +551,11 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         QueryEvaluable qe = sc.getQueryEvaluable();
         QueryClass cls = sc.getQueryClass();
         if (qe != null) {
-            return queryEvaluableToString(qe) + (sc.isNotIn() ? " NOT IN (" : " IN (")
-                + (new FlyMineSqlSelectStatement(q, dr, true)).getStatement() + ")";
+            return queryEvaluableToString(qe) + (sc.getOp() == ConstraintOp.NOT_IN ? " NOT IN ("
+                    : " IN (") + (new FlyMineSqlSelectStatement(q, dr, true)).getStatement() + ")";
         }
-        return queryClassToString(cls, false, true) + (sc.isNotIn() ? " NOT IN (" : " IN (")
+        return queryClassToString(cls, false, true) + (sc.getOp() == ConstraintOp.NOT_IN
+                ? " NOT IN (" : " IN (")
             + (new FlyMineSqlSelectStatement(q, dr, true)).getStatement() + ")";
     }
 
@@ -575,7 +580,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                                                 + arg1.getType().getName()));
         }
         FieldDescriptor fields[] = cld.getPkFields();
-        String retval = (cc.isNotEqual() ? "( NOT (" : "(");
+        String retval = (cc.getOp() == ConstraintOp.NOT_EQUALS ? "( NOT (" : "(");
         boolean needComma = false;
         for (int i = 0; i < fields.length; i++) {
             FieldDescriptor field = fields[i];
@@ -596,7 +601,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 }
             }
         }
-        return retval + (cc.isNotEqual() ? "))" : ")");
+        return retval + (cc.getOp() == ConstraintOp.NOT_EQUALS ? "))" : ")");
     }
 
     /**
@@ -625,7 +630,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         // arg2Class    the ClassDescriptor for arg2 (the QueryClass)
         // thisAlias    the alias for arg1
         // thatAlias    the alias for arg2
-        String retval = (cc.isNotContains() ? "( NOT (" : "(");
+        String retval = (cc.getOp() == ConstraintOp.DOES_NOT_CONTAIN ? "( NOT (" : "(");
         boolean needComma = false;
         if (arg1 instanceof QueryCollectionReference) {
             CollectionDescriptor arg1Desc =
@@ -751,7 +756,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                     + thatField.getColumnName();
             }
         }
-        return retval + (cc.isNotContains() ? "))" : ")");
+        return retval + (cc.getOp() == ConstraintOp.DOES_NOT_CONTAIN ? "))" : ")");
     }
 
     /**
@@ -809,11 +814,11 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         PrintWriter retvalPW = new PrintWriter(retval);
         Iterator orIter = filteredBag.iterator();
         while (orIter.hasNext()) {
-            retvalPW.print(needComma ? " OR " : "(");
+            retvalPW.print(needComma ? " OR " : (c.getOp() == ConstraintOp.IN ? "(" : "( NOT ("));
             needComma = true;
             retvalPW.print(orIter.next());
         }
-        retvalPW.print(")");
+        retvalPW.print((c.getOp() == ConstraintOp.IN ? ")" : "))"));
         retvalPW.flush();
         retval.flush();
         return retval.toString();

@@ -34,7 +34,7 @@ public class ConstraintSetTest extends TestCase {
     }
 
     public void testAddConstrint() {
-        ConstraintSet set = new ConstraintSet(true);
+        ConstraintSet set = new ConstraintSet(ConstraintOp.AND);
         set.addConstraint(sc1);
         set.addConstraint(sc2);
 
@@ -46,7 +46,7 @@ public class ConstraintSetTest extends TestCase {
     }
 
     public void testRemoveConstrint() {
-        ConstraintSet set = new ConstraintSet(true);
+        ConstraintSet set = new ConstraintSet(ConstraintOp.AND);
         set.addConstraint(sc1);
         set.addConstraint(sc2);
         set.removeConstraint(sc1);
@@ -60,7 +60,7 @@ public class ConstraintSetTest extends TestCase {
 
     public void testRemoveNotExists() throws Exception {
         try {
-            set = new ConstraintSet(false);
+            set = new ConstraintSet(ConstraintOp.OR);
             set.addConstraint(sc1);
             set.removeConstraint(sc2);
             fail("Expected IllegalArgumentExcepion");
@@ -70,12 +70,12 @@ public class ConstraintSetTest extends TestCase {
 
 
     public void testEqual() throws Exception {
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs4 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs5 = new ConstraintSet(ConstraintSet.OR);
-        ConstraintSet cs6 = new ConstraintSet(ConstraintSet.AND, true);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs4 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs5 = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet cs6 = new ConstraintSet(ConstraintOp.NAND);
 
         cs1.addConstraint(sc1).addConstraint(sc2);
         cs2.addConstraint(sc1).addConstraint(sc2);
@@ -101,12 +101,12 @@ public class ConstraintSetTest extends TestCase {
     }
 
     public void testHashCode() throws Exception {
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs4 = new ConstraintSet(ConstraintSet.AND);
-        ConstraintSet cs5 = new ConstraintSet(ConstraintSet.OR);
-        ConstraintSet cs6 = new ConstraintSet(ConstraintSet.AND, true);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs4 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs5 = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet cs6 = new ConstraintSet(ConstraintOp.NAND);
 
         cs1.addConstraint(sc1).addConstraint(sc2);
         cs2.addConstraint(sc1).addConstraint(sc2);

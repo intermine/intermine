@@ -66,7 +66,7 @@ public class QueryTestCaseTest extends QueryTestCase
         q1.addFrom(qc1);
 
         QueryField qf1 = new QueryField(qc1, "name");
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Department1"));
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Department1"));
         q1.setConstraint(c1);
 
         Query q2 = new Query();
@@ -75,12 +75,12 @@ public class QueryTestCaseTest extends QueryTestCase
         q2.addFrom(qc2);
 
         QueryField qf2 = new QueryField(qc2, "name");
-        Constraint c2 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department1"));
+        Constraint c2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("Department1"));
         q2.setConstraint(c2);
 
         assertEquals(q1, q2);
 
-        c2 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department2"));
+        c2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("Department2"));
         q2.setConstraint(c2);
 
         failed = false;
@@ -103,7 +103,7 @@ public class QueryTestCaseTest extends QueryTestCase
         q1.addFrom(qc1);
 
         QueryReference qr1 = new QueryObjectReference(qc1, "company");
-        Constraint c1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, new QueryClass(Company.class));
+        Constraint c1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, new QueryClass(Company.class));
         q1.setConstraint(c1);
 
         Query q2 = new Query();
@@ -112,12 +112,12 @@ public class QueryTestCaseTest extends QueryTestCase
         q2.addFrom(qc2);
 
         QueryReference qr2 = new QueryObjectReference(qc2, "company");
-        Constraint c2 = new ContainsConstraint(qr2, ContainsConstraint.CONTAINS, new QueryClass(Company.class));
+        Constraint c2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, new QueryClass(Company.class));
         q2.setConstraint(c2);
 
         assertEquals(q1, q2);
         QueryReference qr3 = new QueryObjectReference(qc2, "manager");
-        c2 = new ContainsConstraint(qr3, ContainsConstraint.CONTAINS, new QueryClass(Manager.class));
+        c2 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, new QueryClass(Manager.class));
         q2.setConstraint(c2);
 
         failed = false;
@@ -175,11 +175,11 @@ public class QueryTestCaseTest extends QueryTestCase
         q1.addToSelect(qc1);
         q1.addFrom(qc1);
 
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.OR);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.OR);
 
         QueryField qf1 = new QueryField(qc1, "name");
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Department1"));
-        Constraint c2 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Department2"));
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Department1"));
+        Constraint c2 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("Department2"));
         cs1.addConstraint(c1);
         cs1.addConstraint(c2);
         q1.setConstraint(cs1);
@@ -191,18 +191,18 @@ public class QueryTestCaseTest extends QueryTestCase
         q2.addToSelect(qc2);
         q2.addFrom(qc2);
 
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
 
         QueryField qf2 = new QueryField(qc2, "name");
-        Constraint c3 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department1"));
-        Constraint c4 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department2"));
+        Constraint c3 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("Department1"));
+        Constraint c4 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("Department2"));
         cs2.addConstraint(c3);
         cs2.addConstraint(c4);
         q2.setConstraint(cs2);
 
         assertEquals(q1, q2);
 
-        Constraint c5 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department4"));
+        Constraint c5 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("Department4"));
         cs2.addConstraint(c5);
         q2.setConstraint(cs2);
 

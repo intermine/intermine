@@ -171,39 +171,52 @@ public class SimpleConstraintTest extends TestCase {
         }
     }
 
-    // create negated SimpleConstraints and check getRealType gives correct answer
+    // create negated SimpleConstraints and check getOp gives correct answer
     public void testGetRealType() throws Exception {
-        SimpleConstraint c1 = new SimpleConstraint(qeNum1, ConstraintOp.EQUALS, qeNum1, true);
-        assertEquals(c1.getRealType(), ConstraintOp.NOT_EQUALS);
-        SimpleConstraint c2 = new SimpleConstraint(qeNum1, ConstraintOp.NOT_EQUALS, qeNum1, true);
-        assertEquals(c2.getRealType(), ConstraintOp.EQUALS);
-        SimpleConstraint c3 = new SimpleConstraint(qeNum1, ConstraintOp.LESS_THAN, qeNum1, true);
-        assertEquals(c3.getRealType(), ConstraintOp.GREATER_THAN_EQUALS);
-        SimpleConstraint c4 = new SimpleConstraint(qeNum1, ConstraintOp.GREATER_THAN_EQUALS, qeNum1, true);
-        assertEquals(c4.getRealType(), ConstraintOp.LESS_THAN);
-        SimpleConstraint c5 = new SimpleConstraint(qeNum1, ConstraintOp.GREATER_THAN, qeNum1, true);
-        assertEquals(c5.getRealType(), ConstraintOp.LESS_THAN_EQUALS);
-        SimpleConstraint c6 = new SimpleConstraint(qeNum1, ConstraintOp.LESS_THAN_EQUALS, qeNum1, true);
-        assertEquals(c6.getRealType(), ConstraintOp.GREATER_THAN);
-        SimpleConstraint c7 = new SimpleConstraint(qeStr1, ConstraintOp.MATCHES, qeStr1, true);
-        assertEquals(c7.getRealType(), ConstraintOp.DOES_NOT_MATCH);
-        SimpleConstraint c8 = new SimpleConstraint(qeStr1, ConstraintOp.DOES_NOT_MATCH, qeStr1, true);
-        assertEquals(c8.getRealType(), ConstraintOp.MATCHES);
-        SimpleConstraint c9 = new SimpleConstraint(qeNum1, ConstraintOp.IS_NULL, true);
-        assertEquals(c9.getRealType(), ConstraintOp.IS_NOT_NULL);
-        SimpleConstraint c10 = new SimpleConstraint(qeNum1, ConstraintOp.IS_NOT_NULL, true);
-        assertEquals(c10.getRealType(), ConstraintOp.IS_NULL);
-        SimpleConstraint c11 = new SimpleConstraint(qeBool1, ConstraintOp.EQUALS, qeBool1, true);
-        assertEquals(c1.getRealType(), ConstraintOp.NOT_EQUALS);
-        SimpleConstraint c12 = new SimpleConstraint(qeBool1, ConstraintOp.NOT_EQUALS, qeBool1, true);
-        assertEquals(c2.getRealType(), ConstraintOp.EQUALS);
+        SimpleConstraint c1 = new SimpleConstraint(qeNum1, ConstraintOp.EQUALS, qeNum1);
+        c1.negate();
+        assertEquals(c1.getOp(), ConstraintOp.NOT_EQUALS);
+        SimpleConstraint c2 = new SimpleConstraint(qeNum1, ConstraintOp.NOT_EQUALS, qeNum1);
+        c2.negate();
+        assertEquals(c2.getOp(), ConstraintOp.EQUALS);
+        SimpleConstraint c3 = new SimpleConstraint(qeNum1, ConstraintOp.LESS_THAN, qeNum1);
+        c3.negate();
+        assertEquals(c3.getOp(), ConstraintOp.GREATER_THAN_EQUALS);
+        SimpleConstraint c4 = new SimpleConstraint(qeNum1, ConstraintOp.GREATER_THAN_EQUALS, qeNum1);
+        c4.negate();
+        assertEquals(c4.getOp(), ConstraintOp.LESS_THAN);
+        SimpleConstraint c5 = new SimpleConstraint(qeNum1, ConstraintOp.GREATER_THAN, qeNum1);
+        c5.negate();
+        assertEquals(c5.getOp(), ConstraintOp.LESS_THAN_EQUALS);
+        SimpleConstraint c6 = new SimpleConstraint(qeNum1, ConstraintOp.LESS_THAN_EQUALS, qeNum1);
+        c6.negate();
+        assertEquals(c6.getOp(), ConstraintOp.GREATER_THAN);
+        SimpleConstraint c7 = new SimpleConstraint(qeStr1, ConstraintOp.MATCHES, qeStr1);
+        c7.negate();
+        assertEquals(c7.getOp(), ConstraintOp.DOES_NOT_MATCH);
+        SimpleConstraint c8 = new SimpleConstraint(qeStr1, ConstraintOp.DOES_NOT_MATCH, qeStr1);
+        c8.negate();
+        assertEquals(c8.getOp(), ConstraintOp.MATCHES);
+        SimpleConstraint c9 = new SimpleConstraint(qeNum1, ConstraintOp.IS_NULL);
+        c9.negate();
+        assertEquals(c9.getOp(), ConstraintOp.IS_NOT_NULL);
+        SimpleConstraint c10 = new SimpleConstraint(qeNum1, ConstraintOp.IS_NOT_NULL);
+        c10.negate();
+        assertEquals(c10.getOp(), ConstraintOp.IS_NULL);
+        SimpleConstraint c11 = new SimpleConstraint(qeBool1, ConstraintOp.EQUALS, qeBool1);
+        c11.negate();
+        assertEquals(c1.getOp(), ConstraintOp.NOT_EQUALS);
+        SimpleConstraint c12 = new SimpleConstraint(qeBool1, ConstraintOp.NOT_EQUALS, qeBool1);
+        c12.negate();
+        assertEquals(c2.getOp(), ConstraintOp.EQUALS);
     }
 
     public void testEquals() throws Exception {
         SimpleConstraint c1 = new SimpleConstraint(qeNum1, ConstraintOp.EQUALS, qeNum1);
         SimpleConstraint c2 = new SimpleConstraint(qeNum1, ConstraintOp.EQUALS, qeNum1);
         SimpleConstraint c3 = new SimpleConstraint(qeStr1, ConstraintOp.EQUALS, qeStr2);
-        SimpleConstraint c4 = new SimpleConstraint(qeStr1, ConstraintOp.EQUALS, qeStr2, true);
+        SimpleConstraint c4 = new SimpleConstraint(qeStr1, ConstraintOp.EQUALS, qeStr2);
+        c4.negate();
 
         assertEquals(c1, c1);
         assertEquals(c1, c2);
@@ -215,7 +228,8 @@ public class SimpleConstraintTest extends TestCase {
         SimpleConstraint c1 = new SimpleConstraint(qeNum1, ConstraintOp.EQUALS, qeNum1);
         SimpleConstraint c2 = new SimpleConstraint(qeNum1, ConstraintOp.EQUALS, qeNum1);
         SimpleConstraint c3 = new SimpleConstraint(qeStr1, ConstraintOp.EQUALS, qeStr2);
-        SimpleConstraint c4 = new SimpleConstraint(qeStr1, ConstraintOp.EQUALS, qeStr2, true);
+        SimpleConstraint c4 = new SimpleConstraint(qeStr1, ConstraintOp.EQUALS, qeStr2);
+        c4.negate();
 
         assertEquals(c1.hashCode(), c1.hashCode());
         assertEquals(c1.hashCode(), c2.hashCode());

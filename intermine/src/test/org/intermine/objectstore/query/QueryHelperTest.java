@@ -44,8 +44,8 @@ public class QueryHelperTest extends TestCase
         fields.put("fullTime", "true");
 
         Map ops = new HashMap();
-        ops.put("name", SimpleConstraint.EQUALS.getIndex().toString());
-        ops.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
+        ops.put("name", ConstraintOp.EQUALS.getIndex().toString());
+        ops.put("fullTime", ConstraintOp.EQUALS.getIndex().toString());
 
         Query q = new Query();
         QueryHelper.addToQuery(q, new QueryClass(Employee.class), fields, ops, model);
@@ -76,8 +76,8 @@ public class QueryHelperTest extends TestCase
         fields1.put("fullTime", "true");
 
         Map ops1 = new HashMap();
-        ops1.put("name", SimpleConstraint.EQUALS.getIndex().toString());
-        ops1.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
+        ops1.put("name", ConstraintOp.EQUALS.getIndex().toString());
+        ops1.put("fullTime", ConstraintOp.EQUALS.getIndex().toString());
 
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
@@ -92,9 +92,9 @@ public class QueryHelperTest extends TestCase
         fields2.put("age", "43");
 
         Map ops2 = new HashMap();
-        ops2.put("name", SimpleConstraint.EQUALS.getIndex().toString());
-        ops2.put("fullTime", SimpleConstraint.NOT_EQUALS.getIndex().toString());
-        ops2.put("age", SimpleConstraint.EQUALS.getIndex().toString());
+        ops2.put("name", ConstraintOp.EQUALS.getIndex().toString());
+        ops2.put("fullTime", ConstraintOp.NOT_EQUALS.getIndex().toString());
+        ops2.put("age", ConstraintOp.EQUALS.getIndex().toString());
 
         QueryHelper.addToQuery(q, qc, fields2, ops2, model);
         assertEquals(1, q.getFrom().size());
@@ -149,12 +149,12 @@ public class QueryHelperTest extends TestCase
         q.addFrom(qc2);
 
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("company1"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("department1"));
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         q.setConstraint(c);
@@ -183,12 +183,12 @@ public class QueryHelperTest extends TestCase
         q.addFrom(qc2);
 
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("company1"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("department1"));
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         q.setConstraint(c);
@@ -223,8 +223,8 @@ public class QueryHelperTest extends TestCase
         fields.put("fullTime", "true");
 
         Map ops = new HashMap();
-        ops.put("name", SimpleConstraint.EQUALS.getIndex().toString());
-        ops.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
+        ops.put("name", ConstraintOp.EQUALS.getIndex().toString());
+        ops.put("fullTime", ConstraintOp.EQUALS.getIndex().toString());
 
         QueryClass qc = new QueryClass(Employee.class);
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
@@ -292,7 +292,7 @@ public class QueryHelperTest extends TestCase
 
     public void testAddConstraintNull() throws Exception {
        try {
-            QueryHelper.addConstraint(null, new ConstraintSet(ConstraintSet.AND));
+            QueryHelper.addConstraint(null, new ConstraintSet(ConstraintOp.AND));
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -307,10 +307,10 @@ public class QueryHelperTest extends TestCase
     public void testAddConstraintEmpty() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
-        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Bob"));
 
         q.setConstraint(sc);
-        QueryHelper.addConstraint(q, new ConstraintSet(ConstraintSet.AND));
+        QueryHelper.addConstraint(q, new ConstraintSet(ConstraintOp.AND));
 
         assertEquals(sc, q.getConstraint());
     }
@@ -318,8 +318,8 @@ public class QueryHelperTest extends TestCase
     public void testAddConstraintToNull() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
-        Constraint sc = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
-        ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);
+        Constraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Bob"));
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(sc);
 
         QueryHelper.addConstraint(q, cs);
@@ -330,15 +330,15 @@ public class QueryHelperTest extends TestCase
     public void testAddConstraintToConstraint() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
-        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
-        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc, "age"), SimpleConstraint.EQUALS, new QueryValue(new Integer(54)));
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Bob"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.EQUALS, new QueryValue(new Integer(54)));
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
         cs2.addConstraint(sc2);
 
         q.setConstraint(sc1);
         QueryHelper.addConstraint(q, cs2);
 
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
         cs3.addConstraint(sc1);
         cs3.addConstraint(sc2);
         assertEquals(cs3, q.getConstraint());
@@ -348,17 +348,17 @@ public class QueryHelperTest extends TestCase
     public void testAddConstraintToConstraintSet() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
-        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
-        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc, "age"), SimpleConstraint.EQUALS, new QueryValue(new Integer(54)));
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Bob"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.EQUALS, new QueryValue(new Integer(54)));
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         cs1.addConstraint(sc1);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
         cs2.addConstraint(sc2);
 
         q.setConstraint(cs1);
         QueryHelper.addConstraint(q, cs2);
 
-        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
         cs3.addConstraint(sc1);
         cs3.addConstraint(sc2);
         assertEquals(cs3, q.getConstraint());
@@ -373,15 +373,15 @@ public class QueryHelperTest extends TestCase
         q.addFrom(qc2);
 
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("company1"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("department1"));
         SimpleConstraint sc3 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryField(qc2, "name"));
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         c.addConstraint(sc3);
@@ -403,12 +403,12 @@ public class QueryHelperTest extends TestCase
         q.addFrom(qc2);
 
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryField(qc2, "name"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("department1"));
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         q.setConstraint(c);
@@ -419,7 +419,7 @@ public class QueryHelperTest extends TestCase
         assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
 
         // removing qc2 gets rid of all constraints
-        c = new ConstraintSet(ConstraintSet.AND);
+        c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         q.setConstraint(c);

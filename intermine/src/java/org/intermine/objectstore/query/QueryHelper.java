@@ -102,7 +102,7 @@ public abstract class QueryHelper
     protected static ConstraintSet generateConstraints(QueryClass qc, Map fieldValues,
                                                        Map fieldOps, Map aliases,
                                                        Model model) throws Exception {
-        ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
         ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
 
         Iterator iter = fieldValues.entrySet().iterator();
@@ -185,7 +185,7 @@ public abstract class QueryHelper
 
         ConstraintSet cs;
         if (!(c instanceof ConstraintSet)) {
-            cs = new ConstraintSet(ConstraintSet.AND);
+            cs = new ConstraintSet(ConstraintOp.AND);
             cs.addConstraint(c);
         } else {
             cs = (ConstraintSet) c;

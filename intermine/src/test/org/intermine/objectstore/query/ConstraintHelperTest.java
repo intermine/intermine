@@ -74,30 +74,30 @@ public class ConstraintHelperTest extends TestCase
         q.addFrom(qc1, "company1");
         q.addFrom(qc2, "department1");
         q.addFrom(qc3, "department2");
-        cs1 = new ConstraintSet(ConstraintSet.AND);
-        simpleConstraint1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, value1);
+        cs1 = new ConstraintSet(ConstraintOp.AND);
+        simpleConstraint1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, value1);
         cs1.addConstraint(simpleConstraint1);
-        simpleConstraint2 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, qf3);
+        simpleConstraint2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, qf3);
         cs1.addConstraint(simpleConstraint2);
-        simpleConstraint3 = new SimpleConstraint(expr1, SimpleConstraint.EQUALS, expr2);
+        simpleConstraint3 = new SimpleConstraint(expr1, ConstraintOp.EQUALS, expr2);
         cs1.addConstraint(simpleConstraint1);
-        simpleConstraint4 = new SimpleConstraint(value1, SimpleConstraint.EQUALS, qf1);
+        simpleConstraint4 = new SimpleConstraint(value1, ConstraintOp.EQUALS, qf1);
         cs1. addConstraint(simpleConstraint4);
-        simpleConstraint5 = new SimpleConstraint(value1, SimpleConstraint.EQUALS, expr2);
+        simpleConstraint5 = new SimpleConstraint(value1, ConstraintOp.EQUALS, expr2);
         cs1. addConstraint(simpleConstraint5);
-        simpleConstraint6 = new SimpleConstraint(value2, SimpleConstraint.EQUALS, func1);
+        simpleConstraint6 = new SimpleConstraint(value2, ConstraintOp.EQUALS, func1);
         cs1. addConstraint(simpleConstraint6);
-        simpleConstraint7 = new SimpleConstraint(qf1, SimpleConstraint.IS_NULL);
+        simpleConstraint7 = new SimpleConstraint(qf1, ConstraintOp.IS_NULL);
         cs1. addConstraint(simpleConstraint7);
         classConstraint1 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, qc3);
         cs1.addConstraint(classConstraint1);
         classConstraint2 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, new Department());
         cs1.addConstraint(classConstraint2);
-        containsConstraint1 = new ContainsConstraint(qcr1, ContainsConstraint.CONTAINS, qc2);
+        containsConstraint1 = new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qc2);
         cs1.addConstraint(containsConstraint1);
-        subqueryConstraint1 = new SubqueryConstraint(subquery1, SubqueryConstraint.CONTAINS, qc2);
+        subqueryConstraint1 = new SubqueryConstraint(qc2, ConstraintOp.IN, subquery1);
         cs1.addConstraint(subqueryConstraint1);
-        subqueryConstraint2 = new SubqueryConstraint(subquery2, SubqueryConstraint.CONTAINS, qf1);
+        subqueryConstraint2 = new SubqueryConstraint(qf1, ConstraintOp.IN, subquery2);
         cs1.addConstraint(subqueryConstraint2);
 
         q.setConstraint(cs1);
@@ -153,15 +153,15 @@ public class ConstraintHelperTest extends TestCase
         q.addFrom(qc1);
         q.addFrom(qc2);
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("company1"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("department1"));
         ContainsConstraint cc1 = new ContainsConstraint(new QueryCollectionReference(qc1, "departments"),
-                                                        ContainsConstraint.CONTAINS,
+                                                        ConstraintOp.CONTAINS,
                                                         qc2);
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         c.addConstraint(cc1);
@@ -185,15 +185,15 @@ public class ConstraintHelperTest extends TestCase
         q.addFrom(qc1);
         q.addFrom(qc2);
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("company1"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                                                    SimpleConstraint.EQUALS,
+                                                    ConstraintOp.EQUALS,
                                                     new QueryValue("department1"));
         ContainsConstraint cc1 = new ContainsConstraint(new QueryCollectionReference(qc1, "departments"),
-                                                        ContainsConstraint.CONTAINS,
+                                                        ConstraintOp.CONTAINS,
                                                         qc2);
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         c.addConstraint(cc1);
@@ -267,8 +267,8 @@ public class ConstraintHelperTest extends TestCase
         QueryValue qv2 = new QueryValue(new Integer(202));
         QueryExpression qe1 = new QueryExpression (qv1, QueryExpression.ADD, qv2);
 
-        SimpleConstraint sc1 = new SimpleConstraint(qv1, SimpleConstraint.EQUALS, qv2);
-        SimpleConstraint sc2 = new SimpleConstraint(qe1, SimpleConstraint.EQUALS, qv2);
+        SimpleConstraint sc1 = new SimpleConstraint(qv1, ConstraintOp.EQUALS, qv2);
+        SimpleConstraint sc2 = new SimpleConstraint(qe1, ConstraintOp.EQUALS, qv2);
         assertTrue(ConstraintHelper.isRelatedToNothing(sc1));
         assertTrue(ConstraintHelper.isRelatedToNothing(sc2));
 
@@ -320,14 +320,14 @@ public class ConstraintHelperTest extends TestCase
         q.alias(subQ, "c");
         q.addFrom(subQ);
 
-        Constraint c1 = new SimpleConstraint(new QueryField(qcA, "vatNumber"), SimpleConstraint.EQUALS, new QueryValue(new Integer(5)));
-        Constraint c2 = new ContainsConstraint(new QueryCollectionReference(qcA, "departments"), ContainsConstraint.CONTAINS, qcB);
-        Constraint c3 = new SimpleConstraint(new QueryField(subQ, subQC, "name"), SimpleConstraint.EQUALS, new QueryField(qcA, "name"));
-        ConstraintSet c4 = new ConstraintSet(ConstraintSet.OR);
-        c4.addConstraint(new SimpleConstraint(new QueryField(qcA, "vatNumber"), SimpleConstraint.EQUALS, new QueryField(subQ, subQC, "vatNumber")));
-        c4.addConstraint(new SimpleConstraint(new QueryField(subQ, subQC, "vatNumber"), SimpleConstraint.EQUALS, new QueryValue(new Integer(3))));
-        Constraint c5 = new SimpleConstraint(new QueryField(qcB, "name"), SimpleConstraint.EQUALS, new QueryValue("hello"));
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(new QueryField(qcA, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(5)));
+        Constraint c2 = new ContainsConstraint(new QueryCollectionReference(qcA, "departments"), ConstraintOp.CONTAINS, qcB);
+        Constraint c3 = new SimpleConstraint(new QueryField(subQ, subQC, "name"), ConstraintOp.EQUALS, new QueryField(qcA, "name"));
+        ConstraintSet c4 = new ConstraintSet(ConstraintOp.OR);
+        c4.addConstraint(new SimpleConstraint(new QueryField(qcA, "vatNumber"), ConstraintOp.EQUALS, new QueryField(subQ, subQC, "vatNumber")));
+        c4.addConstraint(new SimpleConstraint(new QueryField(subQ, subQC, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(3))));
+        Constraint c5 = new SimpleConstraint(new QueryField(qcB, "name"), ConstraintOp.EQUALS, new QueryValue("hello"));
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(c1);
         c.addConstraint(c2);
         c.addConstraint(c3);
@@ -348,7 +348,7 @@ public class ConstraintHelperTest extends TestCase
 
     public void testIsAssociatedWithNothing() throws Exception {
         QueryValue qv1 = new QueryValue("test");
-        SimpleConstraint sc1 = new SimpleConstraint(qv1, SimpleConstraint.IS_NULL);
+        SimpleConstraint sc1 = new SimpleConstraint(qv1, ConstraintOp.IS_NULL);
         assertTrue(ConstraintHelper.isAssociatedWithNothing(sc1));
 
         // cross-references not associated with anything
@@ -388,17 +388,17 @@ public class ConstraintHelperTest extends TestCase
         assertTrue(ConstraintHelper.isCrossReference(simpleConstraint2));
         assertFalse(ConstraintHelper.isCrossReference(simpleConstraint7));
 
-        SimpleConstraint sc1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, expr1);
+        SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, expr1);
         assertTrue(ConstraintHelper.isCrossReference(sc1));
-        SimpleConstraint sc2 = new SimpleConstraint(qv1, SimpleConstraint.EQUALS, expr1);
+        SimpleConstraint sc2 = new SimpleConstraint(qv1, ConstraintOp.EQUALS, expr1);
         assertTrue(ConstraintHelper.isCrossReference(sc2));
-        SimpleConstraint sc3 = new SimpleConstraint(qv1, SimpleConstraint.EQUALS, func1);
+        SimpleConstraint sc3 = new SimpleConstraint(qv1, ConstraintOp.EQUALS, func1);
         assertFalse(ConstraintHelper.isCrossReference(sc3));
-        SimpleConstraint sc4 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, func1);
+        SimpleConstraint sc4 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, func1);
         assertFalse(ConstraintHelper.isCrossReference(sc4));
-        SimpleConstraint sc5 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, func1);
+        SimpleConstraint sc5 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, func1);
         assertTrue(ConstraintHelper.isCrossReference(sc5));
-        SimpleConstraint sc6 = new SimpleConstraint(new QueryField(subquery1, subQc1, "name"), SimpleConstraint.EQUALS,
+        SimpleConstraint sc6 = new SimpleConstraint(new QueryField(subquery1, subQc1, "name"), ConstraintOp.EQUALS,
                                                     new QueryField(qc1, "name"));
         assertTrue(ConstraintHelper.isCrossReference(sc6));
 

@@ -10,7 +10,9 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,41 +21,23 @@ import java.util.Set;
  *
  * @author Richard Smith
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
 public class ConstraintSet extends Constraint
 {
-    /**
-     * All Constraints in set are ANDed together
-     */
-    public static final boolean AND = false;
-
-    /**
-     * All Constraints in set are ORed together
-     */
-    public static final boolean OR = true;
-
-    protected boolean disjunctive;
     protected LinkedHashSet constraints;
 
     /**
-     * Construct empty ConstraintSet setting disjunctive (true = OR)
+     * Construct empty ConstraintSet
      *
-     * @param disjunctive relationship between constraints (true = OR, false = AND)
+     * @param op relationship between constraints
      */
-    public ConstraintSet(boolean disjunctive) {
-        this(disjunctive, false);
-    }
-
-    /**
-     * Construct empty ConstraintSet setting disjunctive (true = OR), and with boolean negated field
-     *
-     * @param disjunctive relationship between constraints (true = OR, false = AND)
-     * @param negated true to negate the sense of the whole ConstraintSet
-     */
-    public ConstraintSet(boolean disjunctive, boolean negated) {
-        this.disjunctive = disjunctive;
+    public ConstraintSet(ConstraintOp op) {
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
+        }
+        this.op = op;
         this.constraints = new LinkedHashSet();
-        this.negated = negated;
     }
 
     /**
@@ -82,24 +66,6 @@ public class ConstraintSet extends Constraint
     }
 
     /**
-     * Set relationship between Constraints (true = OR, false = AND)
-     *
-     * @param disjunctive true = OR, false = AND
-     */
-    public void setDisjunctive(boolean disjunctive) {
-        this.disjunctive = disjunctive;
-    }
-
-    /**
-     * Get relationship between Constraints (true = OR, false = AND)
-     *
-     * @return true if disjunctive
-     */
-    public boolean getDisjunctive() {
-        return disjunctive;
-    }
-
-    /**
      * Returns the Set of constraints.
      *
      * @return Set of Constraint objects
@@ -122,8 +88,7 @@ public class ConstraintSet extends Constraint
         if (obj instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) obj;
             return (constraints.equals(cs.constraints)
-                    && (disjunctive == cs.disjunctive)
-                    && (negated == cs.negated));
+                    && (op == cs.op));
         }
         return false;
     }
@@ -133,7 +98,9 @@ public class ConstraintSet extends Constraint
      * @return the hashCode
      */
     public int hashCode() {
-        return constraints.hashCode() + (negated ? 29 : 0)
-            + (disjunctive ? 31 : 0);
+        return constraints.hashCode() + 3 * op.hashCode();
     }
+
+    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.AND,
+        ConstraintOp.OR, ConstraintOp.NAND, ConstraintOp.NOR});
 }

@@ -462,7 +462,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         QueryClass c = new QueryClass(Types.class);
         q.addFrom(c);
         q.addToSelect(c);
-        ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatType"), ConstraintOp.EQUALS, new QueryValue(new Float(0.6))));
         cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleType"), ConstraintOp.EQUALS, new QueryValue(new Double(0.88))));
         cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatObjType"), ConstraintOp.EQUALS, new QueryValue(new Float(1.6))));

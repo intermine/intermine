@@ -166,7 +166,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
             Query query = new Query();
             QueryClass qcThis = new QueryClass(thisCld.getClassOfObject());
             QueryClass qcCol = new QueryClass(cod.getItemClass());
-            ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
+            ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
             query.addToSelect(qcCol);
             query.addFrom(qcCol).addFrom(qcThis);
 
@@ -220,7 +220,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 Query query = new Query();
                 QueryClass qcThis = new QueryClass(obj.getClass());
                 QueryClass qcRef = new QueryClass(referencedClass);
-                ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
+                ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
                 query.addToSelect(qcRef);
                 query.addFrom(qcRef).addFrom(qcThis);
 

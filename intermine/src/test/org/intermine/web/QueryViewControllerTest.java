@@ -123,11 +123,11 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         Constraint c1 = new SimpleConstraint(new QueryField(qcA, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(5)));
         Constraint c2 = new ContainsConstraint(new QueryCollectionReference(qcA, "departments"), ConstraintOp.CONTAINS, qcB);
         Constraint c3 = new SimpleConstraint(new QueryField(subQ, subQC, "name"), ConstraintOp.EQUALS, new QueryField(qcA, "name"));
-        ConstraintSet c4 = new ConstraintSet(ConstraintSet.OR);
+        ConstraintSet c4 = new ConstraintSet(ConstraintOp.OR);
         c4.addConstraint(new SimpleConstraint(new QueryField(qcA, "vatNumber"), ConstraintOp.EQUALS, new QueryField(subQ, subQC, "vatNumber")));
         c4.addConstraint(new SimpleConstraint(new QueryField(subQ, subQC, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(3))));
         Constraint c5 = new SimpleConstraint(new QueryField(qcB, "name"), ConstraintOp.EQUALS, new QueryValue("hello"));
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet c = new ConstraintSet(ConstraintOp.AND);
         c.addConstraint(c1);
         c.addConstraint(c2);
         c.addConstraint(c3);

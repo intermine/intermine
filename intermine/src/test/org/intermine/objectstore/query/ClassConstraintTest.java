@@ -50,7 +50,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testValidTypeQCQC() throws Exception {
         constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, company2);
-        assertEquals(ConstraintOp.EQUALS, constraint.getType());
+        assertEquals(ConstraintOp.EQUALS, constraint.getOp());
     }
 
     public void testNullConstructor1QCQC() throws Exception {
@@ -107,7 +107,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testValidTypeQCObj() throws Exception {
         constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, company1Object);
-        assertEquals(ConstraintOp.EQUALS, constraint.getType());
+        assertEquals(ConstraintOp.EQUALS, constraint.getOp());
     }
 
     public void testNullConstructor1QCObj() throws Exception {
@@ -152,7 +152,6 @@ public class ClassConstraintTest extends TestCase {
         Constraint c4 = new ClassConstraint(company1, ConstraintOp.EQUALS, company1Object);
         Constraint c5 = new ClassConstraint(company1, ConstraintOp.EQUALS, company1Object);
         Constraint c6 = new ClassConstraint(company1, ConstraintOp.NOT_EQUALS, company1Object);
-        Constraint c7 = new ClassConstraint(company1, ConstraintOp.NOT_EQUALS, company1Object, true);
 
         assertEquals(c1, c1);
         assertEquals(c1, c2);
@@ -165,8 +164,6 @@ public class ClassConstraintTest extends TestCase {
         assertEquals(c4, c5);
         assertTrue(!c4.equals(c6));
 
-        assertTrue(!c6.equals(c7));
-
         assertEquals(c1.hashCode(), c1.hashCode());
         assertEquals(c1.hashCode(), c2.hashCode());
         assertTrue(c1.hashCode() != c3.hashCode());
@@ -176,8 +173,6 @@ public class ClassConstraintTest extends TestCase {
         assertEquals(c4.hashCode(), c4.hashCode());
         assertEquals(c4.hashCode(), c5.hashCode());
         assertTrue(c4.hashCode() != c6.hashCode());
-
-        assertTrue(c6.hashCode() != c7.hashCode());
     }
 }
 

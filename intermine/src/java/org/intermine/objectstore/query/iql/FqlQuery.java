@@ -233,9 +233,9 @@ public class FqlQuery
         if (cc instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) cc;
             if (c.getArg2() == null) {
-                return nodeToString(q, c.getArg1()) + " " + c.getOpString();
+                return nodeToString(q, c.getArg1()) + " " + c.getOp().toString();
             } else {
-                return nodeToString(q, c.getArg1()) + " " + c.getOpString()
+                return nodeToString(q, c.getArg1()) + " " + c.getOp().toString()
                     + " " + nodeToString(q, c.getArg2());
             }
         } else if (cc instanceof SubqueryConstraint) {
@@ -245,11 +245,11 @@ public class FqlQuery
             parameters.addAll(subquery.getParameters());
             return (c.getQueryEvaluable() == null ? nodeToString(q, c.getQueryClass())
                     : nodeToString(q, c.getQueryEvaluable()))
-                + (c.isNotIn() ? " NOT IN (" : " IN (")
+                + " " + c.getOp().toString() + " ("
                 + subquery.getQueryString() + ")";
         } else if (cc instanceof ClassConstraint) {
             ClassConstraint c = (ClassConstraint) cc;
-            String retval = nodeToString(q, c.getArg1()) + (c.isNotEqual() ? " != " : " = ");
+            String retval = nodeToString(q, c.getArg1()) + " " + c.getOp().toString() + " ";
             if (c.getArg2QueryClass() == null) {
                 // Have an example object
                 retval += "?";
@@ -262,30 +262,31 @@ public class FqlQuery
             ContainsConstraint c = (ContainsConstraint) cc;
             QueryReference ref = c.getReference();
             return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName()
-                + (c.isNotContains() ? " DOES NOT CONTAIN " : " CONTAINS ")
-                + q.getAliases().get(c.getQueryClass());
+                + " " + c.getOp().toString() + " " + q.getAliases().get(c.getQueryClass());
         } else if (cc instanceof ConstraintSet) {
-            if (!((ConstraintSet) cc).getConstraints().isEmpty()) {
-                ConstraintSet c = (ConstraintSet) cc;
+            ConstraintSet c = (ConstraintSet) cc;
+            ConstraintOp op = c.getOp();
+            boolean negate = (op == ConstraintOp.NAND) || (op == ConstraintOp.NOR);
+            boolean disjunctive = (op == ConstraintOp.OR) || (op == ConstraintOp.NOR);
+            if (!c.getConstraints().isEmpty()) {
                 boolean needComma = false;
-                String retval = (c.isNegated() ? "( NOT (" : "(");
+                String retval = (negate ? "( NOT (" : "(");
                 Iterator conIter = c.getConstraints().iterator();
                 while (conIter.hasNext()) {
                     Constraint subC = (Constraint) conIter.next();
                     if (needComma) {
-                        retval += (c.getDisjunctive() ? " OR " : " AND ");
+                        retval += (disjunctive ? " OR " : " AND ");
                     }
                     needComma = true;
                     retval += constraintToString(q, subC, parameters);
                 }
-                return retval + (c.isNegated() ? "))" : ")");
+                return retval + (negate ? "))" : ")");
             }
-            return ((((ConstraintSet) cc).getDisjunctive() ? cc.isNegated() : !cc.isNegated())
-                    ? "true" : "false");
+            return ((disjunctive ? negate : !negate) ? "true" : "false");
         } else if (cc instanceof BagConstraint) {
             BagConstraint c = (BagConstraint) cc;
             parameters.add(c.getBag());
-            return nodeToString(q, c.getQueryNode()) + (c.isNegated() ? " NOT IN ?" : " IN ?");
+            return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " ?";
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }

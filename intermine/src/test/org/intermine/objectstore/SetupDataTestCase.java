@@ -160,7 +160,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         Object obj1 = data.get("CompanyA");
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addFrom(qc2);
@@ -178,7 +178,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         subquery.addFrom(qc3);
         subquery.addToSelect(qc3);
         subquery.setConstraint(cc2);
-        SubqueryConstraint sc1 = new SubqueryConstraint(subquery, ConstraintOp.CONTAINS, qc2);
+        SubqueryConstraint sc1 = new SubqueryConstraint(qc2, ConstraintOp.IN, subquery);
         cs1.addConstraint(sc1);
         q1.setConstraint(cs1);
         return q1;
@@ -201,7 +201,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         set.add("CompanyA");
         set.add(data.get("CompanyA"));
         set.add(new Integer(5));
-        q1.setConstraint(new BagConstraint(c1, set));
+        q1.setConstraint(new BagConstraint(c1, ConstraintOp.IN, set));
         return q1;
     }
 }

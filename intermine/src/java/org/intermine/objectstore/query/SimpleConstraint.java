@@ -19,48 +19,33 @@ import org.flymine.util.Util;
 /**
  * Represents a constraint between two QueryEvaluable types.  These are query elements
  * that can be resolved to a value - fields, expressions, aggregate functions and
- * constants.  Constraint type can be standard numeric comparison, IS_NULL, and also MATCHES
+ * constants.  Constraint ops can be standard numeric comparison, IS_NULL, and also MATCHES
  * for simple string pattern matching.
  *
  * @author Richard Smith
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
 public class SimpleConstraint extends Constraint
 {
     protected QueryEvaluable qe1, qe2;
-    protected ConstraintOp type;
 
     /**
      * Construct a Constraint.  Check that java types of QueryEvaluables are compatible with the
      * constraint type selected.
      *
      * @param qe1 first QueryEvaluable for comparison
-     * @param type define type of comparison
+     * @param op define comparison op
      * @param qe2 second QueryEvaluable for comparison
      * @throws IllegalArgumentException if type does not correspond to a defined operation
      */
-    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type, QueryEvaluable qe2) {
-        this(qe1, type, qe2, false);
-    }
-
-    /**
-     * Construct a Constraint.  Check that java types of QueryEvaluables are compatible with the
-     * constraint type selected.
-     *
-     * @param qe1 first QueryEvaluable for comparison
-     * @param type define type of comparison
-     * @param qe2 second QueryEvaluable for comparison
-     * @param negated reverse constraint logic if true
-     * @throws IllegalArgumentException if type does not correspond to a defined operation
-     */
-    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type, QueryEvaluable qe2,
-                            boolean negated) {
+    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp op, QueryEvaluable qe2) {
         if (qe1 == null) {
             throw new NullPointerException("qe1 cannot be null");
         }
 
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
 
         if (qe2 == null) {
@@ -75,76 +60,43 @@ public class SimpleConstraint extends Constraint
                 && (!(qe1.getType().equals(UnknownTypeValue.class)))) {
             qe2.youAreType(qe1.getType());
         }
-        if (!validComparison(qe1.getType(), type, qe2.getType())) {
+        if (!validComparison(qe1.getType(), op, qe2.getType())) {
             throw new IllegalArgumentException("Invalid constraint: "
                                                + qe1.getType().getName()
-                                               + " " + type
+                                               + " " + op
                                                + " " + qe2.getType().getName());
         }
 
         this.qe1 = qe1;
-        this.type = type;
+        this.op = op;
         this.qe2 = qe2;
-        this.negated = negated;
     }
 
     /**
-     * Construct a Constraint.  Check that correct type of constraint is selected for
+     * Construct a Constraint.  Check that correct constraint op is selected for
      * single QueryEvaluable constructor
      *
      * @param qe1 first QueryEvaluable for comparison
-     * @param type define type of comparison
-     * @throws IllegalArgumentException if type does not correspond to a defined operation
+     * @param op define op of comparison
+     * @throws IllegalArgumentException if op does not correspond to a defined operation
      */
-    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type) {
-        this(qe1, type, false);
-    }
-
-    /**
-     * Construct a Constraint.  Check that correct type of constraint is selected for
-     * single QueryEvaluable constructor
-     *
-     * @param qe1 first QueryEvaluable for comparison
-     * @param type define type of comparison
-     * @param negated reverse constraint logic if true
-     * @throws IllegalArgumentException if type does not correspond to a defined operation
-     */
-    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type, boolean negated) {
+    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp op) {
         if (qe1 == null) {
             throw new NullPointerException("qe1 cannot be null");
         }
 
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
 
-        if (!validComparison(qe1.getType(), type, null)) {
+        if (!validComparison(qe1.getType(), op, null)) {
             throw new IllegalArgumentException("Invalid constraint: "
                                                + qe1.getType().getName()
-                                               + " " + type);
+                                               + " " + op);
         }
 
         this.qe1 = qe1;
-        this.type = type;
-        this.negated = negated;
-    }
-
-    /**
-     * Get type of constraint
-     *
-     * @return integer value of operation type
-     */
-    public ConstraintOp getType() {
-        return type;
-    }
-        
-    /**
-     * Get type of constraint, taking negated into account.
-     *
-     * @return integer value of operation type
-     */
-    public ConstraintOp getRealType() {
-        return (negated ? negate(type) : type);
+        this.op = op;
     }
 
     /**
@@ -166,15 +118,6 @@ public class SimpleConstraint extends Constraint
     }
 
     /**
-     * Returns the String representation of the operation.
-     *
-     * @return String representation
-     */
-    public String getOpString() {
-        return getRealType().toString();
-    }
-
-    /**
      * Test whether two SimpleConstraints are equal, overrides Object.equals()
      *
      * @param obj the object to compare with
@@ -184,8 +127,7 @@ public class SimpleConstraint extends Constraint
         if (obj instanceof SimpleConstraint) {
             SimpleConstraint sc = (SimpleConstraint) obj;
             return qe1.equals(sc.qe1)
-                    && type == sc.type
-                    && negated == sc.negated
+                    && op == sc.op
                     && Util.equals(qe2, sc.qe2);
         }
         return false;
@@ -198,123 +140,39 @@ public class SimpleConstraint extends Constraint
      */
     public int hashCode() {
         return qe1.hashCode()
-            + 3 * type.hashCode() 
-            + 5 * (negated ? 1 : 0)
+            + 3 * op.hashCode() 
             + 7 * Util.hashCode(qe2);
     }
 
-    //-------------------------------------------------------------------------
-    
-    /**
-     * require that the two arguments are either equal numerically or are identical strings
-     */
-    protected static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
+    protected static final List NUMBER_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.EQUALS,
+        ConstraintOp.NOT_EQUALS,
+        ConstraintOp.LESS_THAN,
+        ConstraintOp.LESS_THAN_EQUALS,
+        ConstraintOp.GREATER_THAN,
+        ConstraintOp.GREATER_THAN_EQUALS});
 
-    /**
-     * require that the two arguments are not equal numerically or not identical strings
-     */
-    protected static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
+    protected static final List DATE_OPS = NUMBER_OPS;
 
-    /**
-     * require that the first argument is less than the second (numeric only)
-     */
-    protected static final ConstraintOp LESS_THAN = ConstraintOp.LESS_THAN;
+    protected static final List STRING_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.EQUALS,
+        ConstraintOp.NOT_EQUALS,
+        ConstraintOp.MATCHES,
+        ConstraintOp.DOES_NOT_MATCH});
 
-    /**
-     * require that the first argument is less than or equal to the second (numeric only)
-     */
-    protected static final ConstraintOp LESS_THAN_EQUALS = ConstraintOp.LESS_THAN_EQUALS;
+    protected static final List BOOLEAN_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.EQUALS,
+        ConstraintOp.NOT_EQUALS});
 
-    /**
-     * require that the first argument is greater than the second (numeric only)
-     */
-    protected static final ConstraintOp GREATER_THAN = ConstraintOp.GREATER_THAN;
-
-    /**
-     * require that the first argument is greater than or equal to the second (numeric only)
-     */
-    protected static final ConstraintOp GREATER_THAN_EQUALS = ConstraintOp.GREATER_THAN_EQUALS;
-
-    /**
-     * require that the first argument is a substring of the second (string only)
-     */
-    protected static final ConstraintOp MATCHES = ConstraintOp.MATCHES;
-
-    /**
-     * require that the first argument is not a substring of the second (string only)
-     */
-    protected static final ConstraintOp DOES_NOT_MATCH = ConstraintOp.DOES_NOT_MATCH;
-
-    /**
-     * require that the specified argument is null
-     */
-    protected static final ConstraintOp IS_NULL = ConstraintOp.IS_NULL;
-
-    /**
-     * require that the specified argument is not null
-     */
-    protected static final ConstraintOp IS_NOT_NULL = ConstraintOp.IS_NOT_NULL;
-
-    protected static final ConstraintOp[] NUMBER_OPS = {
-        EQUALS,
-        NOT_EQUALS,
-        LESS_THAN,
-        LESS_THAN_EQUALS,
-        GREATER_THAN,
-        GREATER_THAN_EQUALS};
-
-    protected static final ConstraintOp[] DATE_OPS = NUMBER_OPS;
-
-    protected static final ConstraintOp[] STRING_OPS = {
-        EQUALS,
-        NOT_EQUALS,
-        MATCHES,
-        DOES_NOT_MATCH};
-
-    protected static final ConstraintOp[] BOOLEAN_OPS = {
-        EQUALS,
-        NOT_EQUALS};
-
-    protected static final ConstraintOp[] ALL_OPS = {
-        EQUALS,
-        NOT_EQUALS,
-        LESS_THAN,
-        LESS_THAN_EQUALS,
-        GREATER_THAN,
-        GREATER_THAN_EQUALS,
-        MATCHES,
-        DOES_NOT_MATCH};
-
-    /**
-     * Get type of constraint, taking negated into account.
-     *
-     * @param op the operator to negate
-     * @return integer value of operation type
-     */
-    protected static ConstraintOp negate(ConstraintOp op) {
-        if (op == EQUALS) {
-            return NOT_EQUALS;
-        } else if (op == NOT_EQUALS) {
-            return EQUALS;
-        } else if (op == LESS_THAN) {
-            return GREATER_THAN_EQUALS;
-        } else if (op == GREATER_THAN_EQUALS) {
-            return LESS_THAN;
-        } else if (op == GREATER_THAN) {
-            return LESS_THAN_EQUALS;
-        } else if (op == LESS_THAN_EQUALS) {
-            return GREATER_THAN;
-        } else if (op == MATCHES) {
-            return DOES_NOT_MATCH;
-        } else if (op == DOES_NOT_MATCH) {
-            return MATCHES;
-        } else if (op == IS_NULL) {
-            return IS_NOT_NULL;
-        } else if (op == IS_NOT_NULL) {
-            return IS_NULL;
-        }
-        return op;
-    }
+    protected static final List ALL_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.EQUALS,
+        ConstraintOp.NOT_EQUALS,
+        ConstraintOp.LESS_THAN,
+        ConstraintOp.LESS_THAN_EQUALS,
+        ConstraintOp.GREATER_THAN,
+        ConstraintOp.GREATER_THAN_EQUALS,
+        ConstraintOp.MATCHES,
+        ConstraintOp.DOES_NOT_MATCH});
 
     /**
      * Check whether a comparison is valid i.e. the arguments are comparable types and the
@@ -326,7 +184,7 @@ public class SimpleConstraint extends Constraint
      */
     public static boolean validComparison(Class arg1, ConstraintOp op, Class arg2) {
         if (arg2 == null) {
-            return op == IS_NULL || op == IS_NOT_NULL;
+            return op == ConstraintOp.IS_NULL || op == ConstraintOp.IS_NOT_NULL;
         }
         if (comparable(arg1, arg2)) {
             return validOps(arg1).contains(op);
@@ -360,15 +218,15 @@ public class SimpleConstraint extends Constraint
      */
     public static List validOps(Class arg) {
         if (Number.class.isAssignableFrom(arg)) {
-            return Arrays.asList(NUMBER_OPS);
+            return NUMBER_OPS;
         } else if (String.class.equals(arg)) {
-            return Arrays.asList(STRING_OPS);
+            return STRING_OPS;
         } else if (Boolean.class.equals(arg)) {
-            return Arrays.asList(BOOLEAN_OPS);
+            return BOOLEAN_OPS;
         } else if (Date.class.equals(arg)) {
-            return Arrays.asList(DATE_OPS);
+            return DATE_OPS;
         } else if (UnknownTypeValue.class.equals(arg)) {
-            return Arrays.asList(ALL_OPS);
+            return ALL_OPS;
         }
         return null;
     }

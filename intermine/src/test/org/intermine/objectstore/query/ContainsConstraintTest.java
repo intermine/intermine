@@ -85,7 +85,8 @@ public class ContainsConstraintTest extends TestCase {
         ContainsConstraint cc1 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
         ContainsConstraint cc2 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
         ContainsConstraint cc3 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2);
-        ContainsConstraint cc4 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2, true);
+        ContainsConstraint cc4 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2);
+        cc4.negate();
 
         assertEquals(cc1, cc1);
         assertEquals(cc1, cc2);
@@ -97,7 +98,8 @@ public class ContainsConstraintTest extends TestCase {
         ContainsConstraint cc1 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
         ContainsConstraint cc2 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
         ContainsConstraint cc3 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2);
-        ContainsConstraint cc4 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2, true);
+        ContainsConstraint cc4 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2);
+        cc4.negate();
 
         assertEquals(cc1.hashCode(), cc1.hashCode());
         assertEquals(cc1.hashCode(), cc2.hashCode());

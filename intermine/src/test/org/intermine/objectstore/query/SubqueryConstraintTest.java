@@ -31,7 +31,7 @@ public class SubqueryConstraintTest extends TestCase {
 
     public void testNullQueryConstructor() throws Exception {
         try {
-            new SubqueryConstraint(null, ConstraintOp.CONTAINS, qe1);
+            new SubqueryConstraint(qe1, ConstraintOp.IN, null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -39,7 +39,7 @@ public class SubqueryConstraintTest extends TestCase {
     
     public void testNullTypeConstructor() throws Exception {
         try {
-            new SubqueryConstraint(subquery, null, qc1);
+            new SubqueryConstraint(qc1, null, subquery);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -47,12 +47,12 @@ public class SubqueryConstraintTest extends TestCase {
 
     public void testNullArgConstructor() throws Exception {
         try {
-            new SubqueryConstraint(subquery, ConstraintOp.DOES_NOT_CONTAIN, (QueryClass) null);
+            new SubqueryConstraint((QueryClass) null, ConstraintOp.NOT_IN, subquery);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
         try {
-            new SubqueryConstraint(subquery, ConstraintOp.DOES_NOT_CONTAIN, (QueryValue) null);
+            new SubqueryConstraint((QueryValue) null, ConstraintOp.NOT_IN, subquery);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -60,7 +60,7 @@ public class SubqueryConstraintTest extends TestCase {
 
     public void testInvalidType() {
         try {
-            new SubqueryConstraint(subquery, ConstraintOp.EQUALS, qe1);
+            new SubqueryConstraint(qe1, ConstraintOp.EQUALS, subquery);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         }
@@ -70,7 +70,7 @@ public class SubqueryConstraintTest extends TestCase {
     public void testSelectListClass() throws Exception {
         Query q1 = new Query();
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
+            constraint = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
             fail("Expected: IllegalArgumentException - no items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
@@ -79,8 +79,8 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qc1);
 
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
-            fail("Expected: IllegalArgumentException - no items in subquery select");
+            constraint = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
+            fail("Expected: IllegalArgumentException - too many items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
     }
@@ -88,7 +88,7 @@ public class SubqueryConstraintTest extends TestCase {
     public void testSelectListEvaluable() throws Exception {
         Query q1 = new Query();
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qe1);
+            constraint = new SubqueryConstraint(qe1, ConstraintOp.IN, q1);
             fail("Expected: IllegalArgumentException - no items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
@@ -97,8 +97,8 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qc1);
 
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qe1);
-            fail("Expected: IllegalArgumentException - no items in subquery select");
+            constraint = new SubqueryConstraint(qe1, ConstraintOp.IN, q1);
+            fail("Expected: IllegalArgumentException - too many items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
     }
@@ -111,7 +111,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qeStr);
 
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qeNum);
+            constraint = new SubqueryConstraint(qeNum, ConstraintOp.IN, q1);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -123,19 +123,19 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qe1);
 
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
+            constraint = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testSubqueryNotAnEvaluable() throws Exception {
-        // select a QueryEvaluable from subquery, try to compare with a QueryClass
+        // select a QueryClass from subquery, try to compare with a QueryEvaluable
         Query q1 = new Query();
         q1.addToSelect(qc1);
 
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qe1);
+            constraint = new SubqueryConstraint(qe1, ConstraintOp.IN, q1);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -149,7 +149,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(manager);
 
         try {
-            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, department);
+            constraint = new SubqueryConstraint(department, ConstraintOp.IN, q1);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -162,10 +162,10 @@ public class SubqueryConstraintTest extends TestCase {
         Query q2 = new Query();
         q2.addToSelect(qe1);
 
-        SubqueryConstraint sc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
-        SubqueryConstraint sc2 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
-        SubqueryConstraint sc3 = new SubqueryConstraint(q2, ConstraintOp.CONTAINS, qe1);
-        SubqueryConstraint sc4 = new SubqueryConstraint(q2, ConstraintOp.DOES_NOT_CONTAIN, qe1);
+        SubqueryConstraint sc1 = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
+        SubqueryConstraint sc2 = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
+        SubqueryConstraint sc3 = new SubqueryConstraint(qe1, ConstraintOp.IN, q2);
+        SubqueryConstraint sc4 = new SubqueryConstraint(qe1, ConstraintOp.NOT_IN, q2);
 
         assertEquals(sc1, sc1);
         assertEquals(sc1, sc2);
@@ -180,10 +180,10 @@ public class SubqueryConstraintTest extends TestCase {
         Query q2 = new Query();
         q2.addToSelect(qe1);
 
-        SubqueryConstraint sc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
-        SubqueryConstraint sc2 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
-        SubqueryConstraint sc3 = new SubqueryConstraint(q2, ConstraintOp.CONTAINS, qe1);
-        SubqueryConstraint sc4 = new SubqueryConstraint(q2, ConstraintOp.DOES_NOT_CONTAIN, qe1);
+        SubqueryConstraint sc1 = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
+        SubqueryConstraint sc2 = new SubqueryConstraint(qc1, ConstraintOp.IN, q1);
+        SubqueryConstraint sc3 = new SubqueryConstraint(qe1, ConstraintOp.IN, q2);
+        SubqueryConstraint sc4 = new SubqueryConstraint(qe1, ConstraintOp.NOT_IN, q2);
 
         assertEquals(sc1.hashCode(), sc1.hashCode());
         assertEquals(sc1.hashCode(), sc2.hashCode());

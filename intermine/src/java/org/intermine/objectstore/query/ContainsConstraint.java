@@ -20,44 +20,31 @@ import java.util.Arrays;
  *
  * @author Richard Smith
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
 public class ContainsConstraint extends Constraint
 {
     protected QueryReference ref;
     protected QueryClass cls;
-    protected ConstraintOp type;
 
     /**
      * Constructor for ContainsConstraint.
      *
      * @param ref the target QueryReference
-     * @param type specify CONTAINS or DOES_NOT_CONTAIN
+     * @param op specify CONTAINS or DOES_NOT_CONTAIN
      * @param cls the QueryClass to to be tested against reference
      */
-    public ContainsConstraint(QueryReference ref, ConstraintOp type, QueryClass cls) {
-        this(ref, type, cls, false);
-    }
-
-    /**
-     * Constructor for ContainsConstraint.
-     *
-     * @param ref the target QueryReference
-     * @param type specify CONTAINS or DOES_NOT_CONTAIN
-     * @param cls the QueryClass to be tested
-     * @param negated reverse the constraint logic if true
-     */
-    public ContainsConstraint(QueryReference ref, ConstraintOp type, QueryClass cls,
-                              boolean negated) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp op, QueryClass cls) {
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
 
-        if (type == null) {
-            throw new NullPointerException("type cannot be null");
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
         }
 
-        if (!validOps().contains(type)) {
-            throw new IllegalArgumentException("type cannot be " + type);
+        if (!VALID_OPS.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
         }
 
         if (cls == null) {
@@ -67,23 +54,13 @@ public class ContainsConstraint extends Constraint
         if (ref instanceof QueryObjectReference && !ref.getType().equals(cls.getType())) {
             throw new IllegalArgumentException("Invalid constraint: "
                                                + ref.getType()
-                                               + " " + type
+                                               + " " + op
                                                + " " + cls.getType());
         }
         
         this.ref = ref;
-        this.type = type;
+        this.op = op;
         this.cls = cls;
-        this.negated = negated;
-    }
-
-    /**
-     * Return the operation type
-     *
-     * @return the operation type
-     */
-    public ConstraintOp getType() {
-        return type;
     }
 
     /**
@@ -105,16 +82,6 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
-     * Returns true if the constraint is effectively "DOES_NOT_CONTAIN", taking negated into
-     * account.
-     *
-     * @return true if it is DOES_NOT_CONTAIN
-     */
-    public boolean isNotContains() {
-        return (type == CONTAINS ? negated : !negated);
-    }
-
-    /**
      * Test whether two ContainsConstraints are equal, overrides Object.equals()
      *
      * @param obj the object to compare with
@@ -124,8 +91,7 @@ public class ContainsConstraint extends Constraint
         if (obj instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) obj;
             return ref.equals(cc.ref)
-                    && type == cc.type
-                    && negated == cc.negated
+                    && op == cc.op
                     && cls.equals(cc.cls);
         }
         return false;
@@ -138,31 +104,11 @@ public class ContainsConstraint extends Constraint
      */
     public int hashCode() {
         return ref.hashCode()
-            + 3 * type.hashCode()
-            + 5 * (negated ? 1 : 0)
+            + 3 * op.hashCode()
             + 7 * cls.hashCode();
     }
 
-    //-------------------------------------------------------------------------
-    
-    /**
-     * QueryCollection does contain the specified QueryClass.
-     */
-    protected static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
-
-    /**
-     * QueryCollection does not contain the specified QueryClass.
-     */
-    protected static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
-
-    protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {CONTAINS,
-                                                                          DOES_NOT_CONTAIN};
-
-    /**
-     * Return a list of the valid operations for constructing a constraint of this type
-     * @return a List of operation codes
-     */
-    public static List validOps() {
-        return Arrays.asList(VALID_OPS);
-    }
+    /** List of possible operations */
+    public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.CONTAINS,
+        ConstraintOp.DOES_NOT_CONTAIN});
 }

@@ -96,16 +96,16 @@ public class QueryCreator
         q.addFrom(qc);
 
         // AND together the constraints combining QueryClasses in the FROM list
-        ConstraintSet csCombining = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet csCombining = new ConstraintSet(ConstraintOp.AND);
 
         // OR together the constraints for each object in Set
-        ConstraintSet csOr = new ConstraintSet(ConstraintSet.OR);
+        ConstraintSet csOr = new ConstraintSet(ConstraintOp.OR);
 
         Iterator i = orig.iterator();
         while (i.hasNext()) {
 
             // AND together the constraints for each individual example in the Set
-            ConstraintSet csThisObject = new ConstraintSet(ConstraintSet.AND);
+            ConstraintSet csThisObject = new ConstraintSet(ConstraintOp.AND);
 
             Object obj = i.next();
             // Check it is of the same class
@@ -128,7 +128,7 @@ public class QueryCreator
                     } else if (field instanceof AttributeDescriptor) {
                         QueryField qf = new QueryField(qc, fieldName);
                         QueryValue value = new QueryValue(TypeUtil.getFieldValue(obj, fieldName));
-                        Constraint c = new SimpleConstraint(qf, SimpleConstraint.EQUALS, value);
+                        Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, value);
                         csThisObject.addConstraint(c);
                     } else if (field instanceof ReferenceDescriptor) {
                         // Get the class that this reference refers to
@@ -146,7 +146,7 @@ public class QueryCreator
                             q.addFrom(otherQueryClass);
                             // And add a ClassConstraint for it
                             csCombining.addConstraint(new ContainsConstraint(qr,
-                                    ContainsConstraint.CONTAINS, otherQueryClass));
+                                    ConstraintOp.CONTAINS, otherQueryClass));
                         } else {
                             otherQueryClass = (QueryClass) referenceQueryClasses.get(fieldName);
                         }
@@ -243,7 +243,7 @@ public class QueryCreator
         q.addFrom(qc);
 
         // AND together the constraints combining QueryClasses in the FROM list
-        ConstraintSet csCombining = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet csCombining = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(csCombining);
         addKeysToQuery(q, qc, obj, model);
         return q;
@@ -291,7 +291,7 @@ public class QueryCreator
                 if (value == null) {
                     throw new IllegalArgumentException("All primary key fields must be set");
                 }
-                Constraint c = new SimpleConstraint(qf, SimpleConstraint.EQUALS, value);
+                Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, value);
                 ((ConstraintSet) q.getConstraint()).addConstraint(c);
 
             } else if (field instanceof ReferenceDescriptor) {
@@ -307,7 +307,7 @@ public class QueryCreator
                 q.addFrom(otherQueryClass);
                 // And add a ClassConstraint for it
                 ((ConstraintSet) q.getConstraint())
-                    .addConstraint(new ContainsConstraint(qr, ContainsConstraint.CONTAINS,
+                    .addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
                                                           otherQueryClass));
 
                 // Add the keys of the other object

@@ -131,7 +131,7 @@ public class CollatedResult extends Results
             matchesQuery.addFrom((FromElement) i.next());
         }
         // Where all the original constraints
-        ConstraintSet constraintSet = new ConstraintSet(ConstraintSet.AND);
+        ConstraintSet constraintSet = new ConstraintSet(ConstraintOp.AND);
         constraintSet.addConstraint(q.getConstraint());
 
         // if this query is a "group by" add one for each in the group by
@@ -154,7 +154,7 @@ public class CollatedResult extends Results
                     // Add a new SimpleConstraint
                     QueryValue value = new QueryValue(row.get(index));
                     constraintSet.addConstraint(new SimpleConstraint((QueryEvaluable) node,
-                                                                     SimpleConstraint.EQUALS,
+                                                                     ConstraintOp.EQUALS,
                                                                      value));
                 }
             }
@@ -168,7 +168,7 @@ public class CollatedResult extends Results
                     QueryValue value = new QueryValue(row.get(q.getSelect().indexOf(qn)));
                     QueryEvaluable evaluable = qf.getParam();
                     constraintSet.addConstraint(new SimpleConstraint(evaluable,
-                                                                     SimpleConstraint.EQUALS,
+                                                                     ConstraintOp.EQUALS,
                                                                      value));
                 }
             }
@@ -187,7 +187,7 @@ public class CollatedResult extends Results
                 } else {
                     QueryValue value = new QueryValue(row.get(index));
                     constraintSet.addConstraint(new SimpleConstraint((QueryField) node,
-                                                                     SimpleConstraint.EQUALS,
+                                                                     ConstraintOp.EQUALS,
                                                                      value));
                 }
             }
