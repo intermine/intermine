@@ -248,7 +248,7 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         }
     }
 
-    public void testExtimateStartEndNotNull() throws Exception {
+    public void testEstimateStartEndNotNull() throws Exception {
         ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"), 0, 10);
         if (er == null) {
             fail("a null ExplainResult was returned");
@@ -380,5 +380,39 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         assertTrue(a instanceof LazyReference);
         assertEquals(a, ((Company) data.get("CompanyA")).getAddress());
     }
+
+    public void testCountNoGroupByNotDistinct() throws Exception {
+        Query q = (Query) queries.get("ContainsDuplicatesMN");
+        q.setDistinct(false);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        int count = os.count(q);
+        assertEquals(count, 8);
+    }
+
+    public void testCountNoGroupByDistinct() throws Exception {
+        Query q = (Query) queries.get("ContainsDuplicatesMN");
+        q.setDistinct(true);
+        int count = os.count(q);
+        assertEquals(count, 4);
+    }
+
+   public void testCountGroupByNotDistinct() throws Exception {
+        Query q = (Query) queries.get("SimpleGroupBy");
+        q.setDistinct(false);
+        int count = os.count(q);
+        assertEquals(count, 2);
+    }
+
+
+    // distinct doesn't actually do anything to group by reuslt
+    public void testCountGroupByDistinct() throws Exception {
+        Query q = (Query) queries.get("SimpleGroupBy");
+        q.setDistinct(true);
+        int count = os.count(q);
+        assertEquals(count, 2);
+    }
+
+
+
 
 }
