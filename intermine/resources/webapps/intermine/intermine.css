@@ -1,6 +1,6 @@
 body {
   font-family: arial, helvetica, sans-serif;
-  color: black; 
+  color: black;
   background: #f4eeff
 }
 a {
@@ -36,14 +36,13 @@ a:hover {
 .subtitle {
   font-size: large;
 }
-.errors { 
+.errors {
   color: red;
 }
-.messages { 
+.messages {
   color: black;
   font-weight: bold;
 }
-
 table.query, table.results {
   border-left: solid 1px;
   border-top: solid 1px;
@@ -63,7 +62,7 @@ div.view {
 th {
   background: #caf;
 }
-tr.even { 
+tr.even {
   background: #edf;
 }
 .type {
