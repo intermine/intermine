@@ -83,6 +83,47 @@
     rdfs:range :Evidence .
 
 
+# ------------ DAG Terms and relationships ---------------
+
+:DagTerm a owl:Class ;
+    rdfs:subClassOf :BioProperty .
+
+:DagTerm__identifier a owl:DatatypeProperty ;
+    rdfs:domain :DagTerm ;
+    rdfs:range xsd:string .
+
+:DagTerm__name a owl:DatatypeProperty ;
+    rdfs:domain :DagTerm ;
+    rdfs:range xsd:string .
+
+:DagTerm__parentRelation a owl:ObjectProperty ;
+    rdfs:domain :DagTerm ;
+    rdfs:range :DagRelation .
+
+:DagTerm__childRelation a owl:ObjectProperty ;
+    rdfs:domain :DagTerm ;
+    rdfs:range :DagRelation .
+
+:DagRelation a owl:Class ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :DagRelation__parentTerm ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :DagRelation__childTerm ] .
+
+:DagRelation__type a owl:DatatypeProperty ;
+    rdfs:domain :DagRelation ;
+    rdfs:range xsd:string .
+
+:DagRelation__parentTerm a owl:ObjectProperty ;
+    owl:inverseOf :DagTerm__childRelation .
+
+:DagRelation__childTerm a owl:ObjectProperty ;
+    owl:inverseOf :DagTerm__parentRelation .
+
 # ------------ Relationships between BioEntity classes -----------
 
 # define a common superclass for RankedRelation and Location and LinkedRelation
