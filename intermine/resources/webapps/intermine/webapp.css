@@ -4,6 +4,16 @@ img {
 form {
   margin: 0px
 }
+#feedbackForm textarea, input[type=text] {
+  padding: 3px;
+  border-top: 1px solid #909090;
+  border-left: 1px solid #909090;
+  border-bottom: 1px solid #c0c0c0;
+  border-right: 1px solid #c0c0c0;
+}
+#feedbackForm {
+  white-space: nowrap;
+}
 table td {
   font-size: 12px;
 }
@@ -43,7 +53,14 @@ table td {
   font-size: 13px;
   text-align: center;
 }
-
+.expandButton {
+  border: 1px solid #888;
+  background-color: white;
+  padding: 4px;
+  text-align: center;
+  font-size: 13px;
+  white-space: nowrap;
+}
 .heading a {
   color: black;
 }

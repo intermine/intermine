@@ -14,6 +14,7 @@
     <put name="errorMessages" value="/errorMessages.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
+    <put name="feedbackForm" value="feedbackForm.jsp"/>
   </definition>
   <!--pages-->
   <definition name="login.page" extends="layout.template">
