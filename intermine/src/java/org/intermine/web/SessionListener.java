@@ -15,6 +15,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionListener;
 import javax.servlet.http.HttpSessionEvent;
 
+import java.util.HashMap;
+
 /**
  * Perform InterMine-specific actions when a Session is constructed or destroyed
  * @author Mark Woodbridge
@@ -28,7 +30,8 @@ public class SessionListener implements HttpSessionListener
         HttpSession session = se.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        session.setAttribute(Constants.PROFILE, pm.createProfile(null));
+        session.setAttribute(Constants.PROFILE,
+                             new Profile(pm, null, new HashMap(), new HashMap()));
     }
 
     /**

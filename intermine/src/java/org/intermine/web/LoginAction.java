@@ -20,6 +20,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import java.util.HashMap;
+
 /**
  * Action to handle button presses on the main tile
  * @author Mark Woodbridge
@@ -50,7 +52,7 @@ public class LoginAction extends Action
         if (pm.hasProfile(lf.getUsername())) {
             profile = pm.getProfile(lf.getUsername(), lf.getPassword());
         } else {
-            profile = pm.createProfile(lf.getUsername());
+            profile = new Profile(pm, lf.getUsername(), new HashMap(), new HashMap());
             pm.saveProfile(profile);
             pm.setPassword(lf.getUsername(), lf.getPassword());
         }

@@ -28,7 +28,7 @@
       <fmt:message key="menu.examples"/>
     </html:link>
   </span>
-  <c:if test="${empty PROFILE.username}">
+  <c:if test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
     <span class="menu-item">
       <html:link action="/login.do">
         <fmt:message key="menu.login"/>

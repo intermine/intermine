@@ -54,16 +54,6 @@ public class ProfileManager
     }
 
     /**
-     * Construct a blank Profile managed by this Manager.
-     * A check should be made prior to this call to ensure a Profile does not already exist
-     * @param username the username
-     * @return a new blank Profile
-     */
-    public Profile createProfile(String username) {
-        return new Profile(this, username, new HashMap(), new HashMap());
-    }
-
-    /**
      * Check whether a user already has a Profile
      * @param username the username
      * @return true if a profile exists

@@ -62,7 +62,9 @@ public class Profile
      */
     public void saveQuery(String name, PathQuery query) {
         savedQueries.put(name, query);
-        manager.saveProfile(this);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
     }
 
     /**
@@ -71,7 +73,9 @@ public class Profile
      */
     public void deleteQuery(String name) {
         savedQueries.remove(name);
-        manager.saveProfile(this);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
     }
 
     /**
@@ -89,7 +93,9 @@ public class Profile
      */
     public void saveBag(String name, InterMineBag bag) {
         savedBags.put(name, bag);
-        manager.saveProfile(this);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
     }
 
     /**
@@ -98,6 +104,8 @@ public class Profile
      */
     public void deleteBag(String name) {
         savedBags.remove(name);
-        manager.saveProfile(this);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
     }
 }
