@@ -174,6 +174,8 @@ version="1.0">
     </xsl:attribute>
 </xsl:if>
 <xsl:attribute name="border">0</xsl:attribute>
+<xsl:attribute name="hspace">7</xsl:attribute>
+<xsl:attribute name="vspace">5</xsl:attribute>
 <xsl:apply-templates/>
 </img>
 </xsl:template>
