@@ -10,8 +10,6 @@ import org.flymine.objectstore.ObjectStoreWriterAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStore;
 
-import org.flymine.util.ModelUtil;
-
 /**
  * Implementation of ObjectStoreWriter that uses OJB as its underlying store
  *
@@ -50,7 +48,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     public void store(Object o) throws ObjectStoreException {
         boolean valid = false;
         try {
-            valid = ModelUtil.hasValidKey(o, model);
+            valid = hasValidKey(o);
         } catch (Exception e) {
             throw new ObjectStoreException("Error in checking primary key fields:" + e);
         }

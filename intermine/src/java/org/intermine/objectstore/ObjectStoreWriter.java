@@ -8,6 +8,13 @@ package org.flymine.objectstore;
 public interface ObjectStoreWriter
 {
     /**
+     * Retrieve this Writer's ObjectStore
+     *
+     * @return the ObjectStore
+     */
+    public ObjectStore getObjectStore();
+
+    /**
      * Store an object in this ObjectStore
      *
      * @param o the object to store
