@@ -151,6 +151,9 @@
     <action path="/initResultsView" type="org.flymine.web.results.ResultsViewController">
     </action>
 
+    <action path="/initResultsCell" type="org.flymine.web.results.ResultsCellController">
+    </action>
+
   </action-mappings>
 
   <!-- ========== Controller Configuration ================================ -->
