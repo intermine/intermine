@@ -7,6 +7,10 @@
 <title>Downloading and building FlyMine</title>
 </artheader>
 
+<para>In order to improve the chance of continued funding for the
+FlyMine project it would be really appreciated if anyone that uses
+FlyMine or parts of FlyMine would let us know. Just drop a quick email
+to <email>info[at]flymine.org</email>.</para>
 
 <para>Depending on your needs, you can either download precompiled jar
 files of the FlyMine distribution, or build these yourself from
@@ -23,7 +27,7 @@ CVS.</para>
 
 <para>The source code or a jar file containing precompiled classes can
 be downloaded as either an official release, or a nightly
-snapshot. The source code is available in tar.gz or ZIP
+build. The source code is available in tar.gz or ZIP
 format.</para>
 
 <para><ulink
@@ -34,7 +38,7 @@ every couple of months, on average.</para>
 
 <para><ulink
 url="http://download.flymine.org/nightly/"><inlinegraphic
-fileref="/images/download" align="center"/>Nightly dump</ulink> - this
+fileref="/images/download" align="center"/>Nightly build</ulink> - this
 is an up-to-the-minute snapshot of the FlyMine source code, as it was
 last night. This will work, but may be in a state of flux, and with
 portions undocumented, or not conforming to the documentation.</para>
@@ -44,13 +48,7 @@ portions undocumented, or not conforming to the documentation.</para>
 <sect2>
 <title>Anonymous CVS access</title>
 
-<para>The latest version of the FlyMine source code can be downloaded
-anonymously from our CVS server using the following commands:</para>
-
-<para><command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs login</command></para>
-
-<para><command>Password: &lt;none&gt;</command></para>
-<para><command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs co flymine</command></para>
+<para>Instructions can be found <ulink url="cvs-user">here</ulink>.</para>
 
 </sect2>
 
@@ -75,8 +73,11 @@ in the <filename>dist</filename> directory.</listitem>
 <listitem>Copy the file <filename>flymine.jar</filename> to
 a directory on your classpath</listitem>
 
-<listitem>Write a program using the FlyMine Query API! This will
-automatically contact the main FlyMine servers. Many things are
+<listitem>Copy any of the jars in the <filename>lib/</filename>
+directory that you don't already have to a directory on your
+classpath</listitem>
+
+<listitem>Write a program using the FlyMine Query API! Many things are
 configurable by having a file <filename>flymine.properties</filename>
 in your classpath (earlier than <filename>flymine.jar</filename>). An
 example <filename>flymine.properties</filename> can be found in the
