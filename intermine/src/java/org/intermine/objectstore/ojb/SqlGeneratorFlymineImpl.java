@@ -54,11 +54,12 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
+
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.accesslayer.sql.SqlGeneratorDefaultImpl;
 import org.apache.ojb.broker.platforms.Platform;
 import org.flymine.objectstore.query.Query;
-
+import org.apache.log4j.Logger;
 /**
  * SqlGeneratorFlymineImpl
  *
@@ -67,6 +68,8 @@ import org.flymine.objectstore.query.Query;
 
 public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
 {
+
+    protected static final Logger LOG = Logger.getLogger(SqlGeneratorFlymineImpl.class);
 
     /**
      * Constructor, chains to SqlGeneratorDefaultImpl constructor
@@ -87,13 +90,16 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      */
     public String getPreparedSelectStatement(Query query, DescriptorRepository dr, int start,
             int limit) {
-        // TODO: check for statement in cache...
 
-        // get the flymine query.  Currently ignores StatementManager, should it be changed?
+        // TODO - if SQL statements are to be cached this is where to do it
+        // implemetation is awaiting a proper equals() method for org.flymine.objectstore.ojb.Query
 
-        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr, start, limit);
+        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr);
         String result = sql.getStatement();
 
+        if (result != null && (start > 0 && limit > 0)) {
+            result += (" LIMIT " + limit + " OFFSET " + start);
+        }
         return result;
     }
 
