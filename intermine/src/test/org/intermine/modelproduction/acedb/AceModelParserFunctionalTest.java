@@ -39,7 +39,7 @@ public class AceModelParserFunctionalTest extends TestCase
     public void setUp() throws Exception {
         super.setUp();
         parser = new AceModelParser(MODEL);
-        stream = getClass().getClassLoader().getResourceAsStream("test/" + MODEL + ".wrm");
+        stream = getClass().getClassLoader().getResourceAsStream(MODEL + ".wrm");
         model = createModel();
     }
 
