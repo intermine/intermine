@@ -34,9 +34,6 @@ import org.flymine.testing.OneTimeTestCase;
 
 public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 {
-    protected static final org.apache.log4j.Logger LOG
-        = org.apache.log4j.Logger.getLogger(ObjectStoreQueriesTestCase.class);
-
     protected static Map queries = new HashMap();
     protected static Map results = new LinkedHashMap();
 
