@@ -50,10 +50,10 @@ public class QueryBuildAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward submit(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward add(ActionMapping mapping,
+                             ActionForm form,
+                             HttpServletRequest request,
+                             HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
@@ -131,8 +131,8 @@ public class QueryBuildAction extends LookupDispatchAction
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("button.submit", "submit");
-        map.put("button.remove", "remove");
+        map.put("queryclass.add", "add");
+        map.put("queryclass.remove", "remove");
         return map;
     }
 }
