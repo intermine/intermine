@@ -97,7 +97,7 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
         FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr);
         String result = sql.getStatement();
 
-        if (result != null && (start > 0 && limit > 0)) {
+        if (result != null && (start > 0 || limit < Integer.MAX_VALUE)) {
             result += (" LIMIT " + limit + " OFFSET " + start);
         }
         return result;
