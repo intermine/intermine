@@ -10,9 +10,10 @@ package org.intermine.web;
  *
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.struts.action.ActionForward;
 
 /**
@@ -27,7 +28,7 @@ public class ForwardParameters
     /** Original ActionForward. */
     protected ActionForward af;
     /** Map from parameter name to parameter value. */
-    protected Map params = new HashMap();
+    protected Map params = new LinkedHashMap();
     /** Anchor name. */
     protected String anchor;
     
