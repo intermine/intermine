@@ -85,7 +85,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery query = new PathQuery(os.getModel());
         session.setAttribute(Constants.QUERY, query);
-        query.addNode(TypeUtil.unqualifiedName(className));
+        session.setAttribute("path", TypeUtil.unqualifiedName(className));
     }
     
     /**

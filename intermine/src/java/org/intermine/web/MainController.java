@@ -53,27 +53,14 @@ public class MainController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Model model = (Model) os.getModel();
 
-        if (query.getNodes().size() == 0) {
-            String path = (String) query.getView().iterator().next();
-            if (path.indexOf(".") != -1) {
-                path = path.substring(0, path.indexOf("."));
-            }
-            query.addNode(path);
-        }
-
         //set up the metadata
-        String path = (String) session.getAttribute("path");
-        if (path == null) {
-            path = (String) query.getNodes().keySet().iterator().next();
-            session.setAttribute("path", path);
-        }
-        context.putAttribute("nodes", MainHelper.makeNodes(path, model));
+        context.putAttribute("nodes",
+                             MainHelper.makeNodes((String) session.getAttribute("path"), model));
 
         //set up the node on which we are editing constraints
         if (request.getAttribute("editingNode") != null) {
@@ -95,7 +82,7 @@ public class MainController extends TilesAction
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
         Map navigation = new LinkedHashMap();
-        if (prefix != null && prefix.indexOf(".") != -1) {
+        if (prefix != null) {
             for (StringTokenizer st = new StringTokenizer(prefix, "."); st.hasMoreTokens();) {
                 String token = st.nextToken();
                 current = (current == null ? token : current + "." + token);

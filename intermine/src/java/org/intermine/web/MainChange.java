@@ -45,11 +45,9 @@ public class MainChange extends DispatchAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
-        if (path.indexOf(".") != -1) {
-            for (Iterator i = query.getNodes().keySet().iterator(); i.hasNext();) {
-                if (((String) i.next()).startsWith(path)) {
-                    i.remove();
-                }
+        for (Iterator i = query.getNodes().keySet().iterator(); i.hasNext();) {
+            if (((String) i.next()).startsWith(path)) {
+                i.remove();
             }
         }
 
@@ -122,18 +120,14 @@ public class MainChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
-        if (prefix != null) {
-            path = prefix + "." + path.substring(path.indexOf(".") + 1);
-        }
-        query.addNode(path);
-        Node node = (Node) query.getNodes().get(path);
+        path = toPath(prefix, path);
+        Node node = query.addNode(path);
         //automatically start editing node
         request.setAttribute("editingNode", node);
         //and change metadata view if relevant
         if (!node.isAttribute()) {
-            session.setAttribute("prefix", path);
-            path = node.getType();
-            session.setAttribute("path", path);
+            session.setAttribute("prefix", path.indexOf(".") == -1 ? null : path);
+            session.setAttribute("path", node.getType());
         }
         
         return mapping.findForward("query");
@@ -159,6 +153,9 @@ public class MainChange extends DispatchAction
 
         session.setAttribute("path", path);
         if (prefix != null) {
+            if (prefix.indexOf(".") == -1) {
+                prefix = null;
+            }
             session.setAttribute("prefix", prefix);
         }
 
@@ -184,13 +181,26 @@ public class MainChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
-        if (prefix != null) {
-            path = prefix + (path.indexOf(".") == -1
-                             ? ""
-                             : "." + path.substring(path.indexOf(".") + 1));
-        }
-        query.getView().add(path);
+        query.getView().add(toPath(prefix, path));
 
         return mapping.findForward("query");
+    }
+
+    /**
+     * Convert a path and prefix to a path
+     * Note that we don't, in general, allow prefixes without dots in them
+     * @param prefix the prefix (eg null or Department.company)
+     * @param path the path (eg Company, Company.departments)
+     * @return the new path
+     */
+    protected static String toPath(String prefix, String path) {
+        if (prefix != null) {
+            if (path.indexOf(".") == -1) {
+                path = prefix;
+            } else {
+                path = prefix + "." + path.substring(path.indexOf(".") + 1);
+            }
+        }
+        return path;
     }
 }

@@ -72,7 +72,8 @@ public class MainHelper
      * @param currentPath current path suffix (eg organism.name)
      * @param nodes the current Node set
      */
-    protected static void makeNodes(ClassDescriptor cld, String path, String currentPath, Map nodes) {
+    protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
+                                    Map nodes) {
         for (Iterator i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
             String fieldName = fd.getName();
