@@ -1941,28 +1941,27 @@
   </target>
 
   <target name="load-gbrowse-data" 
-          description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse"
-          depends="write-gff">
+          description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
       <arg value="--adaptor"/>
       <arg value="dbi::Pg"/>
       <arg value="--create"/>
       <arg value="--dsn"/>
-      <arg value="dbi:Pg:dbname=flymine"/>
+      <arg value="dbi:Pg:dbname=${gbrowse.database}"/>
       <arg value="--user"/>
-      <arg value="kmr"/>
+      <arg value="${gbrowse.database.user}"/>
       <arg value="--password"/>
-      <arg value="kmr"/>
+      <arg value="${gbrowse.database.password}"/>
     </exec>
     <apply dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
       <arg value="--adaptor"/>
       <arg value="dbi::Pg"/>
       <arg value="--dsn"/>
-      <arg value="dbi:Pg:dbname=flymine"/>
+      <arg value="dbi:Pg:dbname=${gbrowse.database}"/>
       <arg value="--user"/>
-      <arg value="kmr"/>
+      <arg value="${gbrowse.database.user}"/>
       <arg value="--password"/>
-      <arg value="kmr"/>
+      <arg value="${gbrowse.database.password}"/>
       <fileset dir="${build.gbrowse.data}">
         <patternset>
           <include name="*.fa"/>
