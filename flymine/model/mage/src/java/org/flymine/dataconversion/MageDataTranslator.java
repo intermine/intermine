@@ -11,6 +11,7 @@ package org.flymine.dataconversion;
  */
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
@@ -19,8 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.io.File;
+import java.io.FileReader;
 
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.InterMineException;
 import org.intermine.util.XmlUtil;
@@ -30,9 +34,19 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+
 import org.intermine.dataconversion.ItemReader;
+import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.ItemPrefetchDescriptor;
+import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
+import org.intermine.dataconversion.FieldNameAndValue;
 
 import org.apache.log4j.Logger;
 
@@ -200,11 +214,25 @@ public class MageDataTranslator extends DataTranslator
     protected void setReporterLocationCoords(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
         ReferenceList featureInfos = srcItem.getCollection("featureInformationSources");
-        if (featureInfos == null || !isSingleElementCollection(featureInfos)) {
-            throw new IllegalArgumentException("FeatureReporterMap (" + srcItem.getIdentifier()
-                        + " does not have exactly one featureInformationSource");
-        }
+        if (featureInfos == null) {
+            LOG.info("FeatureReporterMap (" + srcItem.getIdentifier()
+                        + " does not have featureInformationSource");
+            throw new IllegalArgumentException("FeatureReporterMap ("
+                        + srcItem.getIdentifier()
+                        + " does not have featureInformationSource");
 
+
+            }
+        if (!isSingleElementCollection(featureInfos)) {
+            LOG.info("FeatureReporterMap (" + srcItem.getIdentifier()
+                        + " does not have single element collection"
+                     + featureInfos.getRefIds().toString());
+            throw new IllegalArgumentException("FeatureReporterMap ("
+                        + srcItem.getIdentifier()
+                        + " has more than one featureInformationSource");
+        }
+        //FeatureInformationSources->FeatureInformation->Feature->FeatureLocation
+        //can't do prefetch from FeatureReporterMap to featureInformationSources
         Item featureInfo = ItemHelper.convert(srcItemReader
                         .getItemById((String) featureInfos.getRefIds().get(0)));
         if (featureInfo != null && featureInfo.hasReference("feature")) {
@@ -253,6 +281,7 @@ public class MageDataTranslator extends DataTranslator
             throw new IllegalArgumentException("PhysicalArrayDesign (" + srcItem.getIdentifier()
                         + ") does not have exactly one featureGroup");
         }
+        //ItemPrefetchDescriptor desc1
         Item featureGroup = ItemHelper.convert(srcItemReader
                   .getItemById((String) featureGroups.getRefIds().get(0)));
         Iterator featureIter = featureGroup.getCollection("features").getRefIds().iterator();
@@ -301,11 +330,12 @@ public class MageDataTranslator extends DataTranslator
         if (featureReporterMaps != null && immobilizedChar != null
                   && isSingleElementCollection(immobilizedChar)) {
             for (Iterator i = featureReporterMaps.getRefIds().iterator(); i.hasNext(); ) {
-                //FeatureReporterMap
+                //FeatureReporterMap //desc2
                 Item frm = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
                 if (frm.hasCollection("featureInformationSources")) {
                     Iterator j = frm.getCollection("featureInformationSources").
                                  getRefIds().iterator();
+                    //can't prefetch from FeatureReporterMap get featureInformationSources
                     while (j.hasNext()) {
                         Item fis = ItemHelper.convert(srcItemReader.getItemById((String) j.next()));
                         if (fis.hasReference("feature")) {
@@ -374,6 +404,8 @@ public class MageDataTranslator extends DataTranslator
         ReferenceList rl = srcItem.getCollection("bioAssays");
         ReferenceList newRl = new ReferenceList();
         newRl.setName("assays");
+
+        //can't prefetch from Experiment to bioAssays
         if (rl != null) {
             for (Iterator i = rl.getRefIds().iterator(); i.hasNext(); ) {
                 Item baItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
@@ -395,7 +427,7 @@ public class MageDataTranslator extends DataTranslator
         if (srcItem.hasAttribute("name")) {
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
         }
-
+        //can't prefetch from Experiment get descriptions
         ReferenceList desRl = srcItem.getCollection("descriptions");
         boolean desFlag = false;
         boolean pubFlag = false;
@@ -444,6 +476,7 @@ public class MageDataTranslator extends DataTranslator
          ReferenceList dbad = srcItem.getCollection("derivedBioAssayData");
          if (dbad != null) {
              for (Iterator j = dbad.getRefIds().iterator(); j.hasNext(); ) {
+                 //can't prefetch from DerivedBioAssay get derivedBioAssayData
                  Item dbadItem = ItemHelper.convert(srcItemReader.getItemById((String) j.next()));
                  if (dbadItem.hasReference("bioDataValues")) {
                      Item bioDataTuples = ItemHelper.convert(srcItemReader.getItemById(
@@ -567,6 +600,7 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
+        //can't prefetch From BioSequence get sequenceDatabases
         if (srcItem.hasCollection("sequenceDatabases")) {
             ReferenceList rl = srcItem.getCollection("sequenceDatabases");
             if (rl != null) {
@@ -631,10 +665,12 @@ public class MageDataTranslator extends DataTranslator
             throw new IllegalArgumentException("LabeledExtract (" + srcItem.getIdentifier()
                         + " does not have exactly one label");
         }
+        //can't prefetch labels from LabeledExtract
         Item label = ItemHelper.convert(srcItemReader
                         .getItemById((String) labels.getRefIds().get(0)));
         tgtItem.addAttribute(new Attribute("label", label.getAttribute("name").getValue()));
 
+        //can't prefetch treatments from LabeledExtract
         ReferenceList treatments = srcItem.getCollection("treatments");
         List treatmentList = new ArrayList();
         ReferenceList tgtTreatments = new ReferenceList("treatments", treatmentList);
@@ -702,6 +738,7 @@ public class MageDataTranslator extends DataTranslator
         if (characteristics != null) {
             for (Iterator i = characteristics.getRefIds().iterator(); i.hasNext();) {
                 String id = (String) i.next();
+                //can't prefetch characteristics from BioSource
                 Item charItem = ItemHelper.convert(srcItemReader.getItemById(id));
                 s = charItem.getAttribute("category").getValue();
                 if (s.equalsIgnoreCase("organism")) {
@@ -766,6 +803,7 @@ public class MageDataTranslator extends DataTranslator
             ReferenceList sourceRl1 = srcItem.getCollection("sourceBioMaterialMeasurements");
             for (Iterator l = sourceRl1.getRefIds().iterator(); l.hasNext(); ) {
                 // bioSampleItem, type extract
+                //can't prefetch sourceBioMaterialMeausrements from Treatment
                 Item bioSampleExItem = ItemHelper.convert(srcItemReader.getItemById(
                                       (String) l.next()));
 
@@ -1005,4 +1043,101 @@ public class MageDataTranslator extends DataTranslator
         organism.addAttribute(new Attribute("name", value));
         return organism;
     }
+
+    /**
+     * main method
+     * @param args command line arguments
+     * @throws Exception if something goes wrong
+     */
+    public static void main (String[] args) throws Exception {
+        String srcOsName = args[0];
+        String tgtOswName = args[1];
+        String modelName = args[2];
+        String format = args[3];
+        String namespace = args[4];
+
+        Map paths = new HashMap();
+        HashSet descSet = new HashSet();
+
+        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor(
+                "(FeatureGroup <- Feature.featureGroup)");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "featureGroup"));
+        desc1.addConstraint(new FieldNameAndValue("className",
+                    "http://www.flymine.org/model/mage#Feature", false));
+        paths.put("http://www.flymine.org/model/mage#FeatureGroup", Collections.singleton(desc1));
+
+
+        desc1 = new ItemPrefetchDescriptor(
+                "(Reporter <- FeatureReporterMap.reporter)");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "reporter"));
+        desc1.addConstraint(new FieldNameAndValue("className",
+                    "http://www.flymine.org/model/mage#FeatureReporterMap", false));
+        paths.put("http://www.flymine.org/model/mage#Reporter", Collections.singleton(desc1));
+
+
+        desc1 = new ItemPrefetchDescriptor("PhysicalArrayDesign.surfaceType");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("surfaceType", "identifier"));
+        paths.put("http://www.flymine.org/model/mage#PhysicalArrayDesign",
+                   Collections.singleton(desc1));
+
+        desc1 = new ItemPrefetchDescriptor("BioAssayDatum.quantitationType");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("quantitationType", "identifier"));
+
+        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
+                 "(BioAssayDatum.quantitationType).scale");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("scale", "identifier"));
+        desc1.addPath(desc2);
+        descSet.add(desc1);
+
+        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
+                  "(BioAssayDatum.quantitationType).targetQuantitationType");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic(
+                  "targetQuantitationType", "identifier"));
+        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
+                   "(BioAssayDatum.quantitationType.targetQuantitationType).scale");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("scale", "identifier"));
+        desc3.addPath(desc4);
+        desc1.addPath(desc3);
+        descSet.add(desc1);
+        //paths.put("http://www.flymine.org/model/mage#BioAssayDatum",Collections.singleton(desc1));
+        paths.put("http://www.flymine.org/model/mage#BioAssayDatum", descSet);
+
+
+        desc1 = new ItemPrefetchDescriptor("BioSequence.type");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("type", "identifier"));
+        paths.put("http://www.flymine.org/model/mage#BioSequence",
+                   Collections.singleton(desc1));
+
+        desc1 = new ItemPrefetchDescriptor("LabeledExtract.materialType");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("materialType", "identifier"));
+        paths.put("http://www.flymine.org/model/mage#LabeledExtract",
+                   Collections.singleton(desc1));
+
+        desc1 = new ItemPrefetchDescriptor("BioSource.materialType");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("materialType", "identifier"));
+        paths.put("http://www.flymine.org/model/mage#BioSource",
+                   Collections.singleton(desc1));
+
+        desc1 = new ItemPrefetchDescriptor("Treatment.action");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "action"));
+        paths.put("http://www.flymine.org/model/mage#Treatment",
+                   Collections.singleton(desc1));
+
+        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
+        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
+        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
+        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new FileReader(new File(modelName)), null, format);
+        DataTranslator dt = new MageDataTranslator(srcItemReader, model, namespace);
+        model = null;
+        dt.translate(tgtItemWriter);
+        tgtItemWriter.close();
+    }
+
 }
+
+
+
+
