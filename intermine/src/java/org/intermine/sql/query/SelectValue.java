@@ -67,4 +67,13 @@ public class SelectValue implements SQLStringable
     public int hashCode() {
         return (3 * v.hashCode()) + (5 * alias.hashCode());
     }
+
+    /**
+     * Gets the AbstractValue from this object.
+     *
+     * @return the AbstractValue of this object
+     */
+    public AbstractValue getValue() {
+        return v;
+    }
 }
