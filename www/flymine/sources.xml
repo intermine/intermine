@@ -17,6 +17,15 @@
       </description>
       <version>Release 2b</version>
     </source>
+    <source>
+      <name>Uniprot proteins</name>
+      <description>
+        Proteins for D. melanogaster, A. gambiae and C. elegans from
+        &lt;a href="http://www.ebi.uniprot.org/index.shtml">Uniprot
+        (trembl and Swissprot)&lt;/a> 
+       </description>
+       <version></version>
+     </source>
    <source>
       <name>D. melanogaster : A. gambiae orthologues.</name>
       <description>
@@ -46,6 +55,14 @@
       <description>
         2-hybrid protein-protein interactions for C. elegans (Li et al
         (2004) Science 303 540-543)
+      </description>
+      <version></version>
+    </source>
+    <source>
+      <name>D. melanogaster protein domain 3-D structure predictions.</name>
+      <description>
+        D. melanogaster protein domain 3-D structure predictions from
+        &lt;a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi&lt;/a>
       </description>
       <version></version>
     </source>
