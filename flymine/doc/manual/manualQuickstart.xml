@@ -23,7 +23,7 @@
       <item>
        Press <ulink url= "manualShowresults.xml">show results</ulink> to view your results in the <ulink url= "manualResultdisplay.xml">results page</ulink>
       </item>
-      <item>For a walk-through a simple query see the <ulink url= "/tutorials/tutorialIndex.xml">tutorials.</ulink></item>
+      <item>For a walk-through a simple query see the <ulink url= "../tutorials/tutorialIndex.xml">tutorials.</ulink></item>
       
 
   </section>
