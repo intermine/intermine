@@ -245,13 +245,17 @@ public class InitialiserPlugin implements PlugIn
             if (RequestPasswordAction.email(profile.getUsername(), password, webProperties)) {
                 pm.saveProfile(profile);
                 pm.setPassword(superuser, password);
-                Iterator iter = templateQueries.values().iterator();
-                while (iter.hasNext()) {
-                    TemplateQuery template = (TemplateQuery) iter.next();
-                    profile.saveTemplate(template.getName(), template);
-                }
             } else {
                 LOG.warn("Failed to send password notification email to superuser " + superuser);
+            }
+        } else {
+            profile = pm.getProfile(superuser, pm.getPassword(superuser));
+        }
+        if (profile.getSavedTemplates().size() == 0) {
+            Iterator iter = templateQueries.values().iterator();
+            while (iter.hasNext()) {
+                TemplateQuery template = (TemplateQuery) iter.next();
+                profile.saveTemplate(template.getName(), template);
             }
         }
     }
