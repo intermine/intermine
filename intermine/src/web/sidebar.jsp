@@ -5,6 +5,6 @@
     <tr><td align="top" height="15%"><tiles:get name="sidebarTwo"/></td></tr>
     <tr><td align="top" height="15%"></td></tr>
     <tr><td align="top" height="15%"></td></tr>  
-    <tr><td align="top" height="15%"></td></tr>
+    <tr><td align="top" height="15%"><tiles:get name="sidebarFive"/></td></tr>
 </table>
 

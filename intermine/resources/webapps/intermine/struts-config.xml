@@ -35,6 +35,10 @@
     <form-bean      name="changeResultsForm"
                     type="org.flymine.web.results.ChangeResultsForm"/>
 
+    <!-- run query has no properties, uses an DynaActionForm -->
+    <form-bean      name="runQueryForm"
+                    type="org.apache.struts.action.DynaActionForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -100,7 +104,8 @@
 
     <!-- Action to run a query for a Query object on the session -->
     <action    path="/runQuery"
-               type="org.flymine.web.RunQueryAction">
+               type="org.flymine.web.RunQueryAction"
+               name="runQueryForm">
       <forward name="results" path="results.page"/>
     </action>
 

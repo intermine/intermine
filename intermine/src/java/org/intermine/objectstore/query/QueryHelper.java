@@ -60,6 +60,7 @@ public abstract class QueryHelper
                 removeConstraints(q, qc);
             } else {
                 q.addFrom(qc);
+                q.addToSelect(qc);
             }
             addConstraint(q, generateConstraints(qc, fieldValues, fieldOps,
                                                  q.getReverseAliases(), model));
