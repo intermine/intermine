@@ -173,7 +173,6 @@ public class ExportAction extends Action
 
             wb.write(response.getOutputStream());
         } catch (ObjectStoreException e) {
-            org.intermine.web.LogMe.log("i", e);
             ActionMessages actionMessages = new ActionMessages();
             actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
                                new ActionError("errors.query.objectstoreerror"));
