@@ -10,7 +10,6 @@
     <td valign="top" width="80%">
 <tiles:get name="queryErrorMessage"/>
 <tiles:get name="fqlQuery"/>
-<tiles:get name="loadQuery"/>
     </td>
   </tr>
 </table>

@@ -11,7 +11,6 @@
     <td valign="top" width="100%">
 <tiles:get name="queryErrorMessage"/>
 <tiles:get name="queryBuild"/>
-<tiles:get name="loadQuery"/>
     </td>
   </tr>
   <tr>

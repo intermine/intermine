@@ -44,7 +44,6 @@
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="queryBuild" value="queryBuild.tile"/>
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
-    <put name="loadQuery" value="loadQuery.jsp"/>
   </definition>
   
   <definition name="fqlQueryMain.tile" path="/fqlQueryMain.jsp">
@@ -53,7 +52,6 @@
     <put name="restartQuery" value="restartQuery.jsp"/>
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="fqlQuery" value="fqlquery.jsp"/>
-    <put name="loadQuery" value="loadQuery.jsp"/>
   </definition>
   
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>

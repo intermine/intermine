@@ -84,9 +84,6 @@ public class SaveQueryAction extends Action
         savedQueriesInverse.put(clonedQuery, queryName);
 
         session.removeAttribute(Constants.QUERY);
-        session.removeAttribute("queryClass");
-        session.removeAttribute("ops");
-        session.removeAttribute("constraints");
 
         return mapping.findForward("results");
     }

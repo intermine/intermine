@@ -98,13 +98,7 @@ a:hover {color: #220077;
 .queryBuildCurrentQuery {
     margin-left: 1em;
 }
-div.savedView {
+.savedView {
+    font-size:small;
 }
-div.savedView li {
-    font-size: small;
-    color: green;
-}
-div.savedView span.title {
-    color: blue;
-    font-size: small;
-}
+

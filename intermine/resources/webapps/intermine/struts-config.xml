@@ -125,8 +125,7 @@
 
     <!-- Action to load a Query from the saved queries -->
     <action path="/loadQuery"
-            type="org.flymine.web.LoadQueryAction"
-            name="loadQueryForm">
+            type="org.flymine.web.LoadQueryAction">
       <forward name="buildquery" path="query.page"/>
     </action>
 

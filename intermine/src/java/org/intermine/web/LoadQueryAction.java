@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
+import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -28,8 +28,7 @@ import java.util.Map;
  * @author Richard Smith
  * @author Kim Rutherford
  */
-
-public class LoadQueryAction extends Action
+public class LoadQueryAction extends DispatchAction
 {
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -52,21 +51,15 @@ public class LoadQueryAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
         HttpSession session = request.getSession();
 
-        LoadQueryForm rqForm = (LoadQueryForm) form;
-        String queryName = rqForm.getQueryName();
-
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+        String queryName = (String) request.getParameter("queryName");
 
-        if ((savedQueries != null) && savedQueries.containsKey(queryName)) {
+        if (savedQueries != null && savedQueries.containsKey(queryName)) {
             session.setAttribute(Constants.QUERY, savedQueries.get(queryName));
-            session.removeAttribute("queryClass");
-            session.removeAttribute("ops");
-            session.removeAttribute("constraints");
         }
 
-        return (mapping.findForward("buildquery"));
+        return mapping.findForward("buildquery");
     }
 }
