@@ -13,7 +13,7 @@
   </html:link>
 </div>
 <div>
-  <html:link action="/bagBuilder">
+  <html:link action="/bagBuild">
     <fmt:message key="index.bagbuilder"/>
   </html:link>
 </div>
