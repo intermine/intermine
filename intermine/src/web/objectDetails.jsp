@@ -169,7 +169,7 @@ Summary for selected
                   <td width="10px">
                     <fmt:message key="objectDetails.class"/>
                   </td>
-                  <c:forEach items="${reference.identifiers}" var="entry">
+                  <c:forEach items="${reference.keyAttributes}" var="entry">
                     <td>
                       <span class="attributeField">${entry.key}</span>
                     </td>
@@ -186,7 +186,7 @@ Summary for selected
                       ${reference.cld.unqualifiedName}
                     </span>
                   </td>
-                  <c:forEach items="${reference.identifiers}" var="entry">
+                  <c:forEach items="${reference.keyAttributes}" var="entry">
                     <td>
                       <span class="value">${entry.value}</span>
                       <c:if test="${empty entry.value}">
