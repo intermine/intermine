@@ -1,7 +1,7 @@
-<%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- loadQuery.jsp -->
 <c:if test="${!empty savedQueries}">
@@ -12,7 +12,7 @@
       </c:forEach>
     </html:select>
     <html:submit property="action">
-      <bean:message key="query.load"/>
+      <fmt:message key="query.load"/>
     </html:submit>
     <br/>
   </html:form>

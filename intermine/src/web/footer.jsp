@@ -1,7 +1,7 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
+<!-- footer.jsp -->
 <table class="footer">
   <tr>
     <td align="left" width="10%">
@@ -13,7 +13,7 @@
             </a>
           </td>
           <td>
-            <bean:message key="flymine.funding"/>
+            <fmt:message key="flymine.funding"/>
           </td>
         </tr>
       </table>
@@ -32,4 +32,4 @@
     </td>
   </tr>
 </table>
-
+<!-- /footer.jsp -->
