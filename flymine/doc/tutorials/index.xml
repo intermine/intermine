@@ -2,27 +2,33 @@
 <!-- -*- DocBook -*- -->
 
 <article>
+  <sect1>
+    <title>Query Tutorials</title>
+    <para>
+      The following tutorials will guide you through gradually more complex
+      queries.  NOTE: It is recommended that you read the <ulink url =
+      "../manual/manualQuickstart.xml">quick start guide</ulink> before you
+      attempt these tutorials.
+    </para>
 
-
-    <sect1>
-       <title>Query Tutorials</title>
-        <para>The following tutorials will guide you through gradually more complex queries.  NOTE: It is recommended that you read the <ulink url = "../manual/manualQuickstart.xml">quick start guide</ulink> before you attempt these tutorials.</para>
-
-
-
-        <para>
-          <orderedlist>
-
-             <listitem><ulink url="queryTutorial1.xml">Tutorial1</ulink>: Show the names of all genes in FlyMine</listitem>
-             <listitem><ulink url="queryTutorial3.xml">Tutorial2</ulink>: Show the names of all the genes from Drosophila melanogaster</listitem>
-             <listitem><ulink url="queryTutorial4.xml">Tutorial3</ulink>: Show the Orthologues between Drosophila melanogaster and Anophelese gambiae and how these were determined</listitem>
-              </orderedlist>
-
-        </para>
-
-     
-
-  
-
-</sect1>
+    <para>
+      <orderedlist>
+        
+        <listitem>
+          <ulink url="tutorial1.xml">Tutorial1</ulink>: Show
+          the names of all genes in FlyMine
+        </listitem> 
+        <listitem>
+          <ulink url="tutorial2.xml">Tutorial2</ulink>: Show
+          the names of all the genes from Drosophila
+          melanogaster
+        </listitem> 
+        <listitem>
+          <ulink url="tutorial3.xml">Tutorial3</ulink>: Show
+          the Orthologues between Drosophila melanogaster and Anophelese
+          gambiae and how these were determined
+        </listitem> 
+      </orderedlist>
+    </para>
+  </sect1>
 </article>
