@@ -131,7 +131,7 @@ public class MainController extends TilesAction
         }
 
         // constraint display values
-        request.setAttribute("constraintDisplayValues", makeConstraintDisplayMap(query));
+        request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         request.setAttribute("viewPaths", listToMap(query.getView()));
         
@@ -149,29 +149,6 @@ public class MainController extends TilesAction
         request.setAttribute("navigation", navigation);
 
         return null;
-    }
-
-    /**
-     * Create constraint values for display. Returns a Map from Constraint to String
-     * for each Constraint in the path query.
-     *
-     * @param pathquery  the PathQuery to look at
-     * @return           Map from Constraint to displat value
-     */
-    protected static Map makeConstraintDisplayMap(PathQuery pathquery) {
-        Map map = new HashMap();
-        Iterator iter = pathquery.getNodes().values().iterator();
-        while (iter.hasNext()) {
-            PathNode node = (PathNode) iter.next();
-            Iterator citer = node.getConstraints().iterator();
-            while (citer.hasNext()) {
-                Constraint con = (Constraint) citer.next();
-                ConstraintOp op = con.getOp();
-                
-                map.put(con, con.getDisplayValue(node));
-            }
-        }
-        return map;
     }
     
     /**
