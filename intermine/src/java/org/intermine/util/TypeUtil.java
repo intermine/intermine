@@ -377,6 +377,20 @@ public class TypeUtil
         }
         return value;
     }
+    
+    /**
+     * Returns a String for a given object
+     *
+     * @param value the value to convert
+     * @return the string representation
+     */
+    public static String objectToString(Object value) {
+        if (value instanceof Date) {
+            return "" + ((Date) value).getTime();
+        } else {
+            return value.toString();
+        }
+    }
 
     /**
      * Inner class to hold info on a field.

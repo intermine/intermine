@@ -11,7 +11,6 @@ package org.flymine.xml.full;
  */
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Arrays;
@@ -179,13 +178,9 @@ public class FullRenderer
                     if (!fieldname.equalsIgnoreCase("id")) {
                         sb.append("<field name=\"")
                             .append(fieldname)
-                            .append("\" value=\"");
-                        if (value instanceof Date) {
-                            sb.append(((Date) value).getTime());
-                        } else {
-                            sb.append(value);
-                        }
-                        sb.append("\"/>" + ENDL);
+                            .append("\" value=\"")
+                            .append(TypeUtil.objectToString(value))
+                            .append("\"/>" + ENDL);
                     }
                 }
             }
