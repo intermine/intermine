@@ -175,6 +175,7 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to get class count for " + className, e);
             }
         }
+        servletContext.setAttribute(Constants.OBJECT_STORE_SUMMARY, oss);
         servletContext.setAttribute("classes", classes);
         servletContext.setAttribute("classCounts", classCounts);
     }
@@ -199,7 +200,7 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
+     * Read the template queries into the TEMPLATE_QUERIES servlet context attribute.
      */
     private void loadTemplateQueries(ServletContext servletContext) throws ServletException {
         InputStream templateQueriesStream =
