@@ -180,7 +180,7 @@
     </module>
 
     <module name="LeftCurly">
-      <property name="option" value="nlow"/>
+      <property name="option" value="eol"/>
       <property name="tokens" value="CTOR_DEF, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, METHOD_DEF"/>
     </module>
 

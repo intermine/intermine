@@ -82,4 +82,32 @@ public class Constant extends AbstractValue
         }
         return false;
     }
+
+    /**
+     * Compare this Constant to another AbstractValue, ignoring alias.
+     * This method is capable of spotting some situations when one Constant is strictly less or
+     * greater than another.
+     *
+     * @see AbstractValue#compare
+     */
+    public int compare(AbstractValue obj) {
+        if (equalsIgnoreAlias(obj)) {
+            return EQUAL;
+        }
+        if (obj instanceof Constant) {
+            Constant objC = (Constant) obj;
+            if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'') 
+                    && (objC.value.charAt(0) == '\'')
+                    && (objC.value.charAt(value.length() - 1) == '\'')) {
+                return (value.compareTo(objC.value) < 0 ? LESS : GREATER);
+            }
+            try {
+                return (Double.parseDouble(value) < Double.parseDouble(objC.value) ? LESS
+                        : GREATER);
+            } catch (NumberFormatException e) {
+                // That's not a problem
+            }
+        }
+        return INCOMPARABLE;
+    }
 }

@@ -50,4 +50,4 @@ public abstract class AbstractTable
      * @return true if obj is equal
      */
     public abstract boolean equalsIgnoreAlias(AbstractTable obj);
-  }
+}

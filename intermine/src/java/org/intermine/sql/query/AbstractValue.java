@@ -9,6 +9,23 @@ package org.flymine.sql.query;
  */
 public abstract class AbstractValue
 {
+    /**
+     * Describes two AbstractValues as being equal.
+     */
+    public static final int EQUAL = 0;
+    /**
+     * Describes one AbstractValue as being less than another AbstractValue.
+     */
+    public static final int LESS = 1;
+    /**
+     * Describes one AbstractValue as being greater than another AbstractValue.
+     */
+    public static final int GREATER = 2;
+    /**
+     * Describes one AbstractValue as being incomparable to another AbstractValue.
+     */
+    public static final int INCOMPARABLE = 3;
+
     protected String alias;
 
     /**
@@ -50,4 +67,39 @@ public abstract class AbstractValue
      * @return true if obj is equal
      */
     public abstract boolean equalsIgnoreAlias(AbstractValue obj);
+
+    /**
+     * Compare the value of this AbstractValue with another. This only really makes sense with
+     * Constants.
+     *
+     * @param obj an AbstractValue to compare to
+     * @return EQUAL, LESS, GREATER, or INCOMPARABLE
+     */
+    public int compare(AbstractValue obj) {
+        return (equalsIgnoreAlias(obj) ? EQUAL : INCOMPARABLE);
+    }
+
+    /**
+     * Compare the value of this AbstractValue with another to see if it is less. This only really
+     * makes sense with Constants. It uses the compare method of AbstractValue. Note that the
+     * result being false does not imply greater than or equal - it may be incomparable.
+     *
+     * @param obj an AbstractValue to compare to
+     * @return true if this is less than obj
+     */
+    public boolean lessThan(AbstractValue obj) {
+        return (compare(obj) == LESS);
+    }
+
+    /**
+     * Compare this value of this AbstractValue with another to see if it is more. This only really
+     * makes sense with Constants. It uses the compare method of AbstractValue. Note that the
+     * result being false does not imply less than or equal - it may be incomparable.
+     *
+     * @param obj an AbstractValue to compare to
+     * @return true if this is more than obj
+     */
+    public boolean greaterThan(AbstractValue obj) {
+        return (compare(obj) == GREATER);
+    }
 }

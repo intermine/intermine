@@ -4,25 +4,22 @@ import junit.framework.*;
 
 public class ConstantTest extends TestCase
 {
-    private Constant c1;
-    private Constant c2;
-    private Constant c3;
-    private Constant c4;
-    private Constant c5;
-    private Constant c6;
+    private Constant c1, c2, c3, c4, c5, c6, c7, c8, c9;
     
     public ConstantTest(String arg1) {
         super(arg1);
     }
 
-    public void setUp()
-    {
-        c1 = new Constant("value1", "alias1");
-        c2 = new Constant("value1", "alias2");
-        c3 = new Constant("value1");
-        c4 = new Constant("value1", "alias1");
-        c5 = new Constant("value2", "alias3");
-        c6 = new Constant("value1");
+    public void setUp() {
+        c1 = new Constant("'value1'", "'alias1'");
+        c2 = new Constant("'value1'", "'alias2'");
+        c3 = new Constant("'value1'");
+        c4 = new Constant("'value1'", "'alias1'");
+        c5 = new Constant("'value2'", "'alias3'");
+        c6 = new Constant("'value1'");
+        c7 = new Constant("5");
+        c8 = new Constant("6");
+        c9 = new Constant("flibble");
     }
         
     public void testConstantWithAlias() throws Exception {
@@ -78,5 +75,16 @@ public class ConstantTest extends TestCase
         assertTrue("Expected c1.hashCode() not to equal c5.hashCode()",
                    !(c1.hashCode() == c5.hashCode()));
         assertEquals(c3.hashCode(), c6.hashCode());
+    }
+
+    public void testCompare() throws Exception {
+        assertEquals(AbstractValue.INCOMPARABLE, c5.compare(c7));
+        assertEquals(AbstractValue.INCOMPARABLE, c8.compare(c3));
+        assertEquals(AbstractValue.INCOMPARABLE, c9.compare(c1));
+        assertEquals(AbstractValue.INCOMPARABLE, c9.compare(c7));
+        assertEquals(AbstractValue.LESS, c6.compare(c5));
+        assertEquals(AbstractValue.GREATER, c5.compare(c6));
+        assertEquals(AbstractValue.LESS, c7.compare(c8));
+        assertEquals(AbstractValue.GREATER, c8.compare(c7));
     }
 }

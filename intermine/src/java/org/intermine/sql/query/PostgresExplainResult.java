@@ -54,8 +54,7 @@ public class PostgresExplainResult extends ExplainResult
      * @throws NullPointerException if text is null
      */
     void parseWarningString(String text) throws IllegalArgumentException,
-                                                NullPointerException
-    {
+                                                NullPointerException {
         int nextToken = text.indexOf("(cost=") + 6;
         if (nextToken < 6) {
             throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"(cost=\""));
