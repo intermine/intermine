@@ -91,13 +91,26 @@ public class GFF3Converter
     public void parse(BufferedReader bReader) throws java.io.IOException, ObjectStoreException {
         List list = new ArrayList();
         GFF3Record record;
+        long start, now, opCount;
+
         list = parser.parse(bReader);
         writer.store(ItemHelper.convert(organism));
         writer.store(ItemHelper.convert(infoSource));
 
+        System.err.println("Total " + list.size() + " lines in file");
+        LOG.info("Total " + list.size() + " lines in file");
+        opCount = 0;
+        start = System.currentTimeMillis();
         for (int i = 0; i < list.size(); i++) {
             record = (GFF3Record) list.get(i);
             process(record);
+            opCount++;
+            if (opCount % 1000 == 0) {
+                now = System.currentTimeMillis();
+                System.err.println("processed " + opCount + " lines --took " + (now - start) + " ms");
+                LOG.info("processed " + opCount + " lines --took " + (now - start) + " ms");
+                start = System.currentTimeMillis();
+            }
         }
 
         // write ComputationalAnalysis items
@@ -133,38 +146,43 @@ public class GFF3Converter
             feature.addAttribute(new Attribute("name", record.getName()));
         }
         feature.addReference(getOrgRef());
-        result.add(feature);
 
         Item location = createItem(targetNameSpace + "Location", "");
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
-        if (record.getStrand().equals("+")) {
+        if (record.getStrand() == null ||record.getStrand().equals(".")) {
+            location.addAttribute(new Attribute("strand", "0"));
+        } else if (record.getStrand().equals("+")) {
             location.addAttribute(new Attribute("strand", "1"));
         } else if (record.getStrand().equals("-")) {
             location.addAttribute(new Attribute("strand", "-1"));
-        } else if (record.getStrand().equals(".")) {
-            location.addAttribute(new Attribute("strand", "0"));
         }
-
+        if (record.getPhase() != null) {
+            location.addAttribute(new Attribute("phase", record.getPhase()));
+        }
         location.addReference(new Reference("object", seq.getIdentifier()));
         location.addReference(new Reference("subject", feature.getIdentifier()));
         location.addCollection(new ReferenceList("evidence",
                             Arrays.asList(new Object[] {infoSource.getIdentifier()})));
         result.add(location);
 
-        if (String.valueOf(record.getScore()) != null) {
-            Item computationalAnalysis = getComputationalAnalysis(record.getSource());
 
-            Item computationalResult = createItem(targetNameSpace + "ComputationalResult", "");
+        Item computationalResult = createItem(targetNameSpace + "ComputationalResult", "");
+        if (String.valueOf(record.getScore()) != null) {
             computationalResult.addAttribute(new Attribute("score",
-                                                           String.valueOf(record.getScore())));
-            computationalResult.addReference(new Reference("analysis",
-                                                           computationalAnalysis.getIdentifier()));
-            ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
-                {computationalResult.getIdentifier(), infoSource.getIdentifier()}));
-            feature.addCollection(evidence);
-            result.add(computationalResult);
+                                             String.valueOf(record.getScore())));
         }
+        if (record.getSource() != null) {
+            Item computationalAnalysis = getComputationalAnalysis(record.getSource());
+            computationalResult.addReference(new Reference("analysis",
+                                             computationalAnalysis.getIdentifier()));
+        }
+        result.add(computationalResult);
+
+        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
+                {computationalResult.getIdentifier(), infoSource.getIdentifier()}));
+        feature.addCollection(evidence);
+        result.add(feature);
 
         try {
             Iterator iter = result.iterator();
@@ -175,7 +193,6 @@ public class GFF3Converter
             LOG.error("Problem writing item to the itemwriter");
             throw e;
         }
-
     }
 
     /**

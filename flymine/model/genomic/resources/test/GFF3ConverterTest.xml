@@ -1,13 +1,20 @@
 <items>
-<item id="0_6" class="http://www.flymine.org/model/genomic#ComputationalResult">
-<attribute name="score" value="1000.0"/>
-<reference name="analysis" ref_id="0_5"/>
+<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="abbreviation" value="HS"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#InfoSource">
 <attribute name="title" value="UCSC"/>
 </item>
-<item id="0_7" class="http://www.flymine.org/model/genomic#Chromosome">
-<attribute name="identifier" value="2"/>
+<item id="0_2" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="1"/>
+</item>
+<item id="0_3" class="http://www.flymine.org/model/genomic#Promoter">
+<attribute name="identifier" value="promoter(90+)"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence">
+<reference ref_id="0_5"/>
+<reference ref_id="0_1"/>
+</collection>
 </item>
 <item id="0_4" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="2097274"/>
@@ -19,8 +26,23 @@
 <reference ref_id="0_1"/>
 </collection>
 </item>
-<item id="0_2" class="http://www.flymine.org/model/genomic#Chromosome">
-<attribute name="identifier" value="1"/>
+<item id="0_6" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+<attribute name="algorithm" value="firstEF"/>
+</item>
+<item id="0_5" class="http://www.flymine.org/model/genomic#ComputationalResult">
+<attribute name="score" value="1000.0"/>
+<reference name="analysis" ref_id="0_6"/>
+</item>
+<item id="0_7" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="2"/>
+</item>
+<item id="0_8" class="http://www.flymine.org/model/genomic#Promoter">
+<attribute name="identifier" value="promoter(2179-)"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence">
+<reference ref_id="0_10"/>
+<reference ref_id="0_1"/>
+</collection>
 </item>
 <item id="0_9" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="2097419"/>
@@ -32,6 +54,10 @@
 <reference ref_id="0_1"/>
 </collection>
 </item>
+<item id="0_10" class="http://www.flymine.org/model/genomic#ComputationalResult">
+<attribute name="score" value="1000.0"/>
+<reference name="analysis" ref_id="0_6"/>
+</item>
 <item id="0_11" class="http://www.flymine.org/model/genomic#Exon">
 <attribute name="identifier" value="exon(2179-)#2"/>
 <reference name="organism" ref_id="0_0"/>
@@ -39,33 +65,6 @@
 <reference ref_id="0_13"/>
 <reference ref_id="0_1"/>
 </collection>
-</item>
-<item id="0_8" class="http://www.flymine.org/model/genomic#Promoter">
-<attribute name="identifier" value="promoter(2179-)"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="evidence">
-<reference ref_id="0_10"/>
-<reference ref_id="0_1"/>
-</collection>
-</item>
-<item id="0_10" class="http://www.flymine.org/model/genomic#ComputationalResult">
-<attribute name="score" value="1000.0"/>
-<reference name="analysis" ref_id="0_5"/>
-</item>
-<item id="0_3" class="http://www.flymine.org/model/genomic#Promoter">
-<attribute name="identifier" value="promoter(90+)"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="evidence">
-<reference ref_id="0_6"/>
-<reference ref_id="0_1"/>
-</collection>
-</item>
-<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="abbreviation" value="HS"/>
-</item>
-<item id="0_13" class="http://www.flymine.org/model/genomic#ComputationalResult">
-<attribute name="score" value="919.0"/>
-<reference name="analysis" ref_id="0_5"/>
 </item>
 <item id="0_12" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="2097289"/>
@@ -77,7 +76,9 @@
 <reference ref_id="0_1"/>
 </collection>
 </item>
-<item id="0_5" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
-<attribute name="algorithm" value="firstEF"/>
+<item id="0_13" class="http://www.flymine.org/model/genomic#ComputationalResult">
+<attribute name="score" value="919.0"/>
+<reference name="analysis" ref_id="0_6"/>
 </item>
 </items>
+
