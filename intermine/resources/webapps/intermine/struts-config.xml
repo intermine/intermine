@@ -329,7 +329,7 @@
             name="mainForm"
             parameter="action"
             input="query">
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
 
     <action path="/iqlQueryAction"
