@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import org.flymine.metadata.*;
-import org.flymine.FlyMineException;
 
 /**
  * Static methods to assist with query generation from front end.
@@ -39,10 +38,10 @@ public abstract class QueryHelper
      * @param fieldValues map of fieldname/value to build constraints from
      * @param fieldOps map of fieldname/operation to build constraints from
      * @param model the business model
-     * @throws FlyMineException if an error occurs
+     * @throws Exception if an error occurs
      */
     public static void addToQuery(Query q, QueryClass qc, Map fieldValues,
-                                  Map fieldOps, Model model) throws FlyMineException {
+                                  Map fieldOps, Model model) throws Exception {
         if (q == null) {
             throw new NullPointerException("Query q parameter is null");
         } else if (qc == null) {
@@ -55,21 +54,16 @@ public abstract class QueryHelper
             throw new NullPointerException("model parameter is null");
         }
 
-        try {
-            // if QueryClass already on query, remove existing constraints and
-            // generate again
-            if (q.getFrom().contains(qc)) {
-                removeConstraints(q, qc, false);
-            } else {
-                q.addFrom(qc);
-                q.addToSelect(qc);
-            }
-            addConstraint(q, generateConstraints(qc, fieldValues, fieldOps,
-                                                 q.getReverseAliases(), model));
-        } catch (Exception e) {
-            throw new FlyMineException("Problem occurred adding class ("
-                                       + qc.getType().getName() + ") to query: " + e);
+        // if QueryClass already on query, remove existing constraints and
+        // generate again
+        if (q.getFrom().contains(qc)) {
+            removeConstraints(q, qc, false);
+        } else {
+            q.addFrom(qc);
+            q.addToSelect(qc);
         }
+        addConstraint(q, generateConstraints(qc, fieldValues, fieldOps,
+                                             q.getReverseAliases(), model));
     }
 
     /**
@@ -116,8 +110,12 @@ public abstract class QueryHelper
             Map.Entry fieldEntry = (Map.Entry) iter.next();
             String fieldValue = (String) fieldEntry.getValue();
             if (!"".equals(fieldValue)) {
-                FieldDescriptor field = cld.getFieldDescriptorByName((String) fieldEntry.getKey());
-                Integer opCode = Integer.valueOf((String) fieldOps.get(field.getName()));
+                String fieldName = (String) fieldEntry.getKey();
+                Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
+                if (fieldName.indexOf("#") != -1) {
+                    fieldName = fieldName.substring(0, fieldName.indexOf("#"));
+                }
+                FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
                 if (field instanceof AttributeDescriptor) {
                     QueryField qf = new QueryField(qc, field.getName());

@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +30,7 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.metadata.ReferenceDescriptor;
@@ -72,56 +75,85 @@ public class QueryBuildController extends TilesAction
             request.setAttribute("cld", cld);
 
             // if editing a QueryClass already on query need to populate form
+            Map aliasMap = new HashMap();
+            List constraints = new ArrayList();
             Query q = (Query) session.getAttribute("query");
             if (q != null) {
                 request.setAttribute("aliases", getAliases(cld, q));
+                aliasMap = q.getAliases();
+                constraints = ConstraintHelper.createList(q, qc);
 
                 String alias = (String) q.getAliases().get(qc);
                 if (alias != null) {
-                    populateQueryBuildForm((QueryBuildForm) form, q, qc);
                     request.setAttribute("aliasStr", alias);
                 }
+
             }
+
+            Map fields = populateQueryBuildForm((QueryBuildForm) form, cld, constraints, aliasMap);
+            request.setAttribute("fields", fields);
+
         }
         return null;
     }
 
     /**
-     * Editing an QueryClass already on query so need to fill in form from
-     * constraints already on query.
+     * Editing a QueryClass already on query so need to fill in form from
+     * constraints already on query.  Returns a map of fieldname vs a list
+     * of fieldname#number for the number of times that field shouls be drawn.
      *
      * @param form the QueryBuildForm to populate
-     * @param q the query being constructed
-     * @param qc the QueryClass being edited
+     * @param cld the class to be displayed
+     * @param constraints a list of contraints applied to this class
+     * @param aliasMap map of QueryClass/alias for the query
+     * @return a map of fieldname/list of fieldname#number
      * @throws Exception if anything goes wrong
      */
-    protected void populateQueryBuildForm(QueryBuildForm form, Query q, QueryClass qc)
-        throws Exception {
+    protected Map populateQueryBuildForm(QueryBuildForm form, ClassDescriptor cld, List constraints,
+                                         Map aliasMap) throws Exception {
 
-        List constraints = ConstraintHelper.createList(q, qc);
+        // all fields need at least one entry in fieldMap, track how many
+        Map fieldMap = new HashMap();
+        Map fieldNums = new HashMap();
+        for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext(); ) {
+            String fieldName = ((FieldDescriptor) iter.next()).getName();
+            fieldNums.put(fieldName, new Integer(0));
+            String fieldNameNum = fieldName + "#0";
+            fieldMap.put(fieldName, new HashSet(Collections.singleton(fieldNameNum)));
+        }
 
-        Iterator iter = constraints.iterator();
-        while (iter.hasNext()) {
-            Constraint c = (Constraint) iter.next();
+        // insert data into form where fieldnames are fieldname#number
+        Map fieldValues = new HashMap();
+        Iterator conIter = constraints.iterator();
+        while (conIter.hasNext()) {
+            Constraint c = (Constraint) conIter.next();
             if (c instanceof SimpleConstraint) {
                 SimpleConstraint sc = (SimpleConstraint) c;
                 if ((sc.getArg1() instanceof QueryField)  && (sc.getArg2() instanceof QueryValue)) {
-                    form.setFieldValue(((QueryField) sc.getArg1()).getFieldName(),
-                                       ((QueryValue) sc.getArg2()).getValue());
+                    String fieldName = ((QueryField) sc.getArg1()).getFieldName();
+                    int num = ((Integer) fieldNums.get(fieldName)).intValue();
+                    fieldNums.put(fieldName, new Integer(num + 1));
+                    String fieldNameNum = fieldName + "#" + Integer.toString(num);
+                    ((HashSet) fieldMap.get(fieldName)).add(fieldNameNum);
 
-                    form.setFieldOp(((QueryField) sc.getArg1()).getFieldName(),
-                                    sc.getType().getIndex());
+                    form.setFieldValue(fieldNameNum, ((QueryValue) sc.getArg2()).getValue());
+                    form.setFieldOp(fieldNameNum, sc.getType().getIndex());
                 }
             } else if (c instanceof ContainsConstraint) {
                 ContainsConstraint cc = (ContainsConstraint) c;
                 String fieldName = cc.getReference().getFieldName();
-                form.setFieldValue(fieldName, (String) q.getAliases()
-                                   .get(cc.getQueryClass()));
+                int num = ((Integer) fieldNums.get(fieldName)).intValue();
+                fieldNums.put(fieldName, new Integer(num + 1));
+                String fieldNameNum = fieldName + "#" + Integer.toString(num);
+                ((HashSet) fieldMap.get(fieldName)).add(fieldNameNum);
 
-                form.setFieldOp(fieldName, cc.getType().getIndex());
+                form.setFieldValue(fieldNameNum, (String) aliasMap.get(cc.getQueryClass()));
+                form.setFieldOp(fieldNameNum, cc.getType().getIndex());
             }
         }
+        return fieldMap;
     }
+
 
     /**
      * This method returns a map from field names to a map of operation codes to operation strings
