@@ -77,6 +77,10 @@ public class EnsemblDataTranslator extends DataTranslator
     private String orgAbbrev;
     private Item organism;
     private Reference orgRef;
+    private Map proteins = new HashMap();
+    private Map proteinIds = new HashMap();
+    private Set proteinSynonyms = new HashSet();
+
 
     /**
      * @see DataTranslator#DataTranslator
@@ -115,6 +119,15 @@ public class EnsemblDataTranslator extends DataTranslator
                 tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
             }
         }
+        i = proteins.values().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+        i = proteinSynonyms.iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
         if (flybaseDb != null) {
             tgtItemWriter.store(ItemHelper.convert(flybaseDb));
         }
@@ -200,13 +213,18 @@ public class EnsemblDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "residues", "dna", "sequence");
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+
                     Item geneRelation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, geneRelation, "objects", true, "subject", false);
                     moveField(srcItem, geneRelation, "gene", "object");
                     result.add(geneRelation);
+
+                    String translationId = srcItem.getReference("translation").getRefId();
+                    String proteinId = getChosenProteinId(translationId, srcNs);
+                    tgtItem.addReference(new Reference("protein", proteinId));
                     Item transRelation = createItem(tgtNs + "SimpleRelation", "");
+                    transRelation.addReference(new Reference("subject", proteinId));
                     addReferencedItem(tgtItem, transRelation, "subjects", true, "object", false);
-                    moveField(srcItem, transRelation, "translation", "subject");
                     result.add(transRelation);
                     // display_labels are not unique
                     //promoteField(tgtItem, srcItem, "identifie", "display_xref", "display_label");
@@ -222,8 +240,12 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
-                    tgtItem.addReference(getEnsemblRef());
-                    tgtItem.addAttribute(new Attribute("type", "accession"));
+                    if (className.equals(srcNs + "translation_stable_id")) {
+                        storeTgtItem = false;
+                    } else {
+                        tgtItem.addReference(getEnsemblRef());
+                        tgtItem.addAttribute(new Attribute("type", "accession"));
+                    }
                 } else if ("clone".equals(className)) {
                     // clone embl_acc needs to be a synonym in embl database
 
@@ -237,14 +259,13 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("chromosome".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                 } else if ("translation".equals(className)) {
-                    tgtItem.addReference(getOrgRef());
-
                     // no UNIPROT id is available so id will be ensembl stable id
-                    Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
-                    if (stableId != null) {
-                        moveField(stableId, tgtItem, "stable_id", "identifier");
-                    }
-                    result.addAll(setProteinIdentifiers(srcItem, tgtItem, srcNs));
+                    // Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
+//                     if (stableId != null) {
+//                         moveField(stableId, tgtItem, "stable_id", "identifier");
+//                     }
+                    getProteinByPrimaryAccession(srcItem, srcNs);
+                    storeTgtItem = false;
                 }
 
                 if (storeTgtItem) {
@@ -460,6 +481,125 @@ public class EnsemblDataTranslator extends DataTranslator
             // or could set primaryAccession to be ensembl stable id
         }
         return synonyms;
+    }
+
+
+    private String getChosenProteinId(String id, String srcNs) throws ObjectStoreException {
+        String chosenId = (String) proteinIds.get(id);
+        if (chosenId == null) {
+            Item translation = ItemHelper.convert(srcItemReader.getItemById(id));
+            chosenId = getProteinByPrimaryAccession(translation, srcNs).getIdentifier();
+            proteinIds.put(id, chosenId);
+        }
+        return chosenId;
+    }
+
+    private Item getProteinByPrimaryAccession(Item srcItem, String srcNs) throws ObjectStoreException {
+        Item protein = createItem(tgtNs + "Protein", "");
+
+        Set synonyms = new HashSet();
+        String value = srcItem.getIdentifier();
+        Set constraints = new HashSet();
+        constraints.add(new FieldNameAndValue("className", srcNs + "object_xref", false));
+        constraints.add(new FieldNameAndValue("ensembl", value, true));
+        Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
+        // set specific ids and add synonyms
+
+        String swissProtId = null;
+        String tremblId = null;
+        String emblId = null;
+        while (objectXrefs.hasNext()) {
+            Item objectXref = ItemHelper.convert(
+                                  (org.intermine.model.fulldata.Item) objectXrefs.next());
+            Item xref = ItemHelper.convert(srcItemReader
+                        .getItemById(objectXref.getReference("xref").getRefId()));
+
+            String accession = null;
+            String dbname = null;
+            if (xref != null) {
+                accession = xref.getAttribute("dbprimary_acc").getValue();
+                Item externalDb = ItemHelper.convert(srcItemReader
+                                  .getItemById(xref.getReference("external_db").getRefId()));
+                if (externalDb != null) {
+                    dbname =  externalDb.getAttribute("db_name").getValue();
+                }
+            }
+            //LOG.error("processing: " + accession + ", " + dbname);
+
+            if (accession != null && !accession.equals("")
+                && dbname != null && !dbname.equals("")) {
+                if (dbname.equals("SWISSPROT")) {
+                    swissProtId = accession;
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
+                    synonym.addReference(getSwissprotRef());
+                    synonyms.add(synonym);
+                } else if (dbname.equals("SPTREMBL")) {
+                    tremblId = accession;
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
+                    synonym.addReference(getTremblRef());
+                    synonyms.add(synonym);
+                } else if (dbname.equals("protein_id")) {
+                    emblId = accession;
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
+                    synonym.addReference(getEmblRef());
+                    synonyms.add(synonym);
+                } else if (dbname.equals("prediction_SPTREMBL")) {
+                    emblId = accession;
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
+                    synonym.addReference(getEmblRef());
+                    synonyms.add(synonym);
+                }
+            }
+        }
+
+        String primaryAcc = null;
+        if (swissProtId != null) {
+            primaryAcc = swissProtId;
+        } else if (tremblId != null) {
+            primaryAcc = tremblId;
+        } else if (emblId != null) {
+            primaryAcc = emblId;
+        } else {
+            // there was no protein identifier so use ensembl stable id - do nothing?
+            // or could set primaryAccession to be ensembl stable id
+        }
+        protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
+
+        Item chosenProtein = (Item) proteins.get(primaryAcc);
+        if (chosenProtein == null) {
+            // set up additional references/collections
+            protein.addReference(getOrgRef());
+            if (srcItem.hasReference("seq_start")) {
+                protein.addReference(new Reference("translationStart", srcItem.getReference("seq_start").getRefId()));
+            }
+            if (srcItem.hasReference("seq_end")) {
+                protein.addReference(new Reference("translationEnd", srcItem.getReference("seq_end").getRefId()));
+            }
+            if (srcItem.hasReference("start_exon")) {
+                protein.addReference(new Reference("startExon", srcItem.getReference("start_exon").getRefId()));
+            }
+            if (srcItem.hasReference("end_exon")) {
+                protein.addReference(new Reference("endExon", srcItem.getReference("end_exon").getRefId()));
+            }
+            proteins.put(primaryAcc, protein);
+            proteinSynonyms.addAll(synonyms);
+            chosenProtein = protein;
+        }
+
+        proteinIds.put(srcItem.getIdentifier(), chosenProtein.getIdentifier());
+        return chosenProtein;
     }
 
     /**
@@ -740,7 +880,26 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new FieldNameAndValue("className",
                     "http://www.flymine.org/model/ensembl#transcript_stable_id", false));
         descSet.add(desc);
+        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
+                "(transcript.translation");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("translation", "identifier"));
+        desc.addPath(desc2);
+        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
+                "((gene <- transcript.gene).translation <- object_xref.ensembl)");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "ensembl"));
+        desc3.addConstraint(new FieldNameAndValue("className",
+                    "http://www.flymine.org/model/ensembl#object_xref", false));
+        desc2.addPath(desc3);
+        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
+                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("xref", "identifier"));
+        desc3.addPath(desc4);
+        ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
+                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
+        desc5.addConstraint(new ItemPrefetchConstraintDynamic("external_db", "identifier"));
+        desc4.addPath(desc5);
         paths.put("http://www.flymine.org/model/ensembl#transcript", descSet);
+
 
         descSet = new HashSet();
         //desc = new ItemPrefetchDescriptor("gene.display_xref");
@@ -755,22 +914,22 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "gene"));
         desc.addConstraint(new FieldNameAndValue("className",
                     "http://www.flymine.org/model/ensembl#transcript", false));
-        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
+        desc2 = new ItemPrefetchDescriptor(
                 "(gene <- transcript.gene).translation");
         descSet.add(desc);
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("translation", "identifier"));
         desc.addPath(desc2);
-        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
+        desc3 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl)");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "ensembl"));
         desc3.addConstraint(new FieldNameAndValue("className",
                     "http://www.flymine.org/model/ensembl#object_xref", false));
         desc2.addPath(desc3);
-        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
+        desc4 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
         desc4.addConstraint(new ItemPrefetchConstraintDynamic("xref", "identifier"));
         desc3.addPath(desc4);
-        ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
+        desc5 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
         desc5.addConstraint(new ItemPrefetchConstraintDynamic("external_db", "identifier"));
         desc4.addPath(desc5);
