@@ -1040,6 +1040,7 @@ public class Query implements SQLStringable
                 case SqlTokenTypes.CONSTRAINT:
                 case SqlTokenTypes.NOT_CONSTRAINT:
                 case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                case SqlTokenTypes.INLIST_CONSTRAINT:
                 case SqlTokenTypes.NULL_CONSTRAINT:
                     addWhere(processNewAbstractConstraint(ast));
                     break;
@@ -1067,6 +1068,7 @@ public class Query implements SQLStringable
                 case SqlTokenTypes.CONSTRAINT:
                 case SqlTokenTypes.NOT_CONSTRAINT:
                 case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                case SqlTokenTypes.INLIST_CONSTRAINT:
                 case SqlTokenTypes.NULL_CONSTRAINT:
                     addHaving(processNewAbstractConstraint(ast));
                     break;
@@ -1139,6 +1141,17 @@ public class Query implements SQLStringable
                 Query rightb = new Query(aliasToTable);
                 rightb.processSqlStatementAST(subAST);
                 return new SubQueryConstraint(leftb, rightb);
+            case SqlTokenTypes.INLIST_CONSTRAINT:
+                subAST = ast.getFirstChild();
+                AbstractValue leftc = processNewAbstractValue(subAST);
+                subAST = subAST.getNextSibling();
+                InListConstraint retval = new InListConstraint(leftc);
+                while (subAST != null) {
+                    AbstractValue rightc = processNewAbstractValue(subAST);
+                    retval.add((Constant) rightc);
+                    subAST = subAST.getNextSibling();
+                }
+                return retval;
             default:
                 throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]"));

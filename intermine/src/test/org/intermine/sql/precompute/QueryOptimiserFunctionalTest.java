@@ -156,6 +156,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         queries.put("table2Table3groupByAvg", "SELECT table2.col1, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
         queries.put("table2Table3groupByAvgHaving", "SELECT table2.col1 AS wotsit, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 HAVING avg(table2.col2 + table3.col2) > " + (DATA_SIZE/5) + " ORDER BY table2.col1");
         queries.put("table4Sorted", "SELECT table4.col1, table4.col2, table4.col3 FROM table4 ORDER BY table4.col1, table4.col2, table4.col3");
+        queries.put("inList", "SELECT table2.col1, table2.col2 FROM table2 WHERE table2.col2 IN (5, 7, 8, 12) AND table2.col1 < " + (DATA_SIZE/2) + " ORDER BY table2.col1, table2.col2");
     }
 
     // Add some precomputed tables into the database

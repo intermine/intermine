@@ -23,9 +23,9 @@ else
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/lib:/usr/lib/jni
 fi
 
-echo "Using classpath: $CP"
-echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-echo "Calling java -cp $CP org.intermine.sql.query.Query \"$1\""
+#echo "Using classpath: $CP"
+#echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+#echo "Calling java -cp $CP org.intermine.sql.query.Query \"$1\""
 
 java -cp $CP org.intermine.sql.query.Query "$1"
 
