@@ -23,7 +23,7 @@ import org.flymine.metadata.MetaDataException;
  * @author Mark Woodbridge
  */
 public class ObjectStoreFactory
-{    
+{
     /**
      * Return an ObjectStore configured using properties
      * @param alias the relevant prefix for the properties
@@ -75,8 +75,25 @@ public class ObjectStoreFactory
             throw new ObjectStoreException("Cannot find specified ObjectStore class '" + clsName
                                            + "' for " + alias + " (check properties file)");
         }
-        Method m = cls.getDeclaredMethod("getInstance", 
+        Method m = cls.getDeclaredMethod("getInstance",
                                          new Class[] {Properties.class, Model.class});
         return (ObjectStore) m.invoke(null, new Object[] {subProps, model});
     }
+
+    /**
+     * Return the default ObjectStore. This is configured by having a property os.default=<alias>.
+     * @return a new ObjectStore
+     * @throws Exception if an error occurs in instantiating the ObjectStore
+     */
+    public static ObjectStore getObjectStore() throws Exception {
+        Properties props = PropertiesUtil.getPropertiesStartingWith("os");
+        props = PropertiesUtil.stripStart("os", props);
+        String osAlias = props.getProperty("default");
+        if (osAlias == null) {
+            throw new ObjectStoreException("No 'os.default' property specified"
+                                           + " (check properties file)");
+        }
+        return ObjectStoreFactory.getObjectStore(osAlias);
+    }
+
 }
