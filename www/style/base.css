@@ -277,6 +277,8 @@ span.tutorial, span.organism
 a.webapplink , a.webapplink:link, a.webapplink:visited, a.webapplink:active, a.webapplink:hover {
   background: url(../images/intlink.gif) right center no-repeat;
   padding-right: 15px;
+  margin-right: 15px;
+  white-space: nowrap;
 }
 
 
