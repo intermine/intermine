@@ -3,7 +3,7 @@
 @prefix owl:  <http://www.w3.org/2002/07/owl#>.
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
 
-:Gene a owl :Class;
+:Gene a owl:Class;
    rdfs:subClassOf :BioEntity.
    
 :Gene__name a owl:DatatypeProperty;
