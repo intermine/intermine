@@ -16,9 +16,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import org.apache.struts.tiles.ComponentContext;
-
+import org.intermine.web.Constants;
 import servletunit.struts.MockStrutsTestCase;
 
+/**
+ * @author Thomas Riley
+ */
 public class BeginControllerTest extends MockStrutsTestCase
 {
     public BeginControllerTest(String arg1) {
@@ -29,7 +32,7 @@ public class BeginControllerTest extends MockStrutsTestCase
          getActionServlet().destroy();
     }
 
-    public void testExpand() throws Exception {
+    public void testCategoryLoad() throws Exception {
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initBegin");
@@ -37,8 +40,8 @@ public class BeginControllerTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         
-        List cats = (List) getRequest().getAttribute("categories");
-        Map subcats = (Map) getRequest().getAttribute("subcategories");
+        List cats = (List) getActionServlet ().getServletContext ().getAttribute(Constants.CATEGORIES);
+        Map subcats = (Map) getActionServlet ().getServletContext ().getAttribute(Constants.CATEGORY_CLASSES);
         
         assertNotNull(cats);
         assertNotNull(subcats);
@@ -50,5 +53,4 @@ public class BeginControllerTest extends MockStrutsTestCase
                     {"Employee","Manager","CEO","Contractor","Secretary"}), subcats.get("People"));
         
     }
-
 }
