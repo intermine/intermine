@@ -83,10 +83,10 @@ public class ProteinStructureDataTranslator extends DataTranslator
             Item model = getReferencedItem(srcItem, "model");
             
             Item modelledProteinStructure = createItem(tgtNs + "ModelledProteinStructure", "");
-            modelledProteinStructure.addAttribute(new Attribute("qScore", model
+            modelledProteinStructure.addAttribute(new Attribute("QScore", model
                                                                 .getAttribute("prosa_q_score")
                                                                 .getValue()));
-            modelledProteinStructure.addAttribute(new Attribute("zScore", model
+            modelledProteinStructure.addAttribute(new Attribute("ZScore", model
                                                                 .getAttribute("prosa_z_score")
                                                                 .getValue()));
             String str;

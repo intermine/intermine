@@ -56,11 +56,11 @@
 :ModelledProteinStructure a owl:Class;
    rdfs:subClassOf :ProteinStructure.
 
-:ModelledProteinStructure__qScore a owl:DatatypeProperty;
+:ModelledProteinStructure__QScore a owl:DatatypeProperty;
    rdfs:domain :ModelledProteinStructure;
    rdfs:range xsd:decimal.
 
-:ModelledProteinStructure__zScore a owl:DatatypeProperty;
+:ModelledProteinStructure__ZScore a owl:DatatypeProperty;
    rdfs:domain :ModelledProteinStructure;
    rdfs:range xsd:decimal.
 
