@@ -61,10 +61,11 @@ public class MageConverterTest extends TestCase
     File f = null;
 
     public void setUp() {
-        converter = new MageConverter(null);
+        converter = new MageConverter(new MockItemWriter(new HashMap()));
     }
 
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        converter.close();
         if (f != null) {
             f.delete();
         }
@@ -74,16 +75,15 @@ public class MageConverterTest extends TestCase
         Reader reader = new InputStreamReader(getClass().getClassLoader().
                  getResourceAsStream("test/mage_ml_example.xml"));
 
-        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
-        ItemWriter itemWriter = new ObjectStoreItemWriter(osw);
-
-        //MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        new MageConverter(itemWriter).process(reader);
-        itemWriter.close();
+        HashMap map = new HashMap();
+        MockItemWriter itemWriter = new MockItemWriter(map);
+        MageConverter mc = new MageConverter(itemWriter);
+        mc.process(reader);
+        mc.close();
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().
                  getResourceAsStream("test/MAGEConverterTest.xml")));
-        //assertEquals(expected, itemWriter.getItems());
+        assertEquals(expected, itemWriter.getItems());
     }
 
     public void testCreateItemAttribute() throws Exception {
@@ -188,9 +188,8 @@ public class MageConverterTest extends TestCase
     }
 
     public void testBioAssayData() throws Exception{
-        converter.seenMap = new LinkedHashMap();
-        converter.dataItems = new LinkedHashSet();
-
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MageConverter mc = new MageConverter(itemWriter);
 
         String exampleData = "1.006\t3.456" + System.getProperty("line.separator")
             + "435.223\t1.004" + System.getProperty("line.separator");
@@ -245,7 +244,8 @@ public class MageConverterTest extends TestCase
         expected.addReference(createReference("bioDataValues","0_13"));
         expected.addReference(createReference("quantitationTypeDimension", "6_8"));
         expected.addReference(createReference("designElementDimension", "1_1"));
-        assertEquals(expected, ItemHelper.convert(converter.createItem(dbad)));
+        mc.seenMap = new LinkedHashMap();
+        assertEquals(expected, ItemHelper.convert(mc.createItem(dbad)));
 
         Item d=createItems(ns+"BioDataTuples","0_13", "");
         ReferenceList rl=new ReferenceList();
@@ -257,7 +257,6 @@ public class MageConverterTest extends TestCase
         d1.addAttribute(createAttribute("value", "1.006"));
         d1.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d1.getIdentifier());
-
 
         Item d2=createItems(ns+"BioAssayDatum", "0_15","" );
         d2.addReference(createReference("designElement", "3_3"));
@@ -285,9 +284,14 @@ public class MageConverterTest extends TestCase
         Set expSet = new HashSet(Arrays.asList(new Object[] {d, d1, d2, d3, d4}));
         Set results = new HashSet();
 
-        Iterator i = converter.dataItems.iterator();
+        // only interested in BioAssayDatam and BioDataTuples items
+        mc.close();
+        Iterator i = itemWriter.getItems().iterator();
         while(i.hasNext()){
-            results.add(ItemHelper.convert((org.intermine.model.fulldata.Item)i.next()));
+            Item item = (Item) i.next();
+            if (item.getClassName().endsWith("BioAssayDatum") || item.getClassName().endsWith("BioDataTuples")) {
+                results.add(item);
+            }
         }
         assertEquals(expSet, results);
 
