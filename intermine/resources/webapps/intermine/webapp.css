@@ -178,8 +178,7 @@ table.results tr.even {
 .value {
 /*  padding: 2px;*/
   font-family: monospace;
-/*  background: white;
-  border: 1px solid #ccc;*/
+  font-size: 13px;
 }
 
 .constraint {
