@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -26,6 +28,8 @@ import org.apache.struts.action.ActionErrors;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.web.results.PagedResults;
 
 /**
  * The portal query action handles links into flymine from external sites.
@@ -39,6 +43,8 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 public class PortalQuery extends TemplateAction
 {
+    private static final Logger LOG = Logger.getLogger(PortalQuery.class);
+
     /**
      * Link-ins from other sites end up here (after some redirection).
      *
@@ -59,7 +65,7 @@ public class PortalQuery extends TemplateAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        
         String extId = request.getParameter("externalid");
         String origin = request.getParameter("origin");
 
@@ -92,8 +98,9 @@ public class PortalQuery extends TemplateAction
         // Convert path query to intermine query
         SessionMethods.loadQuery(queryCopy, request.getSession());
         // Add a message to welcome the user
-        recordMessage(new ActionMessage("portal.welcome" + origin), request);
-
+        SessionMethods.recordMessage(properties.getProperty("portal.welcome" + origin), session);
+        System.out.println("portal.welcome" + origin + " = " + properties.getProperty("portal.welcome" + origin));
+        
         // Set collapsed/uncollapsed state of object details UI
         Map collapsed = (Map) session.getAttribute("COLLAPSED");
         collapsed.put("fields", Boolean.TRUE);
@@ -101,7 +108,14 @@ public class PortalQuery extends TemplateAction
         collapsed.put("other", Boolean.TRUE);
         collapsed.put("summary", Boolean.FALSE);
 
-        return handleTemplateQuery(mapping, request, response, true, false);
+        ActionForward forward = handleTemplateQuery(mapping, request, response, true, false);
+        if (forward.getName().equals("results")) {
+            PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
+            if (pr.getSize () == 0) {
+                LOG.warn("Portal query resulted in no result for identifier \"" + extId + "\"");
+            }
+        }
+        return forward;
     }
 }
 
