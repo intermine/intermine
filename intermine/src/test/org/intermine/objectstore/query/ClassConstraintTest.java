@@ -135,6 +135,8 @@ public class ClassConstraintTest extends TestCase {
         Constraint c4 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
         Constraint c5 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
         Constraint c6 = new ClassConstraint(company1, ClassConstraint.NOT_EQUALS, company1Object);
+        Constraint c7 = new ClassConstraint(company1, ClassConstraint.NOT_EQUALS, company1Object, true);
+
         assertEquals(c1, c1);
         assertEquals(c1, c2);
         assertTrue(!c1.equals(c3));
@@ -146,6 +148,7 @@ public class ClassConstraintTest extends TestCase {
         assertEquals(c4, c5);
         assertTrue(!c4.equals(c6));
 
+        assertTrue(!c6.equals(c7));
 
         assertEquals(c1.hashCode(), c1.hashCode());
         assertEquals(c1.hashCode(), c2.hashCode());
@@ -157,6 +160,7 @@ public class ClassConstraintTest extends TestCase {
         assertEquals(c4.hashCode(), c5.hashCode());
         assertTrue(c4.hashCode() != c6.hashCode());
 
+        assertTrue(c6.hashCode() != c7.hashCode());
     }
 
 
