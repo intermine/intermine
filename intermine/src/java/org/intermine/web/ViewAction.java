@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,12 +19,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.objectstore.query.Results;
 
 import org.intermine.web.results.ChangeResultsForm;
 
 /**
- * Action to handle buttons on view tile
+ * Action to handle buttons on view tile.
+ * 
  * @author Mark Woodbridge
+ * @author Tom Riley
  */
 public class ViewAction extends InterMineAction
 {
@@ -52,11 +57,35 @@ public class ViewAction extends InterMineAction
         
         /** Clear stored DisplayObjects. */
         session.removeAttribute("displayObjects");
+
+        final OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
+        String msg = getResources(request).getMessage("query.runningquery");
+        writer.write(msg);
+        writer.flush();
+
+        RunQueryMonitor monitor = new RunQueryMonitor() {
+            public void queryProgress(Results r) {
+                try {
+                    writer.write(".");
+                    writer.flush();
+                } catch (IOException _) {
+                    // Cancel query here
+                }
+            }
+        };
         
-        if (SessionMethods.runQuery (this, session, request, true)) {
-            return mapping.findForward ("results");
+        String destUrl = null;
+        
+        if (SessionMethods.runQuery (this, session, request, true, monitor)) {
+            destUrl = mapping.findForward("results").getPath();
         } else {
-            return mapping.findForward("query");
+            destUrl = mapping.findForward("query").getPath();
         }
+        
+        writer.write("<script language=\"JavaScript\">document.location=\""
+                + request.getContextPath() + destUrl + "\"</script>");
+        writer.flush();
+        
+        return null;
     }
 }
