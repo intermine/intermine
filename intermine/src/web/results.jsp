@@ -91,7 +91,7 @@
             </c:choose>
           </c:forEach>
         </tr>
-        <c:set var="prevrow" value="${row}" scope="page"/>
+        <c:set var="prevrow" value="${row}"/>
       </c:forEach>
     </c:if>
   </table>

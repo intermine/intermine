@@ -69,7 +69,7 @@ public class QueryClassSelectController extends TilesAction
             classes.put(className, TypeUtil.unqualifiedName(className));
         }
         
-        request.setAttribute("classes", classes);
+        context.putAttribute("classes", classes);
         
         return null;
     }

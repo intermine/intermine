@@ -74,7 +74,7 @@ public class ObjectDetailsController extends TilesAction
             return null;
         }
         
-        request.setAttribute("object", o);
+        context.putAttribute("object", o);
 
         Model model = os.getModel();
         Set leafClds = new HashSet();
