@@ -135,7 +135,6 @@ public class Owl2FlyMine
         if (!prop.getNameSpace().equals(tgtNs)) {
             return;
         }
-
         Iterator r = prop.listRange();
         Iterator d = prop.listDomain();
         String reverseRef = null;
@@ -227,7 +226,7 @@ public class Owl2FlyMine
             reverseRef = OntologyUtil.generateFieldName(invProp, range);
         }
 
-        if (!isInverse && OntologyUtil.isDatatypeProperty((Property) prop)) {
+        if (!isInverse && (invProp == null) && OntologyUtil.isDatatypeProperty((Property) prop)) {
             String javaType;
             if (range.getURI().equals(OntologyUtil.RDFS_NAMESPACE + "Literal")) {
                 javaType = "java.lang.String";
@@ -243,7 +242,8 @@ public class Owl2FlyMine
                                           javaType);
             HashSet atds = getFieldSetForClass(attributes, domain.getLocalName());
             atds.add(atd);
-        } else if (isInverse || OntologyUtil.isObjectProperty((Property) prop)) {
+        } else if (isInverse || (invProp != null)
+                   || OntologyUtil.isObjectProperty((Property) prop)) {
             // TODO set package correctly if java type not business object in collection
             String referencedType = pkg + "." + range.getLocalName();
 
