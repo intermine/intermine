@@ -49,14 +49,14 @@ public class ObjectStoreAbstractImplTest extends TestCase
             return null;
         }
 
-        public List execute(Query q, int start, int end) throws ObjectStoreException {
+        public List execute(Query q, int start, int limit) throws ObjectStoreException {
             return null;
         }
 
         public ExplainResult estimate(Query q) throws ObjectStoreException {
             return null;
         }
-        public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException {
+        public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
             return null;
         }
 
