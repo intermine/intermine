@@ -63,14 +63,8 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
 
     public void testParseFlyBaseId() throws Exception {
         List dbxrefs = new ArrayList(Arrays.asList(new String[] {"FlyBase:FBgn1234", "FlyBase:FBtr1234"}));
-        assertEquals("FBgn1234", handler.parseFlyBaseId(dbxrefs, "FBgn"));
-        assertEquals("FBtr1234", handler.parseFlyBaseId(dbxrefs, "FBtr"));
-        dbxrefs.add("FlyBase:FBgn5678");
-        try {
-            handler.parseFlyBaseId(dbxrefs, "FBgn");
-            fail("expected an exception due to duplicate FBgns");
-        } catch (RuntimeException e) {
-        }
+        assertEquals("FBgn1234", handler.parseFlyBaseId(dbxrefs, "FBgn").get(0));
+        assertEquals("FBtr1234", handler.parseFlyBaseId(dbxrefs, "FBtr").get(0));
     }
 
     public void testHandleGene() throws Exception {
@@ -91,9 +85,11 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("name", "CG1234");
 
-        assertEquals(1, handler.getItems().size());
+        assertEquals(2, handler.getItems().size());
 
-        Item actualGene = (Item) handler.getItems().iterator().next();
+        Iterator itemIter = handler.getItems().iterator();
+        itemIter.next(); // Synonym
+        Item actualGene = (Item) itemIter.next();
 
         assertEquals(expectedGene, actualGene);
     }
@@ -116,7 +112,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG31667");
         expectedGene.setAttribute("organismDbId", "FBgn0051667");
 
-        assertEquals(2, handler.getItems().size());
+        assertEquals(4, handler.getItems().size());
 
         Item actualGene = null;
         iter = handler.getItems().iterator();

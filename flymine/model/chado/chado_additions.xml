@@ -51,4 +51,6 @@
   </class>
   <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.Gene" is-interface="true">
   </class>
+  <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
+  </class>
 </classes>
