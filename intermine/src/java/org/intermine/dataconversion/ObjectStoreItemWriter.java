@@ -96,7 +96,8 @@ public class ObjectStoreItemWriter implements ItemWriter
      * @see ItemWriter#close
      */
     public void close() throws ObjectStoreException {
-        osw.commitTransaction();
-        osw.close();
+        if (osw.isInTransaction()) {
+            osw.commitTransaction();
+        }
     }
 }

@@ -79,45 +79,41 @@ public class DBConverter extends DataConverter
      * @throws Exception if an error occurs in processing
      */
     public void process() throws Exception {
+        // if source db table has a non-unique id need to create a unique identifier
+        // references to the non-unique id will be pointed at an arbitrary unique
+        // identifier dor that group of items.  It is assumed that the group of items
+        // will become one after data translation.
+
         try {
-            // if source db table has a non-unique id need to create a unique identifier
-            // references to the non-unique id will be pointed at an arbitrary unique
-            // identifier dor that group of items.  It is assumed that the group of items
-            // will become one after data translation.
+            c = db.getConnection();
 
-            try {
-                c = db.getConnection();
-
-                for (Iterator cldIter = model.getClassDescriptors().iterator();
-                     cldIter.hasNext();) {
-                    ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                    if (!cld.getName().equals("org.intermine.model.InterMineObject")) {
-                        if (idsProvided(cld) && !idIsUnique(cld)) {
-                            buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
-                        }
-                    }
-                }
-            } finally {
-                if (c != null) {
-                    c.close();
-                }
-            }
-
-            start = System.currentTimeMillis();
-            time = start;
-            times = new long[20];
-            for (int i = 0; i < 20; i++) {
-                times[i] = -1;
-            }
-
-            for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
+            for (Iterator cldIter = model.getClassDescriptors().iterator();
+                 cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 if (!cld.getName().equals("org.intermine.model.InterMineObject")) {
-                    processClassDescriptor(cld);
+                    if (idsProvided(cld) && !idIsUnique(cld)) {
+                        buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
+                    }
                 }
             }
         } finally {
-            writer.close();
+            if (c != null) {
+                c.close();
+            }
+        }
+
+        start = System.currentTimeMillis();
+        time = start;
+        times = new long[20];
+        for (int i = 0; i < 20; i++) {
+            times[i] = -1;
+        }
+
+        for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
+            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            if (!cld.getName().equals("org.intermine.model.InterMineObject")) {
+                processClassDescriptor(cld);
+            }
         }
     }
 

@@ -69,10 +69,12 @@ public class XmlConverterTask extends ConverterTask
             throw new BuildException("osName must be specified");
         }
 
+        ObjectStoreWriter osw = null;
+        ItemWriter writer = null;
         try {
             Model m = Model.getInstanceByName(model);
-            ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
-            ItemWriter writer = new ObjectStoreItemWriter(osw);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            writer = new ObjectStoreItemWriter(osw);
             XmlConverter converter = new XmlConverter(m,
                                                       new BufferedReader(new FileReader(schema)),
                                                       writer);
@@ -83,10 +85,16 @@ public class XmlConverterTask extends ConverterTask
                 System.err .println("Processing file " + toRead.toString());
                 converter.process(new BufferedReader(new FileReader(toRead)));
             }
-            writer.close();
             doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
+        } finally {
+            try {
+                writer.close();
+                osw.close();
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
         }
     }
 }

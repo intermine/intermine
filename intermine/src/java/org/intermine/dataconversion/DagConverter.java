@@ -36,7 +36,7 @@ public class DagConverter extends DataConverter
     protected static final String ONTOLOGY_RELATION =
         "http://www.flymine.org/model/genomic#OntologyRelation";
     protected static final String ONTOLOGY = "http://www.flymine.org/model/genomic#Ontology";
-        
+
     protected String dagFilename;
     protected String termClass;
     protected int uniqueId = 0;
@@ -72,7 +72,7 @@ public class DagConverter extends DataConverter
         nameToTerm = new HashMap();
         process(new DagParser().processForLabellingOntology(new FileReader(dagFilename)));
     }
-    
+
     /**
      * Convert DagTerms into Items and relation Items, and write them to the ItemWriter
      *
@@ -80,16 +80,12 @@ public class DagConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
     protected void process(Collection rootTerms) throws ObjectStoreException {
-        try {
-            for (Iterator i = rootTerms.iterator(); i.hasNext();) {
-                process((DagTerm) i.next());
-            }
-            writer.store(ItemHelper.convert(ontology));
-            for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
-                writer.store(ItemHelper.convert((Item) i.next()));
-            }
-        } finally {
-            writer.close();
+        for (Iterator i = rootTerms.iterator(); i.hasNext();) {
+            process((DagTerm) i.next());
+        }
+        writer.store(ItemHelper.convert(ontology));
+        for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
+            writer.store(ItemHelper.convert((Item) i.next()));
         }
     }
 
