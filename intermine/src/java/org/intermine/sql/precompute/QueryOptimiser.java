@@ -294,7 +294,7 @@ public class QueryOptimiser
             // We should prepare a Set of PrecomputedTable objects to reoptimise the Queries in this
             // Set.
             Set newPrecomputedTables = map.headMap(p).keySet();
-            // Now we want to iterator through every optimised Query in this Set.
+            // Now we want to iterate through every optimised Query in this Set.
             Iterator queryIter = queries.iterator();
             while (queryIter.hasNext()) {
                 Query optimisedQuery = (Query) queryIter.next();
@@ -412,7 +412,7 @@ public class QueryOptimiser
             // So now whereConstraintEqualsSet contains all the constraints that can be left out of
             // the WHERE clause
 
-            // If the PrecomputedTable is distinct, then the Query can't be.
+            // If the PrecomputedTable is distinct, then the Query has to be.
             if (precompQuery.isDistinct() && (!query.isDistinct())) {
                 mappingsIter.remove();
                 continue;
@@ -644,7 +644,7 @@ public class QueryOptimiser
             }
             // So now constraintEqualsSet contains all the constraints that can be left out
 
-            // If the PrecomputedTable is distinct, then the Query can't be.
+            // If the PrecomputedTable is distinct, then the Query has to be.
             if (precompQuery.isDistinct() && (!query.isDistinct())) {
                 continue;
             }
@@ -708,7 +708,7 @@ public class QueryOptimiser
             Iterator set2Iter = set2.iterator();
             while (set2Iter.hasNext()) {
                 AbstractConstraint constraint2 = (AbstractConstraint) set2Iter.next();
-                int compareResult = constraint1.compare(constraint2);
+                int compareResult = constraint2.compare(constraint1);
                 if (AbstractConstraint.checkComparisonImplies(compareResult)) {
                     match = true;
                     if (AbstractConstraint.checkComparisonEquals(compareResult)) {
