@@ -1,15 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <tiles:importAttribute/>
 
 <!-- queryAliasChange.jsp -->
 <c:if test="${query != null}">
-    <font size="-1"><bean:message key="query.modifyclass"/></font>
+    <font size="-1"><fmt:message key="query.modifyclass"/></font>
     <br/>
     <table>
         <c:forEach var="fromElement" items="${query.from}">
@@ -40,12 +39,12 @@
                 </td>
                 <td align="top">
                     <html:link action="/changealias.do?method=remove&alias=${perFromAlias[fromElement]}">
-                        [<bean:message key="button.remove"/>]
+                        [<fmt:message key="button.remove"/>]
                     </html:link>
                 </td>
                 <td align="top">
                     <html:link action="/changealias.do?method=edit&alias=${perFromAlias[fromElement]}">
-                        [<bean:message key="button.edit"/>]
+                        [<fmt:message key="button.edit"/>]
                     </html:link>
                 </td>
             </tr>
