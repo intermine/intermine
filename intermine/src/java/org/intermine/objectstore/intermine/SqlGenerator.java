@@ -579,7 +579,7 @@ public class SqlGenerator
 
     /**
      * Converts a QueryClass to a String.
-     * 
+     *
      * @param buffer the StringBuffer to add text to
      * @param qc the QueryClass to convert
      * @param q the Query
@@ -656,8 +656,9 @@ public class SqlGenerator
 
             buffer.append(classAlias)
                 .append(".")
-                .append(nodeF.getFieldName())
-                .append(nodeF.getSecondFieldName() == null ? "" : nodeF.getSecondFieldName());
+                .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
+                .append(nodeF.getSecondFieldName() == null
+                        ? "" : DatabaseUtil.generateSqlCompatibleName(nodeF.getSecondFieldName()));
         } else if (node instanceof QueryExpression) {
             QueryExpression nodeE = (QueryExpression) node;
             if (nodeE.getOperation() == QueryExpression.SUBSTRING) {
