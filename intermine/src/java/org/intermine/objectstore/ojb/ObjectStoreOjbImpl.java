@@ -106,14 +106,16 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @param q the Query to execute
      * @param start the first row to return, numbered from zero
      * @param limit the maximum number of rows to return
+     * @param optimise true if the query should be optimised
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit) throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise)
+            throws ObjectStoreException {
         checkStartLimit(start, limit);
 
         PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
-        ExplainResult explain = pb.explain(q, start, limit);
+        ExplainResult explain = pb.explain(q, start, limit, optimise);
 
         if (explain.getTime() > maxTime) {
             throw (new ObjectStoreException("Estimated time to run query(" + explain.getTime()
@@ -121,7 +123,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
                                             + maxTime + ")"));
         }
 
-        List res = pb.execute(q, start, limit);
+        List res = pb.execute(q, start, limit, optimise);
         for (int i = 0; i < res.size(); i++) {
             res.set(i, new ResultsRow(Arrays.asList((Object[]) res.get(i))));
         }
@@ -136,12 +138,14 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @param q the query to explain
      * @param start first row required, numbered from zero
      * @param limit the maximum number of rows to return
+     * @param optimise true if the query should be optimised
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
+    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
+            throws ObjectStoreException {
         PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
-        ExplainResult result = pb.explain(q, start, limit);
+        ExplainResult result = pb.explain(q, start, limit, optimise);
         pb.close();
         return result;
     }

@@ -68,9 +68,9 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     /**
      * @see PersistenceBrokerFlyMine#execute
      */
-    public List execute(Query query, int start, int limit) {
+    public List execute(Query query, int start, int limit, boolean optimise) {
         List results = new ArrayList();
-        Iterator iter = new MultiObjectRsIterator(query, this, start, limit);
+        Iterator iter = new MultiObjectRsIterator(query, this, start, limit, optimise);
         while (iter.hasNext()) { // if iterator is of the right length...
             results.add(iter.next());
         }
@@ -80,8 +80,9 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     /**
      *  @see PersistenceBrokerFlyMine#explain
      */
-    public ExplainResult explain(Query query, int start, int limit) {
-        return ((JdbcAccessFlyMineImpl) serviceJdbcAccess()).explainQuery(query, start, limit);
+    public ExplainResult explain(Query query, int start, int limit, boolean optimise) {
+        return ((JdbcAccessFlyMineImpl) serviceJdbcAccess()).explainQuery(query, start, limit,
+                optimise);
     }
 
     /**

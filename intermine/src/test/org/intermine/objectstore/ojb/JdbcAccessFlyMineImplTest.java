@@ -98,7 +98,7 @@ public class JdbcAccessFlyMineImplTest extends SetupDataTestCase
     public void executeTest(String type) throws Exception {
         ResultSetAndStatement retval =
             new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
-        retval = ja.executeQuery((Query) queries.get(type), 0, 10000);
+        retval = ja.executeQuery((Query) queries.get(type), 0, 10000, true);
         ResultSet rs = retval.m_rs;
         ResultSetMetaData md = retval.m_rs.getMetaData();
 
@@ -116,33 +116,33 @@ public class JdbcAccessFlyMineImplTest extends SetupDataTestCase
 
 
     public void testReturnNotNull() throws Exception {
-        assertNotNull(ja.executeQuery(q1, 0, 10));
+        assertNotNull(ja.executeQuery(q1, 0, 10, true));
     }
 
     public void testStatementNotNull() throws Exception {
         ResultSetAndStatement retval =
             new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
-        retval = ja.executeQuery(q1, 0, 10);
+        retval = ja.executeQuery(q1, 0, 10, true);
         assertNotNull(retval.m_stmt);
     }
 
     public void testResultSetNotNull() throws Exception {
         ResultSetAndStatement retval =
             new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
-        retval = ja.executeQuery(q1, 0, 10);
+        retval = ja.executeQuery(q1, 0, 10, true);
         assertNotNull(retval.m_rs);
     }
 
     public void testResultSetStatement() throws Exception {
         ResultSetAndStatement retval =
             new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
-        retval = ja.executeQuery(q1, 0, 10);
+        retval = ja.executeQuery(q1, 0, 10, true);
         assertEquals(retval.m_stmt, retval.m_rs.getStatement());
     }
 
 
     public void testExplainNotNull() throws Exception {
-        ExplainResult er = ja.explainQuery(q1, 0, 10);
+        ExplainResult er = ja.explainQuery(q1, 0, 10, true);
         if (er == null) {
             fail("a null ExplainResult was returned");
         }

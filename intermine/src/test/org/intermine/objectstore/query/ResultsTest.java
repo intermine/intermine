@@ -457,7 +457,7 @@ public class ResultsTest extends TestCase
         res.setBatchSize(1);
         res.batches = Collections.synchronizedMap(new HashMap());
         assertEquals(5000, res.size());
-        assertTrue("Expected size to not need to fetch batches, but fetched " + res.batches.size() + ".", res.batches.size() == 0);
+        assertTrue("Expected size to fetch one batch, but fetched " + res.batches.size() + ".", res.batches.size() == 1);
     }
 
     public void testSizeUsesFewBatchFetches() throws Exception {

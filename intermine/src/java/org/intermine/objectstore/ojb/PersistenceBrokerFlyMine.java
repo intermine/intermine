@@ -31,9 +31,10 @@ public interface PersistenceBrokerFlyMine extends PersistenceBroker
      * @param query the ObjectStore query
      * @param start start index
      * @param limit maximum number of rows to return
+     * @param optimise true if the query should be optimised
      * @return a list of ResultsRows
      */
-    public List execute(Query query, int start, int limit);
+    public List execute(Query query, int start, int limit, boolean optimise);
 
     /**
      * Runs EXPLAIN on the given query with start and limit result indices
@@ -41,9 +42,10 @@ public interface PersistenceBrokerFlyMine extends PersistenceBroker
      * @param query the ObjectStore query
      * @param start start index
      * @param limit maximum number of rows to return
+     * @param optimise true if the query should be optimised
      * @return parsed results of the EXPLAIN
      */
-    public ExplainResult explain(Query query, int start, int limit);
+    public ExplainResult explain(Query query, int start, int limit, boolean optimise);
 
     /**
      * Runs a COUNT(*) on the given query

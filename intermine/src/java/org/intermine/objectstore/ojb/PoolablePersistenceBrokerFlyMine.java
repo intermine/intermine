@@ -38,15 +38,15 @@ class PoolablePersistenceBrokerFlyMine extends PoolablePersistenceBroker
     /**
      * @see PersistenceBrokerFlyMine#execute
      */
-    public List execute(Query query, int start, int limit) {
-        return ((PersistenceBrokerFlyMine) getBroker()).execute(query, start, limit);
+    public List execute(Query query, int start, int limit, boolean optimise) {
+        return ((PersistenceBrokerFlyMine) getBroker()).execute(query, start, limit, optimise);
     }
 
     /**
      *  @see PersistenceBrokerFlyMine#explain
      */
-    public ExplainResult explain(Query query, int start, int limit) {
-        return ((PersistenceBrokerFlyMine) getBroker()).explain(query, start, limit);
+    public ExplainResult explain(Query query, int start, int limit, boolean optimise) {
+        return ((PersistenceBrokerFlyMine) getBroker()).explain(query, start, limit, optimise);
     }
 
     /**

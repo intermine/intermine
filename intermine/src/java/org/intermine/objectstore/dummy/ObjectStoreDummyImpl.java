@@ -91,10 +91,12 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @param q the Query to execute
      * @param start the start row
      * @param limit the maximum numberof rows to be returned
+     * @param optimise true if the query should be optimised
      * @return a list of ResultsRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit) throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException {
         checkStartLimit(start, limit);
         if (executeTime > maxTime) {
             throw new ObjectStoreException("Query will take longer than " + maxTime);
@@ -217,10 +219,12 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @param q the query to explain
      * @param start first row required, numbered from zero
      * @param limit the maximum number of rows to be returned
+     * @param optimise true if the query should be optimised
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
+    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException {
         return new ExplainResult();
     }
 

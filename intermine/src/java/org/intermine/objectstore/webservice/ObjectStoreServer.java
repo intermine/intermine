@@ -116,11 +116,13 @@ public class ObjectStoreServer
      * @param queryId the id of the query
      * @param start the start row
      * @param limit the maximum number of rows to return
+     * @param optimise whether to optimise
      * @throws ObjectStoreException if an error occurs executing the query
      * @return a List of ResultRows
      */
-    public List execute(int queryId, int start, int limit) throws ObjectStoreException {
-        return os.execute(lookupQuery(queryId), start, limit);
+    public List execute(int queryId, int start, int limit, boolean optimise)
+            throws ObjectStoreException {
+        return os.execute(lookupQuery(queryId), start, limit, optimise);
     }
 
     /**
@@ -152,11 +154,13 @@ public class ObjectStoreServer
      * @param queryId the query to explain
      * @param start first row required, numbered from zero
      * @param limit the maximum number og rows to return
+     * @param optimise whether to optimise
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(int queryId, int start, int limit) throws ObjectStoreException {
-        return os.estimate(lookupQuery(queryId), start, limit);
+    public ExplainResult estimate(int queryId, int start, int limit, boolean optimise)
+            throws ObjectStoreException {
+        return os.estimate(lookupQuery(queryId), start, limit, optimise);
     }
 
     /**

@@ -68,6 +68,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public Object getObjectByExample(Object obj) throws ObjectStoreException {
         Results res = execute(QueryHelper.createQueryForExampleObject(obj, model));
+        res.setNoOptimise();
         
         if (res.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
@@ -89,7 +90,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs explining the query
      */
     public ExplainResult estimate(Query q) throws ObjectStoreException {
-        return estimate(q, 0, Integer.MAX_VALUE - 1);
+        return estimate(q, 0, Integer.MAX_VALUE - 1, true);
     }
 
     /**

@@ -41,10 +41,12 @@ public interface ObjectStore
      * @param q the Query to execute
      * @param start the start row
      * @param limit the maximum number of rows to return
+     * @param optimise true if it is expected that optimising the query will improve performance
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit) throws ObjectStoreException;
+    public List execute(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException;
 
     /**
      * Get an object from the ObjectStore by giving an example. The returned object
@@ -73,10 +75,12 @@ public interface ObjectStore
      * @param q the query to explain
      * @param start first row required, numbered from zero
      * @param limit the maximum number og rows to return
+     * @param optimise true if it is expected that optimising the query will improve performance
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException;
+    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException;
 
     /**
      * Counts the number of rows the query will produce

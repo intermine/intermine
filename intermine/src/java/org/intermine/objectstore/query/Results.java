@@ -49,6 +49,7 @@ public class Results extends AbstractList
     protected int originalMaxSize = maxSize;
     protected int batchSize = 100;
     protected boolean initialised = false;
+    private boolean optimise = true;
 
     // Some prefetch stuff.
     protected int lastGet = -1;
@@ -221,7 +222,7 @@ public class Results extends AbstractList
 
         List rows = null;
         try {
-            rows = os.execute(query, start, limit);
+            rows = os.execute(query, start, limit, optimise);
 
             synchronized (this) {
                 // Now deal with a partial batch, so we can update the maximum size
@@ -297,7 +298,15 @@ public class Results extends AbstractList
     public int size() {
         //LOG.debug("size - starting                                       Result "
         //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
-        if (minSize * 2 + batchSize < maxSize) {
+        if ((minSize == 0) && (maxSize == Integer.MAX_VALUE)) {
+            // Fetch the first batch, as it is reasonably likely that it will cover it.
+            try {
+                get(0);
+            } catch (IndexOutOfBoundsException e) {
+                // Ignore - that means there are NO rows in this results object.
+            }
+            return size();
+        } else if (minSize * 2 + batchSize < maxSize) {
             // Do a count, because it will probably be a little faster.
             try {
                 maxSize = os.count(query);
@@ -517,5 +526,12 @@ public class Results extends AbstractList
             columnAliases.add(alias);
             columnTypes.add(type);
         }
+    }
+
+    /**
+     * Sets this Results object to bypass the optimiser.
+     */
+    public void setNoOptimise() {
+        optimise = false;
     }
 }

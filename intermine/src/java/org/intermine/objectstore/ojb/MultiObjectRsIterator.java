@@ -55,8 +55,10 @@ public class MultiObjectRsIterator extends RsIterator
      * @param broker the broker we should use.
      * @param start the number of the first row to return, numbered from zero
      * @param limit the maximum number of rows to return
+     * @param optimise true if the query should be optimised
      */
-    public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker, int start, int limit) {
+    public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker, int start, int limit,
+            boolean optimise) {
         //logger = LoggerFactory.getLogger(this.getClass());
         cache = broker.serviceObjectCache();
         m_row = new HashMap();
@@ -64,7 +66,7 @@ public class MultiObjectRsIterator extends RsIterator
         afterLookupEvent = new PBLifeCycleEvent(m_broker, PBLifeCycleEvent.Type.AFTER_LOOKUP);
         this.query = query;
         m_rsAndStmt = ((JdbcAccessFlyMineImpl) broker.serviceJdbcAccess())
-            .executeQuery(query, start, limit);
+            .executeQuery(query, start, limit, optimise);
         //prefetchRelationships(query);
     }
 

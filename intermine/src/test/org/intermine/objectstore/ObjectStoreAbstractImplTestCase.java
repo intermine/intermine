@@ -50,7 +50,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         int before = os.maxLimit;
         os.maxLimit = 99;
         try{
-            os.execute((Query) queries.get("SelectSimpleObject"), 10, 100);
+            os.execute((Query) queries.get("SelectSimpleObject"), 10, 100, true);
             fail("Expected: ObjectStoreException");
         } catch (IndexOutOfBoundsException e) {
         } finally {
@@ -63,7 +63,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         int before = os.maxOffset;
         os.maxOffset = 99;
         try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 100, 50);
+            os.execute((Query) queries.get("SelectSimpleObject"), 100, 50, true);
             fail("Expected: ObjectStoreException");
         } catch (IndexOutOfBoundsException e) {
         } finally {
@@ -76,7 +76,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         long before = os.maxTime;
         os.maxTime = 0;
         try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 0, 10);
+            os.execute((Query) queries.get("SelectSimpleObject"), 0, 10, true);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         } finally {

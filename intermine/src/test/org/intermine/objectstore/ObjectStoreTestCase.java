@@ -208,7 +208,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     }
 
     public void testEstimateStartEndNotNull() throws Exception {
-        ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"), 0, 10);
+        ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"), 0, 10, true);
         if (er == null) {
             fail("a null ExplainResult was returned");
         }

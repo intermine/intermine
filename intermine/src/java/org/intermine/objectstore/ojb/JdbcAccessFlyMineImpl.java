@@ -56,10 +56,11 @@ public class JdbcAccessFlyMineImpl extends JdbcAccessImpl
      * @param query should be a FlyMine Query
      * @param start the number of the first row to return, starting from zero
      * @param limit the maximum number of rows to return
+     * @param optimise true if the query should be optimised
      * @return the JDBC ResultSet and Statement
      * @throws PersistenceBrokerException if anything goes wrong
      */
-    public ResultSetAndStatement executeQuery(Query query, int start, int limit)
+    public ResultSetAndStatement executeQuery(Query query, int start, int limit, boolean optimise)
         throws PersistenceBrokerException {
         if (logger.isDebugEnabled()) {
             logger.safeDebug("executeQuery", query);
@@ -85,8 +86,10 @@ public class JdbcAccessFlyMineImpl extends JdbcAccessImpl
             // should probably put jdbc stuff somewhere else...?
             ConnectionManagerIF conMan = broker.serviceConnectionManager();
             Connection conn = conMan.getConnection();
-            sql = QueryOptimiser.optimise(sql,
-                    ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
+            if (optimise) {
+                sql = QueryOptimiser.optimise(sql,
+                        ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
+            }
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             ResultSet rs = stmt.executeQuery();
@@ -122,10 +125,11 @@ public class JdbcAccessFlyMineImpl extends JdbcAccessImpl
      * @param query should be a FlyMine Query
      * @param start the number of the first row to return, starting from zero
      * @param limit the maximum number of rows to return
+     * @param optimise true if the query should be optimised
      * @return parsed results of EXPLAIN
-     * @throws PersistenceBrokerException if anyhting goes wrong
+     * @throws PersistenceBrokerException if anything goes wrong
      */
-    public ExplainResult explainQuery(Query query, int start, int limit)
+    public ExplainResult explainQuery(Query query, int start, int limit, boolean optimise)
         throws PersistenceBrokerException {
 
         PreparedStatement stmt = null;
@@ -138,8 +142,10 @@ public class JdbcAccessFlyMineImpl extends JdbcAccessImpl
 
             String sql = "EXPLAIN " + gen.getPreparedSelectStatement(query, dr, start, limit);
 
-            sql = QueryOptimiser.optimise(sql,
-                    ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
+            if (optimise) {
+                sql = QueryOptimiser.optimise(sql,
+                        ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
+            }
 
             ConnectionManagerIF conMan = broker.serviceConnectionManager();
             Connection conn = conMan.getConnection();
