@@ -1,6 +1,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- errorMessages.jsp -->
 <logic:messagesPresent>
@@ -11,6 +12,13 @@
   </div>  
   <br/>
 </logic:messagesPresent>
+
+<noscript>
+  <div class="topBar errors">
+    <fmt:message key="errors.noscript"/>
+  </div>
+  <br/>
+</noscript>
 
 <c:if test="${!empty ERRORS}">
   <div class="topBar errors">
