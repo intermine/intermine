@@ -16,15 +16,13 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionErrors;
 
 import org.apache.log4j.Logger;
 
@@ -33,6 +31,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.TableHelper;
 
@@ -48,6 +47,27 @@ public class SessionMethods
 {
     protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
     
+    private static abstract class RunQueryThread implements Runnable
+    {
+        protected Results r;
+        protected PagedResults pr;
+        protected boolean done = false;
+        protected boolean error = false;
+        
+        protected Results getResults() {
+            return r;
+        }
+        protected PagedResults getPagedResults() {
+            return pr;
+        }
+        protected boolean isDone() {
+            return done;
+        }
+        protected boolean isError() {
+            return error;
+        }
+    };
+    
     /**
      * Executes current query and sets session attributes QUERY_RESULTS and RESULTS_TABLE. If the
      * query fails for some reason, this method returns false and ActionErrors are set on the
@@ -59,45 +79,76 @@ public class SessionMethods
      * @param session   the http session
      * @param request   the current http request
      * @param saveQuery if true, query will be saved automatically
+     * @param monitor   object that will receive a periodic call while the query runs
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */
-    public static boolean runQuery(InterMineAction action,
-                                   HttpSession session,
-                                   HttpServletRequest request,
-                                   boolean saveQuery)
+    public static boolean runQuery(final InterMineAction action,
+                                   final HttpSession session,
+                                   final HttpServletRequest request,
+                                   final boolean saveQuery,
+                                   final RunQueryMonitor monitor)
         throws Exception {
-        ServletContext servletContext = session.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final ServletContext servletContext = session.getServletContext();
+        final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        final PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         
-        PagedResults pr;
-        try {
-            Query q = MainHelper.makeQuery(query, profile.getSavedBags());
-            pr = TableHelper.makeTable(os, q, query.getView());
-        } catch (ObjectStoreException e) {
-            ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
-            if (errors == null) {
-                errors = new ActionErrors();
-                request.setAttribute(Globals.ERROR_KEY, errors);
-            }
-            String key = (e instanceof ObjectStoreQueryDurationException)
-                ? "errors.query.estimatetimetoolong"
-                : "errors.query.objectstoreerror";
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(key));
+        RunQueryThread runnable = new RunQueryThread() {
+            public void run () {
+                try {
+                    Query q = MainHelper.makeQuery(query, profile.getSavedBags());
+                    r = TableHelper.makeResults(os, q);
+                    TableHelper.initResults(r);
+                    pr = new PagedResults(query.getView(), r, os.getModel());
+                } catch (ObjectStoreException e) {
+                    String key = (e instanceof ObjectStoreQueryDurationException)
+                        ? "errors.query.estimatetimetoolong"
+                        : "errors.query.objectstoreerror";
+                    action.recordError(new ActionMessage(key), request);
 
-            // put stack trace in the log
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            LOG.error(sw.toString());
-            
-            return false;
+                    // put stack trace in the log
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    LOG.error(sw.toString());
+                    
+                    error = true;
+                }
+                
+                // debug pause
+                try {
+                    Thread.currentThread().sleep(2000);
+                } catch (Exception _) {
+                    
+                }
+            }
+        };
+        Thread thread = null;
+        thread = new Thread(runnable);
+        thread.start();
+        
+        // Wait for Results object to become available
+        while (thread.isAlive() && runnable.getResults() == null) {
+            Thread.currentThread().sleep(25);
+        }
+        
+        Results r = runnable.getResults();
+        
+        while (thread.isAlive()) {
+            Thread.currentThread().sleep(100);
+            if (monitor != null) {
+                monitor.queryProgress(r);
+            }
         }
 
+        if (runnable.isError()) {
+            return false;
+        }
+        
+        PagedResults pr = runnable.getPagedResults();
         session.setAttribute(Constants.QUERY_RESULTS, pr);
         session.setAttribute(Constants.RESULTS_TABLE, pr);
-        
+
         if (saveQuery) {
             String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
             query.setInfo(pr.getResultsInfo());
