@@ -229,7 +229,7 @@ public class InitialiserPlugin implements PlugIn
         try {
             servletContext.setAttribute(Constants.PROFILE_MANAGER, new ProfileManager(os));
         } catch (ObjectStoreException e) {
-            throw new ServletException("Unable to create profile manager", e);
+            //throw new ServletException("Unable to create profile manager", e);
         }
     }
 
