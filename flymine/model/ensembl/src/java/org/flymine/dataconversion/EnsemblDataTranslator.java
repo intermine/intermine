@@ -318,7 +318,7 @@ public class EnsemblDataTranslator extends DataTranslator
     private Item getSuperContig(String name, String chrId, int start, int end, String strand) {
         Item supercontig = (Item) supercontigs.get(name);
         if (supercontig == null) {
-            supercontig = createItem(tgtNs + "SuperContig", "");
+            supercontig = createItem(tgtNs + "Supercontig", "");
             Item chrLoc = createItem(tgtNs + "Location", "");
             chrLoc.addAttribute(new Attribute("start", "" + Integer.MAX_VALUE));
             chrLoc.addAttribute(new Attribute("end", "" + Integer.MIN_VALUE));

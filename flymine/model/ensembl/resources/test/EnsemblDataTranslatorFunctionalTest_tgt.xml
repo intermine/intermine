@@ -253,7 +253,7 @@
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="4_1"/>
   </item>
-  <item id="-1_18" class="http://www.flymine.org/model/genomic#SuperContig">
+  <item id="-1_18" class="http://www.flymine.org/model/genomic#Supercontig">
     <attribute name="name" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="objects">
@@ -353,7 +353,7 @@
     <attribute name="name" value="ENSANGT00000019935"/>
     <reference name="gene" ref_id="5_1"/>
     <reference name="organism" ref_id="-1_1"/>
-    <reference name="translation" ref_id="4_1"/>
+    <reference name="protein" ref_id="4_1"/>
     <collection name="objects">
       <reference ref_id="-1_28"/>
     </collection>

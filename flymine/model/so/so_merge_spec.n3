@@ -11,3 +11,16 @@
 :BioEntity a owl:Class ;
     owl:equivalentClass so:SequenceFeatureOntology, so:So.
 
+# replace Transcript__genes collection with Transcript_gene reference
+null:Transcript__genes a owl:ObjectProperty;
+    owl:equivalentProperty so:Transcript__genes.
+
+:Transcript__gene a owl:ObjectProperty;
+    rdfs:domain :Transcript;
+    rdfs:range :Gene.
+
+:Transcript a owl:Class;
+    rdfs:subClassOf 
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Transcript__gene ] .

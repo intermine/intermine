@@ -166,9 +166,9 @@ null:repeat_region__analysis a owl:DatatypeProperty ;
     owl:equivalentProperty e:repeat_feature__analysis .
 
 # ---------- assembly maps to null ---------- #
-# SuperContig and associated locations created in EnsemblDataTranslator
+# Supercontig and associated locations created in EnsemblDataTranslator
 
-:SuperContig a owl:Class;
+:Supercontig a owl:Class;
     rdfs:subClassOf :BioEntity.
 
 null:assembly a owl:Class ;
@@ -225,6 +225,9 @@ null:karyotype__chr_end a owl:DatatypeProperty ;
 
 :Transcript__exonCount a owl:DatatypeProperty ;
     owl:equivalentProperty e:transcript__exon_count .
+
+:Transcript__protein a owl:ObjectProperty;
+    owl:equivalentProperty e:transcript__translation.
 
 null:transcript__display_xref a owl:ObjectProperty ;
     owl:equivalentProperty e:transcript__display_xref .
