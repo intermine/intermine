@@ -702,7 +702,7 @@ public class DatabaseUtil
             if (c.isInstance(o)) {
                 String objectString = TypeUtil.objectToString(o);
                 if (c.equals(String.class)) {
-                    objectString = "'" + objectString + "'";
+                    objectString = "'" + StringUtil.duplicateQuotes(objectString) + "'";
                 } else {
                     if (o instanceof InterMineObject) {
                         objectString = "" + ((InterMineObject) o).getId();
