@@ -79,7 +79,6 @@ public class InitialiserPlugin implements PlugIn
         
         loadWebProperties(servletContext);
         loadExampleQueries(servletContext);
-        loadWebConfig(servletContext);
         
         ObjectStore os = null;
         try {
@@ -89,10 +88,11 @@ public class InitialiserPlugin implements PlugIn
         }
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         
+        loadWebConfig(servletContext, os);
+
         loadClassCategories(servletContext, os);
         loadClassDescriptions(servletContext, os);
         
-        processWebConfig(servletContext, os);
         summarizeObjectStore(servletContext, os);
         createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
@@ -106,13 +106,15 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load the displayer configuration
      */
-    private void loadWebConfig(ServletContext servletContext) throws ServletException {
+    private void loadWebConfig(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (is == null) {
             throw new ServletException("Unable to find webconfig-model.xml");
         }
         try {
-            servletContext.setAttribute(Constants.WEBCONFIG, WebConfig.parse(is));
+            servletContext.setAttribute(Constants.WEBCONFIG,
+                                        WebConfig.parse(is, os.getModel()));
         } catch (Exception e) {
             throw new ServletException("Unable to parse webconfig-model.xml", e);
         }
@@ -509,55 +511,6 @@ public class InitialiserPlugin implements PlugIn
         
         servletContext.setAttribute(Constants.CATEGORIES, categories);
         servletContext.setAttribute(Constants.CATEGORY_CLASSES, subcategories);
-    }
-
-    /**
-     * Create the DISPLAYERS ServletContext attribute by looking at the model and the WebConfig.
-     *
-     * @param servletContext  the servlet context
-     * @param os              the main object store
-     */
-    private void processWebConfig(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
-        try {
-            Model model = os.getModel();
-            WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-
-            Map wcTypeMap = (Map) wc.getTypes();
-            Map displayersMap = new HashMap();
-
-            for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
-                 modelIter.hasNext();) {
-                String className = (String) modelIter.next();
-
-                Set cds = model.getClassDescriptorsForClass(Class.forName(className));
-                List cdList = new ArrayList(cds);
-
-                Collections.reverse(cdList);
-            
-                for (Iterator cdIter = cdList.iterator(); cdIter.hasNext(); ) {
-                    ClassDescriptor cd = (ClassDescriptor) cdIter.next();
-
-                    if (wcTypeMap.get(cd.getName()) != null) {
-                        displayersMap.put(className, wcTypeMap.get(cd.getName()));
-                    }
-
-                    for (Iterator fdIter = cd.getFieldDescriptors().iterator(); fdIter.hasNext();) {
-                        FieldDescriptor fd = (FieldDescriptor) fdIter.next();
-                        String newKey = cd.getName() + " " + fd.getName();
-
-                        if (wcTypeMap.get(newKey) != null) {
-                            displayersMap.put(className + " " + fd.getName(),
-                                              wcTypeMap.get(newKey));
-                        }
-                    }
-                }
-            }
-            
-            servletContext.setAttribute(Constants.DISPLAYERS, displayersMap);
-        } catch (ClassNotFoundException e) {
-            throw new ServletException("Unable to process webconfig", e);
-        }
     }
 
     /**
