@@ -26,15 +26,16 @@ import java.io.StringReader;
  * This code borrows heavily from code written by Iwei Yeh of Stanford University.
  *
  * @author Richard Smith
+ * @author Matthew Wakeling
+ * @author Andrew Varley
  *
  */
 public class DagParser
 {
 
     protected Stack parents = new Stack();
-    protected HashSet terms = new HashSet();
+    protected HashSet rootTerms = new HashSet();
     protected HashMap seenTerms = new HashMap();
-    private DagTerm domainTerm = null;
 
     private static final String COMMENT = "!";
     private static final String DOMAIN = "$";
@@ -48,16 +49,21 @@ public class DagParser
      * @return a set of DagTerms - will contain only toplevel (domain) terms
      * @throws Exception if anything goes wrong
      */
-    public Set process(Reader in) throws Exception {
+    public Set processForLabellingOntology(Reader in) throws Exception {
         readTerms(new BufferedReader(replaceRelationStrings(in)));
+        return rootTerms;
+    }
 
-        if (domainTerm != null) {
-            Iterator iter = findOrphans().iterator();
-            while (iter.hasNext()) {
-                domainTerm.addChild((DagTerm) iter.next());
-            }
-        }
-        return terms;
+    /**
+     * Parse a DAG file to produce a set of toplevel DagTerms, having fixed orphans.
+     * @param in text in DAG format
+     * @return a set of DagTerms - will contain only toplevel (domain) terms
+     * @throws Exception if anything goes wrong
+     */
+    public Set processForClassHeirarchy(Reader in) throws Exception {
+        readTerms(new BufferedReader(replaceRelationStrings(in)));
+        fixOrphans();
+        return rootTerms;
     }
 
     /**
@@ -126,8 +132,7 @@ public class DagParser
         term = dagTermFromString(termStr);
 
         if (token.equals(DOMAIN)) {
-            domainTerm = term;
-            terms.add(term);
+            rootTerms.add(term);
         } else if (token.equals(ISA)) {
             DagTerm parent = (DagTerm) parents.peek();
             parent.addChild(term);
@@ -222,7 +227,7 @@ public class DagParser
     }
 
     /**
-     * Replace common alternative isa and partof strings with tokens (% and <).
+     * Replace common alternative isa and partof strings with tokens (% and &lt;).
      * @param in a reader for the DAG text
      * @return a reader for the altered DAG text
      * @throws Exception if anything goes wrong
@@ -241,18 +246,19 @@ public class DagParser
     }
 
 
-    private Set findOrphans() {
-        Set isas = new HashSet();
-        Set partofs = new HashSet();
-
-        Iterator iter = terms.iterator();
+    private void fixOrphans() {
+        Iterator iter = rootTerms.iterator();
         while (iter.hasNext()) {
-            readTree((DagTerm) iter.next(), isas, partofs);
+            DagTerm domainTerm = (DagTerm) iter.next();
+            Set isas = new HashSet();
+            Set partofs = new HashSet();
+            readTree(domainTerm, isas, partofs);
+            partofs.removeAll(isas);
+            Iterator partofIter = partofs.iterator();
+            while (partofIter.hasNext()) {
+                domainTerm.addChild((DagTerm) partofIter.next());
+            }
         }
-
-        partofs.removeAll(isas);
-        // rest have no isa relationship -> orphans
-        return partofs;
     }
 
     private void readTree(DagTerm term, Set isas, Set partofs) {
