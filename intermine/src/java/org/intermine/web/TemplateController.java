@@ -43,7 +43,8 @@ public class TemplateController extends Action
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
-
+        TemplateForm tf = (TemplateForm) form;
+        
         boolean populate = true;
         String queryName = request.getParameter("name");
         if (queryName == null) {
@@ -74,8 +75,8 @@ public class TemplateController extends Action
                 Constraint c = (Constraint) node.getConstraints().get(0);
                 int j = template.getNodes().indexOf(node);
                 
-                ((TemplateForm) form).setAttributeValues("" + (j + 1), "" + c.getDisplayValue(node));
-                ((TemplateForm) form).setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
+                tf.setAttributeValues ("" + (j + 1), "" + c.getDisplayValue(node));
+                tf.setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
             }
         }
 

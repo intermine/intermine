@@ -166,6 +166,7 @@ public class ClassConstraint extends Constraint
             + 7 * Util.hashCode(obj);
     }
 
+    /** Valid operators for this constraint. */
     public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS});
 }
