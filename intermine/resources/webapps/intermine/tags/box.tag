@@ -11,7 +11,8 @@
 </c:if>
 
 <c:if test="${!empty title}">
-  <table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
+<div style="width:100%">
+  <table class="box" width="100%" cellspacing="0" cellpadding="6" border="0" align="center">
     <tr>
       <th class="title" align="left">
         ${title}
@@ -28,11 +29,12 @@
       </th>
     </tr>
     <tr>
-      <td valign="top" align="left" colspan="2">
+      <td valign="top" align="left" colspan="2" class="boxbody">
         <jsp:doBody/>
       </td>
     </tr>
   </table>
+</div>
 </c:if>
 
 <%-- or just process body if no title --%>
