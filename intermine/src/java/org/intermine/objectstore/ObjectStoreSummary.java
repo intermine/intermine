@@ -112,7 +112,12 @@ public class ObjectStoreSummary
      * @return the count of the instances of the class
      */
     public int getClassCount(String className) {
-        return ((Integer) classCountsMap.get(className)).intValue();
+        Integer countInteger = (Integer) classCountsMap.get(className);
+        if (countInteger == null) {
+            throw new RuntimeException("cannot find class count for: " + className);
+        } else {
+            return countInteger.intValue();
+        }
     }
 
     /**
