@@ -49,7 +49,8 @@ public class GenerateWSDDTask extends Task
     }
 
     /**
-     * @see ModelOutput#process
+     * Run the task
+     * @throws BuildException if a problem occurs
      */
     public void execute() throws BuildException {
         if (this.destFile == null) {
