@@ -159,7 +159,7 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * @return int to describe the relationship type
      */
     public int describeRelation(Field field) {
-        return ((PersistenceBrokerFlyMineImpl) pb).describeRelation(field);
+        return ((PersistenceBrokerFlyMine) pb).describeRelation(field);
     }
 
 }

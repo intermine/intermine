@@ -131,7 +131,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     public List execute(Query q, int start, int limit) throws ObjectStoreException {
         checkStartLimit(start, limit);
 
-        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model);
         ExplainResult explain = pb.explain(q, start, limit);
 
         if (explain.getTime() > maxTime) {
@@ -174,7 +174,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     }
 
     private ExplainResult explain(Query q, int start, int limit) throws ObjectStoreException {
-        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model);
         ExplainResult result = pb.explain(q, start, limit);
         pb.close();
         return result;
@@ -188,7 +188,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @return the number of row to be produced by query
      */
     public int count(Query q) {
-        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model);
         int count = pb.count(q);
         pb.close();
         return count;
