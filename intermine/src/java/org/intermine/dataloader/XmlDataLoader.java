@@ -5,6 +5,7 @@ import org.exolab.castor.xml.*;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.metadata.Model;
 
 import java.util.Iterator;
 import java.util.List;
@@ -21,24 +22,25 @@ import org.xml.sax.InputSource;
  * @author Richard Smith
  */
 
-public class XmlDataLoader extends AbstractDataLoader
+public class XmlDataLoader extends DataLoader
 {
-
+    /**
+     * @see AbstractDataLoader#Constructor
+     */
+    public XmlDataLoader(Model model, IntegrationWriter iw) {
+        super(model, iw);
+    }
 
     /**
      * Static method to unmarshall business objects from a given xml file and call
      * store on each.
      *
-     * @param model name of data model being used
-     * @param iw writer to handle storing data
      * @param source access to xml file
      * @throws FlyMineException if anything goes wrong with xml or storing
      */
-    public static void  processXml(String model, IntegrationWriter iw,
-                                   InputSource source) throws FlyMineException {
-
+    public void processXml(InputSource source) throws FlyMineException {
         try {
-            String mapFile = "castor_xml_" + model.toLowerCase() + ".xml";
+            String mapFile = "castor_xml_" + model.getName() + ".xml";
             URL mapUrl = XmlDataLoader.class.getClassLoader().getResource(mapFile);
             Mapping mapping = new Mapping();
             mapping.loadMapping(mapUrl);
@@ -51,7 +53,7 @@ public class XmlDataLoader extends AbstractDataLoader
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                store(iter.next(), iw);
+                store(iter.next());
             }
 
         } catch (MappingException e) {
@@ -65,6 +67,5 @@ public class XmlDataLoader extends AbstractDataLoader
         } catch (ObjectStoreException e) {
             throw new FlyMineException("Problem with store method", e);
         }
-
     }
 }

@@ -16,17 +16,15 @@ public class AceDataLoaderTest extends TestCase {
         super(arg);
     }
 
-    private String model;
+    private AceDataLoader loader  = new AceDataLoader();
 
     public void setUp() throws Exception {
         super.setUp();
-        model = "testmodel";
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
 
     public void testSimpleTag() throws Exception {
         StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
@@ -38,7 +36,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj.identifier = "AceTestObject1";
         testObj.stringValue = "A string";
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.stringValue, ret.stringValue);
@@ -57,7 +55,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj.identifier = "AceTestObject1";
         testObj.stringValue = "A string";
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.stringValue, ret.stringValue);
@@ -78,7 +76,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj.stringValue = "A string";
         testObj.stringValue_2 = "A second string";
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.stringValue, ret.stringValue);
@@ -97,7 +95,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj.identifier = "AceTestObject1";
         testObj.stringValues.add("A string");
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.stringValues, ret.stringValues);
@@ -119,7 +117,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj.stringValues.add("A string");
         testObj.stringValues.add("A second string");
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.stringValues, ret.stringValues);
@@ -136,7 +134,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj.onOrOff = Boolean.TRUE;
 
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.onOrOff, ret.onOrOff);
@@ -158,7 +156,7 @@ public class AceDataLoaderTest extends TestCase {
 
         testObj1.reference = testObj2;
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj1.identifier, ret.identifier);
         assertEquals(testObj1.reference.identifier, ret.reference.identifier);
@@ -186,7 +184,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj1.references.add(testObj2);
         testObj1.references.add(testObj3);
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj1.identifier, ret.identifier);
         assertEquals(testObj1.references.size(), ret.references.size());
@@ -208,7 +206,7 @@ public class AceDataLoaderTest extends TestCase {
         testObj2.stringValue = "A string";
         testObj1.hashValue = testObj2;
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj1.identifier, ret.identifier);
         assertEquals(testObj2.identifier, ret.hashValue.identifier);
@@ -226,7 +224,7 @@ public class AceDataLoaderTest extends TestCase {
         AceTestObject testObj = new AceTestObject();
         testObj.identifier = "AceTestObject1";
 
-        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
         assertEquals(testObj.identifier, ret.identifier);
 
@@ -248,7 +246,7 @@ public class AceDataLoaderTest extends TestCase {
         set.add("1", obj1);
         set.add("2", obj2);
 
-        Collection ret = AceDataLoader.processAceObjects(set, null);
+        Collection ret = loader.processAceObjects(set);
 
         assertEquals(2, ret.size());
 

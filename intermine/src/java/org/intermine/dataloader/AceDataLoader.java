@@ -29,19 +29,29 @@ import org.flymine.util.TypeUtil;
  * DataLoader for AceDB data
  * @author Andrew Varley
  */
-public class AceDataLoader extends AbstractDataLoader
+public class AceDataLoader extends DataLoader
 {
+    /**
+     * No-arg constructor for testing purposes
+     */
+    protected AceDataLoader() {
+    }
+
+    /**
+     * @see AbstractDataLoader#Constructor
+     */
+    public AceDataLoader(Model model, IntegrationWriter iw) {
+        super(model, iw);
+    }
+    
     /**
      * Static method to unmarshall business objects from a given xml file and call
      * store on each.
      *
-     * @param model data model being used
-     * @param iw writer to handle storing data
      * @param source access to AceDb
      * @throws FlyMineException if anything goes wrong with xml or storing
      */
-    public static void processAce(Model model, IntegrationWriter iw,
-                           AceURL source) throws FlyMineException {
+    public void processAce(AceURL source) throws FlyMineException {
         try {
             Ace.registerDriver(new org.acedb.socket.SocketDriver());
 
@@ -56,11 +66,11 @@ public class AceDataLoader extends AbstractDataLoader
                 AceURL objURL = source.relativeURL(clazzName);
                 AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
 
-                Collection objects = processAceObjects(fetchedAceObjects, model);
+                Collection objects = processAceObjects(fetchedAceObjects);
                 Iterator objIter = objects.iterator();
                 while (objIter.hasNext()) {
                     // Now store that object
-                    store(objIter.next(), iw);
+                    store(objIter.next());
                 }
             }
 
@@ -73,19 +83,18 @@ public class AceDataLoader extends AbstractDataLoader
      * Process a set of Ace objects
      *
      * @param set the set of Ace objects to process
-     * @param model the model they belong to
      * @return a set of Java objects
      *
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if an object cannot be instantiated
      */
-    protected static Set processAceObjects(AceSet set, Model model)
+    protected  Set processAceObjects(AceSet set)
         throws AceException, FlyMineException {
         HashSet ret = new HashSet();
         Iterator aceObjIter = set.iterator();
         while (aceObjIter.hasNext()) {
             // Convert to Java object
-            Object obj = processAceObject((AceObject) aceObjIter.next(), null);
+            Object obj = processAceObject((AceObject) aceObjIter.next());
             ret.add(obj);
         }
         return ret;
@@ -96,13 +105,12 @@ public class AceDataLoader extends AbstractDataLoader
      * object and set the identifier.
      *
      * @param aceObject the AceObject to process
-     * @param model the model this object comes from, or null if AceObject name is fully qualified
      * @return an instance of the object
      *
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected static Object processAceObject(AceObject aceObject, Model model)
+    protected Object processAceObject(AceObject aceObject)
         throws AceException, FlyMineException {
         Object currentObject = null;
         try {
@@ -120,7 +128,7 @@ public class AceDataLoader extends AbstractDataLoader
             throw new FlyMineException(e);
         }
 
-        processAceNode(aceObject, currentObject, model);
+        processAceNode(aceObject, currentObject);
         return currentObject;
     }
 
@@ -130,12 +138,11 @@ public class AceDataLoader extends AbstractDataLoader
      *
      * @param aceNode the AceNode to process
      * @param currentObject the object in which to set field
-     * @param model the model this object comes from, or null if AceObject name is fully qualified
      *
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected static void processAceNode(AceNode aceNode, Object currentObject, Model model)
+    protected void processAceNode(AceNode aceNode, Object currentObject)
         throws AceException, FlyMineException {
         String nodeType;
         Object nodeValue;
@@ -151,7 +158,7 @@ public class AceDataLoader extends AbstractDataLoader
             // Set up a dummy AceObject to encapsulate this info and convert to proper Object
             AceObject referredToAceObject = new StaticAceObject((String) nodeValue,
                                                                 null, nodeClass);
-            Object referredToObject = processAceObject(referredToAceObject, model);
+            Object referredToObject = processAceObject(referredToAceObject);
             setField(currentObject, nodeName, referredToObject);
         } else if (aceNode instanceof FloatValue) {
             nodeName = getName(aceNode);
@@ -184,7 +191,7 @@ public class AceDataLoader extends AbstractDataLoader
                 while (nodesIter.hasNext()) {
                     referredToAceObject.addNode((AceNode) nodesIter.next());
                 }
-                Object referredToObject = processAceObject(referredToAceObject, model);
+                Object referredToObject = processAceObject(referredToAceObject);
                 setField(currentObject, nodeName, referredToObject);
             }
 
@@ -193,7 +200,7 @@ public class AceDataLoader extends AbstractDataLoader
         if (aceNode instanceof AceNode) {
             Iterator objIter = aceNode.iterator();
             while (objIter.hasNext()) {
-                processAceNode((AceNode) objIter.next(), currentObject, model);
+                processAceNode((AceNode) objIter.next(), currentObject);
             }
         } else {
             throw new FlyMineException("Node type " + aceNode.getClass() + " not dealt with");
@@ -209,7 +216,7 @@ public class AceDataLoader extends AbstractDataLoader
      * @param fieldValue the value to set or to be added to a collection
      * @throws FlyMineException if the field cannot be accessed
      */
-    protected static void setField(Object target, String fieldName, Object fieldValue)
+    protected void setField(Object target, String fieldName, Object fieldValue)
         throws FlyMineException {
         try {
             Field field = TypeUtil.getField(target.getClass(), fieldName);
@@ -234,7 +241,7 @@ public class AceDataLoader extends AbstractDataLoader
      * @return the name of the parent of the node, or the parent's name if this node is a data node
      * @throws AceException if error occurs with the Ace data
      */
-    protected static String getName(AceSet aceNode) throws AceException {
+    protected String getName(AceSet aceNode) throws AceException {
         String name = aceNode.getParent().getName();
         AceSet node = aceNode;
         int count = 1;
@@ -260,7 +267,7 @@ public class AceDataLoader extends AbstractDataLoader
      * @return true if the node has values as children
      * @throws AceException if error occurs with the Ace data
      */
-    protected static boolean hasChildValues(AceNode node) throws AceException {
+    protected boolean hasChildValues(AceNode node) throws AceException {
         Iterator childIter = node.iterator();
         while (childIter.hasNext()) {
             AceNode childNode = (AceNode) childIter.next();
@@ -308,7 +315,5 @@ public class AceDataLoader extends AbstractDataLoader
         while (iter.hasNext()) {
             AceNode node = (AceNode) iter.next();
         }
-
-
     }
 }

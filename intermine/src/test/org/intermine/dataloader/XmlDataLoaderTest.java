@@ -17,8 +17,10 @@ import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
-import org.flymine.util.*;
+import org.flymine.util.TypeUtil;
+import org.flymine.util.ListBean;
 import org.flymine.model.testmodel.*;
+import org.flymine.metadata.Model;
 
 public class XmlDataLoaderTest extends TestCase {
 
@@ -71,7 +73,8 @@ public class XmlDataLoaderTest extends TestCase {
         Reader reader = new FileReader(file);
         InputSource source = new InputSource(reader);
 
-        XmlDataLoader.processXml("testmodel", iw, source);
+        XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
+        dl.processXml(source);
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1);
