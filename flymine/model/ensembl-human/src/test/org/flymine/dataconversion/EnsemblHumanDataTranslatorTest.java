@@ -103,7 +103,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
 
         Item exp1 = createItem(tgtNs + "Synonym", "-1_1", "");
         exp1.addAttribute(new Attribute("value", "FBgn1001"));
-        exp1.addAttribute(new Attribute("type", "accession"));
+        exp1.addAttribute(new Attribute("type", "identifier"));
         exp1.addReference(new Reference("source", "-1_2"));
         exp1.addReference(new Reference("subject", "4_1"));
 
@@ -115,6 +115,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
     public void testSetOrganismDbId() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl-human#";
         Item gene = createItem(srcNs + "gene", "1_1", "");
+
         gene.addReference(new Reference("seq_region", "1_99"));
 
         Item seq =  createItem(srcNs + "seq_region", "1_99", "");
@@ -228,20 +229,21 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         protein.addReference(new Reference("organism", "-1_1"));
         protein.addCollection(new ReferenceList("subjects", new ArrayList(Arrays.asList(new Object[] {"-1_14","-1_20"}))));
         protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_13"))));
+        protein.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));
         Item synonym0 = createItem(tgtNs + "Synonym", "-1_13", "");
-        synonym0.addAttribute(new Attribute("type", "accession"));
+        synonym0.addAttribute(new Attribute("type", "identifier"));
         synonym0.addAttribute(new Attribute("value", "Q1001"));
         synonym0.addReference(new Reference("subject", "-1_12"));
         synonym0.addReference(new Reference("source", "-1_5"));
 
         Item synonym1 = createItem(tgtNs + "Synonym", "1_6", "");
-        synonym1.addAttribute(new Attribute("type", "accession"));
+        synonym1.addAttribute(new Attribute("type", "identifier"));
         synonym1.addAttribute(new Attribute("value", "TRANScript1"));
         synonym1.addReference(new Reference("subject", "1_1"));
         synonym1.addReference(new Reference("source", "-1_2"));
 
         Item synonym2 = createItem(tgtNs + "Synonym", "2_6", "");
-        synonym2.addAttribute(new Attribute("type", "accession"));
+        synonym2.addAttribute(new Attribute("type", "identifier"));
         synonym2.addAttribute(new Attribute("value", "TRANScript2"));
         synonym2.addReference(new Reference("subject", "2_1"));
         synonym2.addReference(new Reference("source", "-1_2"));
@@ -250,12 +252,14 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         trans1.addAttribute(new Attribute("identifier", "TRANScript1"));
         trans1.addReference(new Reference("organism", "-1_1"));
         trans1.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_16","-1_17"}))));
+        trans1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));
         //trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
 
         Item trans2 = createItem(tgtNs + "Transcript", "2_1", "");
         trans2.addAttribute(new Attribute("identifier", "TRANScript2"));
         trans2.addReference(new Reference("organism", "-1_1"));
         trans2.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_21","-1_22"}))));
+        trans2.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));
         //trans2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_13"))));
 
         Item loca1 = createItem(tgtNs + "Location", "-1_17", "");
@@ -279,10 +283,12 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         Item chr1 = createItem(tgtNs +"Chromosome", "-1_11", "");
         chr1.addAttribute(new Attribute("identifier", "1"));
         chr1.addAttribute(new Attribute("length", "2461200"));
+        chr1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{ "-1_2"}))));
 
         Item chr2 = createItem(tgtNs +"Chromosome", "-1_15", "");
         chr2.addAttribute(new Attribute("identifier", "1"));
         chr2.addAttribute(new Attribute("length", "1124612"));
+        chr2.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{ "-1_2"}))));
 
         Set expected = new HashSet(Arrays.asList(new Object[] {protein, trans1, trans2, synonym0, synonym1, synonym2, loca1, loca2, chr1, chr2}));
 
