@@ -28,7 +28,16 @@ Attributes:<br/>
   <c:forEach items="${object.attributes}" var="entry">
     <tr>
       <td valign="top"><b>${entry.key}</b></td>
-      <td>${entry.value}</td>
+      <td>
+        <c:choose>
+         <c:when test="${entry.value.class.name == 'java.lang.String'}">
+           ${fn:substring(entry.value, 0, 32)}...
+         </c:when>
+         <c:otherwise>
+           ${entry.value}
+         </c:otherwise>
+       </c:choose>
+      </td>
     </tr>
   </c:forEach>
 </table>
