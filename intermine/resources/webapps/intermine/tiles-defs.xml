@@ -33,8 +33,9 @@
 <definition name="sidebar.tile" path="/sidebar.jsp">
     <put name="sidebarOne" value="queryClassSelect.jsp"/>
     <put name="sidebarTwo" value="queryAliasSelect.jsp"/>
-    <put name="sidebarFour" value="runQuery.jsp"/>
-    <put name="sidebarFive" value="restartQuery.jsp"/>
+    <put name="sidebarThree" value="runQuery.jsp"/>
+    <put name="sidebarFour" value="restartQuery.jsp"/>
+    <put name="sidebarFive" value="saveQuery.jsp"/>
 </definition>
 <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do">
 </definition>

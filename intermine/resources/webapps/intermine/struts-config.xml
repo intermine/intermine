@@ -31,7 +31,7 @@
     <form-bean      name="queryAliasSelectForm"
                     type="org.flymine.web.QueryAliasSelectForm"/>
 
-    <!-- ChangeResults from bean -->
+    <!-- ChangeResults form bean -->
     <form-bean      name="changeResultsForm"
                     type="org.flymine.web.results.ChangeResultsForm"/>
 
@@ -39,10 +39,13 @@
     <form-bean      name="runQueryForm"
                     type="org.apache.struts.action.DynaActionForm"/>
 
-    <!-- restart query has no properties, uses an DynaActionForm -->
+    <!-- restart query -->
     <form-bean      name="restartQueryForm"
-                    type="org.apache.struts.action.DynaActionForm"/>
+                    type="org.flymine.web.RestartQueryForm"/>
 
+    <!-- save query -->
+    <form-bean      name="saveQueryForm"
+                    type="org.flymine.web.SaveQueryForm"/>
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -117,6 +120,13 @@
     <action    path="/restartQuery"
                type="org.flymine.web.RestartQueryAction"
                name="restartQueryForm">
+      <forward name="buildquery" path="query.page"/>
+    </action>
+
+    <!-- Action to save the current query -->
+    <action    path="/saveQuery"
+               type="org.flymine.web.SaveQueryAction"
+               name="saveQueryForm">
       <forward name="buildquery" path="query.page"/>
     </action>
 

@@ -19,17 +19,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of <strong>Action</strong> that removes a Query from a session.
+ * Implementation of <strong>Action</strong> that saves a Query from a session.
  *
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
-
-public class RestartQueryAction extends Action
+public class SaveQueryAction extends Action
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -54,24 +54,19 @@ public class RestartQueryAction extends Action
 
         HttpSession session = request.getSession();
 
-        RestartQueryForm rqForm = (RestartQueryForm) form;
-        String queryName = rqForm.getQueryName();
-
-        if ("empty".equals(queryName)) {
-            session.removeAttribute("query");
-        } else {
-            Map savedQueries = (Map) session.getAttribute("savedQueries");
-            if ((savedQueries != null) && savedQueries.containsKey(queryName)) {
-                session.setAttribute("query", savedQueries.get(queryName));
-            } else {
-                session.removeAttribute("query");
-            }
+        Map savedQueries = (Map) session.getAttribute("savedQueries");
+        if (savedQueries == null) {
+            savedQueries = new HashMap();
+            session.setAttribute("savedQueries", savedQueries);
         }
 
-        session.removeAttribute("queryClass");
-        session.removeAttribute("ops");
-
+        SaveQueryForm sqForm = (SaveQueryForm) form;
+        String queryName = sqForm.getQueryName();
+        sqForm.setQueryName("");
+        savedQueries.put(queryName, session.getAttribute("query"));
+        
         return (mapping.findForward("buildquery"));
 
     }
 }
+
