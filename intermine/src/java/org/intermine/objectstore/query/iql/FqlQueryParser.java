@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.fql;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.*;
 
 /**
- * Parser for the FlyMine dialect of OQL (FQL)
+ * Parser for the InterMine dialect of OQL (FQL)
  *
  * @author Matthew Wakeling
  * @author Andrew Varley

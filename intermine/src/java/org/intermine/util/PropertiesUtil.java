@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,9 +52,9 @@ public class PropertiesUtil
     }
 
     /**
-     * Returns all FlyMine properties
+     * Returns all InterMine properties
      *
-     * @return the global properties for FlyMine
+     * @return the global properties for InterMine
      */
     public static Properties getProperties() {
         return globalProperties;

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.translating;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,7 +53,7 @@ public abstract class Translator
      * Translate an object exiting the ObjectStore
      * @param o the object to translate
      * @return the translated object
-     * @throws MetaDataException if item has a field that isn't in FlyMine model
+     * @throws MetaDataException if item has a field that isn't in InterMine model
      */
     public abstract InterMineObject translateFromDbObject(InterMineObject o)
         throws MetaDataException;

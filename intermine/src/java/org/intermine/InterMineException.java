@@ -1,7 +1,7 @@
 package org.intermine;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,7 +12,7 @@ package org.intermine;
 
 /**
  * An Exception that may be thrown by client facing parts
- * of FlyMine code.
+ * of InterMine code.
  *
  * @author Richard Smith
  */

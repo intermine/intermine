@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.fql;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -312,9 +312,9 @@ public class FqlQuery
 
 
     /**
-     * Convert to a FlyMine query
+     * Convert to a InterMine query
      *
-     * @return the FlyMine Query object
+     * @return the InterMine Query object
      */
     public Query toQuery() {
         return FqlQueryParser.parse(this);

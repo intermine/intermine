@@ -1,7 +1,7 @@
 package org.intermine.xml.full;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,7 +28,7 @@ import org.intermine.xml.XmlHelper;
 import org.apache.log4j.Logger;
 
 /**
- * Render an object in FlyMine Full XML format
+ * Render an object in InterMine Full XML format
  *
  * @author Andrew Varley
  */
@@ -44,7 +44,7 @@ public class FullRenderer
     }
 
     /**
-     * Render a collection of objects as XML in FlyMine Full format.
+     * Render a collection of objects as XML in InterMine Full format.
      *
      * @param objects a collection of objects to render
      * @param model the parent model
@@ -82,7 +82,7 @@ public class FullRenderer
     }
 
     /**
-     * Render a collection of items in FlyMine Full XML format.
+     * Render a collection of items in InterMine Full XML format.
      *
      * @param items a collection of items to render
      * @return the XML for the list of items

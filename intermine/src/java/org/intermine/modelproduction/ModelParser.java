@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,7 +15,7 @@ import java.io.Reader;
 import org.intermine.metadata.Model;
 
 /**
- * Common interface for parsing source models into FlyMine model format.
+ * Common interface for parsing source models into InterMine model format.
  *
  * @author Richard Smith
  */
@@ -24,9 +24,9 @@ public interface ModelParser
 {
 
     /**
-     * Read source model information and construct a FlyMine Model object.
+     * Read source model information and construct a InterMine Model object.
      * @param reader the source model to parse
-     * @return the FlyMine Model created
+     * @return the InterMine Model created
      * @throws Exception if Model not created successfully
      */
     public Model process(Reader reader) throws Exception;

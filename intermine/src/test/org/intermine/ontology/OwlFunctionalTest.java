@@ -1,7 +1,7 @@
 package org.intermine.ontology;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,11 +25,11 @@ public class OwlFunctionalTest extends TestCase
 {
     public void testRoundTrip() throws Exception {
         Model original = Model.getInstanceByName("testmodel");
-        InterMine2Owl f2o = new InterMine2Owl();
+        InterMine2Owl i2o = new InterMine2Owl();
         Model newModel = primitivesToObjectsModel(original);
-        OntModel ont = f2o.process(newModel);
-        Owl2InterMine o2f = new Owl2InterMine(original.getName(), original.getPackageName());
-        assertEquals(newModel, o2f.process(ont, original.getNameSpace().toString()));
+        OntModel ont = i2o.process(newModel);
+        Owl2InterMine o2i = new Owl2InterMine(original.getName(), original.getPackageName());
+        assertEquals(newModel, o2i.process(ont, original.getNameSpace().toString()));
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.webservice.ser;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.log4j.Logger;
 
 /**
- * Maps FlyMine metadata to typeMapping entries in a wsdd file
+ * Maps InterMine metadata to typeMapping entries in a wsdd file
  *
  * @author Mark Woodbridge
  */

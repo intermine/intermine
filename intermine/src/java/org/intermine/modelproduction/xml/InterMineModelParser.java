@@ -1,7 +1,7 @@
 package org.intermine.modelproduction.xml;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,18 +22,18 @@ import org.intermine.metadata.*;
 import org.intermine.util.SAXParser;
 
 /**
- * Parse FlyMine metadata XML to produce a FlyMine Model
+ * Parse InterMine metadata XML to produce a InterMine Model
  *
  * @author Mark Woodbridge
  */
 public class InterMineModelParser implements ModelParser
 {
     /**
-     * Read source model information in FlyMine XML format and
-     * construct a FlyMine Model object.
+     * Read source model information in InterMine XML format and
+     * construct a InterMine Model object.
      *
      * @param reader the source model to parse
-     * @return the FlyMine Model created
+     * @return the InterMine Model created
      * @throws Exception if Model not created successfully
      */
     public Model process(Reader reader) throws Exception {

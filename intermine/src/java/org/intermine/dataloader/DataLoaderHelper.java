@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -256,9 +256,9 @@ public class DataLoaderHelper
             int subCount = 0;
             Query q = new Query();
             q.setDistinct(false);
-            QueryClass qcFMBO = new QueryClass(InterMineObject.class);
-            q.addFrom(qcFMBO);
-            q.addToSelect(qcFMBO);
+            QueryClass qcIMO = new QueryClass(InterMineObject.class);
+            q.addFrom(qcIMO);
+            q.addToSelect(qcIMO);
             ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
             Query subQ = null;
 
@@ -333,7 +333,7 @@ public class DataLoaderHelper
                         }
                     }
                     subQ.setConstraint(cs);
-                    where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
+                    where.addConstraint(new SubqueryConstraint(qcIMO, ConstraintOp.IN, subQ));
                     subCount++;
                 }
             }

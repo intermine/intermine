@@ -1,7 +1,7 @@
 package org.intermine.web;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,7 @@ import org.intermine.web.config.WebConfig;
 import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
- * Initialiser for the FlyMine web application
+ * Initialiser for the InterMine web application
  * Anything that needs global initialisation goes here.
  *
  * @author Andrew Varley

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ import org.intermine.util.StringUtil;
  * Three types of index are created: for the specified primary key fields, for all N-1 relations,
  * and for the indirection table columns of M-N relations.
  * This should speed up primary key queries, and other common queries
- * Note that all "id" columns are indexed automatically by virtue of FlyMineTorqueModelOuput
+ * Note that all "id" columns are indexed automatically by virtue of InterMineTorqueModelOuput
  * specifying them as primary key columns.
  * @author Mark Woodbridge
  */

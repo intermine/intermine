@@ -1,7 +1,7 @@
 package org.intermine.objectstore.translating;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -119,10 +119,10 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                 while (rowIter.hasNext()) {
                     Object o = rowIter.next();
                     if (o instanceof InterMineObject) {
-                        InterMineObject fmbo =
+                        InterMineObject imo =
                             translator.translateFromDbObject((InterMineObject) o);
-                        row.add(fmbo);
-                        cacheObjectById(fmbo.getId(), fmbo);
+                        row.add(imo);
+                        cacheObjectById(imo.getId(), imo);
                     } else {
                         row.add(o);
                     }

@@ -1,7 +1,7 @@
 package org.intermine.model;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,7 +11,7 @@ package org.intermine.model;
  */
 
 /**
- * A root interface for all objects that can be stored in a FlyMine database.
+ * A root interface for all objects that can be stored in a InterMine database.
  *
  * @author Matthew Wakeling
  * @author Andrew Varley

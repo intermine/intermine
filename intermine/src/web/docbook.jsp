@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/xml" prefix="x" %>
 
 <%-- Page that will take a request parameter of a file to transform and then --%>
-<%-- transform it through the FlyMine XSL --%>
+<%-- transform it through the InterMine XSL --%>
 
 <!-- docbook.jsp -->
 <c:choose>

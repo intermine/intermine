@@ -1,7 +1,7 @@
 package org.intermine.ontology;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,7 +35,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
 // Test that merges two OWL models together (including restricted subclasses) and takes the
-// output to test generation of FlyMine model.  Also use output to run DataTranslator
+// output to test generation of InterMine model.  Also use output to run DataTranslator
 // on items from each src format into target format.
 // THE OWL FORMAT AND CONSTRUCTS USED IN MERGE SPEC HERE SHOULD BE TREATED AS DEFINITIVE
 // EXAMPLES FOR PRODUCTION SYSTEM
@@ -157,8 +157,8 @@ public class DefinitiveOwlTest extends XMLTestCase
     }
 
     private Model generateInterMineModel() throws Exception {
-        Owl2InterMine o2f = new Owl2InterMine("test", "org.intermine.model.test");
-        Model model = o2f.process(runMergeOwl(), tgtNs);
+        Owl2InterMine o2i = new Owl2InterMine("test", "org.intermine.model.test");
+        Model model = o2i.process(runMergeOwl(), tgtNs);
         return model;
     }
 
@@ -218,7 +218,7 @@ public class DefinitiveOwlTest extends XMLTestCase
                    + "      owl:equivalentProperty src2:Org__organisationName ." + ENDL);
 
         // indicate that a class should not appear in target model, properties with this class
-        // as range or domain will not appear in FlyMine model output
+        // as range or domain will not appear in InterMine model output
         // src1:Contractor -> null:Contractor
         owl.append("null:Contractor a owl:Class ;" + ENDL
                    + "      owl:equivalentClass src1:Contractor." + ENDL);

@@ -1,7 +1,7 @@
 package org.intermine.codegen;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.metadata.*;
 
 /**
- * Maps FlyMine metadata to Java source files
+ * Maps InterMine metadata to Java source files
  *
  * @author Mark Woodbridge
  */

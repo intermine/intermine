@@ -1,7 +1,7 @@
 package org.intermine.tutorial;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,7 @@ import org.intermine.model.tutorial.Department;
  * Simple demonstration of loading data, where data may already exist
  * in the ObjectStore. This is demonstrating using the
  * ObjectStoreWriter.store() method. In real life, lots of this work
- * can done by using one of the FlyMine IntegrationWriter or
+ * can done by using one of the InterMine IntegrationWriter or
  * DataLoader classes.
  *
  * @author Andrew Varley

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,7 +29,7 @@ import org.intermine.xml.lite.LiteParser;
 import org.apache.log4j.Logger;
 
 /**
- * Provides a method to convert from SQL ResultSet data to FlyMine object-based data.
+ * Provides a method to convert from SQL ResultSet data to InterMine object-based data.
  *
  * @author Matthew Wakeling
  * @author Andrew Varley
@@ -39,7 +39,7 @@ public class ResultsConverter
     protected static final Logger LOG = Logger.getLogger(ResultsConverter.class);
 
     /**
-     * Method to convert from SQL results to FlyMine object-based results.
+     * Method to convert from SQL results to InterMine object-based results.
      * This method accepts an SQL ResultSet and a Query as an input. The ResultSet must contain a
      * column named the same as the aliases of the elements in the SELECT list of the Query,
      * each containing either the OBJECT column in the case of a business object, or the value of

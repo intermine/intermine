@@ -1,7 +1,7 @@
 package org.intermine.xml.lite;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,7 +52,7 @@ public class LiteParser
     protected static final String DELIM = "\\$_\\^";
 
     /**
-     * Parse a FlyMine Lite XML file
+     * Parse a InterMine Lite XML file
      *
      * @param is the InputStream to parse
      * @param os the ObjectStore with which to associate any new lazy objects

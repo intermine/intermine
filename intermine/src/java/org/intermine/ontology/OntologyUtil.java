@@ -1,7 +1,7 @@
 package org.intermine.ontology;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -473,7 +473,7 @@ public class OntologyUtil
     }
 
     /**
-     * Prepare format of OWL properties for generation of a FlyMine model:
+     * Prepare format of OWL properties for generation of a InterMine model:
      * a) change names of properties to be <domain>__<property>.
      * b) if multiple ranges that inherit from one another choose correct one
      * @param model the model to alter proerties in

@@ -1,7 +1,7 @@
 package org.intermine.ontology;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,7 +27,7 @@ import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
- * Convert a FlyMine metadata model to a Jena OntModel.
+ * Convert a InterMine metadata model to a Jena OntModel.
  *
  * @author Andrew Varley
  * @author Richard Smith
@@ -36,8 +36,8 @@ public class InterMine2Owl
 {
 
     /**
-     * Create a Jena OntModel by processing a FlyMine metadata Model.
-     * @param model the source FlyMine metadata model
+     * Create a Jena OntModel by processing a InterMine metadata Model.
+     * @param model the source InterMine metadata model
      * @return a Jena OntModel
      */
     public OntModel process(Model model) {
@@ -130,7 +130,7 @@ public class InterMine2Owl
 
 
     /**
-     * Main method to convert FlyMine model XML to OWL.
+     * Main method to convert InterMine model XML to OWL.
      * @param args srcFilename, tgtFilename, OWL format
      * @throws Exception if anything goes wrong
      */
@@ -145,12 +145,12 @@ public class InterMine2Owl
         File srcFile = new File(srcFilename);
         File tgtFile = new File(tgtFilename);
 
-        InterMine2Owl f2o = new InterMine2Owl();
+        InterMine2Owl i2o = new InterMine2Owl();
         Model model = null;
         ModelParser parser = new InterMineModelParser();
         model = parser.process(new FileReader(srcFile));
 
-        OntModel ont = f2o.process(model);
+        OntModel ont = i2o.process(model);
         FileWriter writer = new FileWriter(tgtFile);
         ont.write(writer, format);
         writer.close();

@@ -1,7 +1,7 @@
 package org.intermine.web;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,7 +28,7 @@ import org.apache.struts.config.ExceptionConfig;
 import org.apache.struts.util.ModuleException;
 
 /**
- * FlyMine implementation of the Struts ExceptionHandler
+ * InterMine implementation of the Struts ExceptionHandler
  *
  * @author Andrew Varley
  */

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -112,7 +112,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     /**
      * Gets a ObjectStoreInterMineImpl instance for the given underlying properties
      *
-     * @param props The properties used to configure a FlyMine-based objectstore
+     * @param props The properties used to configure a InterMine-based objectstore
      * @param model the metadata associated with this objectstore
      * @return the ObjectStoreInterMineImpl for this repository
      * @throws IllegalArgumentException if props or model are invalid
@@ -122,14 +122,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         throws ObjectStoreException {
         String dbAlias = props.getProperty("db");
         if (dbAlias == null) {
-            throw new ObjectStoreException("No 'db' property specified for FlyMine"
+            throw new ObjectStoreException("No 'db' property specified for InterMine"
                                            + " objectstore (check properties file)");
         }
         Database db;
         try {
             db = DatabaseFactory.getDatabase(dbAlias);
         } catch (Exception e) {
-            throw new ObjectStoreException("Unable to get database for FlyMine ObjectStore", e);
+            throw new ObjectStoreException("Unable to get database for InterMine ObjectStore", e);
         }
         synchronized (instances) {
             if (!(instances.containsKey(db))) {

@@ -1,7 +1,7 @@
 package org.intermine.xml.lite;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,7 +25,7 @@ import org.intermine.model.InterMineObject;
 import org.apache.log4j.Logger;
 
 /**
- * Render an object in FlyMine Lite XML format
+ * Render an object in InterMine Lite XML format
  *
  * @author Andrew Varley
  */
@@ -41,7 +41,7 @@ public class LiteRenderer
     }
 
     /**
-     * Render the given object as XML in FlyMine Lite format
+     * Render the given object as XML in InterMine Lite format
      *
      * @param obj the object to render
      * @param model the parent model
@@ -54,7 +54,7 @@ public class LiteRenderer
 
 
     /**
-     * Render the given item as XML in FlyMine Lite format
+     * Render the given item as XML in InterMine Lite format
      *
      * @param item the item to render
      * @return the XML for that object
@@ -158,7 +158,7 @@ public class LiteRenderer
      * Convert the InterMineObject to Lite XML Item.
      *
      * @param obj the object to convert
-     * @param model the parent FlyMine model
+     * @param model the parent InterMine model
      * @return the generated item
      */
     protected static Item objectToItem(InterMineObject obj, Model model) {

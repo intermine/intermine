@@ -1,7 +1,7 @@
 package org.intermine.ontology;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,13 +55,13 @@ public class Owl2InterMine
 
 
     /**
-     * Generate a FlyMine metadata model from an OWL ontology.  Can handle attributes,
+     * Generate a InterMine metadata model from an OWL ontology.  Can handle attributes,
      * references and collections, reverse references.  Will not handle
      * ordered collections (how to represent in OWL?).  Also will not do anything
      * about individuals in OWL.
      * @param ontModel jena java representation of OWL ontology
      * @param tgtNs the namespace merged ontology model
-     * @return a FlyMine metadata model
+     * @return a InterMine metadata model
      * @throws Exception if anything goes wrong
      */
     public Model process(OntModel ontModel, String tgtNs) throws Exception {
@@ -187,7 +187,7 @@ public class Owl2InterMine
             return;
         }
 
-        // if this is an inherited duplicate property ignore it, in FlyMine model property
+        // if this is an inherited duplicate property ignore it, in InterMine model property
         // will get inherited ... Jena makes everything subPropertyOf itself -> look through
         // all super properties
         Iterator s = prop.listSuperProperties();
@@ -317,7 +317,7 @@ public class Owl2InterMine
 
 
     /**
-     * Main method to convert OWL to FlyMine model XML.
+     * Main method to convert OWL to InterMine model XML.
      * @param args srcFilename, RDF format, tgtFilename, modelname, package, tgtNs
      * @throws Exception if anything goes wrong
      */
@@ -333,10 +333,10 @@ public class Owl2InterMine
         String pkg = args[4];
         String tgtNs = args[5];
 
-        Owl2InterMine o2f = new Owl2InterMine(modelName, pkg);
+        Owl2InterMine o2i = new Owl2InterMine(modelName, pkg);
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(srcFilename)), null, format);
-        Model tgt = o2f.process(model, tgtNs);
+        Model tgt = o2i.process(model, tgtNs);
         FileWriter writer = new FileWriter(new File(tgtFilename));
         writer.write(tgt.toString());
         writer.close();

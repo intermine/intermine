@@ -1,7 +1,7 @@
 package org.intermine.modelproduction.acedb;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -59,10 +59,10 @@ public class AceModelParser implements ModelParser
 
     /**
      * Read source model information in Ace model format and
-     * construct a FlyMine Model object.
+     * construct a InterMine Model object.
      *
      * @param reader the AceDBsource model to parse
-     * @return the FlyMine Model created
+     * @return the InterMine Model created
      * @throws Exception if a problem occurs during parsing
      */
     public Model process(Reader reader) throws Exception {

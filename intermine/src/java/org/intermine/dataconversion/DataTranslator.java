@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -49,8 +49,8 @@ import org.intermine.xml.full.ItemHelper;
 import org.apache.log4j.Logger;
 
 /**
- * Convert data in FlyMine Full XML format conforming to a source OWL definition
- * to FlyMine Full XML conforming to FlyMine OWL definition.
+ * Convert data in InterMine Full XML format conforming to a source OWL definition
+ * to InterMine Full XML conforming to InterMine OWL definition.
  *
  * @author Andrew Varley
  * @author Richard Smith

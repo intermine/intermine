@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.fql;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -115,7 +115,7 @@ public class FqlShell
             }
         });
 
-        out.println("\nFlyMine Query shell. Type in an FQL query, or \"quit;\" to exit.");
+        out.println("\nInterMine Query shell. Type in an FQL query, or \"quit;\" to exit.");
         out.println("End your query with \";\" then a newline. Other newlines are ignored");
         out.flush();
         String currentQuery = "";

@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,7 +22,7 @@ import org.intermine.modelproduction.acedb.AceModelParser;
 import org.intermine.metadata.Model;
 
 /**
- * Ant task that calls a parser to build a FlyMine model from an external source
+ * Ant task that calls a parser to build a InterMine model from an external source
  * and persist it as xml.
  *
  * @author Richard Smith

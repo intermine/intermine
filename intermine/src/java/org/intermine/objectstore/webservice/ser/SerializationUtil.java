@@ -1,7 +1,7 @@
 package org.intermine.objectstore.webservice.ser;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,7 +38,7 @@ public class SerializationUtil
     protected static final Logger LOG = Logger.getLogger(SerializationUtil.class);
 
     /**
-     * Register type mappings for the 5 built-in FlyMine types that are sent over the wire
+     * Register type mappings for the 5 built-in InterMine types that are sent over the wire
      * Note that Axis only allows mappings for concrete classes (not superclasses or interfaces)
      * In particular this means that we only map ArrayLists (everything else is converted) and
      * we map InterMineObjects at the client/server level rather than at serialization time

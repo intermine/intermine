@@ -1,7 +1,7 @@
 package org.intermine.xml.full;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,7 +41,7 @@ public class FullParser
     private static Log log = LogFactory.getLog(FullParser.class);
 
     /**
-     * Parse a FlyMine Full XML file
+     * Parse a InterMine Full XML file
      *
      * @param is the InputStream to parse
      * @return a list of Items

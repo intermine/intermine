@@ -1,7 +1,7 @@
 package org.intermine.modelproduction.uml;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.metadata.*;
 
 /**
- * Translates a model representation in XMI to FlyMine metadata (Java)
+ * Translates a model representation in XMI to InterMine metadata (Java)
  *
  * @author Mark Woodbridge
  */
@@ -79,10 +79,10 @@ public class XmiParser implements ModelParser
 
     /**
      * Read source model information in XMI format and
-     * construct a FlyMine Model object.
+     * construct a InterMine Model object.
      *
      * @param reader the source XMI file to parse
-     * @return the FlyMine Model created
+     * @return the InterMine Model created
      * @throws Exception if Model not created successfully
      */
     public Model process(Reader reader) throws Exception {

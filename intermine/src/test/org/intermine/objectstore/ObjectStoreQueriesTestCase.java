@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,7 +28,7 @@ import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.*;
 
 /**
- * TestCase for testing FlyMine Queries
+ * TestCase for testing InterMine Queries
  * To check results:
  * add results to the results map
  * override executeTest to run query and assert that the result is what is expected
