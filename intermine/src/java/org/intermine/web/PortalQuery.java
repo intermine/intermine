@@ -10,12 +10,14 @@ package org.intermine.web;
  *
  */
 
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -60,6 +62,13 @@ public class PortalQuery extends TemplateAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         
         String extId = request.getParameter("externalid");
+        String origin = request.getParameter("origin");
+        
+        if (origin == null) {
+            origin = "";
+        } else if (origin.length() > 0) {
+            origin = "." + origin;
+        }
         
         if (extId == null) {
             ActionErrors errors = new ActionErrors();
@@ -71,19 +80,27 @@ public class PortalQuery extends TemplateAction
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
         Integer op = ConstraintOp.EQUALS.getIndex();
-        
         TemplateQuery template = TemplateHelper.findTemplate(request, templateName, "global");
+        
         // Populate template form bean
         TemplateForm tf = new TemplateForm();
         tf.setAttributeOps("1", op.toString());
         tf.setAttributeValues("1", extId);
         tf.parseAttributeValues(template, session, new ActionErrors());
+        
         // Convert form to path query
         PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
         // Convert path query to intermine query
         SessionMethods.loadQuery(queryCopy, request.getSession());
-        // Set a session attribute that indicates we have arrived via a portal
-        session.setAttribute(Constants.ENTERED_PORTAL, Boolean.TRUE);
+        // Add a message to welcome the user
+        recordMessage(new ActionMessage("portal.welcome" + origin), request);
+        
+        // Set collapsed/uncollapsed state of object details UI
+        Map collapsed = (Map) session.getAttribute("COLLAPSED");
+        collapsed.put("fields", Boolean.TRUE);
+        collapsed.put("further", Boolean.TRUE);
+        collapsed.put("other", Boolean.TRUE);
+        collapsed.put("summary", Boolean.FALSE);
         
         return handleTemplateQuery(mapping, request, response, true, false);
     }
