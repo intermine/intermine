@@ -155,6 +155,11 @@ public class Results extends AbstractList
         int startBatch = getBatchNoForRow(start);
         int endBatch = getBatchNoForRow(end);
 
+        List ret = new ArrayList();
+        for (int i = startBatch; i <= endBatch; i++) {
+            ret.addAll(getRowsFromBatch(i, start, end));
+        }
+
         if (start - 1 == lastGet) {
             sequential += end - start + 1;
             //LOG.debug("This access sequential = " + sequential
@@ -203,10 +208,6 @@ public class Results extends AbstractList
         }
         */
 
-        List ret = new ArrayList();
-        for (int i = startBatch; i <= endBatch; i++) {
-            ret.addAll(getRowsFromBatch(i, start, end));
-        }
         return ret;
     }
 
