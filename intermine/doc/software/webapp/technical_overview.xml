@@ -14,7 +14,7 @@
   
   <sect1>
     <para>The three most important "business objects" for the webapp are the PathQuery, the PagedTable and the Profile. These are described below. Other important business logic includes TreeNode, InterMineBag and MetadataNode. Important non-action classes include InitialiserPlugin, SessionListener, InterMineRequestProcessor and InterMineExceptionHandler.</para>
-    <para>The rest of the classes are generally actions (including controllers) for the relevant jsps. Helper classes (for actions or business objects) should not generally import any servlet or struts classes.</para>
+    <para>The rest of the classes are generally actions (including controllers) for the relevant .jsp files. Helper classes (for actions or business objects) should not generally import any servlet or struts classes.</para>
     <para>All session (user specific) and servletcontext (non-user specific) data is stored under keys listed in Constants.java. this makes it easier to keep track of what is available, and used, by any particular page. Also note that of the three objects stored in session (PROFILE, QUERY AND RESULTS_TABLE) only PROFILE is not "temporary", ie. not related to the query "in progress". Note that the even more temporary "path" and "prefix" attributes are also currently stored in the session, but this is not ideal.</para>
     <para>The best way to understand the webapp is to use it, whilst following the struts-config. The tiles-defs are less helpful. tiles are used mainly for including a common element to most pages (eg. the page description) and for configuring controllers.</para>
   </sect1>
