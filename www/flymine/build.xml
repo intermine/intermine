@@ -34,7 +34,14 @@
     </copy>
   </target>
     
-  <target name="www-flymine" depends="prepare"> 
+  <target name="www-flymine" depends="prepare">
+    <xmlvalidate>
+      <fileset dir="${build.www}" includes="**/*.xml">
+        <exclude name="internal/**"/>
+        <!-- necessary until we can accommodate "presentation" within docbook -->
+        <exclude name="doc/presentations/index.xml"/>
+      </fileset>
+    </xmlvalidate>
     <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
            style="../main.xsl" includes="**/*.xml" force="false">
       <param name="branding" expression="flymine" />
