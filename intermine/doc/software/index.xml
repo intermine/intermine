@@ -68,12 +68,6 @@
   </section>
 
   <section>
-    <heading>Presentations</heading>
-    <item><ulink url="../project/presentations/BOSC2003.sxi">BOSC 2003</ulink></item>
-    <item><ulink url="../project/presentations/ISMB2003.sxi">ISMB 2003 (poster)</ulink></item>
-  </section>
-
-  <section>
     <heading>Contributing code to FlyMine</heading>
     <item><ulink url="contributing">Introduction</ulink></item>
     <item><ulink url="coding-standards">Coding standards</ulink></item>
