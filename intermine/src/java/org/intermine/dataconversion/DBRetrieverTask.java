@@ -19,7 +19,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flymine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.xml.full.FullParser;
 
 public class BufferedItemWriterTest extends ItemWriterTestCase {

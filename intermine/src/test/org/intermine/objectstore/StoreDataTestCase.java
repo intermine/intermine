@@ -28,7 +28,7 @@ import java.io.File;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
