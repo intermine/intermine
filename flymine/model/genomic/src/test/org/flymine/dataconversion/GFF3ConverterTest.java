@@ -64,16 +64,15 @@ public class GFF3ConverterTest extends TestCase {
 
     public void testParse() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-            InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/test.gff")));
+                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/test.gff")));
         converter.parse(srcReader);
-        Set expected = new HashSet(getExpectedItems());
-        assertEquals(expected, writer.getItems());
+
         FileWriter writerSrc = new FileWriter(new File("gff_items.xml"));
-        try {
-            writerSrc.write(FullRenderer.render(writer.getItems()));
-        } catch (java.io.IOException e) {}
+        writerSrc.write(FullRenderer.render(writer.getItems()));
         writerSrc.close();
 
+        Set expected = new HashSet(getExpectedItems());
+        assertEquals(expected, writer.getItems());
     }
 
 
