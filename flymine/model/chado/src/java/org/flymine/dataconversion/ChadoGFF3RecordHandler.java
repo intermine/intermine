@@ -103,6 +103,14 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
+        // set TransposableElement.organismDbId
+        if ("TransposableElement".equals(clsName)) {
+            String organismDbId = parseFlyBaseId(record.getDbxrefs(), "FBti");
+            if (organismDbId != null) {
+                feature.setAttribute("organismDbId", organismDbId);
+            }
+        }
+
         // create additional referenced gene
         if ("SnRNA".equals(clsName) || "NcRNA".equals(clsName) || "SnoRNA".equals(clsName)
             || "TRNA".equals(clsName)) {
@@ -112,13 +120,25 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                 gene.setAttribute("organismDbId", organismDbId);
                 addItem(gene);
                 feature.setReference("gene", gene.getIdentifier());
-                // TODO - get CG identifier from 2nd_synonym
+                List list = (List) record.getAttributes().get("synonym_2nd");
+                if (list != null) {
+                    Iterator iter = list.iterator();
+                    while (iter.hasNext()) {
+                        String synonym = (String) iter.next();
+                        if (synonym.startsWith("CG") && Character.isDigit(synonym.charAt(2))) {
+                            if (gene.hasAttribute("identifier")) {
+                                throw new RuntimeException("multiple CG identifiers found for"
+                                                           + "reference gene: " + organismDbId);
+                            }
+                            gene.setAttribute("identifier", synonym);
+                        }
+                    }
+                }
             }
         }
     }
 
-//     private List getSecondDbxrefs(GFF3Record record) {
-//     }
+
 
 
     /**
