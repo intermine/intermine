@@ -12,8 +12,6 @@ package org.flymine.ontology;
 
 import junit.framework.*;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.FileReader;
 import java.util.Iterator;
 import java.util.Set;
@@ -36,16 +34,6 @@ public class OwlFunctionalTest extends TestCase
         FlyMine2Owl f2o = new FlyMine2Owl();
         Model newModel = primitivesToObjectsModel(original);
         OntModel ont = f2o.process(newModel);
-        File file = new File("/home/rns/ont.owl");
-        ont.write(new FileWriter(file), "N3");
-
-        OntModel fromFile = ModelFactory.createOntologyModel();
-        fromFile.read(new FileReader(file), null, "N3");
-
-        OntClass c1 = fromFile.getOntClass(original.getNameSpace() + "Company");
-        assertNotNull(c1);
-        assertNotNull(c1.getNameSpace());
-        //assertEquals(original.getNameSpace(), c1.getNameSpace());
         Owl2FlyMine o2f = new Owl2FlyMine(original.getName(), original.getPackageName());
         assertEquals(newModel, o2f.process(ont, original.getNameSpace().toString()));
     }
