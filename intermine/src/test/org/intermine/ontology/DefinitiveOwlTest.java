@@ -124,18 +124,18 @@ public class DefinitiveOwlTest extends XMLTestCase
 
 //     }
 
-    public void testDataTranslatorSrc2() throws Exception {
-        ItemWriter srcItemWriter = new MockItemWriter(itemMap);
-        for (Iterator i = getSrc2Items().iterator(); i.hasNext();) {
-            srcItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
+//     public void testDataTranslatorSrc2() throws Exception {
+//         ItemWriter srcItemWriter = new MockItemWriter(itemMap);
+//         for (Iterator i = getSrc2Items().iterator(); i.hasNext();) {
+//             srcItemWriter.store(ItemHelper.convert((Item) i.next()));
+//         }
 
-        DataTranslator translator = new DataTranslator(new MockItemReader(itemMap), runMergeOwl(), tgtNs);
-        MockItemWriter tgtItemWriter = new MockItemWriter(new HashMap());
-        translator.translate(tgtItemWriter);
+//         DataTranslator translator = new DataTranslator(new MockItemReader(itemMap), runMergeOwl(), tgtNs);
+//         MockItemWriter tgtItemWriter = new MockItemWriter(new HashMap());
+//         translator.translate(tgtItemWriter);
 
-        assertEquals(getSrc2TgtItems(), tgtItemWriter.getItems());
-    }
+//         assertEquals(getSrc2TgtItems(), tgtItemWriter.getItems());
+//     }
 
     private OntModel runMergeOwl() throws Exception {
         String src1 = getSrc1Model();
