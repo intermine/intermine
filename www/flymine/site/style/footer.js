@@ -25,7 +25,7 @@ function setFooter() {
         var windowHeight = getWindowHeight();
 		if (windowHeight > 0) {
 			var headerHeight = document.getElementById('header').offsetHeight;
-			var contentHeight = document.getElementById('content').offsetHeight;
+			var contentHeight = document.getElementById('pagecontent').offsetHeight;
 			var footerElement = document.getElementById('footer');
 			var footerHeight  = footerElement.offsetHeight;
 			if (windowHeight - (headerHeight + contentHeight + footerHeight) >= 0) {
