@@ -3088,7 +3088,6 @@
           <Feature_ref identifier="F:A-FLYC-1:1.1.1.2"/>
           <Feature_ref identifier="F:A-FLYC-1:1.1.1.3"/>
           <Feature_ref identifier="F:A-FLYC-1:1.1.1.13"/>
-          <Feature_ref identifier="F:A-FLYC-1:4.12.12.13"/>
         </ContainedFeatures_assnreflist>
       </FeatureDimension>
     </DesignElementDimension_assnlist>

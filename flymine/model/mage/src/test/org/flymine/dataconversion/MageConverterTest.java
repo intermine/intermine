@@ -14,16 +14,29 @@ import junit.framework.*;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Iterator;
 
 import org.biomage.BioSequence.BioSequence;
 import org.biomage.Description.OntologyEntry;
 import org.biomage.Description.DatabaseEntry;
 import org.biomage.BioSequence.SeqFeature;
 import org.biomage.tools.xmlutils.*;
+import org.biomage.DesignElement.Feature;
+import org.biomage.BioAssayData.FeatureDimension;
+import org.biomage.DesignElement.FeatureLocation;
+import org.biomage.QuantitationType.MeasuredSignal;
+import org.biomage.BioAssayData.QuantitationTypeDimension;
+import org.biomage.BioAssayData.MeasuredBioAssayData;
+import org.biomage.BioAssayData.BioDataCube;
+import org.biomage.BioAssayData.DataExternal;
 
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -37,9 +50,16 @@ public class MageConverterTest extends TestCase
 {
     MageConverter converter;
     String ns = "http://www.biomage.org#";
+    File f = null;
 
     public void setUp() {
         converter = new MageConverter(null);
+    }
+
+    public void tearDown() {
+        if (f != null) {
+            f.delete();
+        }
     }
 
     public void testConvertMageML() throws Exception {
@@ -147,15 +167,131 @@ public class MageConverterTest extends TestCase
         r1.addRefId("1_2");
         expected.addCollection(r1);
 
+
         assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
     }
 
+    public void testMeasurdBioAssayData() throws Exception{
+        converter.seenMap = new LinkedHashMap();
+        converter.dataItems = new LinkedHashSet();
 
+
+        String exampleData = "1.006\t3.456" + System.getProperty("line.separator")
+            + "435.223\t1.004" + System.getProperty("line.separator");
+
+        f = new File("build/model/mage/resources/test/mage_example_data");
+        FileWriter fw = new FileWriter(f);
+        fw.write(exampleData);
+        fw.flush();
+        fw.close();
+
+        MeasuredBioAssayData mbad=new MeasuredBioAssayData();
+        BioDataCube bdc=new BioDataCube();
+        DataExternal df=new DataExternal();
+        bdc.setDataExternal(df);
+        df.setFilenameURI("test/mage_example_data");
+        mbad.setBioDataValues(bdc);
+
+        QuantitationTypeDimension qtd = new QuantitationTypeDimension();
+        MeasuredSignal qt1 = new MeasuredSignal();
+        OntologyEntry oe1=new OntologyEntry();
+        oe1.setValue("col1");
+        qt1.setDataType(oe1);
+        qtd.addToQuantitationTypes(qt1);
+        MeasuredSignal qt2 = new MeasuredSignal();
+        OntologyEntry oe2=new OntologyEntry();
+        oe2.setValue("col2");
+        qt1.setDataType(oe2);
+        qtd.addToQuantitationTypes(qt2);
+        mbad.setQuantitationTypeDimension(qtd);
+
+        FeatureDimension fd = new FeatureDimension();
+        FeatureLocation fl1 = new FeatureLocation();
+        fl1.setRow(new Integer (1));
+        fl1.setColumn(new Integer(1));
+        Feature f1 = new Feature();
+        f1.setFeatureLocation(fl1);
+        fd.addToContainedFeatures(f1);
+        FeatureLocation fl2 = new FeatureLocation();
+        fl2.setRow(new Integer(1));
+        fl2.setColumn(new Integer(2));
+        Feature f2 = new Feature();
+        f2.setFeatureLocation(fl2);
+        fd.addToContainedFeatures(f2);
+        mbad.setDesignElementDimension(fd);
+
+        Item expected = new Item();
+        expected.setClassName(ns + "MeasuredBioAssayData");
+        expected.setIdentifier("0_0");
+        expected.addReference(createReference("bioDataValues","0_12"));
+        expected.addReference(createReference("quantitationTypeDimension", "6_8"));
+        expected.addReference(createReference("designElementDimension", "1_1"));
+
+        assertEquals(expected, ItemHelper.convert(converter.createItem(mbad)));
+
+        Item d=createItems(ns+"BioDataTuples","0_12", "");
+        ReferenceList rl=new ReferenceList();
+        rl.setName("bioAssayTupleData");
+
+        Item d1=createItems(ns+"BioAssayDatum", "0_13","" );
+        d1.addReference(createReference("designElement", "2_2"));
+        d1.addReference(createReference("quantitationType", "7_9"));
+        d1.addAttribute(createAttribute("value", "1.006"));
+        rl.addRefId(d1.getIdentifier());
+
+
+        Item d2=createItems(ns+"BioAssayDatum", "0_14","" );
+        d2.addReference(createReference("designElement", "2_2"));
+        d2.addReference(createReference("quantitationType", "7_11"));
+        d2.addAttribute(createAttribute("value", "3.456"));
+        rl.addRefId(d2.getIdentifier());
+
+        Item d3=createItems(ns+"BioAssayDatum", "0_15","" );
+        d3.addReference(createReference("designElement", "2_4"));
+        d3.addReference(createReference("quantitationType", "7_9"));
+        d3.addAttribute(createAttribute("value", "435.223"));
+        rl.addRefId(d3.getIdentifier());
+
+        Item d4=createItems(ns+"BioAssayDatum", "0_16","" );
+        d4.addReference(createReference("designElement", "2_4"));
+        d4.addReference(createReference("quantitationType", "7_11"));
+        d4.addAttribute(createAttribute("value", "1.004"));
+        rl.addRefId(d4.getIdentifier());
+        d.addCollection(rl);
+
+        Set expSet = new HashSet(Arrays.asList(new Object[] {d, d1, d2, d3, d4}));
+        Set results = new HashSet();
+
+        Iterator i = converter.dataItems.iterator();
+        while(i.hasNext()){
+            results.add(ItemHelper.convert((org.intermine.model.fulldata.Item)i.next()));
+        }
+        assertEquals(expSet, results);
+    }
+
+
+    private Reference createReference(String name, String refId){
+        Reference ref=new Reference();
+        ref.setRefId(refId);
+        ref.setName(name);
+        return ref;
+    }
+    private Attribute createAttribute(String name, String refId){
+        Attribute ref=new Attribute();
+        ref.setValue(refId);
+        ref.setName(name);
+        return ref;
+    }
+    private Item createItems(String className, String itemId, String implementation){
+        Item item=new Item();
+        item.setIdentifier(itemId);
+        item.setClassName(className);
+        item.setImplementations(implementation);
+        return item;
+    }
     public void testDuplicateQuotes() throws Exception {
         String s1 = "something \"quoted\"";
         String s2 = converter.escapeQuotes(s1);
-        System.out.println(s1);
-        System.out.println(s2);
         assertEquals("something \\\"quoted\\\"", s2);
     }
 }
