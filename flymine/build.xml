@@ -470,18 +470,16 @@
 
   <!-- merge orthologue model with current genomic model owl -->
   <target name="merge-orthologue-model" depends="prepare-genomic-model">
-    <copy file="${model}/orthologue/orthologue.n3" todir="${build.model}/orthologue/"/>
-
-    <!-- merge orthologue model with target genomic model -->
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-          maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/orthologue/orthologue.n3" />
-      <arg value="http://www.flymine.org/model/orthologue#" />
-      <arg value="N3" />
-      <arg value="y" />
+    <copy file="${model}/orthologue/orthologue_merge_spec.n3" todir="${build.model}/orthologue/"/>
+    <!-- merge orthologue merge_spec with current genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m">
+      <classpath refid="models.class.path"/>
+      <arg value="${build.model}/genomic/genomic.n3"/>
+      <arg value="http://www.flymine.org/model/genomic#"/>
+      <arg value="${build.model}/orthologue/orthologue_merge_spec.n3"/>
+      <arg value="http://www.flymine.org/model/orthologue#"/>
+      <arg value="N3"/>
+      <arg value="y"/>
     </java>
   </target>
 
