@@ -2,7 +2,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- query.jsp -->
-<im:viewablejs idPrefixes="browser,query,showing"/>
+<im:viewablejs idPrefixes="nav,browser,query,showing"/>
 <tiles:get name="main"/>
 <br/>
 <tiles:get name="view"/>
