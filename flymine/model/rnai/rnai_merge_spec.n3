@@ -47,9 +47,9 @@ null:Phenotype__code a owl:DatatypeProperty;
 :Phenotype a owl:Class;
     rdfs:subClassOf :BioProperty.
 
-:Phenotype__subject a owl:ObjectProperty;
+:Phenotype__subjects a owl:ObjectProperty;
     owl:inverseOf :Gene__properties;
-    rdfs:subPropertyOf :BioProperty__subject.
+    rdfs:subPropertyOf :BioProperty__subjects.
 
 :Phenotype__evidence a owl:ObjectProperty;
     rdfs:domain :Phenotype;

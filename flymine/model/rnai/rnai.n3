@@ -57,17 +57,13 @@
 
 #Phenotype
 
-:Phenotype a owl:Class;
-    rdfs:subClassOf
-      [ a owl:Restriction;
-        owl:maxCardinality "1";
-        owl:onProperty :Phenotype__subject ].
+:Phenotype a owl:Class.
 
 :Phenotype__code a owl:DatatypeProperty;
     rdfs:domain :Phenotype;
     rdfs:range xsd:string.
 
-:Phenotype__subject a owl:ObjectProperty;
+:Phenotype__subjects a owl:ObjectProperty;
     owl:inverseOf :Gene__phenotypes.
 
 :Phenotype__evidence a owl:ObjectProperty;
