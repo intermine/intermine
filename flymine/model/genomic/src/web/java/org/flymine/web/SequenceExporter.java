@@ -143,12 +143,12 @@ public class SequenceExporter implements TableExporter
 
                 if (object instanceof Contig) {
                     Contig feature = (Contig) object;
-                    if (feature.getResidues() != null) {
+                    if (feature.getSequence().getSequence() != null) {
                         sequence = FlyMineSequenceFactory.make(feature);
                     }
                 } else {
                     Protein protein = (Protein) object;
-                    if (protein.getResidues() != null) {
+                    if (protein.getSequence().getSequence() != null) {
                         sequence = FlyMineSequenceFactory.make(protein);
                     }
                 }
