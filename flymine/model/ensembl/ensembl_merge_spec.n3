@@ -159,6 +159,9 @@ null:repeat_region__analysis a owl:DatatypeProperty ;
 # ---------- assembly maps to null ---------- #
 # SuperContig and associated locations created in EnsemblDataTranslator
 
+:SuperContig a owl:Class;
+    rdfs:subClassOf :BioEntity.
+
 null:assembly a owl:Class ;
     owl:equivalentClass e:assembly .
 
@@ -235,8 +238,26 @@ null:transcript__display_xref a owl:ObjectProperty ;
 :Protein__endExon a owl:ObjectProperty ;
     owl:equivalentProperty e:translation__end_exon .
    
+# main identifier for protein is chosen from other ids in order:
+# 1) SWISSPROT, 2) trEmbl id, 3) EMBL id
 
-# ----------- simple_feature maps to TRNA or CpgIsland --------- #
+:Protein__identifier a owl:DataTypeProperty;
+    rdfs:domain :Protein;
+    rdfs:range xsd:string.
+
+:Protein__swissProtId a owl:DataTypeProperty;
+    rdfs:domain :Protein;
+    rdfs:range xsd:string.
+
+:Protein__spTREMBLId a owl:DataTypeProperty;
+    rdfs:domain :Protein;
+    rdfs:range xsd:string.
+
+:Protein__emblId a owl:DataTypeProperty;
+    rdfs:domain :Protein;
+    rdfs:range xsd:string.
+
+# ----------- simple_feature maps to TRNA or CpGIsland --------- #
 
 :TRNA a owl:Class ;
     rdfs:subClassOf :BioEntity ;
@@ -252,9 +273,19 @@ null:transcript__display_xref a owl:ObjectProperty ;
                         owl:hasValue "tRNAscan-SE"
                       ]
                ]
-       ] .
+       ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :TRNA__contig ] .
 
-:CpgIsland a owl:Class ;
+:TRNA__contig a owl:ObjectProperty;
+    rdfs:domain :TRNA;
+    rdfs:range :Contig;
+    owl:equivalentProperty e:simple_feature__contig.
+
+
+:CpGIsland a owl:Class ;
     rdfs:subClassOf :BioEntity ;
       rdfs:subClassOf e:simple_feature ;
       rdfs:subClassOf
@@ -268,8 +299,16 @@ null:transcript__display_xref a owl:ObjectProperty ;
                         owl:hasValue "cpg"
                       ]
                ]
-       ] .
+       ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :CpGIsland__contig ] .
 
+:CpGIsland__contig a owl:ObjectProperty;
+    rdfs:domain :CpGIsland;
+    rdfs:range :Contig;
+    owl:equivalentProperty e:simple_feature__contig.
 
 null:simple_feature a owl:Class ;
     owl:equivalentClass e:simple_feature .
