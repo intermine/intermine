@@ -176,15 +176,20 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
 
         Item feature = itemFactory.makeItem(null, tgtNs + "TRNA", "");
         feature.setAttribute("identifier", "CR31667");
-
         handler.setFeature(feature);
+
+        Item infoSource = itemFactory.makeItem(null, tgtNs + "InfoSource", "");
+        infoSource.setAttribute("title", "FlyBase");
+        handler.setInfoSource(infoSource);
+
         handler.process(record);
 
         Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
         expectedGene.setAttribute("identifier", "CG31667");
         expectedGene.setAttribute("organismDbId", "FBgn0051667");
         expectedGene.setReference("organism", handler.getOrganism().getIdentifier());
-
+        expectedGene.addCollection(new ReferenceList("evidence",
+                                                    Arrays.asList(new Object[] {handler.getSourceIdentifier("FlyBase")})));
         assertEquals(6, handler.getItems().size());
 
         Item actualGene = null;
@@ -239,7 +244,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedTrans.setAttribute("organismDbId", "FBpp0088316");
         expectedTrans.setReference("organism", handler.getOrganism().getIdentifier());
         expectedTrans.addCollection(new ReferenceList("evidence",
-                                                    Arrays.asList(new Object[] {getInfoSource.getIdentifier()})));
+                                                    Arrays.asList(new Object[] {handler.getSourceIdentifier("FlyBase")})));
         assertEquals(3, handler.getItems().size());
 
         Item actualTrans = null;
