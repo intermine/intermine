@@ -247,7 +247,7 @@
       <description>
         &lt;a
         href="http://www.geneontology.org/GO.current.annotations.shtml/">Uniprot
-        Gene Ontology assignments&lt;/a>for D. melanogaster, A. Gambiae and C. elegans.
+        Gene Ontology assignments&lt;/a> for D. melanogaster, A. Gambiae and C. elegans.
       </description>
       <version>March 16th  2005</version>
     </source>
@@ -255,7 +255,7 @@
       <name>INDAC microarray oligo set</name>
       <description>
         &lt;a
-        href="http://www.indac.net/">INDAC&lt;/a>microarray long oligo set 
+        href="http://www.indac.net/">INDAC&lt;/a> microarray long oligo set 
       </description>
       <version>1.0</version>
     </source>
