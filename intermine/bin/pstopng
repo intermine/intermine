@@ -3,7 +3,6 @@
 if test -d $HOME/tmp ; then
 	TMP_DIR=$HOME/tmp
 else
-	echo "A ~/tmp directory would be preferable - using /tmp for the moment" 1>&2
 	TMP_DIR=/tmp
 fi
 
@@ -122,27 +121,30 @@ USBOTTOMPLUSONE=`echo "$USBOTTOM + 1" | bc`
 
 #echo "$BBOX $WIDTH $HEIGHT $USWIDTH $USHEIGHT $USRES" 1>&2
 
-TEMP_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+LARGE_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+CUT_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+COLOUR_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+ALPHA_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
 
 if test "True" = "$ALPHA" ; then
-	gs -q -sDEVICE=ppmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME >$TEMP_FILENAME.large
+	gs -q -sDEVICE=ppmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME >$LARGE_FILENAME
 	if test "$USLEFT" != "0" || test "$USBOTTOMPLUSONE" != "$USHEIGHT" ; then
 		echo "Cutting picture" 1>&2
-		pnmcut -left $USLEFT -bottom $USBOTTOM <$TEMP_FILENAME.large >$TEMP_FILENAME.cut
-		mv $TEMP_FILENAME.cut $TEMP_FILENAME.large
+		pnmcut -left $USLEFT -bottom $USBOTTOM <$LARGE_FILENAME >$CUT_FILENAME
+		mv $CUT_FILENAME $LARGE_FILENAME
 	fi
-	pnmscalealpha $TEMP_FILENAME.large $TEMP_FILENAME.colour $TEMP_FILENAME.alpha $ANTIALIAS
-	pnmtopng -alpha $TEMP_FILENAME.alpha $TEMP_FILENAME.colour 2>/dev/null
-	rm $TEMP_FILENAME.alpha $TEMP_FILENAME.large $TEMP_FILENAME.colour
+	pnmscalealpha $LARGE_FILENAME $COLOUR_FILENAME $ALPHA_FILENAME $ANTIALIAS
+	pnmtopng -alpha $ALPHA_FILENAME $COLOUR_FILENAME 2>/dev/null
+	rm $ALPHA_FILENAME $LARGE_FILENAME $COLOUR_FILENAME
 else
-	gs -q -sDEVICE=ppmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME >$TEMP_FILENAME.large
+	gs -q -sDEVICE=ppmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME >$LARGE_FILENAME
 	if test "$USLEFT" != "0" || test "$USBOTTOMPLUSONE" != "$USHEIGHT" ; then
 		echo "Cutting picture" 1>&2
-		pnmcut -left $USLEFT -bottom $USBOTTOM <$TEMP_FILENAME.large >$TEMP_FILENAME.cut
-		mv $TEMP_FILENAME.cut $TEMP_FILENAME.large
+		pnmcut -left $USLEFT -bottom $USBOTTOM <$LARGE_FILENAME >$CUT_FILENAME
+		mv $CUT_FILENAME $LARGE_FILENAME
 	fi
-	pnmscale --reduce $ANTIALIAS <$TEMP_FILENAME.large 2>/dev/null | pnmtopng
-	rm $TEMP_FILENAME.large
+	pnmscale --reduce $ANTIALIAS <$LARGE_FILENAME 2>/dev/null | pnmtopng
+	rm $LARGE_FILENAME
 fi
 
 if test "$DELETE_AFTER" = "True" ; then
