@@ -169,9 +169,9 @@ public class JavaModelOutput extends ModelOutput
         if (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m)) {
             type = generateClassifierRef(ae.getType());
         } else {
-            if(ae.getOrdering()==null || ae.getOrdering().getName().equals("unordered")) {
-                type="Set";
-                impl="HashSet";
+            if (ae.getOrdering() == null || ae.getOrdering().getName().equals("unordered")) {
+                type = "Set";
+                impl = "HashSet";
             } else {
                 type = "List";
                 impl = "ArrayList";
@@ -361,25 +361,29 @@ public class JavaModelOutput extends ModelOutput
         
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
-            sb.append(INDENT+"public boolean equals(Object o) {\n")
-                .append(INDENT+INDENT+"if (!(o instanceof " + cls.getName() + ")) return false;\n")
-                .append(INDENT+INDENT+"return (id==null) ? equalsPK(o) : id.equals((("+cls.getName()+")o).getId());\n")
-                .append(INDENT+"}\n\n")
-                .append(INDENT+"public boolean equalsPK(Object o) {\n")
-                .append(INDENT+INDENT+"if (!(o instanceof " + cls.getName() + ")) return false;\n")
-                .append(INDENT+INDENT+cls.getName()+" obj = ("+cls.getName()+") o;\n")
-                .append(INDENT+INDENT+"return obj.getId()==null && ");
+            sb.append(INDENT + "public boolean equals(Object o) {\n")
+                .append(INDENT + INDENT + "if (!(o instanceof ")
+                .append(cls.getName() + ")) return false;\n")
+                .append(INDENT + INDENT + "return (id==null) ? equalsPK(o) : id.equals(((")
+                .append(cls.getName() + ")o).getId());\n")
+                .append(INDENT + "}\n\n")
+                .append(INDENT + "public boolean equalsPK(Object o) {\n")
+                .append(INDENT + INDENT + "if (!(o instanceof ")
+                .append(cls.getName() + ")) return false;\n")
+                .append(INDENT + INDENT + cls.getName() + " obj = (" + cls.getName() + ") o;\n")
+                .append(INDENT + INDENT + "return obj.getId()==null && ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
                 if (getAllAttributes(cls).containsKey(field)
-                    && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
-                    sb.append("((" + cls.getName() + ")o)." + field + "==" + field);
+                    && isPrimitive(((MAttribute)
+                                    getAllAttributes(cls).get(field)).getType().getName())) {
+                    sb.append("obj.get" + generateCapitalName(field) + "()" + "==" + field);
                 } else {
-                    //sb.append(field + ".equals(((" + cls.getName() + ")o).get" + generateCapitalName(field) + "())");
+                    //sb.append(field + ".equals(obj.get" + generateCapitalName(field) + "())");
                     //TODO use the previous line in preference to the following two...
                     //our "key" fields can be null at present - if they are then don't do comparison
-                    String thatField = "((" + cls.getName() + ")o).get" + generateCapitalName(field) + "()";
+                    String thatField = "obj.get" + generateCapitalName(field) + "()";
                     sb.append("(" + thatField + " == null ? (" + field + " == null) : "
                               + thatField + ".equals(" + field + "))");
                 }
@@ -387,7 +391,7 @@ public class JavaModelOutput extends ModelOutput
                     sb.append(" && ");
                 }
             }
-            sb.append("; }\n");
+            sb.append(";\n" + INDENT + "}\n");
         }
         return sb.toString();
     }
@@ -398,14 +402,16 @@ public class JavaModelOutput extends ModelOutput
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
             sb.append(INDENT + "public int hashCode() {\n")
-                .append(INDENT+INDENT+"if (id!=null) return id.hashCode();\n")
-                .append(INDENT+INDENT+"return ");
+                .append(INDENT + INDENT + "if (id!=null) return id.hashCode();\n")
+                .append(INDENT + INDENT + "return ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
                 if (getAllAttributes(cls).containsKey(field) 
-                    && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
-                    if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
+                    && isPrimitive(((MAttribute)
+                                    getAllAttributes(cls).get(field)).getType().getName())) {
+                    if (((MAttribute)
+                         getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
                         sb.append("(" + field + " ? 0 : 1)");
                     } else {
                         sb.append(field);
@@ -419,7 +425,7 @@ public class JavaModelOutput extends ModelOutput
                     sb.append(" ^ ");
                 }
             }
-            sb.append("; }\n");
+            sb.append(";\n" + INDENT + "}\n");
         }
         return sb.toString();
     }
