@@ -153,9 +153,16 @@ public class SimpleConstraint implements Constraint
             if (!(type == EQUALS || type == NOT_EQUALS)) {
                 throw (new IllegalArgumentException("Invalid type for boolean arguments: " + type));
             }
+        } else if (java.util.Date.class.isAssignableFrom(qe1Type)
+                   && java.util.Date.class.isAssignableFrom(qe2Type)) {
+            if (!(type == EQUALS || type == NOT_EQUALS
+                  || type == LESS_THAN || type == LESS_THAN_EQUALS
+                  || type == GREATER_THAN || type == GREATER_THAN_EQUALS)) {
+                throw (new IllegalArgumentException("Invalid type for string arguments: " + type));
+            }
         } else {
             throw (new IllegalArgumentException("Invalid pair of arguments: " + qe1Type + ", "
-                        + qe2Type));
+                                                + qe2Type));
         }
 
         this.type = type;

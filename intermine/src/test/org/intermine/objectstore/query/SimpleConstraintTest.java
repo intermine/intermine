@@ -12,6 +12,8 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
+import java.util.Date;
+
 
 public class SimpleConstraintTest extends TestCase {
 
@@ -22,6 +24,7 @@ public class SimpleConstraintTest extends TestCase {
     private QueryEvaluable qeNum1;
     private QueryEvaluable qeNum2;
     private QueryEvaluable qeBool1;
+    private QueryEvaluable qeDate1;
 
     public SimpleConstraintTest(String arg1) {
         super(arg1);
@@ -33,6 +36,7 @@ public class SimpleConstraintTest extends TestCase {
         qeNum1 = new QueryValue(new Integer(124));
         qeNum2 = new QueryValue(new Double(3.22));
         qeBool1 = new QueryValue(new Boolean(true));
+        qeDate1 = new QueryValue(new Date());
     }
 
 
@@ -165,6 +169,20 @@ public class SimpleConstraintTest extends TestCase {
         } catch (IllegalArgumentException e) {
         }
     }
+
+    public void testDualWrongTypeDate() throws Exception {
+        try {
+            constraint = new SimpleConstraint(qeDate1, SimpleConstraint.MATCHES, qeDate1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            constraint = new SimpleConstraint(qeDate1, SimpleConstraint.DOES_NOT_MATCH, qeDate1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
 
     // create negated SimpleConstraints and check getRealType gives correct answer
     public void testGetRealType() throws Exception {
