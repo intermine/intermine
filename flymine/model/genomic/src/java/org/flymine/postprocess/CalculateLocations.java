@@ -1115,6 +1115,37 @@ public class CalculateLocations
     }
 
     /**
+     * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
+     * LocatedSequenceFeature.chromosomeLocation reference to be that Location.
+     * @throws Exception if anything goes wrong
+     */
+    public void setChromosomeLocations() throws Exception {
+        Results results = PostProcessUtil.findLocations(os, Chromosome.class,
+                                                        LocatedSequenceFeature.class, true);
+        results.setBatchSize(2000);
+        Iterator resIter = results.iterator();
+
+        osw.beginTransaction();
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+
+            Integer chromosomeId = (Integer) rr.get(0);
+            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+            Location locOnChr = (Location) rr.get(2);
+
+            LocatedSequenceFeature lsfClone =
+                (LocatedSequenceFeature) cloneInterMineObject(lsf);
+
+            lsfClone.setChromosomeLocation(locOnChr);
+
+            osw.store(lsfClone);
+        }
+
+        osw.commitTransaction();
+    }
+
+    /**
      * Return true if locations of two objects on some parent object
      * have any overlap.
      * @param sl1 first location
@@ -1129,6 +1160,16 @@ public class CalculateLocations
             return true;
         }
         return false;
+    }
+
+    /**
+     * Create a clone of given InterMineObject including the id
+     * @param obj object to clone
+     * @return the cloned object
+     * @throws Exception if problems with reflection
+     */
+    protected static InterMineObject cloneInterMineObject(InterMineObject obj) throws Exception {
+        return cloneInterMineObject(obj, obj.getClass());
     }
 
     /**
