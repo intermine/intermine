@@ -283,32 +283,38 @@ public class Results extends AbstractList
      * @return the number of rows in this Results object
      */
     public int size() {
-        // If we have got the last batch, then we know the size. Else, fetch batches
-        // in turn until we have got the last one.
-        // TODO: probably want to be cleverer about how we do this.
         //LOG.debug("size - starting                                       Result "
         //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
-        int iterations = 0;
-        while (minSize < maxSize) {
-            try {
-                int toGet = (maxSize == originalMaxSize ? minSize * 2 : (minSize + maxSize) / 2);
-                LOG.info("size - getting " + toGet + "                                   Result "
-                        + query.hashCode() + "         size " + minSize + " - " + maxSize);
-                get(toGet);
-            } catch (ObjectStoreLimitReachedException e) {
-                throw e;
-            } catch (IndexOutOfBoundsException e) {
-                // Ignore - this will happen if the end of a batch lies on the
-                // end of the results
-                //LOG.debug("size - Exception caught                               Result "
-                //        + query.hashCode() + "         size " + minSize + " - " + maxSize
-                //        + " " + e);
+        if (minSize * 2 + batchSize < maxSize) {
+            // Do a count, because it will probably be a little faster.
+            maxSize = os.count(query);
+            minSize = maxSize;
+            LOG.info("size - returning                                      Result "
+                    + query.hashCode() + "         size " + maxSize);
+        } else {
+            int iterations = 0;
+            while (minSize < maxSize) {
+                try {
+                    int toGt = (maxSize == originalMaxSize ? minSize * 2
+                            : (minSize + maxSize) / 2);
+                    LOG.info("size - getting " + toGt + "                                   Result "
+                            + query.hashCode() + "         size " + minSize + " - " + maxSize);
+                    get(toGt);
+                } catch (ObjectStoreLimitReachedException e) {
+                    throw e;
+                } catch (IndexOutOfBoundsException e) {
+                    // Ignore - this will happen if the end of a batch lies on the
+                    // end of the results
+                    //LOG.debug("size - Exception caught                               Result "
+                    //        + query.hashCode() + "         size " + minSize + " - " + maxSize
+                    //        + " " + e);
+                }
+                iterations++;
             }
-            iterations++;
+            LOG.info("size - returning after " + (iterations > 9 ? "" : " ") + iterations
+                    + " iterations                  Result "
+                    + query.hashCode() + "         size " + maxSize);
         }
-        LOG.info("size - returning after " + (iterations > 9 ? "" : " ") + iterations
-                + " iterations                  Result "
-                + query.hashCode() + "         size " + maxSize);
         return maxSize;
     }
 
