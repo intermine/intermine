@@ -67,7 +67,7 @@
     <reference name="sequence" ref_id="12_11169"/>
   </item>
   <item id="12_11169" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
   </item>
   <item id="2_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="ENSANGE00000019936"/>
@@ -107,7 +107,7 @@
     <reference name="sequence" ref_id="12_11167"/>
   </item>
   <item id="12_11167" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="ENSANGE00000019935"/>
@@ -366,7 +366,7 @@
     <reference name="sequence" ref_id="12_11168"/>
   </item>
   <item id="12_11168" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
   </item>
   <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="fb_symbol"/>

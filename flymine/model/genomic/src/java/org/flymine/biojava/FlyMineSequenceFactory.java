@@ -34,7 +34,7 @@ public abstract class FlyMineSequenceFactory
      */
     public static FlyMineSequence make(LocatedSequenceFeature feature)
         throws IllegalSymbolException {
-        return new FlyMineSequence(DNATools.createDNA(feature.getSequence().getSequence()),
+        return new FlyMineSequence(DNATools.createDNA(feature.getSequence().getResidues()),
                                    feature);
     }
 
@@ -48,7 +48,7 @@ public abstract class FlyMineSequenceFactory
     public static FlyMineSequence make(Protein protein)
         throws IllegalSymbolException {
         return new FlyMineSequence(ProteinTools.createProtein(protein.getSequence()
-                                                              .getSequence()), protein);
+                                                              .getResidues()), protein);
     }
 
 }

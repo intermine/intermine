@@ -29,7 +29,7 @@
     </collection>
   </item>
   <item id="-1_8" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="sequence" value="CATTAG"/>
+    <attribute name="residues" value="CATTAG"/>
   </item>
   <item id="0_36" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
@@ -43,7 +43,7 @@
     </collection>
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="sequence" value="TAGCAT"/>
+    <attribute name="residues" value="TAGCAT"/>
   </item>
   <item id="0_11" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="4932"/>

@@ -107,6 +107,9 @@ null:contig__embl_offset a owl:DatatypeProperty ;
 :Sequence a owl:Class;
     owl:equivalentClass e:dna.
 
+:Sequence__residues a owl:DatatypeProperty;
+    owl:equivalentProperty e:dna__sequence.
+
 null:dna__created a owl:DatatypeProperty;
     owl:equivalentProperty e:dna__created.
 
