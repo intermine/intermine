@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2002-11-21</date>
+<title>Coding Standards</title>
+<authorgroup>
+<author>
+<firstname>Andrew</firstname>
+<surname>Varley</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+<title>FlyMine coding standards</title>
+<para>This document presents the standards to which all code in the
+FlyMine project should adhere.</para>
+
+<itemizedlist>
+
+<listitem>All revisions must be checked in with a corresponding
+short comment describing the changes made to that file.</listitem>
+
+<listitem>No paths, usernames, passwords etc to be hardcoded in to the
+code. Where necessary, these should be in a properties
+file.</listitem>
+
+<listitem>The complete system must build directly out of CVS and not
+require any external jar files or binaries (apart from Ant and the
+JDK!!). Any dependent jar files must be in CVS in either the buildlib
+directory (for jars only needed during the build process) or the lib
+directory.</listitem>
+
+<listitem>Any files no longer used should be removed using the command
+<code>cvs rm</code>.</listitem>
+
+<listitem>All classes should have a corresponding JUnit test class (in
+the tests directory) that thoroughly tests every method except getters
+and setters. This <emphasis>must</emphasis> include testing for
+declared exceptions and runtime exceptions, and for invalid parameters
+(eg. null values, empty strings, negative numbers, etc.).</listitem>
+
+<listitem>All classes and interfaces to have JavaDoc comments at the
+start (including author tags) and for every method apart from getters
+and setters.</listitem>
+
+<listitem>No code to be commited to CVS that breaks the build, unless
+for a very short time (eg. while committing a large set of changes)
+and with agreement from all developers.</listitem>
+
+<listitem>All code must follow normal Java indentation rules with an
+indent of 4 spaces.</listitem>
+
+<listitem>Open curly braces to appear on same line as preceding code,
+with a gap of one space. The exception to this is after a class
+definition, where the open curly brace should be on the next
+line.</listitem>
+
+<listitem>Close curly braces to appear on new line by
+themselves.</listitem>
+
+<listitem>Leave one space around operators (eg. <synopsis>if (a ==
+16)</synopsis> and not <synopsis>if (a==16)</synopsis>).</listitem>
+
+</itemizedlist>
+
+
+</sect1>
+</article>
