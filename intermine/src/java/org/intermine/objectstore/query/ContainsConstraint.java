@@ -57,7 +57,7 @@ public class ContainsConstraint extends Constraint
         }
 
         if (!validOps().contains(type)) {
-            throw new NullPointerException("type cannot be " + type);
+            throw new IllegalArgumentException("type cannot be " + type);
         }
 
         if (cls == null) {
