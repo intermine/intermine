@@ -114,7 +114,7 @@ public class QueryOptimiser
         // If we want to do any query caching, here is where we should do it.
         OptimiserCache cache = OptimiserCache.getInstance(database);
         LimitOffsetQuery limitOffsetQuery = new LimitOffsetQuery(query);
-        LOG.info("Original Query: " + limitOffsetQuery.getQuery() + ", "
+        LOG.debug("Original Query: " + limitOffsetQuery.getQuery() + ", "
                 + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
         String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
                 limitOffsetQuery.getOffset());
