@@ -242,7 +242,7 @@ public class FastaReadTask extends Task
                         setSequence(flymineId, seq);
                         // remove now so that at the end of the run we know which IDs don't have
                         // sequence in the FASTA files
-                        idMap.remove(flymineId);
+                        idMap.remove(seq.getName());
                     }
                 }
             } catch (BioException e) {
