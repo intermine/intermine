@@ -175,19 +175,19 @@
     <pathelement location="${build.test}"/>
     <path refid="models.class.path"/>
   </path>
-  
-  
+
+
   <!-- ============================== GLOBAL TASKDEFS ============================= -->
-  
+
   <!-- taskdefs -->
-  
+
   <taskdef name="merge-additions" classname="org.intermine.task.ModelMergerTask">
     <classpath refid="models.class.path"/>
   </taskdef>
-  
-  
+
+
   <!-- presetdefs -->
-  
+
   <presetdef name="merge-genomic-additions">
     <merge-additions inputModelFile="${build.model}/genomic/genomic_model.xml"
                      additionsFile="${additionsFile}"
@@ -195,7 +195,7 @@
   </presetdef>
 
   <!-- ========================= INITIALISATION TARGETS =========================== -->
-  
+
   <target name="prepare">
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
@@ -298,7 +298,7 @@
     </unzip>
     <touch file="${build}/build-model.xml"/>
     <touch file="${build}/build-webapp.xml"/>-->
-    
+
     <copy file="${intermine.path}/build-model.xml" todir="${build}"/>
     <copy file="${intermine.path}/build-webapp.xml" todir="${build}"/>
   </target>
@@ -323,7 +323,7 @@
   </target>
 
 
-  
+
   <!-- CHADO MODEL GENERATION -->
 
   <!-- convert chado zargo to InterMine model -->
@@ -457,7 +457,7 @@
                 merge-protein_structure-model, merge-so-model, merge-shortcuts">
   </target>
 
-  
+
   <!-- create class files from a model in an ObjectStore -->
   <target name="compile-genomic-model-from-db" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-model-from-db" inheritRefs="true">
@@ -628,7 +628,7 @@
     <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph"/>
   </target>
 
-  
+
   <!-- CHADO PIPELINE -->
 
   <!-- Build Chado src items database -->
@@ -1260,10 +1260,59 @@
 
   <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation"/>
 
+  <!--load GFF3 data for flyreg -->
+  <target name="retrieve-flyreg" depends="prepare-build-model, compile-genomic-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.flyreg-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter ="org.flymine.dataconversion.GFF3Converter"
+                  target="osw.flyreg-tgt-items"
+                  seqClsName = "Chromosome"
+                  orgAbbrev ="DM"
+                  infoSourceTitle = "FlyReg"
+                  targetNameSpace ="http://www.flymine.org/model/genomic#">
+      <fileset dir ="/shared/data/flyreg">
+        <include name ="*.gff"/>
+        <include name ="*.GFF"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.flyreg-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-flyreg">
+    <taskdef name="load-flyreg" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-flyreg integrationWriter="integration.production"
+                 source="os.flyreg-translated-std"
+                 sourceName="flyreg"
+                 ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-flyreg-production" depends="retrieve-flyreg, load-flyreg"/>
 
  <!-- GFF3 PIPELINE -->
   <!--load GFF3 data-->
-  <target name="convert-gff3" depends="prepare-build-model, compile-genomic-java">
+  <target name="retrieve-gff3" depends="prepare-build-model, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1271,25 +1320,25 @@
       <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
     </ant>
 
-    <taskdef name="convert-file" classname="org.flymine.task.GFF3ConverterTask">
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <convert-file converter ="org.flymine.dataconversion.GFF3Converter"
+    <retrieve-file converter ="org.flymine.dataconversion.GFF3Converter"
                     target="osw.gff3-tgt-items"
                     seqClsName = "Chromosome"
                     orgAbbrev ="HS"
                     infoSourceTitle = "UCSC"
                     targetNameSpace ="http://www.flymine.org/model/genomic#">
       <fileset dir ="/shared/data/human">
-        <!--include name ="firstEF/*.gff"/--> 
-        <include name ="tfbs/*.gff"/>       
+        <!--include name ="firstEF/*.gff"/-->
+        <include name ="tfbs/*.gff"/>
       </fileset>
       <!--fileset dir ="/shared/data/gff3">
-        <include name ="test.gff"/>       
+        <include name ="test.gff"/>
       </fileset-->
 
-    </convert-file>
+    </retrieve-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1328,7 +1377,7 @@
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165">
       <fileset dir="/shared/data/uniprot">
         <include name="uniprot_sprot.xml"/>
-        <include name="uniprot_trembl.xml"/>
+<!--        <include name="uniprot_trembl.xml"/>-->
       </fileset>
     </filter-uniprot>
   </target>
@@ -1806,14 +1855,15 @@
     </ant>
   </target>
 
-  <target name="compile-genomic-java" depends="compile-genomic-model">
+  <target name="compile-genomic-java" depends="compile-genomic-model, compile-flymine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
-  <target name="compile-genomic-java-from-db" depends="compile-genomic-model-from-db">
+  <target name="compile-genomic-java-from-db"
+          depends="compile-genomic-model-from-db, compile-flymine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2142,7 +2192,7 @@
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
-  </target> 
+  </target>
 
   <target name="compile-mage-model" depends="convert-mage">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
@@ -2305,25 +2355,25 @@
     <merge-genomic-additions additionsFile="${model}/ensembl-human/ensembl-human_additions.xml"/>
   </target>
 
-  <!-- MERGED GENOMIC HUMAN MODEL  -->  
-  
+  <!-- MERGED GENOMIC HUMAN MODEL  -->
+
  <!-- create human genomic model from core and all additions files -->
-  <target name="create-human-production-model" 
+  <target name="create-human-production-model"
           depends="remove-genomic, prepare-build-model,
                 merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
-                merge-uniprot-model, merge-protein_structure-model, merge-so-model">   
+                merge-uniprot-model, merge-protein_structure-model, merge-so-model">
   </target>
-  
+
   <!-- create java objects for the genomic human model-->
   <target name="compile-genomic-human-model" depends="create-human-production-model">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
-  </target> 
+  </target>
 
- 
+
   <!-- DATA LOADING PIPELINE -->
 
   <!-- build ensembl human src items database -->
@@ -2337,7 +2387,7 @@
   </target>
 
   <!-- retrieve ensembl human data -->
-  <target name="retrieve-ensembl-human" 
+  <target name="retrieve-ensembl-human"
           depends="convert-ensembl-human, build-db-ensembl-human-src-items">
     <taskdef name="retrieve-ensembl-human" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
@@ -2351,7 +2401,7 @@
       <property name="os.alias" value="os.ensembl-human-src-items-std"/>
     </ant>
   </target>
-  
+
   <!-- translate ensembl human data -->
   <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -2391,11 +2441,11 @@
   </target>
 
   <!--LOAD PRODUCTION DATA  -->
-  <target name="build-ensembl-human-production" 
+  <target name="build-ensembl-human-production"
           depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
 
    <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="human-production-build" 
+  <target name="human-production-build"
           depends="create-production-model, compile-genomic-human-model,jar-genomic,
                    build-db-production,create-indexes-production, load-static,
                    build-ensembl-human-production, build-go-human-production,
@@ -2417,7 +2467,7 @@
     <transfer-sequences operation="transfer-sequences-chromosome" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="post-process-human">   
+  <target name="post-process-human">
       <antcall target="fetch-contig-sequences"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
@@ -2436,14 +2486,14 @@
     </ant>
   </target>
 
-  <target name="ensembl-human-test" 
+  <target name="ensembl-human-test"
           depends="prepare-test, convert-ensembl-human, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl-human"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
-  
+
   <target name="test-human-models-inc"
           depends="ensembl-human-test, rnai-test, psi-test, orthologue-test, go-test,
                    taxonomy-test, uniprot-test, protein_structure-test">
@@ -2455,8 +2505,8 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="fullhumantest" 
-          depends="clean, compile-genomic-human-model, build-db-genomic-test, 
+  <target name="fullhumantest"
+          depends="clean, compile-genomic-human-model, build-db-genomic-test,
                    create-indexes-genomic-test, test-human-models-inc, genomic-test"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
@@ -2464,7 +2514,7 @@
   </target>
 
 
-  <!-- MODEL COMPILATION TARGETS --> 
+  <!-- MODEL COMPILATION TARGETS -->
   <target name="compile-ensembl-human-model" depends="convert-ensembl-human">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="ensembl-human"/>
@@ -2504,7 +2554,7 @@
     </ant>
   </target>
 
-  <target name="build-go-human-production" 
+  <target name="build-go-human-production"
           depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
 
 </project>
