@@ -135,7 +135,7 @@ public class OrthologueConverter extends FileConverter
      */
     protected void setupItems() throws ObjectStoreException {
         Item pub = newItem("Publication");
-        pub.addAttribute(new Attribute("title", "Automatic clustering of orthologs and"
+        pub.addAttribute(new Attribute("title", "Automatic clustering of orthologs and "
                                         + "in-paralogs from pairwise species comparisons"));
         pub.addAttribute(new Attribute("journal", "Journal of Molecular Biology"));
         pub.addAttribute(new Attribute("volume", "314"));

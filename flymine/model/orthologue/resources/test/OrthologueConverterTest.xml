@@ -4,7 +4,7 @@
     <attribute name="issue" value="5"/>
     <attribute name="journal" value="Journal of Molecular Biology"/>
     <attribute name="pages" value="1041-1052"/>
-    <attribute name="title" value="Automatic clustering of orthologs andin-paralogs from pairwise species comparisons"/>
+    <attribute name="title" value="Automatic clustering of orthologs and in-paralogs from pairwise species comparisons"/>
     <attribute name="volume" value="314"/>
     <attribute name="year" value="2001"/>
     <attribute name="pubMedId" value="11743721"/>
