@@ -93,9 +93,8 @@
     <put name="historyBagView" value="historyBagView.jsp"/>
     <put name="historyQueryView" value="historyQueryView.jsp"/>
   </definition>
-  <definition name="objectSummary.tile" path="/objectSummary.jsp" controllerUrl="/initObjectSummary.do"/>
-  <definition name="objectDetailsPage.tile" path="/objectDetailsPage.jsp" controllerUrl="/initObjectDetails.do"/>
-  <definition name="objectDetails.tile" path="/objectDetails.jsp" controllerUrl="/initObjectSummary.do"/>
+  <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
+  <definition name="objectDetailsPage.tile" path="/objectDetailsPage.jsp"/>
   <definition name="collectionDetailsPage.tile" path="/table.jsp" controllerUrl="/initCollectionDetails.do"/>
   <definition name="bagDetailsPage.tile" path="/table.jsp" controllerUrl="/initBagDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
