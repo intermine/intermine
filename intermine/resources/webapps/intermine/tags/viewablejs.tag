@@ -3,7 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%-- JavaScript functions required once on the page before using <im:viewable ...> --%>
+<%-- JavaScript functions required once on the page before using <im:viewable ...>
+     The prefixes are the set of values later passed as the idPrefix attribute
+     when using <im:viewable>
+--%>
 
 <c:set var="prefixes" value="${fn:split(idPrefixes, ',')}"/>
 
@@ -12,15 +15,15 @@
 
 function enterPath(path)
 {
-  setBorderStyle(path, "#fff");
+  setStyle(path, "#fff");
 }
 
 function exitPath(path)
 {
-  setBorderStyle(path, "#f5f0ff");
+  setStyle(path, "#f5f0ff");
 }
 
-function setBorderStyle(path, style)
+function setStyle(path, style)
 {
   var a = null;
   <c:forEach var="prefix" items="${prefixes}" varStatus="status">
