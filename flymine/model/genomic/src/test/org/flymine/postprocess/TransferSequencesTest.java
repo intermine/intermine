@@ -69,6 +69,9 @@ public class TransferSequencesTest extends TestCase
 
     public void tearDown() throws Exception {
         LOG.error("in tear down");
+        if (osw.isInTransaction()) {
+            osw.abortTransaction();
+        }
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
