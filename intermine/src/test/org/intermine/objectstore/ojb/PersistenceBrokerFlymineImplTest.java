@@ -50,7 +50,7 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         FieldDescriptor fld = cldDept.getFieldDescriptorByName("id");
         Integer id = (Integer) fld.getPersistentField().get(dept);
 
-        assertEquals(stmt.getStatement(), "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.title AS a1_title FROM Employee AS a1_, Department AS a2_ WHERE ((a2_.ID = " + id.intValue() + ") AND (a2_.ID = a1_.departmentId)) ORDER BY a1_.ID");
+        assertEquals(stmt.getStatement(), "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.title AS a1_title FROM Employee AS a1_, Department AS a2_ WHERE ((a2_.ID = " + id.intValue() + ") AND (a2_.ID = a1_.departmentId)) ORDER BY a1_.ID");
 
     }
 
