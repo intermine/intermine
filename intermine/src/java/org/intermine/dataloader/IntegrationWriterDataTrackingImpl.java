@@ -52,7 +52,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @return an instance of this class
      * @throws ObjectStoreException sometimes
      */
-    public static IntegrationWriterDataTrackingImpl getInstance(Properties props) 
+    public static IntegrationWriterDataTrackingImpl getInstance(Properties props)
             throws ObjectStoreException {
         String writerAlias = props.getProperty("osw");
         if (writerAlias == null) {
@@ -121,7 +121,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     protected DataTracker getDataTracker() {
         return dataTracker;
     }
-    
+
     /**
      * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
      */
@@ -156,7 +156,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (obj instanceof ProxyReference) {
                 obj = ((ProxyReference) obj).getObject();
             }
-            classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
+            try {
+                classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
+            } catch (Exception e) {
+                LOG.error("Broken with: " + DynamicUtil.decomposeClass(o.getClass()));
+                throw new ObjectStoreException(e);
+            }
         }
         InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
         newObj.setId(newId);
@@ -171,7 +176,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 String fieldName = field.getName();
                 if (!"id".equals(fieldName)) {
                     Set sortedEquivalentObjects;
-                    
+
                     if (field instanceof CollectionDescriptor) {
                         sortedEquivalentObjects = new HashSet();
                     } else {
@@ -213,7 +218,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 FieldDescriptor field = (FieldDescriptor) fieldToEquivEntry.getKey();
                 Set sortedEquivalentObjects = (Set) fieldToEquivEntry.getValue();
                 String fieldName = field.getName();
-                    
+
                 objIter = sortedEquivalentObjects.iterator();
                 while (objIter.hasNext()) {
                     InterMineObject obj = (InterMineObject) objIter.next();
@@ -232,7 +237,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             throw new ObjectStoreException(e);
         }
         store(newObj);
-        
+
         // We have called store() on an object, and we are about to write all of its data tracking
         // data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS NEW, so that
         // the data tracker can cache the writes without having to ask the db if records for that
