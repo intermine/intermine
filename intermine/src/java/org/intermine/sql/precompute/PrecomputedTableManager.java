@@ -1,8 +1,9 @@
 package org.flymine.sql.precompute;
 
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 import java.sql.*;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.sql.Database;
@@ -16,11 +17,10 @@ import org.flymine.sql.query.Query;
 public class PrecomputedTableManager
 {
 
-    protected Map precomputedTables = new HashMap();
+    protected Set precomputedTables = new HashSet();
     protected Database database = null;
     protected static final String TABLE_INDEX = "precompute_index";
     protected static Map instances = new HashMap();
-    Date lastChecked;
 
     /**
      * Create a PrecomputedTableManager for the given underlying database
@@ -77,7 +77,7 @@ public class PrecomputedTableManager
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
         addTableToDatabase(pt);
-        precomputedTables.put(pt.getName(), pt);
+        precomputedTables.add(pt);
     }
 
 
@@ -93,35 +93,21 @@ public class PrecomputedTableManager
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
-        delete(pt.getName());
-    }
+        if (!precomputedTables.contains(pt)) {
+            throw new IllegalArgumentException("Table is not valid: " + pt);
+        }
 
-    /**
-     * Delete a precomputed table from the underlying database
-     *
-     * @param name the name of the table to delete
-     * @throws SQLException if an error occurs in the underlying database
-     * @throws NullPointerException if name is null
-     * @throws IllegalArgumentException if name does not refer to a valid table
-     */
-    public void delete(String name) throws SQLException {
-        if (name == null) {
-            throw new NullPointerException("Table name cannot be null");
-        }
-        if (!(precomputedTables.containsKey(name))) {
-            throw new IllegalArgumentException("Table name is not valid: " + name);
-        }
-        deleteTableFromDatabase(name);
-        precomputedTables.remove(name);
+        deleteTableFromDatabase(pt.getName());
+        precomputedTables.remove(pt);
     }
 
     /**
      * Get all the precomputed tables in the underlying database
      *
-     * @return a Collection of PrecomputedTables present in the database
+     * @return a Set of PrecomputedTables present in the database
      */
-    public Collection getPrecomputedTables() {
-        return precomputedTables.values();
+    public Set getPrecomputedTables() {
+        return precomputedTables;
     }
 
     /**
@@ -200,13 +186,11 @@ public class PrecomputedTableManager
             String tableName = res.getString(1);
             String queryString = res.getString(2);
             try {
-                precomputedTables.put(tableName,
-                                      new PrecomputedTable(new Query(queryString), tableName));
+                precomputedTables.add(new PrecomputedTable(new Query(queryString), tableName));
             } catch (IllegalArgumentException e) {
                 // This would be a poor query string in the TABLE_INDEX
             }
         }
-
     }
 
     /**
@@ -217,8 +201,7 @@ public class PrecomputedTableManager
      */
     protected void setupDatabase(Connection con) throws SQLException {
         Statement stmt = con.createStatement();
-        stmt.execute("CREATE TABLE precompute_index(name varchar(255), statement BYTEA)");
+        stmt.execute("CREATE TABLE " + TABLE_INDEX + "(name varchar(255), statement BYTEA)");
         con.commit();
     }
-
 }
