@@ -835,7 +835,7 @@
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="model.src" value="${model}/testmodel"/>
-    </ant>    
+    </ant>
   </target>
 
   <target name="jar-webservice-client" depends="jar-intermine">
@@ -848,15 +848,22 @@
       </fileset>
     </unzip>
 
-    <jar destfile="${dist}/intermine-webservice-client.jar">
+    <jar destfile="${dist}/webservice-client.jar">
       <zipfileset src="${dist}/intermine.jar"/>
       <fileset dir="${build.tmp}/jars"/>
-      <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
     </jar>
     
     <delete dir="${build.tmp}/jars"/>
   </target>
 
+  <target name="jar-demo-webservice-client" depends="jar-webservice-client, compile-testmodel">
+    <jar destfile="${dist}/intermine-webservice-client.jar">
+      <zipfileset src="${dist}/webservice-client.jar"/>
+      <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
+      <fileset dir="${build.model}/testmodel"/>
+    </jar>
+  </target>
+      
   <target name="build-tutorial" depends="jar-intermine, build-webapp"
           description="build the tutorial tree">
     <!-- root dir -->
