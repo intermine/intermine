@@ -43,6 +43,8 @@ public class PagedCollection extends PagedTable
         }
 
         updateRows();
+
+        ((Column) getColumns().get(0)).setType(Object.class);
     }
 
     /**
