@@ -1,19 +1,31 @@
 package org.flymine.objectstore.webservice;
 
+/*
+ * Copyright (C) 2002-2003 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.List;
 
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
 
 /**
  * The server side of an ObjectStore webservice. This should be run in
  * session scope, ie. there is one example of this object per user.
+ *
+ * @author Andrew Varley
  */
 
-public class ObjectStoreServer {
+public class ObjectStoreServer
+{
 
     /**
      * Register a query with this class. This is useful to avoid repeated
@@ -44,7 +56,7 @@ public class ObjectStoreServer {
      * @param limit the maximum number of rows to return
      * @return a List of ResultRows
      */
-    public List execute(int queryId, int start, int end) {
+    public List execute(int queryId, int start, int limit) {
         return null;
     }
 
@@ -65,7 +77,7 @@ public class ObjectStoreServer {
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(int queryId) {
+    public ExplainResult estimate(int queryId) throws ObjectStoreException {
         return null;
     }
 
