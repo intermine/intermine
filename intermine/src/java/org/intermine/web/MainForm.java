@@ -243,7 +243,7 @@ public class MainForm extends ActionForm
             PathNode node = (PathNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
             parsedAttributeValue =
-                    parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
+                parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
         }
 
         if (errors.size() > 0) {
@@ -280,11 +280,17 @@ public class MainForm extends ActionForm
             if (value.length() == 0) {
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.like"));
             } else {
+                if (value instanceof String) {
+                    value = ((String) value).trim();
+                }
                 parsedValue = wildcardUserToSql(value);
             }
         } else {
             try {
                 parsedValue = TypeUtil.stringToObject(type, value);
+                if (parsedValue instanceof String) {
+                    parsedValue = ((String) parsedValue).trim();
+                }
             } catch (NumberFormatException e) {
                 String shortName = TypeUtil.unqualifiedName(type.getName()).toLowerCase();
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
