@@ -82,9 +82,30 @@ public class MergeModelsFunctionalTest extends XMLTestCase
         //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
     }
 
-    // test add reference
+    public void testAddReference() throws Exception {
+        String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"></class></model>";
+        Model model = parser.process(new StringReader(modelStr));
 
-    // test add collection
+        // add Department.company
+        String addition = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/></class>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+
+        String expected = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/></class></model>";
+        //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+    }
+
+
+    public void testAddCollection() throws Exception {
+        String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"></class></model>";
+        Model model = parser.process(new StringReader(modelStr));
+
+        // add Company.departments
+        String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/></class>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+
+        String expected = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/></class></model>";
+        //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+    }
 
 
     // test conflicting types
@@ -103,6 +124,62 @@ public class MergeModelsFunctionalTest extends XMLTestCase
     }
 
     // test conflicting references
+    public void testConflictingReferences() throws Exception {
+        String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
+        Model model = parser.process(new StringReader(modelStr));
+
+
+        // referenced-type wrong - Department.company
+        String addition = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Department\" reverse-reference=\"departments\"/></class></model>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+
+        try {
+            ModelMerger.mergeModel(model, additionClds);
+            fail("Expected ModelMergerException");
+        } catch (ModelMergerException e) {
+        }
+
+        // reverse reference wrong - Department.company
+        addition = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"incorrect\"/></class></model>";
+        additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        model = parser.process(new StringReader(modelStr));
+
+        //try {
+            //ModelMerger.mergeModel(model, additionClds);
+            //fail("Expected ModelMergerException");
+        //} catch (ModelMergerException e) {
+        //}
+    }
+
+
 
     // test conflicting collections
+    public void testConflictingCollections() throws Exception {
+        String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
+        Model model = parser.process(new StringReader(modelStr));
+
+
+        // referenced-type wrong - Company.departments
+        String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Company\" ordered=\"true\" reverse-reference=\"company\"/></class>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+
+        try {
+            ModelMerger.mergeModel(model, additionClds);
+            fail("Expected ModelMergerException");
+        } catch (ModelMergerException e) {
+        }
+
+        // reverse reference wrong - Company.departments
+        addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"incorrect\"/></class>";
+        additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        model = parser.process(new StringReader(modelStr));
+
+        //try {
+            //ModelMerger.mergeModel(model, additionClds);
+            //fail("Expected ModelMergerException");
+        //} catch (ModelMergerException e) {
+        //}
+    }
+
+
 }
