@@ -299,7 +299,11 @@ public class Results extends AbstractList
         //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
         if (minSize * 2 + batchSize < maxSize) {
             // Do a count, because it will probably be a little faster.
-            maxSize = os.count(query);
+            try {
+                maxSize = os.count(query);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("ObjectStore error has occured (in size)", e);
+            }
             minSize = maxSize;
             LOG.info("size - returning                                      Result "
                     + query.hashCode() + "         size " + maxSize);
