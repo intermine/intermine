@@ -31,6 +31,7 @@ import org.flymine.model.testmodel.Manager;
 import org.flymine.model.testmodel.Contractor;
 import org.flymine.model.testmodel.CEO;
 import org.flymine.model.testmodel.RandomInterface;
+import org.flymine.model.testmodel.ImportantPerson;
 
 public class FlymineSqlSelectStatementTest extends QueryTestCase
 {
@@ -64,7 +65,19 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         FieldDescriptor fld = cld.getFieldDescriptorByName("id");
         int id = ((Integer) fld.getPersistentField().get(obj)).intValue();
         results.put("WhereClassObject", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = " + id + ") ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
-        //results.put("Contains11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.fullTime AS a2_fullTime, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.Manager' OR a2_.CLASS = 'org.flymine.model.testmodel.CEO') AND ((a1_.managerId = a2_.ID) AND a1_.name = 'DepartmentA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("Contains11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.fullTime AS a2_fullTime, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.CEO' OR a2_.CLASS = 'org.flymine.model.testmodel.Manager') AND ((a1_.managerId = a2_.ID) AND a1_.name = 'DepartmentA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("ContainsNot11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.fullTime AS a2_fullTime, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.CEO' OR a2_.CLASS = 'org.flymine.model.testmodel.Manager') AND (( NOT (a1_.managerId = a2_.ID)) AND a1_.name = 'DepartmentA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("ContainsNeg11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.fullTime AS a2_fullTime, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.CEO' OR a2_.CLASS = 'org.flymine.model.testmodel.Manager') AND (( NOT (a1_.managerId = a2_.ID)) AND a1_.name = 'DepartmentA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("Contains1N", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.companyId AS a2_companyId, a2_.managerId AS a2_managerId, a2_.name AS a2_name FROM Company AS a1_, Department AS a2_ WHERE ((a1_.ID = a2_.companyId) AND a1_.name = 'CompanyA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("ContainsN1", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE ((a1_.companyId = a2_.ID) AND a2_.name = 'CompanyA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("ContainsMN", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.businessAddressId AS a1_businessAddressId, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Contractor AS a1_, Company AS a2_, CompanyContractor AS ind_a1_a2_CompanyContractor_ WHERE ((a1_.ID = ind_a1_a2_CompanyContractor_.contractorId AND a2_.ID = ind_a1_a2_CompanyContractor_.companyId) AND a1_.name = 'ContractorA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE (a1_.ID = a3_.companyId) GROUP BY a1_.ID ORDER BY a1_.ID, COUNT(*) LIMIT 10000 OFFSET 0");
+        results.put("MultiJoin", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.companyId AS a2_companyId, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.CLASS AS a3_CLASS, a3_.ID AS a3_ID, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.departmentId AS a3_departmentId, a3_.fullTime AS a3_fullTime, a3_.name AS a3_name, a3_.salary AS a3_salary, a3_.title AS a3_title, a4_.ID AS a4_ID, a4_.address AS a4_address FROM Company AS a1_, Department AS a2_, Employee AS a3_, Address AS a4_ WHERE (a3_.CLASS = 'org.flymine.model.testmodel.CEO' OR a3_.CLASS = 'org.flymine.model.testmodel.Manager') AND ((a1_.ID = a2_.companyId) AND (a2_.managerId = a3_.ID) AND (a3_.addressId = a4_.ID) AND a3_.name = 'EmployeeA1') ORDER BY a1_.ID, a2_.ID, a3_.ID, a4_.ID LIMIT 10000 OFFSET 0");
+        results.put("SelectComplex", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, (AVG(a1_.vatNumber) + 20) AS a3_, a2_.name AS a4_, a2_.ID AS a2_ID, a2_.companyId AS a2_companyId, a2_.managerId AS a2_managerId, a2_.name AS a2_name FROM Company AS a1_, Department AS a2_ ORDER BY a1_.ID, (AVG(a1_.vatNumber) + 20), a2_.name, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("SelectClassAndSubClasses", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.departmentId AS a1_departmentId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.title AS a1_title FROM Employee AS a1_ ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("SelectInterfaceAndSubClasses", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.businessAddressId AS a1_businessAddressId, a1_.departmentId AS a1_departmentId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a1_.salary AS a1_salary, a1_.title AS a1_title FROM (SELECT 'org.flymine.model.testmodel.Contractor' AS CLASS, ID, NULL AS addressId, NULL AS age, businessAddressId, NULL AS departmentId, NULL AS fullTime, name, personalAddressId, NULL AS salary, NULL AS title FROM Contractor UNION SELECT CLASS, ID, addressId, age, NULL AS businessAddressId, departmentId, fullTime, name, NULL AS personalAddressId, salary, title FROM Employee) AS a1_ ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("SelectInterfaceAndSubClasses2", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM (SELECT 'org.flymine.model.testmodel.Company' AS CLASS, ID, addressId, NULL AS companyId, NULL AS managerId, name, vatNumber FROM Company UNION SELECT 'org.flymine.model.testmodel.Department' AS CLASS, ID, NULL AS addressId, companyId, managerId, name, NULL AS vatNumber FROM Department) AS a1_ ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("SelectInterfaceAndSubClasses3", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.businessAddressId AS a1_businessAddressId, a1_.departmentId AS a1_departmentId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a1_.salary AS a1_salary, a1_.title AS a1_title FROM (SELECT 'org.flymine.model.testmodel.Contractor' AS CLASS, ID, NULL AS addressId, NULL AS age, businessAddressId, NULL AS departmentId, NULL AS fullTime, name, personalAddressId, NULL AS salary, NULL AS title FROM Contractor UNION SELECT CLASS, ID, addressId, age, NULL AS businessAddressId, departmentId, fullTime, name, NULL AS personalAddressId, salary, title FROM Employee WHERE CLASS = 'org.flymine.model.testmodel.CEO' OR CLASS = 'org.flymine.model.testmodel.Manager') AS a1_ ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
     }
 
     public void executeTest(String type) throws Exception {
@@ -208,52 +221,6 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
 
 
 
-    public void testWhereObjectReference() throws Exception {
-        QueryClass qc1 = new QueryClass(Department.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-        QueryObjectReference qor1 = new QueryObjectReference(qc1, "company");
-        ContainsConstraint cc1 = new ContainsConstraint(qor1, ContainsConstraint.CONTAINS, qc2);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        q1.addToSelect(qc2);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE (a1_.companyId = a2_.ID) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNotObjectReference() throws Exception {
-        QueryClass qc1 = new QueryClass(Department.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-        QueryObjectReference qor1 = new QueryObjectReference(qc1, "company");
-        ContainsConstraint cc1 = new ContainsConstraint(qor1, ContainsConstraint.DOES_NOT_CONTAIN, qc2);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        q1.addToSelect(qc2);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE ( NOT (a1_.companyId = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNegObjectReference() throws Exception {
-        QueryClass qc1 = new QueryClass(Department.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-        QueryObjectReference qor1 = new QueryObjectReference(qc1, "company");
-        ContainsConstraint cc1 = new ContainsConstraint(qor1, ContainsConstraint.CONTAINS, qc2);
-        cc1.setNegated(true);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        q1.addToSelect(qc2);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE ( NOT (a1_.companyId = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
     /*
     public void testEmployee() throws Exception {
         QueryClass qc1 = new QueryClass(Employee.class);
@@ -284,6 +251,15 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
 
     public void testRandomInterface() throws Exception {
         QueryClass qc1 = new QueryClass(RandomInterface.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        throw (new Exception(s1.getStatement()));
+    }
+
+    public void testImportantPerson() throws Exception {
+        QueryClass qc1 = new QueryClass(ImportantPerson.class);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);

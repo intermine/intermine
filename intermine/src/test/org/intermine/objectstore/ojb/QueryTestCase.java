@@ -82,6 +82,8 @@ public abstract class QueryTestCase extends TestCase
         queries.put("WhereNegClassClass", whereNegClassClass());
         queries.put("WhereClassObject", whereClassObject());
         queries.put("Contains11", contains11());
+        queries.put("ContainsNot11", containsNot11());
+        queries.put("ContainsNeg11", containsNeg11());
         queries.put("Contains1N", contains1N());
         queries.put("ContainsN1", containsN1());
         queries.put("ContainsMN", containsMN());
@@ -90,6 +92,8 @@ public abstract class QueryTestCase extends TestCase
         queries.put("SelectComplex", selectComplex());
         queries.put("SelectClassAndSubClasses", selectClassAndSubClasses());
         queries.put("SelectInterfaceAndSubClasses", selectInterfaceAndSubClasses());
+        queries.put("SelectInterfaceAndSubClasses2", selectInterfaceAndSubClasses2());
+        queries.put("SelectInterfaceAndSubClasses3", selectInterfaceAndSubClasses3());
     }
 
     /**
@@ -530,6 +534,61 @@ public abstract class QueryTestCase extends TestCase
       }
 
     /*
+      select department, manager
+      from Department, Manager
+      where department.manager !contains manager
+      and department.name = "DepartmentA1"
+    */
+
+      public Query containsNot11() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Manager.class);
+        QueryReference qr1 = new QueryObjectReference(qc1, "manager");
+        QueryValue v1 = new QueryValue("DepartmentA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.DOES_NOT_CONTAIN, qc2);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
+      select department, manager
+      from Department, Manager
+      where (not department.manager contains manager)
+      and department.name = "DepartmentA1"
+    */
+
+      public Query containsNeg11() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Manager.class);
+        QueryReference qr1 = new QueryObjectReference(qc1, "manager");
+        QueryValue v1 = new QueryValue("DepartmentA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        cc1.setNegated(true);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
       select company, department
       from Company, Department
       where company contains department
@@ -661,12 +720,14 @@ public abstract class QueryTestCase extends TestCase
         cs1.addConstraint(new ContainsConstraint(qr2, ContainsConstraint.CONTAINS, qc3));
         cs1.addConstraint(new ContainsConstraint(qr3, ContainsConstraint.CONTAINS, qc4));
         cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, qv1));
+        q1.setConstraint(cs1);
         return q1;
     }
 
     /*
       select company, avg(company.vatNumber) + 20, department.name, department
       from Company, Department
+      TODO: This query does not make sense
     */
     public Query selectComplex() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -706,6 +767,32 @@ public abstract class QueryTestCase extends TestCase
     */
     public Query selectInterfaceAndSubClasses() throws Exception {
         QueryClass qc1 = new QueryClass(Employable.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        return q1;
+    }
+
+    /*
+      SHOULD PICK UP THE DEPARTMENTS AND COMPANIES
+      select randominterface
+      from RandomInterface
+    */
+    public Query selectInterfaceAndSubClasses2() throws Exception {
+        QueryClass qc1 = new QueryClass(RandomInterface.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        return q1;
+    }
+
+    /*
+      SHOULD PICK UP THE MANAGERS AND CONTRACTORS
+      select ImportantPerson
+      from ImportantPerson
+    */
+    public Query selectInterfaceAndSubClasses3() throws Exception {
+        QueryClass qc1 = new QueryClass(ImportantPerson.class);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addFrom(qc1);

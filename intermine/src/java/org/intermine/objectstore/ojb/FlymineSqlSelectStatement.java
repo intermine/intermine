@@ -632,9 +632,8 @@ public class FlymineSqlSelectStatement implements SqlStatement
             throw (new IllegalArgumentException("Couldn't find class descriptor for "
                         + arg2.getType()));
         }
-        String thisAlias = ((String) query.getAliases().get(arg1.getQueryClass()))
-            + ".";
-        String thatAlias = ((String) query.getAliases().get(arg2)) + ".";
+        String thisAlias = ((String) query.getAliases().get(arg1.getQueryClass()));
+        String thatAlias = ((String) query.getAliases().get(arg2));
         // Now, the available variables are:
         // arg1Class    the ClassDescriptor for arg1 (the QueryReference)
         // arg2Class    the ClassDescriptor for arg2 (the QueryClass)
@@ -688,16 +687,16 @@ public class FlymineSqlSelectStatement implements SqlStatement
                         retval += " AND ";
                     }
                     needComma = true;
-                    retval += thisAlias + thisFields[i].getColumnName() + " = " + indirectAlias
-                        + "." + thisIntermediateFields[i];
+                    retval += thisAlias + "." + thisFields[i].getColumnName() + " = "
+                        + indirectAlias + "." + thisIntermediateFields[i];
                 }
                 for (int i = 0; i < thatFields.length; i++) {
                     if (needComma) {
                         retval += " AND ";
                     }
                     needComma = true;
-                    retval += thatAlias + thatFields[i].getColumnName() + " = " + indirectAlias
-                        + "." + thatIntermediateFields[i];
+                    retval += thatAlias + "." + thatFields[i].getColumnName() + " = "
+                        + indirectAlias + "." + thatIntermediateFields[i];
                 }
             } else {
                 // 1 to N relation
@@ -726,7 +725,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
                         retval += " AND ";
                     }
                     needComma = true;
-                    retval += thisAlias + thisField.getColumnName() + " = " + thatAlias
+                    retval += thisAlias + "." + thisField.getColumnName() + " = " + thatAlias + "."
                         + thatField.getColumnName();
                 }
             }
@@ -762,7 +761,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
                     retval += " AND ";
                 }
                 needComma = true;
-                retval += thisAlias + thisField.getColumnName() + " = " + thatAlias
+                retval += thisAlias + "." + thisField.getColumnName() + " = " + thatAlias + "."
                     + thatField.getColumnName();
             }
         }
@@ -784,7 +783,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
             retval += (needComma ? ", " : " GROUP BY ");
             needComma = true;
             if (node instanceof QueryClass) {
-                retval += queryClassToString((QueryClass) node, false, false);
+                retval += queryClassToString((QueryClass) node, false, true);
             } else {
                 retval += queryEvaluableToString((QueryEvaluable) node);
             }
