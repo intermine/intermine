@@ -15,7 +15,7 @@ import java.util.Comparator;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 
 /**
@@ -27,7 +27,7 @@ import org.flymine.objectstore.ObjectStoreException;
  */
 public class SourcePriorityComparator implements Comparator
 {
-    private ObjectStore dataTracker;
+    private ObjectStoreWriter dataTracker;
     private FieldDescriptor field;
     private Source def;
     private FlyMineBusinessObject defObj;
@@ -35,14 +35,14 @@ public class SourcePriorityComparator implements Comparator
     /**
      * Constructs a new Comparator for comparing objects for priority for a given field.
      *
-     * @param dataTracker the data tracking objectstore
+     * @param dataTracker the data tracking ObjectStoreWriter
      * @param field the FieldDescriptor the comparison is for
      * @param def the default Source
      * @param defObj a FlyMineBusinessObject that came from a data source, not from the destination
      * objectstore, and should be associated with the default source
      */
-    public SourcePriorityComparator(ObjectStore dataTracker, FieldDescriptor field, Source def,
-            FlyMineBusinessObject defObj) {
+    public SourcePriorityComparator(ObjectStoreWriter dataTracker, FieldDescriptor field,
+            Source def, FlyMineBusinessObject defObj) {
         this.dataTracker = dataTracker;
         this.field = field;
         this.def = def;

@@ -20,7 +20,6 @@ import java.util.WeakHashMap;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
 import org.flymine.model.datatracking.Field;
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.BagConstraint;
@@ -50,13 +49,13 @@ public class DataTracking
      *
      * @param obj the object
      * @param field the name of the field
-     * @param os the ObjectStore used for datatracking
+     * @param osw the ObjectStoreWriter used for datatracking
      * @return the Source
      * @throws ObjectStoreException if an error occurs
      */
-    public static Source getSource(FlyMineBusinessObject obj, String field, ObjectStore os)
+    public static Source getSource(FlyMineBusinessObject obj, String field, ObjectStoreWriter osw)
         throws ObjectStoreException {
-        Field fieldObj = getField(obj, field, os);
+        Field fieldObj = getField(obj, field, osw);
         if (fieldObj != null) {
             return fieldObj.getSource();
         }
@@ -68,21 +67,17 @@ public class DataTracking
      *
      * @param obj the FlyMineBusinessObject
      * @param field the name of the field
-     * @param os the ObjectStore used for datatracking
+     * @param osw the ObjectStoreWriter used for datatracking
      * @return the Field
      * @throws ObjectStoreException if an error occurs
      */
-    public static Field getField(FlyMineBusinessObject obj, String field, ObjectStore os)
+    public static Field getField(FlyMineBusinessObject obj, String field, ObjectStoreWriter osw)
             throws ObjectStoreException {
         if (obj.getId() != null) {
-            Object cacheId = os;
-            if (cacheId instanceof ObjectStoreWriter) {
-                cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
-            }
-            Map cache = (Map) dataTrackerToCache.get(cacheId);
+            Map cache = (Map) dataTrackerToCache.get(osw);
             if (cache == null) {
                 cache = new CacheMap();
-                dataTrackerToCache.put(cacheId, cache);
+                dataTrackerToCache.put(osw, cache);
             }
             Map cachedObject = (Map) cache.get(obj.getId().toString());
             if (cachedObject == null) {
@@ -98,7 +93,7 @@ public class DataTracking
                 q.addFrom(qc1);
                 q.addToSelect(qc1);
 
-                SingletonResults res = new SingletonResults(q, os, os.getSequence());
+                SingletonResults res = new SingletonResults(q, osw, osw.getSequence());
                 Iterator resIter = res.iterator();
                 while (resIter.hasNext()) {
                     Field fieldObj = (Field) resIter.next();
@@ -149,14 +144,10 @@ public class DataTracking
         f.setSource(source);
         osw.store(f);
         
-        Object cacheId = osw;
-        if (cacheId instanceof ObjectStoreWriter) {
-            cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
-        }
-        Map cache = (Map) dataTrackerToCache.get(cacheId);
+        Map cache = (Map) dataTrackerToCache.get(osw);
         if (cache == null) {
             cache = new CacheMap();
-            dataTrackerToCache.put(cacheId, cache);
+            dataTrackerToCache.put(osw, cache);
         }
         Map cachedObject = (Map) cache.get(obj.getId().toString());
         if (cachedObject != null) {
@@ -181,14 +172,10 @@ public class DataTracking
             throw new IllegalArgumentException("obj id is null");
         }
 
-        Object cacheId = osw;
-        if (cacheId instanceof ObjectStoreWriter) {
-            cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
-        }
-        Map cache = (Map) dataTrackerToCache.get(cacheId);
+        Map cache = (Map) dataTrackerToCache.get(osw);
         if (cache == null) {
             cache = new CacheMap();
-            dataTrackerToCache.put(cacheId, cache);
+            dataTrackerToCache.put(osw, cache);
         }
         cache.put(obj.getId().toString(), new HashMap());
         //System//.out.println("Cleared cache for object      id=" + obj.getId());
@@ -203,20 +190,16 @@ public class DataTracking
      * end.
      *
      * @param set a Set of FlyMineBusinessObjects to precache
-     * @param os the ObjectStore used for datatracking
+     * @param osw the ObjectStoreWriter used for datatracking
      */
-    public static void precacheObjects(Set set, ObjectStore os) {
+    public static void precacheObjects(Set set, ObjectStoreWriter osw) {
         try {
-            Object cacheId = os;
-            if (cacheId instanceof ObjectStoreWriter) {
-                cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
-            }
-            Map cache = (Map) dataTrackerToCache.get(cacheId);
+            Map cache = (Map) dataTrackerToCache.get(osw);
             if (cache == null) {
                 cache = new CacheMap();
-                dataTrackerToCache.put(cacheId, cache);
+                dataTrackerToCache.put(osw, cache);
             }
-            dataTrackerToPrecache.remove(cacheId);
+            dataTrackerToPrecache.remove(osw);
             Set precache = new HashSet();
             Set bag = new HashSet();
             Iterator objIter = set.iterator();
@@ -251,7 +234,7 @@ public class DataTracking
                 q.addFrom(qc1);
                 q.addToSelect(qc1);
 
-                SingletonResults res = new SingletonResults(q, os, os.getSequence());
+                SingletonResults res = new SingletonResults(q, osw, osw.getSequence());
                 Iterator resIter = res.iterator();
                 while (resIter.hasNext()) {
                     Field fieldObj = (Field) resIter.next();
@@ -268,7 +251,7 @@ public class DataTracking
                     cachedObject.put(fieldName, fieldObj);
                 }
             }
-            dataTrackerToPrecache.put(cacheId, precache);
+            dataTrackerToPrecache.put(osw, precache);
             //System//.out.println("Precached objects. cache = " + cache.keySet());
         } catch (ObjectStoreException e) {
             // Ignore
@@ -278,18 +261,14 @@ public class DataTracking
     /**
      * Release the precached data into normal CacheMap behaviour.
      *
-     * @param os the ObjectStore being used for data tracking
+     * @param osw the ObjectStoreWriter being used for data tracking
      */
-    public static void releasePrecached(ObjectStore os) {
-        Object cacheId = os;
-        if (cacheId instanceof ObjectStoreWriter) {
-            cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
-        }
-        Map cache = (Map) dataTrackerToCache.get(cacheId);
+    public static void releasePrecached(ObjectStoreWriter osw) {
+        Map cache = (Map) dataTrackerToCache.get(osw);
         if (cache == null) {
             cache = new CacheMap();
-            dataTrackerToCache.put(cacheId, cache);
+            dataTrackerToCache.put(osw, cache);
         }
-        dataTrackerToPrecache.remove(cacheId);
+        dataTrackerToPrecache.remove(osw);
     }
 }
