@@ -86,6 +86,9 @@
     <action path="/collectionDetails"
             forward="collectionDetails.page"/>
 
+    <action path="/objectDetails"
+            forward="objectDetails.page"/>
+
     <action path="/begin"
             forward="begin.page"/>
 
