@@ -19,7 +19,6 @@
 <attribute name="start" value="1"/>
 <attribute name="type" value="Low_complexity"/>
 <reference name="organism" ref_id="-1_1"/>
-<reference name="analysis" ref_id="11_2"/>
 <reference name="contig" ref_id="1_11167"/>
 <collection name="evidence">
 <reference ref_id="-1_18"/>
@@ -213,7 +212,6 @@
 </item>
 <item id="14_2077" class="http://www.flymine.org/model/genomic#TRNA" implements="http://www.flymine.org/model/genomic#BioEntity">>
 <reference name="organism" ref_id="-1_1"/>
-<reference name="analysis" ref_id="11_4"/>
 <reference name="contig" ref_id="1_11167"/>
 <collection name="evidence">
 <reference ref_id="-1_7"/>
@@ -298,7 +296,6 @@
 <reference name="subject" ref_id="0_2"/>
 </item>
 <item id="14_1" class="http://www.flymine.org/model/genomic#CpgIsland" implements="http://www.flymine.org/model/genomic#BioEntity">>
-<reference name="analysis" ref_id="11_5"/>
 <reference name="contig" ref_id="1_11167"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">

@@ -153,6 +153,9 @@ null:repeat_region__contig_end a owl:DatatypeProperty ;
 null:repeat_region__contig_strand a owl:DatatypeProperty ;
     owl:equivalentProperty e:repeat_feature__contig_strand .
 
+null:repeat_region__analysis a owl:DatatypeProperty ;
+    owl:equivalentProperty e:repeat_feature__analysis .
+
 # ---------- assembly maps to null ---------- #
 # SuperContig and associated locations created in EnsemblDataTranslator
 
@@ -285,6 +288,9 @@ null:simple_feature__contig_strand a owl:DatatypeProperty ;
 
 null:simple_feature__score a owl:DatatypeProperty ;
     owl:equivalentProperty e:simple_feature__score .
+
+null:simple_feature__analysis a owl:DatatypeProperty ;
+    owl:equivalentProperty e:simple_feature__analysis .
 
 
 # ------------ dna_align_feature and protein_align_feature are Match objects ----------- #
