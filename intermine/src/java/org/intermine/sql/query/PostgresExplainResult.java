@@ -26,6 +26,8 @@ public class PostgresExplainResult extends ExplainResult
      * protected long rows, start, complete, width, estimatedRows
      */
 
+    private String explainText = null;
+
     /**
      * Constructs an instance of PostgresExplainResult without any data.
      *
@@ -98,6 +100,14 @@ public class PostgresExplainResult extends ExplainResult
         stmt.close();
     }
 
+    /**
+     * Returns the text of the explain result, in human readable form.
+     *
+     * @return a String
+     */
+    public String getExplainText() {
+        return explainText;
+    }
 
     /**
      * Retrieve EXPLAIN String from post-7.3 databases
@@ -123,6 +133,12 @@ public class PostgresExplainResult extends ExplainResult
         } catch (RuntimeException e) {
             throw (new SQLException("Error parsing EXPLAIN string: " + e));
         }
+
+        StringBuffer explainTextBuffer = new StringBuffer(text).append("\n");
+        while (results.next()) {
+            explainTextBuffer.append(results.getString(1)).append("\n");
+        }
+        explainText = explainTextBuffer.toString();
     }
 
     /**
