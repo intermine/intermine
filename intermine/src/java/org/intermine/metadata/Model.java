@@ -160,12 +160,29 @@ public class Model
     }
 
     /**
-     * Get the ClassDescriptors for the subclasses of a class
+     * Get the ClassDescriptors for the direct subclasses of a class
      * @param cld the parent ClassDescriptor
      * @return the ClassDescriptors of its children
      */
-    public Set getSubs(ClassDescriptor cld) {
+    public Set getDirectSubs(ClassDescriptor cld) {
         return (Set) subMap.get(cld);
+    }
+
+    /**
+     * Get the ClassDescriptors for the all subclasses of a class
+     * @param cld the parent ClassDescriptor
+     * @return the ClassDescriptors of all decedents
+     */
+    public Set getAllSubs(ClassDescriptor cld) {
+        Set returnSubs = new HashSet(); 
+        Set directSubs = getDirectSubs(cld);
+        returnSubs.addAll(directSubs);
+        Iterator directSubsIterator = directSubs.iterator();
+        while (directSubsIterator.hasNext()) {
+            returnSubs.addAll(getAllSubs((ClassDescriptor) directSubsIterator.next()));
+        }
+
+        return returnSubs;
     }
 
     /**
