@@ -1,0 +1,44 @@
+<project name="FlyMine model" default="all" basedir=".">
+  <description>FlyMine model build file</description>
+
+  <!--
+  The following properties are used in this file:
+
+  model.name: the name of the model
+  model.src: the source location for the model
+  class.path: the classpath to use
+  build.model: the location of the model build directory
+  build.tmp: the location to store temporary files
+  -->
+
+  <!-- Create the directory that this model will be built to -->
+  <target name="prepare"
+          description="Create a directory that this model will be built to">
+    <mkdir dir="${build.model}/${model.name}" />
+  </target>
+
+
+  <!-- has XMI model been unzipped? -->
+  <target name="unpack-xmi-model.check" depends="prepare">
+    <uptodate property="unpack-xmi-model.uptodate">
+      <srcfiles dir="${model.src}" includes="${model.name}.zargo" />
+      <mapper type="glob" from="*.zargo" to="${build.tmp}/*_.xmi" />
+    </uptodate>
+  </target>
+  
+  <!-- unzip testmodel -->
+  <target name="unpack-xmi-model" depends="unpack-xmi-model.check"
+          description="unpacks an XMI model from .zargo file"
+          unless="unpack-xmi-model.uptodate">
+    <unzip src="${model.src}/${model.name}.zargo" dest="${build.tmp}">
+      <patternset>
+        <include name="${model.name}_.xmi"/>
+      </patternset>
+    </unzip>
+
+    <touch file="${build.tmp}/${model.name}_.xmi" />
+  </target>
+
+
+
+</project>
