@@ -60,7 +60,7 @@ public class SimpleQuery
         Results results = os.execute(q.toQuery());
 
         // Set up the String that is going to be returned
-        String ret = null;
+        String ret = "";
 
         // Iterate throught the results of the query
         Iterator rrIter = results.iterator();

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.util.DynamicUtil;
 
 import org.flymine.model.tutorial.Company;
 import org.flymine.model.tutorial.Address;
@@ -55,8 +56,8 @@ public class SimpleDataLoader
         // flymine.properties file
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.tutorial");
 
-        // Set up a Company object to store
-        Company company = new Company();
+        // Set up a Company object to store - this is a dynamic class
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
 
         // Set the primary keys of the company object
         Address address = new Address();

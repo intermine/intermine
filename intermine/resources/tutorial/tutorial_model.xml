@@ -1,43 +1,80 @@
-<model name="tutorial" namespace="http://www.flymine.org/model/tutorial">
+<model name="tutorial" namespace="http://www.flymine.org/model/tutorial#">
+    <class name="org.flymine.model.tutorial.Broke" is-interface="true">
+        <attribute name="debt" type="int"/>
+        <reference name="bank" referenced-type="org.flymine.model.tutorial.Bank" reverse-reference="debtors"/>
+    </class>
 
-  <class name="org.flymine.model.tutorial.Address">
-    <attribute name="address" type="java.lang.String" primary-key="true"/>
-  </class>
+    <class name="org.flymine.model.tutorial.Thing" is-interface="true"></class>
 
-  <class name="org.flymine.model.tutorial.Employable" is-interface="true"/>
+    <class name="org.flymine.model.tutorial.Employable" extends="org.flymine.model.tutorial.Thing" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+    </class>
 
-  <class name="org.flymine.model.tutorial.Employee" implements="org.flymine.model.tutorial.Employable">
-    <attribute name="name" type="java.lang.String" primary-key="true"/>
-    <attribute name="fullTime" type="boolean"/>
-    <attribute name="age" type="int" primary-key="true"/>
-    <reference name="department" referenced-type="org.flymine.model.tutorial.Department" reverse-reference="employees"/>
-    <reference name="address" referenced-type="org.flymine.model.tutorial.Address" primary-key="true"/>
-  </class>
+    <class name="org.flymine.model.tutorial.HasAddress" is-interface="true">
+        <reference name="address" referenced-type="org.flymine.model.tutorial.Address"/>
+    </class>
 
-  <class name="org.flymine.model.tutorial.Manager" extends="org.flymine.model.tutorial.Employee">
-    <attribute name="title" type="java.lang.String"/>
-  </class>
+    <class name="org.flymine.model.tutorial.HasSecretarys" is-interface="true">
+        <collection name="secretarys" referenced-type="org.flymine.model.tutorial.Secretary" ordered="true"/>
+    </class>
 
-  <class name="org.flymine.model.tutorial.Contractor" implements="org.flymine.model.tutorial.Employable">
-    <attribute name="name" type="java.lang.String" primary-key="true"/>
-    <reference name="personalAddress" referenced-type="org.flymine.model.tutorial.Address" primary-key="true"/>
-    <reference name="businessAddress" referenced-type="org.flymine.model.tutorial.Address" primary-key="true"/>
-    <collection name="companys" referenced-type="org.flymine.model.tutorial.Company" ordered="true" reverse-reference="contractors"/>
-  </class>
+    <class name="org.flymine.model.tutorial.Contractor" extends="org.flymine.model.tutorial.Employable org.flymine.model.tutorial.ImportantPerson" is-interface="false">
+        <reference name="personalAddress" referenced-type="org.flymine.model.tutorial.Address"/>
+        <reference name="businessAddress" referenced-type="org.flymine.model.tutorial.Address"/>
+        <collection name="companys" referenced-type="org.flymine.model.tutorial.Company" ordered="true" reverse-reference="contractors"/>
+        <collection name="oldComs" referenced-type="org.flymine.model.tutorial.Company" ordered="true" reverse-reference="oldContracts"/>
+    </class>
 
-  <class name="org.flymine.model.tutorial.Department">
-    <attribute name="name" type="java.lang.String" primary-key="true"/>
-    <reference name="company" referenced-type="org.flymine.model.tutorial.Company" reverse-reference="departments" primary-key="true"/>
-    <reference name="manager" referenced-type="org.flymine.model.tutorial.Manager"/>
-    <collection name="employees" referenced-type="org.flymine.model.tutorial.Employee" ordered="true" reverse-reference="department"/>
-  </class>
+    <class name="org.flymine.model.tutorial.Manager" extends="org.flymine.model.tutorial.Employee org.flymine.model.tutorial.ImportantPerson" is-interface="false">
+        <attribute name="title" type="java.lang.String"/>
+    </class>
 
-  <class name="org.flymine.model.tutorial.Company">
-    <attribute name="name" type="java.lang.String" primary-key="true"/>
-    <attribute name="vatNumber" type="int"/>
-    <reference name="address" referenced-type="org.flymine.model.tutorial.Address" primary-key="true"/>
-    <collection name="departments" referenced-type="org.flymine.model.tutorial.Department" ordered="true" reverse-reference="company"/>
-    <collection name="contractors" referenced-type="org.flymine.model.tutorial.Contractor" ordered="true" reverse-reference="companys"/>
-  </class>
+    <class name="org.flymine.model.tutorial.Employee" extends="org.flymine.model.tutorial.Employable org.flymine.model.tutorial.HasAddress" is-interface="false">
+        <attribute name="fullTime" type="boolean"/>
+        <attribute name="age" type="int"/>
+        <reference name="department" referenced-type="org.flymine.model.tutorial.Department" reverse-reference="employees"/>
+        <reference name="departmentThatRejectedMe" referenced-type="org.flymine.model.tutorial.Department" reverse-reference="rejectedEmployee"/>
+    </class>
 
+    <class name="org.flymine.model.tutorial.Department" extends="org.flymine.model.tutorial.RandomInterface" is-interface="false">
+        <attribute name="name" type="java.lang.String"/>
+        <reference name="company" referenced-type="org.flymine.model.tutorial.Company" reverse-reference="departments"/>
+        <reference name="manager" referenced-type="org.flymine.model.tutorial.Manager"/>
+        <collection name="employees" referenced-type="org.flymine.model.tutorial.Employee" ordered="true" reverse-reference="department"/>
+        <collection name="rejectedEmployee" referenced-type="org.flymine.model.tutorial.Employee" ordered="true" reverse-reference="departmentThatRejectedMe"/>
+    </class>
+
+    <class name="org.flymine.model.tutorial.Company" extends="org.flymine.model.tutorial.RandomInterface org.flymine.model.tutorial.HasAddress org.flymine.model.tutorial.HasSecretarys" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="vatNumber" type="int"/>
+        <reference name="cEO" referenced-type="org.flymine.model.tutorial.CEO" reverse-reference="company"/>
+        <collection name="departments" referenced-type="org.flymine.model.tutorial.Department" ordered="true" reverse-reference="company"/>
+        <collection name="contractors" referenced-type="org.flymine.model.tutorial.Contractor" ordered="true" reverse-reference="companys"/>
+        <collection name="oldContracts" referenced-type="org.flymine.model.tutorial.Contractor" ordered="true" reverse-reference="oldComs"/>
+    </class>
+
+    <class name="org.flymine.model.tutorial.Address" extends="org.flymine.model.tutorial.Thing" is-interface="false">
+        <attribute name="address" type="java.lang.String"/>
+    </class>
+
+    <class name="org.flymine.model.tutorial.RandomInterface" is-interface="true">
+    </class>
+
+    <class name="org.flymine.model.tutorial.CEO" extends="org.flymine.model.tutorial.Manager org.flymine.model.tutorial.HasSecretarys" is-interface="false">
+        <attribute name="salary" type="int"/>
+        <reference name="company" referenced-type="org.flymine.model.tutorial.Company" reverse-reference="cEO"/>
+    </class>
+
+    <class name="org.flymine.model.tutorial.ImportantPerson" is-interface="true">
+        <attribute name="seniority" type="java.lang.Integer"/>
+    </class>
+
+    <class name="org.flymine.model.tutorial.Secretary" is-interface="false">
+        <attribute name="name" type="java.lang.String"/>
+    </class>
+
+    <class name="org.flymine.model.tutorial.Bank" is-interface="false">
+        <attribute name="name" type="java.lang.String"/>
+        <collection name="debtors" referenced-type="org.flymine.model.tutorial.Broke" ordered="false" reverse-reference="bank"/>
+    </class>
 </model>
