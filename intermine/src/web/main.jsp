@@ -118,15 +118,13 @@
                 <fmt:message key="query.showNode"/>
               </html:link>
             </c:if>
-            <c:if test="${QUERY.nodes[fullpath] == null}">
-              <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-                <fmt:param value="${node.fieldName}"/>
-              </fmt:message>
-              <html:link action="/mainChange?method=addPath&path=${node.path}"
-                         title="${addConstraintToTitle}">
-                <img class="arrow" src="images/right-arrow.gif" alt="->"/>
-              </html:link>
-            </c:if>
+            <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+              <fmt:param value="${node.fieldName}"/>
+            </fmt:message>
+            <html:link action="/mainChange?method=addPath&path=${node.path}"
+                       title="${addConstraintToTitle}">
+              <img class="arrow" src="images/right-arrow.gif" alt="->"/>
+            </html:link>
           </nobr>
         </div>
       </c:forEach>
