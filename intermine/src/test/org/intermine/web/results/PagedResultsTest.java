@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
+import org.intermine.metadata.Model;
 
 public class PagedResultsTest extends TestCase
 {
@@ -42,7 +43,8 @@ public class PagedResultsTest extends TestCase
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
-        return new PagedResults(results);
+        Model model = Model.getInstanceByName("testmodel");
+        return new PagedResults(results, model);
     }
 
     private PagedResults getExactResults() throws Exception {
@@ -50,21 +52,24 @@ public class PagedResultsTest extends TestCase
         // Make sure we definitely know the end
         results.setBatchSize(20);
         results.get(0);
-        return new PagedResults(results);
+        Model model = Model.getInstanceByName("testmodel");
+        return new PagedResults(results, model);
     }
 
     private PagedResults getEstimateTooHighResults() throws Exception {
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        return new PagedResults(results);
+        Model model = Model.getInstanceByName("testmodel");
+        return new PagedResults(results, model);
     }
 
     private PagedResults getEstimateTooLowResults() throws Exception {
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        return new PagedResults(results);
+        Model model = Model.getInstanceByName("testmodel");
+        return new PagedResults(results, model);
     }
 
     public void testConstructor() throws Exception {

@@ -30,6 +30,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.model.testmodel.*;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.Constants;
+import org.intermine.metadata.Model;
 
 public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 {
@@ -83,7 +84,8 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         row.add(department3);
         os.addRow(row);
 
-        pr = new PagedResults(results);
+        Model model = Model.getInstanceByName("testmodel");
+        pr = new PagedResults(results, model);
         pr.setPageSize(5);
     }
 
@@ -151,7 +153,8 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testAddToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("addToExistingBag", "");
-        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
+        Model model = Model.getInstanceByName("testmodel");
+        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results, model));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});
@@ -185,7 +188,8 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testAddSameToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("addToExistingBag", "");
-        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
+        Model model = Model.getInstanceByName("testmodel");
+        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results, model));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});
