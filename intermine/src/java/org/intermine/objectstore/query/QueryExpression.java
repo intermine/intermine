@@ -81,12 +81,12 @@ public class QueryExpression implements QueryEvaluable
         if (!(Number.class.isAssignableFrom(len.getType()))) {
             throw new IllegalArgumentException("Invalid argument type len for substring");
         }
-        if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) pos).getValue()).intValue()
+        if ((pos instanceof QueryValue) && (((Number) ((QueryValue) pos).getValue()).longValue()
                     < 0)) {
             throw (new IllegalArgumentException("Invalid pos argument less than zero for "
                         + "substring"));
         }
-        if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) len).getValue()).intValue()
+        if ((len instanceof QueryValue) && (((Number) ((QueryValue) len).getValue()).longValue()
                     < 0)) {
             throw (new IllegalArgumentException("Invalid len argument less than zero for "
                         + "substring"));
