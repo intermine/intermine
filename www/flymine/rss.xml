@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>FlyMine News</title>
+    <link>http://www.flymine.org/</link>
+    <description>An integrated database for Drosophila and Anopheles genomics.</description>
+    <language>en-gb</language>
+    <managingEditor>info@flymine.org</managingEditor>
+    <webMaster>info@flymine.org</webMaster>
+    <!--
+      
+      Example news item:
+      
+      <item>
+        <title>Star City</title>
+        <link>http://www.flymine.org</link>
+        <description>
+          How do Americans get ready to work with Russians aboard the
+          International Space Station? They take a crash course in culture,
+          language and protocol at Russia's Star City.
+        </description>
+        <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      </item>
+    
+    -->   
+  </channel>
+</rss>
