@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 import java.io.File;
@@ -62,7 +61,6 @@ public class MageConverter extends FileConverter
     protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
 
     protected HashMap seenMap;
-    protected HashSet dataItems;
     protected HashMap padIdentifiers = new HashMap();
     protected HashMap featureIdentifiers = new HashMap();
     protected int id = 0;
@@ -79,7 +77,6 @@ public class MageConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         seenMap = new LinkedHashMap();
-        dataItems = new LinkedHashSet();
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
@@ -92,23 +89,18 @@ public class MageConverter extends FileConverter
             }
             fileWriter.close();
             MAGEReader mageReader = new MAGEReader(f.getPath());
-            seenMap = new LinkedHashMap();
             createItem(mageReader.getMAGEobj());
         } finally {
             f.delete();
         }
+    }
 
+
+    /**
+     * @see FileConverter#process
+     */
+    public void close() throws Exception {
         long now = System.currentTimeMillis();
-        writer.storeAll(seenMap.values());
-        LOG.info("store seenMap " + seenMap.values().size()
-                  + " in " + (System.currentTimeMillis() - now) + " ms");
-
-        now = System.currentTimeMillis();
-        writer.storeAll(dataItems);
-        LOG.info("store dataItem " + dataItems.size()
-                 + " in " + (System.currentTimeMillis() - now) + " ms");
-
-        now = System.currentTimeMillis();
         writer.storeAll(padIdentifiers.values());
         LOG.info("store padIdentifiers " + padIdentifiers.values().size()
                  + " in " + (System.currentTimeMillis() - now) + " ms");
@@ -118,7 +110,6 @@ public class MageConverter extends FileConverter
         LOG.info("store featureIdentifiers " + featureIdentifiers.values().size()
                  + " in " + (System.currentTimeMillis() - now) + " ms");
     }
-
 
     /**
      * Create an item and associated fields, references and collections
@@ -131,6 +122,7 @@ public class MageConverter extends FileConverter
         if (seenMap.containsKey(obj)) {
             return (Item) seenMap.get(obj);
         }
+        boolean storeItem = true;
         Class cls = obj.getClass();
         String className = TypeUtil.unqualifiedName(cls.getName());
         Item item = new Item();
@@ -141,11 +133,11 @@ public class MageConverter extends FileConverter
             if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")
                 && !cls.getName().equals("org.biomage.DesignElement.Feature")) {
                 item.setIdentifier(alias(className) + "_" + (id++));
-                if (cls.getName().endsWith("OntologyEntry")) {
-                    LOG.info("classname " + cls.getName() + " identifier: " + id);
-                }
                 seenMap.put(obj, item);
             }
+        } else {
+            // don't store the MAGEJava object
+            storeItem = false;
         }
 
         opCount++;
@@ -225,6 +217,7 @@ public class MageConverter extends FileConverter
             } else {
                 item = padItem;
             }
+            storeItem = false;
         } else if (className.equals("Feature")) {
             Feature feature = (Feature) obj;
             String fid = feature.getIdentifier();
@@ -238,6 +231,7 @@ public class MageConverter extends FileConverter
             } else {
                 item = fItem;
             }
+            storeItem = false;
         } else if (className.equals("MeasuredBioAssayData")
             || className.equals("DerivedBioAssayData")) {
             boolean normalised = false;
@@ -266,45 +260,43 @@ public class MageConverter extends FileConverter
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
                     QuantitationType qt = (QuantitationType) j.next();
                     String value = st.nextToken();
-                    Item data = new Item();
-                    data.setClassName(MAGE_NS + "BioAssayDatum");
-                    data.setImplementations("");
-                    data.setIdentifier(alias(className) + "_" + (id++));
-                    sb.append(data.getIdentifier() + " ");
+                    Item datum = new Item();
+                    datum.setClassName(MAGE_NS + "BioAssayDatum");
+                    datum.setImplementations("");
+                    datum.setIdentifier(alias(className) + "_" + (id++));
+                    sb.append(datum.getIdentifier() + " ");
                     Reference ref = new Reference();
                     ref.setName("quantitationType");
                     ref.setRefId(createItem(qt).getIdentifier());
-                    data.addReferences(ref);
-                    ref.setItem(data);
+                    datum.addReferences(ref);
+                    ref.setItem(datum);
                     ref = new Reference();
                     ref.setName("designElement");
                     ref.setRefId(createItem(feature).getIdentifier());
-                    data.addReferences(ref);
-                    ref.setItem(data);
+                    datum.addReferences(ref);
+                    ref.setItem(datum);
                     Attribute attr = new Attribute();
                     attr.setName("value");
                     attr.setValue(value);
-                    data.addAttributes(attr);
-                    attr.setItem(data);
+                    datum.addAttributes(attr);
+                    attr.setItem(datum);
                     // add normalised attribute - not actually in MAGE model, will be removed
                     // by MageDataTranslator before validating against model
                     Attribute norm = new Attribute();
                     norm.setName("normalised");
                     norm.setValue(normalised ? "true" : "false");
-                    data.addAttributes(norm);
-                    norm.setItem(data);
+                    datum.addAttributes(norm);
+                    norm.setItem(datum);
                     //should create reference for bioAssay
-                    //ref = new Reference();
-                    //ref.setName("bioAssay");
-                    //ref.setRefId(createItem(obj).getIdentifier());
-                    //data.addReferences(ref);
-                    dataItems.add(data);
+                    //ref = new Reference(); ref.setName("bioAssay");
+                    //ref.setRefId(createItem(obj).getIdentifier()); datum.addReferences(ref);
+                    writer.store(datum);
                 }
             }
             rl.setRefIds(sb.toString().trim());
             bdt.addCollections(rl);
             rl.setItem(bdt);
-            dataItems.add(bdt);
+            writer.store(bdt); // store BioDataTuple item
             Reference bdtRef = new Reference();
             bdtRef.setName("bioDataValues");
             bdtRef.setRefId(bdt.getIdentifier());
@@ -320,9 +312,11 @@ public class MageConverter extends FileConverter
             item.setReferences(newRefs);
             bdtRef.setItem(item);
         }
+        if (storeItem) {
+            writer.store(item);
+        }
         return item;
     }
-
 
 
     /**

@@ -454,7 +454,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/MageTestData_exp.xml")));
         //converter = new MageConverter( mockIw);
         converter.process(srcReader);
-
+        converter.close();
         return mockIw.getItems();
 
     }
