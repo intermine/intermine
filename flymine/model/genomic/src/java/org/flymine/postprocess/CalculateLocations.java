@@ -61,9 +61,153 @@ public class CalculateLocations
         this.os = osw.getObjectStore();
     }
 
+    /**
+     * Turn Location objects that should be partial into PartialLocations.  Locations are only
+     * converted if they go to the start/end of the object BioEntity and there is at one other
+     * location that refers to the same subject.
+     * eg.
+     *   object1  ---------++------------ object2
+     *                |loc1||loc2|
+     *       subject  +----------+
+     * or
+     *   object1  ---------++----++------------ object2
+     *                |loc1||loc2||loc3|
+     *       subject  +----------------+
+     *
+     * Locations that just happen to go to the start or end but there is only one Location that
+     * refers to the subject:
+     *   object   ---------+
+     *                |loc1|
+     *   subject      +----+
+     * @throws Exception if anything goes wrong
+     */
+    public void fixPartials() throws Exception {
+        fixPartials(Contig.class, Exon.class);
+    }
+
+    private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
+        Iterator resIter = findLocations(os, objectCls, subjectCls);
+
+        Set batch = new HashSet();
+
+        int previousSubjectId = -1;
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            BioEntity object = (BioEntity) rr.get(0);
+            BioEntity subject = (BioEntity) rr.get(1);
+            Location location = (Location) rr.get(2);
+
+            if (subject.getId().intValue() != previousSubjectId && batch.size() > 0) {
+                fixPartialBatch(batch);
+            }
+
+            batch.add(location);
+            previousSubjectId = subject.getId().intValue();
+        }
+
+        if (previousSubjectId != -1 && batch.size() > 0) {
+            fixPartialBatch(batch);
+        }
+    }
+
+
+
+    private void fixPartialBatch(Set batch) throws Exception {
+        if (batch.size() < 2) {
+            // if the object doesn't have two location objects the locations can't be partial
+            return;
+        }
+
+        Location startLocation;
+        int startLocationObjectLength = -1;
+
+        Location endLocation = null;
+        int endLocationObjectLength = -1;
+
+        //
+        Set veryPartialLocations = new HashSet();
+
+        int subjectLengthSoFar = -1;
+        
+        Iterator batchIter = batch.iterator();
+        while (batchIter.hasNext()) {
+            Location location = (Location) batchIter.next();
+
+            try {
+                Object objectLengthField = TypeUtil.getFieldValue(location.getObject(), "length");
+                int objectLength = -1;
+                if (objectLengthField instanceof Integer) {
+                    objectLength = ((Integer) objectLengthField).intValue(); 
+               } else {
+                    LOG.error("Object with ID: "
+                              + location.getObject().getId() + " has no Integer length field");
+                    continue;
+                }
+
+                if (location.getEnd().intValue() == objectLength
+                    && location.getStart().intValue() == 1) {
+                    // both ends are partial - fix last
+                    veryPartialLocations.add(location);
+                }
+
+                if (location.getStart().intValue() == 1
+                    && location.getEnd().intValue() != objectLength) {
+                    endLocation = location;
+                }
+
+                if (location.getEnd().intValue() == objectLength
+                    && location.getStart().intValue() != 1) {
+                    PartialLocation pl =
+                        (PartialLocation) cloneInterMineObject(location, PartialLocation.class);
+                    pl.setStartIsPartial(Boolean.FALSE);
+                    pl.setEndIsPartial(Boolean.TRUE);
+                    pl.setSubjectStart(new Integer(1));
+                    subjectLengthSoFar =
+                        location.getEnd().intValue() - location.getStart().intValue() + 1;
+                    pl.setSubjectEnd(new Integer(subjectLengthSoFar));
+                    osw.store(pl);
+                }
+            } catch (IllegalAccessException e) {
+                LOG.error("Object with ID: " + location.getObject().getId()
+                          + " has no Integer length field");
+            }
+        }
+
+        Iterator veryPartialLocationsIterator = veryPartialLocations.iterator();
+
+        while (veryPartialLocationsIterator.hasNext()) {
+            Location location = (Location) batchIter.next();
+
+            int thisObjectLength =
+                location.getEnd().intValue() - location.getStart().intValue() + 1;
+
+            PartialLocation pl =
+                (PartialLocation) cloneInterMineObject(location, PartialLocation.class);
+            pl.setStartIsPartial(Boolean.TRUE);
+            pl.setEndIsPartial(Boolean.TRUE);
+            pl.setSubjectStart(new Integer(subjectLengthSoFar + 1));
+            pl.setSubjectEnd(new Integer(subjectLengthSoFar + thisObjectLength));
+            osw.store(pl);
+            subjectLengthSoFar += thisObjectLength;
+        }
+
+        PartialLocation pl =
+            (PartialLocation) cloneInterMineObject(endLocation, PartialLocation.class);
+
+        pl.setStartIsPartial(Boolean.TRUE);
+        pl.setEndIsPartial(Boolean.FALSE);
+        pl.setSubjectStart(new Integer(subjectLengthSoFar + 1));
+        int newEndPos =
+            pl.getSubjectStart().intValue() + (pl.getEnd().intValue() - pl.getStart().intValue());
+        pl.setSubjectEnd(new Integer(newEndPos));
+        osw.store(pl);
+        
+    }
+
 
     // TODO 1) support pos/neg strand
-    //      2) store chromosomes in id map -> avaoid getObjectById
+    //      2) store chromosomes in id map -> avoid getObjectById
     //      3) map from chromosome to children -> less overlap comparasons
     //      4) check if a Location already exists?
     //      5) evidence collection for locations
@@ -88,159 +232,26 @@ public class CalculateLocations
     public void createLocations() throws Exception  {
 
         // 0. Hold Chromosomes in map by id
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Chromosome.class);
-        q.addToSelect(qc);
-        q.addFrom(qc);
-        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
-        Iterator chrIter = sr.iterator();
-        while (chrIter.hasNext()) {
-            Chromosome chr = (Chromosome) chrIter.next();
-            chrById.put(chr.getId(), chr);
-        }
+        makeChromosomeMap();
 
         // 1. Find and hold locations of ChromosomeBands on Chromsomes
-        Iterator resIter = findLocations(Chromosome.class, ChromosomeBand.class);
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            Chromosome chr = (Chromosome) rr.get(0);
-            ChromosomeBand band = (ChromosomeBand) rr.get(1);
-            Location loc = (Location) rr.get(2);
-            SimpleLoc sl = new SimpleLoc(chr.getId().intValue(),
-                                         band.getId().intValue(),
-                                         loc);
-            addToMap(chrToBand, chr.getId(), sl);
-            bandToChr.put(band.getId(), sl);
-        }
-        LOG.info("Found " + bandToChr.size() + " ChromosomeBands located on Chromosomes");
-        LOG.info("chrToBand keys " + chrToBand.keySet());
+        makeChromosomeBandLocations();
 
         // 2. Find and hold locations of Supercontigs on Chromosomes
         //    Create locations of Supercontigs on ChromosomeBands
-        resIter = findLocations(Chromosome.class, Supercontig.class);
+        makeSupercontigLocations();
+
+        // 3. hold offsets of Contigs on Supercontigs
+        //    create locations Contig->ChromosomeBand, Contig->Chromosome
+        makeContigLocations();
+
+        // 4. For all BioEntities located on Contigs compute other offsets on all parents
+        Iterator resIter = findLocations(os, Contig.class, BioEntity.class);
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
         Map idBands = new HashMap();
         Iterator bandIter = PostProcessUtil.selectObjectsOfClass(os, ChromosomeBand.class);
-        while (bandIter.hasNext()) {
-            ChromosomeBand band = (ChromosomeBand) bandIter.next();
-            idBands.put(band.getId(), band);
-        }
-        LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
-
-        osw.beginTransaction();
-        i = 0;
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            Location scOnChrLoc = (Location) rr.get(2);
-            Chromosome chr = (Chromosome) rr.get(0);
-            Supercontig sc = (Supercontig) rr.get(1);
-            SimpleLoc scOnChr = new SimpleLoc(chr.getId().intValue(),
-                                              sc.getId().intValue(),
-                                              scOnChrLoc);
-            scToChr.put(sc.getId(), scOnChr);
-            addToMap(chrToSc, chr.getId(), scOnChr);
-
-            // find get ChromosomeBands that cover location on Chromosome
-            Set bands = (Set) chrToBand.get(chr.getId());
-            if (bands != null) {
-                Iterator iter = bands.iterator();
-                while (iter.hasNext()) {
-                    SimpleLoc bandOnChr = (SimpleLoc) iter.next();
-                    if (overlap(scOnChr, bandOnChr)) {
-                        ChromosomeBand band = (ChromosomeBand)
-                            idBands.get(new Integer(bandOnChr.getChildId()));
-                        Location scOnBandLoc = createLocation(band, bandOnChr, sc, scOnChr);
-
-                        osw.store(scOnBandLoc);
-                        i++;
-                    }
-                }
-            }
-        }
-        osw.commitTransaction();
-        LOG.info("Stored " + i + " Locations between Supercontig and ChromosomeBand.");
-
-        // 3. hold offsets of Contigs on Supercontigs
-        //    create locations Contig->ChromosomeBand, Contig->Chromosome
-        resIter = findLocations(Supercontig.class, Contig.class);
-
-        // create map ChromsomeBands to avoid calling getObjectById
-        // need to keep running query after each commit transaction
-        idBands = new HashMap();
-        bandIter = PostProcessUtil.selectObjectsOfClass(os, ChromosomeBand.class);
-        while (bandIter.hasNext()) {
-            ChromosomeBand band = (ChromosomeBand) bandIter.next();
-            idBands.put(band.getId(), band);
-        }
-        LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
-
-        osw.beginTransaction();
-        i = 0;
-        j = 0;
-        long start = System.currentTimeMillis();
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            Location locContigOnSc = (Location) rr.get(2);
-            Supercontig sc = (Supercontig) rr.get(0);
-            Contig contig = (Contig) rr.get(1);
-            SimpleLoc contigOnSc = new SimpleLoc(sc.getId().intValue(),
-                                                 contig.getId().intValue(),
-                                                 locContigOnSc);
-
-            // create location of contig on chromosome, don't expect partial locations
-            SimpleLoc scOnChr = (SimpleLoc) scToChr.get(sc.getId());
-            Chromosome chr = (Chromosome) chrById.get(new Integer(scOnChr.getParentId()));
-            Location contigOnChrLoc = createChromosomeLocation(scOnChr, contigOnSc, chr, contig);
-
-            SimpleLoc contigOnChr = new SimpleLoc(chr.getId().intValue(),
-                                                  contig.getId().intValue(),
-                                                  contigOnChrLoc);
-
-            contigToChr.put(contig.getId(), contigOnChr);
-            contigToSc.put(contig.getId(), contigOnSc);
-
-            osw.store(contigOnChrLoc);
-            i++;
-
-            // create location of contig on ChromosomeBand
-            // get ChromosomeBands that cover location on Chromosome
-            Set bands = (Set) chrToBand.get(chr.getId());
-            if (bands != null) {
-                Iterator iter = bands.iterator();
-                while (iter.hasNext()) {
-                    SimpleLoc bandOnChr = (SimpleLoc) iter.next();
-                    if (overlap(contigOnChr, bandOnChr)) {
-
-                        ChromosomeBand band = (ChromosomeBand)
-                            idBands.get(new Integer(bandOnChr.getChildId()));
-                        Location contigOnBandLoc = createLocation(band, bandOnChr, contig,
-                                                                  contigOnChr);
-
-                        osw.store(contigOnBandLoc);
-                        j++;
-                    }
-                }
-            }
-            if (i % 100 == 0) {
-                long now = System.currentTimeMillis();
-                LOG.info("Created " + i + " Contig/Chromosome and " + j
-                         + " Contig/ChromosomeBand locations (avg = "
-                         + ((60000L * i) / (now - start)) + " per minute)");
-            }
-        }
-        osw.commitTransaction();
-        LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
-        LOG.info("Stored " + j + " Locations between Contig and ChromosomeBand.");
-
-        // 4. For all BioEntities located on Contigs compute other offsets on all parents
-        resIter = findLocations(Contig.class, BioEntity.class);
-
-        // create map ChromsomeBands to avoid calling getObjectById
-        // need to keep running query after each commit transaction
-        idBands = new HashMap();
-        bandIter = PostProcessUtil.selectObjectsOfClass(os, ChromosomeBand.class);
         while (bandIter.hasNext()) {
             ChromosomeBand band = (ChromosomeBand) bandIter.next();
             idBands.put(band.getId(), band);
@@ -260,7 +271,7 @@ public class CalculateLocations
         i = 0;
         j = 0;
         k = 0;
-        start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         osw.beginTransaction();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -487,6 +498,170 @@ public class CalculateLocations
         return childOnParent;
     }
 
+    /**
+     * Hold Chromosomes in map by id
+     */
+    private void makeChromosomeMap() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Chromosome.class);
+        q.addToSelect(qc);
+        q.addFrom(qc);
+        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+        Iterator chrIter = sr.iterator();
+        while (chrIter.hasNext()) {
+            Chromosome chr = (Chromosome) chrIter.next();
+            chrById.put(chr.getId(), chr);
+        }
+    }
+
+
+    /**
+     * Find and hold locations of ChromosomeBands on Chromsomes
+     */
+    private void makeChromosomeBandLocations() throws Exception {
+        Iterator resIter = findLocations(os, Chromosome.class, ChromosomeBand.class);
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Chromosome chr = (Chromosome) rr.get(0);
+            ChromosomeBand band = (ChromosomeBand) rr.get(1);
+            Location loc = (Location) rr.get(2);
+            SimpleLoc sl = new SimpleLoc(chr.getId().intValue(),
+                                         band.getId().intValue(),
+                                         loc);
+            addToMap(chrToBand, chr.getId(), sl);
+            bandToChr.put(band.getId(), sl);
+        }
+        LOG.info("Found " + bandToChr.size() + " ChromosomeBands located on Chromosomes");
+        LOG.info("chrToBand keys " + chrToBand.keySet());
+    }
+
+    /**
+     * Find and hold locations of Supercontigs on Chromosomes
+     * Create locations of Supercontigs on ChromosomeBands
+     */
+    private void makeSupercontigLocations() throws Exception {
+        Iterator resIter = findLocations(os, Chromosome.class, Supercontig.class);
+
+        // create map ChromsomeBands to avoid calling getObjectById
+        // need to keep running query after each commit transaction
+        Map idBands = new HashMap();
+        Iterator bandIter = PostProcessUtil.selectObjectsOfClass(os, ChromosomeBand.class);
+        while (bandIter.hasNext()) {
+            ChromosomeBand band = (ChromosomeBand) bandIter.next();
+            idBands.put(band.getId(), band);
+        }
+        LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
+
+        osw.beginTransaction();
+        i = 0;
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Location scOnChrLoc = (Location) rr.get(2);
+            Chromosome chr = (Chromosome) rr.get(0);
+            Supercontig sc = (Supercontig) rr.get(1);
+            SimpleLoc scOnChr = new SimpleLoc(chr.getId().intValue(),
+                                              sc.getId().intValue(),
+                                              scOnChrLoc);
+            scToChr.put(sc.getId(), scOnChr);
+            addToMap(chrToSc, chr.getId(), scOnChr);
+
+            // find get ChromosomeBands that cover location on Chromosome
+            Set bands = (Set) chrToBand.get(chr.getId());
+            if (bands != null) {
+                Iterator iter = bands.iterator();
+                while (iter.hasNext()) {
+                    SimpleLoc bandOnChr = (SimpleLoc) iter.next();
+                    if (overlap(scOnChr, bandOnChr)) {
+                        ChromosomeBand band = (ChromosomeBand)
+                            idBands.get(new Integer(bandOnChr.getChildId()));
+                        Location scOnBandLoc = createLocation(band, bandOnChr, sc, scOnChr);
+
+                        osw.store(scOnBandLoc);
+                        i++;
+                    }
+                }
+            }
+        }
+        osw.commitTransaction();
+        LOG.info("Stored " + i + " Locations between Supercontig and ChromosomeBand.");
+    }
+
+    /**
+     * hold offsets of Contigs on Supercontigs
+     * create locations Contig->ChromosomeBand, Contig->Chromosome
+     */
+    private void makeContigLocations() throws Exception {
+        Iterator resIter = findLocations(os, Supercontig.class, Contig.class);
+
+        // create map ChromsomeBands to avoid calling getObjectById
+        // need to keep running query after each commit transaction
+        Map idBands = new HashMap();
+        Iterator bandIter = PostProcessUtil.selectObjectsOfClass(os, ChromosomeBand.class);
+        while (bandIter.hasNext()) {
+            ChromosomeBand band = (ChromosomeBand) bandIter.next();
+            idBands.put(band.getId(), band);
+        }
+        LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
+
+        osw.beginTransaction();
+        i = 0;
+        j = 0;
+        long start = System.currentTimeMillis();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Location locContigOnSc = (Location) rr.get(2);
+            Supercontig sc = (Supercontig) rr.get(0);
+            Contig contig = (Contig) rr.get(1);
+            SimpleLoc contigOnSc = new SimpleLoc(sc.getId().intValue(),
+                                                 contig.getId().intValue(),
+                                                 locContigOnSc);
+
+            // create location of contig on chromosome, don't expect partial locations
+            SimpleLoc scOnChr = (SimpleLoc) scToChr.get(sc.getId());
+            Chromosome chr = (Chromosome) chrById.get(new Integer(scOnChr.getParentId()));
+            Location contigOnChrLoc = createChromosomeLocation(scOnChr, contigOnSc, chr, contig);
+
+            SimpleLoc contigOnChr = new SimpleLoc(chr.getId().intValue(),
+                                                  contig.getId().intValue(),
+                                                  contigOnChrLoc);
+
+            contigToChr.put(contig.getId(), contigOnChr);
+            contigToSc.put(contig.getId(), contigOnSc);
+
+            osw.store(contigOnChrLoc);
+            i++;
+
+            // create location of contig on ChromosomeBand
+            // get ChromosomeBands that cover location on Chromosome
+            Set bands = (Set) chrToBand.get(chr.getId());
+            if (bands != null) {
+                Iterator iter = bands.iterator();
+                while (iter.hasNext()) {
+                    SimpleLoc bandOnChr = (SimpleLoc) iter.next();
+                    if (overlap(contigOnChr, bandOnChr)) {
+
+                        ChromosomeBand band = (ChromosomeBand)
+                            idBands.get(new Integer(bandOnChr.getChildId()));
+                        Location contigOnBandLoc = createLocation(band, bandOnChr, contig,
+                                                                  contigOnChr);
+
+                        osw.store(contigOnBandLoc);
+                        j++;
+                    }
+                }
+            }
+            if (i % 100 == 0) {
+                long now = System.currentTimeMillis();
+                LOG.info("Created " + i + " Contig/Chromosome and " + j
+                         + " Contig/ChromosomeBand locations (avg = "
+                         + ((60000L * i) / (now - start)) + " per minute)");
+            }
+        }
+        osw.commitTransaction();
+        LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
+        LOG.info("Stored " + j + " Locations between Contig and ChromosomeBand.");
+    }
+    
 
     /**
      * Given the location of a child BioEntity on a parent and the location of
@@ -517,7 +692,6 @@ public class CalculateLocations
         return childOnChr;
     }
 
-
     /**
      * Return true if locations of two objects on some parent object
      * have any overlap.
@@ -525,7 +699,7 @@ public class CalculateLocations
      * @param sl2 second location
      * @return true if the two locations have any overlap
      */
-    protected boolean overlap(SimpleLoc sl1, SimpleLoc sl2) {
+    protected static boolean overlap(SimpleLoc sl1, SimpleLoc sl2) {
         if ((sl1.getStart() >= sl2.getStart() && sl1.getStart() <= sl2.getEnd())
             || (sl1.getEnd() >= sl2.getStart() && sl1.getEnd() <= sl2.getEnd())
             || (sl1.getStart() >= sl2.getStart() && sl1.getEnd() <= sl2.getEnd())
@@ -538,13 +712,14 @@ public class CalculateLocations
 
     /**
      * Query ObjectStore for all Location object between given object and
-     * subject classes.  Return an iterator.
+     * subject classes.  Return an iterator over the results ordered by subject.
+     * @param os the ObjectStore to find the Locations in
      * @param objectCls object type of the Location
      * @param subjectCls subject type of the Location
      * @return an iterator over the results
      * @throws ObjectStoreException if problem reading ObjectStore
      */
-    protected Iterator findLocations(Class objectCls, Class subjectCls)
+    protected static Iterator findLocations(ObjectStore os, Class objectCls, Class subjectCls)
         throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
@@ -556,6 +731,7 @@ public class CalculateLocations
         QueryClass qcSub = new QueryClass(subjectCls);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
+        q.addToOrderBy(qcSub);
         QueryClass qcLoc = new QueryClass(Location.class);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
@@ -567,9 +743,8 @@ public class CalculateLocations
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
-        //ObjectStore os = osw.getObjectStore();
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(20000);
         return res.iterator();
     }
 
@@ -577,12 +752,14 @@ public class CalculateLocations
     /**
      * Create a clone of given InterMineObject including the id
      * @param obj object to clone
+     * @param newClass the class to create - must be the same class as obj or a sub-class
      * @return the cloned object
      * @throws Exception if problems with reflection
      */
-    protected InterMineObject cloneInterMineObject(InterMineObject obj) throws Exception {
+    protected static InterMineObject cloneInterMineObject(InterMineObject obj,
+                                                          Class newClass) throws Exception {
         InterMineObject newObj = (InterMineObject)
-            DynamicUtil.createObject(DynamicUtil.decomposeClass(obj.getClass()));
+            DynamicUtil.createObject(DynamicUtil.decomposeClass(newClass));
         Map fieldInfos = new HashMap();
         Iterator clsIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
         while (clsIter.hasNext()) {
