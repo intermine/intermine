@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,8 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.ObjectStore;
@@ -57,8 +60,10 @@ public class MainController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
-
-        //set up the metadata
+        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
+                                               getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        
+        // set up the metadata
         context.putAttribute("nodes",
                              MainHelper.makeNodes((String) session.getAttribute("path"), model));
 
@@ -84,6 +89,22 @@ public class MainController extends TilesAction
             }
             if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
+            }
+            
+            if (node.getParentType().equals("null") == false)
+            {
+                String parentClassName = MainHelper.getClass(node.getParentType(), os.getModel()).getName();
+                List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
+                if (fieldNames != null && node.getType() != null)
+                {
+                    request.setAttribute("attributeOptions", fieldNames);
+                    List fixedOps = SimpleConstraint.fixedEnumOps(MainHelper.getClass(node.getType()));
+                    List fixedOpsCodes = new ArrayList();
+                    Iterator iter = fixedOps.iterator();
+                    while (iter.hasNext())
+                        fixedOpsCodes.add(((ConstraintOp) iter.next()).getIndex());
+                    request.setAttribute("fixedOptionsOps", fixedOpsCodes);
+                }
             }
         }
 
