@@ -843,7 +843,7 @@
 
   <!-- create merged model from currently merged OWL ontologies 
        in build/genomic/genomic.n3  -->
-  <target name="create-genomic-model">
+  <target name="create-genomic-model" depends="prepare-genomic-model, compile-main">
     <java classname="org.flymine.ontology.Owl2FlyMine" fork="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -862,7 +862,7 @@
   </target>
 
 
-  <target name="jar-genomic" depends="prepare-dist"
+  <target name="jar-genomic" depends="prepare-dist, create-genomic-model"
           description="create a jar of the genomic model">
     <ant antfile="build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1300,8 +1300,7 @@
 
   <!-- Webapp targets -->
 
-  <target name="build-webapp" depends="prepare,prepare-dist,jar"
-    description="Build the FlyMine web application">
+  <target name="prepare-webapp" depends="prepare,prepare-dist,jar">
     <mkdir dir="${build.webapp}/flymine"/>
     <mkdir dir="${build.webapp}/flymine/images"/>
     <mkdir dir="${build.webapp}/flymine/model"/>
@@ -1310,6 +1309,7 @@
     <mkdir dir="${build.webapp}/flymine/WEB-INF/classes"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF/lib"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF/src"/>
+
     <copy todir="${build.webapp}/flymine">
       <fileset dir="${src.webapp}"/>
       <fileset dir="${src.www}" includes="flymine.css"/>
@@ -1331,31 +1331,16 @@
       </fileset>
       <fileset dir="${dist}" includes="flymine*.jar"/>
     </copy>
-    
-    <!-- model-specific files -->
-    <loadfile property="model.struts.config" srcFile="${model}/testmodel/resources/web/struts-config-model.xml"/>
-    <replace file="${build.webapp}/flymine/WEB-INF/struts-config.xml" value="${model.struts.config}">
-      <!-- can't use normal token as xml must be parseable before this replacement -->
-      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
-    </replace>
 
-    <copy todir="${build.webapp}/flymine/model">
-      <fileset dir="${model}/testmodel/src/web"/>
-    </copy>
+    <copy todir="${build.webapp}/flymine/META-INF" file="${resources}/webapps/flymine/context.xml"/>
+    <replace file="${build.webapp}/flymine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
+  </target>
 
-    <copy todir="${build.webapp}/flymine/WEB-INF">
-       <fileset dir="${model}/testmodel/resources/web"/>
-    </copy>
-
-    <copy todir="${build.webapp}/flymine/WEB-INF/classes">
-       <fileset dir="${model}/testmodel/resources/web" includes="model*.properties"/>
-    </copy>
+  <target name="build-webapp" depends="prepare-webapp"
+    description="Build the FlyMine web application">
 
     <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
 
-    <copy todir="${build.webapp}/flymine/META-INF" file="${resources}/webapps/flymine/context.xml"/>
-
-    <replace file="${build.webapp}/flymine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
 
     <!-- this precompilation step is optional -->
     <antcall target="precompile-jsp"/>
@@ -1402,15 +1387,33 @@
     <delete dir="${build.webapp}/flymine/WEB-INF/src"/>
   </target>
 
-  <target name="build-testable-webapp" depends="build-webapp,jar-testmodel"
+  <target name="build-testable-webapp" depends="prepare-webapp, jar-testmodel"
     description="Build a FlyMine webapp including the test classes and libraries">
+    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="model.src" value="${model}/testmodel"/>
+    </ant>
+
+    <antcall target="build-webapp"/>
+
     <war destfile="${dist.webapp}/flymine.war" update="true">
-      <lib dir="${dist}" includes="flymine-testmodel.jar"/>
       <lib dir="${lib}">
         <patternset refid="lib.webapptest"/>
       </lib>
       <fileset dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
     </war>
+  </target>
+
+  <target name="build-production-webapp" depends="prepare-webapp, jar-genomic"
+    description="Build a FlyMine webapp including the test classes and libraries">
+    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="model.src" value="${model}/genomic"/>
+    </ant>
+
+    <antcall target="build-webapp"/>
   </target>
 
   <!-- Webservice targets -->
@@ -1573,7 +1576,7 @@
   </target>
 
   <!-- webapp -->
-  <target name="release-webapp" depends="build-webapp"
+  <target name="release-webapp" depends=""
     description="releases the FlyMine web application to the server">
  
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
