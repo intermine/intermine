@@ -21,18 +21,18 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.testing.OneTimeTestCase;
 
-public class JdbcAccessFlymineImplTest extends SetupDataTestCase
+public class JdbcAccessFlyMineImplTest extends SetupDataTestCase
 {
-    private JdbcAccessFlymineImpl ja;
+    private JdbcAccessFlyMineImpl ja;
     private Query q1;
     private PersistenceBrokerFlyMine pb;
 
-    public JdbcAccessFlymineImplTest(String arg) {
+    public JdbcAccessFlyMineImplTest(String arg) {
         super(arg);
     }
 
     public static Test suite() {
-        return OneTimeTestCase.buildSuite(JdbcAccessFlymineImplTest.class);
+        return OneTimeTestCase.buildSuite(JdbcAccessFlyMineImplTest.class);
     }
 
     public void setUp() throws Exception {
@@ -54,7 +54,7 @@ public class JdbcAccessFlymineImplTest extends SetupDataTestCase
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
 
-        ja = (JdbcAccessFlymineImpl) pb.serviceJdbcAccess();
+        ja = (JdbcAccessFlyMineImpl) pb.serviceJdbcAccess();
     }
 
     public static void oneTimeSetUp() throws Exception {

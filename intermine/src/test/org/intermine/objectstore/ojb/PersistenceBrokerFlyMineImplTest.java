@@ -15,12 +15,12 @@ import org.flymine.model.testmodel.*;
 
 import org.flymine.util.TypeUtil;
 
-public class PersistenceBrokerFlymineImplTest extends TestCase
+public class PersistenceBrokerFlyMineImplTest extends TestCase
 {
     PersistenceBrokerFlyMineImpl broker;
     DescriptorRepository dr;
 
-    public PersistenceBrokerFlymineImplTest(String arg1) {
+    public PersistenceBrokerFlyMineImplTest(String arg1) {
         super(arg1);
     }
 
@@ -44,7 +44,7 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         CollectionDescriptor codEmployees = cldDept.getCollectionDescriptorByName("employees");
 
         Query q = broker.getCollectionQuery(dept, cldDept, codEmployees);
-        FlymineSqlSelectStatement stmt = new FlymineSqlSelectStatement(q, dr);
+        FlyMineSqlSelectStatement stmt = new FlyMineSqlSelectStatement(q, dr);
 
         FieldDescriptor fld = cldDept.getFieldDescriptorByName("id");
         Integer id = (Integer) fld.getPersistentField().get(dept);
@@ -62,7 +62,7 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         CollectionDescriptor codContractors = cldComp.getCollectionDescriptorByName("contractors");
 
         Query q = broker.getCollectionQuery(comp, cldComp, codContractors);
-        FlymineSqlSelectStatement stmt = new FlymineSqlSelectStatement(q, dr);
+        FlyMineSqlSelectStatement stmt = new FlyMineSqlSelectStatement(q, dr);
 
         FieldDescriptor fld = cldComp.getFieldDescriptorByName("id");
         Integer id = (Integer) fld.getPersistentField().get(comp);

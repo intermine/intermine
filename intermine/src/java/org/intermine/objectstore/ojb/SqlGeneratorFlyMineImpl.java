@@ -61,22 +61,22 @@ import org.apache.ojb.broker.platforms.Platform;
 import org.flymine.objectstore.query.Query;
 
 /**
- * SqlGeneratorFlymineImpl
+ * SqlGeneratorFlyMineImpl
  *
  * @author Richard Smith
  */
 
-public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
+public class SqlGeneratorFlyMineImpl extends SqlGeneratorDefaultImpl
 {
     protected static final org.apache.log4j.Logger LOG
-        = org.apache.log4j.Logger.getLogger(SqlGeneratorFlymineImpl.class);
+        = org.apache.log4j.Logger.getLogger(SqlGeneratorFlyMineImpl.class);
 
     /**
      * Constructor, chains to SqlGeneratorDefaultImpl constructor
      *
      * @param pf the database to be used
      */
-    public SqlGeneratorFlymineImpl(Platform pf) {
+    public SqlGeneratorFlyMineImpl(Platform pf) {
         super(pf);
     }
 
@@ -95,7 +95,7 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
         // is implemented for org.flymine.objectstore.Query.  Most queries tested take
         // around 1ms to produce so a cache would be of limited value unless this changes.
 
-        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr);
+        FlyMineSqlSelectStatement sql = new FlyMineSqlSelectStatement(query, dr);
         String result = sql.getStatement();
 
         if (result != null && (start > 0 || limit < Integer.MAX_VALUE)) {
@@ -113,7 +113,7 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      */
     public String getPreparedCountStatement(Query query, DescriptorRepository dr) {
 
-        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr, false, true);
+        FlyMineSqlSelectStatement sql = new FlyMineSqlSelectStatement(query, dr, false, true);
         return sql.getStatement();
     }
 

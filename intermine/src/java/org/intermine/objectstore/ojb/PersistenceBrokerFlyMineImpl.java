@@ -32,7 +32,7 @@ import org.flymine.sql.query.ExplainResult;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl 
+public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     implements PersistenceBrokerFlyMine
 {
     //protected static final org.apache.log4j.Logger LOG =
@@ -71,14 +71,14 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
      *  @see PersistenceBrokerFlyMine#explain
      */
     public ExplainResult explain(Query query, int start, int limit) {
-        return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).explainQuery(query, start, limit);
+        return ((JdbcAccessFlyMineImpl) serviceJdbcAccess()).explainQuery(query, start, limit);
     }
 
     /**
      * @see PersistenceBrokerFlyMine#count
      */
     public int count(Query query) {
-        return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).countQuery(query);
+        return ((JdbcAccessFlyMineImpl) serviceJdbcAccess()).countQuery(query);
     }
 
     /**

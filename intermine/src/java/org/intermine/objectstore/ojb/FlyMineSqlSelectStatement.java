@@ -103,7 +103,7 @@ import org.apache.ojb.broker.metadata.ObjectReferenceDescriptor;
  */
 
 
-public class FlymineSqlSelectStatement implements SqlStatement
+public class FlyMineSqlSelectStatement implements SqlStatement
 {
     private Query query;
     private DescriptorRepository dr;
@@ -131,7 +131,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @param query a flymine query
      * @param dr DescriptorRepository for the database
      */
-    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr) {
+    public FlyMineSqlSelectStatement(Query query, DescriptorRepository dr) {
         this.query = query;
         this.dr = dr;
         this.isSubQuery = false;
@@ -147,7 +147,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @param dr DescriptorRepository for the database
      * @param isAConstraint true if this is a query that is part of a subquery constraint
      */
-    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint) {
+    public FlyMineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint) {
         this.query = query;
         this.dr = dr;
         this.isSubQuery = true;
@@ -165,7 +165,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @param isAConstraint true if this is a query that is part of a subquery constraint
      * @param count if true create a statement that will run a COUNT(*) on query
      */
-    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint,
+    public FlyMineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint,
                                      boolean count) {
         this.query = query;
         this.dr = dr;
@@ -473,7 +473,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
             } else {
                 Query q = (Query) fromElement;
                 String alias = (String) query.getAliases().get(q);
-                fromText += "(" + (new FlymineSqlSelectStatement(q, dr, false)).getStatement()
+                fromText += "(" + (new FlyMineSqlSelectStatement(q, dr, false)).getStatement()
                     + ") AS " + alias;
             }
         }
@@ -574,10 +574,10 @@ public class FlymineSqlSelectStatement implements SqlStatement
         QueryClass cls = sc.getQueryClass();
         if (qe != null) {
             return queryEvaluableToString(qe) + (sc.isNotIn() ? " NOT IN (" : " IN (")
-                + (new FlymineSqlSelectStatement(q, dr, true)).getStatement() + ")";
+                + (new FlyMineSqlSelectStatement(q, dr, true)).getStatement() + ")";
         }
         return queryClassToString(cls, false, true) + (sc.isNotIn() ? " NOT IN (" : " IN (")
-            + (new FlymineSqlSelectStatement(q, dr, true)).getStatement() + ")";
+            + (new FlyMineSqlSelectStatement(q, dr, true)).getStatement() + ")";
     }
 
     /**

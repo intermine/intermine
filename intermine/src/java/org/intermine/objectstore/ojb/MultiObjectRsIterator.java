@@ -105,7 +105,7 @@ public class MultiObjectRsIterator extends RsIterator
         m_broker = broker;
         afterLookupEvent = new PBLifeCycleEvent(m_broker, PBLifeCycleEvent.Type.AFTER_LOOKUP);
         this.query = query;
-        m_rsAndStmt = ((JdbcAccessFlymineImpl) broker.serviceJdbcAccess())
+        m_rsAndStmt = ((JdbcAccessFlyMineImpl) broker.serviceJdbcAccess())
             .executeQuery(query, start, limit);
         //prefetchRelationships(query);
     }

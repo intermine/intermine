@@ -8,7 +8,7 @@ import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
-import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
+import org.flymine.objectstore.ojb.FlyMineSqlSelectStatement;
 import org.flymine.util.TypeUtil;
 
 import org.flymine.model.testmodel.*;
@@ -696,8 +696,8 @@ public class CollatedResultTest extends TestCase
         PersistenceBroker broker = os.getPersistenceBroker();
         DescriptorRepository dr = broker.getDescriptorRepository();
 
-        String sql1 = new FlymineSqlSelectStatement(q1, dr).getStatement();
-        String sql2 = new FlymineSqlSelectStatement(q2, dr).getStatement();
+        String sql1 = new FlyMineSqlSelectStatement(q1, dr).getStatement();
+        String sql2 = new FlyMineSqlSelectStatement(q2, dr).getStatement();
 
         assertEquals(sql1, sql2);
 

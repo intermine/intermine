@@ -10,12 +10,12 @@ import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import org.flymine.model.testmodel.*;
 
-public class SqlGeneratorFlymineImplTest extends TestCase
+public class SqlGeneratorFlyMineImplTest extends TestCase
 {
     DescriptorRepository dr;
-    SqlGeneratorFlymineImpl gen;
+    SqlGeneratorFlyMineImpl gen;
 
-    public SqlGeneratorFlymineImplTest(String arg1) {
+    public SqlGeneratorFlyMineImplTest(String arg1) {
         super(arg1);
     }
 
@@ -23,7 +23,7 @@ public class SqlGeneratorFlymineImplTest extends TestCase
         ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBroker broker = os.getPersistenceBroker();
         dr = broker.getDescriptorRepository();
-        gen = (SqlGeneratorFlymineImpl) broker.serviceSqlGenerator();
+        gen = (SqlGeneratorFlyMineImpl) broker.serviceSqlGenerator();
     }
 
     public void testPreparedSelectStatement() throws Exception {
@@ -31,7 +31,7 @@ public class SqlGeneratorFlymineImplTest extends TestCase
         QueryClass qc1 = new QueryClass(Company.class);
         q.addToSelect(qc1);
         q.addFrom(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr);
         assertEquals(s1.getStatement(), gen.getPreparedSelectStatement(q, dr, 0, Integer.MAX_VALUE));
     }
 
@@ -40,7 +40,7 @@ public class SqlGeneratorFlymineImplTest extends TestCase
         QueryClass qc1 = new QueryClass(Company.class);
         q.addToSelect(qc1);
         q.addFrom(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr);
         String string1 = s1.getStatement();
         string1 += " LIMIT 10300 OFFSET 47";
 

@@ -23,7 +23,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.ojb.PersistenceBrokerFlyMine;
-import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
+import org.flymine.objectstore.ojb.FlyMineSqlSelectStatement;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.gnu.readline.Readline;
@@ -374,7 +374,7 @@ public class Query implements FromElement
             return qn.toString();
         }
     }
-    
+
     private String constraintToString(Constraint cc) {
         if (cc instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) cc;
@@ -418,7 +418,7 @@ public class Query implements FromElement
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }
     }
-    
+
     private void alias(Object obj) {
         if (!aliases.containsKey(obj)) {
             String aliasString = "a" + (alias++) + "_";
@@ -525,7 +525,7 @@ public class Query implements FromElement
             }
         });
 
-        out.println("\nFlymine Query shell. Type in an FQL query, or \"quit;\" to exit.");
+        out.println("\nFlyMine Query shell. Type in an FQL query, or \"quit;\" to exit.");
         out.println("End your query with \";\" then a newline. Other newlines are ignored");
         out.flush();
         String currentQuery = "";
@@ -582,9 +582,9 @@ public class Query implements FromElement
         //out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
         //            - startTime.getTime()) + " milliseconds.");
 
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr);
         out.println("\nSQL query: " + s1.getStatement());
-        
+
         Results res = os.execute(q);
         out.print("Column headings: ");
         outputList(res.getColumnAliases());
@@ -610,7 +610,7 @@ public class Query implements FromElement
         }
         out.println("");
     }
-    
+
     /**
      * Construct a new query by parsing a String.
      *
@@ -869,7 +869,7 @@ public class Query implements FromElement
                 } catch (NumberFormatException e) {
                     // No problem - not a representable number
                 }
-                
+
                 if ("true".equals(value)) {
                     return new QueryValue(Boolean.TRUE);
                 } else if ("false".equals(value)) {
@@ -914,7 +914,7 @@ public class Query implements FromElement
                         + ast.getType() + "]");
         }
         Object obj = reverseAliases.get(ast.getText());
-        
+
         if (obj instanceof QueryClass) {
             AST secondAst = ast.getNextSibling();
             if (secondAst == null) {
@@ -1151,7 +1151,7 @@ public class Query implements FromElement
             ast = ast.getNextSibling();
         } while (ast != null);
     }
-    
+
     /**
      * Processes an AST node that describes a ConstraintSet.
      * This method will also recognise any other type of constraint, and treat it as a ConstraintSet

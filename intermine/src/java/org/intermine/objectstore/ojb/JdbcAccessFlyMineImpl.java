@@ -81,7 +81,7 @@ import org.flymine.sql.precompute.QueryOptimiser;
  */
 
 
-public class JdbcAccessFlymineImpl extends JdbcAccessImpl
+public class JdbcAccessFlyMineImpl extends JdbcAccessImpl
 {
 
     /**
@@ -89,7 +89,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      *
      * @param broker the PersistenceBroker in which to execute JDBC calls
      */
-    public JdbcAccessFlymineImpl (PersistenceBroker broker) {
+    public JdbcAccessFlyMineImpl (PersistenceBroker broker) {
         super(broker);
     }
 
@@ -97,7 +97,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      * Performs a select statement on database, returns the jdbc Statement
      * and ResultSet
      *
-     * @param query should be a Flymine Query
+     * @param query should be a FlyMine Query
      * @param start the number of the first row to return, starting from zero
      * @param limit the maximum number of rows to return
      * @return the JDBC ResultSet and Statement
@@ -113,7 +113,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
             new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
 
         try {
-            SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
+            SqlGeneratorFlyMineImpl gen = (SqlGeneratorFlyMineImpl)
                 this.broker.serviceSqlGenerator();
             DescriptorRepository dr = this.broker.getDescriptorRepository();
             String sql = gen.getPreparedSelectStatement(query, dr, start, limit);
@@ -163,7 +163,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
     /**
      * Runs an EXPLAIN for given query with LIMIT and OFFSET values
      *
-     * @param query should be a Flymine Query
+     * @param query should be a FlyMine Query
      * @param start the number of the first row to return, starting from zero
      * @param limit the maximum number of rows to return
      * @return parsed results of EXPLAIN
@@ -176,7 +176,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
         ExplainResult explain = null;
 
         try {
-            SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
+            SqlGeneratorFlyMineImpl gen = (SqlGeneratorFlyMineImpl)
                 this.broker.serviceSqlGenerator();
             DescriptorRepository dr = this.broker.getDescriptorRepository();
 
@@ -218,7 +218,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
     /**
      * Runs a COUNT(*) on the given query.
      *
-     * @param query a Flymine Query object to COUNT
+     * @param query a FlyMine Query object to COUNT
      * @return number of rows to be returned from the query
      * @throws PersistenceBrokerException if anyhting goes wrong
      */
@@ -232,7 +232,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
         int count = -1;
 
         try {
-            SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
+            SqlGeneratorFlyMineImpl gen = (SqlGeneratorFlyMineImpl)
                 this.broker.serviceSqlGenerator();
             DescriptorRepository dr = this.broker.getDescriptorRepository();
 

@@ -21,16 +21,16 @@ import org.flymine.testing.OneTimeTestCase;
 
 import org.flymine.model.testmodel.*;
 
-public class FlymineSqlSelectStatementTest extends SetupDataTestCase
+public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
 {
     protected static DescriptorRepository dr;
 
-    public FlymineSqlSelectStatementTest(String arg1) {
+    public FlyMineSqlSelectStatementTest(String arg1) {
         super(arg1);
     }
 
     public static Test suite() {
-        return OneTimeTestCase.buildSuite(FlymineSqlSelectStatementTest.class);
+        return OneTimeTestCase.buildSuite(FlyMineSqlSelectStatementTest.class);
     }
 
     public static void oneTimeSetUp() throws Exception {
@@ -78,7 +78,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
     }
 
     public void executeTest(String type) throws Exception {
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement((Query) queries.get(type), dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement((Query) queries.get(type), dr);
         assertEquals(type + " has failed", results.get(type), s1.getStatement());
     }
 
@@ -88,7 +88,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryValue v3 = new QueryValue(new Date(1046275720000l));
         QueryValue v4 = new QueryValue(Boolean.TRUE);
         Query q1 = new Query();
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, null);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, null);
         assertEquals(s1.queryEvaluableToString(v1), "5");
         assertEquals(s1.queryEvaluableToString(v2), "'Hello'");
         assertEquals(s1.queryEvaluableToString(v3), "'2003-02-26 16:08:40.000'");
@@ -103,7 +103,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryExpression e3 = new QueryExpression(v1, QueryExpression.MULTIPLY, v2);
         QueryExpression e4 = new QueryExpression(v1, QueryExpression.DIVIDE, v2);
         Query q1 = new Query();
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, null);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, null);
         assertEquals(s1.queryEvaluableToString(e1), "(5 + 7)");
         assertEquals(s1.queryEvaluableToString(e2), "(5 - 7)");
         assertEquals(s1.queryEvaluableToString(e3), "(5 * 7)");
@@ -116,7 +116,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryValue v3 = new QueryValue(new Integer(5));
         QueryExpression e1 = new QueryExpression(v1, v2, v3);
         Query q1 = new Query();
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, null);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, null);
         assertEquals(s1.queryEvaluableToString(e1), "Substr('Hello', 3, 5)");
     }
 
@@ -125,7 +125,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryField f1 = new QueryField(c1, "name");
         Query q1 = new Query();
         q1.addFrom(c1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         assertEquals("a1_.name", s1.queryEvaluableToString(f1));
     }
 
@@ -139,7 +139,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryFunction f5 = new QueryFunction(v1, QueryFunction.MAX);
         Query q1 = new Query();
         q1.addFrom(c1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, null);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, null);
         assertEquals("COUNT(*)", s1.queryEvaluableToString(f1));
         assertEquals("SUM(a1_.vatNumber)", s1.queryEvaluableToString(f2));
         assertEquals("AVG(a1_.vatNumber)", s1.queryEvaluableToString(f3));
@@ -150,28 +150,28 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
     public void testCountNoGroupByNotDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(false);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr, false, true);
         assertEquals("SELECT COUNT(*) AS count_ FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS ind_a1_a2_OldComsOldContracts_ WHERE (a1_.ID = ind_a1_a2_OldComsOldContracts_.oldContractsId AND a2_.ID = ind_a1_a2_OldComsOldContracts_.oldComsId)", s1.getStatement());
     }
 
     public void testCountNoGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(true);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr, false, true);
         assertEquals("SELECT COUNT(*) AS count_ FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.businessAddressId AS a1_businessAddressId, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.cEOId AS a2_cEOId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS ind_a1_a2_OldComsOldContracts_ WHERE (a1_.ID = ind_a1_a2_OldComsOldContracts_.oldContractsId AND a2_.ID = ind_a1_a2_OldComsOldContracts_.oldComsId)) AS fake_table", s1.getStatement());
     }
 
     public void testCountGroupByNotDistinct() throws Exception {
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(false);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr, false, true);
         assertEquals("SELECT COUNT(*) AS count_ FROM (SELECT 1 AS flibble FROM Company AS a1_, Department AS a3_ WHERE (a1_.ID = a3_.companyId) GROUP BY a1_.ID, a1_.addressId, a1_.cEOId, a1_.name, a1_.vatNumber) AS fake_table", s1.getStatement());
     }
 
     public void testCountGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(true);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q, dr, false, true);
         assertEquals(s1.getStatement(), "SELECT COUNT(*) AS count_ FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE (a1_.ID = a3_.companyId) GROUP BY a1_.ID, a1_.addressId, a1_.cEOId, a1_.name, a1_.vatNumber) AS fake_table");
     }
 
@@ -185,7 +185,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         String result = s1.queryClassToString(c1, true, false);
         assertEquals("a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber", result);
     }
@@ -205,7 +205,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         q1.addToSelect(e1);
         q1.addToSelect(f3);
         q1.addToSelect(c2);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         assertEquals("a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, (AVG(a1_.vatNumber) + 20) AS a3_, a2_.name AS a4_, a2_.ID AS a2_ID, a2_.companyId AS a2_companyId, a2_.managerId AS a2_managerId, a2_.name AS a2_name", s1.buildSelectComponent());
     }
 
@@ -213,7 +213,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         assertEquals("Company AS a1_", s1.buildFromComponent());
     }
 
@@ -224,7 +224,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         q1.addToSelect(c1);
         Query q2 = new Query();
         q2.addFrom(q1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q2, dr);
         assertEquals("(SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_) AS a1_", s1.buildFromComponent());
     }
 
@@ -237,7 +237,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q2 = new Query();
         q2.addFrom(c2);
         q2.addFrom(q1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q2, dr);
         org.flymine.sql.query.Query oq1 = new org.flymine.sql.query.Query("SELECT DISTINCT 5 as a from (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_) AS a2_, Department as a1_");
         org.flymine.sql.query.Query oq2 = new org.flymine.sql.query.Query("SELECT DISTINCT 5 as a from " + s1.buildFromComponent());
         assertEquals(oq1, oq2);
@@ -256,7 +256,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -265,7 +265,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -274,7 +274,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -283,7 +283,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -292,7 +292,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -301,7 +301,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
