@@ -116,6 +116,17 @@ public class Query implements SQLStringable
      * @throws IllegalArgumentException if the SQL String is invalid
      */
     public Query(String sql) {
+        this(sql, true);
+    }
+
+    /**
+     * Construct a new parsed Query from a String.
+     *
+     * @param sql a SQL SELECT String to parse
+     * @param treeParse true if a tree-parse step is required (usually so)
+     * @throws IllegalArgumentException if the SQL String is invalid
+     */
+    public Query(String sql, boolean treeParse) {
         this();
 
         aliasToTable = new HashMap();
@@ -131,16 +142,18 @@ public class Query implements SQLStringable
             if (ast == null) {
                 throw (new IllegalArgumentException("Invalid SQL string " + sql));
             }
-            AST oldAst;
-            do {
-                oldAst = ast;
-                SqlTreeParser treeparser = new SqlTreeParser();
-                treeparser.start_rule(ast);
-                ast = treeparser.getAST();
-                if (ast == null) {
-                    throw (new IllegalArgumentException("Invalid SQL string " + sql));
-                }
-            } while (!oldAst.equalsList(ast));
+            if (treeParse) {
+                AST oldAst;
+                do {
+                    oldAst = ast;
+                    SqlTreeParser treeparser = new SqlTreeParser();
+                    treeparser.start_rule(ast);
+                    ast = treeparser.getAST();
+                    if (ast == null) {
+                        throw (new IllegalArgumentException("Invalid SQL string " + sql));
+                    }
+                } while (!oldAst.equalsList(ast));
+            }
 
             processSqlStatementAST(ast);
         } catch (antlr.RecognitionException e) {
