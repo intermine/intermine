@@ -62,22 +62,6 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    private Set compareItemSets(Set a, Set b) {
-        Set diff = new HashSet(a);
-        Iterator i = a.iterator();
-        while (i.hasNext()) {
-            Item itemA = (Item) i.next();
-            Iterator j = b.iterator();
-            while (j.hasNext()) {
-                Item itemB = (Item) j.next();
-                if (itemA.equals(itemB)) {
-                    diff.remove(itemA);
-                }
-            }
-        }
-        return diff;
-    }
-
     public void testSetGeneSynonyms() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";
         Item gene = createItem(srcNs + "gene", "1_1", "");
