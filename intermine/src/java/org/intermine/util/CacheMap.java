@@ -115,9 +115,9 @@ public class CacheMap extends WeakHashMap
      *     cache, because that may take a long time.
      */
 
-    protected static final int HOLDER_ARRAY_COUNT = 128;
-    protected static final int HOLDER_ARRAY_SIZE = 64;
-    protected static final int HOLDER_RANDOMNESS = 100;
+    protected static final int HOLDER_ARRAY_COUNT = 256;
+    protected static final int HOLDER_ARRAY_SIZE = 1024;
+    protected static final int HOLDER_RANDOMNESS = 2000;
     protected static final int ACCESS_HOLDER_SMALL = 20;
     protected static final int ACCESS_HOLDER_SMALL_MIDDLE = 10;
     protected static final int ACCESS_HOLDER_LARGE = 2048;
