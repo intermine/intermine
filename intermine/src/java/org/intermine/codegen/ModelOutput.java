@@ -17,6 +17,8 @@ import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.*;
 import ru.novosoft.uml.foundation.extension_mechanisms.*;
 
+import org.flymine.util.StringUtil;
+
 public abstract class ModelOutput
 {
     protected static final Logger LOG = Logger.getLogger(ModelOutput.class);
@@ -78,9 +80,9 @@ public abstract class ModelOutput
     protected  String generateMultiplicity(MMultiplicity m) { return ""; }
     protected  String generateAssociationEnd(MAssociationEnd ae) { return ""; }
 
-    protected abstract String generateFileStart(String path);
-    protected abstract String generateFile(MClassifier cls, String path);
-    protected abstract String generateFileEnd(String path);
+    protected abstract void generateFileStart(File path);
+    protected abstract void generateFile(MClassifier cls, File path);
+    protected abstract void generateFileEnd(File path);
 
     protected String generateExpression(MExpression expr) {
         if (expr == null) {
@@ -121,11 +123,21 @@ public abstract class ModelOutput
     protected String generateLowercaseName(String n) {
         return n.toLowerCase();
     }
-
-//     protected String generateSqlCompatibleName(String n) {
-//         return FlyMine.toSqlCompatibleName(n);
-//     }
-
+    
+    protected String generateSqlCompatibleName(String n) {
+        //n should start with a lower case letter
+        if (n.equalsIgnoreCase("end")) {
+            return StringUtil.toSameInitialCase("finish", n);
+        }
+        if (n.equalsIgnoreCase("id")) {
+            return StringUtil.toSameInitialCase("identifier", n);
+        }
+        if (n.equalsIgnoreCase("index")) {
+            return StringUtil.toSameInitialCase("number", n);
+        }
+        return n;
+    }
+    
     protected String generateUninterpreted(String un) {
         if (un == null) {
             return "";
@@ -152,7 +164,7 @@ public abstract class ModelOutput
         return packagePath;
     }
 
-    public void output(String path) {
+    public void output(File path) {
         MNamespace ns = (MNamespace) mmodel;
 
         // Set up file or directories etc.
@@ -164,20 +176,38 @@ public abstract class ModelOutput
         generateFileEnd(path);
     }
 
-    private void recurse(MNamespace ns, String path) {
+    private void recurse(MNamespace ns, File path) {
         Iterator ownedElements = ns.getOwnedElements().iterator();
         while (ownedElements.hasNext()) {
             MModelElement me = (MModelElement) ownedElements.next();
             if (me instanceof MPackage) {
                 recurse((MNamespace) me, path);
             }
-            if (me instanceof MClass) {
+            if (me instanceof MClass && isBusinessObject((MClassifier) me)) {
                 generateFile((MClass) me, path);
             }
-            if (me instanceof MInterface) {
+            if (me instanceof MInterface && isBusinessObject((MClassifier) me)) {
                 generateFile((MInterface) me, path);
             }
         }
+    }
+    
+    public boolean isBusinessObject(MClassifier cls) {
+        String name = cls.getName();
+        if (name == null || name.length() == 0 
+            || name.equals("void") || name.equals("char") || name.equals("byte")
+            || name.equals("short") || name.equals("int") || name.equals("long")
+            || name.equals("boolean") || name.equals("float") || name.equals("double")) {
+            return false;
+        }
+
+        String packagePath = getPackagePath(cls);
+
+        if (packagePath.endsWith("java.lang") || packagePath.endsWith("java.util")) {
+            return false;
+        }
+        
+        return true;
     }
 
     protected void initFile(File f) {
