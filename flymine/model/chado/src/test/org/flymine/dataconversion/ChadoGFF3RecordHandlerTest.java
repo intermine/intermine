@@ -114,22 +114,22 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         handler.process(record);
 
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
-        expectedGene.setAttribute("organismDbId", "FBgn0024811");
+        expectedGene.setAttribute("organismDbId", "CG1234");
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("name", "CG1234");
 
-        assertEquals(0, handler.getItems().size());
+        assertEquals(2, handler.getItems().size());
 
-//         Item actualGene = null;
-//         iter = handler.getItems().iterator();
-//         while (iter.hasNext()) {
-//             Item item = (Item) iter.next();
-//             if (item.getClassName().equals(tgtNs + "Gene")) {
-//                 actualGene = item;
-//                 expectedGene.setIdentifier(actualGene.getIdentifier());
-//             }
-//         }
-//         assertEquals(expectedGene, actualGene);
+        Item actualGene = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                actualGene = item;
+                expectedGene.setIdentifier(actualGene.getIdentifier());
+            }
+        }
+        assertEquals(expectedGene, actualGene);
     }
 
     public void testHandleGeneNoFbgn() throws Exception {
@@ -145,7 +145,23 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         handler.setFeature(feature);
         handler.process(record);
 
-        assertEquals(0, handler.getItems().size());
+        assertEquals(2, handler.getItems().size());
+
+        Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
+        expectedGene.setAttribute("organismDbId", "CG1234");
+        expectedGene.setAttribute("identifier", "CG1234");
+        expectedGene.setAttribute("name", "CG1234");
+
+        Item actualGene = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                actualGene = item;
+                expectedGene.setIdentifier(actualGene.getIdentifier());
+            }
+        }
+        assertEquals(expectedGene, actualGene);
     }
 
 
