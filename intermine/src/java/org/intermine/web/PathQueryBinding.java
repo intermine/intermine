@@ -107,7 +107,7 @@ public class PathQueryBinding
     /**
      * Extension of DefaultHandler to handle parsing PathQueries
      */
-    class QueryHandler extends DefaultHandler
+    static class QueryHandler extends DefaultHandler
     {
         Map queries;
         String queryName;
