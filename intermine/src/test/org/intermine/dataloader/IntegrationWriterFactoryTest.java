@@ -23,7 +23,7 @@ public class IntegrationWriterFactoryTest extends TestCase
     }
 
     public void testValidAlias() throws Exception {
-        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest");
+        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
         assertNotNull(iw);        
     }
 

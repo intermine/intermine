@@ -10,11 +10,16 @@ package org.flymine.dataloader;
  *
  */
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.MetaDataException;
 import org.flymine.metadata.Model;
+import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
 import org.flymine.objectstore.ObjectStore;
@@ -24,6 +29,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.util.TypeUtil;
 
 /**
  * Abstract implementation of ObjectStoreIntegrationWriter.  To retain
@@ -37,6 +43,9 @@ import org.flymine.objectstore.query.SingletonResults;
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
     protected ObjectStoreWriter osw;
+    protected static final int SKELETON = 0;
+    protected static final int FROM_DB = 1;
+    protected static final int SOURCE = 2;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -70,6 +79,141 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         return new SingletonResults(q, this);
     }
 
+    /**
+     * @see IntegrationWriter#store
+     */
+    public abstract void store(FlyMineBusinessObject o, Source source)
+        throws ObjectStoreException;
+
+    /**
+     * Stores the given object in the objectstore. This method recurses into the object's fields
+     * according to the type variable.
+     *
+     * @param o the object to store
+     * @param source the data Source to which to attribute the data
+     * @param type the type of action required, from SOURCE, SKELETON, or FROM_DB
+     * @return the FlyMineBusinessObject that was written to the database
+     * @throws ObjectStoreException if an error occurs in the underlying objectstore
+     */
+    protected abstract FlyMineBusinessObject store(FlyMineBusinessObject o, Source source, int type)
+        throws ObjectStoreException;
+
+    /**
+     * Copies the value of the field given from the source object into the destination object.
+     * 
+     * @param srcObj the source object
+     * @param dest the destination object
+     * @param source the data Source to which to attribute the data
+     * @param field the FieldDescriptor describing the field to copy
+     * @param type the type of copy required - SOURCE for a full copy, SKELETON for a minimal copy
+     * that guarantees limited recursion, and FROM_DB to indicate that the source object originated
+     * from the destination database.
+     * @throws IllegalAccessException should never happen
+     * @throws ObjectStoreException if an error ocurs in the underlying objectstore
+     */
+    protected void copyField(FlyMineBusinessObject srcObj, FlyMineBusinessObject dest,
+            Source source, FieldDescriptor field, int type) throws IllegalAccessException,
+    ObjectStoreException {
+        String fieldName = field.getName();
+        if (!"id".equals(fieldName)) {
+            switch (field.relationType()) {
+                case FieldDescriptor.NOT_RELATION:
+                    TypeUtil.setFieldValue(dest, fieldName, TypeUtil.getFieldValue(srcObj,
+                                fieldName));
+                    break;
+                case FieldDescriptor.N_ONE_RELATION:
+                    if ((type == FROM_DB) || (type == SOURCE)
+                            || DataLoaderHelper.fieldIsPrimaryKey(getModel(),
+                                dest.getClass(), fieldName, source)) {
+                        if (type == FROM_DB) {
+                            TypeUtil.setFieldValue(dest, fieldName,
+                                    TypeUtil.getFieldValue(srcObj, fieldName));
+                        } else {
+                            FlyMineBusinessObject target = store((FlyMineBusinessObject)
+                                    TypeUtil.getFieldValue(srcObj, fieldName), source, SKELETON);
+                            TypeUtil.setFieldValue(dest, fieldName, target);
+                        }
+                    }
+                    break;
+                case FieldDescriptor.ONE_ONE_RELATION:
+                    if ((type == FROM_DB) || (type == SOURCE)) {
+                        FlyMineBusinessObject loser = (FlyMineBusinessObject)
+                            TypeUtil.getFieldValue(dest, fieldName);
+                        ReferenceDescriptor reverseRef = ((ReferenceDescriptor) field)
+                            .getReverseReferenceDescriptor();
+                        if (loser != null) {
+                            invalidateObjectById(loser.getId());
+                            try {
+                                TypeUtil.setFieldValue(loser, reverseRef.getName(), null);
+                            } catch (NullPointerException e) {
+                                throw new NullPointerException("reverseRef must be null: "
+                                        + reverseRef + ", forward ref is "
+                                        + field.getClassDescriptor().getName() + "."
+                                        + field.getName() + ", type is " + field.relationType());
+                            }
+                            store(loser);
+                        }
+                        FlyMineBusinessObject target = null;
+                        if (type == SOURCE) {
+                            target = store((FlyMineBusinessObject)
+                                    TypeUtil.getFieldValue(srcObj, fieldName), source, SKELETON);
+                        } else {
+                            target = (FlyMineBusinessObject) TypeUtil.getFieldValue(srcObj,
+                                    fieldName);
+                        }
+                        if (target != null) {
+                            FlyMineBusinessObject targetsReferent = (FlyMineBusinessObject)
+                                TypeUtil.getFieldValue(target, reverseRef.getName());
+                            if (targetsReferent != null) {
+                                invalidateObjectById(targetsReferent.getId());
+                                TypeUtil.setFieldValue(targetsReferent, fieldName, null);
+                                store(targetsReferent);
+                            }
+                            TypeUtil.setFieldValue(target, reverseRef.getName(), dest);
+                            store(target);
+                        }
+                        TypeUtil.setFieldValue(dest, fieldName, target);
+                    }
+                    break;
+                case FieldDescriptor.ONE_N_RELATION:
+                    if ((type == FROM_DB) && ((dest.getId() == null)
+                                || (!dest.getId().equals(srcObj.getId())))) {
+                        Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
+                        Iterator colIter = col.iterator();
+                        while (colIter.hasNext()) {
+                            FlyMineBusinessObject colObj = (FlyMineBusinessObject) colIter.next();
+                            invalidateObjectById(colObj.getId());
+                            ReferenceDescriptor reverseRef = ((CollectionDescriptor) field)
+                                .getReverseReferenceDescriptor();
+                            TypeUtil.setFieldValue(colObj, reverseRef.getName(), dest);
+                            if (type == FROM_DB) {
+                                store(colObj);
+                                store(colObj, source, FROM_DB);
+                            } else {
+                                store(colObj, source, SKELETON);
+                            }
+                        }
+                    }
+                    break;
+                case FieldDescriptor.M_N_RELATION:
+                    if ((type == SOURCE) || ((type == FROM_DB) && ((dest.getId() == null)
+                                || (!dest.getId().equals(srcObj.getId()))))) {
+                        Collection destCol = (Collection) TypeUtil.getFieldValue(dest, fieldName);
+                        Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
+                        Iterator colIter = col.iterator();
+                        while (colIter.hasNext()) {
+                            FlyMineBusinessObject colObj = (FlyMineBusinessObject) colIter.next();
+                            if (type == FROM_DB) {
+                                destCol.add(colObj);
+                            } else {
+                                destCol.add(store(colObj, source, SKELETON));
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+    }
 
 
 

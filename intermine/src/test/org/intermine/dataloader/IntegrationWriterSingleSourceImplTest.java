@@ -56,7 +56,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
 
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
-        iw = new IntegrationWriterSingleSourceImpl(writer);
+        iw = (IntegrationWriterSingleSourceImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
         os = iw.getObjectStore();
     }
 
@@ -536,83 +536,4 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertEquals(8762, ((Broke) re).getDebt());
         assertEquals(new Integer(876123), ((Manager) re).getSeniority());
     }
-
-
-
-
-
-
-/*
-    public void testStoredObjectAsSkeleton() throws Exception {
-        Address address = new Address();
-        address.setAddress("Company Street, AVille");
-        Address a2 = (Address) iw.getObjectByExample(address, Collections.singleton("address"));
-
-        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company.setAddress(a2);
-        company.setName("CompanyC");
-        company.setVatNumber(100);
-        toDelete.add(company);
-
-        iw.store(company, true); // store as skeleton
-
-        // check object stored correctly
-        Company example = (Company) iw.getObjectByExample(company, Collections.singleton("name"));
-        assertNotNull("Expected to retrieve object by example", example);
-
-        // this object has not been stored as a skeleton, we should be able to write over everything
-        // so IntegrationDesciptor should be empty apart from id
-        IntegrationDescriptor descriptor = iw.getByExample(company);
-
-        assertNotNull("Expected return from getByExample to be not null", descriptor);
-        assertNotNull("Expected Id to be not null", descriptor.get("id"));
-
-        // rest should be empty
-        Map infos = TypeUtil.getFieldInfos(Company.class);
-        Iterator iter = infos.keySet().iterator();
-        while (iter.hasNext()) {
-            String fieldname = (String) iter.next();
-            if (!"id".equals(fieldname)) {
-                assertNull(descriptor.get(fieldname));
-            }
-        }
-    }
-
-    public void testStoredObjectAsNonSkeleton() throws Exception {
-        Address address = new Address();
-        address.setAddress("Company Street, AVille");
-        Address a2 = (Address) iw.getObjectByExample(address, Collections.singleton("address"));
-
-        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company.setAddress(a2);
-        company.setName("CompanyC");
-        company.setVatNumber(100);
-        toDelete.add(company);
-
-        iw.store(company, false);
-
-        // object has already been stored by this integration writer so we cannot overwrite
-        // fields - IntegrationDescriptor should contain fields we stored
-        IntegrationDescriptor descriptor = iw.getByExample(company);
-
-        assertNotNull("Expected return from getByExample to be not null", descriptor);
-
-        assertNotNull("Expected Id to be not null", descriptor.get("id"));
-
-        // assert that the fields we set are filled in
-        Address a = (Address) descriptor.get("address");
-        assertEquals(company.getAddress(), a);
-        Integer vat = (Integer) descriptor.get("vatNumber");
-        assertEquals(company.getVatNumber(), vat.intValue());
-        String name = (String) descriptor.get("name");
-        assertEquals(company.getName(), name);
-
-        // rest should be empty
-        CEO ceo = (CEO) descriptor.get("cEO");
-        assertNull("cEO should not have been filled in", ceo);
-
-        List departments = (List) descriptor.get("departments");
-        assertTrue("departments should have been an empty list", departments.size() == 0);
-    }
-*/
 }
