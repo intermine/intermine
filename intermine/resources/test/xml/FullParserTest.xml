@@ -1,22 +1,22 @@
 <items>
   <object xml_id="1" implements="http://www.flymine.org/testmodel#Company">
-    <field name="http://www.flymine.org/testmodel#Company.name" value="Company1"/>
-    <reference name="http://www.flymine.org/testmodel#Company.address" ref_id="2"/>
-    <collection name="http://www.flymine.org/testmodel#Company.departments">
+    <field name="name" value="Company1"/>
+    <reference name="address" ref_id="2"/>
+    <collection name="departments">
       <reference ref_id="3"/>
       <reference ref_id="4"/>
     </collection>
   </object>
 
   <object xml_id="2" class="http://www.flymine.org/testmodel#Address">
-    <field name="http://www.flymine.org/testmodel#Address.address" value="Address1"/>
+    <field name="address" value="Address1"/>
   </object>
 
   <object xml_id="3" class="http://www.flymine.org/testmodel#Department">
-    <field name="http://www.flymine.org/testmodel#Department.name" value="Department1"/>
+    <field name="name" value="Department1"/>
   </object>
 
   <object xml_id="4" class="http://www.flymine.org/testmodel#Department">
-    <field name="http://www.flymine.org/testmodel#Department.name" value="Department2"/>
+    <field name="name" value="Department2"/>
   </object>
 </items>
