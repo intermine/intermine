@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <html:html locale="true" xhtml="true">
   <%-- from the tiles config file for description.jsp --%>
@@ -31,36 +32,17 @@
     <tiles:get name="header"/>
     <tiles:get name="menu"/>
     <div id="pagecontent">
-    
-      <%-- figure out whether or not we have a page description, if not we don't
-           render a box around the content frame. --%>
-      <fmt:message key="${pageName}.description" var="description"/>
-      <c:set var="hasDesc" value="${!empty description}"/>
       
       <tiles:get name="errorMessages"/>
       
-      <%-- table only if we have a description --%>
-      <c:if test="${hasDesc}">
-        <table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
+      <fmt:message key="${pageName}.help" var="help"/>
+      <c:if test="${!empty help}">
+        <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"/>
       </c:if>
       
-      <tiles:insert attribute="description">
-        <tiles:put name="pageName" beanName="pageName" beanScope="tile"/>
-      </tiles:insert>
-
-      <%-- table only if we have a description --%>
-      <c:if test="${hasDesc}">
-        <tr>
-          <td valign="top" colspan="2">
-            <tiles:get name="body"/>
-          </td>
-        </tr>
-        </table>
-      </c:if>
-
-      <c:if test="${not hasDesc}">
+      <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
         <tiles:get name="body"/>
-      </c:if>
+      </im:box>
 
     </div>
     
