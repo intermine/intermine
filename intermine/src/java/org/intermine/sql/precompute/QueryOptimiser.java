@@ -1,5 +1,6 @@
 package org.flymine.sql.precompute;
 
+import org.flymine.sql.Database;
 import org.flymine.sql.query.Query;
 import org.flymine.sql.query.AbstractTable;
 import org.flymine.sql.query.AbstractConstraint;
@@ -39,6 +40,8 @@ import java.sql.SQLException;
  */
 public class QueryOptimiser
 {
+    private static final String ALIAS_PREFIX = "P";
+
     /**
      * Runs the optimiser through the query represented in the String, given the database. If
      * anything goes wrong, then the original String is returned.
@@ -48,7 +51,7 @@ public class QueryOptimiser
      * @return a String representing the optimised query
      * @throws SQLException if a database error occurs
      */
-    public static String optimise(String query, Connection database) throws SQLException {
+    public static String optimise(String query, Database database) throws SQLException {
         try {
             return optimise(new Query(query), database).getSQLString();
         } catch (RuntimeException e) {
@@ -65,15 +68,38 @@ public class QueryOptimiser
      * @return the optimised Query
      * @throws SQLException if a database error occurs
      */
-    public static Query optimise(Query query, Connection database) throws SQLException {
-        BestQueryExplainer bestQuery = new BestQueryExplainer();
+    protected static Query optimise(Query query, Database database) throws SQLException {
+        Connection explainConnection = database.getConnection();
+        Query retval = null;
         try {
-            Set precomputedTables = null; //PrecomputedTableManager.getPrecomputedTables(database);
+            BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
+            remapAliasesToAvoidPrecomputePrefix(query);
+            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
+            Set precomputedTables = ptm.getPrecomputedTables();
             recursiveOptimise(precomputedTables, query, bestQuery, query);
+            retval = bestQuery.getBestQuery();
         } catch (BestQueryException e) {
             // Ignore - bestQuery decided to cut short the search
+        } finally {
+            explainConnection.close();
         }
-        return bestQuery.getBestQuery();
+        return retval;
+    }
+
+    /**
+     * Remaps the aliases of any table that starts with the ALIAS_PREFIX, to avoid clashes with
+     * future precomputed tables.
+     *
+     * @param query the query to remap
+     */
+    protected static void remapAliasesToAvoidPrecomputePrefix(Query query) {
+        Iterator tableIter = query.getFrom().iterator();
+        while (tableIter.hasNext()) {
+            AbstractTable table = (AbstractTable) tableIter.next();
+            if (table.getAlias().startsWith(ALIAS_PREFIX)) {
+                table.setAlias(ALIAS_PREFIX + StringUtil.uniqueString());
+            }
+        }
     }
 
     /**
@@ -264,7 +290,7 @@ public class QueryOptimiser
                     // left out of the WHERE clause
               
                     Table precomputedSqlTable = new Table(precomputedTable.getName(),
-                            StringUtil.uniqueString());
+                            ALIAS_PREFIX + StringUtil.uniqueString());
                     Query newQuery = new Query();
                 
                     // Populate the SELECT list of the new Query. This method will throw an
@@ -411,7 +437,7 @@ public class QueryOptimiser
             }
 
             Table precomputedSqlTable = new Table(precomputedTable.getName(),
-                    StringUtil.uniqueString());
+                    ALIAS_PREFIX + StringUtil.uniqueString());
             Query newQuery = new Query();
             
             try {
@@ -536,7 +562,7 @@ public class QueryOptimiser
                 boolean used = true;
                 String alternativeName = null;
                 do {
-                    alternativeName = StringUtil.uniqueString();
+                    alternativeName = ALIAS_PREFIX + StringUtil.uniqueString();
                 } while (findTableForAlias(alternativeName, tables) != null);
                 matchingTable.setAlias(alternativeName);
             }
