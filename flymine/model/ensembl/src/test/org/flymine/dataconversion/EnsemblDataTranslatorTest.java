@@ -51,9 +51,32 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
+        String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
+        String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
+
+        if (expectedNotActual.length() > 25) {
+            System.out.println(expectedNotActual);
+            System.out.println(actualNotExpected);
+        }
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
+
+    private Set compareItemSets(Set a, Set b) {
+        Set diff = new HashSet(a);
+        Iterator i = a.iterator();
+        while (i.hasNext()) {
+            Item itemA = (Item) i.next();
+            Iterator j = b.iterator();
+            while (j.hasNext()) {
+                Item itemB = (Item) j.next();
+                if (itemA.equals(itemB)) {
+                    diff.remove(itemA);
+                }
+            }
+        }
+        return diff;
+    }
 
     public void testSetGeneSynonyms() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";

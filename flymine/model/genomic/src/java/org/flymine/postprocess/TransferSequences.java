@@ -10,6 +10,7 @@ package org.flymine.postprocess;
  *
  */
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DynamicUtil;
 import org.flymine.model.genomic.*;
 
 import org.apache.log4j.Logger;
@@ -93,7 +95,8 @@ public class TransferSequences
                 chrSequence = (char[]) seqArrayMap.get(chrId);
             }
 
-            copySeqArray(chrSequence, contig.getResidues(), contigOnChrLocation);
+            copySeqArray(chrSequence, contig.getSequence().getSequence(),
+                         contigOnChrLocation);
         }
 
 // XXX - Chromosome needs a residues field
@@ -125,8 +128,11 @@ public class TransferSequences
 
             char[] chrSequence = (char[]) seqArrayMap.get(chrId);
             String featureSeq = getSubSequence(chrSequence, locationOnChr);
-
-            feature.setResidues(featureSeq);
+            Sequence seq =
+                    (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+            seq.setSequence(featureSeq);
+            feature.setSequence(seq);
+            osw.store(seq);
             osw.store(feature);
         }
     }

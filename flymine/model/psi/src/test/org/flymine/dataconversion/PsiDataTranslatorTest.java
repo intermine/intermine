@@ -36,6 +36,7 @@ import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.XmlConverter;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
 import org.intermine.xml.full.FullRenderer;
 
 public class PsiDataTranslatorTest extends DataTranslatorTestCase {
@@ -57,6 +58,7 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
+
     protected String getModelName() {
         return "genomic";
     }
@@ -73,7 +75,10 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
         XmlConverter converter = new XmlConverter(psiModel, xsdReader, mockIw);
         converter.process(srcReader);
-
+//         FileWriter fw = new FileWriter(new File("psi_tmp.xml"));
+//         fw.write(mockIw.getItems());
+//         fw.flush();
+//         fw.close();
         return mockIw.getItems();
     }
 

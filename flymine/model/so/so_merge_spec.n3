@@ -43,13 +43,8 @@ null:Transcript__genes a owl:ObjectProperty;
     rdfs:domain :LocatedSequenceFeature;
     rdfs:range :Sequence.
 
-# ChromsomeBand not in SO so not a LocatedSequenceFeature
+# ChromsomeBand not in SO -> make it a Region
 :ChromosomeBand a owl:Class;
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :ChromosomeBand__sequence ] .
+    rdfs:subClassOf :Region.
 
-:ChromosomeBand__sequence a owl:ObjectProperty;
-    rdfs:domain :ChromosomeBand;
-    rdfs:range :Sequence.
+

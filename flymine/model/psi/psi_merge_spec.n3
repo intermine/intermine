@@ -136,10 +136,16 @@ null:Confidence_ExperimentType a owl:Class;
 # ------------------- InteractorType ------------------- #
 
 :Protein a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Protein__sequence ] ;
     owl:equivalentClass psi:ProteinInteractorType.
 
-:Protein__residues a owl:DatatypeProperty;
-    owl:equivalentProperty psi:ProteinInteractorType__sequence.
+# need to create Sequence object and set in code from psi:ProteinInteractorType__sequence.
+:Protein__sequence a owl:ObjectProperty;
+    rdfs:domain :Protein;
+    rdfs:range :Sequence.
 
 :Protein__organism a owl:ObjectProperty;
     rdfs:subPropertyOf :BioEntity__organism;
@@ -150,6 +156,9 @@ null:Confidence_ExperimentType a owl:Class;
 
 null:ProteinInteractorType__identifier a owl:DatatypeProperty;
     owl:equivalentProperty psi:ProteinInteractorType__identifier.
+
+null:ProteinInteractorType__sequence a owl:DatatypeProperty;
+    owl:equivalentProperty psi:ProteinInteractorType__sequence.
 
 null:ProteinInteractorType__names a owl:ObjectProperty;
     owl:equivalentProperty psi:ProteinInteractorType__names.

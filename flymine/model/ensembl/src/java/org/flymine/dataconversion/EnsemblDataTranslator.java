@@ -45,7 +45,6 @@ import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
@@ -212,7 +211,6 @@ public class EnsemblDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, relation, "subjects", true, "object", false);
                     moveField(srcItem, relation, "clone", "subject");
                     result.add(relation);
-                    promoteField(tgtItem, srcItem, "residues", "dna", "sequence");
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(getOrgRef());
 
