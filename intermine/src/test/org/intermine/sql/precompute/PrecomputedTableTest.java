@@ -133,4 +133,20 @@ public class PrecomputedTableTest extends TestCase
         assertEquals(result, pt.getValueMap());
     }
 
+    public void testOrderByField() throws Exception {
+        Query q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
+        PrecomputedTable pt = new PrecomputedTable(q1, "name", con);
+        assertEquals("orderby_field", pt.getOrderByField());
+
+        q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.name AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
+        pt = new PrecomputedTable(q1, "name", con);
+        assertEquals(null, pt.getOrderByField());
+
+        q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.name AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
+        pt = new PrecomputedTable(q1, "name", con);
+        assertEquals(null, pt.getOrderByField());
+
+        q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
+        pt = new PrecomputedTable(q1, "name", con);
+    }
 }

@@ -760,4 +760,61 @@ public class QueryOptimiserTest extends TestCase
 
         assertEquals(eq1, q1);
     }
+
+    public void testOrderByField() throws Exception {
+        Query pq1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c, tc.name AS name FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+
+        Query q, eq;
+        Set eSet;
+        BestQueryStorer bestQuery;
+
+        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY ta.id, tb.id, tc.id");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 259999999999999999999999999999999999999999 ORDER BY orderby_field");
+        eSet = new ConsistentSet();
+        eSet.add(eq);
+        StringUtil.setNextUniqueNumber(42);
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        assertEquals(eSet, bestQuery.getQueries());
+
+        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY ta.id, tb.id, tc.name");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 259999999999999999999999999999999999999999 ORDER BY P42.orderby_field, P42.name");
+        eSet = new ConsistentSet();
+        eSet.add(eq);
+        StringUtil.setNextUniqueNumber(42);
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        assertEquals(eSet, bestQuery.getQueries());
+
+        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY tc.id, ta.id, tb.id");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 259999999999999999999999999999999999999999 ORDER BY P42.c, P42.orderby_field");
+        eSet = new ConsistentSet();
+        eSet.add(eq);
+        StringUtil.setNextUniqueNumber(42);
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        assertEquals(eSet, bestQuery.getQueries());
+
+        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY ta.id, tc.id, tb.id");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 259999999999999999999999999999999999999999 ORDER BY P42.orderby_field, P42.c, P42.b");
+        eSet = new ConsistentSet();
+        eSet.add(eq);
+        StringUtil.setNextUniqueNumber(42);
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        assertEquals(eSet, bestQuery.getQueries());
+
+        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.age AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY ta.id, tc.id, tb.id");
+        pq1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.age AS c FROM Company AS ta, Department AS tb, Employee AS tc");
+        pt1 = new PrecomputedTable(pq1, "precomp1", con);
+        precomps = new HashSet();
+        precomps.add(pt1);
+
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        assertEquals(Collections.EMPTY_SET, bestQuery.getQueries());
+    }
 }
