@@ -181,7 +181,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("translation".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
-                    result.addAll(setProteinIdentifiers(srcItem, tgtItem));
+                    //result.addAll(setProteinIdentifiers(srcItem, tgtItem));
                 }
 
                 if (storeTgtItem) {
