@@ -60,9 +60,6 @@
 	</row>
     </tbody>
 </table>
-	 
-	 <listitem> Open the main flymine directory and then the lib directory.  From here copy the file called <command>nsuml.jar</command> to the lib folder in the main tutorial directory.
-	 </listitem>
 
 	 <listitem> Back in <command>build.xml</command> the <command>insert data into the database</command> section now needs to be changed: First you must change the depends statement at the top of the target (see below). It should now read <command> depends="build-model, compile"</command>.</listitem>
 	 <listitem>The rest of that target now needs to be modified to accept the data from the java program you have created. Below is an exampe of how to do this, but obviously this will be specific to your programs.</listitem>
