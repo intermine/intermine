@@ -24,22 +24,31 @@
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
   <%-- filter unimportant templates if necessary --%>
   <c:if test="${!important || templateQuery.important}">
-    <span class="templateDesc"><c:out value="${templateQuery.description}"/></span>&nbsp;
-    <fmt:message var="linkTitle" key="templateList.run">
-      <fmt:param value="${templateQuery.name}"/>
-    </fmt:message>
-    <c:set var="extra" value=""/>
-    <c:if test="${!empty className}">
-      <c:forEach items="${CLASS_TEMPLATE_EXPRS[className][templateQuery.name]}" var="fieldExpr">
-        <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
-        <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
-        <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
-      </c:forEach>
-    </c:if>
-    <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
-               title="${linkTitle}">
+    <c:if test="${!templateQuery.valid}">
+      <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=${type}" styleClass="brokenTmplLink">
+      <strike><span class="templateDesc"><c:out value="${templateQuery.description}"/></span></strike>
       <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-    </html:link>
+      </html:link>
+    </c:if>
+    <c:if test="${templateQuery.valid}">
+      <span class="templateDesc"><c:out value="${templateQuery.description}"/></span>
+      &nbsp;
+      <fmt:message var="linkTitle" key="templateList.run">
+        <fmt:param value="${templateQuery.name}"/>
+      </fmt:message>
+      <c:set var="extra" value=""/>
+      <c:if test="${!empty className}">
+        <c:forEach items="${CLASS_TEMPLATE_EXPRS[className][templateQuery.name]}" var="fieldExpr">
+          <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
+          <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
+          <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
+        </c:forEach>
+      </c:if>
+      <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
+                 title="${linkTitle}">
+        <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+      </html:link>
+    </c:if>
     <c:if test="${type == 'user'}">
       <%-- pull required messages --%>
       <fmt:message var="confirmMessage" key="templateList.deleteMessage">
@@ -58,12 +67,14 @@
         <img border="0" src="images/cross.gif" alt="x"/>
       </html:link>
       <c:remove var="deleteParams"/>
-      <fmt:message var="linkTitle" key="templateList.edit">
-        <fmt:param value="${templateQuery.name}"/>
-      </fmt:message>
-      <html:link action="/editTemplate?name=${templateQuery.name}" title="${linkTitle}">
-        <img border="0" class="arrow" src="images/edit.gif" alt="[edit]"/>
-      </html:link>
+      <c:if test="${templateQuery.valid}">
+        <fmt:message var="linkTitle" key="templateList.edit">
+          <fmt:param value="${templateQuery.name}"/>
+        </fmt:message>
+        <html:link action="/editTemplate?name=${templateQuery.name}" title="${linkTitle}">
+          <img border="0" class="arrow" src="images/edit.gif" alt="[edit]"/>
+        </html:link>
+      </c:if>
     </c:if>
     <c:if test="${!status.last}">
       <div class="seperator"></div>
