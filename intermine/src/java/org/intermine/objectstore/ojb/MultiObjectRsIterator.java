@@ -56,6 +56,7 @@ package org.flymine.objectstore.ojb;
 
 import org.apache.ojb.broker.accesslayer.*;
 
+import org.apache.ojb.broker.PBLifeCycleEvent;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
 import org.apache.ojb.broker.util.SqlHelper;
@@ -71,7 +72,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryNode;
 
-import org.apache.ojb.broker.util.logging.LoggerFactory;
+//import org.apache.ojb.broker.util.logging.LoggerFactory;
 
 /**
  * An extension to RsIterator that can be used to retrieve multiple
@@ -98,13 +99,14 @@ public class MultiObjectRsIterator extends RsIterator
      * @param limit the maximum number of rows to return
      */
     public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker, int start, int limit) {
-        logger = LoggerFactory.getLogger(this.getClass());
+        //logger = LoggerFactory.getLogger(this.getClass());
         cache = broker.serviceObjectCache();
-        m_rsAndStmt = ((JdbcAccessFlymineImpl) broker.serviceJdbcAccess()).executeQuery(query,
-                start, limit);
         m_row = new HashMap();
-        this.query = query;
         m_broker = broker;
+        afterLookupEvent = new PBLifeCycleEvent(m_broker, PBLifeCycleEvent.Type.AFTER_LOOKUP);
+        this.query = query;
+        m_rsAndStmt = ((JdbcAccessFlymineImpl) broker.serviceJdbcAccess())
+            .executeQuery(query, start, limit);
         //prefetchRelationships(query);
     }
 
@@ -144,7 +146,8 @@ public class MultiObjectRsIterator extends RsIterator
                         }
                         itemExtentClass = null;
                         obj = getObjectFromResultSet();
-                        m_broker.fireBrokerEvent(obj, PersistenceBrokerImpl.EVENT_AFTER_LOOKUP);
+                        afterLookupEvent.setTarget(obj);
+                        m_broker.fireBrokerEvent(afterLookupEvent);
                     } else {
                         int columnIndex = m_rsAndStmt.m_rs.findColumn(alias);
                         int jdbcType = m_rsAndStmt.m_rs.getMetaData().getColumnType(columnIndex);
