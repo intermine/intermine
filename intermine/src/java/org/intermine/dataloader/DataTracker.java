@@ -98,7 +98,8 @@ public class DataTracker
             throw new IllegalArgumentException("Could not access SQL database");
         }
         cacheStorer = new CacheStorer();
-        Thread cacheStorerThread = new Thread(cacheStorer, "DataTracker.CacheStorer");
+        Thread cacheStorerThread = new Thread(cacheStorer, "DataTracker CacheStorer");
+        cacheStorerThread.setDaemon(true);
         cacheStorerThread.start();
     }
 

@@ -59,6 +59,7 @@ public class PrefetchManager
                             // There are too many requests for the servicing threads.
                             Thread newThread = new ServiceThread();
                             newThread.setDaemon(true);
+                            newThread.setName("PrefetchManager ServiceThread");
                             newThread.start();
                             serviceThreads++;
                             LOG.info("addRequest - creating new ServiceThread. We now have "
