@@ -32,7 +32,6 @@ import org.intermine.metadata.ReferenceDescriptor;
  */
 public class ModelMerger
 {
-    
     /**
      * Creates a new instance of ModelMerger.
      */
@@ -71,7 +70,7 @@ public class ModelMerger
                 newClass = mergeClass(oldClass, mergeClass);
             } else {
                 // It is a new class
-                newClass = new ClassDescriptor(mergeClass);
+                newClass = cloneClassDescriptor(mergeClass);
             }
             newClasses.put(newClass.getName(), newClass);
         }
@@ -81,17 +80,42 @@ public class ModelMerger
             ClassDescriptor oldClass = (ClassDescriptor) iter.next();
             if (!newClasses.containsKey(oldClass.getName())) {
                 // We haven't merged this class so we add the old one
-                newClasses.put(oldClass.getName(), new ClassDescriptor(oldClass));
+                newClasses.put(oldClass.getName(), cloneClassDescriptor(oldClass));
             }
         }
         try {
-            return new Model(original.getName(), original.getNameSpace().toString(),
-                new TreeSet(newClasses.values()));
+            Model newModel = new Model(original.getName(), original.getNameSpace().toString(),
+                                        new HashSet(newClasses.values()));
+            // Remove duplicatate indirect inheritance
+            checkInheritance(newModel);
+            return newModel;
+        
         } catch (URISyntaxException err) {
             throw new ModelMergerException(err);
         } catch (MetaDataException err) {
             throw new ModelMergerException(err);
         }
+    }
+    
+    /**
+     * <pre>
+     * Original:
+     * A -> C
+     *
+     * Addition:
+     * A -> B -> C
+     *
+     * Result:
+     * A -> (C,B)  <--- we want to remove this C
+     * B -> C
+     * </pre>
+     *
+     * @param model the resultant model to check
+     * @returns fixed model (if no change occured, returns same model)
+     */
+    protected static Model checkInheritance(Model model) throws ModelMergerException {
+        
+        return model;
     }
     
     /**
@@ -140,8 +164,8 @@ public class ModelMerger
         }
         
         Set newSet = new HashSet();
-        newSet.addAll(original.getAttributeDescriptors());
-        newSet.addAll(merge.getAttributeDescriptors());
+        newSet.addAll(cloneAttributeDescriptors(original.getAttributeDescriptors()));
+        newSet.addAll(cloneAttributeDescriptors(merge.getAttributeDescriptors()));
         return newSet;
     }
     
@@ -172,11 +196,10 @@ public class ModelMerger
         }
         
         Set newSet = new HashSet();
-        newSet.addAll(original.getAttributeDescriptors());
-        newSet.addAll(merge.getAttributeDescriptors());
+        newSet.addAll(cloneCollectionDescriptors(original.getCollectionDescriptors()));
+        newSet.addAll(cloneCollectionDescriptors(merge.getCollectionDescriptors()));
         return newSet;
     }
-    
     
     /**
      * Merge the references of a target model class descriptor <code>original</code> with
@@ -205,8 +228,49 @@ public class ModelMerger
         }
         
         Set newSet = new HashSet();
-        newSet.addAll(original.getReferenceDescriptors());
-        newSet.addAll(merge.getReferenceDescriptors());
+        newSet.addAll(cloneReferenceDescriptors(original.getReferenceDescriptors()));
+        newSet.addAll(cloneReferenceDescriptors(merge.getReferenceDescriptors()));
         return newSet;
+    }
+    
+    protected static Set cloneReferenceDescriptors(Set refs) {
+        Set copy = new HashSet();
+        for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) iter.next();
+            copy.add(new ReferenceDescriptor(ref.getName(), ref.getReferencedClassName(),
+                    ref.getReverseReferenceFieldName()));
+        }
+        return copy;
+    }
+    
+    protected static Set cloneCollectionDescriptors(Set refs) {
+        Set copy = new HashSet();
+        for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
+            CollectionDescriptor ref = (CollectionDescriptor) iter.next();
+            copy.add(new CollectionDescriptor(ref.getName(), ref.getReferencedClassName(),
+                    ref.getReverseReferenceFieldName(), ref.isOrdered()));
+        }
+        return copy;
+    }
+    
+    protected static Set cloneAttributeDescriptors(Set refs) {
+        Set copy = new HashSet();
+        for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
+            AttributeDescriptor ref = (AttributeDescriptor) iter.next();
+            copy.add(new AttributeDescriptor(ref.getName(), ref.getType()));
+        }
+        return copy;
+    }
+    
+    /**
+     * Construct a ClassDescriptor that takes on all the properties of <code>cld</code>
+     * without attaching to a particular Model.
+     * @param cld the ClassDescriptor to clone
+     */
+    protected static ClassDescriptor cloneClassDescriptor(ClassDescriptor cld) {
+        return new ClassDescriptor(cld.getName(), cld.getSupers(), cld.isInterface(),
+                cloneAttributeDescriptors(cld.getAttributeDescriptors()),
+                cloneReferenceDescriptors(cld.getReferenceDescriptors()),
+                cloneCollectionDescriptors(cld.getCollectionDescriptors()));
     }
 }
