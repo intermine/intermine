@@ -125,35 +125,22 @@
               <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status2">
                 <c:choose>
                   <c:when test="${column.visible}">
-                    <c:choose>
-                      <%-- "!=" only works on objects of the same type.  Objects in a
-                        column will only have the same type if we are showing a
-                        collection.  Collections will have only one column so
-                        don't do the check if there is only one column --%>
-                      <c:when test="${RESULTS_TABLE.columnCount == 1 ||
-                                    ((status.count == 1) ||
-                                    !(row[status2.index] == prevrow[status2.index]))}">
-                        <%-- the checkbox to select this object --%>
-                        <td align="center" width="1%">
-                          <html:multibox property="selectedObjects"
-                                         styleId="selectedObjects_${status2.index}_${status.index}"
-                                         onclick="unselectColumnCheckbox(${status2.index})">
-                            <c:out value="${status2.index},${status.index}"/>
-                          </html:multibox>
-                        </td>
-                        <td>
-                          <c:set var="object" value="${row[column.index]}" scope="request"/>
-                          <c:set var="viewType" value="summary" scope="request"/>
-                          <tiles:get name="objectView.tile" />
-                        </td>
-                      </c:when>
-                      <c:otherwise>
-                        <%-- add a space so that IE renders the borders --%>
-                        <td colspan="2">&nbsp;</td>
-                      </c:otherwise>
-                    </c:choose>
+                    <%-- the checkbox to select this object --%>
+                    <td align="center" width="1%">
+                      <html:multibox property="selectedObjects"
+                                     styleId="selectedObjects_${status2.index}_${status.index}"
+                                     onclick="unselectColumnCheckbox(${status2.index})">
+                        <c:out value="${status2.index},${status.index}"/>
+                      </html:multibox>
+                    </td>
+                    <td>
+                      <c:set var="object" value="${row[column.index]}" scope="request"/>
+                      <c:set var="viewType" value="summary" scope="request"/>
+                      <tiles:get name="objectView.tile" />
+                    </td>
                   </c:when>
                   <c:otherwise>
+                    <%-- add a space so that IE renders the borders --%>
                     <td colspan="2">&nbsp;</td>
                   </c:otherwise>
                 </c:choose>
