@@ -10,14 +10,15 @@ package org.flymine.web;
  *
  */
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Iterator;
+
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -35,7 +36,6 @@ import org.flymine.metadata.presentation.DisplayModel;
  */
 public class QueryBuildAction extends LookupDispatchAction
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
