@@ -33,10 +33,7 @@ public class DagConverterTask extends Task
 {
     protected static final Logger LOG = Logger.getLogger(DagConverterTask.class);
 
-    protected String file;
-    protected String osName;
-    protected String termClass;
-    protected String relationClass;
+    protected String file, dagName, osName, termClass;
 
     /**
      * Set the input file name
@@ -44,6 +41,14 @@ public class DagConverterTask extends Task
      */
     public void setFile(String file) {
         this.file = file;
+    }
+
+    /**
+     * Set the name of the dag
+     * @param dagName the name
+     */
+    public void setDagName(String dagName) {
+        this.dagName = dagName;
     }
 
     /**
@@ -64,15 +69,6 @@ public class DagConverterTask extends Task
     }
 
     /**
-     * Set the relation class name
-     *
-     * @param relationClass the class of the relation
-     */
-    public void setRelationClass(String relationClass) {
-        this.relationClass = relationClass;
-    }
-
-    /**
      * Run the task
      * @throws BuildException if a problem occurs
      */
@@ -80,21 +76,21 @@ public class DagConverterTask extends Task
         if (file == null) {
             throw new BuildException("database attribute is not set");
         }
+        if (dagName == null) {
+            throw new BuildException("dagName attribute is not set");
+        }
         if (osName == null) {
             throw new BuildException("model attribute is not set");
         }
         if (termClass == null) {
             throw new BuildException("termClass attribute is not set");
         }
-        if (relationClass == null) {
-            throw new BuildException("relationClass attribute is not set");
-        }
 
         try {
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             ItemWriter writer = new ObjectStoreItemWriter(osw);
 
-            DagConverter converter = new DagConverter(writer, file, termClass, relationClass);
+            DagConverter converter = new DagConverter(writer, file, dagName, termClass);
             converter.process();
         } catch (Exception e) {
             throw new BuildException(e);
