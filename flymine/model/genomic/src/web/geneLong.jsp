@@ -2,16 +2,21 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- geneLong.jsp -->
-<c:out value="${object.organism.name}"/> gene 
+<fmt:setBundle basename="model"/>
+
+<html:link action="/objectDetails?id=${object.organism.id}">
+  <c:out value="${object.organism.name}"/>
+</html:link>
+<fmt:message key="gene.gene"/>
 <c:if test="${!empty object.name}">
   <c:out value="${object.name}"/>
 </c:if>
 <br/>
 <c:if test="${!empty object.seqlen}">
-  Sequence length: <c:out value="${object.seqlen}"/><br/>
+  <fmt:message key="gene.sequencelength"/>: <c:out value="${object.seqlen}"/><br/>
 </c:if>
 <c:if test="${!empty object.transcripts}">
-  Transcripts:
+  <fmt:message key="gene.transcipts"/>:
   <c:forEach items="${object.transcripts}" var="thisTranscript">
     <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
       <c:out value="${thisTranscript}"/>
@@ -19,46 +24,16 @@
   </c:forEach>
 </c:if>
 <c:if test="${!empty object.synonyms}">
-  Synonyms:
+  <fmt:message key="gene.synonyms"/>:
   <c:forEach items="${object.synonyms}" var="thisSynonym">
-    <c:if test="${thisSynonym.source.title == 'ensembl'}">
-      <c:if test="${object.organism.name == 'Drosophila Melanogaster'}">
-        <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
-                   title="Ensembl: ${thisSynonym.synonym}"
-                   target="view_window">
-          <html:img src="model/ensembl_logo_small.png"/>
-        </html:link>
-        <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
-                   title="Ensembl: ${thisSynonym.synonym}"
-                   target="view_window">
-          <c:out value="${thisSynonym.synonym}"/>
-        </html:link>
-      </c:if>
-      <c:if test="${object.organism.name != 'Drosophila Melanogaster'}">
-        <html:link href="http://www.ensembl.org/Anopheles_gambiae/geneview?db=core&gene=${thisSynonym.synonym}"
-                   title="Ensembl: ${thisSynonym.synonym}"
-                   target="view_window">
-          <html:img src="model/ensembl_logo_small.png"/>
-        </html:link>
-        <html:link href="http://www.ensembl.org/Anopheles_gambiae/geneview?db=core&gene=${thisSynonym.synonym}"
-                   title="Ensembl: ${thisSynonym.synonym}"
-                   target="view_window">
-          <c:out value="${thisSynonym.synonym}"/>
-        </html:link>
-      </c:if>
-    </c:if>
-    <c:if test="${thisSynonym.source.title == 'flybase'}">
-      <html:link href="http://www.flybase.org/.bin/fbidq.html?${thisSynonym.synonym}"
-                 title="FlyBase:: ${thisSynonym.synonym}"
-                 target="view_window">
-        <html:img src="model/flybase_logo_small.png"/>
-      </html:link>
-      <html:link href="http://www.flybase.org/.bin/fbidq.html?${thisSynonym.synonym}"
-                 title="FlyBase: ${thisSynonym.synonym}"
-                 target="view_window">
-        <c:out value="${thisSynonym.synonym}"/>
-      </html:link> 
-   </c:if>
+    <c:set var="sourceTitle" value="${thisSynonym.source.title}"/>
+    <c:set var="linkProperty" value="${sourceTitle}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
+    <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
+               title="${sourceTitle}: ${thisSynonym.synonym}"
+               target="view_window">
+      <html:img src="model/ensembl_logo_small.png"/>
+      <c:out value="${thisSynonym.synonym}"/>
+    </html:link>
   </c:forEach>
 </c:if>
 <!--
