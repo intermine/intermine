@@ -30,19 +30,22 @@ public abstract class TableHelper
     public static final int BATCH_SIZE = 100;
 
     /**
-     * Make a results table from an objectstore and a query
+     * Make a results table from an objectstore and a query and call initTable.
      * @param os the ObjectStore against which to run the Query
      * @param query the Query to create the PagedTable for
      * @return a PagedResults object for the argument Query
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
     public static PagedResults makeTable(ObjectStore os, Query query)
-    throws ObjectStoreException {
-        return new PagedResults(makeResults(os, query), os.getModel());
+        throws ObjectStoreException {
+        Results r = makeResults(os, query);
+        initResults(r);
+        PagedResults pr = new PagedResults(r, os.getModel());
+        return pr;
     }
 
     /**
-     * Make a results table from an objectstore, a query and a view
+     * Make a results table from an objectstore, a query and a view and call initTable.
      * @param os the ObjectStore against which to run the Query
      * @param query the Query to create the PagedTable for
      * @param view the list of paths to SELECT
@@ -51,24 +54,23 @@ public abstract class TableHelper
      */
     public static PagedResults makeTable(ObjectStore os, Query query, List view)
         throws ObjectStoreException {
-        return new PagedResults(view, makeResults(os, query), os.getModel());
+        Results r = makeResults(os, query);
+        initResults(r);
+        PagedResults pr = new PagedResults(view, r, os.getModel());
+        return pr;
     }
-
+    
     /**
-     * Make a results object from an objectstore and a query
-     * @param os the ObjectStore against which to run the Query
-     * @param query the Query to create the results for
-     * @return a results object for the argument Query
+     * Must be called after makeResults to check that the query is valid and
+     * fetch the first row.
+     * @param results the Results object returned by makeResults
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    protected static Results makeResults(ObjectStore os, Query query)
+    public static void initResults(Results results)
         throws ObjectStoreException {
-        Results r = os.execute(query);
-        r.setBatchSize(BATCH_SIZE);
-
         // call this so that if an exception occurs we notice now rather than in the JSP code
         try {
-            r.get(0);
+            results.get(0);
         } catch (IndexOutOfBoundsException _) {
             // no results - ignore
             // we don't call size() first to avoid this exception because that could be very slow
@@ -80,7 +82,19 @@ public abstract class TableHelper
                 throw e;
             }
         }
-        
+    }
+
+    /**
+     * Make a results object from an objectstore and a query
+     * @param os the ObjectStore against which to run the Query
+     * @param query the Query to create the results for
+     * @return a results object for the argument Query
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     */
+    public static Results makeResults(ObjectStore os, Query query)
+        throws ObjectStoreException {
+        Results r = os.execute(query);
+        r.setBatchSize(BATCH_SIZE);
         return r;
     }
 }
