@@ -41,7 +41,7 @@ public class ChadoDataTranslator extends DataTranslator
      * @see DataTranslator#DataTranslator
      */
     public ChadoDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
-                               String tgtModel) {
+                               Model tgtModel) {
         super(srcItemReader, mapping, srcModel, tgtModel);
     }
 
