@@ -93,7 +93,7 @@ public class QueryHelperTest extends QueryTestCase
     }
 
     public void testQueryForExampleSetOneObjectKeyAttributesReferences() throws Exception {
-        // Employee's key is "name", "address", "fullTime" fields
+        // Employee's key is "name", "address", "age" fields
         Set set = new HashSet();
         Address a = new Address();
         a.setAddress("1 The Street");
@@ -101,7 +101,7 @@ public class QueryHelperTest extends QueryTestCase
         Employee e = new Employee();
         e.setAddress(a);
         e.setName("Employee 1");
-        e.setFullTime(true);
+        e.setAge(20);
         set.add(e);
 
         Query q = QueryHelper.createQueryForExampleSet(set);
@@ -121,10 +121,10 @@ public class QueryHelperTest extends QueryTestCase
         QueryField qf1 = new QueryField(qcEmployee, "name");
         cs3.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
 
-        cs3.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a));
+        QueryField qf2 = new QueryField(qcEmployee, "age");
+        cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
 
-        QueryField qf2 = new QueryField(qcEmployee, "fullTime");
-        cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Boolean(true))));
+        cs3.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a));
 
         cs2.addConstraint(cs3);
         cs1.addConstraint(cs2);
@@ -134,7 +134,7 @@ public class QueryHelperTest extends QueryTestCase
     }
 
     public void testQueryForExampleSetTwoObjectsKeyAttributesReferences() throws Exception {
-        // Employee's key is "name", "address", "fullTime" fields
+        // Employee's key is "name", "address", "age" fields
         Set set = new HashSet();
         Address a1 = new Address();
         a1.setAddress("1 The Street");
@@ -144,13 +144,13 @@ public class QueryHelperTest extends QueryTestCase
         Employee e1 = new Employee();
         e1.setAddress(a1);
         e1.setName("Employee 1");
-        e1.setFullTime(true);
+        e1.setAge(20);
         set.add(e1);
 
         Employee e2 = new Employee();
         e2.setAddress(a2);
         e2.setName("Employee 2");
-        e2.setFullTime(false);
+        e2.setAge(30);
         set.add(e2);
 
         Query q = QueryHelper.createQueryForExampleSet(set);
@@ -169,18 +169,18 @@ public class QueryHelperTest extends QueryTestCase
         cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress));
 
         QueryField qf1 = new QueryField(qcEmployee, "name");
-        QueryField qf2 = new QueryField(qcEmployee, "fullTime");
+        QueryField qf2 = new QueryField(qcEmployee, "age");
 
         // First Employee
         cs3.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
+        cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
         cs3.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a1));
-        cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Boolean(true))));
         cs2.addConstraint(cs3);
 
         // Second Employee
         cs4.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 2")));
+        cs4.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(30))));
         cs4.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a2));
-        cs4.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Boolean(false))));
         cs2.addConstraint(cs4);
 
         cs1.addConstraint(cs2);
