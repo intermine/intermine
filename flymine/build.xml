@@ -37,7 +37,6 @@
   <property name="build.resources.testxml" location="${build}/resources/test"/>
   <property name="build.test" location="${build}/test"/>
   <property name="build.model" location="${build}/model" />
-  <property name="build.schema" location="${build}/schema" />
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
@@ -226,7 +225,6 @@
     <mkdir dir="${build.resources.testxml}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.model}" />
-    <mkdir dir="${build.schema}" />
     <mkdir dir="${build.src.java}"/>
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
@@ -727,7 +725,6 @@
     <jspc srcdir="${build.webapp}/flymine"
       destdir="${build.webapp}/flymine/WEB-INF/src"
       package="org.flymine.jsp"
-      compiler="jasper41"
       verbose="9"
       webinc="${build.tmp}/generated-web.xml">
       <include name="*.jsp"/>
@@ -845,7 +842,7 @@
     </condition>
 
     <echo message="Creating jar file version ${version}" />
-    <manifest file="${build}/MANIFEST.MF">
+    <manifest file="${build.tmp}/MANIFEST.MF">
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Specification-Title" value="FlyMine"/>
       <attribute name="Specification-Version" value="${version}"/>
@@ -855,7 +852,7 @@
       <attribute name="Implementation-Vendor" value="FlyMine"/>
     </manifest>
 
-    <jar destfile="${dist}/flymine.jar" manifest="${build}/MANIFEST.MF">
+    <jar destfile="${dist}/flymine.jar" manifest="${build.tmp}/MANIFEST.MF">
       <fileset dir="${build.java}" />
       <fileset dir="${build.resources}"/>
     </jar>
@@ -1019,15 +1016,12 @@
     <delete dir="${build.test}"/>
     <delete dir="${build.src.test}"/>
     <delete dir="${build.resources}"/>
-    <delete dir="${build.schema}"/>
     <delete>
     <fileset dir=".">
       <include name="velocity.log*"/>
       <include name="flymine.log*"/>
     </fileset>
     </delete>
-    <delete file="flymine.log" />
-    <delete file="${build}/testmodel_.xmi" />
     <antcall target="prepare" />
   </target>
   
@@ -1047,8 +1041,7 @@
    <target name="ant-doc"> 
      <AntDoc
 	destination="${results.antdoc}"
-	buildfile="${ant.file}"
-      />
+	buildfile="${ant.file}"/>
     </target>
 
 </project>
