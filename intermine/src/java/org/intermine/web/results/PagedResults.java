@@ -11,6 +11,7 @@ package org.intermine.web.results;
  */
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
@@ -45,13 +46,7 @@ public class PagedResults extends PagedTable
     public PagedResults(List columnNames, Results results) {
         super(columnNames);
         this.results = results;
-    }
-
-    /**
-     * @see PagedTable#getRows
-     */
-    public List getRows() {
-        return results.subList(startRow, getEndRow() + 1);
+        updateRows();
     }
 
     /**
@@ -65,12 +60,6 @@ public class PagedResults extends PagedTable
      * @see PagedTable#getSize
      */
     public int getSize() {
-        //this ensures that if we're on the last page then we get an exact count
-        try {
-            results.subList(startRow, startRow + pageSize + 1);
-        } catch (IndexOutOfBoundsException e) {
-        }
-        
         try {
             return results.getInfo().getRows();
         } catch (ObjectStoreException e) {
@@ -94,6 +83,19 @@ public class PagedResults extends PagedTable
      */
     protected int getExactSize() {
         return results.size();
+    }
+
+    /**
+     * @see PageTable#updateRows
+     */
+    protected void updateRows() {
+        rows = new ArrayList();
+        try {
+            for (int i = startRow; i < startRow + pageSize; i++) {
+                rows.add(results.get(i));
+            }
+        } catch (IndexOutOfBoundsException e) {
+        }
     }
 
     /**

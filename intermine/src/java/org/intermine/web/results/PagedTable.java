@@ -24,6 +24,7 @@ import java.util.Iterator;
 public abstract class PagedTable
 {
     protected List columns = new ArrayList();
+    protected List rows;
     protected int startRow = 0;
     protected int pageSize = 10;
 
@@ -94,52 +95,6 @@ public abstract class PagedTable
             columns.add(index + 1, columns.remove(index));
         }
     }
-    
-    /**
-     * Go to the first page
-     */
-    public void firstPage() {
-        startRow = 0;
-    }
-
-    /**
-     * Check if we are on the first page
-     *
-     * @return true if we are on the first page
-     */
-    public boolean isFirstPage() {
-        return (startRow == 0);
-    }
-
-    /**
-     * Go to the last page
-     */
-    public void lastPage() {
-        startRow = ((getExactSize() - 1) / pageSize) * pageSize;
-    }
-
-    /**
-     * Check if we are on the last page
-     *
-     * @return true if we are on the last page
-     */
-    public boolean isLastPage() {
-        return (!isSizeEstimate() && getEndRow() == getSize() - 1);
-    }
-
-    /**
-     * Go to the previous page
-     */
-    public void previousPage() {
-        startRow -= pageSize;
-    }
-
-    /**
-     * Go to the next page
-     */
-    public void nextPage() {
-        startRow += pageSize;
-    }
 
     /**
      * Set the page size of the table
@@ -149,6 +104,7 @@ public abstract class PagedTable
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
         startRow = (startRow / pageSize) * pageSize;
+        updateRows();
     }
 
     /**
@@ -173,20 +129,65 @@ public abstract class PagedTable
      * @return the index
      */
     public int getEndRow() {
-        int endRow = startRow + pageSize - 1;
-        if (!isSizeEstimate() && (endRow + 1 > getSize())) {
-            return getSize() - 1;
-        } else {
-            return endRow;
-        }
+        return startRow + rows.size() - 1;
+    }
+
+    /**
+     * Go to the first page
+     */
+    public void firstPage() {
+        startRow = 0;
+        updateRows();
+    }
+
+    /**
+     * Check if were are on the first page
+     * @return true if we are on the first page
+     */
+    public boolean isFirstPage() {
+        return (startRow == 0);
+    }
+
+    /**
+     * Go to the last page
+     */
+    public void lastPage() {
+        startRow = ((getExactSize() - 1) / pageSize) * pageSize;
+        updateRows();
+    }
+
+    /**
+     * Check if we are on the last page
+     * @return true if we are on the last page
+     */
+    public boolean isLastPage() {
+        return (!isSizeEstimate() && getEndRow() == getSize() - 1);
+    }
+
+    /**
+     * Go to the previous page
+     */
+    public void previousPage() {
+        startRow -= pageSize;
+        updateRows();
+    }
+
+    /**
+     * Go to the next page
+     */
+    public void nextPage() {
+        startRow += pageSize;
+        updateRows();
     }
 
     /**
      * Return the rows of the table as a List of Lists.
      *
      * @return the rows of the table
-     */
-    public abstract List getRows();
+     */    
+    public List getRows() {
+        return rows;
+    }
 
     /**
      * Return all the rows of the table as a List of Lists.
@@ -212,4 +213,9 @@ public abstract class PagedTable
      * @return the number of rows
      */
     protected abstract int getExactSize();
+
+    /**
+     * Update the internal row list
+     */
+    protected abstract void updateRows();
 }

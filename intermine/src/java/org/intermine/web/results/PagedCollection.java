@@ -41,13 +41,8 @@ public class PagedCollection extends PagedTable
             row.add(i.next());
             list.add(row);
         }
-    }
 
-    /**
-     * @see PagedTable#getRows
-     */
-    public List getRows() {
-        return list.subList(startRow, getEndRow() + 1);
+        updateRows();
     }
 
     /**
@@ -61,7 +56,7 @@ public class PagedCollection extends PagedTable
      * @see PagedTable#getSize
      */
     public int getSize() {
-        return list.size();
+        return getExactSize();
     }
 
     /**
@@ -75,6 +70,13 @@ public class PagedCollection extends PagedTable
      * @see PagedTable#getExactSize
      */
     protected int getExactSize() {
-        return getSize();
+        return list.size();
+    }
+
+    /**
+     * @see PageTable#updateRows
+     */
+    protected void updateRows() {
+        rows = list.subList(startRow, Math.max(startRow + pageSize, list.size()));
     }
 }
