@@ -48,7 +48,10 @@
             <c:remove var="deleteParams"/>
           </c:if>
           <c:if test="${showEdit == 1}">
-            <html:link action="/editTemplate?name=${templateQuery.key}">
+            <fmt:message var="linkTitle" key="templateList.edit">
+              <fmt:param value="${templateQuery.key}"/>
+            </fmt:message>
+            <html:link action="/editTemplate?name=${templateQuery.key}" title="${linkTitle}">
               <img border="0" class="arrow" src="images/edit.png" alt="->"/>
             </html:link>
           </c:if>
