@@ -243,4 +243,29 @@ public class PrecomputedTableManagerTest extends TestCase
 
         assertEquals(expected, got);
     }
+
+    public void testAddMultiple() throws Exception {
+        synchronized (pt1) {
+            Connection con = database.getConnection();
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
+            try {
+                createTable();
+                ptm.add(pt1);
+                assertTrue(ptm.getPrecomputedTables().contains(pt1));
+                assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
+                PrecomputedTable pt2 = new PrecomputedTable(pt1.getQuery(), "precomp2", con);
+                ptm.add(pt2);
+                assertFalse(ptm.getPrecomputedTables().contains(pt2));
+                assertFalse(DatabaseUtil.tableExists(con, "precomp2"));
+                ptm.delete(pt1);
+                assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
+                assertTrue(!(DatabaseUtil.tableExists(con, "precomp1")));
+            } catch (SQLException e) {
+                throw (SQLException) Util.verboseException(e);
+            } finally {
+                deleteTable();
+                con.close();
+            }
+        }
+    }
 }
