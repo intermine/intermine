@@ -2483,7 +2483,8 @@
   <!-- MERGED GENOMIC HUMAN MODEL  -->  
   
  <!-- create merged model from all source OWL ontologies -->
-  <target name="create-human-production-model" depends="remove-genomic, prepare-build-model,
+  <target name="create-human-production-model" 
+          depends="remove-genomic, prepare-build-model,
                 merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
                 merge-uniprot-model, merge-protein_structure-model, merge-so-model">   
@@ -2522,7 +2523,8 @@
   </target>
 
   <!-- retrieve ensembl human data -->
-  <target name="retrieve-ensembl-human" depends="convert-ensembl-human, build-db-ensembl-human-src-items">
+  <target name="retrieve-ensembl-human" 
+          depends="convert-ensembl-human, build-db-ensembl-human-src-items">
     <taskdef name="retrieve-ensembl-human" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -2537,7 +2539,8 @@
   </target>
   
   <!-- translate ensembl human data -->
-  <target name="translate-ensembl-human" depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
+  <target name="translate-ensembl-human" 
+          depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
     <java classname="org.flymine.dataconversion.EnsemblHumanDataTranslator" fork="true"
           maxmemory="1800m"  failonerror="true">
       <classpath refid="models.class.path" />
@@ -2571,23 +2574,18 @@
   </target>
 
   <!--LOAD PRODUCTION DATA  -->
-  <target name="build-ensembl-human-production" depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
+  <target name="build-ensembl-human-production" 
+          depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
 
    <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="human-production-build" depends="create-production-model, compile-genomic-model, 
-                                           jar-genomic,
-                                           build-db-production,create-indexes-production,
-                                           load-static,
-                                           build-ensembl-human-production,
-                                           build-psi-production,
-                                           build-orthologues-production,
-                                           build-rnai-production,
-                                           build-phenotype-production,
-                                           build-go-human-production,
-                                           build-protein_structure-production,
-                                           build-uniprot-production,
-                                           analyse-db-production,
-                                           grant-db-production"/>
+  <target name="human-production-build" 
+          depends="create-production-model, compile-genomic-human-model,jar-genomic,
+                   build-db-production,create-indexes-production, load-static,
+                   build-ensembl-human-production, build-psi-production,
+                   build-orthologues-production, build-rnai-production,
+                   build-phenotype-production, build-go-human-production,
+                   build-protein_structure-production, build-uniprot-production,
+                   analyse-db-production, grant-db-production"/>
 
   <!--POST PROCESSING 
   <target name="post-process-human">    
@@ -2606,13 +2604,14 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <fetch-sequences alias="osw.production" ensemblDb="db.ensembl-human" type="fetch-sequences"/>
+    <fetch-sequences alias="osw.production" ensemblDb="db.ensembl-human" 
+                     type="fetch-contig-sequences-human" />
   </target>
 
   <target name="post-process-human">   
       <antcall target="fetch-contig-sequences"/>
       <antcall target="transfer-sequences"/>
-    </target>
+  </target>
 
   <!--COMPILATION AND TESTING TARGETS -->
   <target name="compile-ensembl-human-java">
@@ -2622,7 +2621,8 @@
     </ant>
   </target>
 
-  <target name="ensembl-human-test" depends="prepare-test, convert-ensembl-human, build-db-fulldatatest">
+  <target name="ensembl-human-test" 
+          depends="prepare-test, convert-ensembl-human, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl-human"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -2640,7 +2640,9 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="fullhumantest" depends="clean, compile-genomic-human-model, build-db-genomic-test, create-indexes-genomic-test, test-human-models-inc, genomic-test"
+  <target name="fullhumantest" 
+          depends="clean, compile-genomic-human-model, build-db-genomic-test, 
+                   create-indexes-genomic-test, test-human-models-inc, genomic-test"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
@@ -2687,7 +2689,8 @@
     </ant>
   </target>
 
-  <target name="build-go-human-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
+  <target name="build-go-human-production" 
+          depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
 
 </project>
 
