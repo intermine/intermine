@@ -21,8 +21,10 @@ import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.objectstore.proxy.ProxyReference;
 
 import org.intermine.util.TypeUtil;
 
@@ -59,8 +61,12 @@ public class DisplayObject
                 if (fd.isAttribute() && !fd.getName().equals("id")) {
                     keyAttributes.put(fd.getName(), fieldValue);
                 } else if (fd.isReference()) {
-                    keyReferences.put(fd.getName(),
-                                      new DisplayReference((InterMineObject) fieldValue, model));
+                    ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+                    ProxyReference proxy = (ProxyReference) TypeUtil.getFieldProxy(object,
+                                                                                   fd.getName());
+                    keyReferences.put(ref.getName(),
+                                      new DisplayReference(proxy,
+                                                           ref.getReferencedClassDescriptor()));
                 }
             }
         }
@@ -69,21 +75,29 @@ public class DisplayObject
             ClassDescriptor cld = (ClassDescriptor) i.next();
             for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) j.next();
-                Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
-                if (fieldValue != null) {
-                    if (fd.isAttribute() && !fd.getName().equals("id")) {
+                if (fd.isAttribute() && !fd.getName().equals("id")) {
+                    Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
+                    if (fieldValue != null) {
                         attributes.put(fd.getName(), fieldValue);
-                    } else if (fd.isReference()) {
+                    }
+                } else if (fd.isReference()) {
+                    ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+                    //check whether reference is null without dereferencing
+                    ProxyReference proxy = (ProxyReference) TypeUtil.getFieldProxy(object,
+                                                                                   ref.getName());
+                    if (proxy != null) {
                         references.put(fd.getName(),
-                                       new DisplayReference((InterMineObject) fieldValue, model));
-                    } else if (fd.isCollection()) {
-                        ClassDescriptor refCld =
-                            ((CollectionDescriptor) fd).getReferencedClassDescriptor();
-                        DisplayCollection collection =
-                            new DisplayCollection((LazyCollection) fieldValue, refCld);
-                        if (collection.getSize() > 0) {
-                            collections.put(fd.getName(), collection);
-                        }
+                                       new DisplayReference(proxy,
+                                                            ref.getReferencedClassDescriptor()));
+                    }
+                } else if (fd.isCollection()) {
+                    Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
+                    ClassDescriptor refCld =
+                        ((CollectionDescriptor) fd).getReferencedClassDescriptor();
+                    DisplayCollection collection =
+                        new DisplayCollection((LazyCollection) fieldValue, refCld);
+                    if (collection.getSize() > 0) {
+                        collections.put(fd.getName(), collection);
                     }
                 }
             }
@@ -166,8 +180,9 @@ public class DisplayObject
      * Set the verbosity for a field
      * @param fieldName the field name
      * @param verbose true or false
+     * @throws Exception if an error occurs
      */
-    public void setVerbosity(String fieldName, boolean verbose) {
+    public void setVerbosity(String fieldName, boolean verbose) throws Exception {
         verbosity.put(fieldName, verbose ? fieldName : null);
     }
 }
