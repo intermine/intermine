@@ -64,9 +64,22 @@ public class XmiParser implements ModelParser
 {
     protected static final Logger LOG = Logger.getLogger(XmiParser.class);
 
+    protected String modelName;
+
     private Collection keys;
     private Set attributes, references, collections;
     private Set classes = new LinkedHashSet();
+
+
+    /**
+     * Constructor that takes the modelName
+     *
+     * @param modelName the name of the model to produce
+     */
+    public XmiParser(String modelName) {
+        this.modelName = modelName;
+    }
+
 
     /**
      * Read source model information in XMI format and
@@ -78,7 +91,7 @@ public class XmiParser implements ModelParser
      */
     public Model process(InputStream is) throws Exception {
         recurse(new XMIReader().parse(new InputSource(is)));
-        return new Model("testmodel", classes);
+        return new Model(modelName, classes);
     }
 
     /**
