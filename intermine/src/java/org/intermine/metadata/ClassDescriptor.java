@@ -230,6 +230,20 @@ public class ClassDescriptor
     }
 
     /**
+     * Gets all ReferenceDescriptors for this class - i.e. including those from superclass
+     * @return set of references for this Class
+     */
+    public Set getAllReferenceDescriptors() {
+        if (superclassDescriptor == null) {
+            return getReferenceDescriptors();
+        } else {
+            Set set = new LinkedHashSet(getReferenceDescriptors());
+            set.addAll(superclassDescriptor.getAllReferenceDescriptors());
+            return set;
+        }
+    }
+
+    /**
      * Gets a ReferenceDescriptor for a field of the given name.  Returns null if
      * not found.
      * @param name the name of a ReferenceDescriptor to find
@@ -260,6 +274,20 @@ public class ClassDescriptor
         while (colIter.hasNext()) {
             CollectionDescriptor cod = (CollectionDescriptor) colIter.next();
             cod.findReferencedDescriptor();
+        }
+    }
+
+    /**
+     * Gets all CollectionDescriptors for this class - i.e. including those from superclass
+     * @return set of collections for this Class
+     */
+    public Set getAllCollectionDescriptors() {
+        if (superclassDescriptor == null) {
+            return getCollectionDescriptors();
+        } else {
+            Set set = new LinkedHashSet(getCollectionDescriptors());
+            set.addAll(superclassDescriptor.getAllCollectionDescriptors());
+            return set;
         }
     }
 
