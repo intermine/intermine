@@ -1,3 +1,6 @@
+:set showbreak=\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+:set ts=12
+:set noexpandtab
 		Advanced techniques for Object Warehousing:
 		Multiple inheritance, collections & references, & advanced queries
 		Schema - underlying database format, cglib
@@ -12,15 +15,15 @@
 		
 		Plan:
 		Introduction (9 minutes):
-Title		    Who I am, and what I do (1 minute)
-Intro 1		    Caveats for this talk - ie what this talk does not do (1 minute):
+Title	1:00	    Who I am, and what I do (1 minute)
+Intro 1	0:40   1:40	    Caveats for this talk - ie what this talk does not do (1 minute):
 Intro 1		        OJB, Hibernate, etc.
 Intro 1		    Warning: this talk has InterMine & Flymine as its base (1 minute)
-Intro 2		    Assumptions that this talk makes (3 minutes):
+Intro 2	1:00   2:40	    Assumptions that this talk makes (3 minutes):
 Intro 2		        You don't have a tyrannical DBA breathing down your neck and changing the DB schema under your feet (1 minute)
 Intro 2		        You want to build a database from data sources and present it to the data users as a read-only database (only half of the talk assumes this) (1 minute)
 Intro 2		        You wish to use complicated data (1 minute)
-Intro 3		    What I will be covering: (3 minutes)
+Intro 3	1:10   3:50	    What I will be covering: (3 minutes)
 Intro 3		        Multiple inheritance and CGLib
 Intro 3		        Collections and references
 Intro 3		        Objectstores - brief introduction
@@ -32,24 +35,24 @@ Intro 3		            Data transformations and why a simple pipe won't work
 Intro 3		            DBConverter and DataTranslator
 Intro 3		            DataLoader
 		Multiple inheritance and CGLib (11 minutes)
-MI 1, 2, 3		    Motivation - I'm using biological data, and it doesn't fit (3 minutes)
-MI 4		    Interfaces in the model that can have direct implementations (2 minutes)
-MI 5		    Classes in the model that implement multiple interfaces (2 minutes)
+MI 1, 2, 3	0:55   4:45	    Motivation - I'm using biological data, and it doesn't fit (3 minutes)
+MI 4	0:45   5:30	    Interfaces in the model that can have direct implementations (2 minutes)
+MI 5	0:30   6:00	    Classes in the model that implement multiple interfaces (2 minutes)
 MI 5		    Objects in the database that are no particular class from the model, but dynamically implement and extend various classes and interfaces from the model (3 minutes)
-MI 6		    Objects that implement no other interface than InterMineObject (1 minute)
-MI 7		    What the model describes
-MI 8		    Using CGLib to create objects of a dynamic class
-MI 9		    Characteristics of such dynamic objects
+MI 6	0:30   6:30	    Objects that implement no other interface than InterMineObject (1 minute)
+MI 7	1:15   7:45	    What the model describes
+MI 8	1:10   8:55	    Using CGLib to create objects of a dynamic class
+MI 9	0:45   9:40	    Characteristics of such dynamic objects
 		Schemas (13 minutes)
-DS 1		    Map all classes onto one table (cheap read & write, really bad data density affects performance, plus field type conflicts) (3 minutes)
-DS 2		    Map every class onto an individual table, put each object into only one table (cheap write, read must use UNIONs) (3 minutes)
-DS 3		    Map every class onto an individual table, with only the new fields stored in the table, and write each object into all applicable tables (write must use multiple tables, read must use JOIN) (3 minutes)
-DS 4		    Map every class onto an individual table, put each object into all applicable tables, have an OBJECT field (cheap & simple reads, write must use multiple tables, quite bad data density, but that does not affect read performance) (4 minutes)
-DS 5		    Extension to that mapping: truncated classes
-Members 1		Collections and references (3 minutes)
-Members 1,2		    Proxies
+DS 1	0:50  10:30	    Map all classes onto one table (cheap read & write, really bad data density affects performance, plus field type conflicts) (3 minutes)
+DS 2	0:50  11:20	    Map every class onto an individual table, put each object into only one table (cheap write, read must use UNIONs) (3 minutes)
+DS 3	0:40  12:00	    Map every class onto an individual table, with only the new fields stored in the table, and write each object into all applicable tables (write must use multiple tables, read must use JOIN) (3 minutes)
+DS 4	1:10  13:10	    Map every class onto an individual table, put each object into all applicable tables, have an OBJECT field (cheap & simple reads, write must use multiple tables, quite bad data density, but that does not affect read performance) (4 minutes)
+DS 5	1:30  14:40	    Extension to that mapping: truncated classes
+Members 1	1:20  16:00	Collections and references (3 minutes)
+Members 1,2	0:45  16:45	    Proxies
 		ObjectStores (7 minutes)
-OS 1		    Take queries and return results (2 minutes)
+OS 1	1:35  18:10	    Take queries and return results (2 minutes)
 OS 1		    Provides lookup by ID
 OS 1		    Different implementations for different tasks (3 minutes)
 OS 1		        ObjectStoreInterMineImpl
@@ -60,50 +63,69 @@ OS 1		        ObjectStorePassThruImpl
 --------		            ObjectStoreSafeImpl
 --------		        ObjectStoreTranslatingImpl
 OS 1		        ObjectStoreClient (with ObjectStoreServer)
-OS 2		    Caches (2 minutes)
+OS 2	1:00  19:10	    Caches (2 minutes)
 		Queries and results (27 minutes - 70 minutes so far)
-Q&R 1		    Queries are effectively a description of the results (3 minutes)
-Q&R 2		    Results are Collections of rows (3 minutes)
+Q&R 1	1:00  20:10	    Queries are effectively a description of the results (3 minutes)
+Q&R 2	1:10  21:20	    Results are Collections of rows (3 minutes)
 Q&R 2		    Results can be multi-column, where each column can be an object, field, constant, or computed value (4 minutes)
-Q&R 3		    Results could be single-column. You could create a special single-column results Collection that is a collection of objects rather than a collection of rows, and use that as a Collection proxy (3 minutes)
+Q&R 3	1:00  22:20	    Results could be single-column. You could create a special single-column results Collection that is a collection of objects rather than a collection of rows, and use that as a Collection proxy (3 minutes)
 Q&R 3		    Results are loaded on-demand
-Q&R 4		    Creating results is done with a query and objectstore, but doesn't actually run a query until it is accessed.
+Q&R 4	1:10  23:30	    Creating results is done with a query and objectstore, but doesn't actually run a query until it is accessed.
 Q&R 4		    Batching reads, so the Results object is even more lazy. PrefetchManager
-Q&R 5		    SQL generation and results parsing (5 minutes)
-Q&R 6		    Maintaining consistency of results by imposing ORDER BY onto the SQL (3 minutes)
-Q&R 7		    Changing the Query - don't. Or use ObjectStoreSafeImpl (3 minutes)
+Q&R 5	1:00  24:30	    SQL generation and results parsing (5 minutes)
+Q&R 6	1:00  25:30	    Maintaining consistency of results by imposing ORDER BY onto the SQL (3 minutes)
+Q&R 7	1:00  26:30	    Changing the Query - don't. Or use ObjectStoreSafeImpl (3 minutes)
 		ObjectStoreWriter and transaction processing (12 minutes - 82 minutes so far)
-OSW 1, 2		    Attached to the ObjectStore (1 minute)
-OSW 2		    All operations rely on ID
+OSW 1, 2	0:40  27:10	    Attached to the ObjectStore (1 minute)
+OSW 2	1:05  28:15	    All operations rely on ID
 OSW 2		    Delete (2 minutes)
-OSW 3		    Store: (4 minutes)
+OSW 3	1:00  29:15	    Store: (4 minutes)
 OSW 3		        Setting IDs in the objects and related objects
 OSW 3		        Deleting any previous object - and the limitations
 OSW 3		        Merging collections, overwriting everything else
-OSW 4		    Transactions: (5 minutes)
+OSW 4	0:40  29:55	    Transactions: (5 minutes)
 OSW 4		        Beginning (2 minutes)
 OSW 4		        The state of the ObjectStore during a transaction (1 minute)
 OSW 4		        Ending (and flushing caches) (2 minutes)
+Mot 1	1:00  30:55	Motivation for doing data integration
 		Inserting the data: (23 minutes - 105 minutes so far)
 		    Models, ontologies, and OWL (7 minutes)
-DL 1, 2, 3		        OWL as a format for describing models (3 minutes)
-DL 4, 5		        Merging models (2 minutes)
+DL 1, 2, 3	4:00  34:55	        OWL as a format for describing models (3 minutes)
+DL 4, 5	2:15  37:10	        Merging models (2 minutes)
 		    Data transformations and why a simple pipe won't work (12 minutes)
-DL 6		        Three steps needed.
-DL 7		        DBConverter stage: must transform M:N collections into ReferenceLists (searching in the source) (2 minutes)
-DL 8		        DataTranslator stage: must follow references in the source to attach attributes to the correct object, also may generate new objects which must be kept in memory until the end, so that they can be searched like the source (3 minutes)
-DL 9		        DataLoader stage: must be able to search in the source to build object graphs, and search in the destination to find equivalent objects
-DL 10		            Searching in the source to build an object graph, using the ObjectStoreTranslatingImpl (2 minutes)
-		            Searching in the destination for any equivalent objects (2 minutes)
-		            Merging together equivalent objects using information from the data tracker, and data source priorities (3 minutes)
+DL 6	0:35  37:45	        Three steps needed.
+DL 7	0:50  38:35	        DBConverter stage: must transform M:N collections into ReferenceLists (searching in the source) (2 minutes)
+DL 8	1:00  39:35	        DataTranslator stage: must follow references in the source to attach attributes to the correct object, also may generate new objects which must be kept in memory until the end, so that they can be searched like the source (3 minutes)
+DL 9	1:10  40:45	        DataLoader stage: must be able to search in the source to build object graphs, and search in the destination to find equivalent objects
+DL 10	1:10  41:55	            Searching in the source to build an object graph, using the ObjectStoreTranslatingImpl (2 minutes)
+DL 11, 12	2:50  44:45	            Searching in the destination for any equivalent objects (2 minutes)
+DL 13,14,15	2:30  47:15	            Merging together equivalent objects using information from the data tracker, and data source priorities (3 minutes)
+DL 16	1:30  48:45	        Recursion and skeletons.
 		    Relationship types (4 minutes)
-		        1:1 - must be consistent
-		        1:N - can be ignored by the data loader, as it is never unidirectional
-		        N:1 - very simple - could be unidirectional
-		        M:N - handled by indirection table
+DL 17	0:30  49:15	        Attributes
+DL 18	0:35  49:50	        1:1 - must be consistent
+DL 19	0:20  50:10	        1:N - can be ignored by the data loader, as it is never unidirectional
+DL 20	0:50  51:00	        N:1 - very simple - could be unidirectional
+DL 21	0:45  51:45	        M:N - handled by indirection table
 		QueryOptimiser (15 minutes - 120 minutes so far)
-		
-		
+Opt 1	0:40  52:25	    Motivation
+Opt 2	0:50  53:15	    SQL Views
+Opt 3	0:45  54:00	    Precomputed table is the opposite of a view
+Opt 4	0:50  54:50	    A trivial example
+Opt 5	0:50  55:40	    Another example
+Opt 6	1:10  56:50	    Precomputed tables are fitted into queries
+Opt 7	1:20  57:10	    Optimiser asks server to EXPLAIN queries
+Opt 7		    Optimiser gives up after a while
+Opt 7		    Improvements between 10% and 10000% (mention machine learning problem)
+		Future stuff - relationship metadata
+Fut 1	1:00  58:10	    Motivation
+Fut 2	0:40  58:50	    Diagrams
+Fut 3	1:00  59:50	    Changes to objects
+		Future stuff - graph reasoning
+Fut 4	1:30  61:20	    What is possible
+Fut 5	1:20  62:40	    What we're doing about it
+
+
 		Improving performance in Object Warehousing:
 		The N + 1 reads problem
 		Large offsets
