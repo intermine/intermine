@@ -36,7 +36,7 @@ public abstract class ModelOutput
     /**
      * Constructor
      * @param model to model used for generation
-     * @param file the destination directory for generated output   
+     * @param file the destination directory for generated output
      * @throws Exception if problem occurs in loading model
      */
     public ModelOutput(Model model, File file) throws Exception {
@@ -118,7 +118,7 @@ public abstract class ModelOutput
             }
         }
     }
-    
+
     /**
      * Check whether the specified type name represents a primitive
      * @param type the type String
@@ -126,6 +126,23 @@ public abstract class ModelOutput
      */
     protected boolean isPrimitive(String type) {
         return type.indexOf(".") == -1 && Character.isLowerCase(type.charAt(0));
+    }
+
+    /**
+     * Check whether the specified type name represents a basic type (String, Integer, etc)
+     * @param type the type String
+     * @return true if it is a basic type
+     */
+    protected boolean isBasicType(String type) {
+        if ((type.equals("java.lang.String"))
+            || (type.equals("java.lang.Float"))
+            || (type.equals("java.lang.Double"))
+            || (type.equals("java.lang.Boolean"))
+            || (type.equals("java.lang.Integer"))
+            || (type.equals("java.util.Date"))) {
+            return true;
+        }
+        return false;
     }
 }
 
