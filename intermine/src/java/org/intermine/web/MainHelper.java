@@ -114,17 +114,25 @@ public class MainHelper
      * @param qNodes the current Node map (from path to Node)
      * @param path the path for the new Node
      * @param model the model
+     * @return the RightNode that was added to the qNodes Map
      */
-    public static void addNode(Map qNodes, String path, Model model) {
-        String prefix = path.substring(0, path.lastIndexOf("."));
-        if (qNodes.containsKey(prefix)) {
-            RightNode parent = (RightNode) qNodes.get(prefix);
-            String fieldName = path.substring(path.lastIndexOf(".") + 1);
-            qNodes.put(path, new RightNode(parent, fieldName, model));
+    public static RightNode addNode(Map qNodes, String path, Model model) {
+        RightNode qNode;
+        if (path.lastIndexOf(".") == -1) {
+            qNode = new RightNode(path);
         } else {
-            addNode(qNodes, prefix, model);
-            addNode(qNodes, path, model);
+            String prefix = path.substring(0, path.lastIndexOf("."));
+            if (qNodes.containsKey(prefix)) {
+                RightNode parent = (RightNode) qNodes.get(prefix);
+                String fieldName = path.substring(path.lastIndexOf(".") + 1);
+                qNode = new RightNode(parent, fieldName, model);
+            } else {
+                addNode(qNodes, prefix, model);
+                return addNode(qNodes, path, model);
+            }
         }
+        qNodes.put(path, qNode);
+        return qNode;
     }
 
     /**

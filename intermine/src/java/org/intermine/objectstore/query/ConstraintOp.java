@@ -94,7 +94,16 @@ public class ConstraintOp
     }
 
     /**
-     * Get the negated op.
+     * Get the the internal list of ConstraintOps
+     * (Only for use in webapp)
+     * @return the List of ConstraintOps
+     */
+    public static List getValues() {
+        return values;
+    }
+
+    /**
+     * Get the negated op
      *
      * @return the negated op
      */

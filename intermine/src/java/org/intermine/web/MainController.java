@@ -66,10 +66,8 @@ public class MainController extends TilesAction
             if (className == null) {
                 return mapping.findForward("begin");
             }
-            className = TypeUtil.unqualifiedName(className);
-            RightNode node = new RightNode(className);
             qNodes = new TreeMap();
-            qNodes.put(className, node);
+            MainHelper.addNode(qNodes, TypeUtil.unqualifiedName(className), model);
             session.setAttribute(Constants.QUERY, qNodes);
         }
         List view = (List) session.getAttribute(Constants.VIEW);
