@@ -149,10 +149,4 @@ public interface Constants
      * The name of the property to look up to find the maximum size of an inline table.
      */
     public static final String INLINE_TABLE_SIZE = "inline.table.size";
-    
-    /**
-     * Session attribute that has value Boolean.TRUE after use enters site via the portal
-     * action.
-     */
-    public static final String ENTERED_PORTAL = "ENTERED_PORTAL";
 }
