@@ -4,20 +4,19 @@ img {
 form { 
   margin: 0px
 }
-.main-layout {
-  margin: 3px;
-}
-
-.links, .footer {
+.links {
   font-size: small;
-  background-color: #ccaaff;
-  border: solid 1px;
-  margin-top: 3px;
-  margin-bottom: 3px;
+  background-color: #fff;
+  border-bottom: solid black 1px;
+  padding-top: 3px;
+  padding-bottom:3px;
+}
+.main-layout {
+  margin-top: 10px;
 }
 .links .menu-item {
-  padding-right: 1em;
-  padding-left: 1em;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 .paneTitle {
   font-weight: bold;
@@ -67,3 +66,10 @@ tr.even {
   color: green;
 }
 
+/* override flymine2.css */
+#content
+{
+  padding: 5px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
