@@ -32,7 +32,7 @@ public class Query
      *
      * @param cls the QueryClass to be added
      * @return the updated Query
-     */    
+     */
     public Query addClass(QueryClass cls) {
         if (cls == null) {
             throw new NullPointerException("cls must not be null");
@@ -51,7 +51,18 @@ public class Query
         queryClasses.remove(cls);
         return this;
     }
-    
+
+
+    /**
+     * Returns all QueryClasses in the FROM clause
+     *
+     * @return list of QueryClasses
+     */
+    public Set getClasses() {
+        return Collections.unmodifiableSet(queryClasses);
+    }
+
+
     /**
        * Constrain this Query using either a single constraint or a set of constraints
        *
@@ -77,7 +88,7 @@ public class Query
      *
      * @param node the node to add
      * @return the updated Query
-     */    
+     */
     public Query addToGroupBy(QueryNode node) {
         groupBy.add(node);
         return this;
@@ -88,18 +99,18 @@ public class Query
      *
      * @param node the node to remove
      * @return the updated Query
-     */    
+     */
     public Query deleteFromGroupBy(QueryNode node) {
         groupBy.remove(node);
         return this;
     }
-    
+
     /**
      * Add a QueryNode to the ORDER BY clause of this Query
      *
      * @param node the node to add
      * @return the updated Query
-     */    
+     */
     public Query addToOrderBy(QueryNode node) {
         orderBy.add(node);
         return this;
@@ -110,7 +121,7 @@ public class Query
      *
      * @param node the node to remove
      * @return the updated Query
-     */    
+     */
     public Query deleteFromOrderBy(QueryNode node) {
         orderBy.remove(node);
         return this;
@@ -121,7 +132,7 @@ public class Query
      *
      * @param node the QueryNode to add
      * @return the updated Query
-     */    
+     */
     public Query addToSelect(QueryNode node) {
         select.add(node);
         aliases.put(node, "a" + (alias++) + "_");
@@ -133,7 +144,7 @@ public class Query
      *
      * @param node the node to remove
      * @return the updated Query
-     */    
+     */
     public Query deleteFromSelect(QueryNode node) {
         select.remove(node);
         aliases.remove(node);
@@ -144,7 +155,7 @@ public class Query
      * Gets the SELECT list
      *
      * @return the (unmodifiable) list
-     */    
+     */
     public List getSelect() {
         return Collections.unmodifiableList(select);
     }
@@ -153,7 +164,7 @@ public class Query
      * Get the number of results returned by this Query
      *
      * @return the number of results
-     */    
+     */
     public int getMaxResults() {
         return maxResults;
     }
@@ -162,26 +173,26 @@ public class Query
      * Set the maximum number of results this Query should return
      *
      * @param maxResults the number of results
-     */    
+     */
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
-    }    
-    
+    }
+
     /**
      * Get the value of the distinct property
      *
      * @return the value of distinct
-     */    
+     */
     public boolean getDistinct() {
         return distinct;
     }
 
     /**
-     * Set the value of the distinct property, which determines whether duplicates are 
+     * Set the value of the distinct property, which determines whether duplicates are
      * permitted in the results returned by this Query
      *
      * @param distinct the value of distinct
-     */    
+     */
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
     }
@@ -199,7 +210,7 @@ public class Query
      * Returns a string representation of this Query object
      *
      * @return a String representation
-     */    
+     */
     public String toString() {
         return null;
     }
