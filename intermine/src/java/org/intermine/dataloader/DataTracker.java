@@ -415,7 +415,7 @@ public class DataTracker
                         }
                     }
                 }
-                while (needAction = true) {
+                while (needAction) {
                     try {
                         needAction = doWrite();
                     } catch (Exception e) {
