@@ -78,8 +78,6 @@ public class CreateIndexesTaskTest extends TestCase
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
         task.createAttributeIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.CEO"));
-        org.intermine.web.LogMe.log("i", "expected: " + expected);
-        org.intermine.web.LogMe.log("i", "got:      " + task.sqlStatements);
         assertEquals(expected, task.sqlStatements);
 
     }
