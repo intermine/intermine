@@ -10,8 +10,9 @@ package org.intermine.sql.precompute;
  *
  */
 
-import java.sql.ResultSet;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.HashMap;
@@ -66,6 +67,21 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
     protected void setUpData() throws Exception {
         Connection con = getDatabase().getConnection();
         Statement stmt = con.createStatement();
+        try {
+            stmt.execute("DROP TABLE table1");
+        } catch (SQLException e) {
+            con.rollback();
+        }
+        try {
+            stmt.execute("DROP TABLE table2");
+        } catch (SQLException e) {
+            con.rollback();
+        }
+        try {
+            stmt.execute("DROP TABLE table3");
+        } catch (SQLException e) {
+            con.rollback();
+        }
         Random random = new Random(27278383973L);
         stmt.addBatch("CREATE TABLE table1(col1 int, col2 int)");
         for (int i = 1; i<=DATA_SIZE; i++) {

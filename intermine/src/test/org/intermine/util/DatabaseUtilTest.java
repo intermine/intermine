@@ -13,6 +13,7 @@ package org.intermine.util;
 import junit.framework.TestCase;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.HashSet;
@@ -43,6 +44,11 @@ public class DatabaseUtilTest extends TestCase
     }
 
     protected void createTable() throws Exception {
+        try {
+            dropTable();
+        } catch (SQLException e) {
+            con.rollback();
+        }
         con.createStatement().execute("CREATE TABLE table1(col1 int)");
         con.commit();
     }
@@ -80,6 +86,12 @@ public class DatabaseUtilTest extends TestCase
 
     public void testTableNotExists() throws Exception {
         synchronized (con) {
+            try {
+                con.createStatement().execute("DROP TABLE table2");
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+            }
             createTable();
             assertTrue(!(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "table2")));
             dropTable();
