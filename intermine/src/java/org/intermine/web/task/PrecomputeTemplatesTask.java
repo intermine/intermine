@@ -10,54 +10,33 @@ package org.intermine.web.task;
  *
  */
 
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Collection;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.TreeSet;
-import java.util.TreeMap;
-import java.util.Iterator;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
-import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.QueryEvaluable;
-import org.intermine.objectstore.query.QueryReference;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-
-import org.intermine.web.TemplateQuery;
-import org.intermine.web.TemplateQueryBinding;
 import org.intermine.web.MainHelper;
 import org.intermine.web.PathNode;
-
-import org.apache.log4j.Logger;
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.TemplateQueryBinding;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
