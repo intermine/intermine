@@ -14,6 +14,7 @@
     <div class="view">
       <div>
         <fmt:message key="view.notempty.description"/>
+        <br/>
       </div>
       <div>
         <table class="results" cellspacing="0">
