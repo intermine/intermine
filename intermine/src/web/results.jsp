@@ -10,21 +10,35 @@
 <table border="1px" width="90%">
   <%-- The headers --%>
   <tr>
-    <c:forEach var="column" items="${resultsTable.columns}">
+    <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
       <th align="center" class="resultsHeader">
-        <c:out value="${column.value.alias}"/>
+        <c:out value="${column.alias}"/>
+
+        <%-- show/hide --%>
         <c:choose>
-          <c:when test="${column.value.visible}">
-            <html:link action="/changeResults?method=hideColumn&columnAlias=${column.value.alias}">
+          <c:when test="${column.visible}">
+            <html:link action="/changeResults?method=hideColumn&columnAlias=${column.alias}">
               [<bean:message key="results.hideColumn"/>]
             </html:link>
           </c:when>
           <c:otherwise>
-            <html:link action="/changeResults?method=showColumn&columnAlias=${column.value.alias}">
+            <html:link action="/changeResults?method=showColumn&columnAlias=${column.alias}">
               [<bean:message key="results.showColumn"/>]
             </html:link>
           </c:otherwise>
         </c:choose>
+
+        <%-- right/left --%>
+        <c:if test="${not status.first}">
+          <html:link action="/changeResults?method=moveUp&columnAlias=${column.alias}">
+            [<bean:message key="results.moveUp"/>]
+          </html:link>
+        </c:if>
+        <c:if test="${not status.last}">
+          <html:link action="/changeResults?method=moveDown&columnAlias=${column.alias}">
+            [<bean:message key="results.moveDown"/>]
+          </html:link>
+        </c:if>
       </th>
     </c:forEach>
   </tr>
@@ -45,8 +59,8 @@
 
       <c:forEach var="column" items="${resultsTable.columns}">
         <td>
-          <c:if test="${column.value.visible}">
-            <c:out value="${row[column.value.index]}"/>
+          <c:if test="${column.visible}">
+            <c:out value="${row[column.index]}"/>
           </c:if>
         </td>
       </c:forEach>
