@@ -6,19 +6,19 @@
 <c:if test="${cld != null}">
     <html:form action="/query">
         <c:choose>
-            <c:when test="${!empty alias}">
+            <c:when test="${!empty aliasStr}">
                 <c:set var="startStr" value="Edit"/>
-                <c:set var="aliasStr" value="${alias}"/>
+                <c:set var="endStr" value="${aliasStr}"/>
             </c:when>
             <c:otherwise>
                 <c:set var="startStr" value="New"/>
-                <c:set var="aliasStr" value=""/>
+                <c:set var="endStr" value=""/>
             </c:otherwise>
         </c:choose>
 
         <c:out value="${startStr}"/> 
         <font class="queryViewFromItemTitle"> <c:out value="${cld.unqualifiedName}"/> </font> 
-        <font class="queryViewFromItemAlias"> <c:out value="${aliasStr}"/></font>              
+        <font class="queryViewFromItemAlias"> <c:out value="${endStr}"/></font>              
 
         <table border="0">        
             <c:forEach var="field" items="${cld.allAttributeDescriptors}">

@@ -11,7 +11,9 @@
         <html:select property="alias">
             <c:forEach items="${query.aliases}" var="entry">
                 <c:set var="alias" scope="page" value="${entry.value}"/>
-                <html:option value="<%= (String) pageContext.getAttribute("alias") %>"><c:out value="${alias} ${entry.key.type.name}"/></html:option>
+                <html:option value="<%= (String) pageContext.getAttribute("alias") %>">
+                    <c:out value="${alias} ${classNames[entry.key.type.name]}"/>
+                </html:option>
             </c:forEach>
         </html:select>
 
