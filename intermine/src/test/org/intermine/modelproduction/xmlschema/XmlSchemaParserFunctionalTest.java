@@ -28,6 +28,7 @@ public class XmlSchemaParserFunctionalTest extends TestCase
 {
     private static final String MODEL = "xmlschematest";
     private static final String PKG = "org.intermine.model." + MODEL;
+    private static final String TGT_NS = "http://www.intermine.org/model/xmlschematest#";
     private String nameSpace = "http://www.intermine.org/model";
 
     public XmlSchemaParserFunctionalTest(String arg) {
@@ -38,7 +39,7 @@ public class XmlSchemaParserFunctionalTest extends TestCase
         ModelParser parser1 = new InterMineModelParser();
         Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xml"));
         Model model1 = parser1.process(reader1);
-        ModelParser parser2 = new XmlSchemaParser(MODEL, PKG);
+        ModelParser parser2 = new XmlSchemaParser(MODEL, PKG, TGT_NS);
         Reader reader2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
         Model model2 = parser2.process(reader2);
         assertEquals(model1, model2);
@@ -46,7 +47,7 @@ public class XmlSchemaParserFunctionalTest extends TestCase
 
 
     public void testReferences() throws Exception {
-        ModelParser parser = new XmlSchemaParser(MODEL, PKG);
+        ModelParser parser = new XmlSchemaParser(MODEL, PKG, TGT_NS);
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
         Model model = parser.process(reader);
 
