@@ -36,15 +36,18 @@ public class TemplateQuery
         this.description = description;
         this.query = query;
 
-        int i = 1;
-        StringBuffer sb = new StringBuffer();
-        Matcher m = Pattern.compile(PATTERN).matcher(description);
-        while (m.find()) {
-            nodes.add(query.getNodes().get(m.group(1)));
-            m.appendReplacement(sb, "[" + (i++) + "]");
+        if (description != null)
+        {
+            int i = 1;
+            StringBuffer sb = new StringBuffer();
+            Matcher m = Pattern.compile(PATTERN).matcher(description);
+            while (m.find()) {
+                nodes.add(query.getNodes().get(m.group(1)));
+                m.appendReplacement(sb, "[" + (i++) + "]");
+            }
+            m.appendTail(sb);
+            indexedDescription = sb.toString();
         }
-        m.appendTail(sb);
-        indexedDescription = sb.toString();
     }
 
     /**
