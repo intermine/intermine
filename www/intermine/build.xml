@@ -90,10 +90,7 @@
     </taskdef>
     <insert-xml-data integrationWriter="integration.demo"
                      xmlFile="../../intermine-www/resources/test/testmodel_data.xml"
-                     sourceName="testsource">
-      <classpath refid="demo.class.path"/>
-    </insert-xml-data>
-
+                     sourceName="testsource"/>
     <ant dir="../../intermine-www" target="release-webapp" inheritRefs="true"/>
   </target>
 
