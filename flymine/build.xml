@@ -1556,7 +1556,7 @@
     </ant>
   </target>
 
-  <target name="create-indexes-production" depends="prepare-build-model">
+  <target name="create-indexes-production" depends="prepare-build-model, compile-genomic-model">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1565,7 +1565,8 @@
     </ant>
   </target>
 
-  <target name="create-indexes-production-attribute" depends="prepare-build-model">
+  <target name="create-indexes-production-attribute" 
+          depends="prepare-build-model, compile-genomic-model">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
