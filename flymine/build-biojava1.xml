@@ -26,9 +26,9 @@
   <property name="base.dir" value="."/>
   <property name="resources.dir" value="resources"/>
 
-  <!-- ADATPT this to your working environment -->
+  <!-- ADAPT this to your working environment -->
   <property name="intermine-all.jar" value="lib/intermine-all.jar"/>
-  <property name="intermine-genomic.jar" value="lib/intermine-genomic.jar"/>
+  <property name="intermine-genomic.jar" value="dist/intermine-genomic.jar"/>
 
   <property name="intermine.properties" value="${user.home}/intermine.properties"/>
   <property name="default.intermine.properties" value="${user.home}/default.intermine.properties"/>
