@@ -606,7 +606,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
             ptm.dropEverything();
         } catch (SQLException e) {
-            throw new Error("Problem with precomputed tables");
+            throw new Error("Problem with precomputed tables", e);
         }
     }
 
