@@ -328,12 +328,16 @@ public class ResultsTest extends TestCase
         os2.setResultsSize(100000);
         
         Results res = os2.execute(q);
+        Object tempHold = null;;
         res.setBatchSize(200);
         int count = 0;
         Iterator iter = res.iterator();
         while (iter.hasNext() && (count < 50000)) {
-            count++;
             Object row = iter.next();
+            if (count == 0) {
+                tempHold = row;
+            }
+            count++;
         }
         int mapSize = res.batches.size();
         int mapCount = 0;
@@ -343,6 +347,7 @@ public class ResultsTest extends TestCase
             Object obj = iter.next();
         }
         Results.LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
+        tempHold = null;
         System.gc();
         Results.LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
         int newMapSize = res.batches.size();
