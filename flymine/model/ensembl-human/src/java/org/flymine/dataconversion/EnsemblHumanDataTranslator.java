@@ -157,6 +157,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     location.addAttribute(new Attribute("strand", "0"));
                     result.add(location);
                 } else if ("exon".equals(className)) {
+
                     tgtItem.addReference(getOrgRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
                     if (stableId != null) {
@@ -281,7 +282,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @param srcItemIsChild true if srcItem should be subject of Location
      * @return the location item
      */
-    protected Item createLocation(Item srcItem, Item tgtItem, boolean srcItemIsChild) {
+    protected Item createLocation(Item srcItem, Item tgtItem, boolean srcItemIsChild) throws ObjectStoreException {
 
         String namespace = XmlUtil.getNamespaceFromURI(tgtItem.getClassName());
 
@@ -327,7 +328,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @return location item which reflects the relations between chromosome and contig,
      * supercontig and contig, clone and contig
      */
-    protected Item createAssemblyLocation(Item srcItem) {
+    protected Item createAssemblyLocation(Item srcItem)
+    throws ObjectStoreException{
 
         int start, end, asmStart, cmpStart, asmEnd, cmpEnd, contigLength;
         String ori, contigId, bioEntityId;
@@ -376,7 +378,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @param refId = refId for the seq_region
      * @return seq item it could be  chromosome, supercontig, clone or contig
      */
-    protected Item getSeqItem(String refId) {
+    protected Item getSeqItem(String refId)
+    throws ObjectStoreException {
         Item seq = new Item();
         Item seqRegion = ItemHelper.convert(srcItemReader.getItemById(refId));
         if (seqIdMap.containsKey(refId)) {
@@ -409,7 +412,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @param tgtItem item that will reference AnalysisResult
      * @return new AnalysisResult item
      */
-    protected Item createAnalysisResult(Item srcItem, Item tgtItem) {
+    protected Item createAnalysisResult(Item srcItem, Item tgtItem)
+    throws ObjectStoreException{
         Item result = createItem(tgtNs + "ComputationalResult", "");
         if (srcItem.hasAttribute("analysis")) {
             moveField(srcItem, result, "analysis", "analysis");
