@@ -10,6 +10,7 @@ package org.flymine.objectstore.translating;
  *
  */
 
+import org.flymine.metadata.MetaDataException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
@@ -24,7 +25,7 @@ import org.flymine.model.FlyMineBusinessObject;
 public abstract class Translator
 {
     protected ObjectStore os;
-    
+
     /**
      * Set this Translator's ObjectStore
      * @param os the ObjectStore
@@ -32,7 +33,7 @@ public abstract class Translator
      public void setObjectStore(ObjectStore os) {
          this.os = os;
      }
-    
+
     /**
      * Translate a query
      * @param query the Query to translate
@@ -40,18 +41,20 @@ public abstract class Translator
      * @throws ObjectStoreException if the query cannot be translated
      */
     public abstract Query translateQuery(Query query) throws ObjectStoreException;
-    
+
     /**
     * Translate an object entering the ObjectStore
     * @param o the FlyMineBusinessObject to translate
     * @return the translated object
     */
     public abstract FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o);
-    
+
     /**
      * Translate an object exiting the ObjectStore
      * @param o the object to translate
      * @return the translated object
+     * @throws MetaDataException if item has a field that isn't in FlyMine model
      */
-    public abstract FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o);
+    public abstract FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o)
+        throws MetaDataException;
 }

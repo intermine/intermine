@@ -20,6 +20,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.flymine.metadata.Model;
+import org.flymine.metadata.MetaDataException;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.fulldata.Item;
 import org.flymine.model.fulldata.Attribute;
@@ -47,6 +48,7 @@ import org.flymine.ontology.OntologyUtil;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.StringUtil;
+import org.flymine.util.TypeUtil.FieldInfo;
 
 import org.apache.log4j.Logger;
 
@@ -62,7 +64,7 @@ public class ItemToObjectTranslator extends Translator
     protected Model model;
     protected SortedMap idToNamespace = new TreeMap();
     protected Map namespaceToId = new HashMap();
-    
+
     /**
      * Constructor
      * @param model the Model used in business object creation
@@ -133,7 +135,7 @@ public class ItemToObjectTranslator extends Translator
                         .indexOf("_") + 1)));
         return retval;
     }
-    
+
     /**
      * @see Translator#translateQuery
      */
@@ -152,12 +154,12 @@ public class ItemToObjectTranslator extends Translator
               && ((QueryClass) qn).getType().equals(FlyMineBusinessObject.class))) {
             throw new ObjectStoreException("Query cannot be translated: " + query);
         }
-        
+
         Query q = new Query();
         QueryClass qc = new QueryClass(Item.class);
         q.addToSelect(qc);
         q.addFrom(qc);
-        
+
         Constraint constraint = query.getConstraint();
         if (constraint != null) {
             if (constraint instanceof BagConstraint
@@ -181,7 +183,7 @@ public class ItemToObjectTranslator extends Translator
                        .getFieldName().equals("id")) {
                 SimpleConstraint sc =
                     new SimpleConstraint(new QueryField(qc, "identifier"),
-                            ConstraintOp.EQUALS, 
+                            ConstraintOp.EQUALS,
                             new QueryValue(idToIdentifier((Integer) (((QueryValue)
                                         ((SimpleConstraint) constraint).getArg2())).getValue())));
                 q.setConstraint(sc);
@@ -192,22 +194,23 @@ public class ItemToObjectTranslator extends Translator
         q.setDistinct(query.isDistinct());
         return q;
     }
-    
+
     /**
      * @see Translator#translateToDbObject
      */
     public FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o) {
         return o;
     }
-    
+
     /**
      * @see Translator#translateFromDbObject
      */
-    public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o) {
+    public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o)
+        throws MetaDataException {
         if (!(o instanceof Item)) {
             return o;
         }
-        
+
         Item item = (Item) o;
         FlyMineBusinessObject obj = (FlyMineBusinessObject)
             DynamicUtil.instantiateObject(
@@ -215,23 +218,33 @@ public class ItemToObjectTranslator extends Translator
                 OntologyUtil.generateClassNames(item.getImplementations(), model));
 
         obj.setId(identifierToId(item.getIdentifier()));
-        
+
         try {
             for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
                 Attribute attr = (Attribute) i.next();
-                Class attrClass = TypeUtil.getFieldInfo(obj.getClass(), attr.getName()).getType();
+                FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
+                if (info == null) {
+                    throw new MetaDataException("Attribute not found in model: "
+                                                + obj.getClass() + "." + attr.getName());
+                }
+                Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
                     Object value = TypeUtil.stringToObject(attrClass, attr.getValue());
                     TypeUtil.setFieldValue(obj, attr.getName(), value);
                 }
             }
-            
+
             for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
                 Reference ref = (Reference) i.next();
                 Integer identifier = identifierToId(ref.getRefId());
-                TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier));
+                if (TypeUtil.getFieldInfo(obj.getClass(), ref.getName()) != null) {
+                    TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier));
+                } else {
+                    throw new MetaDataException("Reference not found in model: "
+                                                + obj.getClass() + "." + ref.getName());
+                }
             }
-            
+
             for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
                 ReferenceList refs = (ReferenceList) i.next();
                 QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
@@ -243,8 +256,13 @@ public class ItemToObjectTranslator extends Translator
                 q.addToSelect(qc);
                 q.addFrom(qc);
                 q.setConstraint(bc);
-                TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os,
-                            os.getSequence()));
+                if (TypeUtil.getFieldInfo(obj.getClass(), refs.getName()) != null) {
+                    TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os,
+                                                                             os.getSequence()));
+                } else {
+                    throw new MetaDataException("Collection not found in model: "
+                                                + obj.getClass() + "." + refs.getName());
+                }
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);

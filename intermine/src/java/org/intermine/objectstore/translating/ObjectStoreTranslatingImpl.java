@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.flymine.metadata.Model;
+import org.flymine.metadata.MetaDataException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreFactory;
@@ -40,7 +41,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     private ObjectStore os;
     private Translator translator;
     private Map queryCache = Collections.synchronizedMap(new WeakHashMap());
-    
+
     /**
      * Constructor
      * @param model the Model that this ObjectStore appears to use
@@ -53,7 +54,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         this.translator = translator;
         translator.setObjectStore(this);
     }
-    
+
     /**
      * Gets an ObjectStore for the given underlying properties.
      *
@@ -104,40 +105,45 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         Query q2 = translateQuery(q);
         List results = new ArrayList();
         Iterator resIter = os.execute(q2, start, limit, optimise, explain, sequence).iterator();
-        while (resIter.hasNext()) {
-            ResultsRow row = new ResultsRow();
-            Iterator rowIter = ((ResultsRow) resIter.next()).iterator();
-            while (rowIter.hasNext()) {
-                Object o = rowIter.next();
-                if (o instanceof FlyMineBusinessObject) {
-                    FlyMineBusinessObject fmbo =
-                        translator.translateFromDbObject((FlyMineBusinessObject) o);
-                    row.add(fmbo);
-                    cacheObjectById(fmbo.getId(), fmbo);
-                } else {
-                    row.add(o);
+
+        try {
+            while (resIter.hasNext()) {
+                ResultsRow row = new ResultsRow();
+                Iterator rowIter = ((ResultsRow) resIter.next()).iterator();
+                while (rowIter.hasNext()) {
+                    Object o = rowIter.next();
+                    if (o instanceof FlyMineBusinessObject) {
+                        FlyMineBusinessObject fmbo =
+                            translator.translateFromDbObject((FlyMineBusinessObject) o);
+                        row.add(fmbo);
+                        cacheObjectById(fmbo.getId(), fmbo);
+                    } else {
+                        row.add(o);
+                    }
                 }
+                results.add(row);
             }
-            results.add(row);
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
         }
-        
+
         return results;
     }
-    
+
     /**
      * @see ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(translateQuery(q));
     }
-    
+
     /**
      * @see ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return os.count(translateQuery(q), sequence);
     }
-    
+
     private Query translateQuery(Query q) throws ObjectStoreException {
         Query retval = (Query) queryCache.get(q);
         if (retval == null) {
