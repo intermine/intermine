@@ -223,6 +223,11 @@ null:karyotype__seq_region a owl:ObjectProperty ;
 :Transcript__protein a owl:ObjectProperty;
     owl:inverseOf :Protein__transcript.
 
+:Transcript__exonCount a owl:DatatypeProperty;
+    rdfs:domain :Transcript;
+    rdfs:range xsd:integer.
+
+
 null:transcript__display_xref a owl:ObjectProperty ;
     owl:equivalentProperty e:transcript__display_xref .
 
