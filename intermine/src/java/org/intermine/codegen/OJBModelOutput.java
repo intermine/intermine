@@ -207,7 +207,7 @@ public class OJBModelOutput extends ModelOutput
                 .append("\" element-class-ref=\"")
                 .append(col.getReferencedClassDescriptor().getClassName())
                 .append("\" collection-class=\"")
-                .append(col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet")
+                .append(col.getCollectionClass().getName())
                 .append("\" proxy=\"true\"")
                 .append(" indirection-table=\"")
                 .append(joiningTableName)
@@ -224,7 +224,7 @@ public class OJBModelOutput extends ModelOutput
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
-        } else if (col.getReverseReferenceDescriptor() instanceof ReferenceDescriptor) { //one:many
+        } else if (col.getReverseReferenceDescriptor() instanceof ReferenceDescriptor) { //many:one
             String name1 = col.getReverseReferenceDescriptor().getName();
             collections.append(INDENT + INDENT)
                 .append("<collection-descriptor name=\"")
@@ -246,7 +246,12 @@ public class OJBModelOutput extends ModelOutput
 
     //=================================================================
 
-    private List getParents(ClassDescriptor cld) {
+    /**
+     * Get all superclasses of the given class descriptor.
+     * @param cld descriptor for class in question
+     * @return a list of descriptors for superclasses
+     */
+    protected List getParents(ClassDescriptor cld) {
         List parentList = new ArrayList();
         ClassDescriptor superCld = cld.getSuperclassDescriptor();
         while (superCld != null) {
@@ -257,14 +262,26 @@ public class OJBModelOutput extends ModelOutput
         return parentList;
     }
 
-    private void doAttributes(ClassDescriptor cld, StringBuffer sb) {
+    /**
+     * Iterate over attributes of this class inquestion and generate
+     * ouput text for each.
+     * @param cld descriptor of class in question
+     * @param sb a stringbuffer to write field data to
+     */
+    protected void doAttributes(ClassDescriptor cld, StringBuffer sb) {
         Iterator iter = cld.getAttributeDescriptors().iterator();
         while (iter.hasNext()) {
             sb.append(generate((AttributeDescriptor) iter.next()));
         }
     }
 
-    private void doAssociations(ClassDescriptor cld, StringBuffer sb) {
+    /**
+     * Iterate over associations for given class and create output data
+     * for all references and collections.
+     * @param cld descriptor of class in question
+     * @param sb buffer to write field data to
+     */
+    protected void doAssociations(ClassDescriptor cld, StringBuffer sb) {
         Iterator iter;
         iter = cld.getReferenceDescriptors().iterator();
         while (iter.hasNext()) {
@@ -276,7 +293,12 @@ public class OJBModelOutput extends ModelOutput
         }
     }
 
-    private String generateSqlCompatibleName(String n) {
+    /**
+     * Convert any sql keywords to valid names for tables/columns.
+     * @param n the string to convert
+     * @return a valid sql name
+     */
+    protected String generateSqlCompatibleName(String n) {
         //n should start with a lower case letter
         if (n.equalsIgnoreCase("end")) {
             return StringUtil.toSameInitialCase("finish", n);
@@ -290,7 +312,14 @@ public class OJBModelOutput extends ModelOutput
         return n;
     }
 
-    private String generateOJBSqlType(String type) {
+    /**
+     * Convert java primitive and object names to those compatible
+     * with ojb reposiory file.  Returns unaltered string if no
+     * conversion is required.
+     * @param type the string to convert
+     * @return ojb mapping file compatible name
+     */
+    protected String generateOJBSqlType(String type) {
         if (type.equals("int") || type.equals("java.lang.Integer")) {
             return "INTEGER";
         }
