@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -306,9 +307,10 @@ public class InitialiserPlugin implements PlugIn
         Map categoryTemplates = new HashMap();
         // a Map from class name to a Map from category to template
         Map classCategoryTemplates = new HashMap();
-        // a Map from class name to a Map from template name to field name - the field name is the
-        // one that should be set when a template is linked to from the object details page
-        Map classTemplateFieldName = new HashMap();
+        // a Map from class name to a Map from template name to field name List - the field
+        // names/expressions are the ones that should be set when a template is linked to from the
+        // object details page eg. Gene.identifier
+        Map classTemplateExprs = new HashMap();
         Iterator iter = templateMap.values().iterator();
         while (iter.hasNext()) {
             TemplateQuery template = (TemplateQuery) iter.next();
@@ -323,11 +325,11 @@ public class InitialiserPlugin implements PlugIn
             ObjectStore os = (ObjectStore) osObject;
 
             
-            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateFieldName);
+            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateExprs);
         }
         servletContext.setAttribute(Constants.CATEGORY_TEMPLATES, categoryTemplates);
         servletContext.setAttribute(Constants.CLASS_CATEGORY_TEMPLATES, classCategoryTemplates);
-        servletContext.setAttribute(Constants.CLASS_TEMPLATE_FIELDNAMES, classTemplateFieldName);
+        servletContext.setAttribute(Constants.CLASS_TEMPLATE_EXPRS, classTemplateExprs);
     }
     
     /**
@@ -336,12 +338,13 @@ public class InitialiserPlugin implements PlugIn
      */
     private static void setClassesForTemplate(ObjectStore os, TemplateQuery template,
                                               Map classCategoryTemplates,
-                                              Map classTemplateFieldName) {
+                                              Map classTemplateExprs) {
         List constraints = template.getAllConstraints();
         Model model = os.getModel();
         Iterator constraintIter = constraints.iterator();
         
         // look for ClassName.fieldname  (Gene.identifier)
+        // or ClassName.fieldname.fieldname.fieldname...  (eg. Gene.organism.name)
         while (constraintIter.hasNext()) {
             Constraint c = (Constraint) constraintIter.next();
 
@@ -351,30 +354,44 @@ public class InitialiserPlugin implements PlugIn
             if (bits.length == 2) {
                 String className = model.getPackageName() + "." + bits[0];
                 String fieldName = bits[1];
+                String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
                 ClassDescriptor cd = model.getClassDescriptorByName(className);
 
-                if (cd != null) {
-                    FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName); 
-                    if (fd != null) {
-                        if (!classCategoryTemplates.containsKey(className)) {
-                            classCategoryTemplates.put(className, new HashMap());
+                if (cd != null && cd.getFieldDescriptorByName(fieldName) != null) {
+                    Set subClasses = model.getAllSubs(cd);
+
+                    Set thisAndSubClasses = new HashSet();
+                    thisAndSubClasses.addAll(subClasses);
+                    thisAndSubClasses.add(cd);
+
+                    Iterator thisAndSubClassesIterator = thisAndSubClasses.iterator();
+                    
+                    while (thisAndSubClassesIterator.hasNext()) {
+                        ClassDescriptor thisCD = (ClassDescriptor) thisAndSubClassesIterator.next();
+                        String thisClassName = thisCD.getName();
+                        if (!classCategoryTemplates.containsKey(thisClassName)) {
+                            classCategoryTemplates.put(thisClassName, new HashMap());
                         }
-                        
-                        Map categoryTemplatesMap = (Map) classCategoryTemplates.get(className);
-                        
+                    
+                        Map categoryTemplatesMap = (Map) classCategoryTemplates.get(thisClassName);
+                    
                         if (!categoryTemplatesMap.containsKey(template.getCategory())) {
                             categoryTemplatesMap.put(template.getCategory(), new ArrayList());
                         }
-                        
+                    
                         ((List) categoryTemplatesMap.get(template.getCategory())).add(template);
-                        
-                        if (!classTemplateFieldName.containsKey(className)) {
-                            classTemplateFieldName.put(className, new HashMap());
+                    
+                        if (!classTemplateExprs.containsKey(thisClassName)) {
+                            classTemplateExprs.put(thisClassName, new HashMap());
                         }
-                        
-                        Map fieldNameTemplatesMap = (Map) classTemplateFieldName.get(className);
-                        
-                        fieldNameTemplatesMap.put(template.getName(), fieldName);
+                    
+                        Map fieldNameTemplatesMap = (Map) classTemplateExprs.get(thisClassName);
+                    
+                        if (!fieldNameTemplatesMap.containsKey(template.getName())) {
+                            fieldNameTemplatesMap.put(template.getName(), new ArrayList());
+                        }
+                    
+                        ((List) fieldNameTemplatesMap.get(template.getName())).add(fieldExpr);
                     }
                }
             }
