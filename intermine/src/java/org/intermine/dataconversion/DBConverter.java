@@ -30,6 +30,8 @@ import org.flymine.model.fulldata.Item;
 import org.flymine.model.fulldata.Reference;
 import org.flymine.model.fulldata.ReferenceList;
 
+import org.apache.log4j.Logger;
+
 /**
  * Class to read a source database and produce a data representation
  *
@@ -38,6 +40,7 @@ import org.flymine.model.fulldata.ReferenceList;
  */
 public class DBConverter extends DataConverter
 {
+    protected static final Logger LOG = Logger.getLogger(DBConverter.class);
     protected Connection c = null;
     protected Model model;
     protected Database db;
@@ -86,6 +89,8 @@ public class DBConverter extends DataConverter
     protected void processClassDescriptor(ClassDescriptor cld) throws Exception {
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         ResultSet r;
+
+        LOG.error("Processing class: " + clsName)
 
         boolean idsProvided = idsProvided(cld);
         if (idsProvided) {
