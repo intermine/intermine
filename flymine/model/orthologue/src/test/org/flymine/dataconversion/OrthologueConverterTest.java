@@ -22,6 +22,13 @@ import org.flymine.xml.full.FullParser;
 public class OrthologueConverterTest extends TestCase
 {
     public void testProcess() throws Exception {
+        // the input file format is 5 tab-delimited columns
+        // the first two are cluster IDs and are ignored
+        // the third is the species - orthologues are cross-species, paralogues are within-species
+        // the fourth is a confidence relative to the closest match (defined as the orthologue) which is given a confidence of 1.000
+        // note that the confidence for the first member of the group appears meaningless (row 1).
+        // the fifth is some form of swissprot id to identify the protein
+        // so...this input should produce one orthologue (rows 1 & 3) and two paralogues (1 & 2, 3 & 4)
         String input = "14\t1217\tCE\t1.000\tO01438\n"
             + "14\t1217\tCE\t0.997\tQ95Q95\n"
             + "14\t1217\tSC\t1.000\tTOR2_YEAST\n"
