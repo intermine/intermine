@@ -148,7 +148,44 @@ Full details:<br/><br/>
       <html:link action="/collectionDetails?id=${object.id}&field=${entry.key}"><b>${entry.key}</b></html:link>
       <span class="type">- ${collection.size} ${collection.cld.unqualifiedName} objects</span>
       <c:if test="${collection.verbose}">
-        <table rules="all" style="margin-left: 20px" cellpadding="5">
+<table rules="all" cellpadding="5">
+  <thead style="text-align: center">
+    <tr>
+      <c:forEach items="${collection.table.keyAttributes}" var="fd">
+        <td rowspan="2"><b>${fd.name}</b></td>
+      </c:forEach>
+      <c:forEach items="${collection.table.keyReferences}" var="entry">
+        <td colspan="${fn:length(entry.value)}"><b>${entry.key.name}</b></td>
+      </c:forEach>
+    </tr>
+    <tr>
+      <c:forEach items="${collection.table.keyReferences}" var="entry">
+        <c:forEach items="${entry.value}" var="fd">
+          <td><b>${fd.name}</b></td>
+        </c:forEach>
+      </c:forEach>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <c:forEach items="${object.keyAttributes}" var="entry">
+        <td>${entry.value}</td>
+      </c:forEach>
+      <c:forEach items="${object.keyReferences}" var="entry">
+        <c:forEach items="${entry.value.identifiers}" var="entry">
+          <td>${entry.value}</td>
+        </c:forEach>
+      </c:forEach>
+    </tr>
+  </tbody>
+</table>
+
+
+        ${collection.table.keyAttributes}<br/>
+        ${collection.table.keyReferences}<br/>
+        ${collection.table.types}<br/>
+        ${collection.table.rows}<br/>
+        <%--table rules="all" style="margin-left: 20px" cellpadding="5">
           <thead style="text-align: center">
             <tr>
               <td/>
@@ -173,7 +210,7 @@ Full details:<br/><br/>
               </tr>
             </c:forEach>
           </tbody>
-        </table>
+        </table--%>
       </c:if>
       <br/><br/>
     </c:forEach>
