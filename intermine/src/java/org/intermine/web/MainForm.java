@@ -215,17 +215,9 @@ public class MainForm extends ActionForm
         } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
             // Is the expression valid? We need a non-zero length string at least 
             if (value.length() == 0)
-                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.like", value));
+                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.like"));
             else
-            {
-                if (value.charAt(0) == '*')
-                    value = '%'+value.substring(1);
-                if (value.charAt(value.length()-1) == '*')
-                    value = value.substring(0, value.length()-1)+'%';
-                if (value.charAt(0) != '%' && value.charAt(value.length()-1) != '%')
-                    value = '%'+value+'%';
-                parsedValue = value;
-            }
+                parsedValue = wildcardUserToSql(value);            
         } else {
             try {
                 parsedValue = TypeUtil.stringToObject(type, value);
@@ -236,6 +228,29 @@ public class MainForm extends ActionForm
             }
         }
         return parsedValue;
+    }
+    
+    public static String wildcardSqlToUser(String exp) {
+        if (exp.charAt(0) == '%' && exp.charAt(exp.length()-1) == '%')
+            return exp.substring(1, exp.length()-1);
+        else if (exp.charAt(0) == '%')
+            return "*"+exp.substring(1);
+        else if (exp.charAt(exp.length()-1) == '%')
+            return exp.substring(0, exp.length()-1)+"*";
+        else
+            return exp;
+    }
+    
+    public static String wildcardUserToSql(String exp) {
+        if (exp.length() == 0)
+            throw new IllegalArgumentException(exp);
+        if (exp.charAt(0) == '*')
+            exp = '%'+exp.substring(1);
+        if (exp.charAt(exp.length()-1) == '*')
+            exp = exp.substring(0, exp.length()-1)+'%';
+        if (exp.charAt(0) != '%' && exp.charAt(exp.length()-1) != '%')
+            exp = '%'+exp+'%';
+        return exp;
     }
 
     /**
