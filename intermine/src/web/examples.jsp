@@ -14,11 +14,13 @@
           <fmt:message key="exampleQuery.${exampleQuery.key}.description"/>
         </span>
         <fmt:message key="exampleQuery.${exampleQuery.key}.prefix" var="prefix"/>
-        <span class="docLink">
-          [<html:link href="/${prefix}/${exampleQuery.key}.html">
+        <c:if test="${!empty prefix}">
+          <span class="docLink">
+            [<html:link href="/${prefix}/${exampleQuery.key}.html">
             tutorial
-          </html:link>]
-        </span>
+            </html:link>]
+          </span>
+        </c:if>
         <span class="link">
           <html:link action="/loadExampleQuery?method=load&name=${exampleQuery.key}">
             <img class="arrow" src="images/right-arrow.png" alt="->"/>
