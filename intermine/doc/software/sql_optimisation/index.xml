@@ -27,7 +27,7 @@
 	<listitem><ulink url="todo">Current status and todo list</ulink></listitem>
 </itemizedlist>
 
-<inlinegraphic fileref="arch_pic1" />
+<!--<inlinegraphic fileref="arch_pic1" />-->
 <inlinegraphic fileref="arch_pic2" />
 
 <sect1>
@@ -47,9 +47,10 @@
 		<listitem>A set of precomputed table names, to load later</listitem>
 		<listitem>Symbolic precomputed table copies, which are a combination of a precomputed table, a mapping to reorder unique original query table names, and the reverse mapping</listitem>
 		<listitem>Precomputed table descriptions, including lists of tables and restrictions</listitem>
-		<listitem>A set of the symbolic precomputed table copies that are being used currently</listitem>
+<!--		<listitem>A set of the symbolic precomputed table copies that are being used currently</listitem>
 		<listitem>A mapping from original table aliases to symbolic precomputed table copies that are covering them currently</listitem>
 		<listitem>A set of original table where causes that are not needed because they are covered by a symbolic precomputed table copy that is being used currently</listitem>
+		-->
 		<listitem>Optimised query table aliases and names</listitem>
 		<listitem>Optimised query field aliases and names</listitem>
 		<listitem>Optimised query restrictions</listitem>

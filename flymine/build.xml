@@ -26,6 +26,7 @@
   <!-- build directories -->
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
+  <property name="build.test" location="${build}/test"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.www" location="${build}/www"/>
   <property name="build.www-internal" location="${build}/www/internal"/>
@@ -55,6 +56,11 @@
     </fileset>
   </path>
 
+  <path id="test.class.path">
+    <path refid="project.class.path"/>
+    <pathelement location="${build.test}"/>
+  </path>
+
   <!-- Initialisation targets -->
 
   <target name="prepare">
@@ -63,6 +69,7 @@
     </tstamp>
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.www}"/>
     <mkdir dir="${build.www-internal}"/>
@@ -90,9 +97,17 @@
     </javac>
   </target>
 
+  <target name="compile-test" depends="prepare"
+          description="compile the java test source" >
+    <javac destdir="${build.test}" listfiles="yes">
+      <classpath refid="project.class.path"/>
+      <src path="${src.test}" />
+    </javac>
+  </target>
+
   <!-- Unit tests -->
 
-  <target name="test-main" depends="compile-main"
+  <target name="test-main" depends="compile-main,compile-test"
           description="perform JUnit tests on main source code" >
 
     <!-- Specify that the tests depend on the java files in the main directories -->
@@ -104,15 +119,15 @@
     <!-- Check if the tests have been run after the Java file last updated -->
     <uptodate property="test-main.uptodate">
       <srcfiles dir="${src.test}" includes="**/*.java"/>
-      <mapper type="package" from="*Test.java" to="${results.junit}/TEST-*Test.xml" />
+      <mapper type="package" from="*.java" to="${results.junit}/TEST-*.xml" />
     </uptodate>
 
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" dir="${build.java}">
-      <classpath refid="project.class.path"/>
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+      <classpath refid="test.class.path"/>
       <formatter type="xml" />
       <batchtest fork="yes" todir="${results.junit}" unless="test-main.uptodate">
-	<fileset dir="${build.java}">
-	  <include name="**/*Test.class" />
+	<fileset dir="${build.test}">
+	  <include name="**/*.class" />
 	</fileset>
       </batchtest>
     </junit>
@@ -124,7 +139,7 @@
   <target name="junit-clean" depends="prepare">
     <!-- Force all the unit tests to be redone -->
     <delete>
-      <fileset dir="${results.junit}" includes="TEST-*Test.xml"/>
+      <fileset dir="${results.junit}" includes="TEST-*.xml"/>
     </delete>
   </target>
 

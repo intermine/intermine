@@ -106,7 +106,7 @@
     </module>
 
     <module name="LineLength">
-      <property name="max" value="80"/>
+      <property name="max" value="100"/>
       <property name="ignorePattern" value="^$"/>
     </module>
 
@@ -224,7 +224,9 @@
     <module name="InnerAssignment"/>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
-    <module name="TodoComment"/>
+    <module name="TodoComment">
+      <property name="format" value="FAIL"/>
+    </module>
     <module name="UpperEll"/>
 
   </module>
