@@ -56,8 +56,8 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         actionPerform();
 
         verifyNoActionErrors();
-        assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Department")));
+        assertNotNull(context.getAttribute("object"));
+        assertTrue(context.getAttribute("object") instanceof Department);
     }
 
     public void testField() throws Exception {
@@ -72,7 +72,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         actionPerform();
 
         verifyNoActionErrors();
-        assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company")));
+        assertNotNull(context.getAttribute("object"));
+        assertTrue(context.getAttribute("object") instanceof Company);
     }
 }

@@ -27,8 +27,11 @@
   <definition name="error.page" extends="layout.template">
     <put name="body" value="/error.jsp"/>
   </definition>
-  <definition name="details.page" extends="layout.template">
-    <put name="body" value="objectDetails.tile"/>
+  <definition name="objectDetails.page" extends="layout.template">
+    <put name="body" value="objectDetailsPage.tile"/>
+  </definition>
+  <definition name="collectionDetails.page" extends="layout.template">
+    <put name="body" value="collectionDetailsPage.tile"/>
   </definition>
   <definition name="documentation.page" extends="layout.template">
     <put name="body" value="/docbook.jsp"/>
@@ -70,7 +73,13 @@
 
   <definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do"/>
 
-  <definition name="objectDetails.tile" path="/details.jsp" controllerUrl="/initObjectDetails.do"/>
+  <definition name="objectSummary.tile" path="/objectSummary.jsp" controllerUrl="/initResultsCell.do"/>
+
+  <definition name="objectDetailsPage.tile" path="/objectDetailsPage.jsp" controllerUrl="/initObjectDetails.do"/>
+
+  <definition name="objectDetails.tile" path="/objectDetails.jsp" controllerUrl="/initResultsCell.do"/>
+
+  <definition name="collectionDetailsPage.tile" path="/collectionDetailsPage.jsp" controllerUrl="/initObjectDetails.do"/>
 
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
 

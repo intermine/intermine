@@ -4,8 +4,8 @@
 <tiles:importAttribute/>
 
 <!-- allFields.jsp -->
-<c:forEach items="${cld.allFieldDescriptors}" var="thisFieldDescriptor" varStatus="status">
-  <c:set var="fieldDescriptor" value="${thisFieldDescriptor}" scope="request"/>
+<c:forEach items="${cld.allFieldDescriptors}" var="fieldDescriptor">
+  <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
   <tiles:insert name="/oneField.jsp"/>
 </c:forEach>
 <!-- /allFields.jsp -->

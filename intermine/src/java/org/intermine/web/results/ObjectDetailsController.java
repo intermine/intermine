@@ -10,10 +10,6 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -25,10 +21,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 
@@ -69,25 +62,14 @@ public class ObjectDetailsController extends TilesAction
         Integer id = new Integer((String) request.getParameter("id"));
         String field = request.getParameter("field");
 
-        InterMineObject o = os.getObjectById(id);
+        Object o = os.getObjectById(id);
 
         if (field != null) {
-            o = (InterMineObject) TypeUtil.getFieldValue(o, field);
+            o = TypeUtil.getFieldValue(o, field);
         }
 
-        if (o == null) {
-            return null;
-        }
-        
         context.putAttribute("object", o);
 
-        Model model = os.getModel();
-        Set leafClds = new HashSet();
-        for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
-            leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
-        }
-        context.putAttribute("leafClds", leafClds);
-        
         return null;
     }
 }

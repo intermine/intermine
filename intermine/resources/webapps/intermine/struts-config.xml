@@ -155,8 +155,11 @@
       <forward name="buildquery" path="query.page"/>
     </action>
 
-    <action path="/details"
-            forward="details.page"/>
+    <action path="/objectDetails"
+            forward="objectDetails.page"/>
+
+    <action path="/collectionDetails"
+            forward="collectionDetails.page"/>
 
     <action path="/results"
             forward="results.page"/>
@@ -183,6 +186,9 @@
 
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
+
+    <action path="/initCollectionDetails"
+            type="org.intermine.web.results.CollectionDetailsController"/>
 
     <action path="/initTree"
             type="org.intermine.web.TreeController"/>
