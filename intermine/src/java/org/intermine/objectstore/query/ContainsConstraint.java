@@ -2,6 +2,8 @@ package org.flymine.objectstore.query;
 
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.
+ * QueryReference can refer to an object or a collection, test whether
+ * QueryClass is a member of the collection or an instance of the object
  *
  * @author Richard Smith
  * @author Mark Woodbridge
@@ -30,7 +32,7 @@ public class ContainsConstraint implements Constraint
      *
      * @param ref the target QueryReference
      * @param type specify CONTAINS or DOES_NOT_CONTAIN
-     * @param cls the QueryClass to be tested
+     * @param cls the QueryClass to to be tested against reference
      */
     public ContainsConstraint(QueryReference ref, int type, QueryClass cls) {
         this(ref, type, cls, false);
@@ -52,14 +54,22 @@ public class ContainsConstraint implements Constraint
             throw (new NullPointerException("cls cannot be null"));
         }
 
-        this.ref = ref;
-        this.cls = cls;
+        if (QueryObjectReference.class.isAssignableFrom(ref.getClass())) {
+            if (ref.getType() != cls.getType()) {
+                throw (new IllegalArgumentException("QueryObjectReference type(" + ref.getType()
+                                                    + ") not equal to QueryClass type("
+                                                    + cls.getType() + ")"));
+            }
+        }
+
         if ((type < 1) || (type > 2)) {
             throw (new IllegalArgumentException("Invalid value for type: " + type));
         }
+
+        this.ref = ref;
+        this.cls = cls;
         this.type = type;
         this.negated = negated;
-        // TODO: Check that the reference class and cls are the same object class.
     }
 
     /**
