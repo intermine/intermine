@@ -40,6 +40,7 @@
     <item><ulink url="objectstore/proxies">Reference and collection proxies</ulink></item>
     <item><ulink url="objectstore/results_prefetch">Results prefetching</ulink></item>
     <item><ulink url="objectstore/query_explain">Explain plans for FlyMine queries</ulink></item>
+    <item><menu>
     <section>
       <heading>OJB implementation</heading>
       <item><ulink url="objectstore/ojb/OJB-details">Details of O/R mapping layer</ulink></item>
@@ -47,6 +48,8 @@
       <item><ulink url="objectstore/ojb/sql_gen_notes">SQL generation notes</ulink></item>
       <item><ulink url="objectstore/ojb/polymorphism_and_sql_generation">Polymorphism and SQL generation</ulink></item>    
     </section>
+    </menu>
+    </item>
   </section>
 
   <section>
