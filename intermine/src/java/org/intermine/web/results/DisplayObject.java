@@ -76,8 +76,11 @@ public class DisplayObject
                     } else if (fd.isCollection()) {
                         ClassDescriptor refCld =
                             ((CollectionDescriptor) fd).getReferencedClassDescriptor();
-                        collections.put(fd.getName(), new DisplayCollection((SingletonResults)
-                                                                            fieldValue, refCld));
+                        DisplayCollection collection =
+                            new DisplayCollection((SingletonResults) fieldValue, refCld);
+                        if (collection.getSize() > 0) {
+                            collections.put(fd.getName(), collection);
+                        }
                     }
                 }
             }
