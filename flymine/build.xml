@@ -1566,13 +1566,28 @@
     <mappings alias="osw.production" type="transfer-sequences"/>
   </target>
 
-  <target name="summarise-objectstore">
+  <property name="os.summary.properties.file" 
+            value="${model}/genomic/resources/objectstoresummary.config.properties" />
+  <property name="summarise.output.properties" 
+            value="${build.model}/genomic/objectstoresummary.properties"/>
+
+  <target name="check-production-objectstore-summary">
+    <echo message="${os.summary.properties.file}"/>
+    <echo message="${summarise.output.properties}"/>
+    <uptodate property="production-objectstore-is-summarised"
+              srcfile="${os.summary.properties.file}"
+              targetfile="${summarise.output.properties}"/>
+  </target>
+  
+  <target name="summarise-production-objectstore" 
+          depends="check-production-objectstore-summary"
+          unless="production-objectstore-is-summarised">
     <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
-      <classname refid="class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
-    <summarise-objectstore alias="${os.production}" 
-                           outputFile="${dest.properties.file}"
-                           inputFile="${summarise.properties}"/>
+    <summarise-objectstore alias="os.production" 
+                           inputFile="${os.summary.properties.file}"
+                           outputFile="${summarise.output.properties}"/>
   </target>
 
 
@@ -1804,7 +1819,8 @@
 
   <!-- WEBAPP TARGETS -->
 
-  <target name="build-production-webapp" depends="create-genomic-model">
+  <target name="build-production-webapp" 
+          depends="create-genomic-model, summarise-production-objectstore">
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -1841,6 +1857,8 @@
       <reference torefid="file.names" refid="lib.flymine"/>
     </ant>
 
+    <copy todir="${build.tmp}" file="${build.model}/genomic/objectstoresummary.properties"/>
+
     <filter token="SITE_PREFIX" value="${www.location}"/>
     <copy todir="${build.tmp}" filtering="true"
           file="${resources}/webapp/flymine/global.web.properties" 
@@ -1852,6 +1870,7 @@
     <patternset id="flymine-global-web-properties-patternset">
       <include name="global.web.properties"/>
       <include name="web.properties"/>
+      <include name="objectstoresummary.properties"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
