@@ -129,10 +129,8 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
             // should probably put jdbc stuff somewhere else...?
             ConnectionManagerIF conMan = broker.serviceConnectionManager();
             Connection conn = conMan.getConnection();
-            /* Commented out while a problem is fixed
             sql = QueryOptimiser.optimise(sql,
                     ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
-            */
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             ResultSet rs = stmt.executeQuery();
