@@ -68,7 +68,6 @@ public class PagedResults extends PagedTable
     public List getAllRows() {
         Results r = new Results(results.getQuery(), results.getObjectStore(),
                                 results.getObjectStore().getSequence());
-        r.setBatchSize(results.getObjectStore().getMaxLimit());
         return r;
     }
 
