@@ -147,9 +147,12 @@ public class Owl2InterMine
             OntProperty tmpProp = (OntProperty) inverse.next();
             if (tmpProp.getNameSpace().equals(tgtNs)) {
                 invProp = tmpProp;
-                if (inverse.hasNext()) {
-                    throw new Exception("Property: " + prop.getURI().toString()
-                                        + " has more than one inverse property.");
+                while (inverse.hasNext()) {
+                    OntProperty nextInvProp = (OntProperty) inverse.next();
+                    if (nextInvProp.getNameSpace().equals(tgtNs)) {
+                        throw new Exception("Property: " + prop.getURI().toString()
+                                            + " has more than one inverse property.");
+                    }
                 }
             }
         }
@@ -202,8 +205,7 @@ public class Owl2InterMine
                 } else {
                     superDomain = (OntClass) superProp.getDomain().as(OntClass.class);
                 }
-                if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superDomain,
-                                                                         false)) {
+                if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superDomain, false)) {
                     return;
                 }
             }
