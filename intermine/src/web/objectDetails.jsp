@@ -6,6 +6,12 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- objectDetails.jsp -->
+<c:set var="helpUrl" 
+       value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualDetailedresults.html"/>
+
+<im:box helpUrl="${helpUrl}"
+        titleKey="objectDetails.heading.details">
+
 <table width="100%">
 <tr>
   <td valign="top" width="30%">
@@ -222,4 +228,37 @@
     <fmt:message key="results.return"/>
   </html:link>
 </c:if>
+
+</im:box>
+
+<im:vspacer height="12"/>
+
+<c:set var="showTemplatesFlag" value="false"/>
+
+<c:forEach items="${object.clds}" var="cld">
+  <c:set var="className" value="${cld.name}"/>
+  <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className]}">
+    <c:set var="showTemplatesFlag" value="true"/>
+  </c:if>
+</c:forEach>
+
+<c:if test="${showTemplatesFlag == 'true'}">
+  <c:set var="helpUrl" 
+         value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualTemplatequeries.html"/>
+  
+  <im:box helpUrl="${helpUrl}"
+          titleKey="objectDetails.heading.templates">
+    <c:forEach items="${CATEGORIES}" var="category">
+      <c:forEach items="${object.clds}" var="cld">
+        <c:set var="className" value="${cld.name}"/>
+        <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className][category]}">
+          <c:set var="interMineObject" value="${object.object}"/>
+          <im:templateList type="global" category="${category}" className="${className}" 
+                           interMineObject="${object.object}"/>
+        </c:if>
+      </c:forEach>
+    </c:forEach>
+  </im:box>
+</c:if>
+
 <!-- /objectDetails.jsp -->
