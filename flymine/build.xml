@@ -9,12 +9,17 @@
 
   <!-- Libraries and binaries -->
   <property name="lib" location="lib"/>
+  <property name="buildlib" location="buildlib"/>
   <property name="bin" location="bin"/>
 
   <!-- source directories -->
   <property name="src.java" location="src"/>
   <property name="src.www" location="doc"/>
   <property name="src.www-internal" location="../flymine-private/doc"/>
+
+  <!-- resources directory -->
+  <property name="resources" location="resources"/>
+
 
   <!-- build directories -->
   <property name="build" location="build"/>
@@ -26,6 +31,7 @@
   <!-- results directories -->
   <property name="results"  location="results"/>
   <property name="results.junit"  location="${results}/junit"/>
+  <property name="results.checkstyle"  location="${results}/checkstyle"/>
 
   <!-- distributable directories -->
   <property name="dist"  location="dist"/>
@@ -39,6 +45,10 @@
     <pathelement path="${build.java}"/>
     <pathelement path="${lib}"/>
     <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement path="${buildlib}"/>
+    <fileset dir="${buildlib}">
       <include name="**/*.jar"/>
     </fileset>
   </path>
@@ -57,6 +67,7 @@
 
     <mkdir dir="${results}"/>
     <mkdir dir="${results.junit}"/>
+    <mkdir dir="${results.checkstyle}"/>
 
   </target>
 
@@ -115,9 +126,10 @@
     </delete>
   </target>
 
-  <target name="fulltest" depends="prepare,junit-clean,test-main"
+  <target name="fulltest" depends="prepare,junit-clean,test-main,checkstyle"
           description="do a full test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
+    <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
   </target>
 
   <target name="test-report" depends="prepare"
@@ -134,6 +146,28 @@
   <!-- Functional tests -->
 
   <!-- System tests -->
+
+  <!-- Check the style of all the java files in the project -->
+  <target name="checkstyle" depends="prepare"
+          description="checks the coding style of all the java files in the project">
+    <taskdef resource="checkstyletask.properties">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <checkstyle config="${resources}/checkstyle-config.xml"
+                failureProperty="checkstyle.failure"
+                failOnViolation="false">
+      <classpath refid="project.class.path"/>
+      <formatter type="xml" tofile="${results.checkstyle}/checkstyle_report.xml" />
+      <fileset dir="${src.java}">
+        <include name="**/*.java" />
+      </fileset>
+    </checkstyle>
+
+    <style in="${results.checkstyle}/checkstyle_report.xml"
+           out="${results.checkstyle}/checkstyle_report.html"
+           style="${resources}/checkstyle-frames.xsl" />
+
+  </target>
 
   <!-- Javadoc -->
   <target name="javadoc" depends="prepare"
