@@ -27,7 +27,10 @@
     </copy>
   </target>
 
-  <target name="www-intermine" depends="prepare"> 
+  <target name="www-intermine" depends="prepare">
+    <xmlvalidate>
+      <fileset dir="${build.www}" includes="**/*.xml"/>
+    </xmlvalidate>
     <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
            style="../main.xsl" includes="**/*.xml" force="false">
       <param name="branding" expression="intermine" />
