@@ -22,7 +22,7 @@ import org.flymine.model.genomic.*;
 import org.apache.log4j.Logger;
 
 /**
- * CalculateLocationsUtil class
+ * Utility methods for CalculateLocations.
  *
  * @author Kim Rutherford
  */
