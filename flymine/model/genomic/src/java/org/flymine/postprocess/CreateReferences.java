@@ -17,7 +17,12 @@ import java.util.ArrayList;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
 
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.*;
 
@@ -34,13 +39,16 @@ public class CreateReferences
     private static final Logger LOG = Logger.getLogger(CreateReferences.class);
 
     protected ObjectStoreWriter osw;
+    private Model model;
 
     /**
      * Construct with an ObjectStoreWriter, read and write from same ObjectStore
      * @param osw an ObjectStore to write to
+     * @throws MetaDataException if problem getting genomic Model
      */
-    public CreateReferences(ObjectStoreWriter osw) {
+    public CreateReferences(ObjectStoreWriter osw) throws MetaDataException {
         this.osw = osw;
+        this.model = Model.getInstanceByName("genomic");
     }
 
     /**
@@ -66,7 +74,7 @@ public class CreateReferences
     /**
      * Fill in missing references/collectiosn in model by querying relations
      * @param objectClass the class of the objects to which the collection will be added
-     * @param subjectClass the class to the objects to add to the new collection
+     * @param subjectClass the class of the objects added to the collection
      * @param relationClass the class that relates subjectClass and objectClass
      * @param collectionFieldName the field in the object class to which the subjects will be added
      * @throws Exception if anything goes wrong
@@ -132,12 +140,19 @@ public class CreateReferences
         LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
                  + subjectClass.getName() + " via the " + collectionFieldName + " field");
         osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(objectClass.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
     }
 
     /**
      * Add a collection of objects of type X to objects of type Y by using a connecting class.
      * Eg. Add a collection of Exon objects to Gene by examining the Transcript objects in the
-     * transcripts collection of the Genem, which would use a query like:
+     * transcripts collection of the Gene, which would use a query like:
      *   SELECT DISTINCT gene, exon FROM Gene AS gene, Transcript AS transcript, Exon AS exon WHERE
      *   (gene.transcripts CONTAINS transcript AND transcript.exons CONTAINS exon) ORDER BY gene
      * and then set exon.gene
@@ -199,5 +214,12 @@ public class CreateReferences
         LOG.info("Created " + count + " references in " + destinationClass.getName() + " to "
                  + sourceClass.getName() + " via " + connectingClass.getName());
         osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(destinationClass.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
     }
 }
