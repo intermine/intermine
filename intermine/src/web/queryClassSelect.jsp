@@ -18,7 +18,7 @@
   </html:select>
   <br/>
   <html:submit property="action">
-    <fmt:message key="button.addclass"/>
+    <fmt:message key="button.selectClass"/>
   </html:submit>
   <html:submit property="action">
     <fmt:message key="button.browse"/>

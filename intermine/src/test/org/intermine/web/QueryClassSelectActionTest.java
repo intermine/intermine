@@ -26,7 +26,7 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
         QueryClassSelectForm form = new QueryClassSelectForm();
         form.setClassName("org.intermine.model.testmodel.Company");
         setActionForm(form);
-        addRequestParameter("action", "Add");
+        addRequestParameter("action", "Select");
         actionPerform();
 
         verifyForward("query");
