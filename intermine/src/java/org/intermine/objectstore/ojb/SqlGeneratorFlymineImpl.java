@@ -54,9 +54,6 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
-
-
-import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.accesslayer.sql.SqlGeneratorDefaultImpl;
 import org.apache.ojb.broker.platforms.Platform;
