@@ -146,7 +146,7 @@ public class AceDataLoaderTest extends TestCase {
         StaticAceNode node1 = new StaticAceNode("reference", obj);
         obj.addNode(node1);
         Reference ref1 = new StaticReference("AceTestObject2", node1,
-                                             new AceURL("acedb://user:password@server:1234/" + AceTestObject.class.getName()));
+                                             new AceURL("acedb", "host", 1234, AceTestObject.class.getName(), "", "", "username", "password"));
         node1.addNode(ref1);
 
         AceTestObject testObj1 = new AceTestObject();
@@ -168,10 +168,10 @@ public class AceDataLoaderTest extends TestCase {
         StaticAceNode node1 = new StaticAceNode("references", obj);
         obj.addNode(node1);
         Reference ref1 = new StaticReference("AceTestObject2", node1,
-                                             new AceURL("acedb://user:password@server:1234/" + AceTestObject.class.getName()));
+                                             new AceURL("acedb", "host", 1234, AceTestObject.class.getName(), "", "", "username", "password"));
         node1.addNode(ref1);
         Reference ref2 = new StaticReference("AceTestObject3", node1,
-                                             new AceURL("acedb://user:password@server:1234/" + AceTestObject.class.getName()));
+                                             new AceURL("acedb", "host", 1234, AceTestObject.class.getName(), "", "", "username", "password"));
         node1.addNode(ref2);
 
         AceTestObject testObj1 = new AceTestObject();
