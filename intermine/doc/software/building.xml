@@ -30,12 +30,12 @@ or a nightly build. The source code is available in tar.gz or ZIP
 format.</para>
 
 <para><ulink
-url="http://download.intermine.org/releases/">Official releases</ulink> -
+url="http://download.flymine.org/releases/">Official releases</ulink> -
 this is where the official InterMine release appear. Official releases are planned to occur 
 every couple of months, on average.</para>
 
 <para><ulink
-url="http://download.intermine.org/nightly/">Nightly build</ulink> - this
+url="http://download.flymine.org/nightly/">Nightly build</ulink> - this
 is a snapshot of the InterMine source code taken last night. This will work, but may be in a state of flux, and with
 portions undocumented, or not conforming to the documentation.</para>
 
@@ -44,7 +44,7 @@ portions undocumented, or not conforming to the documentation.</para>
 <sect2>
 <title>Anonymous CVS access</title>
 
-<para>Instructions can be found <ulink url="cvs-user">here</ulink>.</para>
+<para>Instructions can be found <ulink url="cvs-user.xml">here</ulink>.</para>
 
 </sect2>
 
