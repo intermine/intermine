@@ -49,8 +49,16 @@
               </span>
             </c:if>
             <span class="type">
-              <c:out value="${node.type}"/>
-              <c:if test="${node.collection}"> collection</c:if>
+              <c:choose>
+                <c:when test="${node.collection}">
+                  <fmt:message key="query.collectionMessage">
+                    <fmt:param value="${node.type}"/>
+                  </fmt:message>
+                </c:when>
+                <c:otherwise>
+                  <c:out value="${node.type}"/>
+                </c:otherwise>
+              </c:choose>
             </span>
             <c:choose>
               <c:when test="{node.indentation > 0">
@@ -106,7 +114,9 @@
                   <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}">
                     <c:out value="${node.type}"/>
                   </html:link>
-                  <c:if test="${node.collection}"> collection</c:if>
+                  <c:if test="${node.collection}">
+                    <fmt:message key="query.collection"/>
+                  </c:if>
                 </c:otherwise>
               </c:choose>
             </span>
@@ -171,11 +181,22 @@
   <c:if test="${editingNode != null}">
     <tr>
       <td valign="top">
-        Constrain
-        <span class="metadata"><c:out value="${editingNode.fieldName}"/></span>
+        <span class="metadata">
+          <fmt:message key="query.constrain">
+            <fmt:param value="${editingNode.fieldName}"/>
+          </fmt:message>
+        </span>
         <span class="type">
-          <c:out value="${editingNode.type}"/>
-          <c:if test="${node.collection}"> collection</c:if>:
+          <c:choose>
+            <c:when test="${editingNode.collection}">
+              <fmt:message key="query.collectionMessage">
+                <fmt:param value="${editingNode.type}"/>
+              </fmt:message>
+            </c:when>
+            <c:otherwise>
+              <c:out value="${editingNode.type}"/>
+            </c:otherwise>
+          </c:choose>
         </span>
         <br/><br/>
         <html:form action="/mainAction">
