@@ -8,7 +8,7 @@ import org.flymine.sql.query.SQLStringable;
  *
  * @author Andrew Varley
  */
-public class PrecomputedTable implements SQLStringable
+public class PrecomputedTable implements SQLStringable, Comparable
 {
     protected Query q;
     protected String name;
@@ -78,5 +78,16 @@ public class PrecomputedTable implements SQLStringable
      */
     public int hashCode() {
         return (3 * q.hashCode()) + (5 * name.hashCode());
+    }
+
+    /**
+     * Implements Comparable's method, so we can put PrecomputedTable objects into SortedMaps.
+     *
+     * @param obj an Object to compare to
+     * @return an integer based on the comparison
+     * @throws ClassCastException if obj is not a PrecomputedTable
+     */
+    public int compareTo(Object obj) {
+        return name.compareTo(((PrecomputedTable) obj).name);
     }
 }
