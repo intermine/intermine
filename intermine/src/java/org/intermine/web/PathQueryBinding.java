@@ -49,14 +49,12 @@ public class PathQueryBinding
                   + "' view='" + StringUtil.join(query.getView(), " ") + "'>");
         for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
             PathNode node = (PathNode) j.next();
-            if (node.getConstraints().size() > 0) {
-                sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");
-                for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
-                    Constraint c = (Constraint) k.next();
-                    sb.append("<constraint op='" + c.getOp() + "' value='" + c.getValue() + "'/>");
-                }
-                sb.append("</node>");
+            sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");
+            for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
+                Constraint c = (Constraint) k.next();
+                sb.append("<constraint op='" + c.getOp() + "' value='" + c.getValue() + "'/>");
             }
+            sb.append("</node>");
         }
         sb.append("</query>");
         return sb.toString();
