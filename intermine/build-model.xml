@@ -5,7 +5,6 @@
   The following properties are used in this file:
 
   model.name: the name of the model
-  model.src: the source location for the model
   class.path: the classpath to use
   db.name: the name of the database to build, if actually building the schema
   build.model: the location of the model build directory
@@ -19,7 +18,7 @@
   <property name="build.model.dir.tmp" location="${build.model.dir}/tmp"/>
   <property name="build.model.dir.tmp.builddb" location="${build.model.dir.tmp}/builddb"/>
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
-  <property name="model.lib" location="${model.src}/lib"/>
+  <property name="model.lib" location="${model}/${model.name}/lib"/>
 
   <path id="compile.class.path">
     <path refid="class.path"/>
@@ -43,11 +42,10 @@
     <mkdir dir="${build.model.dir.tmp.builddb}" />
   </target>
 
-
   <!-- has .zargo been unzipped? -->
   <target name="unpack-xmi-model.check" depends="prepare">
     <uptodate property="unpack-xmi-model.uptodate">
-      <srcfiles dir="${model.src}" includes="${model.name}.zargo" />
+      <srcfiles dir="${model}/${model.name}" includes="${model.name}.zargo" />
       <mapper type="glob" from="*.zargo" to="${build.model.dir.tmp}/*_.xmi" />
     </uptodate>
   </target>
@@ -56,25 +54,22 @@
   <target name="unpack-xmi-model" depends="unpack-xmi-model.check"
           description="unpacks an XMI model from .zargo file"
           unless="unpack-xmi-model.uptodate">
-    <unzip src="${model.src}/${model.name}.zargo" dest="${build.model.dir.tmp}">
+    <unzip src="${model}/${model.name}/${model.name}.zargo" dest="${build.model.dir.tmp}">
       <patternset>
         <include name="${model.name}_.xmi"/>
       </patternset>
     </unzip>
-
     <touch file="${build.model.dir.tmp}/${model.name}_.xmi" />
   </target>
 
-
   <!-- copy an exiting xmi file to build/tmp -->
   <target name="copy-xmi" depends="prepare">
-    <copy file="${model.src}/${model.name}.xmi" tofile="${build.model.dir.tmp}/${model.name}_.xmi"/>
+    <copy file="${model}/${model.name}/${model.name}.xmi" tofile="${build.model.dir.tmp}/${model.name}_.xmi"/>
   </target>
-
 
   <!-- copy intermine xml model file to build model directory -->
   <target name="copy-xml-model" depends="prepare">
-    <copy todir="${build.model.dir}" file="${model.src}/${model.name}_model.xml"/>
+    <copy todir="${build.model.dir}" file="${model}/${model.name}/${model.name}_model.xml"/>
   </target>
 
   <!-- copy key definition files -->
@@ -93,48 +88,37 @@
     </copy>
   </target>
 
-
   <!-- Model generation targets -->
   <target name="generate-xmi-model"
           description="Generate InterMine model from an XMI file">
+    <!-- if from ArgoUML the XMI filename will have a trailing underscore -->
     <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
-
-    <!-- if from ArgoUML the XMI filename will have a trailing underscore -->
-
-
-    <model-generation
-       type="xmi"
-       nameSpace="${namespace}"
-       modelName="${model.name}"
-       source="${build.model.dir.tmp}/${model.name}_.xmi"
-       destDir="${build.model.dir}" />   
+    <model-generation type="xmi"
+                      nameSpace="${namespace}"
+                      modelName="${model.name}"
+                      source="${build.model.dir.tmp}/${model.name}_.xmi"
+                      destDir="${build.model.dir}"/>
   </target>
 
-  <!-- Generate XML Schema model -->
   <target name="generate-xmlschema-model" depends="prepare"
           description="Generate InterMine model from an XML Schema">
     <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
-
-    <model-generation
-       type="xmlschema"
-       pkg="${pkg}"
-       modelName="${model.name}"
-       source="${model.src}/${model.name}.xsd"
-       destDir="${build.model.dir}" />   
+    <model-generation type="xmlschema"
+                      pkg="${pkg}"
+                      modelName="${model.name}"
+                      source="${model}/${model.name}/${model.name}.xsd"
+                      destDir="${build.model.dir}" />   
   </target>
-
 
   <target name="generate-owl-model"
           description="Generate InterMine model from an OWL file">
-
     <copy file="${model}/${model.name}/${model.name}.n3"
           todir="${build.model.dir}"
           overwrite="false"/>
-
     <java classname="org.intermine.ontology.Owl2InterMine" fork="true" maxmemory="800m">
       <classpath refid="class.path" />
       <arg value="${build.model.dir}/${model.name}.n3" />
@@ -144,38 +128,29 @@
       <arg value="${packagename}.${model.name}" />
       <arg value="${namespace}/${model.name}#" />
     </java>
-
   </target>
 
   <target name="generate-acedb-model" depends="prepare"
           description="Generate a InterMine model file from an AceDB model file">
-    <taskdef
-      name="model-generation"
-      classname="org.intermine.modelproduction.ModelGenerationTask">
+    <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
-
-    <model-generation
-       type="acedb"
-       nameSpace="${namespace}"
-       modelName="${model.name}"
-       source="${model.src}/${model.name}.wrm"
-       destDir="${build.model.dir}"/>
+    <model-generation type="acedb"
+                      nameSpace="${namespace}"
+                      modelName="${model.name}"
+                      source="${model}/${model.name}/${model.name}.wrm"
+                      destDir="${build.model.dir}"/>
   </target>
 
-
   <!-- Code generation targets -->
-
   <target name="generate-model-java" depends="prepare"
           description="Generate Java files from a InterMine model file">
     <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
-
     <model-output type="java" model="${model.name}" destdir="${build.model.dir}"/>
   </target>
 
-  <!-- compile java source -->
   <target name="compile-model-java" depends="generate-model-java">
     <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="class.path"/>
@@ -186,26 +161,26 @@
   <target name="compile-java" depends="prepare">
     <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
-      <src path="${model.src}/src/java"/>
+      <src path="${model}/${model.name}/src/java"/>
     </javac>
   </target>
 
   <target name="compile-webapp-java" depends="prepare">
     <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
-      <src path="${model.src}/src/web/java"/>
+      <src path="${model}/${model.name}/src/web/java"/>
     </javac>
   </target>
 
   <target name="compile-test" depends="compile-java, copy-test-resources">
-    <depend srcdir="${model.src}/src/test" destdir="${build.model.dir.tmp}" closure="yes" dump="yes">
+    <depend srcdir="${model}/${model.name}/src/test" destdir="${build.model.dir.tmp}" closure="yes" dump="yes">
       <classpath>
         <pathelement path="${build.model.dir}"/>
       </classpath>
     </depend>
     <javac destdir="${build.model.dir.tmp}/" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
-      <src path="${model.src}/src/test"/>
+      <src path="${model}/${model.name}/src/test"/>
     </javac>
   </target>
 
@@ -223,53 +198,29 @@
     </junit>
   </target>
 
-  <target name="build-db"
-          description="Build database tables from a Torque description">
-    <taskdef
-      name="build-db"
-      classname="org.intermine.task.BuildDbTask">
-      <classpath refid="class.path"/>
-    </taskdef>
-    <taskdef name="build-torque" classname="org.intermine.objectstore.intermine.TorqueModelOutputTask">
-      <classpath refid="class.path"/>
-    </taskdef>
-    
+  <target name="build-db" description="Build database tables from a Torque description">
     <!-- clean the directory so that torque doesn't find any files from the
          last execution of this target -->
     <delete dir="${build.model.dir.tmp.builddb}"/>
     <mkdir dir="${build.model.dir.tmp.builddb}"/>
-
-    <build-torque osName="${objectstore.name}" destFile="${build.model.dir}/${objectstore.name}-schema.xml"/>
-    <build-db
-      database="${db.name}"
-      tempdir="${build.model.dir.tmp.builddb}"
-      schemafile="${objectstore.name}-schema.xml">
+    <taskdef name="build-torque" classname="org.intermine.objectstore.intermine.TorqueModelOutputTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <build-torque osName="${objectstore.name}"
+                  destFile="${build.model.dir}/${objectstore.name}-schema.xml"/>
+    <taskdef name="build-db" classname="org.intermine.task.BuildDbTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <build-db database="${db.name}"
+              tempdir="${build.model.dir.tmp.builddb}"
+              schemafile="${objectstore.name}-schema.xml">
     </build-db>
   </target>
 
-
   <!-- Targets that could be called from another build script -->
-  <target name="build-model-from-xml"
-          depends="copy-xml-model, compile-model-java, copy-keydefs"
-          description="Build a usable model from a InterMine model XML file">
-  </target>
-
-  <target name="generate-model-from-xml"
-          depends="copy-xml-model, copy-keydefs"
-          description="Generate a InterMine xml model from a xml file"/>
-
-  <target name="build-model-from-zargo" depends="generate-model-from-zargo, compile-model-java"
-          description="Build a usable model from a .zargo file">
-  </target>
-
   <target name="generate-model-from-zargo"
           depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
           description="Generate a InterMine xml model from a .zargo file">
-  </target>
-
-  <target name="build-model-from-xmi"
-          depends="generate-xmi-model, compile-model-java, copy-keydefs"
-          description="Build a usable model from a .zargo file">
   </target>
 
   <target name="generate-model-from-xmi"
@@ -277,29 +228,31 @@
           description="Generate a InterMine xml model from a xmi file">
   </target>
   
-  <target name="build-model-from-xmlschema"
-          depends="generate-xmlschema-model, compile-model-java, copy-keydefs"
+  <target name="generate-model-from-xmlschema"
+          depends="generate-xmlschema-model, copy-keydefs"
           description="Build a usable model from an xmlschema">
   </target>
 
-  <target name="generate-model-from-xmlschema"
-          depends="generate-xmlschema-model, copy-keydefs"
-          description="Generate a InterMine xml model from an xml schema">
-  </target>
-  
   <target name="generate-model-from-owl" 
           depends="generate-owl-model, copy-keydefs"
           description="Generate a InterMine xml model from an OWL file">
   </target>
-  
+
+  <target name="build-model-from-xml"
+          depends="copy-xml-model, compile-model-java, copy-keydefs"
+          description="Build a usable model from a InterMine model XML file">
+  </target>
+
+  <target name="build-model-from-zargo" depends="generate-model-from-zargo, compile-model-java"
+          description="Build a usable model from a .zargo file">
+  </target>
+ 
   <target name="build-model-from-ace" 
           depends="generate-acedb-model, compile-model-java, copy-keydefs"
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
-  <!-- jar a model - note this does not build the model because it doesn't know the source format (xml, zargo...) -->
-  <target name="jar"
-          description="create a jar of a model">
+  <target name="jar" description="create a jar of a model">
     <jar destfile="${dist}/intermine-${model.name}.jar">
       <fileset dir="${build.model.dir}" >
         <exclude name="**/*.java"/>
@@ -308,15 +261,41 @@
     </jar>
   </target>
 
-  <!-- create indexes task definition -->
   <target name="create-indexes" depends="copy-keydefs">
-    <taskdef
-      name="create-indexes"
-      classname="org.intermine.task.CreateIndexesTask">
+    <taskdef name="create-indexes" classname="org.intermine.task.CreateIndexesTask">
       <classpath refid="class.path"/>
     </taskdef>
-
     <create-indexes database="${db.name}" model="${model.name}"/>
   </target>
 
+  <target name="add-model-to-webapp" depends="compile-webapp-java"
+          description="Add a model to the webapp">
+    <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
+    <unwar src="${war}" dest="${build.tmp}">   
+      <patternset>
+        <include name="**/struts-config.xml"/>        
+      </patternset>
+    </unwar>
+    <replace file="${build.tmp}/WEB-INF/struts-config.xml" value="${model.struts.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+    <mkdir dir="${build.webapp}/intermine/"/>
+    <copy todir="${build.webapp}/intermine/model" failonerror="false" >
+      <fileset dir="${model}/${model.name}/src/web/jsp"/>
+      <fileset dir="${model}/${model.name}/src/web/images"/>
+      <fileset file="${model}/${model.name}/resources/web/model.css"/>
+    </copy>
+    <!-- Make a copy in order to rename file -->
+    <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
+    <war destfile="${war}" update="true">
+      <fileset dir="${build.webapp}/intermine" includes="model/**/*" excludes="*.properties"/>
+      <webinf file="${build.tmp}/WEB-INF/struts-config.xml"/>
+      <webinf dir="${model}/${model.name}/resources/web" excludes="model.properties"/>
+      <lib dir="${dist}" includes="intermine-${model.name}.jar"/>
+      <classes file="${model}/${model.name}/resources/web/model.properties"/>
+      <classes file="${build.tmp}/WEB-INF/intermine.properties" />
+      <classes dir="${build.model}/${model.name}" includes="**/web/*.class"/>
+    </war>
+  </target>
 </project>
