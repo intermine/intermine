@@ -240,7 +240,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
 
             // Now cld is the ClassDescriptor for the node's class. Now need to find node's
             // FieldDescriptor.
-            
+
             return classAlias + "." + nodeF.getFieldName();
         } else if (node instanceof QueryExpression) {
             QueryExpression nodeE = (QueryExpression) node;
@@ -445,7 +445,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
         }
         return "";
     }
-    
+
     /**
      * Returns the GROUP BY clause for the SQL query.
      *
@@ -513,7 +513,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @return sql statement as a string
      */
     public String getStatement() {
-        return "SELECT " + (query.getDistinct() ? "DISTINCT " : "") + buildSelectComponent()
+        return "SELECT " + (query.isDistinct() ? "DISTINCT " : "") + buildSelectComponent()
             + " FROM " + buildFromComponent()
             + buildWhereClause() + buildGroupBy()
             + (isSubQuery ? "" : buildOrderBy() + " LIMIT " + limit + " OFFSET " + start);
