@@ -86,7 +86,7 @@ public class StringUtil
      * @return a String that is different every time
      */
     public static synchronized String uniqueString() {
-        return "P" + (differentNumber++) + "_";
+        return "" + (differentNumber++);
     }
 
     /**
