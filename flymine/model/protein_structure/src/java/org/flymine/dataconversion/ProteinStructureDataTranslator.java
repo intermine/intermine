@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Arrays;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -24,6 +25,7 @@ import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
@@ -45,6 +47,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
 {
     protected static final String ENDL = System.getProperty("line.separator");
     protected String dataLocation;
+    protected Item db;
 
     /**
      * @see DataTranslator#DataTranslator
@@ -53,9 +56,20 @@ public class ProteinStructureDataTranslator extends DataTranslator
                                           String dataLocation) {
         super(srcItemReader, model, ns);
         this.dataLocation = dataLocation;
+        db = createItem(tgtNs + "Database", "");
+        db.addAttribute(new Attribute("title", "Pfam"));
     }
 
-   /**
+    /**
+     * @see DataTranslator#translate
+     */
+    public void translate(ItemWriter tgtItemWriter)
+        throws ObjectStoreException, InterMineException {
+        tgtItemWriter.store(ItemHelper.convert(db));
+        super.translate(tgtItemWriter);
+    }
+
+    /**
      * @see DataTranslator#translateItem
      */
     protected Collection translateItem(Item srcItem)
@@ -79,6 +93,10 @@ public class ProteinStructureDataTranslator extends DataTranslator
                                                 .getAttribute("end").getValue()));
             location.addReference(new Reference("subject", protein.getIdentifier()));
             location.addReference(new Reference("object", proteinRegion.getIdentifier()));
+
+
+            location.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {db.getIdentifier()})));
 
             // model -> modelledProteinStructure
             Item model = getReferencedItem(srcItem, "model");
