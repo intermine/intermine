@@ -75,6 +75,7 @@
     <include name="commons-digester*.jar" />
     <include name="commons-beanutils*.jar" />
     <include name="icu4j*.jar"/>
+    <include name="jakarta-oro*.jar"/>
     <include name="jena*.jar" />
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
