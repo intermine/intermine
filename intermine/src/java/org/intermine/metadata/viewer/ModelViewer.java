@@ -53,11 +53,13 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
      * @param model the model to view
      */
     public ModelViewer(Model model) {
+        super(new BorderLayout());
+        
         this.model = model;
         DefaultMutableTreeNode top =
             new DefaultMutableTreeNode(model.getName());
         createNodes(top);
-
+        
         //Create a tree that allows one selection at a time.
         tree = new JTree(top);
         tree.getSelectionModel().setSelectionMode
@@ -84,7 +86,7 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
         treeView.setMinimumSize(minimumSize);
         splitPane.setDividerLocation(400);
 
-        splitPane.setPreferredSize(new Dimension(800, 300));
+        splitPane.setPreferredSize(new Dimension(800, 500));
 
         add(splitPane, BorderLayout.CENTER);
     }
@@ -169,7 +171,7 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
         //Create and set up the content pane.
         ModelViewer viewer = new ModelViewer(model);
         viewer.setOpaque(true); //content panes must be opaque
-        frame.setContentPane(viewer);
+        frame.getContentPane().add(viewer);
 
         //Display the window.
         frame.pack();
