@@ -268,19 +268,15 @@ public class WriteGFFTask extends Task
 
     private void writeChromosomeFasta(File destinationDirectory, Chromosome chr)
         throws IOException, ChangeVetoException, IllegalArgumentException, IllegalSymbolException {
-        try {
-            FileOutputStream outputStream =
-                new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
-            
-            FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-            
-            if (sequence != null) {
-                sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                     chromosomeFileNamePrefix(chr));
-                SeqIOTools.writeFasta(outputStream, sequence);
-            }
-        } catch (org.biojava.bio.symbol.IllegalSymbolException e) {
-            org.intermine.web.LogMe.log("i", "chr: " + chr.getSequence().getSequence());
+        FileOutputStream outputStream =
+            new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
+        
+        FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
+        
+        if (sequence != null) {
+            sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                                 chromosomeFileNamePrefix(chr));
+            SeqIOTools.writeFasta(outputStream, sequence);
         }
     }
     
