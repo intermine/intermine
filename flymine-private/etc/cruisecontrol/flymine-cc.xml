@@ -1,4 +1,4 @@
-<project name="FlyMine" default="masterbuild"> 
+<project name="flymine-cc" default="masterbuild"> 
   <target name="checkout" description="Update packages from CVS">
     <cvs cvsroot=":ext:cvs-internal.flymine.org:/cvs"
       package="flymine" dest="/shared/log/buildlog/.projects"/>
