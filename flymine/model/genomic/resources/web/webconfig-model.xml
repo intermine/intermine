@@ -4,6 +4,11 @@
       <displayer src="/model/modelledStructure.jsp"/>
     </longdisplayers>
   </class>
+  <class className="org.flymine.model.genomic.Publication">
+    <longdisplayers>
+      <displayer src="/model/publication.jsp"/>
+    </longdisplayers>
+  </class>
   <class className="org.flymine.model.genomic.Database">
     <shortdisplayers>
       <displayer src="/model/databaseShort.jsp"/>
