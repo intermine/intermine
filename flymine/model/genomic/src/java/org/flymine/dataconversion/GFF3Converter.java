@@ -12,11 +12,10 @@ package org.flymine.dataconversion;
 
 import java.io.BufferedReader;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -86,6 +85,7 @@ public class GFF3Converter
 
         handler.setItemFactory(itemFactory);
         handler.setIdentifierMap(identifierMap);
+
     }
 
     /**
@@ -140,8 +140,8 @@ public class GFF3Converter
     public void process(GFF3Record record) throws ObjectStoreException {
         // get rid of previous record Items from handler
         handler.clear();
-
-        Set result = new HashSet();
+        List records = record.getNames();
+        List parents = record.getParents();
 
         Item seq = getSeq(record.getSequenceID());
 
@@ -149,32 +149,46 @@ public class GFF3Converter
         String className = TypeUtil.javaiseClassName(term);
 
         Item feature;
-
+        Item synonym1, synonym2;
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
+            synonym1 = createItem("Synonym");
+            synonym1.addReference(new Reference("subject", feature.getIdentifier()));
+            synonym1.addAttribute(new Attribute("value", record.getId()));
+            synonym1.addAttribute(new Attribute("type", "identifier"));
+            synonym1.addReference(new Reference("source", infoSource.getIdentifier()));
+            handler.addItem(synonym1);
+
         } else {
             feature = createItem(className);
         }
 
-        if (record.getName() != null) {
-            feature.addAttribute(new Attribute("name", record.getName()));
+        if (records != null) {
+            feature.addAttribute(new Attribute("name", (String) records.get(0)));
+            for (Iterator i = records.iterator(); i.hasNext(); ) {
+                String recordName = (String) i.next();
+                synonym2 = createItem("Synonym");
+                synonym2.addReference(new Reference("subject", feature.getIdentifier()));
+                synonym2.addAttribute(new Attribute("value", recordName));
+                synonym2.addAttribute(new Attribute("type", "name"));
+                synonym2.addReference(new Reference("source", infoSource.getIdentifier()));
+                handler.addItem(synonym2);
+            }
         }
         feature.addReference(getOrgRef());
 
         // if parents -> create a SimpleRelation
         if (record.getParents() != null) {
-            Iterator parentIter = record.getParents().iterator();
-            while (parentIter.hasNext()) {
-                String parentId = (String) parentIter.next();
+            for (Iterator i = parents.iterator(); i.hasNext();) {
+                String parentName = (String) i.next();
                 Item simpleRelation = createItem("SimpleRelation");
-                simpleRelation.setReference("object", getIdentifier(parentId));
+                simpleRelation.setReference("object", getIdentifier(parentName));
                 simpleRelation.setReference("subject", feature.getIdentifier());
                 handler.addParentRelation(simpleRelation);
             }
         }
-
 
 
         Item location = createItem("Location");
@@ -201,7 +215,6 @@ public class GFF3Converter
         evidence.addRefId(infoSource.getIdentifier());
 
         if (record.getScore() != null) {
-
             Item computationalResult = createItem("ComputationalResult");
             if (String.valueOf(record.getScore()) != null) {
                 computationalResult.addAttribute(new Attribute("score",
