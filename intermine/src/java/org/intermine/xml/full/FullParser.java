@@ -20,10 +20,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.digester.*;
+import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,6 +32,11 @@ import org.flymine.util.DynamicUtil;
 import org.flymine.util.StringUtil;
 import org.flymine.metadata.Model;
 
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
 
 /**
  * Unmarshal XML Full format data into java business objects.
@@ -67,26 +70,34 @@ public class FullParser
 
         digester.addObjectCreate("items", ArrayList.class);
 
-        digester.addObjectCreate("items/object", Item.class);
-        digester.addSetProperties("items/object", new String[]{"xml_id", "class", "implements"},
-                                  new String[] {"identifier", "className", "implementations"});
+        digester.addObjectCreate("items/item", Item.class);
+        digester.addSetProperties("items/item", new String[]{"class", "implements"},
+                                  new String[] {"className", "implementations"});
+        digester.addSetNext("items/item", "add");
 
-        digester.addObjectCreate("items/object/field", Field.class);
-        digester.addSetProperties("items/object/field");
+        digester.addObjectCreate("items/item/identifier", Identifier.class);
+        digester.addSetProperties("items/item/identifier");
+        digester.addSetNext("items/item/identifier", "setIdentifier");
 
-        digester.addObjectCreate("items/object/reference", Field.class);
-        digester.addSetProperties("items/object/reference", "ref_id", "value");
+        digester.addObjectCreate("items/item/attribute", Attribute.class);
+        digester.addSetProperties("items/item/attribute");
+        digester.addSetNext("items/item/attribute", "addAttributes");
 
-        digester.addObjectCreate("items/object/collection", ReferenceList.class);
-        digester.addSetProperties("items/object/collection");
-        digester.addCallMethod("items/object/collection/reference", "addValue", 1);
-        digester.addCallParam("items/object/collection/reference", 0, "ref_id");
+        digester.addObjectCreate("items/item/reference", Reference.class);
+        digester.addSetProperties("items/item/reference");
+        digester.addSetNext("items/item/reference", "addReferences");
 
-        digester.addSetNext("items/object/field", "addField");
-        digester.addSetNext("items/object/reference", "addReference");
-        digester.addSetNext("items/object/collection", "addCollection");
-        digester.addSetNext("items/object", "add");
+        digester.addObjectCreate("items/item/reference/ref_id", Identifier.class);
+        digester.addSetProperties("items/item/reference/ref_id", "identifier", "value");
+        digester.addSetNext("items/item/reference/ref_id", "setIdentifier");
 
+        digester.addObjectCreate("items/item/collection", ReferenceList.class);
+        digester.addSetProperties("items/item/collection");
+        digester.addSetNext("items/item/collection", "addCollections");
+
+        digester.addObjectCreate("items/item/collection/ref_id", Identifier.class);
+        digester.addSetProperties("items/item/collection/ref_id", "identifier", "value");
+        digester.addSetNext("items/item/collection/ref_id", "addIdentifiers");
 
         return (List) digester.parse(is);
     }
@@ -98,14 +109,14 @@ public class FullParser
      * @return a collection of realised business objects
      * @throws ClassNotFoundException if invalid item className found
      */
-    public static Collection realiseObjects(Collection items, Model model)
+    public static List realiseObjects(Collection items, Model model)
         throws ClassNotFoundException {
-        Map objMap = new LinkedHashMap();
+        Map objMap = new LinkedHashMap(); // map from id to outline object
 
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
-            objMap.put(item.getIdentifier(), realiseObject(item, model));
+            objMap.put(item.getIdentifier().getValue(), realiseObject(item, model));
         }
 
         iter = items.iterator();
@@ -113,17 +124,16 @@ public class FullParser
             populateObject((Item) iter.next(), objMap);
         }
 
-        Collection col = new ArrayList();
+        List result = new ArrayList();
         Iterator i = objMap.keySet().iterator();
         while (i.hasNext()) {
-            col.add(objMap.get(i.next()));
+            result.add(objMap.get(i.next()));
         }
-        //return (Collection) objMap.values();
-        return col;
+        return result;
     }
 
     /**
-     * Create an outlie business object from an Item, does not fill in fields.
+     * Create an outline business object from an Item, does not fill in fields.
      * @param item a the Item to realise
      * @param model the parent model
      * @return the materialised business object
@@ -134,13 +144,13 @@ public class FullParser
         if (item.getClassName() != null && !item.getClassName().equals("")) {
             classes.add(generateClass(item.getClassName(), model));
         }
-        List interfaces = StringUtil.tokenize(item.getImplementations());
-        Iterator intIter = interfaces.iterator();
-        while (intIter.hasNext()) {
-            classes.add(generateClass((String) intIter.next(), model));
+        if (item.getImplementations() != null) {
+            for (Iterator i =  StringUtil.tokenize(item.getImplementations()).iterator();
+                 i.hasNext();) {
+                classes.add(generateClass((String) i.next(), model));
+            }
         }
-        Object obj = DynamicUtil.createObject(classes);
-        return obj;
+        return DynamicUtil.createObject(classes);
     }
 
 
@@ -150,44 +160,39 @@ public class FullParser
      * @param objMap a map of item identifiers to outline business objects
      */
     protected static void populateObject(Item item, Map objMap) {
-        Object obj = objMap.get(item.getIdentifier());
+        Object obj = objMap.get(item.getIdentifier().getValue());
 
         try {
             // Set the data for every given Field
-            Iterator fieldIter = item.getFields().iterator();
-            while (fieldIter.hasNext()) {
-                Field field = (Field) fieldIter.next();
-                Class fieldClass = TypeUtil.getFieldInfo(obj.getClass(), field.getName()).getType();
-                if (!field.getName().equalsIgnoreCase("id")) {
-                    TypeUtil.setFieldValue(obj, field.getName(),
-                                           TypeUtil.stringToObject(fieldClass, field.getValue()));
+            Iterator attrIter = item.getAttributes().iterator();
+            while (attrIter.hasNext()) {
+                Attribute attr = (Attribute) attrIter.next();
+                Class attrClass = TypeUtil.getFieldInfo(obj.getClass(), attr.getName()).getType();
+                if (!attr.getName().equalsIgnoreCase("id")) {
+                    TypeUtil.setFieldValue(obj, attr.getName(),
+                                           TypeUtil.stringToObject(attrClass, attr.getValue()));
                 }
             }
 
             // Set the data for every given reference
             Iterator refIter = item.getReferences().iterator();
             while (refIter.hasNext()) {
-                Field field = (Field) refIter.next();
-                Class fieldClass = TypeUtil.getFieldInfo(obj.getClass(), field.getName()).getType();
-
-                Object ref = objMap.get(field.getValue());
-                TypeUtil.setFieldValue(obj, field.getName(), ref);
+                Reference ref = (Reference) refIter.next();
+                Object refObj = objMap.get(ref.getIdentifier().getValue());
+                TypeUtil.setFieldValue(obj, ref.getName(), refObj);
             }
 
             // Set objects for every collection
             Iterator colIter = item.getCollections().iterator();
             while (colIter.hasNext()) {
                 ReferenceList refList = (ReferenceList) colIter.next();
-                Method m = TypeUtil.getGetter(obj.getClass(), refList.getName());
-                Collection col = (Collection) m.invoke(obj, null);
-
-                Iterator refs = refList.getReferences().iterator();
+                Collection col = (Collection) TypeUtil.getFieldValue(obj, refList.getName());
+                Iterator refs = refList.getIdentifiers().iterator();
                 while (refs.hasNext()) {
-                    col.add(objMap.get(refs.next()));
+                    col.add(objMap.get(((Identifier) refs.next()).getValue()));
                 }
             }
         } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {
         }
     }
 

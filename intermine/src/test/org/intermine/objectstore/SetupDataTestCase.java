@@ -10,6 +10,8 @@ package org.flymine.objectstore;
  *
  */
 
+import java.io.FileWriter;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -23,11 +25,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.io.FileWriter;
-import java.io.File;
 
 import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.BagConstraint;
@@ -40,8 +39,6 @@ import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.Database;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.XmlBinding;
 import org.flymine.util.TypeUtil;
@@ -61,7 +58,9 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreQueriesTestCase.oneTimeSetUp();
         model = Model.getInstanceByName("testmodel");
-        setUpData();
+        Collection col = setUpData();
+        setIds(col);
+        data = map(col);
         // These queries are here because they require objects with IDs
         queries.put("WhereClassObject", whereClassObject());
         queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
@@ -70,17 +69,14 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("InterfaceCollection", interfaceCollection());
     }
 
-    public static void setUpData() throws Exception {
+    public static Collection setUpData() throws Exception {
         XmlBinding binding = new XmlBinding(model);
-        List col = (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"));
-        setIds(col);
-        map(col);
+        return (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"));
     }
 
     public static void main(String[] args) throws Exception {
         XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
-        setUpDataObjects();
-        Collection col = data.values();
+        Collection col = setUpDataObjects();
         setIds(col);
         binding.marshal(col, new FileWriter(File.createTempFile("testmodel_data", "xml")));
     }
@@ -94,7 +90,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     // Used to re-generate testmodel_data.xml file from java objects, called by main method
-    public static void setUpDataObjects() throws Exception {
+    public static Collection setUpDataObjects() throws Exception {
         Company companyA = (Company) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
         companyA.setName("CompanyA");
         companyA.setVatNumber(1234);
@@ -283,10 +279,11 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         set.add(address7);
         set.add(address8);
         set.add(types1);
-        map(set);
+        return set;
     }
 
-    private static void map(Collection c) throws Exception {
+    private static Map map(Collection c) throws Exception {
+        Map data = new LinkedHashMap();
         Iterator iter = c.iterator();
         while(iter.hasNext()) {
             Object o = iter.next();
@@ -305,6 +302,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
                 data.put(new Integer(o.hashCode()), o);
             }
         }
+        return data;
     }
 
     /*

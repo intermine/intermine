@@ -1,22 +1,29 @@
 <items>
-  <object xml_id="1" implements="http://www.flymine.org/testmodel#Company">
-    <field name="name" value="Company1"/>
-    <reference name="address" ref_id="2"/>
+  <item class="" implements="http://www.flymine.org/model/testmodel#Company">
+    <identifier value="1"/>
+    <attribute name="name" value="Company1"/>
+    <attribute name="vatNumber" value="10"/>
+    <reference name="address">
+      <ref_id identifier="2"/>
+    </reference>
     <collection name="departments">
-      <reference ref_id="3"/>
-      <reference ref_id="4"/>
+      <ref_id identifier="3"/>
+      <ref_id identifier="4"/>
     </collection>
-  </object>
+  </item>
 
-  <object xml_id="2" class="http://www.flymine.org/testmodel#Address">
-    <field name="address" value="Address1"/>
-  </object>
+  <item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+    <identifier value="2"/>
+    <attribute name="address" value="Address1"/>
+  </item>
 
-  <object xml_id="3" class="http://www.flymine.org/testmodel#Department">
-    <field name="name" value="Department1"/>
-  </object>
+  <item class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
+    <identifier value="3"/>
+    <attribute name="name" value="Department1"/>
+  </item>
 
-  <object xml_id="4" class="http://www.flymine.org/testmodel#Department">
-    <field name="name" value="Department2"/>
-  </object>
+  <item class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
+    <identifier value="4"/>
+    <attribute name="name" value="Department2"/>
+  </item>
 </items>

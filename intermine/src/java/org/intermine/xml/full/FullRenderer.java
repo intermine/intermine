@@ -15,12 +15,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.TreeSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.xml.XmlHelper;
+
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.ReferenceList;
+import org.flymine.model.fulldata.Reference;
 
 import org.apache.log4j.Logger;
 
@@ -41,24 +50,6 @@ public class FullRenderer
     }
 
     /**
-     * Return the Full XML file header
-     *
-     * @return the header
-     */
-    public static String getHeader() {
-        return "<items>";
-    }
-
-    /**
-     * Return the Full XML file footer
-     *
-     * @return the footer
-     */
-    public static String getFooter() {
-        return "</items>";
-    }
-
-    /**
      * Render a collection of objects as XML in FlyMine Full format.
      *
      * @param objects a collection of objects to render
@@ -66,16 +57,36 @@ public class FullRenderer
      * @return the XML for the list of objects
      */
     public static String render(Collection objects, Model model) {
-        StringBuffer sb = new StringBuffer();
+        return render(toItems(objects, model));
+    }
 
-        sb.append(getHeader() + ENDL);
-        Iterator iter = objects.iterator();
-        while (iter.hasNext()) {
-            sb.append(render((FlyMineBusinessObject) iter.next(), model));
+
+    /**
+     * Render a FlyMineBusinessObject as Xml in Full Data format.
+     * @param obj an object to render
+     * @param model the parent model
+     * @return the XML for object
+     */
+    public static String render(FlyMineBusinessObject obj, Model model) {
+        return render(toItem(obj, model));
+    }
+
+
+    /**
+     * Convert a collection of FlyMineBusinessObjects to Item format.
+     * @param objects objects to convert
+     * @param model the parent model
+     * @return a list of Full Data Items
+     */
+    public static List toItems(Collection objects, Model model) {
+        List items = new ArrayList();
+
+        Iterator objIter = objects.iterator();
+        while (objIter.hasNext()) {
+            FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+            items.add(toItem(obj, model));
         }
-        sb.append(getFooter() + ENDL);
-
-        return sb.toString();
+        return items;
     }
 
     /**
@@ -96,30 +107,81 @@ public class FullRenderer
         return sb.toString();
     }
 
+
     /**
-     * Render the given object as XML.
-     * @param obj the object to render
+     * Convert a FlyMineBusinessObject to Item format.
+     * @param obj object to convert
      * @param model the parent model
-     * @return an XML representation of the object
+     * @return a new Full Data Item
      */
-    protected static String render(FlyMineBusinessObject obj, Model model) {
+    public static Item toItem(FlyMineBusinessObject obj, Model model) {
         if (obj.getId() == null) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
 
         String className = XmlHelper.getClassName(obj, model);
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("<object xml_id=\"" + obj.getId() + "\" class=\"")
-            .append(className == "" ? "" : model.getNameSpace()
-                     + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)))
-            .append("\" implements=\"")
-            .append(getImplements(obj, model))
-            .append("\">" + ENDL)
-            .append(getFields(obj))
-            .append("</object>" + ENDL);
-        return sb.toString();
+        Item item = new Item();
+        item.setClassName(className == "" ? "" : model.getNameSpace()
+                          + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)));
+        item.setImplementations(getImplements(obj, model));
+        Identifier itemId = new Identifier();
+        itemId.setValue(obj.getId().toString());
+        item.setIdentifier(itemId);
+
+        try {
+            Map infos = TypeUtil.getFieldInfos(obj.getClass());
+            Iterator iter = infos.keySet().iterator();
+            while (iter.hasNext()) {
+                // If Reference, value is id of referred-to object
+                // If Attribute, value is field value
+                // If Collection, contains list of ids of objects in collection
+
+                // Element is not output if the value is null
+
+                String fieldname = (String) iter.next();
+                Object value = TypeUtil.getFieldValue(obj, fieldname);
+
+                if (value == null) {
+                    continue;
+                }
+                // Collection
+                if (Collection.class.isAssignableFrom(value.getClass())) {
+                    Collection col = (Collection) value;
+                    if (col.size() > 0) {
+                        ReferenceList refList = new ReferenceList();
+                        refList.setName(fieldname);
+                        Iterator j = col.iterator();
+                        while (j.hasNext()) {
+                            Identifier id = new Identifier();
+                            id.setValue(((FlyMineBusinessObject) j.next()).getId().toString());
+                            refList.addIdentifiers(id);
+                        }
+                        item.addCollections(refList);
+                    }
+                } else if (value instanceof FlyMineBusinessObject) {
+                    Reference ref = new Reference();
+                    Identifier id = new Identifier();
+                    id.setValue(((FlyMineBusinessObject) value).getId().toString());
+                    ref.setName(fieldname);
+                    ref.setIdentifier(id);
+                    item.addReferences(ref);
+                } else {
+                    if (!fieldname.equalsIgnoreCase("id")) {
+                        Attribute attr = new Attribute();
+                        attr.setName(fieldname);
+                        attr.setValue(TypeUtil.objectToString(value));
+                        item.addAttributes(attr);
+                    }
+                }
+            }
+
+        } catch (IllegalAccessException e) {
+        }
+
+        return item;
     }
+
 
     /**
      * Render the given Item as XML
@@ -127,8 +189,79 @@ public class FullRenderer
      * @return an XML representation of the Item
      */
     public static String render(Item item) {
-        return item.toString();
+        if (item.getIdentifier() == null || item.getIdentifier().getValue() == null) {
+            throw new IllegalArgumentException("Item has null Identifier");
+        }
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("<item");
+        String className = "";
+        if (item.getClassName() != null && !item.getClassName().equals("")) {
+            className = item.getClassName();
+        }
+        sb.append(" class=\"" + className + "\"");
+        if (item.getImplementations() != null && !item.getImplementations().equals("")) {
+            sb.append(" implements=\"" + item.getImplementations() + "\"");
+        }
+        sb.append(">" + ENDL)
+            .append("<identifier value=\"" + item.getIdentifier().getValue() + "\"/>" + ENDL);
+
+        TreeSet attrs = new TreeSet(new SimpleComparator());
+        attrs.addAll(item.getAttributes());
+        Iterator i = attrs.iterator();
+        while (i.hasNext()) {
+            Attribute attr = (Attribute) i.next();
+            sb.append("<attribute name=\"" + attr.getName() + "\" value=\""
+                      + attr.getValue() + "\"/>" + ENDL);
+        }
+        TreeSet refs = new TreeSet(new SimpleComparator());
+        refs.addAll(item.getReferences());
+        i = refs.iterator();
+        while (i.hasNext()) {
+            Reference ref = (Reference) i.next();
+            sb.append("<reference name=\"" + ref.getName() + "\">" + ENDL)
+                .append("<ref_id identifier=\"" + ref.getIdentifier().getValue() + "\"/>" + ENDL)
+                .append("</reference>" + ENDL);
+        }
+
+        TreeSet cols = new TreeSet(new SimpleComparator());
+        cols.addAll(item.getCollections());
+        i = cols.iterator();
+        while (i.hasNext()) {
+            ReferenceList refList = (ReferenceList) i.next();
+            sb.append("<collection name=\"" + refList.getName() + "\">" + ENDL);
+
+            Iterator j = refList.getIdentifiers().iterator();
+            while (j.hasNext()) {
+                sb.append("<ref_id identifier=\"" + ((Identifier) j.next()).getValue())
+                    .append("\"/>" + ENDL);
+            }
+            sb.append("</collection>" + ENDL);
+        }
+        sb.append("</item>" + ENDL);
+        return sb.toString();
     }
+
+
+    /**
+     * Return the Full XML file header
+     *
+     * @return the header
+     */
+    public static String getHeader() {
+        return "<items>";
+    }
+
+
+    /**
+     * Return the Full XML file footer
+     *
+     * @return the footer
+     */
+    public static String getFooter() {
+        return "</items>";
+    }
+
 
     /**
      * Get all interfaces that an object implements.
@@ -156,67 +289,6 @@ public class FullRenderer
 
 
     /**
-     * Get all fields of an object.
-     *
-     * @param obj the object
-     * @return string containing XML representation of all fields
-     */
-    protected static String getFields(FlyMineBusinessObject obj) {
-        StringBuffer sb = new StringBuffer();
-
-        try {
-            Map infos = TypeUtil.getFieldInfos(obj.getClass());
-            Iterator iter = infos.keySet().iterator();
-            while (iter.hasNext()) {
-                // If reference, value is id of referred-to object
-                // If field, value is field value
-                // If collection, ...............
-                // Element is not output if the value is null
-
-                String fieldname = (String) iter.next();
-                Object value = TypeUtil.getFieldValue(obj, fieldname);
-
-                if (value == null) {
-                    continue;
-                }
-                // Collection
-                if (Collection.class.isAssignableFrom(value.getClass())) {
-                    Collection col = (Collection) value;
-                    if (col.size() > 0) {
-                        sb.append("<collection name=\"")
-                            .append(fieldname)
-                            .append("\">" + ENDL);
-                        Iterator i = col.iterator();
-                        while (i.hasNext()) {
-                            sb.append("<reference ref_id=\"")
-                                .append(((FlyMineBusinessObject) i.next()).getId())
-                            .append("\"/>" + ENDL);
-                        }
-                        sb.append("</collection>" + ENDL);
-                    }
-                } else if (value instanceof FlyMineBusinessObject) {
-                    sb.append("<reference name=\"")
-                        .append(fieldname)
-                        .append("\" ref_id=\"")
-                        .append(((FlyMineBusinessObject) value).getId())
-                        .append("\"/>" + ENDL);
-                } else {
-                    if (!fieldname.equalsIgnoreCase("id")) {
-                        sb.append("<field name=\"")
-                            .append(fieldname)
-                            .append("\" value=\"")
-                            .append(TypeUtil.objectToString(value))
-                            .append("\"/>" + ENDL);
-                    }
-                }
-            }
-
-        } catch (IllegalAccessException e) {
-        }
-        return sb.toString();
-    }
-
-    /**
      * A simple implementation of Comparator to order pairs of Class objects.
      */
     static class SimpleComparator implements Comparator
@@ -228,7 +300,65 @@ public class FullRenderer
          * @return integer result of comparason
          */
         public int compare(Object a, Object b) {
-            return ((Class) a).getName().compareTo(((Class) b).getName());
+            if (a instanceof Class && b instanceof Class) {
+                return compare((Class) a, (Class) b);
+            } else if (a instanceof Item && b instanceof Item) {
+                return compare((Item) a, (Item) b);
+            } else if (a instanceof Identifier && b instanceof Identifier) {
+                return compare((Identifier) a, (Identifier) b);
+            } else if (a instanceof Attribute && b instanceof Attribute) {
+                return compare((Attribute) a, (Attribute) b);
+            } else if (a instanceof Reference && b instanceof Reference) {
+                return compare((Reference) a, (Reference) b);
+            } else if (a instanceof ReferenceList && b instanceof ReferenceList) {
+                return compare((ReferenceList) a, (ReferenceList) b);
+            } else {
+                throw new IllegalArgumentException("Cannot compare: " + a.getClass().getName()
+                                                   + " and " + b.getClass().getName());
+            }
+        }
+
+        private int compare(Class a, Class b) {
+            return a.getName().compareTo(b.getName());
+        }
+
+        private int compare(Item a, Item b) {
+            return a.getIdentifier().getValue().compareTo(b.getIdentifier().getValue());
+        }
+
+        private int compare(Identifier a, Identifier b) {
+            return new Integer(Integer.parseInt(a.getValue()))
+                .compareTo(new Integer(Integer.parseInt(b.getValue())));
+        }
+
+        private int compare(Attribute a, Attribute b) {
+            return a.getName().compareTo(b.getName());
+        }
+
+        private int compare(Reference a, Reference b) {
+            return a.getName().compareTo(b.getName());
+        }
+
+        private int compare(ReferenceList a, ReferenceList b) {
+            return a.getName().compareTo(b.getName());
         }
     }
+
+    /**
+     * A simple implementation of Comparator to order pairs of Identifier objects.
+     */
+    static class IdentifierComparator implements Comparator
+    {
+        /**
+         * Compare two Identifier objects by integer value.
+         * @param a an object to compare
+         * @param b an object to compare
+         * @return integer result of comparason
+         */
+        public int compare(Object a, Object b) {
+            return ((Identifier) a).getValue().compareTo(((Identifier) b).getValue());
+        }
+    }
+
+
 }

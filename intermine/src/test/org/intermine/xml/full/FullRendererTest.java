@@ -26,6 +26,12 @@ import org.flymine.util.DynamicUtil;
 import org.flymine.model.testmodel.*;
 import org.flymine.metadata.Model;
 
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
+
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -38,67 +44,47 @@ public class FullRendererTest extends XMLTestCase
         model = Model.getInstanceByName("testmodel");
     }
 
-    public void testRenderBusinessObjects() throws Exception {
-        Department d1 = new Department();
-        d1.setId(new Integer(5678));
-        Department d2 = new Department();
-        d2.setId(new Integer(6789));
+    public void testRenderItem() throws Exception {
+        Identifier id1 = newIdentifier("1");
+        Identifier id2 = newIdentifier("2");
+        Identifier id3 = newIdentifier("3");
+        Identifier id4 = newIdentifier("4");
 
-        List list = Arrays.asList(new Object[] {d1, d2});
+        Item item1 = new Item();
+        item1.setImplementations("http://www.flymine.org/testmodel#Company");
+        item1.setIdentifier(id1);
+        Attribute attr1 = new Attribute();
+        attr1.setName("name");
+        attr1.setValue("Company1");
+        item1.addAttributes(attr1);
+        Reference ref1 = new Reference();
+        ref1.setName("address");
+        ref1.setIdentifier(id2);
+        item1.addReferences(ref1);
+        ReferenceList col1 = new ReferenceList();
+        col1.setName("departments");
+        col1.addIdentifiers(id3);
+        col1.addIdentifiers(id4);
+        item1.addCollections(col1);
 
-        String expected = "<items>" + ENDL
-            + "<object xml_id=\"5678\" class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
-            + "</object>" + ENDL
-            + "<object xml_id=\"6789\" class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
-            + "</object>" + ENDL
-            + "</items>" + ENDL;
 
-        assertEquals(expected, FullRenderer.render(list, model));
+        String expected = "<item class=\"\" implements=\"http://www.flymine.org/testmodel#Company\">" + ENDL
+            + "<identifier value=\"1\"/>" + ENDL
+            + "<attribute name=\"name\" value=\"Company1\"/>" + ENDL
+            + "<reference name=\"address\">" + ENDL
+            + "<ref_id identifier=\"2\"/>" + ENDL
+            + "</reference>" + ENDL
+            + "<collection name=\"departments\">" + ENDL
+            + "<ref_id identifier=\"3\"/>" + ENDL
+            + "<ref_id identifier=\"4\"/>" + ENDL
+            + "</collection>" + ENDL
+            + "</item>" + ENDL;
+
+        assertEquals(expected, FullRenderer.render(item1));
     }
 
     public void testRenderItems() throws Exception {
-        Item item1 = new Item();
-        item1.setImplementations("http://www.flymine.org/testmodel#Company");
-        item1.setIdentifier("1");
-        Field field1 = new Field();
-        field1.setName("name");
-        field1.setValue("Company1");
-        item1.addField(field1);
-        Field ref1 = new Field();
-        ref1.setName("address");
-        ref1.setValue("2");
-        item1.addReference(ref1);
-        ReferenceList col1 = new ReferenceList();
-        col1.setName("departments");
-        col1.addValue("3");
-        col1.addValue("4");
-        item1.addCollection(col1);
-
-        Item item2 = new Item();
-        item2.setClassName("http://www.flymine.org/testmodel#Address");
-        item2.setIdentifier("2");
-        Field field2 = new Field();
-        field2.setName("address");
-        field2.setValue("Address1");
-        item2.addField(field2);
-
-        Item item3 = new Item();
-        item3.setClassName("http://www.flymine.org/testmodel#Department");
-        item3.setIdentifier("3");
-        Field field3 = new Field();
-        field3.setName("name");
-        field3.setValue("Department1");
-        item3.addField(field3);
-
-        Item item4 = new Item();
-        item4.setClassName("http://www.flymine.org/testmodel#Department");
-        item4.setIdentifier("4");
-        Field field4 = new Field();
-        field4.setName("name");
-        field4.setValue("Department2");
-        item4.addField(field4);
-
-        List exampleItems = Arrays.asList(new Object[] {item1, item2, item3, item4});
+        List exampleItems = getExampleItems();
         String generated = FullRenderer.render(exampleItems);
 
         InputStream expected = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
@@ -107,7 +93,8 @@ public class FullRendererTest extends XMLTestCase
         assertXMLEqual(new InputStreamReader(expected), new StringReader(generated));
     }
 
-    public void testRenderObjectMaterial() throws Exception {
+
+    public void testToItemMaterial() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
         e.setId(new Integer(1234));
@@ -115,15 +102,105 @@ public class FullRendererTest extends XMLTestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<object xml_id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
-            + "<field name=\"age\" value=\"0\"/>" + ENDL
-            + "<field name=\"fullTime\" value=\"false\"/>" + ENDL
-            + "<field name=\"name\" value=\"Employee1\"/>" + ENDL
-            + "<reference name=\"department\" ref_id=\"5678\"/>" + ENDL
-            + "</object>" + ENDL;
+        Item exp1 = new Item();
+        Identifier id1 = newIdentifier("1234");
+        exp1.setIdentifier(id1);
+        exp1.setClassName(model.getNameSpace() + "Employee");
+        exp1.setImplementations("http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress");
+        Attribute atr1 = new Attribute();
+        atr1.setName("name");
+        atr1.setValue("Employee1");
+        exp1.addAttributes(atr1);
+        Attribute atr2 = new Attribute();
+        atr2.setName("age");
+        atr2.setValue("0");
+        exp1.addAttributes(atr2);
+        Attribute atr3 = new Attribute();
+        atr3.setName("fullTime");
+        atr3.setValue("false");
+        exp1.addAttributes(atr3);
+        Reference ref = new Reference();
+        Identifier id2 = newIdentifier("5678");
+        ref.setName("department");
+        ref.setIdentifier(id2);
+        exp1.addReferences(ref);
 
-        assertEquals(expected, FullRenderer.render(e, model));
+        assertEquals(FullRenderer.render(exp1), FullRenderer.render(FullRenderer.toItem(e, model)));
     }
+
+
+    public void testToItemDynamic() throws Exception {
+        Department d1 = new Department();
+        d1.setId(new Integer(5678));
+        Department d2 = new Department();
+        d2.setId(new Integer(6789));
+
+        Object o = DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
+        Company c = (Company) o;
+        c.setId(new Integer(1234));
+        c.setName("BrokeCompany1");
+        c.setDepartments(Arrays.asList(new Object[] {d1, d2}));
+
+        Broke b = (Broke) o;
+        b.setDebt(10);
+
+        Identifier id1 = newIdentifier("1234");
+        Identifier id2 = newIdentifier("5678");
+        Identifier id3 = newIdentifier("6789");
+
+        Item exp1 = new Item();
+        exp1.setIdentifier(id1);
+        exp1.setClassName("");
+        exp1.setImplementations("http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company");
+        Attribute atr1 = new Attribute();
+        atr1.setName("name");
+        atr1.setValue("BrokeCompany1");
+        exp1.addAttributes(atr1);
+        Attribute atr2 = new Attribute();
+        atr2.setName("debt");
+        atr2.setValue("10");
+        exp1.addAttributes(atr2);
+        Attribute atr3 = new Attribute();
+        atr3.setName("vatNumber");
+        atr3.setValue("0");
+        exp1.addAttributes(atr3);
+        ReferenceList refList1 = new ReferenceList();
+        refList1.setName("departments");
+        refList1.addIdentifiers(id2);
+        refList1.addIdentifiers(id3);
+        exp1.addCollections(refList1);
+
+        assertEquals(FullRenderer.render(exp1), FullRenderer.render(FullRenderer.toItem(b, model)));
+    }
+
+
+    public void testToItems() throws Exception {
+        List expected = getExampleItems();
+
+        Address a1 = new Address();
+        a1.setId(new Integer(2));
+        a1.setAddress("Address1");
+        Department d1 = new Department();
+        d1.setId(new Integer(3));
+        d1.setName("Department1");
+        Department d2 = new Department();
+        d2.setId(new Integer(4));
+        d2.setName("Department2");
+
+        Object o1 = DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class})));
+        Company c1 = (Company) o1;
+        c1.setId(new Integer(1));
+        c1.setName("Company1");
+        c1.setAddress(a1);
+        c1.setVatNumber(10);
+        c1.setDepartments(Arrays.asList(new Object[] {d1, d2}));
+
+        List objects = Arrays.asList(new Object[] {c1, a1, d1, d2});
+
+        assertEquals(FullRenderer.render(expected), FullRenderer.render(FullRenderer.toItems(objects, model)));
+
+    }
+
 
     public void testRenderObjectNoId() throws Exception {
         Employee e = new Employee();
@@ -135,6 +212,29 @@ public class FullRendererTest extends XMLTestCase
         } catch (IllegalArgumentException ex) {
         }
     }
+
+
+    public void testRenderObjectMaterial() throws Exception {
+        Employee e = new Employee();
+        Department d = new Department();
+        e.setId(new Integer(1234));
+        e.setName("Employee1");
+        d.setId(new Integer(5678));
+        e.setDepartment(d);
+
+        String expected = "<item class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
+            + "<identifier value=\"1234\"/>" + ENDL
+            + "<attribute name=\"age\" value=\"0\"/>" + ENDL
+            + "<attribute name=\"fullTime\" value=\"false\"/>" + ENDL
+            + "<attribute name=\"name\" value=\"Employee1\"/>" + ENDL
+            + "<reference name=\"department\">" + ENDL
+            + "<ref_id identifier=\"5678\"/>" + ENDL
+            + "</reference>" + ENDL
+            + "</item>" + ENDL;
+
+        assertEquals(expected, FullRenderer.render(e, model));
+    }
+
 
     public void testRenderObjectDynamic() throws Exception {
         Department d1 = new Department();
@@ -151,18 +251,41 @@ public class FullRendererTest extends XMLTestCase
         Broke b = (Broke) o;
         b.setDebt(10);
 
-        String expected = "<object xml_id=\"1234\" class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
-            + "<field name=\"vatNumber\" value=\"0\"/>" + ENDL
-            + "<field name=\"debt\" value=\"10\"/>" + ENDL
+        String expected = "<item class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
+            + "<identifier value=\"1234\"/>" + ENDL
+            + "<attribute name=\"debt\" value=\"10\"/>" + ENDL
+            + "<attribute name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
+            + "<attribute name=\"vatNumber\" value=\"0\"/>" + ENDL
             + "<collection name=\"departments\">" + ENDL
-            + "<reference ref_id=\"5678\"/>" + ENDL
-            + "<reference ref_id=\"6789\"/>" + ENDL
+            + "<ref_id identifier=\"5678\"/>" + ENDL
+            + "<ref_id identifier=\"6789\"/>" + ENDL
             + "</collection>" + ENDL
-            + "<field name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
-            + "</object>" + ENDL;
+            + "</item>" + ENDL;
 
         assertEquals(expected, FullRenderer.render(b, model));
     }
+
+
+    public void testRenderBusinessObjects() throws Exception {
+        Department d1 = new Department();
+        d1.setId(new Integer(5678));
+        Department d2 = new Department();
+        d2.setId(new Integer(6789));
+
+        List list = Arrays.asList(new Object[] {d1, d2});
+
+        String expected = "<items>" + ENDL
+            + "<item class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
+            + "<identifier value=\"5678\"/>" + ENDL
+            + "</item>" + ENDL
+            + "<item class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
+            + "<identifier value=\"6789\"/>" + ENDL
+            + "</item>" + ENDL
+            + "</items>" + ENDL;
+
+        assertEquals(expected, FullRenderer.render(list, model));
+    }
+
 
     public void testRenderTypes() throws Exception {
         Types t = new Types();
@@ -184,25 +307,92 @@ public class FullRendererTest extends XMLTestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<object xml_id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
-            + "<field name=\"booleanObjType\" value=\"true\"/>" + ENDL
-            + "<field name=\"doubleType\" value=\"1.3\"/>" + ENDL
-            + "<field name=\"floatType\" value=\"1.2\"/>" + ENDL
-            + "<field name=\"longObjType\" value=\"876328471234\"/>" + ENDL
-            + "<field name=\"booleanType\" value=\"true\"/>" + ENDL
-            + "<field name=\"stringObjType\" value=\"A String\"/>" + ENDL
-            + "<field name=\"intType\" value=\"2\"/>" + ENDL
-            + "<field name=\"doubleObjType\" value=\"2.3\"/>" + ENDL
-            + "<field name=\"dateObjType\" value=\"7777777777\"/>" + ENDL
-            + "<field name=\"intObjType\" value=\"4\"/>" + ENDL
-            + "<field name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>" + ENDL
-            + "<field name=\"floatObjType\" value=\"2.2\"/>" + ENDL
-            + "<field name=\"longType\" value=\"327641237623423\"/>" + ENDL
-            + "<field name=\"shortObjType\" value=\"786\"/>" + ENDL
-            + "<field name=\"shortType\" value=\"231\"/>" + ENDL
-            + "<field name=\"name\" value=\"Types1\"/>" + ENDL
-            + "</object>" + ENDL;
+        String expected = "<item class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
+            + "<identifier value=\"1234\"/>" + ENDL
+            + "<attribute name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>" + ENDL
+            + "<attribute name=\"booleanObjType\" value=\"true\"/>" + ENDL
+            + "<attribute name=\"booleanType\" value=\"true\"/>" + ENDL
+            + "<attribute name=\"dateObjType\" value=\"7777777777\"/>" + ENDL
+            + "<attribute name=\"doubleObjType\" value=\"2.3\"/>" + ENDL
+            + "<attribute name=\"doubleType\" value=\"1.3\"/>" + ENDL
+            + "<attribute name=\"floatObjType\" value=\"2.2\"/>" + ENDL
+            + "<attribute name=\"floatType\" value=\"1.2\"/>" + ENDL
+            + "<attribute name=\"intObjType\" value=\"4\"/>" + ENDL
+            + "<attribute name=\"intType\" value=\"2\"/>" + ENDL
+            + "<attribute name=\"longObjType\" value=\"876328471234\"/>" + ENDL
+            + "<attribute name=\"longType\" value=\"327641237623423\"/>" + ENDL
+            + "<attribute name=\"name\" value=\"Types1\"/>" + ENDL
+            + "<attribute name=\"shortObjType\" value=\"786\"/>" + ENDL
+            + "<attribute name=\"shortType\" value=\"231\"/>" + ENDL
+            + "<attribute name=\"stringObjType\" value=\"A String\"/>" + ENDL
+            + "</item>" + ENDL;
 
         assertEquals(expected, FullRenderer.render(t, model));
     }
+
+    private Identifier newIdentifier(String value) {
+        Identifier id = new Identifier();
+        id.setValue(value);
+        return id;
+    }
+
+    public List getExampleItems() {
+        Identifier id1 = newIdentifier("1");
+        Identifier id2 = newIdentifier("2");
+        Identifier id3 = newIdentifier("3");
+        Identifier id4 = newIdentifier("4");
+
+        Item item1 = new Item();
+        item1.setImplementations("http://www.flymine.org/model/testmodel#Company");
+        item1.setIdentifier(id1);
+        Attribute attr1 = new Attribute();
+        attr1.setName("name");
+        attr1.setValue("Company1");
+        item1.addAttributes(attr1);
+        Attribute attr2 = new Attribute();
+        attr2.setName("vatNumber");
+        attr2.setValue("10");
+        item1.addAttributes(attr2);
+
+        Reference ref1 = new Reference();
+        ref1.setName("address");
+        ref1.setIdentifier(id2);
+        item1.addReferences(ref1);
+        ReferenceList col1 = new ReferenceList();
+        col1.setName("departments");
+        col1.addIdentifiers(id3);
+        col1.addIdentifiers(id4);
+        item1.addCollections(col1);
+
+        Item item2 = new Item();
+        item2.setClassName("http://www.flymine.org/model/testmodel#Address");
+        item2.setImplementations("http://www.flymine.org/model/testmodel#Thing");
+        item2.setIdentifier(id2);
+        Attribute attr3 = new Attribute();
+        attr3.setName("address");
+        attr3.setValue("Address1");
+        item2.addAttributes(attr3);
+
+        Item item3 = new Item();
+        item3.setClassName("http://www.flymine.org/model/testmodel#Department");
+        item3.setImplementations("http://www.flymine.org/model/testmodel#RandomInterface");
+        item3.setIdentifier(id3);
+        Attribute attr4 = new Attribute();
+        attr4.setName("name");
+        attr4.setValue("Department1");
+        item3.addAttributes(attr4);
+
+        Item item4 = new Item();
+        item4.setClassName("http://www.flymine.org/model/testmodel#Department");
+        item4.setImplementations("http://www.flymine.org/model/testmodel#RandomInterface");
+        item4.setIdentifier(id4);
+        Attribute attr5 = new Attribute();
+        attr5.setName("name");
+        attr5.setValue("Department2");
+        item4.addAttributes(attr5);
+
+        List exampleItems = Arrays.asList(new Object[] {item1, item2, item3, item4});
+        return exampleItems;
+    }
+
 }

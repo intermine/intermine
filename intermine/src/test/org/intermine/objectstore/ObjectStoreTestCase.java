@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 import org.flymine.objectstore.query.ConstraintOp;
@@ -137,7 +138,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
                              { data.get("ContractorA"), data.get("CompanyB") } };
         results.put("ContainsMN", toList(r));
-        
+
         r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
                              { data.get("ContractorA"), data.get("CompanyB") },
                              { data.get("ContractorB"), data.get("CompanyA") },
@@ -240,7 +241,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
         r = new Object[][] { { data.get("EmployeeB1") } };
         results.put("DynamicClassConstraint", toList(r));
-        
+
         r = new Object[][] { { data.get("EmployeeB1") } };
         results.put("ContainsConstraintNull", toList(r));
 
@@ -254,7 +255,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeB3") } };
         results.put("SimpleConstraintNull", toList(r));
-        
+
         r = new Object[][] { { data.get("EmployeeB1") } };
         results.put("SimpleConstraintNotNull", toList(r));
     }
@@ -309,14 +310,13 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void testLazyCollection() throws Exception {
         List r = os.execute((Query) queries.get("ContainsN1"));
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
-        List e = d.getEmployees();
-        assertTrue("Expected " + e.getClass() + " to be a SingletonResults object", e instanceof SingletonResults);
+        assertTrue("Expected " + d.getEmployees().getClass() + " to be a SingletonResults object", d.getEmployees() instanceof SingletonResults);
 
-        List expected = new ArrayList();
+        Set expected = new HashSet();
         expected.add(data.get("EmployeeA1"));
         expected.add(data.get("EmployeeA2"));
         expected.add(data.get("EmployeeA3"));
-        assertEquals(expected, e);
+        assertEquals(expected, new HashSet(d.getEmployees()));
     }
 
     public void testLazyCollectionMtoN() throws Exception {
@@ -332,19 +332,19 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
         Company c = (Company) rr.get(0);
-        List contractors = c.getContractors();
-        assertTrue("Expected " + contractors.getClass() + " to be a SingletonResults object", contractors instanceof SingletonResults);
-        List expected1 = new ArrayList();
+        assertTrue("Expected " + c.getContractors().getClass() + " to be a SingletonResults object", c.getContractors() instanceof SingletonResults);
+        Set contractors = new HashSet(c.getContractors());
+        Set expected1 = new HashSet();
         expected1.add(data.get("ContractorA"));
         expected1.add(data.get("ContractorB"));
         assertEquals(expected1, contractors);
 
-        List companies = ((Contractor) contractors.get(0)).getCompanys();
-        assertTrue("Expected " + companies.getClass() + " to be a SingletonResults object", companies instanceof SingletonResults);
-        List expected2 = new ArrayList();
+        Contractor contractor1 = (Contractor) contractors.iterator().next();
+        assertTrue("Expected " + contractor1.getCompanys().getClass() + " to be a SingletonResults object", contractor1.getCompanys() instanceof SingletonResults);
+        Set expected2 = new HashSet();
         expected2.add(data.get("CompanyA"));
         expected2.add(data.get("CompanyB"));
-        assertEquals(expected2, companies);
+        assertEquals(expected2, new HashSet(contractor1.getCompanys()));
     }
 
     // setDistinct tests
@@ -435,7 +435,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         cs.addConstraint(new SimpleConstraint(new QueryField(c, "bigDecimalObjType"), ConstraintOp.EQUALS, new QueryValue(new BigDecimal("876323428764587621764532432.8768173432887324123645"))));
         cs.addConstraint(new SimpleConstraint(new QueryField(c, "stringObjType"), ConstraintOp.EQUALS, new QueryValue("A test String")));
         cs.addConstraint(new SimpleConstraint(new QueryField(c, "dateObjType"), ConstraintOp.EQUALS, new QueryValue(new Date(7777777l))));
-        
+
         q.setConstraint(cs);
         Results res = os.execute(q);
         Types d = (Types) ((List) res.get(0)).get(0);
@@ -487,7 +487,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         assertEquals(a, b);
         assertTrue(a == b);
     }
-    
+
     // helper method
 
     protected static List toList(Object[][] o) {

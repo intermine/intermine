@@ -27,10 +27,12 @@ import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.sql.Database;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.DatabaseUtil;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Field;
-import org.flymine.xml.full.ReferenceList;
 import org.flymine.xml.full.FullRenderer;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
 
 import org.apache.log4j.Logger;
 
@@ -113,26 +115,26 @@ public class ChadoConvertor
             String clsId = r.getObject(clsName + "_id").toString();
             Item item = new Item();
             item.setClassName(cld.getModel().getNameSpace() + clsName);
-            item.setIdentifier(clsId);
+            item.setIdentifier(newIdentifier(clsId));
             LOG.info("Processing item: " + clsName + " " + clsId);
             for (Iterator fdIter = cld.getFieldDescriptors().iterator(); fdIter.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) fdIter.next();
                 String fieldName = fd.getName();
                 if (fd.isAttribute()) {
-                    Field f = new Field();
-                    f.setName(fieldName);
+                    Attribute attr = new Attribute();
+                    attr.setName(fieldName);
                     Object value = r.getObject(fieldName);
                     if (value != null) {
-                        f.setValue(TypeUtil.objectToString(value));
-                        item.addField(f);
+                        attr.setValue(TypeUtil.objectToString(value));
+                        item.addAttributes(attr);
                     }
                 } else if (fd.isReference()) {
-                    Field f = new Field();
-                    f.setName(fieldName);
+                    Reference ref = new Reference();
+                    ref.setName(fieldName);
                     Object value = r.getObject(fieldName + "_id");
                     if (value != null) {
-                        f.setValue(TypeUtil.objectToString(value));
-                        item.addReference(f);
+                        ref.setIdentifier(newIdentifier(TypeUtil.objectToString(value)));
+                        item.addReferences(ref);
                     }
                 } else if (fd.isCollection()) {
                     String sql;
@@ -154,10 +156,10 @@ public class ChadoConvertor
                     ReferenceList refs = new ReferenceList();
                     refs.setName(fieldName);
                     while (idSet.next()) {
-                        refs.addValue(idSet.getObject(1).toString());
+                        refs.addIdentifiers(newIdentifier(idSet.getObject(1).toString()));
                     }
-                    if (refs.getReferences().size() > 0) {
-                        item.addCollection(refs);
+                    if (refs.getIdentifiers().size() > 0) {
+                        item.addCollections(refs);
                     }
                 }
             }
@@ -205,6 +207,12 @@ public class ChadoConvertor
     protected  ResultSet executeQuery(Connection c, String sql) throws SQLException {
         Statement s = c.createStatement();
         return s.executeQuery(sql);
+    }
+
+    private Identifier newIdentifier(String value) {
+        Identifier id = new Identifier();
+        id.setValue(value);
+        return id;
     }
 
 //     public static void main(String[] args) throws Exception {

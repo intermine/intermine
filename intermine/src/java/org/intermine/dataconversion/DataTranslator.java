@@ -15,16 +15,16 @@ import java.util.LinkedHashSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Field;
-import org.flymine.xml.full.ReferenceList;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
 import org.flymine.ontology.OntologyUtil;
-
+import org.flymine.util.StringUtil;
 
 /**
  * Convert data in FlyMine Full XML format conforming to a source OWL definition
@@ -35,7 +35,6 @@ import org.flymine.ontology.OntologyUtil;
  */
 public class DataTranslator
 {
-
     /**
      * Convert a list of Items in source format to a list of items conforming
      * to target OWL where mapping between OWL model is described by equivalence
@@ -68,43 +67,45 @@ public class DataTranslator
         Item tgtItem = new Item();
         tgtItem.setIdentifier(srcItem.getIdentifier());
         tgtItem.setClassName(((Resource) equivMap.get(srcItem.getClassName())).getURI());
-        StringTokenizer tokenizer = new StringTokenizer(srcItem.getImplementations(),
-                                                        " ", false);
-        String imps = "";
-        while (tokenizer.hasMoreTokens()) {
-            imps += ((Resource) equivMap.get(tokenizer.nextToken())).getURI() + " ";
-        }
-        tgtItem.setImplementations(imps.trim());
 
-        Iterator fieldIter = srcItem.getFields().iterator();
-        while (fieldIter.hasNext()) {
-            Field field = (Field) fieldIter.next();
-            Field newField = new Field();
-            newField.setName(OntologyUtil.getFragmentFromURI(
-                ((Resource) equivMap.get(ns + field.getName())).getURI()));
-            newField.setValue(field.getValue());
-            tgtItem.addField(newField);
+        //implementations
+        String imps = srcItem.getImplementations();
+        String newImps = "";
+        if (imps != null) {
+            for (Iterator i = StringUtil.tokenize(imps).iterator(); i.hasNext();) {
+                newImps += ((Resource) equivMap.get((String) i.next())).getURI() + " ";
+            }
         }
-        Iterator refIter = srcItem.getReferences().iterator();
-        while (refIter.hasNext()) {
-            Field field = (Field) refIter.next();
-            Field newField = new Field();
-            newField.setName(OntologyUtil.getFragmentFromURI(
-                ((Resource) equivMap.get(ns + field.getName())).getURI()));
-            newField.setValue(field.getValue());
-            tgtItem.addReference(newField);
+        tgtItem.setImplementations(newImps.trim());
+
+        //attributes
+        for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
+            Attribute attr = (Attribute) i.next();
+            Attribute newAttr = new Attribute();
+            newAttr.setName(OntologyUtil.getFragmentFromURI(
+                ((Resource) equivMap.get(ns + attr.getName())).getURI()));
+            newAttr.setValue(attr.getValue());
+            tgtItem.addAttributes(newAttr);
         }
-        Iterator colIter = srcItem.getCollections().iterator();
-        while (colIter.hasNext()) {
-            ReferenceList col = (ReferenceList) colIter.next();
+
+        //references
+        for (Iterator i = srcItem.getReferences().iterator(); i.hasNext();) {
+            Reference ref = (Reference) i.next();
+            Reference newRef = new Reference();
+            newRef.setName(OntologyUtil.getFragmentFromURI(
+                ((Resource) equivMap.get(ns + ref.getName())).getURI()));
+            newRef.setIdentifier(ref.getIdentifier());
+            tgtItem.addReferences(newRef);
+        }
+
+        //collections
+        for (Iterator i = srcItem.getCollections().iterator(); i.hasNext();) {
+            ReferenceList col = (ReferenceList) i.next();
             ReferenceList newCol = new ReferenceList();
             newCol.setName(OntologyUtil.getFragmentFromURI(
                 ((Resource) equivMap.get(ns + col.getName())).getURI()));
-            Iterator i = col.getReferences().iterator();
-            while (i.hasNext()) {
-                newCol.addValue((String) i.next());
-            }
-            tgtItem.addCollection(newCol);
+            newCol.setIdentifiers(col.getIdentifiers());
+            tgtItem.addCollections(newCol);
         }
         return tgtItem;
     }

@@ -13,7 +13,6 @@ package org.flymine.dataconversion;
 import junit.framework.*;
 
 import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.InputStream;
@@ -23,14 +22,14 @@ import org.biomage.Description.OntologyEntry;
 import org.biomage.Description.DatabaseEntry;
 import org.biomage.BioSequence.SeqFeature;
 import org.biomage.tools.xmlutils.*;
-import org.biomage.Common.MAGEJava;
 
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Field;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.FullRenderer;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
 import org.flymine.xml.full.FullParser;
-
+import org.flymine.xml.full.FullRenderer;
 
 public class MageConvertorTest extends TestCase
 {
@@ -46,7 +45,7 @@ public class MageConvertorTest extends TestCase
         List items = new ArrayList(convertor.convertMageML(is, ns));
 
         List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/MAGEConvertor_test.xml"));
-        assertEquals(expected, items);
+        assertEquals(FullRenderer.render(expected), FullRenderer.render(items));
     }
 
     public void testCreateItemAttribute() throws Exception {
@@ -57,13 +56,13 @@ public class MageConvertorTest extends TestCase
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
-        expected.setIdentifier("1");
-        Field f1 = new Field();
-        f1.setName("sequence");
-        f1.setValue("GATTACA");
-        expected.addField(f1);
+        expected.setIdentifier(newIdentifier("1"));
+        Attribute attr = new Attribute();
+        attr.setName("sequence");
+        attr.setValue("GATTACA");
+        expected.addAttributes(attr);
 
-        assertEquals(expected, convertor.createItem(bio, ns));
+        assertEquals(FullRenderer.render(expected), FullRenderer.render(convertor.createItem(bio, ns)));
     }
 
 
@@ -75,12 +74,12 @@ public class MageConvertorTest extends TestCase
 
         Item expected = new Item();
         expected.setClassName(ns + "SeqFeature");
-        expected.setIdentifier("1");
-        Field f1 = new Field();
-        f1.setName("basis");
-        f1.setValue("both");
-        expected.addField(f1);
-        assertEquals(expected, convertor.createItem(s1, ns));
+        expected.setIdentifier(newIdentifier("1"));
+        Attribute attr = new Attribute();
+        attr.setName("basis");
+        attr.setValue("both");
+        expected.addAttributes(attr);
+        assertEquals(FullRenderer.render(expected), FullRenderer.render(convertor.createItem(s1, ns)));
     }
 
 
@@ -95,20 +94,20 @@ public class MageConvertorTest extends TestCase
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
-        expected.setIdentifier("1");
+        expected.setIdentifier(newIdentifier("1"));
         Item item2 = new Item();
         item2.setClassName(ns + "OntologyEntry");
-        item2.setIdentifier("2");
-        Field f2 = new Field();
-        f2.setName("value");
-        f2.setValue("Term");
-        item2.addField(f2);
-        Field f1 = new Field();
-        f1.setName("polymerType");
-        f1.setValue("2");
-        expected.addReference(f1);
+        item2.setIdentifier(newIdentifier("2"));
+        Attribute attr = new Attribute();
+        attr.setName("value");
+        attr.setValue("Term");
+        item2.addAttributes(attr);
+        Reference ref = new Reference();
+        ref.setName("polymerType");
+        ref.setIdentifier(newIdentifier("2"));
+        expected.addReferences(ref);
 
-        assertEquals(expected, convertor.createItem(bio, ns));
+        assertEquals(FullRenderer.render(expected), FullRenderer.render(convertor.createItem(bio, ns)));
     }
 
 
@@ -125,29 +124,35 @@ public class MageConvertorTest extends TestCase
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
-        expected.setIdentifier("1");
+        expected.setIdentifier(newIdentifier("1"));
         Item item2 = new Item();
         item2.setClassName(ns + "DatabaseEntry");
-        item2.setIdentifier("2");
-        Field f1 = new Field();
-        f1.setName("uri");
-        f1.setValue("www.test1.org");
-        item2.addField(f1);
+        item2.setIdentifier(newIdentifier("2"));
+        Attribute attr1 = new Attribute();
+        attr1.setName("uri");
+        attr1.setValue("www.test1.org");
+        item2.addAttributes(attr1);
 
         Item item3 = new Item();
         item3.setClassName(ns + "DatabaseEntry");
-        item3.setIdentifier("3");
-        Field f2 = new Field();
-        f2.setName("uri");
-        f2.setValue("www.test1.org");
-        item3.addField(f2);
+        item3.setIdentifier(newIdentifier("3"));
+        Attribute attr2 = new Attribute();
+        attr2.setName("uri");
+        attr2.setValue("www.test1.org");
+        item3.addAttributes(attr2);
 
         ReferenceList r1 = new ReferenceList();
         r1.setName("sequenceDatabases");
-        r1.addValue("2");
-        r1.addValue("3");
-        expected.addCollection(r1);
+        r1.addIdentifiers(newIdentifier("2"));
+        r1.addIdentifiers(newIdentifier("3"));
+        expected.addCollections(r1);
 
-        assertEquals(expected, convertor.createItem(bio, ns));
+        assertEquals(FullRenderer.render(expected), FullRenderer.render(convertor.createItem(bio, ns)));
+    }
+
+    private Identifier newIdentifier(String value) {
+        Identifier id = new Identifier();
+        id.setValue(value);
+        return id;
     }
 }

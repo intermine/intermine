@@ -30,12 +30,14 @@ import com.mockobjects.sql.MockMultiRowResultSet;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
 import org.flymine.util.TypeUtil;
-import org.flymine.xml.full.Field;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.ReferenceList;
 import org.flymine.xml.full.FullRenderer;
 
 public class ChadoConvertorTest extends TestCase {
@@ -45,7 +47,7 @@ public class ChadoConvertorTest extends TestCase {
     private Database db;
     private MockSingleRowResultSet blank;
     private Collection items;
-    
+
     public void setUp() throws Exception {
         map = new HashMap();
         model = Model.getInstanceByName("testmodel");
@@ -72,14 +74,14 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("12");
-        Field field = new Field();
-        field.setName("name");
-        field.setValue("DepartmentA1");
-        item.addField(field);
+        item.setIdentifier(newIdentifier("12"));
+        Attribute attr = new Attribute();
+        attr.setName("name");
+        attr.setValue("DepartmentA1");
+        item.addAttributes(attr);
 
         convertor.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(FullRenderer.render(Collections.singletonList(item)), FullRenderer.render(items));
     }
 
     public void testReference() throws Exception {
@@ -98,14 +100,14 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("12");
-        Field field = new Field();
-        field.setName("company");
-        field.setValue("14");
-        item.addReference(field);
+        item.setIdentifier(newIdentifier("12"));
+        Reference ref = new Reference();
+        ref.setName("company");
+        ref.setIdentifier(newIdentifier("14"));
+        item.addReferences(ref);
 
         convertor.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(FullRenderer.render(Collections.singletonList(item)), FullRenderer.render(items));
     }
 
     public void test1NCollection() throws Exception {
@@ -129,15 +131,15 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("12");
+        item.setIdentifier(newIdentifier("12"));
         ReferenceList refs = new ReferenceList();
         refs.setName("employees");
-        refs.addValue("1");
-        refs.addValue("2");
-        item.addCollection(refs);
+        refs.addIdentifiers(newIdentifier("1"));
+        refs.addIdentifiers(newIdentifier("2"));
+        item.addCollections(refs);
 
         convertor.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(FullRenderer.render(Collections.singletonList(item)), FullRenderer.render(items));
     }
 
     public void testMNCollection() throws Exception {
@@ -162,15 +164,15 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Company");
-        item.setIdentifier("12");
+        item.setIdentifier(newIdentifier("12"));
         ReferenceList refs = new ReferenceList();
         refs.setName("contractors");
-        refs.addValue("1");
-        refs.addValue("2");
-        item.addCollection(refs);
+        refs.addIdentifiers(newIdentifier("1"));
+        refs.addIdentifiers(newIdentifier("2"));
+        item.addCollections(refs);
 
         convertor.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(FullRenderer.render(Collections.singletonList(item)), FullRenderer.render(items));
     }
 
     public void testUnidirectional() throws Exception {
@@ -183,21 +185,21 @@ public class ChadoConvertorTest extends TestCase {
 
         map.put("SELECT * FROM Contractor ORDER BY Contractor_id LIMIT 1", msrs);
         map.put("SELECT * FROM Contractor WHERE Contractor_id > 12 ORDER BY Contractor_id LIMIT 1", blank);
-        
+
         map.put("SELECT Company_id FROM Contractor_Company WHERE Contractor_id = 12", blank);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Contractor");
-        item.setIdentifier("12");
-        Field field = new Field();
-        field.setName("personalAddress");
-        field.setValue("14");
-        item.addReference(field);
+        item.setIdentifier(newIdentifier("12"));
+        Reference ref = new Reference();
+        ref.setName("personalAddress");
+        ref.setIdentifier(newIdentifier("14"));
+        item.addReferences(ref);
 
         convertor.processClassDescriptor(cld);
-        assertEquals(Collections.singletonList(item), items);
+        assertEquals(FullRenderer.render(Collections.singletonList(item)), FullRenderer.render(items));
     }
-    
+
     public void testMultipleInstances() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
 
@@ -218,22 +220,22 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("12");
-        Field field = new Field();
-        field.setName("name");
-        field.setValue("DepartmentA1");
-        item.addField(field);
+        item.setIdentifier(newIdentifier("12"));
+        Attribute attr = new Attribute();
+        attr.setName("name");
+        attr.setValue("DepartmentA1");
+        item.addAttributes(attr);
 
         Item item2 = new Item();
         item2.setClassName(model.getNameSpace() + "Department");
-        item2.setIdentifier("13");
-        Field field2 = new Field();
-        field2.setName("name");
-        field2.setValue("DepartmentA2");
-        item2.addField(field2);
+        item2.setIdentifier(newIdentifier("13"));
+        Attribute attr2 = new Attribute();
+        attr2.setName("name");
+        attr2.setValue("DepartmentA2");
+        item2.addAttributes(attr2);
 
         convertor.processClassDescriptor(cld);
-        assertEquals(Arrays.asList(new Object[] {item, item2}), items);
+        assertEquals(FullRenderer.render(Arrays.asList(new Object[] {item, item2})), FullRenderer.render(items));
     }
 
     public void testMultipleClasses() throws Exception {
@@ -255,11 +257,11 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("12");
-        Field field = new Field();
-        field.setName("name");
-        field.setValue("DepartmentA1");
-        item.addField(field);
+        item.setIdentifier(newIdentifier("12"));
+        Attribute attribute = new Attribute();
+        attribute.setName("name");
+        attribute.setValue("DepartmentA1");
+        item.addAttributes(attribute);
 
         MockSingleRowResultSet mrs2 = new MockSingleRowResultSet();
         mrs2.addExpectedNamedValues(
@@ -274,10 +276,10 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item2 = new Item();
         item2.setClassName(model.getNameSpace() + "Company");
-        item2.setIdentifier("13");
+        item2.setIdentifier(newIdentifier("13"));
 
         convertor.process();
-        assertEquals(Arrays.asList(new Object[] {item, item2}), items); 
+        assertEquals(FullRenderer.render(Arrays.asList(new Object[] {item, item2})), FullRenderer.render(items));
     }
 
     public void testProcessWriter() throws Exception {
@@ -299,11 +301,11 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("12");
-        Field field = new Field();
-        field.setName("name");
-        field.setValue("DepartmentA1");
-        item.addField(field);
+        item.setIdentifier(newIdentifier("12"));
+        Attribute attr = new Attribute();
+        attr.setName("name");
+        attr.setValue("DepartmentA1");
+        item.addAttributes(attr);
 
         MockSingleRowResultSet mrs2 = new MockSingleRowResultSet();
         mrs2.addExpectedNamedValues(
@@ -318,12 +320,18 @@ public class ChadoConvertorTest extends TestCase {
 
         Item item2 = new Item();
         item2.setClassName(model.getNameSpace() + "Company");
-        item2.setIdentifier("13");
+        item2.setIdentifier(newIdentifier("13"));
 
         convertor = new MockChadoConvertor(model, db, null);
         StringWriter sw = new StringWriter();
         convertor.process(sw);
-        assertEquals(FullRenderer.render(Arrays.asList(new Object[] {item, item2})), sw.toString()); 
+        assertEquals(FullRenderer.render(Arrays.asList(new Object[] {item, item2})), sw.toString());
+    }
+
+    private Identifier newIdentifier(String value) {
+        Identifier id = new Identifier();
+        id.setValue(value);
+        return id;
     }
 
     class MockChadoConvertor extends ChadoConvertor {
@@ -343,7 +351,6 @@ public class ChadoConvertorTest extends TestCase {
         }
 
         protected ResultSet executeQuery(Connection c, String sql) throws SQLException {
-            System.out.println(sql);
             ResultSet rs = (ResultSet) map.get(sql);
             if (rs == null) {
                 throw new RuntimeException("SQL string not found in ResultSet map: " + sql);

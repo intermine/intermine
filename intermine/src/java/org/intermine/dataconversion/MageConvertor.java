@@ -23,10 +23,13 @@ import java.io.InputStream;
 
 import org.biomage.tools.xmlutils.MAGEReader;
 
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Field;
-import org.flymine.xml.full.ReferenceList;
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Identifier;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+import org.flymine.model.fulldata.ReferenceList;
 import org.flymine.util.TypeUtil;
+
 
 /**
  * Convert MAGE-ML to FlyMine Full Data Xml via MAGE-OM objects.
@@ -86,8 +89,7 @@ public class MageConvertor
         item.setClassName(ns + TypeUtil.unqualifiedName(cls.getName()));
 
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")) {
-            Integer identifier = nextIdentifier();
-            item.setIdentifier(identifier.toString());
+            item.setIdentifier(newIdentifier(nextIdentifier().toString()));
             seenMap.put(obj, item);
         }
 
@@ -105,30 +107,32 @@ public class MageConvertor
                         Iterator refIter = ((Collection) value).iterator();
                         if (refIter.hasNext()) {
                             while (refIter.hasNext()) {
-                                ref.addValue(createItem(refIter.next(), ns).getIdentifier()
-                                             .toString());
+                                ref.addIdentifiers(createItem(refIter.next(), ns)
+                                                   .getIdentifier());
                             }
-                            item.addCollection(ref);
+                            item.addCollections(ref);
                         }
                     } else if (m.getReturnType().getName().startsWith("org.biomage")) {
-
-                        // reference
-                        Field f = new Field();
-                        f.setName(info.getName());
                         if (m.getReturnType().getName().startsWith(cls.getName() + "$")) {
+                            //attribute
+                            Attribute attr = new Attribute();
+                            attr.setName(info.getName());
                             Method getName = value.getClass().getMethod("getName", null);
-                            f.setValue((String) getName.invoke(value, null));
-                            item.addField(f);
+                            attr.setValue((String) getName.invoke(value, null));
+                            item.addAttributes(attr);
                         } else {
-                            f.setValue(createItem(value, ns).getIdentifier().toString());
-                            item.addReference(f);
+                            //reference
+                            Reference ref = new Reference();
+                            ref.setName(info.getName());
+                            ref.setIdentifier(createItem(value, ns).getIdentifier());
+                            item.addReferences(ref);
                         }
                     } else {
                         // attribute
-                        Field f = new Field();
-                        f.setName(info.getName());
-                        f.setValue(value.toString());
-                        item.addField(f);
+                        Attribute attr = new Attribute();
+                        attr.setName(info.getName());
+                        attr.setValue(value.toString());
+                        item.addAttributes(attr);
                         // TODO handle dates?
                     }
                 }
@@ -136,7 +140,6 @@ public class MageConvertor
         }
         return item;
     }
-
 
     /**
      * Get the next identifier number in sequence.
@@ -146,4 +149,9 @@ public class MageConvertor
         return new Integer(++identifier);
     }
 
+    private Identifier newIdentifier(String value) {
+        Identifier id = new Identifier();
+        id.setValue(value);
+        return id;
+    }
 }
