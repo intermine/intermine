@@ -46,6 +46,8 @@ public abstract class TableHelper
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ObjectStoreQueryDurationException) {
                 throw (ObjectStoreQueryDurationException) e.getCause();
+            } else {
+                throw e;
             }
         }
 
