@@ -219,6 +219,9 @@
                     <span class="constraint">
                       <c:out value="${constraint.op}"/>
                       <c:choose>
+                        <c:when test="${node.reference}">
+                          <c:out value=" ${fn:replace(constraintDisplayValues[constraint], '.', ' > ')}"/>
+                        </c:when>
                         <c:when test="${constraint.value.class.name == 'java.util.Date'}">
                           <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
                         </c:when>
@@ -418,7 +421,7 @@
                   <html:select property="loopQueryValue">
                     <c:forEach items="${loopQueryPaths}" var="loopPath">
                       <html:option value="${loopPath}">
-                        <c:out value="${loopQueryPathsDisplay[loopPath]}"/>
+                        <c:out value="${fn:replace(loopPath, '.', ' > ')}"/>
                       </html:option>
                     </c:forEach>
                   </html:select>
