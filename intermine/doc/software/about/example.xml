@@ -62,7 +62,7 @@
   </para>
 
   <para>
-    Given this data, the model, and some extra configuration information InterMine is capable of storing the data in a relational database. The data is subsequently accessible using an object-oriented query language that returns Java objects representing the data. The system is capable of exposing the datastore to web users using an HTML interface, and other remote users using a SOAP interface. Ultimately this means that whilst the prerequisites for building an InterMine database include the installation of a relational database (PostgreSQL) and a Java runtime, end users can simply use a web browser or a simple Java API (which accepts queries in object-oriented, or OQL-like format) to access the data.
+    Given this data, the model, and some extra configuration information InterMine is capable of storing the data in a relational database. The data is subsequently accessible using an object-oriented query language that returns Java objects representing the data. The system is capable of exposing the datastore to web users using an HTML interface, and other remote users using a SOAP interface. Ultimately this means that whilst the prerequisites for building an InterMine database include the installation of a relational database (PostgreSQL) and a Java runtime, end users can simply use a web browser or a simple Java API (which accepts queries in either an <ulink url="../java_query/spec.xml">object-oriented</ulink> or <ulink url="../iql_query/spec.xml">OQL-like format</ulink>) to access the data.
   </para>
 
   <para>
