@@ -5,7 +5,6 @@
 <!-- geneLong.jsp -->
 <fmt:setBundle basename="model"/>
 
-<br/>
 <html:link action="/objectDetails?id=${object.organism.id}">
   <c:out value="${object.organism.name}"/>
 </html:link>
@@ -19,18 +18,25 @@
   <br/>
   <fmt:message key="gene.synonyms"/>:<br/>
   <ul>
-  <c:forEach items="${object.synonyms}" var="thisSynonym">
-    <c:set var="sourceTitle" value="${thisSynonym.source.title}"/>
-    <c:set var="linkProperty" value="${sourceTitle}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
-    <li>
-      <html:img src="model/${sourceTitle}_logo_small.png"/>
-      <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
-                 title="${sourceTitle}: ${thisSynonym.synonym}"
-                 target="view_window">
-        <c:out value="${thisSynonym.synonym}"/>
-      </html:link>
-    </li>
-  </c:forEach>
+    <c:forEach items="${object.synonyms}" var="thisSynonym">
+      <c:set var="sourceTitle" value="${thisSynonym.source.title}"/>
+      <c:set var="linkProperty" value="${sourceTitle}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
+      <li>
+        <html:img src="model/${sourceTitle}_logo_small.png"/>
+        <c:choose>
+          <c:when test="${empty WEB_PROPERTIES[linkProperty]}">
+            <c:out value="${thisSynonym.synonym}"/>
+          </c:when>
+          <c:otherwise>
+            <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
+                       title="${sourceTitle}: ${thisSynonym.synonym}"
+                       target="view_window">
+              <c:out value="${thisSynonym.synonym}"/>
+            </html:link>
+          </c:otherwise>
+        </c:choose>
+      </li>
+    </c:forEach>
   </ul>
 </c:if>
 <!-- /geneLong.jsp -->
