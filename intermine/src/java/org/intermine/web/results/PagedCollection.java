@@ -10,21 +10,19 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Arrays;
+import java.util.AbstractList;
 
 /**
  * A pageable and configurable table created from a Collection.
- *
- * @author Andrew Varley
- * @author Kim Rutherford
+ * @author Mark Woodbridge
  */
 public class PagedCollection extends PagedTable
 {
-    protected List list = new ArrayList();
+    protected List list;
 
     /**
      * Create a new PagedCollection object from the given Collection.
@@ -35,23 +33,20 @@ public class PagedCollection extends PagedTable
      */
     public PagedCollection(String name, Collection collection) {
         super(Arrays.asList(new Object[] {name}));
-
-        for (Iterator i = collection.iterator(); i.hasNext();) {
-            ArrayList row = new ArrayList();
-            row.add(i.next());
-            list.add(row);
+        if (collection instanceof List) {
+            list = (List) collection;
+        } else {
+            list = new ArrayList(collection);
         }
-
-        updateRows();
-
         ((Column) getColumns().get(0)).setType(Object.class);
+        updateRows();
     }
 
     /**
      * @see PagedTable#getAllRows
      */
     public List getAllRows() {
-        return list;
+        return new TableAdapter(list);
     }
 
     /**
@@ -79,7 +74,7 @@ public class PagedCollection extends PagedTable
      * @see PagedTable#updateRows
      */
     protected void updateRows() {
-        rows = list.subList(startRow, Math.min(startRow + pageSize, list.size()));
+        rows = new TableAdapter(list.subList(startRow, Math.min(startRow + pageSize, list.size())));
     }
 
     /**
@@ -87,5 +82,34 @@ public class PagedCollection extends PagedTable
      */
     public int getMaxRetrievableIndex() {
         return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Class to turn a List into a List of Lists of one element
+     */
+    class TableAdapter extends AbstractList
+    {
+        List list;
+        /**
+         * Constructor
+         * @param list a List
+         */
+        TableAdapter(List list) {
+            this.list = list;
+        }
+        /**
+         * @see AbstractList#get
+         */
+        public Object get(int i) {
+            ArrayList row = new ArrayList();
+            row.add(list.get(i));
+            return row;
+        }
+        /**
+         * @see AbstractList#size
+         */
+        public int size() {
+            return list.size();
+        }
     }
 }
