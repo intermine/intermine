@@ -121,7 +121,7 @@ public class PathQueryBinding
                 int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
                 ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
                 Object constraintValue;
-                if (BagConstraint.VALID_OPS.contains(constraintOp)) {
+                if (node.isReference() || BagConstraint.VALID_OPS.contains(constraintOp)) {
                     constraintValue =  attrs.getValue("value");
                 } else {
                     constraintValue = TypeUtil.stringToObject(MainHelper.getClass(node.getType()),
