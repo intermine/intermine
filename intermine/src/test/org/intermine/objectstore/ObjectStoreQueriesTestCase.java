@@ -101,6 +101,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
             } else {
                 Object result = results.get(type);
                 if (result != NO_RESULT) {
+                    long startTime = System.currentTimeMillis();
                     try {
                         executeTest(type);
                     } catch (AssertionFailedError e) {
@@ -111,6 +112,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                         writer.println("\n" + type + " produced an error:");
                         t.printStackTrace(writer);
                         status = 2;
+                    } finally {
+                        System.out.println("Test " + type + " took " + (System.currentTimeMillis() - startTime) + " ms");
                     }
                 }
             }
