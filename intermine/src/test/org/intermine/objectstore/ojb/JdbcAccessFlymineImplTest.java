@@ -31,7 +31,7 @@ import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.sql.Database;
-
+import org.flymine.sql.query.ExplainResult;
 
 public class JdbcAccessFlymineImplTest extends QueryTestCase
 {
@@ -135,21 +135,12 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
     }
 
 
-    /**** test values when data is put in db
-    public void testSimpleQueryValues() throws Exception {
-        ResultSetAndStatement retval =
-            new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
-        retval = ja.executeQuery(q1, 0, 10);
-        retval.m_rs.next();
-
-        assertEquals(retval.m_rs.getString("a1_name"), "CompanyA");
-        assertEquals(retval.m_rs.getInt("a1_vatNumber"), 1234);
-
-        if (retval.m_rs.next()) {
-            fail("Expected only one row in ResultSet");
+    public void testExplainNotNull() throws Exception {
+        ExplainResult er = ja.explainQuery(q1, 0, 10);
+        if (er == null) {
+            fail("a null ExplainResult was returned");
         }
     }
-    ****/
 
 
     class ResultsHolder {
