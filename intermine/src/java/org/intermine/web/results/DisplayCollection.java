@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.proxy.LazyCollection;
 
 /**
  * Class to represent a collection field of an object for the webapp
@@ -34,7 +34,7 @@ public class DisplayCollection
      * @param cld the type of this collection
      * @throws Exception if an error occurs
      */
-    public DisplayCollection(SingletonResults collection, ClassDescriptor cld) throws Exception {
+    public DisplayCollection(LazyCollection collection, ClassDescriptor cld) throws Exception {
         this.cld = cld;
         table = new InlineResultsTable(collection);
         size = collection.getInfo().getRows();

@@ -21,7 +21,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.proxy.ProxyCollection;
+import org.intermine.objectstore.proxy.LazyCollection;
 
 import org.intermine.util.TypeUtil;
 
@@ -81,8 +81,7 @@ public class DisplayObject
                         ClassDescriptor refCld =
                             ((CollectionDescriptor) fd).getReferencedClassDescriptor();
                         DisplayCollection collection =
-                            new DisplayCollection(((ProxyCollection) fieldValue).getCollection(),
-                                                  refCld);
+                            new DisplayCollection((LazyCollection) fieldValue, refCld);
                         if (collection.getSize() > 0) {
                             collections.put(fd.getName(), collection);
                         }

@@ -20,7 +20,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.proxy.LazyCollection;
 
 /**
  * An inline table created from a Collection
@@ -29,7 +29,7 @@ import org.intermine.objectstore.query.SingletonResults;
  */
 public class InlineResultsTable
 {
-    protected SingletonResults results;
+    protected LazyCollection results;
     protected int size = 10;
 
     /**
@@ -37,7 +37,7 @@ public class InlineResultsTable
      * @param results the underlying SingletonResults object
      * @throws ObjectStoreException if an error occurs
      */
-    public InlineResultsTable(SingletonResults results) throws ObjectStoreException {
+    public InlineResultsTable(LazyCollection results) throws ObjectStoreException {
         this.results = results;
         try {
             results.get(size);
