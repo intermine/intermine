@@ -5,7 +5,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div class="body">
-  <c:if test="${empty id || !COLLAPSED[id]}">
-    <jsp:doBody/>
-  </c:if>
+  <c:choose>
+    <c:when test="${empty id || !COLLAPSED[id]}">
+      <jsp:doBody/>
+    </c:when>
+    <c:otherwise>
+      <div class="collapsed"><fmt:message key="tag.body.hidden"/></div>
+    </c:otherwise>
+  </c:choose>
 </div>
