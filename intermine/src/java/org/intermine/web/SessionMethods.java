@@ -29,9 +29,10 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
+import org.intermine.web.results.DisplayObjectFactory;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.TableHelper;
-import org.intermine.web.results.DisplayObjectCache;
+
 import org.intermine.util.CacheMap;
 
 /**
@@ -359,7 +360,7 @@ public class SessionMethods
         session.setAttribute(Constants.PROFILE,
                              new Profile(pm, null, new HashMap(), new HashMap(), new HashMap()));
         session.setAttribute(Constants.COLLAPSED, new HashMap());
-        session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectCache(session));
+        session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectFactory(session));
     }
 
     /**
