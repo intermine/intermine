@@ -34,7 +34,6 @@ public class StringUtilTest extends TestCase
     }
 
     public void testCapitalise() throws Exception {
-
         assertEquals("A", StringUtil.capitalise("a"));
         assertEquals("A", StringUtil.capitalise("A"));
         assertEquals("Aaaa", StringUtil.capitalise("aaaa"));
@@ -42,5 +41,21 @@ public class StringUtilTest extends TestCase
         assertEquals("", StringUtil.capitalise(""));
         assertNull(StringUtil.capitalise(null));
     }
+    
+    public void testToSameInitialCaseNull() throws Exception {
+        try {
+            StringUtil.toSameInitialCase(null, "dog");
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
 
+   public void testToSameInitialCase() throws Exception {
+       assertEquals("dog", StringUtil.toSameInitialCase("dog", null));
+       assertEquals("a", StringUtil.toSameInitialCase("a", "dog"));
+       assertEquals("A", StringUtil.toSameInitialCase("a", "Dog"));
+       assertEquals("Ant", StringUtil.toSameInitialCase("ant", "D"));
+       assertEquals("ant", StringUtil.toSameInitialCase("Ant", "d"));
+   }
 }
