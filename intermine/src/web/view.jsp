@@ -92,7 +92,7 @@
     <div class="heading">
       <fmt:message key="view.actions"/>
     </div>
-    <div class="body">
+    <div class="body" style="width:100%"> <%-- IE table width bug --%>
       <table width="100%">
         <tr>
           <td align="left">

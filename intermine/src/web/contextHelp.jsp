@@ -8,7 +8,7 @@
     style="display:none"
   </c:if>
 >
-  <div class="topBar contextHelp">
+  <div class="topBar contextHelp" style="width:100%"> <%-- IE table width bug --%>
     <table width="100%" cellspacing="0" border="0" padding="0">
     <tr>
       <td valign="top">
