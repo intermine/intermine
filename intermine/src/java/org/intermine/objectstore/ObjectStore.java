@@ -5,6 +5,8 @@ import java.util.List;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 
+import org.flymine.sql.query.ExplainResult;
+
 /**
  * Gets the Results of a Query from an underlying store.
  *
@@ -35,4 +37,25 @@ public interface ObjectStore
      */
     public List execute(Query q, int start, int end) throws ObjectStoreException;
 
+
+    /**
+     * Runs an EXPLAIN on the query without ant LIMIT or OFFSET.
+     *
+     * @param q the query to estimate rows for
+     * @return parsed results of EXPLAIN
+     * @throws ObjectStoreException if an error occurs explining the query
+     */
+    public ExplainResult estimate(Query q) throws ObjectStoreException;
+
+    /**
+     * Runs an EXPLAIN for the given query with specified start and end parameters.  This
+     * gives estimated time for a single 'page' of the query.
+     *
+     * @param q the query to explain
+     * @param start first row required, numbered from zero
+     * @param end the number of the last row required, numbered from zero
+     * @return parsed results of EXPLAIN
+     * @throws ObjectStoreException if an error occurs explining the query
+     */
+    public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException;
 }
