@@ -7,26 +7,58 @@
 
     <itemizedlist>
       <listitem>
-        <para>FlyMine allows you to construct complex queries across multiple
-        integrated data sources using a web interface</para>
+
+       <para>The FlyMine query page provides three routes to the data
+       in the FlyMine database. These are described in more detail below:</para> 
+       
+       <orderedlist>
+         <listitem>
+           <para>The FlyMine Query Builder</para>
+         </listitem>
+         <listitem>
+           <para>Browsing</para>
+         </listitem>
+          <listitem>
+           <para>Template queries</para>
+         </listitem>
+       </orderedlist>
+     
+      </listitem>
+    </itemizedlist>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="mainPage1.png" />
+            </imageobject>
+          </mediaobject>
+
+   </section>
+
+   <section>
+     <title>1. The FlyMine Query Builder: building complex queries</title>
+   
+      <itemizedlist>
+        <listitem>
+         <para>FlyMine allows you to construct complex queries across
+        multiple integrated data sources using a web interface</para>
       </listitem>
 
       <listitem>
-        <para>Building a simple query using the FlyMine query builder involves
-        the following steps: (These are described in more detail below).</para>
+        <para>Building a query using the FlyMine query builder involves
+        the following steps, which are described in more detail below.</para>
 
         <orderedlist>
           <listitem>
-            <para>To start a new FlyMine query select <ulink
-            url="classChooser.do">start a new query with a particular
-            class</ulink> from the main page. This will take you to the class
-            chooser page.</para>
+            <para>To start a new FlyMine query, choose the starting
+            point for your query either from the classes displayed
+            (which have been divided into biologically meaniful
+            categories) or by selecting the 'List all classes'
+            link</para>
           </listitem>
 
           <listitem>
-            <para>Select the class with which to start your query and press
-            "select". This will take you to the main query builder
-            page.</para>
+            <para>Selecting the class with which to start your query
+            will take you to the main query builder page.</para>
           </listitem>
 
           <listitem>
@@ -58,23 +90,59 @@
         url="../tutorials/index.xml">tutorials.</ulink></para>
       </listitem>
     </itemizedlist>
-  </section>
+ 
+    <itemizedlist>
+      <listitem>
+        <para>The FlyMine query builder consists of 3 main sections:</para> 
+      
+
+       <orderedlist> 
+
+       <listitem>     
+         <para>A. The class chooser</para>
+       </listitem>
+
+       <listitem>
+         <para>B. The main query builder page</para>
+       </listitem>
+
+       <listitem>
+         <para>C. The results display</para>
+      </listitem>
+
+     </orderedlist>
+   </listitem>
+</itemizedlist>
+   
+ </section>
 
   <section>
-    <title>The FlyMine query builder</title>
-
-    <para>consists of 3 main pages:</para>
-
-    <orderedlist>
-      <listitem>
-        <para>The class chooser page, the main query builder page and the
-        result display:</para>
-
+      <title>A. The class chooser page</title>
         <itemizedlist>
+
+            <listitem>
+              <para>The screen shot below shows the class
+              chooser. This displays only the main starting points for
+              a query and these have been divided into biologically
+              meaniful categories.</para>
+            </listitem>
+         </itemizedlist>
+
+            <mediaobject>
+              <imageobject>
+                <imagedata fileref="classSelection2.png" />
+              </imageobject>
+            </mediaobject>
+
+         <itemizedlist>
           <listitem>
-            <para>The screen shot below shows the class chooser page. This
-            page contains a list of classes for which objects exist in the
-            database (i.e. classes for which there is data associated)</para>
+            <para>In addition to the above classes a full list of
+            classes from which you can start your query can be
+            accessed by clicking on the 'List all classes' link (see
+            above screenshot). This takes you to the class chooser
+            page (see screenshot below). This page contains a list of
+            classes for which objects exist in the database
+            (i.e. classes for which there is data associated)</para>
           </listitem>
 
           <listitem>
@@ -82,11 +150,20 @@
             and pressing the 'Select' button will take you to the FlyMine
             query builder page.</para>
           </listitem>
+         </itemizedlist>          
+  
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="../tutorials/classSelection1.png" />
+            </imageobject>
+          </mediaobject>
 
-          <listitem>
-            <para>The browse button allows you to browse the complete FlyMine
-            object model. This shows all the classes in FlyMine, some of which
-            do not yet have data associated with them.</para>
+        <itemizedlist>
+         <listitem>
+            <para>The browse button (accessed from the initial class
+            selection point)allows you to browse the complete FlyMine
+            object model. This shows all the classes in FlyMine, some
+            of which do not yet have data associated with them.</para>
           </listitem>
 
           <listitem>
@@ -99,20 +176,15 @@
             the FlyMine query builder page.</para>
           </listitem>
         </itemizedlist>
+     </section>
 
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="../tutorials/classSelection1.png" />
-          </imageobject>
-        </mediaobject>
-      </listitem>
-
-      <listitem>
-        <para>The main query builder page</para>
-
-        <para>The main FlyMine query builder page is composed of 3 sections
-        (shown in the screen shot below):</para>
-
+   <section>
+        <title>B. The main query builder page</title>
+          <itemizedlist>
+            <listitem>
+               <para>The main FlyMine query builder page is composed
+        of 3 sections (shown in the screen shot below):</para>
+           
         <orderedlist>
           <listitem>
             <para>a model browser (left)</para>
@@ -126,6 +198,8 @@
             <para>an output fields list (bottom)</para>
           </listitem>
         </orderedlist>
+       </listitem>
+     </itemizedlist>
 
         <mediaobject>
           <imageobject>
@@ -133,7 +207,7 @@
           </imageobject>
         </mediaobject>
 
-        <orderedlist>
+         <orderedlist>
           <listitem>
             <para>The model browser</para>
 
@@ -230,12 +304,15 @@
                 <imagedata fileref="fieldsSelected1.png" />
               </imageobject>
             </mediaobject>
+
           </listitem>
         </orderedlist>
-      </listitem>
+     
+</section>
 
-      <listitem>
-        <para>The Results page</para>
+<section>
+   
+        <title>C. The Results page</title>
 
         <itemizedlist>
           <listitem>
@@ -268,7 +345,6 @@
             <imagedata fileref="../tutorials/resultsQuery1.png" />
           </imageobject>
         </mediaobject>
-      </listitem>
-    </orderedlist>
+     
   </section>
 </article>
