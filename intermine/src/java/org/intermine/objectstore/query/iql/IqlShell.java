@@ -10,21 +10,22 @@ package org.intermine.objectstore.query.iql;
  *
  */
 
+import java.io.File;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
-import java.io.PrintStream;
 
+import org.gnu.readline.Readline;
+import org.gnu.readline.ReadlineLibrary;
+import org.gnu.readline.ReadlineCompleter;
+
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.util.TypeUtil;
-import org.gnu.readline.Readline;
-import org.gnu.readline.ReadlineLibrary;
-import org.gnu.readline.ReadlineCompleter;
-import java.io.File;
 
 /**
  * Shell for doing IQL queries
@@ -43,27 +44,24 @@ public class IqlShell
      */
     public static void main(String args[]) throws Exception {
         PrintStream out = System.out;
-        if (args.length > 2) {
-            out.println("Usage: java org.intermine.objectstore.query.Query "
+        if (args.length > 1) {
+            out.println("Usage: java org.intermine.objectstore.query.iql.IqlShell "
                         + "<objectstore alias> - to enter shell-mode");
-            out.println("       java org.intermine.objectstore.query.Query "
-                        + "<objectstore alias> \"<IQL Query>\" - to run");
-            out.println("                      a one-off query");
         } else {
             try {
-                ObjectStore os = ObjectStoreFactory.getObjectStore(args[0]);
-                if (args.length == 2) {
-                    runQuery(args[1], os);
+                ObjectStore os;
+                if (args.length == 0) {
+                    os = ObjectStoreFactory.getObjectStore();
                 } else {
-                    doShell(os);
+                    os = ObjectStoreFactory.getObjectStore(args[0]);
                 }
+                doShell(os);
             } catch (Exception e) {
                 out.println("Exception caught: " + e);
                 e.printStackTrace(out);
             }
         }
     }
-
 
     /**
      * Run the shell on a given ObjectStore
@@ -212,5 +210,4 @@ public class IqlShell
         }
         out.println("");
     }
-
 }
