@@ -270,7 +270,7 @@ public class Model
         synchronized (classToClassDescriptorSet) {
             Set retval = (Set) classToClassDescriptorSet.get(c);
             if (retval == null) {
-                retval = new HashSet();
+                retval = new LinkedHashSet();
                 Stack stack = new Stack();
                 Set done = new HashSet();
                 stack.push(c);
