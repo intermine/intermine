@@ -76,6 +76,7 @@ public class SaveQueryHelper
             newNode = new RightNode(node.getType());
         } else {
             newNode = new RightNode(parent, node.getFieldName(), model);
+            newNode.setType(node.getType());
         }
         newNode.setConstraints(clone(node.getConstraints()));
         return newNode;

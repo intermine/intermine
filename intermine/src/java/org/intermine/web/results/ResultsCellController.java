@@ -65,16 +65,14 @@ public class ResultsCellController extends TilesAction
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Object o = request.getAttribute("object");
 
-        List leafClds = new ArrayList();
-
         if (o instanceof InterMineObject) {
+            List leafClds = new ArrayList();
             for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
                 leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
             }
+            context.putAttribute("leafClds", leafClds);
         }
 
-        context.putAttribute("leafClds", leafClds);
-            
         return null;
     }
 }
