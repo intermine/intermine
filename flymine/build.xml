@@ -1564,9 +1564,7 @@
     <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-uniprot-production" depends="translate-uniprot, load-uniprot"/>
-
-  <!--  <target name="build-uniprot-production" depends="retrieve-uniprot"/>-->
+  <target name="build-uniprot-production" depends="filter-uniprot, retrieve-uniprot, translate-uniprot, load-uniprot"/>
 
 
   <!-- BUILD PRODUCTION DATABASE -->
