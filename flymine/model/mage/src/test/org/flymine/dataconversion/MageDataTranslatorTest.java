@@ -60,9 +60,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
-        FileWriter writerSrc = new FileWriter(new File("src_items.xml"));
-        writerSrc.write(FullRenderer.render(srcItems));
-        writerSrc.close();
+        //FileWriter writerSrc = new FileWriter(new File("src_items.xml"));
+        //writerSrc.write(FullRenderer.render(srcItems));
+        //writerSrc.close();
 
 
         Map itemMap = writeItems(srcItems);
@@ -72,9 +72,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        FileWriter writer = new FileWriter(new File("exptmp"));
-        writer.write(FullRenderer.render(tgtIw.getItems()));
-        writer.close();
+        //FileWriter writer = new FileWriter(new File("exptmp"));
+        //writer.write(FullRenderer.render(tgtIw.getItems()));
+        //writer.close();
 
         //assertEquals(new HashSet(expectedItems), tgtIw.getItems());
 
