@@ -30,6 +30,12 @@ public interface PagedTable
     public List getColumns();
 
     /**
+     * Return the number of visible columns.  Used by JSP pages.
+     * @return the number of visible columns.
+     */
+    public int getVisibleColumnCount();
+    
+    /**
      * Return the width (number of columns) of the table.  Used by the JSP because
      * getColumns().size() isn't possible in JSTL.
      * @return the table width

@@ -26,6 +26,7 @@ import org.intermine.objectstore.ObjectStoreException;
 public class PagedCollection implements PagedTable
 {
     private List columns;
+    private Column column;
     private int start = 0;
     private int pageSize = 10;
 
@@ -50,7 +51,7 @@ public class PagedCollection implements PagedTable
             collectionAsList.add(row);
         }
 
-        Column column = new Column();
+        column = new Column();
         column.setVisible(true);
         column.setName(name);
 
@@ -67,6 +68,18 @@ public class PagedCollection implements PagedTable
         return columns;
     }
 
+    /**
+     * Return the number of visible columns.  Used by JSP pages.
+     * @return the number of visible columns.
+     */
+    public int getVisibleColumnCount() {
+        if (column.isVisible()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
     /**
      * Return the width (number of columns) of the table.  Used by the JSP because
      * getColumns().size() isn't possible in JSTL.

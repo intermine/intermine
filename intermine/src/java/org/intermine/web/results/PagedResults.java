@@ -70,6 +70,23 @@ public class PagedResults implements PagedTable
     }
 
     /**
+     * Return the number of visible columns.  Used by JSP pages.
+     * @return the number of visible columns.
+     */
+    public int getVisibleColumnCount() {
+        int count = 0;
+
+        for (int i = 0; i < columns.size(); i++) {
+            Column thisColumn = (Column) columns.get(i);
+            if (thisColumn.isVisible())  {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
      * Return the width (number of columns) of the table.  Used by the JSP because
      * getColumns().size() isn't possible in JSTL.
      * @return the table width
@@ -88,7 +105,7 @@ public class PagedResults implements PagedTable
             columns.add(index - 1, columns.remove(index));
         }
     }
-    
+
     /**
      * Move a column right
      *
