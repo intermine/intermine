@@ -173,22 +173,25 @@ public class MergeOwl
      */
     protected void addEquivalenceStatement(Resource target, Resource obj, Resource original,
                                            List statements) {
-        if (obj.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE) && obj.getLocalName()
-            .equals("Class")) {
-            statements.add(tgtModel.createStatement(target,
-                tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "equivalentClass"),
-                                                    original));
-        } else if (obj.getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
-                   && obj.getLocalName().equals("Property")) {
-            statements.add(tgtModel.createStatement(target,
-                tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "equivalentProperty"),
-                                                    original));
-        } else if (obj.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE)
-                   && obj.getLocalName().equals("Individual")) {
-            statements.add(tgtModel.createStatement(target,
-                tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "sameAs"), original));
+        if (!obj.isAnon()) {
+            if (obj.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE) && obj.getLocalName()
+                .equals("Class")) {
+                statements.add(tgtModel.createStatement(target,
+                    tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "equivalentClass"),
+                    original));
+            } else if (obj.getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
+                       && obj.getLocalName().equals("Property")) {
+                statements.add(tgtModel.createStatement(target,
+                    tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "equivalentProperty"),
+                    original));
+            } else if (obj.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE)
+                       && obj.getLocalName().equals("Individual")) {
+                statements.add(tgtModel.createStatement(target,
+                    tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "sameAs"), original));
+            }
         }
     }
+
 
 
     /**
