@@ -54,14 +54,17 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
-import org.flymine.objectstore.query.Query;
-
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.accesslayer.JdbcAccessImpl;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.accesslayer.ResultSetAndStatement;
+import org.apache.ojb.broker.query.Query;
+import org.apache.ojb.broker.accesslayer.ConnectionManagerIF;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 /**
  * This Implementation of JdbcAccess overrides executeQuery to
@@ -87,20 +90,51 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      * Performs a select statement on database, returns the jdbc Statement
      * and ResultSet
      *
-     * @param query Flymine query to convert
-     * @param clds array of ClassDescriptors for objects in query
+     * @param query should be a QueryPackage which implements OJB Query interface but
+     * actually contains a FlyMine query and a ClassDescriptor array
      *
      * @return the JDBC ResultSet and Statement
      * @throws PersistenceBrokerException if anything goes worong
      */
-    public ResultSetAndStatement executeQuery(Query query, ClassDescriptor[] clds)
+    public ResultSetAndStatement executeQuery(Query query)
         throws PersistenceBrokerException {
         if (logger.isDebugEnabled()) {
             logger.safeDebug("executeQuery", query);
         }
 
+        if (!(query instanceof QueryPackage)) {
+            throw (new IllegalArgumentException("must pass a QueryPackage object"));
+        }
+
         ResultSetAndStatement retval =
             new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
+
+        ClassDescriptor dummy = null;
+
+        try {
+            String sql = this.broker.serviceSqlGenerator().getPreparedSelectStatement(query, dummy);
+
+            // statementManager is used to serve statements and cache statements related to a
+            // partcular class (wraps a ConnectionManager).  We only want something to get a
+            // connection so deal directly with ConnectionManeger (?)
+            // ...
+            //PreparedStatement stmt = broker.serviceStatementManager()
+            // .getPreparedStatement(cld, sql, scrollable);
+            //broker.serviceStatementManager().bindStatement(stmt, query.getCriteria(), cld, 1);
+
+            // should probably put jdbc stuff somewhere else...?
+            ConnectionManagerIF conMan = broker.serviceConnectionManager();
+            Connection conn = conMan.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            ResultSet rs = stmt.executeQuery();
+
+            retval.m_rs = rs;
+            retval.m_stmt = stmt;
+
+        } catch (Exception e) {
+            // what exceptions?  Do something.
+        }
 
         return retval;
     }
