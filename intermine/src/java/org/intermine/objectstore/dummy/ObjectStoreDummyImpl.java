@@ -33,7 +33,6 @@ public class ObjectStoreDummyImpl implements ObjectStore
      */
     public Results execute(Query q) throws ObjectStoreException {
         Results res = new Results(q, this);
-        res.setSize(resultsSize);
         return res;
     }
 
@@ -54,7 +53,7 @@ public class ObjectStoreDummyImpl implements ObjectStore
 
         // If we are asking for rows completely outside resultsSize, throw ObjectStoreException
         if (start > resultsSize) {
-            throw new ObjectStoreException("Start row outside results size");
+            throw new ArrayIndexOutOfBoundsException("Start row outside results size");
         }
 
         for (int i = start; ((i <= end) && (i < resultsSize)); i++) {
