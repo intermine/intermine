@@ -333,6 +333,14 @@
     </ant>
   </target>
 
+  <target name="jar-fulldata" depends="compile-fulldata">
+    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <property name="model.src" value="${model}/fulldata"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>
+  </target>
+
   <target name="compile-main" depends="compile-datatracking, compile-fulldata"
     description="compile the java source">
     <javac destdir="${build.java}" listfiles="yes">
@@ -858,6 +866,7 @@
     </manifest>
 
     <jar destfile="${dist}/intermine.jar" manifest="${build.tmp}/MANIFEST.MF">
+      <fileset file="build-model.xml"/>
       <fileset dir="${build.java}"/>
       <fileset dir="${build.model}/fulldata"/>
       <fileset dir="${build.model}/datatracking"/>
