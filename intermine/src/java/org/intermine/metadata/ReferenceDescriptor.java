@@ -90,6 +90,10 @@ public class ReferenceDescriptor extends FieldDescriptor
             this.reverseRef = this.refClassDescriptor
                 .getReferenceDescriptorByName(reverseRefName);
             if (reverseRef == null) {
+                this.reverseRef = this.refClassDescriptor
+                    .getCollectionDescriptorByName(reverseRefName);
+            }
+            if (reverseRef == null) {
                 throw new MetaDataException("Unable to find named reverse reference ("
                                             + reverseRefName + ") in class ("
                                             + this.refClassDescriptor.getClassName() + ").");
