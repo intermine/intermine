@@ -15,7 +15,7 @@
     <br/>
     <fmt:message key="bagBuild.or"/>
     <br/>
-    <fmt:message key="bagBuild.bagFromFile"/>
+    <fmt:message key="bagBuild.bagFromFile"/>:
     <br/>
     <html:file property="formFile"/>
     <br/>
