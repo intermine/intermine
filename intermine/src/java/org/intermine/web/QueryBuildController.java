@@ -93,7 +93,11 @@ public class QueryBuildController extends TilesAction
             qbf.setFieldValues(toStrings(d.getFieldValues()));
             
             session.setAttribute("validOps", getValidOps(cld, false));
-            session.setAttribute("allFieldNames", getAllFieldNames(cld));
+            if (getAllFieldNames(cld).size() == 0) {
+                session.setAttribute("allFieldNames", null);
+            } else {
+                session.setAttribute("allFieldNames", getAllFieldNames(cld));
+            }
         }
 
         return null;
@@ -121,7 +125,10 @@ public class QueryBuildController extends TilesAction
     protected static List getAllFieldNames(ClassDescriptor cld) {
         List allFieldNames = new ArrayList();
         for (Iterator i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
-            allFieldNames.add(((FieldDescriptor) i.next()).getName());
+            String fieldName = ((FieldDescriptor) i.next()).getName();
+            if (!fieldName.equals("id")) {
+                allFieldNames.add(fieldName);
+            }
         }
         return allFieldNames;
     }
