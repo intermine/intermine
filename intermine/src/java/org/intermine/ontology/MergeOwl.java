@@ -103,8 +103,11 @@ public class MergeOwl
      * @throws Exception if problem renaming properties
      */
     protected void mergeByEquivalence(OntModel srcModel, String srcNs) throws Exception {
-        LOG.info("building equivalence map");
+        LOG.info("buildRestrictedSubclasses = " + buildRestrictedSubclasses);
+        long time = System.currentTimeMillis();
         equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
+        LOG.info("built equivalence map in " + (System.currentTimeMillis() - time) + " ms");
+        time = System.currentTimeMillis();
 
         // build map from source class to restricted subclasses
         subMap = new HashMap();
@@ -121,6 +124,10 @@ public class MergeOwl
                 }
             }
         }
+
+        LOG.info("built restricted subclass map " + (System.currentTimeMillis() - time)
+                 + " ms, size = " + subMap.values().size());
+        time = System.currentTimeMillis();
 
         // adding statements to Jena model by batch method is supposedly faster
         List statements = new ArrayList();
@@ -185,8 +192,10 @@ public class MergeOwl
             }
         }
         tgtModel.add(statements);
-        LOG.debug("calling reorganiseProperties");
+        LOG.info("completed merge in " + (System.currentTimeMillis() - time) + " ms");
+        time = System.currentTimeMillis();
         OntologyUtil.reorganiseProperties(tgtModel, tgtNs);
+        LOG.info("ran reorganiseProperties in " + (System.currentTimeMillis() - time) + " ms");
     }
 
 
