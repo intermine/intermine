@@ -14,7 +14,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.util.PropertiesUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * Produce ObjectStoreWriters
@@ -24,6 +28,8 @@ import org.intermine.util.PropertiesUtil;
 
 public class ObjectStoreWriterFactory
 {
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreWriterFactory.class);
+
     /**
      * Return an ObjectStoreWriter configured using properties file
      * @param alias identifier for properties defining integration/writer parameters
@@ -83,6 +89,19 @@ public class ObjectStoreWriterFactory
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
                                            + clsName + ", " + e.toString());
+        }
+        if ("org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl".equals(clsName)) {
+            String batchWriterClass = props.getProperty("batchWriter");
+            if (batchWriterClass != null) {
+                try {
+                    Class cls = Class.forName(batchWriterClass);
+                    Constructor c = cls.getConstructor(new Class[] {});
+                    BatchWriter batchWriter = (BatchWriter) c.newInstance(new Object[] {});
+                    ((ObjectStoreWriterInterMineImpl) osw).setBatchWriter(batchWriter);
+                } catch (Exception e) {
+                    LOG.error("Could not find requested BatchWriter " + batchWriterClass);
+                }
+            }
         }
         return osw;
     }

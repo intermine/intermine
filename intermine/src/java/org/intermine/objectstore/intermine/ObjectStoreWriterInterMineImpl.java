@@ -34,7 +34,8 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.sql.writebatch.Batch;
-import org.intermine.sql.writebatch.BatchWriterPreparedStatementImpl;
+import org.intermine.sql.writebatch.BatchWriter;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
@@ -96,9 +97,29 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         recentSequences = Collections.synchronizedMap(new CacheMap(getClass().getName()
                     + " with sequence = " + sequence + ", model = \"" + model.getName()
                     + "\" recentSequences cache"));
-        batch = new Batch(new BatchWriterPreparedStatementImpl());
+        batch = new Batch(new BatchWriterPostgresCopyImpl());
     }
     
+    /**
+     * Allows the changing of the BatchWriter that this ObjectStoreWriter uses.
+     *
+     * @param batchWriter the new BatchWriter - use BatchWriterSimpleImpl for writers likely to see
+     * small batches, and optimised (eg BatchWriterPostgresCopyImpl) implementations for bulk-write
+     * writers.
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void setBatchWriter(BatchWriter batchWriter) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection(); // Must get connection - it is our concurrency control.
+            batch.setBatchWriter(batchWriter);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
     /**
      * @see ObjectStoreInterMineImpl#getConnection
      */

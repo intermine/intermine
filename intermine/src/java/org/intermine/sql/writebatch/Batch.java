@@ -105,4 +105,13 @@ public class Batch
         batchWriter.write(con, tables);
         batchSize = 0;
     }
+
+    /**
+     * Changes the BatchWriter for a new one.
+     *
+     * @param batchWriter the new BatchWriter
+     */
+    public void setBatchWriter(BatchWriter batchWriter) {
+        this.batchWriter = batchWriter;
+    }
 }
