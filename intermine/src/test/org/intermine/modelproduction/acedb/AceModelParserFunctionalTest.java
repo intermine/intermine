@@ -54,6 +54,7 @@ public class AceModelParserFunctionalTest extends TestCase
         atts.add(new AttributeDescriptor("stringValue", false, "java.lang.String"));
         atts.add(new AttributeDescriptor("stringValue_2", false, "java.lang.String"));
         atts.add(new AttributeDescriptor("onOrOff", false, "boolean"));
+        atts.add(new AttributeDescriptor("dateValue", false, "java.util.Date"));
         Set refs = new LinkedHashSet();
         refs.add(new ReferenceDescriptor("reference", false, PKG + "AceTestObject", null));
         refs.add(new ReferenceDescriptor("hashValue", false, PKG + "AceTestObject", null));

@@ -12,9 +12,12 @@ package org.flymine.dataloader;
 
 import junit.framework.TestCase;
 
+import java.util.Date;
+
 import org.acedb.*;
 import org.acedb.staticobj.*;
 
+import org.flymine.util.StringUtil;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 import org.flymine.model.acedbtest.*;
@@ -49,7 +52,24 @@ public class AceDataLoaderTest extends TestCase
         assertEquals(testObj.getIdentifier(), ret.getIdentifier());
         assertEquals(testObj.getStringValue(), ret.getStringValue());
     }
+    
+    public void testDateTypeTag() throws Exception {
+        Date date = new Date();
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
+        StaticAceNode node1 = new StaticAceNode("dateValue", obj);
+        obj.addNode(node1);
+        StaticDateValue value1 = new StaticDateValue(date, node1);
+        node1.addNode(value1);
 
+        AceTestObject testObj = new AceTestObject();
+        testObj.setIdentifier("AceTestObject1");
+        testObj.setDateValue(date);
+
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
+
+        assertEquals(testObj.getIdentifier(), ret.getIdentifier());
+        assertEquals(testObj.getDateValue(), ret.getDateValue());
+    }
     public void testNestedTag() throws Exception {
         StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("baseTag", obj);
@@ -196,51 +216,67 @@ public class AceDataLoaderTest extends TestCase
         assertEquals(testObj1.getReferences().size(), ret.getReferences().size());
     }
 
-//     public void testHashReference() throws Exception {
-//         StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
-//         StaticAceNode node1 = new StaticAceNode("hashValue", obj);
-//         obj.addNode(node1);
-//         StaticAceNode node2 = new StaticAceNode("stringValue", node1);
-//         node1.addNode(node2);
-//         StaticStringValue value1 = new StaticStringValue("A string", node2);
-//         node2.addNode(value1);
+    // obj1 - node(hash obj2) - node - value => obj1 - obj2 - obj3(node - value)
+    public void testHashReference() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
+        StaticAceNode node1 = new StaticAceNode("hashValue", obj);
+        obj.addNode(node1);
+        StaticAceNode node2 = new StaticAceNode("intValue", node1);
+        node1.addNode(node2);
+        StaticIntValue value1 = new StaticIntValue(42, node2);
+        node2.addNode(value1);
 
-//         AceTestObject testObj1 = new AceTestObject();
-//         AceTestObject testObj2 = new AceTestObject();
-//         testObj1.setIdentifier("AceTestObject1");
-//         testObj2.setIdentifier("");
-//         testObj2.setStringValue("A string");
-//         testObj1.setHashValue(testObj2);
+        AceTestObject testObj1 = new AceTestObject();
+        testObj1.setIdentifier("AceTestObject1");
+        AceTestObject testObj2 = new AceTestObject();
+        testObj2.setIdentifier("0");
+        testObj2.setIntValue(new Integer(42));
+        testObj1.setHashValue(testObj2);
+
+        StringUtil.setNextUniqueNumber(0);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
+
+        assertEquals(testObj1.getIdentifier(), ret.getIdentifier());
+        assertEquals(testObj2.getIdentifier(), ret.getHashValue().getIdentifier());
+        assertEquals(testObj2.getIntValue(), ret.getHashValue().getIntValue());
+    }
+
+    public void testHashCollection() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
+        StaticAceNode node1 = new StaticAceNode("hashValues", obj);
+        obj.addNode(node1);
+        StaticAceNode node2 = new StaticAceNode("intValue", node1);
+        node1.addNode(node2);
+        StaticIntValue value1 = new StaticIntValue(42, node2);
+        node2.addNode(value1);
+
+        AceTestObject testObj1 = new AceTestObject();
+        testObj1.setIdentifier("AceTestObject1");
+        AceTestObject testObj2 = new AceTestObject();
+        testObj2.setIdentifier("0");
+        testObj2.setIntValue(new Integer(42));
+        testObj1.getHashValues().add(testObj2);
+
+        StringUtil.setNextUniqueNumber(0);
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
+        AceTestObject ret2 = (AceTestObject) ret.getHashValues().iterator().next();
+
+        assertEquals(testObj1.getIdentifier(), ret.getIdentifier());
+        assertEquals(testObj1.getHashValues().size(), ret.getHashValues().size());
+        assertEquals(testObj2.getIdentifier(), ret2.getIdentifier());
+        assertEquals(testObj2.getIntValue(), ret2.getIntValue());
+    }
+
+//     public void testValueMissing() throws Exception {
+//         StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
+//         StaticAceNode node1 = new StaticAceNode("stringValue", obj);
+//         obj.addNode(node1);
 
 //         AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
-//         assertEquals(testObj1.getIdentifier(), ret.getIdentifier());
-//         assertEquals(testObj2.getIdentifier(), ret.getHashValue().getIdentifier());
-//         assertEquals(testObj2.getStringValue(), ret.getHashValue().getStringValue());
+//         assertEquals("", ret.getStringValue());
 //     }
-
-//     public void testHashCollection() throws Exception {
-//         StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
-//         StaticAceNode node1 = new StaticAceNode("hashValues", obj);
-//         obj.addNode(node1);
-//         StaticAceNode node2 = new StaticAceNode("stringValue", node1);
-//         node1.addNode(node2);
-//         StaticStringValue value1 = new StaticStringValue("A string", node2);
-//         node2.addNode(value1);
-
-//         AceTestObject testObj1 = new AceTestObject();
-//         AceTestObject testObj2 = new AceTestObject();
-//         testObj1.setIdentifier("AceTestObject1");
-//         testObj2.setIdentifier("");
-//         testObj2.setStringValue("A string");
-//         testObj1.getHashValues().add(testObj2);
-
-//         AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
-
-//         assertEquals(testObj1.getIdentifier(), ret.getIdentifier());
-//         assertEquals(testObj1.getHashValues().size(), ret.getHashValues().size());
-//     }
-
+    
     public void testFieldMissing() throws Exception {
         StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("nonexistentValue", obj);
