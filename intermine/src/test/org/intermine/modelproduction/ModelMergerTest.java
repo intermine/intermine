@@ -145,16 +145,6 @@ public class ModelMergerTest extends TestCase
                     .iterator().next();
     }
     
-    // add Department.company
-    String addition = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
-            + "<reference name=\"addition\" referenced-type=\"org.intermine.model.testmodel.Department\"/>"
-            + "</class>";
-
-    String expXml = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
-            + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"department\"/>"
-            + "<reference name=\"addition\" referenced-type=\"org.intermine.model.testmodel.Department\"/>"
-            + "</class>";
-    
     public void testMergeClassReferencesWithReverseRefs() throws Exception {
         String modelStr = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
                 + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"department\"/>"
