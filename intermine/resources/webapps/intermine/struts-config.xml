@@ -91,6 +91,10 @@
     </action>
 
     <action path="/initQueryView" type="org.flymine.web.QueryViewController"/>
+
+    <action path="/initResultsView" type="org.flymine.web.results.ResultsViewController">
+    </action>
+
   </action-mappings>
 
   <!-- ========== Controller Configuration ================================ -->
@@ -121,4 +125,5 @@
         property="definitions-config" 
         value="/WEB-INF/tiles-defs.xml"/>
   </plug-in>
+
 </struts-config>
