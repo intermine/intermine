@@ -2,6 +2,6 @@
 
 <!-- debtField.jsp -->
 <span class="debt">
-  <c:out value="${object[fieldDescriptor.name]}" default="null"/>
+  DEBT: <c:out value="${object.debt}" default="null"/>
 </span>
 <!-- /debtField.jsp -->
