@@ -61,7 +61,7 @@ public class PrecomputedTableManager
      */
     public static PrecomputedTableManager getInstance(String dbName) throws SQLException {
         synchronized (instances) {
-            if (! (instances.containsKey(dbName))) {
+            if (!(instances.containsKey(dbName))) {
                 instances.put(dbName, new PrecomputedTableManager(dbName));
             }
         }
