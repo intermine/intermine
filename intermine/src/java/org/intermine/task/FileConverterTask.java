@@ -122,7 +122,6 @@ public class FileConverterTask extends Task
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
-                //System.out.println("Processing file: " + f.getName());
                 LOG.error("Processing file: " + f.getName());
                 converter.process(new BufferedReader(new FileReader(f)));
             }
