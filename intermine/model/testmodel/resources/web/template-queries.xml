@@ -6,11 +6,11 @@
     <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee">
       <node path="Employee.department.company.name">
         <constraint op="=" value="CompanyA" editable="true" description="" 
-                    identifier="Company.name.1"/>
+                    identifier="Company.name"/>
       </node>
       <node path="Employee.department.name">
         <constraint op="LIKE" value="Department%" editable="true" description=""
-                    identifier="Employee.department.name.1"/>
+                    identifier="Department.name"/>
       </node>
     </query>
   </template>
@@ -33,7 +33,7 @@
             category="People">
     <query name="employeeByName" model="testmodel" view="Employee">
       <node path="Employee.name">
-        <constraint op="=" value="" editable="true" description="" identifier="Employee.name.1"/>
+        <constraint op="=" value="" editable="true" description="" identifier="Employee.name"/>
       </node>
     </query>
   </template>
