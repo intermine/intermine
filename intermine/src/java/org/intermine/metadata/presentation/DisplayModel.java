@@ -55,12 +55,7 @@ public class DisplayModel
      * @return Collection of fully qualified class names
      */
     public Collection getClassNames() {
-        Collection collection = new TreeSet();
-        Iterator iter = model.getClassDescriptors().iterator();
-        while (iter.hasNext()) {
-            collection.add(((ClassDescriptor) iter.next()).getName());
-        }
-        return collection;
+        return new TreeSet(model.getClassNames());
     }
 
    /**
@@ -70,9 +65,8 @@ public class DisplayModel
      */
     public Collection getUnqualifiedClassNames() {
         Collection collection = new ArrayList();
-        Iterator iter = getClassNames().iterator();
-        while (iter.hasNext()) {
-            collection.add(TypeUtil.unqualifiedName((String) iter.next()));
+        for (Iterator i = getClassNames().iterator(); i.hasNext();) {
+            collection.add(TypeUtil.unqualifiedName((String) i.next()));
         }
         return collection;
     }
