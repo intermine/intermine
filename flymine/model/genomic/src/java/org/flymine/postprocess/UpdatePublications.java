@@ -162,7 +162,7 @@ public class UpdatePublications
          */
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if ("ERROR".equals(name)) {
-                throw new SAXException("Error retrieving pubmed record: "+characters);
+                LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {
                 publication = new MyItem("Publication");
                 toStore.add(publication);
