@@ -56,7 +56,7 @@ public class GFF3Converter
     private int itemid = 0;
     private Map analyses = new HashMap();
     private Map seqs = new HashMap();
-    private Map idMap = new HashMap();
+    private Map identifierMap = new HashMap();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
 
@@ -83,6 +83,9 @@ public class GFF3Converter
         this.organism = getOrganism();
         this.infoSource = createItem("InfoSource");
         infoSource.addAttribute(new Attribute("title", infoSourceTitle));
+
+        handler.setItemFactory(itemFactory);
+        handler.setIdentifierMap(identifierMap);
     }
 
     /**
@@ -96,8 +99,6 @@ public class GFF3Converter
         GFF3Record record;
         long start, now, opCount;
 
-        // get rid of previous record Items from handler
-        handler.clear();
 
         // TODO should probably not store if an empty file
         writer.store(ItemHelper.convert(organism));
@@ -137,6 +138,9 @@ public class GFF3Converter
      * @throws ObjectStoreException if an error occurs storing items
      */
     public void process(GFF3Record record) throws ObjectStoreException {
+        // get rid of previous record Items from handler
+        handler.clear();
+
         Set result = new HashSet();
 
         Item seq = getSeq(record.getSequenceID());
@@ -214,10 +218,14 @@ public class GFF3Converter
         feature.addCollection(evidence);
         handler.setFeature(feature);
 
+        handler.process(record);
+
         try {
             Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
-                writer.store(ItemHelper.convert((Item) iter.next()));
+                Item item = (Item) iter.next();
+                org.intermine.web.LogMe.log("gc", "saving item: " + item);
+                writer.store(ItemHelper.convert(item));
             }
         } catch (ObjectStoreException e) {
             LOG.error("Problem writing item to the itemwriter");
@@ -226,10 +234,10 @@ public class GFF3Converter
     }
 
     private String getIdentifier(String id) {
-        String identifier = (String) idMap.get(id);
+        String identifier = (String) identifierMap.get(id);
         if (identifier == null) {
             identifier = createIdentifier();
-            idMap.put(id, identifier);
+            identifierMap.put(id, identifier);
         }
         return identifier;
     }
@@ -291,10 +299,8 @@ public class GFF3Converter
     }
 
     /**
-     * Create an item with given className, implementation and item identifier
+     * Create an item with given className
      * @param className
-     * @param implementations
-     * @param identifier
      * @return the created item
      */
     private Item createItem(String className) {
@@ -302,10 +308,9 @@ public class GFF3Converter
     }
 
     /**
-     * Create an item with given className, implementation and item identifier
+     * Create an item with given className and item identifier
      * @param className
      * @param implementations
-     * @param identifier
      * @return the created item
      */
     private Item createItem(String className, String identifier) {
@@ -315,5 +320,4 @@ public class GFF3Converter
     private String createIdentifier() {
         return "0_" + itemid++;
     }
-
 }
