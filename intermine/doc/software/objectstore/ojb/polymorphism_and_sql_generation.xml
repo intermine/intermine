@@ -84,40 +84,39 @@
 		<listitem>Iterate through this list.
             If the class is an interface (checked with ClassDescriptor.isInterface()), then throw it away and go on to the next class.
             <itemizedlist>
-				<listitem>Find all the field names of the class.
-                    Add these field names to a Set (allFieldNames).
-					This Set will contain all the field names that need to be included in the SELECT list.
-					One could at this stage put allFieldNames into a instance-global Map (classToFieldNames) with the current ClassDescriptor as the lookup key, so that the code that creates the SELECT list of the main query can use it.</listitem>
+				<listitem>Find all the column names of the class.
+                    Add these column names to a Set (allColumnNames).
+					This Set will contain all the column names that need to be included in the SELECT list.
+					One could at this stage put allColumnNames into a instance-global Map (classToColumnNames) with the current ClassDescriptor as the lookup key, so that the code that creates the SELECT list of the main query can use it.</listitem>
 				<listitem>Also find the table name for the class.
-					Create a new Set, add the field names to it, and insert that into a Map (tableNameToFields) with the table name as the lookup key.
-					This Map will then contain all the table names that will be involved in the output text, along with the fields that the table knows about.</listitem>
-				<listitem>Also insert the class name into a Map (tableNameToClassName) with the table name as the lookup key.
-					This Map will be used to find out the class name of objects present in a table that does not have an ojbConcreteClass field (which guarantees that they are all of the same class).</listitem>
-				<listitem>Also, insert an entry into another Map (tableNameToRestriction) with either a Set or a "No restriction needed" object as the value, and the table name as the lookup key.
-					If the current class is an absolute superclass (checked by ClassDescriptor.getSuperClass() == null) then the value should be "No restriction needed".
+					Create a new Set, add the column names to it, and insert that into a Map (tableNameToColumns) with the table name as the lookup key.
+					This Map will then contain all the table names that will be involved in the output text, along with the columns that the table knows about.</listitem>
+				<listitem>Also, insert an entry into another Map (tableNameToClasses) with either a Set or the current classname as the value, and the table name as the lookup key.
+					If the current class is an absolute superclass (checked by ClassDescriptor.getSuperClass() == null) then the value should be the class name.
 					Otherwise, the Set should contain all the classnames found so far for this table.
-					This Map will be used to produce the restrictions that need to be added to the WHERE clause.
-					If the table name looked up in tableNameToRestriction is "No restriction needed", then do not add a restriction.
+					This Map will be used to find out the class name of objects present in a table that does not have an ojbConcreteClass field (which guarantees that they are all of the same class, and that class is an absolute superclass).
+					This Map will also be used to produce the restrictions that need to be added to the WHERE clause.
+					If the table name looked up in tableNameToClasses is a String, then do not add a restriction.
 					Otherwise, the condition required is for the table ojbConcreteClass field to equal any of the class names in the Set resulting from the lookup.</listitem>
 			</itemizedlist>
 		</listitem>
-		<listitem>Count the number of table names in tableNameToFields.
-			If there is only one, then write the table name into the FROM list, and add the condition (from tableNameToRestriction) to the WHERE clause - and the job is finished.
-			Otherwise, iterate through tableNameToFields.
-			For each table, output a whole SELECT statement, where the SELECT list mentions every single field in allFieldNames.
-			For each field name, there are three possibilities:
+		<listitem>Count the number of table names in tableNameToColumns.
+			If there is only one, then write the table name into the FROM list, and add the condition (from tableNameToClasses) to the WHERE clause - and the job is finished.
+			Otherwise, iterate through tableNameToColumns.
+			For each table, output a whole SELECT statement, where the SELECT list mentions every single column in allColumnNames.
+			For each column name, there are three possibilities:
 			<itemizedlist>
-				<listitem>If the field name is present in the Set resulting from looking up the table name in tableNameToFields, then just output its name.</listitem>
-				<listitem>Otherwise, if the field name is the column name for ojbConcreteClass, then output "'&lt;the result of looking up the field name in tableNameToClassName&gt;' AS &lt;the field name&gt;".</listitem>
-				<listitem>Otherwise, output "NULL AS &lt;the field name&gt;".</listitem>
+				<listitem>If the column name is present in the Set resulting from looking up the table name in tableNameToColumns, then just output its name.</listitem>
+				<listitem>Otherwise, if the column name is the column name for ojbConcreteClass, then output "'&lt;the result of looking up the column name in tableNameToClassName&gt;' AS &lt;the column name&gt;".</listitem>
+				<listitem>Otherwise, output "NULL AS &lt;the column name&gt;".</listitem>
 			</itemizedlist>
-			The statement should have a FROM list with a single table - the table name, and a WHERE clause with the restriction from tableNameToRestriction.</listitem>
+			The statement should have a FROM list with a single table - the table name, and a WHERE clause with the restriction from tableNameToClasses.</listitem>
 	</itemizedlist>
-	And once classToFieldNames is set up, the process of creating the SELECT list is quite simple:
+	And once classToColumnNames is set up, the process of creating the SELECT list is quite simple:
 	<itemizedlist>
-		<listitem>Look up the ClassDescriptor in classToFieldNames.</listitem>
-		<listitem>Use the resulting Set as the list of field names.</listitem>
-		<listitem>For each field, output "&lt;alias of table&gt;.&lt;field name&gt; AS &lt;alias of table&gt;&lt;field name&gt;".</listitem>
+		<listitem>Look up the ClassDescriptor in classToColumnNames.</listitem>
+		<listitem>Use the resulting Set as the list of column names.</listitem>
+		<listitem>For each column, output "&lt;alias of table&gt;.&lt;column name&gt; AS &lt;alias of table&gt;&lt;column name&gt;".</listitem>
 	</itemizedlist>
 </para>
 </sect1>
