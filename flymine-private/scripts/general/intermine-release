@@ -80,7 +80,7 @@ fi
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
 then
-    command="ssh $server \"find $destdir -mtime +7 -name \"intermine*\" | xargs rm -f\""
+    command="ssh $server \"find $destdir -mtime +7 -name \"intermine*.*\" | xargs rm -f\""
     eval $command
 fi
 
@@ -90,7 +90,7 @@ command="scp *.tar.gz *.zip $server:$destdir/"
 eval $command
 
 ### Make sure all permissions are world-readable
-command="ssh $server \"find $destdir -type f -name \"intermine*\" | xargs chmod a+r\""
+command="ssh $server \"find $destdir -type f -name \"intermine*.*\" | xargs chmod a+r\""
 eval $command
 
 cd $origdir
