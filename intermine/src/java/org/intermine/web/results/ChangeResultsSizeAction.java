@@ -13,6 +13,7 @@ package org.flymine.web.results;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -80,9 +81,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
     public ActionForward saveNewBag(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
-        ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
-
-        saveBag(changeResultsForm.getNewBagName(), mapping, form, request, response);
+        saveBag(((ChangeResultsForm) form).getNewBagName(), form, request);
         return mapping.findForward("results");
     }
 
@@ -100,9 +99,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
     public ActionForward addToExistingBag(ActionMapping mapping, ActionForm form,
                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
-        ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
-
-        saveBag(changeResultsForm.getBagName(), mapping, form, request, response);
+        saveBag(((ChangeResultsForm) form).getBagName(), form, request);
         return mapping.findForward("results");
     }
 
@@ -110,56 +107,49 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
      * Save the selected objects to a bag on the session
      *
      * @param bagName the bag to save to
-     * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
      *
      * @exception ServletException if a servlet error occurs
      */
-    public void saveBag(String bagName, ActionMapping mapping, ActionForm form,
-                        HttpServletRequest request, HttpServletResponse response)
+    public void saveBag(String bagName, ActionForm form, HttpServletRequest request)
         throws ServletException {
         ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
 
         HttpSession session = request.getSession();
 
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        Map savedBagsInverse =
-            (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
-        Results results = (Results) session.getAttribute("results");
-        String[] selectedObjects = changeResultsForm.getSelectedObjects()
-;
-        Collection bag = (Collection) savedBags.get(bagName);
+        if (savedBags == null) {
+            savedBags = new HashMap();
+            session.setAttribute(Constants.SAVED_BAGS, savedBags);
+        }
 
+        Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
+        if (savedBagsInverse == null) {
+            savedBagsInverse = new IdentityHashMap();
+            session.setAttribute(Constants.SAVED_BAGS_INVERSE, savedBagsInverse);
+        }
+        
+        Results results = (Results) session.getAttribute("results");
+        String[] selectedObjects = changeResultsForm.getSelectedObjects();
+
+        Collection bag = (Collection) savedBags.get(bagName);
         if (bag == null) {
             bag = new LinkedHashSet();
+            savedBags.put(bagName, bag);
+            savedBagsInverse.put(bag, bagName);
         }
 
         // Go through the selected items and add to the set
-        Iterator iter = Arrays.asList(selectedObjects).iterator();
-        while (iter.hasNext()) {
-            String selectedObject = (String) iter.next();
+        for (Iterator i =  Arrays.asList(selectedObjects).iterator(); i.hasNext();) {
+            String selectedObject = (String) i.next();
             // selectedObject is of the form column,row - we use those
             // to pick out the object from the underlying results
             int commaIndex = selectedObject.indexOf(",");
             int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
             int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-
             bag.add(((ResultsRow) results.get(row)).get(column));
         }
-
-        // handle the case where queryName already exists - remove it from
-        // both maps
-        if (savedBags.get(bagName) != null) {
-            Collection savedCollection = (Collection) savedBags.get(bagName);
-            savedBagsInverse.remove(savedCollection);
-            savedBags.remove(bagName);
-        }
-
-        // Save the altered bag in the savedBags map
-        savedBags.put(bagName, bag);
-        savedBagsInverse.put(bag, bagName);
     }
 
     /**
@@ -175,6 +165,4 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         map.put("bag.existing", "addToExistingBag");
         return map;
     }
-
-
 }
