@@ -53,6 +53,10 @@ import org.apache.log4j.Logger;
  */
 public class MageConverter extends FileConverter
 {
+    private int opCount;
+    private long time;
+    private long start;
+
     private static final Logger LOG = Logger.getLogger(MageConverter.class);
 
     protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
@@ -77,6 +81,9 @@ public class MageConverter extends FileConverter
         seenMap = new LinkedHashMap();
         dataItems = new LinkedHashSet();
         id = 0;
+        opCount = 0;
+        time = System.currentTimeMillis();
+        start = time;
         File f = new File("build/tmp/mage/mageconvert.xml");
         try {
             Writer fileWriter = new FileWriter(f);
@@ -91,10 +98,26 @@ public class MageConverter extends FileConverter
         } finally {
             f.delete();
         }
+
+        long now = System.currentTimeMillis();
         writer.storeAll(seenMap.values());
+        LOG.info("store seenMap " + seenMap.values().size()
+                  + "in " + (System.currentTimeMillis() - now) + " ms");
+
+        now = System.currentTimeMillis();
         writer.storeAll(dataItems);
+        LOG.info("store dataItem " + dataItems.size()
+                 + "in " + (System.currentTimeMillis() - now) + " ms");
+
+        now = System.currentTimeMillis();
         writer.storeAll(padIdentifiers.values());
+        LOG.info("store padIdentifiers " + padIdentifiers.values().size()
+                 + "in " + (System.currentTimeMillis() - now) + " ms");
+
+        now = System.currentTimeMillis();
         writer.storeAll(featureIdentifiers.values());
+        LOG.info("store featureIdentifiers " + featureIdentifiers.values().size()
+                 + "in " + (System.currentTimeMillis() - now) + " ms");
     }
 
 
@@ -109,21 +132,30 @@ public class MageConverter extends FileConverter
         if (seenMap.containsKey(obj)) {
             return (Item) seenMap.get(obj);
         }
-
         Class cls = obj.getClass();
         String className = TypeUtil.unqualifiedName(cls.getName());
-
         Item item = new Item();
         item.setClassName(MAGE_NS + className);
         item.setImplementations("");
-
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")
             && !className.endsWith("_package")) {
-            if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign") &&
-                !cls.getName().equals("org.biomage.DesignElement.Feature")) {
+            if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")
+                && !cls.getName().equals("org.biomage.DesignElement.Feature")) {
                 item.setIdentifier(alias(className) + "_" + (id++));
                 seenMap.put(obj, item);
             }
+        }
+
+        opCount++;
+        if (opCount % 1000 == 0) {
+            long now = System.currentTimeMillis();
+            LOG.info("Converted " + opCount + " objects - running at "
+                     + (60000000 / (now - time)) + " (avg "
+                     + ((60000L * opCount) / (now - start))
+                     + ") objects per minute -- now on "
+                     + item.getClassName());
+
+            time = now;
         }
 
         for (Iterator i = TypeUtil.getFieldInfos(cls).values().iterator(); i.hasNext();) {
@@ -133,7 +165,6 @@ public class MageConverter extends FileConverter
                 Object value = m.invoke(obj, null);
                 if (value != null) {
                     if (Collection.class.isAssignableFrom(m.getReturnType())) {
-                        // collection
                         ReferenceList refs = new ReferenceList();
                         refs.setName(info.getName());
                         StringBuffer sb = new StringBuffer();
@@ -146,7 +177,6 @@ public class MageConverter extends FileConverter
                         }
                     } else if (m.getReturnType().getName().startsWith("org.biomage")) {
                         if (m.getReturnType().getName().startsWith(cls.getName() + "$")) {
-                            //attribute
                             Attribute attr = new Attribute();
                             attr.setName(info.getName());
                             Method getName = value.getClass().getMethod("getName", null);
@@ -159,14 +189,12 @@ public class MageConverter extends FileConverter
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
                             }
                         } else {
-                            //reference
                             Reference ref = new Reference();
                             ref.setName(info.getName());
                             ref.setRefId(createItem(value).getIdentifier());
                             item.addReferences(ref);
                         }
                     } else if (!info.getName().equals("identifier")) {
-                        // attribute
                         Attribute attr = new Attribute();
                         attr.setName(info.getName());
                         attr.setValue(escapeQuotes(value.toString()));
@@ -176,16 +204,11 @@ public class MageConverter extends FileConverter
                 }
             }
         }
-
-
-
         if (className.equals("PhysicalArrayDesign")) {
-            // if item does not have name set it is a placeholder
-            // do not want to store
+            // if item does not have name set it is a placeholder do not want to store
             PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
             String padId = pad.getIdentifier();
             Item padItem = (Item) padIdentifiers.get(padId);
-
             if (padItem == null) {
                 item.setIdentifier(alias(className) + "_" + (id++));
                 padIdentifiers.put(padId, item);
@@ -195,18 +218,14 @@ public class MageConverter extends FileConverter
             } else {
                 item = padItem;
             }
-
         } else if (className.equals("Feature")) {
-            // as above but where check pad.getName() check
-            // if feature.getZone()... from mage object
             Feature feature = (Feature) obj;
             String fid = feature.getIdentifier();
             Item fItem = (Item) featureIdentifiers.get(fid);
-
             if (fItem == null) {
                 item.setIdentifier(alias(className) + "_" + (id++));
                 featureIdentifiers.put(fid, item);
-            } else if ( feature.getZone() != null) {
+            } else if (feature.getZone() != null) {
                 item.setIdentifier(fItem.getIdentifier());
                 featureIdentifiers.put(fid, item);
             } else {
@@ -230,12 +249,11 @@ public class MageConverter extends FileConverter
             bdt.setClassName(MAGE_NS + "BioDataTuples");
             bdt.setImplementations("");
             bdt.setIdentifier(alias(className) + "_" + (id++));
-
             ReferenceList rl = new ReferenceList();
             rl.setName("bioAssayTupleData");
             StringBuffer sb = new StringBuffer();
             for (Iterator i = rowNames.iterator(); i.hasNext();) {
-                Feature f = (Feature) i.next();
+                Feature feature = (Feature) i.next();
                 String s = br.readLine();
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
@@ -245,51 +263,39 @@ public class MageConverter extends FileConverter
                     data.setClassName(MAGE_NS + "BioAssayDatum");
                     data.setImplementations("");
                     data.setIdentifier(alias(className) + "_" + (id++));
-
                     sb.append(data.getIdentifier() + " ");
-
-                    //reference
                     Reference ref = new Reference();
                     ref.setName("quantitationType");
                     ref.setRefId(createItem(qt).getIdentifier());
                     data.addReferences(ref);
-
                     ref = new Reference();
                     ref.setName("designElement");
-                    ref.setRefId(f.getIdentifier());
-                    // ref.setRefId(createItem(f).getIdentifier());
+                    ref.setRefId(createItem(feature).getIdentifier());
                     data.addReferences(ref);
-
                     Attribute attr = new Attribute();
                     attr.setName("value");
                     attr.setValue(value);
                     data.addAttributes(attr);
-
-                    // add normalised attribute - not actually in MAGE model,
-                    // will be removed by MageDataTranslator before validating
-                    // against model
+                    // add normalised attribute - not actually in MAGE model, will be removed
+                    // by MageDataTranslator before validating against model
                     Attribute norm = new Attribute();
                     norm.setName("normalised");
                     norm.setValue(normalised ? "true" : "false");
                     data.addAttributes(norm);
-
                     //should create reference for bioAssay
                     //ref = new Reference();
                     //ref.setName("bioAssay");
                     //ref.setRefId(createItem(obj).getIdentifier());
                     //data.addReferences(ref);
                     dataItems.add(data);
-
                 }
             }
             rl.setRefIds(sb.toString().trim());
             bdt.addCollections(rl);
             dataItems.add(bdt);
-
             Reference bdtRef = new Reference();
             bdtRef.setName("bioDataValues");
             bdtRef.setRefId(bdt.getIdentifier());
-
             Set newRefs = new HashSet();
             Iterator refIter = item.getReferences().iterator();
             while (refIter.hasNext()) {
