@@ -65,6 +65,9 @@ public class CreateTemplateAction extends InterMineAction
 
         boolean seenProblem = false;
 
+        // Make sure this attribute is cleared
+        session.setAttribute(Constants.EDITING_TEMPLATE, null);
+        
         // Check whether query has at least one constraint and at least one output
         if (query.getView().size() == 0) {
             recordError(new ActionMessage("errors.createtemplate.nooutputs"), request);
