@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
@@ -42,6 +42,7 @@
 
 </table>
 
+<%-- "Displaying xxx to xxx of xxx rows" messages --%>
 <c:choose>
   <c:when test="${resultsTable.sizeEstimate}">
     <bean:message key="results.pageinfo.estimate"
@@ -55,5 +56,23 @@
                   arg1="${resultsTable.end+1}"
                   arg2="${resultsTable.size}"/>
   </c:otherwise>
+
 </c:choose>
 
+<%-- Paging controls --%>
+<html:link action="/changeResults?method=first">
+  <bean:message key="results.first"/>
+</html:link>
+<c:if test="${resultsTable.previousButton}">
+  <html:link action="/changeResults?method=previous">
+    <bean:message key="results.previous"/>
+  </html:link>
+</c:if>
+<c:if test="${resultsTable.nextButton}">
+  <html:link action="/changeResults?method=next">
+    <bean:message key="results.next"/>
+  </html:link>
+</c:if>
+<html:link action="/changeResults?method=last">
+  <bean:message key="results.last"/>
+</html:link>
