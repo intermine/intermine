@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -75,9 +73,9 @@ public class ShutdownHook extends Thread
                 } else if (o instanceof OutputStream) {
                     ((OutputStream) o).flush();
                     ((OutputStream) o).close();
-                } else if (o instanceof ObjectStoreWriterInterMineImpl) {
-                    ((ObjectStoreWriterInterMineImpl) o).shutdown();
-                } else {
+                } else if (o instanceof Shutdownable) {
+                    ((Shutdownable) o).shutdown();
+                } else if (o != null) {
                     LOG.error("Do not know how to shut down " + o);
                 }
             } catch (Exception e) {

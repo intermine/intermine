@@ -207,6 +207,12 @@ public class DirectDBReader implements DBReader
     }
 
     /**
+     * @see DBReader#close
+     */
+    public void close() {
+    }
+
+    /**
      * Nested class to provide the sqlIterator service.
      */
     private class SqlIterator implements Iterator

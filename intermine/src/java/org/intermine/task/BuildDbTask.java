@@ -147,19 +147,20 @@ public class BuildDbTask extends Task
         isql.execute();
         // TODO: properly
 
+        Connection c = null;
         try {
-            Connection c = database.getConnection();
+            c = database.getConnection();
             c.setAutoCommit(true);
             c.createStatement().execute("create sequence " + SEQUENCE_NAME);
-            c.close();
-        } catch (SQLException e) {
-        }
-        try {
-            Connection c = database.getConnection();
-            c.setAutoCommit(true);
             c.createStatement().execute("drop table tracker");
-            c.close();
         } catch (SQLException e) {
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
         }
 
         tempFile.delete();

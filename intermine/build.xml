@@ -488,7 +488,7 @@
   <target name="test-main" depends="compile-test, build-db-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="test.class.path"/>
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
@@ -537,7 +537,7 @@
           depends="build-db-userprofile, compile-webapp-tests, build-testable-webapp"
           description="perform JUnit tests on web application" >
 
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
@@ -555,7 +555,7 @@
 
   <target name="test-webservice" depends="compile-test, build-db-unittest, build-testable-webservice, release-webservice"
           description="perform JUnit tests on web service" >
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">

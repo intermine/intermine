@@ -31,6 +31,8 @@ public class ReadAheadDBReader extends BatchingDBReader
     protected SQLException nextProblem;
     protected boolean ready = false;
     protected WorkerThread workerThread;
+    protected boolean doClose = false;
+    protected boolean closed = false;
 
     /**
      * Constructs a new ReadAheadDBReader.
@@ -54,6 +56,22 @@ public class ReadAheadDBReader extends BatchingDBReader
     }
 
     /**
+     * @see DBReader#close
+     */
+    public void close() {
+        synchronized (this) {
+            doClose = true;
+            notify();
+            while (!closed) {
+                try {
+                    wait(100000L);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
+
+    /**
      * Creates a new DBBatch for a given offset.
      *
      * @param previous the previous batch, or null if this is the first
@@ -67,7 +85,7 @@ public class ReadAheadDBReader extends BatchingDBReader
             long start = System.currentTimeMillis();
             while ((nextBatch == null) && (nextProblem == null) && ready) {
                 try {
-                    wait();
+                    wait(100000);
                 } catch (InterruptedException e) {
                 }
             }
@@ -90,11 +108,14 @@ public class ReadAheadDBReader extends BatchingDBReader
     private void doWork() {
         DBBatch previous = null;
         synchronized (this) {
-            while ((nextBatch != null) || (nextProblem != null) || (!ready)) {
+            while (((nextBatch != null) || (nextProblem != null) || (!ready)) && (!doClose)) {
                 try {
-                    wait();
+                    wait(100000L);
                 } catch (InterruptedException e) {
                 }
+            }
+            if (doClose) {
+                return;
             }
             previous = referenceBatch;
         }
@@ -117,15 +138,27 @@ public class ReadAheadDBReader extends BatchingDBReader
         }
     }
 
+    private void workLoop() {
+        boolean cont = true;
+        while (cont) {
+            doWork();
+            synchronized (this) {
+                cont = !doClose;
+            }
+        }
+        synchronized (this) {
+            closed = true;
+            notifyAll();
+        }
+    }
+
     private class WorkerThread implements Runnable
     {
         public WorkerThread() {
         }
 
         public void run() {
-            while (true) {
-                doWork();
-            }
+            workLoop();
         }
     }
 }

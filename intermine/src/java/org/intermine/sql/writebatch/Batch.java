@@ -12,6 +12,7 @@ package org.intermine.sql.writebatch;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,8 @@ public class Batch
     private SQLException problem = null;
     
     private volatile int lastDutyCycle = 100;
+    private boolean closed = false;
+    private static final List CLOSE_DOWN_COMMAND = new ArrayList();
 
     /**
      * Constructs an empty Batch, with no tables.
@@ -78,6 +81,9 @@ public class Batch
      */
     public void addRow(Connection con, String name, Object idValue, String colNames[],
             Object values[]) throws SQLException {
+        if (closed) {
+            throw new SQLException("Batch is closed");
+        }
         TableBatch table = (TableBatch) tables.get(name);
         if (table == null) {
             table = new TableBatch();
@@ -102,6 +108,9 @@ public class Batch
      */
     public void addRow(Connection con, String name, String leftColName, String rightColName,
             int left, int right) throws SQLException {
+        if (closed) {
+            throw new SQLException("Batch is closed");
+        }
         IndirectionTableBatch table = (IndirectionTableBatch) tables.get(name);
         if (table == null) {
             table = new IndirectionTableBatch(leftColName, rightColName);
@@ -132,6 +141,9 @@ public class Batch
      */
     public void deleteRow(Connection con, String name, String idField,
             Object idValue) throws SQLException {
+        if (closed) {
+            throw new SQLException("Batch is closed");
+        }
         TableBatch table = (TableBatch) tables.get(name);
         if (table == null) {
             table = new TableBatch();
@@ -156,6 +168,9 @@ public class Batch
      */
     public void deleteRow(Connection con, String name, String leftColName, String rightColName,
             int left, int right) throws SQLException {
+        if (closed) {
+            throw new SQLException("Batch is closed");
+        }
         IndirectionTableBatch table = (IndirectionTableBatch) tables.get(name);
         if (table == null) {
             table = new IndirectionTableBatch(leftColName, rightColName);
@@ -169,10 +184,10 @@ public class Batch
 
     /**
      * Flushes the batch out to the database server. This method guarantees that the Connection
-     * is no longer in use by the batch once it returns.
+     * is no longer in use by the batch even if it does not return normally.
      *
      * @param con a Connection for writing to the database
-     * @throws SQLException if a flush occurs, and an error occurs while flushing
+     * @throws SQLException if an error occurs while flushing
      */
     public void flush(Connection con) throws SQLException {
         backgroundFlush(con);
@@ -189,6 +204,9 @@ public class Batch
      * @throws SQLException if an error occurs while flushing
      */
     public void backgroundFlush(Connection con) throws SQLException {
+        if (closed) {
+            throw new SQLException("Batch is closed");
+        }
         long start = System.currentTimeMillis();
         List jobs = batchWriter.write(con, tables);
         long middle = System.currentTimeMillis();
@@ -202,6 +220,26 @@ public class Batch
     }
 
     /**
+     * Closes this BatchWriter. This method guarantees that the Connection is no longer in use by
+     * the batch, and the background writer Thread will die soon, even if it does not return
+     * normally.
+     *
+     * @param con a Connection for writing to the database
+     * @throws SQLException if an error occurs while flushing.
+     */
+    public void close(Connection con) throws SQLException {
+        if (closed) {
+            throw new SQLException("Batch is already closed");
+        }
+        try {
+            backgroundFlush(con);
+        } catch (SQLException e) {
+        }
+        closed = true;
+        putFlushJobs(CLOSE_DOWN_COMMAND);
+    }
+
+    /**
      * Clears the batch without writing it to the database. NOTE that some data may have already
      * made it to the database. It is expected that this will be called just before a transaction
      * is aborted, removing the data anyway. This method guarantees that the Connection is no longer
@@ -209,6 +247,9 @@ public class Batch
      * waiting to be thrown
      */
     public void clear() {
+        if (closed) {
+            throw new IllegalStateException("Batch is closed");
+        }
         Iterator iter = tables.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
@@ -226,6 +267,9 @@ public class Batch
      * @param batchWriter the new BatchWriter
      */
     public void setBatchWriter(BatchWriter batchWriter) {
+        if (closed) {
+            throw new IllegalStateException("Batch is closed");
+        }
         waitForFreeConnection();
         this.batchWriter = batchWriter;
     }
@@ -313,9 +357,10 @@ public class Batch
             long totalSpent = 0;
             long timeAtLastMessage = flusherStart;
             long spentAtLastMessage = totalSpent;
-            while (true) {
+            List jobs = null;
+            while (jobs != CLOSE_DOWN_COMMAND) {
                 try {
-                    List jobs = getFlushJobs();
+                    jobs = getFlushJobs();
                     long start = System.currentTimeMillis();
                     Iterator jobIter = jobs.iterator();
                     while (jobIter.hasNext()) {

@@ -65,11 +65,7 @@ public class DatabaseTest extends TestCase
         Properties invalidProps = new Properties();
         invalidProps.put("datasource.class", "org.postgresql.jdbc3.Jdbc3PoolingDataSource");
         invalidProps.put("datasource.someRubbish", "blahblahblah");
-        try {
-            Database db = new Database(invalidProps);
-        } catch (Exception e) {
-            fail("Did not expect an exception to be thrown");
-        }
+        Database db = new Database(invalidProps);
     }
 
     public void testNullProperties() throws Exception {

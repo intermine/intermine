@@ -69,7 +69,7 @@ public class DatabaseUtilTest extends TestCase
 
     public void testTableExistsNullTable() throws Exception {
         try {
-            DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), null);
+            DatabaseUtil.tableExists(con, null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -79,7 +79,7 @@ public class DatabaseUtilTest extends TestCase
     public void testTableExists() throws Exception {
         synchronized (con) {
             createTable();
-            assertTrue(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "table1"));
+            assertTrue(DatabaseUtil.tableExists(con, "table1"));
             dropTable();
         }
     }
@@ -93,7 +93,7 @@ public class DatabaseUtilTest extends TestCase
                 con.rollback();
             }
             createTable();
-            assertTrue(!(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "table2")));
+            assertTrue(!(DatabaseUtil.tableExists(con, "table2")));
             dropTable();
         }
     }

@@ -67,6 +67,7 @@ public class XmlDataLoaderTest extends TestCase
         if (file != null) {
             file.delete();
         }
+        writer.close();
     }
 
 

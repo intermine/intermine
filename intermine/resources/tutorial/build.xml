@@ -111,7 +111,6 @@
       <classpath refid="tutorial.class.path"/>
     </taskdef>
     <insert-xml-data integrationWriter="integration.tutorial"  xmlFile="${resources}/tutorial_data.xml"  sourceName="tutorialsource">
-      <classpath refid="tutorial.class.path"/>
     </insert-xml-data>
   </target>
 
@@ -187,13 +186,3 @@
     <delete file="velocity.log"/>
   </target>
 </project>
-
-
-
-
-
-
-
-
-
-

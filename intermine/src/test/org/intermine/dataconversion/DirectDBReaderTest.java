@@ -56,7 +56,7 @@ public class DirectDBReaderTest extends DBReaderTestCase
         sb.append("abcdefghijklmnopqrstuvwxyz");
         batch.addRow(c, "testread", null, colNames, new Object[] {new Integer(20201), sb.toString()});
         sb = null;
-        batch.flush(c);
+        batch.close(c);
         c.close();
 
         DBReader reader = getDBReader();

@@ -77,7 +77,7 @@ public class DBReaderTestCase extends TestCase {
             batch.addRow(c, "company_contractor", null, colNames, new Object[] {iInteger, new Integer(i * 775434512)});
             batch.addRow(c, "company_contractor", null, colNames, new Object[] {iInteger, new Integer(i * 642134545)});
         }
-        batch.flush(c);
+        batch.close(c);
         c.commit();
         try {
             s.execute("DROP TABLE company_secretary");
@@ -121,6 +121,7 @@ public class DBReaderTestCase extends TestCase {
             v++;
         }
         assertEquals(2500, v);
+        reader.close();
     }
 
     public DBReader getDBReader() throws Exception {
