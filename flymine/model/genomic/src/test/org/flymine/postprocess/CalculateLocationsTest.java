@@ -2565,7 +2565,7 @@ public class CalculateLocationsTest extends TestCase {
     private Chromosome getChromosome() {
         if (chromosome == null) {
             chromosome = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-            chromosome.setName("X");
+            chromosome.setIdentifier("X");
             chromosome.setLength(new Integer(10000));
             chromosome.setId(new Integer(101));
         }

@@ -99,12 +99,12 @@ public class CreateReferencesTest extends TestCase {
     private void compareChromosomeExonResultsToExpected() throws Exception {
         osw.flushObjectById();
         Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        expectedExon.setName("exon1");
+        expectedExon.setIdentifier("exon1");
         expectedExon.setId(storedExon.getId());
 
         Chromosome expectedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        expectedChromosome.setName("chr1");
+        expectedChromosome.setIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
 
         Relation expectedChromosomeRelation =
@@ -168,12 +168,12 @@ public class CreateReferencesTest extends TestCase {
         osw.flushObjectById();
 
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setName("gene1");
+        expectedGene.setIdentifier("gene1");
         expectedGene.setId(storedGene.getId());
 
         Transcript expectedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        expectedTranscript.setName("trans1");
+        expectedTranscript.setIdentifier("trans1");
         expectedTranscript.setId(storedTranscript.getId());
         expectedTranscript.setGene(expectedGene);
         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
@@ -237,12 +237,12 @@ public class CreateReferencesTest extends TestCase {
         osw.flushObjectById();
 
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setName("gene1");
+        expectedGene.setIdentifier("gene1");
         expectedGene.setId(storedGene.getId());
 
         Transcript expectedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        expectedTranscript.setName("trans1");
+        expectedTranscript.setIdentifier("trans1");
         expectedTranscript.setId(storedTranscript.getId());
         expectedTranscript.setGene(expectedGene);
         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
@@ -256,7 +256,7 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setSubjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
 
         Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        expectedExon.setName("exon1");
+        expectedExon.setIdentifier("exon1");
         expectedExon.setId(storedExon.getId());
         expectedTranscript.setExons(Arrays.asList(new Object[] {expectedExon}));
         expectedExon.setTranscripts(Arrays.asList(new Object[] {expectedTranscript}));
@@ -273,7 +273,7 @@ public class CreateReferencesTest extends TestCase {
 
         Chromosome expectedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        expectedChromosome.setName("chr1");
+        expectedChromosome.setIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
 
         Relation expectedChromosomeRelation =
@@ -362,20 +362,20 @@ public class CreateReferencesTest extends TestCase {
         osw.flushObjectById();
 
         storedChromosome = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        storedChromosome.setName("chr1");
+        storedChromosome.setIdentifier("chr1");
 
         storedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        storedGene.setName("gene1");
+        storedGene.setIdentifier("gene1");
 
         storedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        storedTranscript.setName("trans1");
+        storedTranscript.setIdentifier("trans1");
         // currently the gene reference in Transcript is set before post-processing but the
         // transcripts reference in Gene isn't set
         storedTranscript.setGene(storedGene);
 
         storedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon.setName("exon1");
+        storedExon.setIdentifier("exon1");
 
         storedTranscriptRelation =
             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
