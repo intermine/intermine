@@ -844,10 +844,10 @@
       <fileset dir="${src.www}" includes="flymine.css"/>
     </copy>
     <copy todir="${build.webapp}/flymine/WEB-INF">
-      <fileset dir="${resources}/webapps/flymine" excludes="FlyMineWebApp*.properties"/>
+      <fileset dir="${resources}/webapps/flymine" excludes="*.properties"/>
     </copy>
     <copy todir="${build.webapp}/flymine/WEB-INF/classes">
-      <fileset dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
+      <fileset dir="${resources}/webapps/flymine" includes="*.properties"/>
     </copy>
     <copy todir="${build.webapp}/flymine/WEB-INF/lib">
       <fileset dir="${lib}">
@@ -879,7 +879,7 @@
 
     <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
 
-    <!-- this step is optional -->
+    <!-- this precompilation step is optional -->
     <antcall target="precompile-jsp"/>
 
     <delete file="${build.webapp}/flymine/WEB-INF/web.xml"/>
