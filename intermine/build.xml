@@ -374,11 +374,12 @@
     </ant>
   </target>
   
-  <target name="build-db-userprofile" depends="compile-userprofile">
+  <target name="build-db-userprofile" depends="compile-webapp">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="userprofile"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.unittest"/>
+      <property name="objectstore.name" value="os.userprofile"/>      
     </ant>
   </target>
 
@@ -522,7 +523,7 @@
     </javac>
   </target>
 
-  <target name="test-webapp" depends="compile-test-webapp, build-testable-webapp"
+  <target name="test-webapp" depends="build-db-userprofile, compile-test-webapp, build-testable-webapp"
           description="perform JUnit tests on web application" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
@@ -631,89 +632,22 @@
 
   <!-- Webapp targets -->
 
-  <target name="compile-userprofile" depends="precompile-main">
-    <!--copy todir="${build.model}/fulldata" file="${model}/fulldata/fulldata_keyDefs.properties"/-->
-    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
-      <property name="model.name" value="userprofile"/>
-      <property name="model.src" value="${model}/userprofile"/>
-      <reference torefid="class.path" refid="project.class.path"/>
-    </ant>
-  </target>
-
-  <target name="compile-webapp" depends="compile-main, compile-userprofile">
-    <javac destdir="${build.java}" listfiles="yes">
-      <classpath refid="project.class.path"/>
-      <src path="${build.src.java}"/>
-      <include name="org/intermine/web/**"/>
-    </javac>
+   <target name="compile-webapp" depends="compile-main">
+    <ant antfile="build-webapp.xml" target="compile-webapp" inheritRefs="true">
+       <property name="war" value="${dist.webapp}/intermine.war"/> 
+       <reference torefid="class.path" refid="project.class.path"/>
+    </ant>   
   </target>
   
   <target name="jar-intermine-webapp" depends="prepare-dist, compile-webapp">
-    <condition property="version" value="${DTSTAMP}">
-      <not>
-        <isset property="version" />
-      </not>
-    </condition>
-
-    <echo message="Creating jar file version ${version}" />
-
-    <manifest file="${build.tmp}/MANIFEST.MF">
-      <attribute name="Built-By" value="${user.name}"/>
-      <attribute name="Specification-Title" value="InterMine"/>
-      <attribute name="Specification-Version" value="${version}"/>
-      <attribute name="Specification-Vendor" value="InterMine"/>
-      <attribute name="Implementation-Title" value="InterMine"/>
-      <attribute name="Implementation-Version" value="${version}"/> 
-      <attribute name="Implementation-Vendor" value="InterMine"/>
-    </manifest>
-
-    <jar destfile="${dist}/intermine-webapp.jar" manifest="${build.tmp}/MANIFEST.MF">
-      <fileset dir="${build.java}" includes="org/intermine/web/**"/>
-      <fileset dir="${build.model}/userprofile" excludes="tmp/**"/>
-      <fileset file="${build.resources}/intermine.properties"/>
-      <fileset file="${build.resources}/log4j.properties"/>
-    </jar>
+    <ant antfile="build-webapp.xml" target="jar-webapp" inheritRefs="true">
+       <property name="war" value="${dist.webapp}/intermine.war"/>
+       <reference torefid="class.path" refid="project.class.path"/>
+    </ant>      
   </target>
+    
 
-  <target name="prepare-webapp" depends="jar-intermine, jar-intermine-webapp">
-    <mkdir dir="${build.webapp}/intermine"/>
-    <mkdir dir="${build.webapp}/intermine/images"/>
-    <mkdir dir="${build.webapp}/intermine/model"/>
-    <mkdir dir="${build.webapp}/intermine/META-INF"/>
-    <mkdir dir="${build.webapp}/intermine/WEB-INF"/>
-    <mkdir dir="${build.webapp}/intermine/WEB-INF/classes"/>
-    <mkdir dir="${build.webapp}/intermine/WEB-INF/lib"/>
-
-    <copy todir="${build.webapp}/intermine">
-      <fileset dir="${src.webapp}"/>
-      <fileset file="${resources}/webapps/intermine/intermine.css"/>
-    </copy>
-    <copy todir="${build.webapp}/intermine/images">
-      <fileset dir="${resources}/webapps/intermine/images"/>
-    </copy>
-    <copy todir="${build.webapp}/intermine/WEB-INF">
-      <fileset dir="${resources}/webapps/intermine" 
-               excludes="web.xml images/** *.properties intermine.css"/>
-      <fileset dir="${resources}/webapps/intermine"
-               includes="global.web.properties"/>
-    </copy>
-    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
-      <fileset dir="${resources}/webapps/intermine" includes="*.properties"/>
-    </copy>
-    <copy todir="${build.webapp}/intermine/WEB-INF/lib">
-      <fileset dir="${lib}">
-        <patternset refid="lib.common"/>
-        <patternset refid="lib.antlr"/>
-        <patternset refid="lib.webapp.intermine"/>
-      </fileset>
-      <fileset dir="${dist}" includes="intermine*.jar"/>
-    </copy>
-
-    <copy todir="${build.webapp}/intermine/META-INF" file="${resources}/webapps/intermine/context.xml"/>
-    <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
-  </target>
-
-  <target name="compile-testmodel-web-java" depends="prepare-webapp"
+  <target name="compile-testmodel-web-java" depends="compile-webapp"
           description="Build the java code specific to the testmodel">
     <ant antfile="build-model.xml" target="compile-webapp-java" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
@@ -722,35 +656,41 @@
     </ant>    
   </target>
 
-  <target name="build-webapp" depends="prepare-webapp"
+  <target name="build-webapp" depends="jar"
           description="Build webapp without including a model">
-    <war destfile="${dist.webapp}/intermine.war"
-         webxml="${resources}/webapps/intermine/web.xml">
-      <fileset dir="${build.webapp}/intermine"/>
-    </war>
+      <ant antfile="build-webapp.xml" target="build-webapp" inheritRefs="true">
+       <property name="war" value="${dist.webapp}/intermine.war"/>
+       <reference torefid="class.path" refid="project.class.path"/>
+      </ant>
   </target>
 
-  <target name="build-testmodel-webapp" 
-          depends="prepare-webapp, jar-testmodel, compile-testmodel-web-java"
+  <target name="build-testmodel-webapp"
+          depends="jar-testmodel, compile-testmodel-web-java, build-webapp"
           description="Build webapp including the test model">
-    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
+    <ant antfile="build-webapp.xml" target="add-model-to-webapp" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/intermine.war"/>
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="model.src" value="${model}/testmodel"/>
     </ant>
-    <antcall target="build-webapp"/>
   </target>
 
   <target name="build-testable-webapp" depends="build-testmodel-webapp"
     description="Build webapp including the test model and test libraries">
     <!-- now update war to include the test jars -->
-    <war destfile="${dist.webapp}/intermine.war" update="true">
-      <lib dir="${lib}">
-        <patternset refid="lib.webapptest"/>
-      </lib>
-      <!-- struts test stuff requires messages to be in root of webapp -->
-      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
-    </war>
+     <ant antfile="build-webapp.xml" target="add-lib-to-webapp" inheritRefs="true">
+       <property name="war" value="${dist.webapp}/intermine.war"/>       
+       <reference torefid="lib.toadd" refid="lib.webapptest"/>
+        <property name="lib.dir" value="${lib}"/>
+      </ant>
+    <patternset id="webapp-properties">
+      <include name="InterMineWebApp*.properties"/>
+     </patternset>
+    <ant antfile="build-webapp.xml" target="add-file-to-webapp" inheritRefs="true">
+        <property name="war" value="${dist.webapp}/intermine.war"/>
+        <reference torefid="file.toadd" refid="webapp-properties"/>
+        <property name="file.dir" value="${resources}/webapps/intermine"/>
+      </ant>    
   </target>
 
   <!-- Webservice targets -->

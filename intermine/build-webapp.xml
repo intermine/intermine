@@ -1,0 +1,186 @@
+<project name="intermine-webapp" basedir=".">
+   <description>InterMine WebApp build file</description>
+   
+
+ <!-- Webapp targets -->
+
+  <target name="compile-userprofile" >
+  
+    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
+      <property name="model.name" value="userprofile"/>
+      <property name="model.src" value="${model}/userprofile"/>
+     
+    </ant>
+  </target>
+
+  <target name="compile-webapp" depends="compile-userprofile">
+    <javac destdir="${build.java}" listfiles="yes">
+      <classpath refid="class.path"/>
+      <src path="${build.src.java}"/>
+      <include name="org/intermine/web/**"/>
+    </javac>
+  </target>
+  
+  <target name="jar-webapp" depends="compile-webapp">
+    <condition property="version" value="${DTSTAMP}">
+      <not>
+        <isset property="version" />
+      </not>
+    </condition>
+
+    <echo message="Creating jar file version ${version}" />
+
+    <manifest file="${build.tmp}/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Specification-Title" value="InterMine"/>
+      <attribute name="Specification-Version" value="${version}"/>
+      <attribute name="Specification-Vendor" value="InterMine"/>
+      <attribute name="Implementation-Title" value="InterMine"/>
+      <attribute name="Implementation-Version" value="${version}"/> 
+      <attribute name="Implementation-Vendor" value="InterMine"/>
+    </manifest>
+
+    <jar destfile="${dist}/intermine-webapp.jar" manifest="${build.tmp}/MANIFEST.MF">
+      <fileset dir="${build.java}" includes="org/intermine/web/**"/>
+      <fileset dir="${build.model}/userprofile" excludes="tmp/**"/>
+      <fileset file="${build.resources}/intermine.properties"/>
+      <fileset file="${build.resources}/log4j.properties"/>
+    </jar>
+  </target>
+
+  <target name="prepare-webapp" depends="jar-webapp">
+    <mkdir dir="${build.webapp}/intermine"/>
+    <mkdir dir="${build.webapp}/intermine/images"/>
+    <mkdir dir="${build.webapp}/intermine/model"/>
+    <mkdir dir="${build.webapp}/intermine/META-INF"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF/classes"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF/lib"/>
+
+    <copy todir="${build.webapp}/intermine">
+      <fileset dir="${src.webapp}"/>
+      <fileset file="${resources}/webapps/intermine/intermine.css"/>
+    </copy>
+    <copy todir="${build.webapp}/intermine/images">
+      <fileset dir="${resources}/webapps/intermine/images"/>
+    </copy>
+    <copy todir="${build.webapp}/intermine/WEB-INF">
+      <fileset dir="${resources}/webapps/intermine" 
+               excludes="web.xml images/** *.properties intermine.css"/>
+      <fileset dir="${resources}/webapps/intermine"
+               includes="global.web.properties"/>
+    </copy>
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
+      <fileset dir="${resources}/webapps/intermine" includes="*.properties"/>
+    </copy>
+    <copy todir="${build.webapp}/intermine/WEB-INF/lib">
+      <fileset dir="${lib}">
+        <patternset refid="lib.common"/>
+        <patternset refid="lib.antlr"/>
+        <patternset refid="lib.webapp.intermine"/>
+      </fileset>
+      <fileset dir="${dist}" includes="intermine*.jar"/>
+    </copy>
+
+    <copy todir="${build.webapp}/intermine/META-INF" file="${resources}/webapps/intermine/context.xml"/>
+    <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
+  </target>
+
+ 
+  <target name="build-webapp" depends="prepare-webapp"
+          description="Build webapp without including a model">
+    <war destfile="${war}"
+         webxml="${resources}/webapps/intermine/web.xml">
+      <fileset dir="${build.webapp}/intermine"/>
+    </war>
+  </target>
+
+  <target name="add-lib-to-webapp"
+    description="Build webapp including the test model and test libraries">
+    <!-- now update war to include the test jars -->
+    <war destfile="${war}" update="true">
+      <lib dir="${lib.dir}">
+        <patternset refid="lib.toadd"/>
+      </lib>
+      
+    </war>
+ </target>
+
+<target name="add-file-to-webapp"
+    description="Build webapp including the test model and test libraries">
+    <!-- now update war to include the test jars -->
+    <war destfile="${war}" update="true">
+      <fileset dir="${file.dir}">
+        <patternset refid="file.toadd"/>
+      </fileset>      
+    </war>
+  </target>
+
+  <target name="add-model-to-webapp" 
+    description="Add a model to the webapp">
+
+    <!-- model-specific files -->
+    <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
+
+    <unwar src="${war}" dest="${build.tmp}">   
+       <patternset>
+           <include name="**/struts-config.xml"/>        
+       </patternset>
+    </unwar>
+    
+
+    <replace file="${build.tmp}/WEB-INF/struts-config.xml" value="${model.struts.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    <copy todir="${build.webapp}/intermine/model">
+      <fileset dir="${model}/${model.name}/src/web/jsp"/>
+      <fileset dir="${model}/${model.name}/src/web/images"/>
+      <fileset file="${model}/${model.name}/resources/web/model.css"/>
+    </copy>
+
+     <war destfile="${war}" update="true">
+      <fileset dir="${build.webapp}/intermine">
+         <include name="model/**/*" />        
+      </fileset> 
+      <webinf  dir="${model}/${model.name}/resources/web"/>  
+      <webinf  file="${build.tmp}/WEB-INF/struts-config.xml"/>
+      <classes dir="${model}/${model.name}/resources/web" includes="model*.properties"/>
+      <classes dir="${build.model}/${model.name}" includes="**/web/*.class"/>
+      <lib  dir="${dist}" includes="intermine-${model.name}.jar"/>
+    </war>
+
+  </target>
+
+   <!-- release webapp -->  
+ 
+
+  <target name="release-webapp" depends=""
+    description="releases the InterMine web application to the server">
+ 
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+
+    <tomcat-deploy 
+      url="${webapp.baseurl}/manager"
+      username="${webapp.manager}" 
+      password="${webapp.password}"
+      path="${webapp.path}" 
+      war="file://${war}"/> 
+  </target>
+
+  <target name="remove-webapp"
+    description="remove the web application from the server">
+    <taskdef name="tomcat-undeploy" 
+      classname="org.apache.catalina.ant.UndeployTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <tomcat-undeploy
+      url="${webapp.baseurl}/manager"
+      username="${webapp.manager}" 
+      password="${webapp.password}"
+      path="${webapp.path}"/>
+  </target>
+</project>  

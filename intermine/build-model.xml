@@ -328,44 +328,4 @@
     <create-indexes database="${db.name}" model="${model.name}"/>
   </target>
 
-
-  <target name="add-model-to-webapp" depends="prepare"
-    description="Add a model to the webapp">
-
-    <!-- model-specific files -->
-    <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>
-    <replace file="${build.webapp}/intermine/WEB-INF/struts-config.xml" value="${model.struts.config}">
-      <!-- can't use normal token as xml must be parseable before this replacement -->
-      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
-    </replace>
-
-    <copy todir="${build.webapp}/intermine/model">
-      <fileset dir="${model}/${model.name}/src/web/jsp"/>
-      <fileset dir="${model}/${model.name}/src/web/images"/>
-      <fileset file="${model}/${model.name}/resources/web/model.css"/>
-    </copy>
-
-    <copy todir="${build.webapp}/intermine/WEB-INF">
-       <fileset dir="${model}/${model.name}/resources/web"/>
-    </copy>
-
-    <copy todir="${build.webapp}/intermine/WEB-INF">
-       <fileset dir="${model}/${model.name}/resources/web"/>
-    </copy>
-
-    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
-       <fileset dir="${model}/${model.name}/resources/web" includes="model*.properties"/>
-    </copy>
-
-    <copy todir="${build.webapp}/intermine/WEB-INF/classes"
-          failonerror="false" verbose="true">
-       <fileset dir="${build.model.dir}" includes="**/web/*.class"/>
-    </copy>
-
-    <copy todir="${build.webapp}/intermine/WEB-INF/lib">
-       <fileset dir="${dist}" includes="intermine-${model.name}.jar"/>
-    </copy>
-
-  </target>
-
 </project>
