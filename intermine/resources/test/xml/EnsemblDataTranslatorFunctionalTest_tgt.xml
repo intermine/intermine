@@ -103,6 +103,7 @@
 <reference name="subject" ref_id="1_11168"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="name" value="5_1"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>
@@ -247,6 +248,7 @@
 <attribute name="url" value="http://www.ebi.ac.uk/embl"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Transcript">
+<attribute name="name" value="ENSANGT00000019935"/>
 <attribute name="exonCount" value="2"/>
 <reference name="gene" ref_id="5_1"/>
 <reference name="organism" ref_id="-1_1"/>
@@ -299,6 +301,7 @@
 <reference name="subject" ref_id="13_8846"/>
 </item>
 <item id="0_2" class="http://www.flymine.org/model/genomic#Exon">
+<attribute name="name" value="ENSANGE00000019936"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>
@@ -308,6 +311,7 @@
 </collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Exon">
+<attribute name="name" value="ENSANGE00000019935"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>

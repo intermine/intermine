@@ -111,6 +111,7 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
         Collection result = new HashSet();
+        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
@@ -122,6 +123,10 @@ public class EnsemblDataTranslator extends DataTranslator
                     result.add(createLocation(srcItem, tgtItem, "chromosome", "chr", true));
                 } else if ("exon".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
+                    if (stableId != null) {
+                        moveField(stableId, tgtItem, "stable_id", "name");
+                    }
                     storeTgtItem = false;
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Set locs = processExon(srcItem, tgtItem,
@@ -149,6 +154,12 @@ public class EnsemblDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
                     if (!tgtItem.hasAttribute("name")) {
+                        Item stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
+                        if (stableId != null) {
+                            moveField(stableId, tgtItem, "stable_id", "name");
+                        }
+                    }
+                    if (!tgtItem.hasAttribute("name")) {
                         tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
                     }
                 } else if ("contig".equals(className)) {
@@ -171,7 +182,10 @@ public class EnsemblDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
                     // if no name set the identifier as name (primary key)
                     if (!tgtItem.hasAttribute("name")) {
-                        tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
+                        Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
+                        if (stableId != null) {
+                            moveField(stableId, tgtItem, "stable_id", "name");
+                        }
                     }
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
@@ -190,7 +204,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("translation".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
-                    result.addAll(setProteinIdentifiers(srcItem, tgtItem));
+                    result.addAll(setProteinIdentifiers(srcItem, tgtItem, srcNs));
                 }
 
                 if (storeTgtItem) {
@@ -397,68 +411,67 @@ public class EnsemblDataTranslator extends DataTranslator
         return results;
     }
 
-    private Set setProteinIdentifiers(Item srcItem, Item tgtItem) throws ObjectStoreException {
+    private Set setProteinIdentifiers(Item srcItem, Item tgtItem, String srcNs)
+        throws ObjectStoreException {
         Set synonyms = new HashSet();
-        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         String value = srcItem.getIdentifier().substring(srcItem.getIdentifier().indexOf("_") + 1);
         Set constraints = new HashSet();
         constraints.add(new FieldNameAndValue("className", srcNs + "object_xref", false));
         constraints.add(new FieldNameAndValue("ensembl_id", value, false));
+        constraints.add(new FieldNameAndValue("ensembl_object_type", "Translation", false));
         Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
         // set specific ids and add synonyms
         //Iterator i = objectXrefs.iterator();
         while (objectXrefs.hasNext()) {
             Item objectXref = ItemHelper.convert(
                                   (org.flymine.model.fulldata.Item) objectXrefs.next());
-            if (objectXref.getAttribute("ensembl_object_type").getValue().equals("Translation")) {
-                Item xref = ItemHelper.convert(srcItemReader
-                                      .getItemById(objectXref.getReference("xref").getRefId()));
+            Item xref = ItemHelper.convert(srcItemReader
+                        .getItemById(objectXref.getReference("xref").getRefId()));
 
-                String accession = null;
-                String dbname = null;
-                if (xref != null) {
-                    accession = xref.getAttribute("dbprimary_acc").getValue();
-                    Item externalDb = ItemHelper.convert(srcItemReader
-                                      .getItemById(xref.getReference("external_db").getRefId()));
-                    if (externalDb != null) {
-                        dbname =  externalDb.getAttribute("db_name").getValue();
-                    }
+            String accession = null;
+            String dbname = null;
+            if (xref != null) {
+                accession = xref.getAttribute("dbprimary_acc").getValue();
+                Item externalDb = ItemHelper.convert(srcItemReader
+                                  .getItemById(xref.getReference("external_db").getRefId()));
+                if (externalDb != null) {
+                    dbname =  externalDb.getAttribute("db_name").getValue();
                 }
-                //LOG.error("processing: " + accession + ", " + dbname);
+            }
+            //LOG.error("processing: " + accession + ", " + dbname);
 
-                if (accession != null && !accession.equals("")
-                    && dbname != null && !dbname.equals("")) {
-                    if (dbname.equals("SWISSPROT")) {
-                        Attribute a = new Attribute("swissProtId", accession);
-                        tgtItem.addAttribute(a);
-                        tgtItem.addAttribute(new Attribute("swissProtId", accession));
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("synonym", accession));
-                        synonym.addReference(getSwissprotRef());
-                        synonyms.add(synonym);
-                    } else if (dbname.equals("SPTREMBL")) {
-                        tgtItem.addAttribute(new Attribute("spTREMBLId", accession));
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("synonym", accession));
-                        synonym.addReference(getTremblRef());
-                        synonyms.add(synonym);
-                    } else if (dbname.equals("protein_id")) {
-                        tgtItem.addAttribute(new Attribute("emblId", accession));
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("synonym", accession));
-                        synonym.addReference(getEmblRef());
-                        synonyms.add(synonym);
-                    } else if (dbname.equals("prediction_SPTREMBL")) {
-                        tgtItem.addAttribute(new Attribute("emblId", accession));
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("synonym", accession));
-                        synonym.addReference(getEmblRef());
-                        synonyms.add(synonym);
-                    }
+            if (accession != null && !accession.equals("")
+                && dbname != null && !dbname.equals("")) {
+                if (dbname.equals("SWISSPROT")) {
+                    Attribute a = new Attribute("swissProtId", accession);
+                    tgtItem.addAttribute(a);
+                    tgtItem.addAttribute(new Attribute("swissProtId", accession));
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addReference(getSwissprotRef());
+                    synonyms.add(synonym);
+                } else if (dbname.equals("SPTREMBL")) {
+                    tgtItem.addAttribute(new Attribute("spTREMBLId", accession));
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addReference(getTremblRef());
+                    synonyms.add(synonym);
+                } else if (dbname.equals("protein_id")) {
+                    tgtItem.addAttribute(new Attribute("emblId", accession));
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addReference(getEmblRef());
+                    synonyms.add(synonym);
+                } else if (dbname.equals("prediction_SPTREMBL")) {
+                    tgtItem.addAttribute(new Attribute("emblId", accession));
+                    Item synonym = createItem(tgtNs + "Synonym", "");
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addReference(getEmblRef());
+                    synonyms.add(synonym);
                 }
             }
         }
@@ -473,19 +486,31 @@ public class EnsemblDataTranslator extends DataTranslator
                                                tgtItem.getAttribute("emblId").getValue()));
         } else {
             // there was no protein identifier so use ensembl translation_stable_id
-            //String stableIdIdentifier = (String) srcItem.getCollection("translation_stable_ids")
-            //    .getRefIds().iterator().next();
-            //Item stableId = ItemHelper.convert(srcItemReader.getItemById(stableIdIdentifier));
-            //tgtItem.addAttribute(new Attribute("identifier",
-            //                                   stableId.getAttribute("stable_id").getValue()));
-
-
-            // temporarily use item identifier as no reference to stable_id
-            tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
+            Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
+            if (stableId != null) {
+                moveField(stableId, tgtItem, "stable_id", "identifier");
+            }
         }
         return synonyms;
     }
 
+    // ensemblType should be part of name before _stable_id
+    private Item getStableId(String ensemblType, String identifier, String srcNs) throws
+        ObjectStoreException {
+        //String value = identifier.substring(identifier.indexOf("_") + 1);
+        String value = identifier;
+        Set constraints = new HashSet();
+        constraints.add(new FieldNameAndValue("className",
+                                              srcNs + ensemblType + "_stable_id", false));
+        constraints.add(new FieldNameAndValue(ensemblType, value, true));
+        Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
+
+        if (stableIds.hasNext()) {
+            return ItemHelper.convert((org.flymine.model.fulldata.Item) stableIds.next());
+        } else {
+            return null;
+        }
+    }
 
     private Item getEnsemblDb() {
         if (ensemblDb == null) {
@@ -610,7 +635,7 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic("dna", "identifier"));
         paths.put("http://www.flymine.org/model/ensembl#contig", Collections.singleton(desc));
 
-        
+
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);

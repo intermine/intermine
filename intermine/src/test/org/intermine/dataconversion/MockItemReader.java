@@ -17,12 +17,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.model.fulldata.Item;
 import org.flymine.model.fulldata.Attribute;
+import org.flymine.xml.full.ItemHelper;
 
 public class MockItemReader implements ItemReader
 {
@@ -71,7 +73,40 @@ public class MockItemReader implements ItemReader
         return null;
     }
 
-    public List getItemsByDescription(Set constraints) {
-        return Collections.EMPTY_LIST;
+    public List getItemsByDescription(Set constraints) throws ObjectStoreException {
+        List items = new ArrayList();
+
+        Iterator i = itemIterator();
+        while (i.hasNext()) {
+            Item item = (Item) i.next();
+
+
+
+            boolean matches = true;
+            Iterator descIter = constraints.iterator();
+            while (descIter.hasNext()) {
+                FieldNameAndValue f = (FieldNameAndValue) descIter.next();
+                if (!f.matches(item)) {
+                    matches = false;
+                }
+//                 System.out.println(f);
+//                 if (!f.isReference()) {
+//                     if (!item.hasAttribute(f.getFieldName())
+//                         || !item.getAttribute(f.getFieldName()).getValue().equals(f.getValue())) {
+
+//                         matches = false;
+//                     }
+//                 } else {
+//                     if (!item.hasReference(f.getFieldName())
+//                         || !item.getReference(f.getFieldName()).getRefId().equals(f.getValue())) {
+//                         matches = false;
+//                     }
+//                 }
+            }
+            if (matches) {
+                items.add(item);
+            }
+        }
+        return items;
     }
 }
