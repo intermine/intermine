@@ -22,6 +22,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
@@ -85,12 +86,17 @@ public class SavedQueryParser
             if (qName.equals("constraint")) {
                 int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
                 ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
-                Object constraintValue = TypeUtil
-                    .stringToObject(MainHelper.getClass(node.getType()), attrs.getValue("value"));
+                Object constraintValue;
+                if (BagConstraint.VALID_OPS.contains(constraintOp)) {
+                    constraintValue =  attrs.getValue("value");
+                } else {
+                    constraintValue = TypeUtil.stringToObject(MainHelper.getClass(node.getType()),
+                                                              attrs.getValue("value"));
+                }
                 node.getConstraints().add(new Constraint(constraintOp, constraintValue));
             }
         }
-
+        
         /**
          * @see DefaultHandler#endElement
          */
