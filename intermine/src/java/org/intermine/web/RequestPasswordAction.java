@@ -35,12 +35,16 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
  * Action to handle button presses RequestPasswordForm
  * @author Mark Woodbridge
  */
 public class RequestPasswordAction extends Action
 {
+    protected static final Logger LOG = Logger.getLogger(RequestPasswordAction.class);
+
     protected Random random = new Random();
 
     /** 
@@ -110,12 +114,12 @@ public class RequestPasswordAction extends Action
      * @return true if sending was successful
      */
     protected boolean email(String to, String password, Map webProperties) {
-        String host = (String) webProperties.get("mail.host");
-        String from = (String) webProperties.get("mail.from");
-        String subject = (String) webProperties.get("mail.subject");
-        String text = (String) webProperties.get("mail.text");
-        text = MessageFormat.format(text, new Object[] {password});
         try {
+            String host = (String) webProperties.get("mail.host");
+            String from = (String) webProperties.get("mail.from");
+            String subject = (String) webProperties.get("mail.subject");
+            String text = (String) webProperties.get("mail.text");
+            text = MessageFormat.format(text, new Object[] {password});
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", host);
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(properties, null));
@@ -126,7 +130,7 @@ public class RequestPasswordAction extends Action
             Transport.send(message);
             return true;
         } catch (Exception e) {
-            Logger.log(e);
+            LOG.warn(e);
             return false;
         }
     }
