@@ -693,7 +693,7 @@
 
     <filter-chado tgtDir="${build.tmp}">
       <fileset dir="/shared/data/flybase/release_4_0/gff">
-        <!include name="*.gff"/>
+        <include name="*.gff"/>
       </fileset>
     </filter-chado>
   </target>
