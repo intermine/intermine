@@ -47,7 +47,7 @@ public class QueryBuildController extends TilesAction
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         String editingAlias = (String) session.getAttribute("editingAlias");
-        Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
+        Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         ServletContext servletContext = session.getServletContext();
         Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
         Query q = (Query) session.getAttribute("query");
