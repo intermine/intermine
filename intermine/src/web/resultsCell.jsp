@@ -11,7 +11,9 @@
   </c:when>
   <c:otherwise>
     <font class="resultsCellValue">
-      <c:out value="${object}"/>
+      <nobr>
+        <c:out value="${object}"/>
+      </nobr>
     </font>
   </c:otherwise>
 </c:choose>
