@@ -63,6 +63,10 @@ public class RunQueryAction extends Action
         if (session.getAttribute("results") != null) {
             session.removeAttribute("results");
         }
+        // Remove any previous displayableresults from the session
+        if (session.getAttribute("resultsTable") != null) {
+            session.removeAttribute("resultsTable");
+        }
         Query q = (Query) session.getAttribute("query");
 
         Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
