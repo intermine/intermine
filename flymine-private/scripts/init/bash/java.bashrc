@@ -8,29 +8,37 @@ if [ "${JDBC_HOME:-unset}" = "unset" ]; then
     JDBC_HOME=/software/noarch/mm.mysql; export JDBC_HOME
 fi
 
+
+addjarstopath () {
+    for jar in `find $2 -follow -maxdepth 1 -name "*.jar"`; do
+	append "$1" $jar
+    done
+}
+
 prepend PATH $JDK/bin
 prepend MANPATH $JDK/man
 
-append CLASSPATH $JDBC_HOME/mm.mysql.jar
-#append CLASSPATH /software/noarch/ecs/ecs.jar
-#append CLASSPATH /software/noarch/local/lib/java
-append CLASSPATH /software/noarch/biojava/biojava.jar
-append CLASSPATH /software/noarch/jaxb/lib/jaxb-rt-1.0-ea.jar
-append CLASSPATH /software/noarch/mage/MAGE-2002-02-22.jar
-append CLASSPATH /software/noarch/ojb/ojb.jar
-append CLASSPATH /software/noarch/junit/junit.jar
+
+addjarstopath CLASSPATH $JDBC_HOME
+addjarstopath CLASSPATH /software/noarch/biojava/
+addjarstopath CLASSPATH /software/noarch/jaxb/lib/
+addjarstopath CLASSPATH /software/noarch/mage/
+addjarstopath CLASSPATH /software/noarch/ojb/
+addjarstopath CLASSPATH /software/noarch/junit/
+addjarstopath CLASSPATH /software/noarch/castor/
+addjarstopath CLASSPATH /software/noarch/argouml/
+
 append CLASSPATH .
 
+# Jikes needs the main java runtime libraries in the CLASSPATH
 append JIKESPATH $JDK/jre/lib/rt.jar
-
-for jar in `find $JDK/jre/lib/ext -name "*.jar"`; do
-    append JIKESPATH $jar
-done 
-
+addjarstopath JIKESPATH $JDK/jre/lib/ext
 append JIKESPATH $CLASSPATH
-
-alias javac="jikes -depend"
 
 if [ "${ANT_HOME:-unset}" = "unset" ]; then
     ANT_HOME=/software/noarch/ant; export ANT_HOME
 fi
+
+# Aliases
+alias javac="jikes -depend"
+alias argouml="java -jar /software/noarch/argouml/argouml.jar"
