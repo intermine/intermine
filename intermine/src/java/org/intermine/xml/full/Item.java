@@ -291,7 +291,7 @@ public class Item
     /**
      * Add a reference to this item
      * @param name the name of the attribute
-     * @param value the value of the attribute
+     * @param refId the value of the attribute
      */
     public void setReference(String name, String refId) {
         addReference(new Reference(name, refId));
@@ -314,7 +314,7 @@ public class Item
     /**
      * Add a reference to a collection of this item
      * @param name the name of the collection
-     * @param Identifier the item to add to the collection
+     * @param identifier the item to add to the collection
      */
     public void addToCollection(String name, String identifier) {
         ReferenceList list = getCollection(name);
@@ -384,6 +384,9 @@ public class Item
         }
     }
 
+    /**
+     * Throw RuntimeException if the given implementations don't match the model.
+     */
     protected void checkImplementations(String implementations) {
         if (model == null) {
             return;
@@ -443,7 +446,9 @@ public class Item
     }
 
     /**
-     * Call only if model, className and implementations are set
+     * Return the ClassDescriptors of the class of this Item (as given by className) and all the
+     * implementations.  Call only if model, className and implementations are set.
+     * @return all the ClassDescriptors for this Item
      */
     protected Set getAllClassDescriptors() {
         Set cds = new HashSet();
@@ -460,6 +465,8 @@ public class Item
      * been set.  Throw a RuntimeException if any of the classes named in the implementations
      * parameter aren't in the Model.
      * @param implementations the interfaces that this item implements
+     * @return the ClassDescriptors for the given implementations.  Returns null if the Model hasn't
+     * been set
      */
     protected Set getImplementClassDescriptors(String implementations) {
         if (implementations.length() == 0) {

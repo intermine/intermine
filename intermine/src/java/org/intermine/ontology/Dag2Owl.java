@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.XmlUtil;
@@ -72,7 +71,6 @@ public class Dag2Owl
     /**
      * Constructor
      * @param namespace the namespace to use in generating URI-based identifiers
-     * @param partOf if true, generates the partOf relationships
      * @param inversePartOf if ture, generates the inverse partOf relationship
      */
     public Dag2Owl(String namespace, boolean inversePartOf) {
@@ -115,7 +113,7 @@ public class Dag2Owl
      * @return the corresponding OntClass
      */
     public Resource process(DagTerm term) {
-        System.out.println("Processing term " + term.getName() + ": ");
+        System .out.println("Processing term " + term.getName() + ": ");
         Resource cls = (Resource) nameToResource.get(term.getName());
         if (cls == null) {
             long start = System.currentTimeMillis();

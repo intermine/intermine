@@ -46,7 +46,7 @@ public class TemplateQueryBinding
             writer.writeAttribute("name", template.getName());
             writer.writeAttribute("description", template.getDescription());
             writer.writeAttribute("category", template.getCategory());
-            writer.writeAttribute("important", new Boolean(template.isImportant()).toString());
+            writer.writeAttribute("important", "" + template.isImportant());
             
             new PathQueryBinding().marshal(template.getQuery(),
                                            template.getName(),
