@@ -5,9 +5,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
+import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.metadata.MetaDataException;
 
 /**
  * Parses the AceDB model file given, and produces a Flymine model.
@@ -16,40 +24,7 @@ import java.util.Stack;
  */
 public class ParseAceModel
 {
-    private static final String PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
-        + "<model name=\"acedb\">\n"
-        + "<package name=\"org.flymine.model.acedb\">\n"
-        + "<class name=\"Colour\">\n"
-        + "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n"
-        + "</class>\n"
-        + "<class name=\"DNA\">\n"
-        + "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n"
-        + "    <attribute name=\"sequence\" type=\"String\"/>\n"
-        + "</class>\n"
-        + "<class name=\"DateType\">\n"
-        + "    <attribute name=\"identifier\" type=\"Date\" primary-key=true/>\n"
-        + "</class>\n"
-        + "<class name=\"Float\">\n"
-        + "    <attribute name=\"identifier\" type=\"float\" primary-key=true/>\n"
-        + "</class>\n"
-        + "<class name=\"Int\">\n"
-        + "    <attribute name=\"identifier\" type=\"int\" primary-key=true/>\n"
-        + "</class>\n"
-        + "<class name=\"Keyword\">\n"
-        + "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n"
-        + "</class>\n"
-        + "<class name=\"LongText\">\n"
-        + "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n"
-        + "    <attribute name=\"text\" type=\"String\"/>\n"
-        + "</class>\n"
-        + "<class name=\"Peptide\">\n"
-        + "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n"
-        + "    <attribute name=\"peptide\" type=\"String\"/>\n"
-        + "</class>\n"
-        + "<class name=\"Text\">\n"
-        + "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n"
-        + "</class>\n";
-    private static final String POSTAMBLE = "</package>\n</model>\n";
+    private static final String PACKAGE = "org.flymine.model.acedb.";
     
     /**
      * Takes a single argument - the file to parse.
@@ -64,16 +39,69 @@ public class ParseAceModel
             err.println("Usage: java org.flymine.modelproduction.acedb.ParseAceModel <file>");
         } else {
             BufferedReader in = new BufferedReader(new FileReader(args[0]));
-            List classes = parse(in);
-            out.print(PREAMBLE);
-            Iterator classIter = classes.iterator();
-            while (classIter.hasNext()) {
-                ModelNode c = (ModelNode) classIter.next();
-                //printModelNode(c);
-                out.print(nodeClassToXML(c));
-            }
-            out.print(POSTAMBLE);
+            Model m = readerToModel(in);
+            out.print(m.toString());
         }
+    }
+
+    /**
+     * Converts an ACEDB model file provided in the BufferedReader into a Flymine Model.
+     *
+     * @param in the contents of the ACEDB model file
+     * @return a Flymine Model
+     * @throws IOException if the BufferedReader does
+     * @throws MetaDataException if the model is inconsistent
+     */
+    public static Model readerToModel(BufferedReader in) throws IOException, MetaDataException {
+        List classes = parse(in);
+        List classDescriptors = new ArrayList();
+        addBuiltinClasses(classDescriptors);
+        Iterator classIter = classes.iterator();
+        while (classIter.hasNext()) {
+            ModelNode c = (ModelNode) classIter.next();
+            classDescriptors.add(nodeClassToDescriptor(c));
+        }
+        return new Model("acedb", classDescriptors);
+    }
+
+    /**
+     * Adds a predefined list of builtin classes.
+     *
+     * @param l a List of ClassDescriptors to add to
+     */
+    public static void addBuiltinClasses(List l) {
+        List atts = new ArrayList();
+        List refs = Collections.EMPTY_LIST;
+        List cols = Collections.EMPTY_LIST;
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "Colour", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("sequence", false, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "DNA", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "java.util.Date"));
+        l.add(new ClassDescriptor(PACKAGE + "DateType", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "float"));
+        l.add(new ClassDescriptor(PACKAGE + "Float", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "int"));
+        l.add(new ClassDescriptor(PACKAGE + "Int", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "Keyword", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("text", false, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "LongText", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("peptide", false, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "Peptide", null, null, false, atts, refs, cols));
+        atts = new ArrayList();
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        l.add(new ClassDescriptor(PACKAGE + "Text", null, null, false, atts, refs, cols));
     }
 
     /**
@@ -194,42 +222,46 @@ public class ParseAceModel
     }
 
     /**
-     * Converts a ModelNode that is a class into XML.
+     * Converts a ModelNode that is a class into a ClassDescriptor.
      *
      * @param node a ModelNode to convert
-     * @return an XML String
+     * @return a ClassDescriptor for the ModelNode
      */
-    public static String nodeClassToXML(ModelNode node) {
-        String retval = null;
+    public static ClassDescriptor nodeClassToDescriptor(ModelNode node) {
         if (node.getAnnotation() == ModelNode.ANN_CLASS) {
-            retval = "<class name=\"" + node.getName().substring(1) + "\">\n";
-            retval += "    <attribute name=\"identifier\" type=\"String\" primary-key=true/>\n";
-            retval += nodeToXML(node.getChild(), null, true);
-            retval += "</class>\n";
+            List atts = new ArrayList();
+            List refs = new ArrayList();
+            List cols = new ArrayList();
+            atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+            nodeToLists(node.getChild(), null, true, atts, refs, cols);
+            return new ClassDescriptor(PACKAGE + node.getName().substring(1),
+                    null, null, false, atts, refs, cols);
         } else {
             throw new IllegalArgumentException("Not a class");
         }
-        return retval;
     }
 
     /**
-     * Converts a ModelNode that is not a class into XML.
+     * Converts a ModelNode that is not a class into a FieldDescriptor and puts it into the supplied
+     * Lists.
      *
      * @param node a ModelNode to convert
      * @param parent the name of the parent, for the case where this node is actually a Reference
      * @param collection true if the parent node is not a UNIQUE keyword
-     * @return an XML String
+     * @param atts a List of AttributeDescriptors to add to
+     * @param refs a List of ReferenceDescriptors to add to
+     * @param cols a List of CollectionDescriptors to add to
      */
-    public static String nodeToXML(ModelNode node, String parent, boolean collection) {
-        String retval = null;
+    public static void nodeToLists(ModelNode node, String parent, boolean collection, List atts,
+            List refs, List cols) {
         if (node.getAnnotation() == ModelNode.ANN_TAG) {
             if (node.getChild() != null) {
-                retval = nodeToXML(node.getChild(), node.getName(), true);
+                nodeToLists(node.getChild(), node.getName(), true, atts, refs, cols);
             } else {
-                retval = "    <attribute name=\"" + node.getName() + "\" type=\"boolean\"/>\n";
+                atts.add(new AttributeDescriptor(node.getName(), false, "boolean"));
             }
             if (node.getSibling() != null) {
-                retval += nodeToXML(node.getSibling(), parent, collection);
+                nodeToLists(node.getSibling(), parent, collection, atts, refs, cols);
             }
         } else if ((node.getAnnotation() == ModelNode.ANN_KEYWORD)
                 && "UNIQUE".equals(node.getName())) {
@@ -237,39 +269,41 @@ public class ParseAceModel
                 throw new IllegalArgumentException("Unsuitable node next to TAG-UNIQUE");
             }
             if (node.getChild() != null) {
-                retval = nodeToXML(node.getChild(), parent, false);
+                nodeToLists(node.getChild(), parent, false, atts, refs, cols);
             } else {
                 throw new IllegalArgumentException("UNIQUE cannot be a leaf node");
             }
         } else if (node.getAnnotation() == ModelNode.ANN_REFERENCE) {
-            retval = nodeRefToXML(node, parent, collection, 1);
+            nodeRefToLists(node, parent, collection, 1, atts, refs, cols);
         } else {
             throw new IllegalArgumentException("Unknown node");
         }
-        return retval;
     }
 
     /**
-     * Converts a ModelNode that is a reference into XML.
+     * Converts a ModelNode that is a reference into a FieldDescriptor and puts it into the supplied
+     * Lists.
      *
      * @param node a ModelNode to convert
      * @param parent the name of the parent tag
      * @param collection true if this reference is a collection
      * @param number the field number for this parent tag name
-     * @return an XML String
+     * @param atts a list of AttributeDescriptors to add to
+     * @param refs a List of ReferenceDescriptors to add to
+     * @param cols a List of CollectionDescriptors to add to
      */
-    public static String nodeRefToXML(ModelNode node, String parent, boolean collection,
-            int number) {
+    public static void nodeRefToLists(ModelNode node, String parent, boolean collection,
+            int number, List atts, List refs, List cols) {
         if (node.getSibling() != null) {
             throw new IllegalArgumentException("Another node next to a reference");
         }
-        String xref = "";
+        String xref = null;
         ModelNode nextNode = node.getChild();
         if ((nextNode != null) && (nextNode.getAnnotation() == ModelNode.ANN_KEYWORD)
                 && "XREF".equals(nextNode.getName())
                 && (nextNode.getChild() != null)
                 && (nextNode.getChild().getAnnotation() == ModelNode.ANN_XREF)) {
-            xref = " reverse-reference=\"" + nextNode.getChild().getName() + "\"";
+            xref = nextNode.getChild().getName();
             nextNode = nextNode.getChild().getChild();
         }
         if ((nextNode != null) && (nextNode.getAnnotation() == ModelNode.ANN_KEYWORD)
@@ -282,16 +316,19 @@ public class ParseAceModel
         if ((type.charAt(0) == '#') || (type.charAt(0) == '?')) {
             type = type.substring(1);
         }
-        String retval = "    " + (collection ? "<collection " : "<reference ") + "name=\""
-                + fieldName + "\" referenced-type=\"" + type + "\"" + xref + "/>\n";
+        if (collection) {
+            cols.add(new CollectionDescriptor(fieldName, false, PACKAGE + type, xref, false));
+        } else {
+            refs.add(new ReferenceDescriptor(fieldName, false, PACKAGE + type, xref));
+        }
         if (nextNode != null) {
             if (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE) {
-                retval += nodeRefToXML(nextNode, parent, true, number + 1);
+                nodeRefToLists(nextNode, parent, true, number + 1, atts, refs, cols);
             } else if ((nextNode.getAnnotation() == ModelNode.ANN_KEYWORD)
                     && "UNIQUE".equals(nextNode.getName())) {
                 nextNode = nextNode.getChild();
                 if ((nextNode != null) && (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE)) {
-                    retval += nodeRefToXML(nextNode, parent, collection, number + 1);
+                    nodeRefToLists(nextNode, parent, collection, number + 1, atts, refs, cols);
                 } else {
                     throw new IllegalArgumentException("Invalid node type after a reference and"
                             + " UNIQUE");
@@ -300,7 +337,6 @@ public class ParseAceModel
                 throw new IllegalArgumentException("Invalid node type after a reference");
             }
         }
-        return retval;
     }
 
 }
