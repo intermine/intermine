@@ -104,7 +104,7 @@ public class AceDataLoader extends DataLoader
             Iterator clazzIter = clsNames.iterator();
             while (clazzIter.hasNext()) {
                 String clsName = (String) clazzIter.next();
-                if ("org.flymine.model.acedb.Locus".equals(clsName)) {
+                if (true) {
                     String aceClazzName = AceModelParser
                         .unformatAceName(TypeUtil.unqualifiedName(clsName));
                     AceURL objURL = source.relativeURL(aceClazzName);
