@@ -25,7 +25,7 @@ import java.io.IOException;
 public class RunQueryMonitorDots implements RunQueryMonitor
 {
     /** Number of times queryProgress has been called. */
-    protected int tickCount = 0;
+    //protected int tickCount = 0;
     /** Writer to draw progress dots to. */
     protected Writer writer;
     
@@ -46,10 +46,10 @@ public class RunQueryMonitorDots implements RunQueryMonitor
     public void queryProgress(Results results) {
         tickCount++;
         try {
-            if (tickCount % 40 == 0) {
-                writer.write("<br>");
-            }
-            writer.write(".");
+            //if (tickCount % 40 == 0) {
+            //    writer.write("<br>");
+            //}
+            writer.write(". ");
             writer.flush();
         } catch (IOException _) {
             cancelQuery(results);
@@ -72,7 +72,7 @@ public class RunQueryMonitorDots implements RunQueryMonitor
      * @throws IOException if writing to the response stream fails
      */
     public void forwardClient(String url) throws IOException {
-        writer.write("<script language=\"JavaScript\">document.location=\"" + url + "\"</script>");
+        writer.write("<script language=\"JavaScript\">document.location=\"" + url + "\"</script>\n\n");
         writer.flush();
     }
 }
