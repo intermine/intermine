@@ -209,8 +209,20 @@
     </java>
   </target>
 
+  <!-- generate mapping file for castor xml binding -->
+  <target name="generate-castor-xml-mapping" depends="testmodel-repository.check, compile-main"
+          if="testmodel-repository.outofdate">
+    <java classname="org.flymine.codegen.CastorModelOutput" fork="true">
+      <classpath refid="base.class.path" />
+      <arg value="TestModel" />
+      <arg value="${build.src.test}" />
+      <arg value="${build.resources}" />
+    </java>
+  </target>
+
+
   <!-- generate schema from repository descriptor and use to create database tables -->
-  <target name="build-db-testmodel" depends="generate-repository-testmodel"
+  <target name="build-db-testmodel" depends="generate-repository-testmodel, generate-castor-xml-mapping"
           if="testmodel-repository.outofdate">
     <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
       <classpath refid="base.class.path" />
