@@ -335,7 +335,7 @@ public class ResultsTest extends TestCase
         while (iter.hasNext() && (count < 50000)) {
             Object row = iter.next();
             if (count == 0) {
-                tempHold = row;
+                tempHold = res.batches.keySet().iterator().next();
             }
             count++;
         }
