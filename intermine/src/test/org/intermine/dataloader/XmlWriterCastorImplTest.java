@@ -37,7 +37,7 @@ public class XmlWriterCastorImplTest extends XMLTestCase {
 
         xWriter = new XmlWriterCastorImpl("testmodel");
 
-        file = new File("./build/tmp", "temp.xml");
+        file = File.createTempFile("temp", "xml");
         setIds(Arrays.asList(new Object[] {d1}));
 
         xWriter.writeXml(d1, file);
@@ -57,7 +57,7 @@ public class XmlWriterCastorImplTest extends XMLTestCase {
 
         xWriter = new XmlWriterCastorImpl("testmodel");
 
-        file = new File("./build/tmp", "temp.xml");
+        file = File.createTempFile("temp", "xml");
         List list = Arrays.asList(new Object[] {d1, d2, d3});
         setIds(list);
 
