@@ -259,6 +259,10 @@ version="1.0">
 <i><xsl:apply-templates/></i>
 </xsl:template>
 
+<xsl:template match="highlights">
+<b><xsl:apply-templates/></b>
+</xsl:template>
+
 <xsl:template match="filename">
 <tt><xsl:apply-templates/></tt>
 </xsl:template>
