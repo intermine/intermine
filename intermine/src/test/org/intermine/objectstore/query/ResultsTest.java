@@ -22,8 +22,12 @@ import org.intermine.objectstore.ObjectStoreLimitReachedException;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.model.testmodel.Department;
 
+import org.apache.log4j.Logger;
+
 public class ResultsTest extends TestCase
 {
+    private static final Logger LOG = Logger.getLogger(ResultsTest.class);
+
     public ResultsTest(String arg1) {
         super(arg1);
     }
@@ -273,10 +277,10 @@ public class ResultsTest extends TestCase
             mapCount++;
             Object obj = iter.next();
         }
-        Results.LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
+        LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
         tempHold = null;
         System.gc();
-        Results.LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
+        LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
         int newMapSize = res.batches.size();
         int newMapCount = 0;
         iter = res.batches.keySet().iterator();
@@ -284,8 +288,8 @@ public class ResultsTest extends TestCase
             newMapCount++;
             Object obj = iter.next();
         }
-        Results.LOG.info("testGarbageCollectionOnWeakHashMap - original size: " + mapSize + ", new size: " + newMapSize);
-        Results.LOG.info("testGarbageCollectionOnWeakHashMap - original count: " + mapCount + ", new count: " + newMapCount);
+        LOG.info("testGarbageCollectionOnWeakHashMap - original size: " + mapSize + ", new size: " + newMapSize);
+        LOG.info("testGarbageCollectionOnWeakHashMap - original count: " + mapCount + ", new count: " + newMapCount);
         assertTrue("new count " + newMapCount + " is not less than " + mapCount, newMapCount <= mapCount);
     }
 
@@ -313,7 +317,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
 
-        Results.LOG.info("testSizeUsesFewBatchFetches starting");
+        LOG.info("testSizeUsesFewBatchFetches starting");
         Results res = os2.execute(q);
         res.setBatchSize(1);
         res.batches = Collections.synchronizedMap(new HashMap());
@@ -327,7 +331,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
 
-        Results.LOG.info("testSizeUsesFewBatchFetches starting");
+        LOG.info("testSizeUsesFewBatchFetches starting");
         Results res = os2.execute(q);
         res.setBatchSize(1);
         res.get(3000);
@@ -347,7 +351,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
 
-        Results.LOG.info("testSizeUsesFewBatchFetches2 starting");
+        LOG.info("testSizeUsesFewBatchFetches2 starting");
         Results res = os2.execute(q);
         res.setBatchSize(30);
         res.get(3000);
@@ -362,7 +366,7 @@ public class ResultsTest extends TestCase
     }
 
     public void testIteratorPropagatesObjectStoreException() throws Exception {
-        Results.LOG.info("testIteratorPropagatesObjectStoreException starting");
+        LOG.info("testIteratorPropagatesObjectStoreException starting");
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
