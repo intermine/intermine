@@ -50,11 +50,7 @@ public class ProfileManager
      */
     public ProfileManager(ObjectStore os) throws ObjectStoreException {
         this.os = os;
-        try {
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile");
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException(e);
-        }
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile");
     }
 
     /**
