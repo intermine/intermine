@@ -3,7 +3,7 @@ package org.flymine.objectstore.ojb;
 import org.apache.ojb.broker.PBKey;
 import org.apache.ojb.broker.ta.PersistenceBrokerFactoryIF;
 import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
-import java.util.Collection;
+import java.util.List;
 
 import org.flymine.objectstore.query.Query;
 
@@ -37,7 +37,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
      * @param end end index
      * @return a collection of ResultsRows
      */
-    public Collection getCollectionByQuery(Query query, int start, int end) {
-        return (Collection) new java.util.ArrayList();
+    public List execute(Query query, int start, int end) {
+        return new java.util.ArrayList();
     }
 }
