@@ -12,7 +12,7 @@ import org.flymine.util.ModelUtil;
 import org.flymine.util.TypeUtil;
 
 /**
- * Class that heps build queries or parts of queries for common situations.
+ * Class that helps build queries or parts of queries for common situations.
  *
  * @author Andrew Varley
  */
@@ -23,9 +23,10 @@ public class QueryHelper
 
     /**
      * Create a query that will retrieve a set of objects from the data store given
-     * a set of example objects of the same class
-     *
+     * a set of example objects of the same class.
+     * <p>
      * For example:
+     * <pre>
      * Company (key = name, type)
      * Department (key = company, name)
      * Group (key = departments)
@@ -34,29 +35,30 @@ public class QueryHelper
      *
      * select company
      * from company
-     * where ((company.name = <company1.name> and company.type = <company1.type>)
-     *        or (company.name = <company2.name> and company.type = <company2.type))
+     * where ((company.name = &lt;company1.name&gt; and company.type = &lt;company1.type&gt;)
+     *        or (company.name = &lt;company2.name&gt; and company.type = &lt;company2.type&gt;))
      *
      * Query for department is:
      *
      * select department
      * from company, department
      * where department.company CONTAINS company
-     * and ((department.name = <department1.name>
-     *       and company = <department1.company>)
-     *      or (department.name = <department2.name>
-     *          and company = <department2.company>)
+     * and ((department.name = &lt;department1.name&gt;
+     *       and company = &lt;department1.company&gt;)
+     *      or (department.name = &lt;department2.name&gt;
+     *          and company = &lt;department2.company&gt;)
      *
      * Query for group is: TODO: THIS IS WRONG
      *
      * select group
      * from group, departments
      * where group.departments CONTAINS department
-     * and (department = <group1.department>
-     *      or department = <group2.department> ...)
+     * and (department = &lt;group1.department&gt;
+     *      or department = &lt;group2.department&gt; ...)
      *
      * and combinations thereof, for keys containing a mixture of
      * attributes, references and collections
+     * </pre>
      *
      * @param orig the set of Objects to query for
      * @return a Query that will retrieve these objects from the data store
