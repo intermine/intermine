@@ -29,7 +29,7 @@ doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd"/>
     <head>
     <title><xsl:value-of select="$brand/title"/></title>
     <xsl:for-each select="$brand/stylesheet">
-        <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}"/>
+        <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}" media="screen,screen"/>
     </xsl:for-each>
     <xsl:for-each select="$brand/meta">
         <meta>
