@@ -23,7 +23,6 @@ import org.flymine.util.Util;
 public class CollectionDescriptor extends ReferenceDescriptor
 {
     protected final boolean ordered;
-    private boolean setReverseRef = false;
     protected final Class collectionClass;
 
     /**
