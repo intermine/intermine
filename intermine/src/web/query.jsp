@@ -12,13 +12,14 @@
 
     <logic:present scope="session" name="cld">
 
-       <c:out value="${cld.unqualifiedName}" /><br/>
-
-       <table border="0">        
+        <c:out value="${cld.unqualifiedName}" /><br/>
+        <table border="0">        
         <c:forEach var="field" items="${cld.attributeDescriptors}">
-            <c:set scope="request" var="stringHack" value="fieldValue(${field.name})"/>
-            <tr><td><c:out value="${field.name}"/></td>
-            <td><html:text property="<%=(String) request.getAttribute("stringHack")%>"/> </td></tr>
+            <c:set scope="page" var="stringHack" value="fieldValue(${field.name})"/>
+            <tr>
+                <td><c:out value="${field.name}"/></td>
+                <td><html:text property="<%=(String) pageContext.getAttribute("stringHack")%>"/> </td>
+            </tr>
         </c:forEach>
 
 <%--        <c:forEach var="field" items="${cld.referenceDescriptors}">
@@ -33,12 +34,10 @@
 --%>
         <tr><td>
         <html:submit property="action">
-           <bean:message key="button.submit"/>
+            <bean:message key="button.submit"/>
         </html:submit>
-
-        </table>
-
-      
+        </td></tr>
+        </table>    
 
     </logic:present>
 </html:form>
