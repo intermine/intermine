@@ -203,7 +203,7 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         q1.addToSelect(qc1);
         q1.addFrom(qc1);
         try{
-            List l1 = os.execute(q1, 10, 120);
+            List l1 = os.execute(q1, 10, 100);
             fail("Expected: ObjectStoreException");
         }  catch (IndexOutOfBoundsException e) {
         } finally {
@@ -220,7 +220,7 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         q1.addToSelect(qc1);
         q1.addFrom(qc1);
         try {
-            List l1 = os.execute(q1, 100, 180);
+            List l1 = os.execute(q1, 100, 50);
             fail("Expected: ObjectStoreException");
         } catch (IndexOutOfBoundsException e) {
         } finally {
