@@ -354,11 +354,11 @@ public class BatchWriterSimpleImpl implements BatchWriter
         Statement s = conn.createStatement();
         ResultSet r = s.executeQuery("SELECT COUNT(*) FROM " + name);
         if (r.next()) {
-            int retval = r.getInt(1);
+            int returnValue = r.getInt(1);
             if (r.next()) {
                 throw new SQLException("Too many results");
             }
-            return retval;
+            return returnValue;
         } else {
             throw new SQLException("No results");
         }
