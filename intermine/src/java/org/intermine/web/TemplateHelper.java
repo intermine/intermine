@@ -158,15 +158,15 @@ public class TemplateHelper
         TemplateQueryBinding binding = new TemplateQueryBinding();
         Iterator iter = templates.values().iterator();
         
-        while (iter.hasNext()) {
-            try {
-                XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-                writer.writeStartElement("template-list");
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            writer.writeStartElement("template-list");
+            while (iter.hasNext()) {
                 binding.marshal((TemplateQuery) iter.next(), writer);
-                writer.writeEndElement();
-            } catch (XMLStreamException e) {
-                throw new RuntimeException(e);
             }
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
         }
         
         return sw.toString();
