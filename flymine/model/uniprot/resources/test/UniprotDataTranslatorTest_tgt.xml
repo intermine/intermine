@@ -112,6 +112,7 @@
 </item>
 <item id="-1_2" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="identifier" value="Q5TME6_ANOGA"/>
+<attribute name="name" value="ENSANGP00000011199"/>
 <attribute name="primaryAccession" value="Q5TME6"/>
 <reference name="organism" ref_id="-1_1"/>
 <reference name="sequence" ref_id="-1_7"/>
@@ -153,6 +154,7 @@
 </item>
 <item id="-1_28" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="identifier" value="TINA1_DROME"/>
+<attribute name="name" value="Troponin C-akin-1 protein"/>;
 <attribute name="primaryAccession" value="Q9W0Y1"/>
 <reference name="organism" ref_id="-1_27"/>
 <reference name="sequence" ref_id="-1_36"/>
@@ -205,7 +207,7 @@
 </item>
 <item id="-1_13" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="1433_CAEEL"/>
+<attribute name="value" value="14331_CAEEL"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_12"/>
 </item>
@@ -227,7 +229,8 @@
 </collection>
 </item>
 <item id="-1_12" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="identifier" value="1433_CAEEL"/>
+<attribute name="identifier" value="14331_CAEEL"/>
+<attribute name="name" value="14-3-3-like protein 1"/>
 <attribute name="primaryAccession" value="P41932"/>
 <reference name="organism" ref_id="-1_11"/>
 <reference name="sequence" ref_id="-1_20"/>
