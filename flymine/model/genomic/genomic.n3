@@ -263,3 +263,15 @@
 
 # Organism will map to a phylogeny when that data is available
 :Organism a owl:Class .
+
+:Organism__name a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Organism__shortName a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Organism__taxonId a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
