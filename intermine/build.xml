@@ -133,6 +133,7 @@
     <include name="commons-lang*.jar"/>
     <include name="commons-logging*.jar"/>
     <include name="torque-gen*.jar"/>
+    <include name="stax*.jar"/>
     <!-- Stuff for webapps -->
     <include name="commons-digester*.jar"/>
     <include name="commons-collections*.jar"/>
