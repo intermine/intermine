@@ -11,11 +11,15 @@ package org.intermine.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.Parser;
@@ -37,17 +41,31 @@ import org.apache.log4j.Logger;
  *
  * @author Richard Smith
  * @author Andrew Varley
+ * @author Thomas Riley
  */
 public class XmlMetaData
 {
     protected static final Logger LOG = Logger.getLogger(XmlMetaData.class);
 
     protected Stack paths;
-    protected Map idFields;
-    protected Map refFields;
-    protected Map refIdPaths;
+    /** path -> Set of key fields */
+    protected Map keyFields;
+    /** key name -> path */
+    protected Map keyNameToPath;
+    /** key name -> field name */
+    protected Map keyNameToField;
+    /** path -> Set of referring fields */
+    protected Map keyrefFields;
+    /** path+"/"+field -> key name */
+    protected Map keyrefFieldToKey;
+    /** key/keyref xpath -> to regex pattern */
+    protected Map xpathToRegex;
+    /** element path -> field name. */
+    protected Map referenceElements;
+    
+    protected Map keyNames;
     protected Map clsNameMap;
-
+    
     /**
      * Construct with a reader for the XML Schema
      * @param xsdReader reader pointing ant an XML Schema
@@ -55,11 +73,16 @@ public class XmlMetaData
      */
     public XmlMetaData(Reader xsdReader) throws Exception {
         paths = new Stack();
-        idFields = new HashMap();
-        refFields = new HashMap();
-        refIdPaths = new HashMap();
+        keyFields = new HashMap();
+        keyNameToPath = new HashMap();
+        keyNameToField = new HashMap();
+        keyrefFields = new HashMap();
+        keyrefFieldToKey = new HashMap();
         clsNameMap = new HashMap();
-
+        keyNames = new HashMap();
+        xpathToRegex = new HashMap();
+        referenceElements = new HashMap();
+        
         SchemaUnmarshaller schemaUnmarshaller = null;
         schemaUnmarshaller = new SchemaUnmarshaller();
 
@@ -74,7 +97,9 @@ public class XmlMetaData
         Schema schema = schemaUnmarshaller.getSchema();
 
         buildRefsMap(schema);
+        filterReferenceElements();
         LOG.info("clsNameMap: " + clsNameMap);
+        LOG.info(toString());
     }
 
     /**
@@ -84,63 +109,131 @@ public class XmlMetaData
      */
     public XmlMetaData(Schema schema) throws Exception {
         paths = new Stack();
-        idFields = new HashMap();
-        refFields = new HashMap();
-        refIdPaths = new HashMap();
+        keyFields = new HashMap();
+        keyNameToPath = new HashMap();
+        keyNameToField = new HashMap();
+        keyrefFields = new HashMap();
+        keyrefFieldToKey = new HashMap();
         clsNameMap = new HashMap();
+        keyNames = new HashMap();
+        xpathToRegex = new HashMap();
+        referenceElements = new HashMap();
+        
         buildRefsMap(schema);
+        filterReferenceElements();
         LOG.info("clsNameMap: " + clsNameMap);
+        LOG.info(toString());
     }
 
     /**
-     * Return true if the given element path is defined as a keyref
-     * @param refPath the path to examine
-     * @return true if path is a reference
+     * Return true if the given field on the given element path is a key.
+     *
+     * @param path  the path to examine
+     * @param field  the field name
+     * @return true if field is a key field
      */
-    public boolean isReference(String refPath) {
-        return refFields.containsKey(refPath);
+    public boolean isKeyField(String path, String field) {
+        return getKeyFields(path).contains(field);
     }
-
+    
     /**
-     * Get the attribute of a reference element which contains the
-     * reference text.
-     * @param refPath the path to examine
-     * @return name of the reference attribute
+     * Given a path, return a Set of field names that are keys. If the path
+     * has no key fields, an empty Set will be returned.
+     *
+     * @param path  path
+     * @return  Set of field names
      */
-    public String getReferenceField(String refPath) {
-        return (String) refFields.get(refPath);
+    public Set getKeyFields(String path) {
+        Set set = (Set) keyFields.get(path);
+        if (set == null) {
+            return new TreeSet();
+        } else {
+            return set;
+        } 
     }
-
+    
     /**
-     * For a path that is defined as a keyref find the corresponding path
-     * for the id attribute.
-     * @param refPath the path to examine
-     * @return the id path
+     * Return true if the given field on the given element path is a reference.
+     *
+     * @param path  the path to examine
+     * @param field  the field name
+     * @return true if field is a reference field
      */
-    public String getIdPath(String refPath) {
-        return (String) refIdPaths.get(refPath);
+    public boolean isReferenceField(String path, String field) {
+        return getReferenceFields(path).contains(field);
     }
-
+    
     /**
-     * Return true if the given element path is defined as a key
-     * @param idPath the path to examine
-     * @return true if path is a key
+     * Given a path, return a List of field names that are references.
+     *
+     * @param path  path
+     * @return  List of field names
      */
-    public boolean isId(String idPath) {
-        return idFields.containsKey(idPath);
+    public Set getReferenceFields(String path) {
+        Set set = (Set) keyrefFields.get(path);
+        if (set == null) {
+            return new TreeSet();
+        } else {
+            return set;
+        } 
     }
-
+    
     /**
-     * Get the attribute of an element which contains the
-     * id text.
-     * @param idPath the path to examine
-     * @return name of the id attribute
+     * Return the name of the key referenced by the given reference field.
+     *
+     * @param  path path to element with reference field
+     * @param  field  the name of the reference field
+     * @return  name of key referenced
      */
-    public String getIdField(String idPath) {
-        return (String) idFields.get(idPath);
+    public String getReferencingKeyName(String path, String field) {
+        return (String) keyrefFieldToKey.get(path + "/" + field);
     }
-
-
+    
+    /**
+     * Return the element path associated with the given key.
+     *
+     * @param key  the key name
+     * @return  the associated element path
+     * @see #getKeyField
+     */
+    public String getKeyPath(String key) {
+        return (String) keyNameToPath.get(key);
+    }
+    
+    /**
+     * Return the field name associated with the given key.
+     *
+     * @param key  the key name
+     * @return  the associated field name
+     * @see #getKeyPath
+     */
+    public String getKeyField(String key) {
+        return (String) keyNameToField.get(key);
+    }
+    
+    /**
+     * Return true if given path refers to an element which contains
+     * a single reference attribute. In which case the element as a
+     * whole is treated as a reference.
+     * 
+     * @param path  path to element
+     * @return  true if element is reference (single reference attribute)
+     */
+    public boolean isReferenceElement(String path) {
+        return referenceElements.containsKey(path);
+    }
+    
+    /**
+     * Given a path that refers to a reference element - it has a single
+     * reference attribute - return the name of that reference attribute.
+     *
+     * @param path  path to reference element
+     * @return  name of element's single reference attribute
+     */
+    public String getReferenceElementField(String path) {
+        return (String) referenceElements.get(path);
+    }
+    
     /**
      * Return a classname for the element ant specified by xpath.
      * Will possible have _EnclosingClass... according to element
@@ -149,16 +242,81 @@ public class XmlMetaData
      * @return the generated class name
      */
     public String getClsNameFromXPath(String xpath) {
-        if (isReference(xpath)) {
-            String retval = (String) clsNameMap.get(getIdPath(xpath));
-            LOG.debug("getClsNameFromXPath(\"" + xpath + "\") is a reference - returning \""
-                    + retval + "\"");
-            return retval;
+        // If xpath is a reference element, then we resolve the target
+        // path using the referring key and call this method again
+        if (isReferenceElement(xpath)) {
+            String field = getReferenceElementField(xpath);
+            String key = getReferencingKeyName(xpath, field);
+            String xpath2 = getKeyPath(key);
+            LOG.debug("getClsNameFromXPath(\"" + xpath + "\") - is reference element, "
+                      + "recursing with path \"" + xpath2 + "\"");
+            return getClsNameFromXPath(xpath2);
         }
-        String retval = (String) clsNameMap.get(xpath);
-        LOG.debug("getClsNameFromXPath(\"" + xpath + "\") is not a reference - returning \""
-                + retval + "\"");
-        return retval;
+        // Try and map directly
+        String name = (String) clsNameMap.get(xpath);
+        if (name != null) {
+            return name;
+        }
+        // If we don't map directly, then try matching
+        // via regular expression
+        String regex = (String) xpathToRegex.get(xpath);
+        if (regex != null) {
+            LOG.debug("getClsNameFromXPath(\"" + xpath + "\") - matching with regex \""
+                      + regex + "\"");
+            Pattern pattern = Pattern.compile(regex);
+            Iterator iter = clsNameMap.keySet().iterator();
+            while (iter.hasNext()) {
+                String path = (String) iter.next();
+                if (pattern.matcher(path).matches()) {
+                    name = (String) clsNameMap.get(path);
+                    break;
+                }
+            }
+        }
+        LOG.debug("getClsNameFromXPath(\"" + xpath + "\") - returning \"" + name + "\"");
+        return name;
+    }
+    
+    /**
+     * For a given full element path, return the set of key field names. This method
+     * finds the xpath that keys the key field map via <code>getKeyXPathMatchingPath</code>.
+     *
+     * @param path the full element path
+     * @return set of key field names
+     */
+    public Set getKeyFieldsForPath(String path) {
+        String xpath = getKeyXPathMatchingPath(path);
+        if (!xpath.equals(path)) {
+            LOG.info("getKeyFieldsForPath() found matching xpath " + xpath
+                                 + " for path " + path);
+        }
+        return this.getKeyFields(xpath);
+    }
+    
+    /**
+     * For a given path, return the xpath that keys the key field set associated with
+     * this path. Use this method when you have constructed your own path.
+     *
+     * @param path a full path
+     * @return xpath that keys key field set for element at given path
+     */
+    public String getKeyXPathMatchingPath(String path) {
+        Iterator iter = keyFields.keySet().iterator();
+        while (iter.hasNext()) {
+            String xpath = (String) iter.next();
+            String regex = (String) xpathToRegex.get(xpath);
+            if (regex != null) {
+                // compile regex and try to match path against it
+                Pattern pattern = Pattern.compile(regex);
+                if (pattern.matcher(path).matches()) {
+                    // path matched this key - get keyfields for key
+                    LOG.info("getKeyXPathMatchingPath() found matching xpath " + xpath
+                             + " for path " + path);
+                    return xpath;
+                }
+            }
+        }
+        return path;
     }
 
 
@@ -187,6 +345,19 @@ public class XmlMetaData
 
         String clsName = null;
         XMLType xmlType = eDecl.getType();
+        
+        // Record those elements that are actually references
+        if (xmlType != null && xmlType.isComplexType()) {
+            Enumeration e1 = ((ComplexType) xmlType).getAttributeDecls();
+            AttributeDecl attrib = null;
+            if (e1.hasMoreElements() && ((attrib = (AttributeDecl) e1.nextElement()) != null)
+                && !e1.hasMoreElements()
+                /*&& xmlInfo.isReferenceField(path, attrib.getName())*/) {
+                // Add as candidate, these are checked at the end of the parse
+                referenceElements.put(path, attrib.getName());
+            }
+        }
+        
         isCollection = isCollection || (eDecl.getMaxOccurs() < 0) || (eDecl.getMaxOccurs() > 1);
         LOG.debug("Processing path: " + path + ", isCollection = " + isCollection
                 + (xmlType == null ? "" : ", isComplexType = " + xmlType.isComplexType()
@@ -216,6 +387,7 @@ public class XmlMetaData
                 clsName = eDecl.getName();
             }
         }
+        
         if (clsName != null) {
             LOG.debug("clsName = " + clsName);
             clsNameMap.put(path, StringUtil.capitalise(clsName));
@@ -238,8 +410,8 @@ public class XmlMetaData
     }
 
 
-    private void processContentModelGroup(ContentModelGroup cmGroup,
-            boolean isCollection) throws Exception {
+    private void processContentModelGroup(ContentModelGroup cmGroup, boolean isCollection)
+        throws Exception {
         if (cmGroup instanceof Group) {
             if ((((Group) cmGroup).getMaxOccurs() < 0) || (((Group) cmGroup).getMaxOccurs() > 1)) {
                 isCollection = true;
@@ -263,8 +435,19 @@ public class XmlMetaData
             }
         }
     }
-
-
+    
+    private void filterReferenceElements() {
+        Iterator iter = this.referenceElements.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String path = (String) entry.getKey();
+            String field = (String) entry.getValue();
+            if (!isReferenceField(path, field)) {
+                iter.remove();
+            }
+        }
+    }
+    
     private void findRefs(ElementDecl eDecl) throws Exception {
         Map keys = new HashMap();
         Map keyrefs = new HashMap();
@@ -279,27 +462,65 @@ public class XmlMetaData
             }
         }
 
-        Map keyNames = new HashMap();
+        
         Iterator iter = keys.values().iterator();
         while (iter.hasNext()) {
             Key key = (Key) iter.next();
-            String path = paths.peek() + "/" + key.getSelector().getXPath();
-            Enumeration keyFieldEnum = key.getFields();
-            String field = ((IdentityField) keyFieldEnum.nextElement()).getXPath();
-            if (keyFieldEnum.hasMoreElements()) {
-                throw new Exception("Unable to deal with Keys on more than one field");
+            String selector = key.getSelector().getXPath();
+            String selectors[] = StringUtils.split(selector, '|');
+            for (int i = 0; i < selectors.length; i++) {
+                String path = null;
+                String regex = null;
+                if (selectors[i].equals(".")) {
+                    regex = "^" + (String) paths.peek() + "$";
+                    path = (String) paths.peek();
+                } else if (selectors[i].startsWith(".//")) {
+                    // all descendents
+                    regex = "^" + paths.peek() + "/.+/" + selectors[i].substring(3) + "$";
+                    regex += "|^" + paths.peek() + "/" + selectors[i].substring(3) + "$";
+                    path = paths.peek() + "/" + selectors[i];
+                } else {
+                    regex = "^" + paths.peek() + "/" + selectors[i] + "$";
+                    path = paths.peek() + "/" + selectors[i];
+                }
+                
+                Enumeration keyFieldEnum = key.getFields();
+                String field = ((IdentityField) keyFieldEnum.nextElement()).getXPath();
+                if (keyFieldEnum.hasMoreElements()) {
+                    //throw new Exception("Unable to deal with Keys on more than one field");
+                    LOG.info("skipping key " + key.getName() + " on more than one field");
+                    continue;
+                }
+                if (field.startsWith("@")) {
+                    field = field.substring(field.indexOf('@') + 1);
+                }
+                Set fields = (Set) keyFields.get(path);
+                if (fields == null) {
+                    fields = new TreeSet();
+                    keyFields.put(path, fields);
+                }
+                fields.add(field);
+                xpathToRegex.put(path, regex);
+                keyNameToPath.put(key.getName(), path);
+                keyNameToField.put(key.getName(), field);
+                LOG.debug("found key name:" + key.getName() + " path:" + path + " field:" + field);
             }
-            if (field.startsWith("@")) {
-                field = field.substring(field.indexOf('@') + 1);
-            }
-            idFields.put(path, field);
-            keyNames.put(key.getName(), path);
         }
 
         iter = keyrefs.values().iterator();
         while (iter.hasNext()) {
             KeyRef keyref = (KeyRef) iter.next();
-            String path = paths.peek() + "/" + keyref.getSelector().getXPath();
+            String path = null;
+            String selector = keyref.getSelector().getXPath();
+            if (selector.equals(".")) {
+                path = (String) paths.peek();
+            } else if (selector.startsWith(".//")) {
+                // all descendents
+                path = paths.peek() + "/" + selector.substring(3);
+            } else {
+                path = paths.peek() + "/" + selector;
+            }
+            
             Enumeration keyrefEnum = keyref.getFields();
             String field = ((IdentityField) keyrefEnum.nextElement()).getXPath();
             if (keyrefEnum.hasMoreElements()) {
@@ -308,8 +529,15 @@ public class XmlMetaData
             if (field.startsWith("@")) {
                 field = field.substring(field.indexOf('@') + 1);
             }
-            refFields.put(path, field);
-            refIdPaths.put(path, keyNames.get(keyref.getRefer()));
+            Set fields = (Set) keyrefFields.get(path);
+            if (fields == null) {
+                fields = new TreeSet();
+                keyrefFields.put(path, fields);
+            }
+            fields.add(field);
+            keyrefFieldToKey.put(path + "/" + field, keyref.getRefer());
+            LOG.debug("keyref path:" + path + " field:" + field + " refer:" + keyref.getRefer()
+                      + " refid:" + keyNames.get(keyref.getRefer()));
         }
     }
 
@@ -319,10 +547,36 @@ public class XmlMetaData
     public String toString() {
         String endl = System.getProperty("line.separator");
         StringBuffer sb = new StringBuffer();
-        sb.append("idFields: " + idFields + endl)
-            .append("refFields: " + refFields + endl)
-            .append("refIdPaths: " + refIdPaths + endl)
-            .append("clsNameMap: " + clsNameMap + endl);
+        Iterator iter = keyFields.keySet().iterator();
+        sb.append("\n\n ========= keyFields ========= " + endl);
+        while (iter.hasNext()) {
+            Object path = iter.next();
+            sb.append(path + endl);
+            sb.append("\t\t" + keyFields.get((String) path) + endl);
+        }
+        iter = keyrefFields.keySet().iterator();
+        sb.append("\n\n ========= keyrefFields ========= " + endl);
+        while (iter.hasNext()) {
+            Object path = iter.next();
+            sb.append(path + endl);
+            Iterator fields = getReferenceFields((String) path).iterator();
+            while (fields.hasNext()) {
+                String field = (String) fields.next();
+                sb.append("\t\t" + field + "  ->  " + getReferencingKeyName((String) path, field)
+                    + endl);
+            }
+        }
+        iter = referenceElements.keySet().iterator();
+        sb.append("\n\n ======== reference elements ======== " + endl);
+        while (iter.hasNext()) {
+            String path = (String) iter.next();
+            String field = (String) referenceElements.get(path);
+            sb.append("\t\t" + path + "  ->  " + field + endl);
+        }
+       // sb.append("idFields: " + idFields + endl + endl)
+       //     .append("refFields: " + refFields + endl + endl)
+       //     .append("refIdPaths: " + refIdPaths + endl + endl)
+       //     .append("clsNameMap: " + clsNameMap + endl + endl);
         return sb.toString();
     }
 
