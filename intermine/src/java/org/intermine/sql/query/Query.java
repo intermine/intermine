@@ -94,6 +94,9 @@ public class Query implements SQLStringable
                 SqlTreeParser treeparser = new SqlTreeParser();
                 treeparser.start_rule(ast);
                 ast = treeparser.getAST();
+                if (ast == null) {
+                    throw (new IllegalArgumentException("Invalid SQL string"));
+                }
             } while (!oldAst.equalsList(ast));
 
             if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
