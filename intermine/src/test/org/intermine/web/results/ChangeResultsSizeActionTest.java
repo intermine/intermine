@@ -90,7 +90,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("buttons(changePageSize)", "");
 
-        ChangeResultsForm form = new ChangeResultsForm();
+        ChangeResultsForm form = new MockChangeResultsForm();
         form.setPageSize("25");
         setActionForm(form);
 
