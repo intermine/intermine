@@ -154,15 +154,21 @@
   </target>
     
   <target name="prepare-testmodel">
-    <mkdir dir="${build.model}/testmodel" />
+    <ant antfile="build-model.xml" target="prepare">
+      <property name="model.name" value="testmodel"/>
+    </ant>
   </target>
 
   <target name="prepare-acedbtest">
-    <mkdir dir="${build.model}/acedbtest" />
+    <ant antfile="build-model.xml" target="prepare">
+      <property name="model.name" value="acedbtest"/>
+    </ant>
   </target>
 
   <target name="prepare-acedb">
-    <mkdir dir="${build.model}/acedb" />
+    <ant antfile="build-model.xml" target="prepare">
+      <property name="model.name" value="acedb"/>
+    </ant>
   </target>
 
   <!-- Compilation targets -->
@@ -194,6 +200,16 @@
 
   <!-- Build flymine with testmodel -->
 
+
+  <!-- unzip testmodel -->
+  <target name="unpack-testmodel"
+          description="unpacks the testmodel from .zargo file">
+    <ant antfile="build-model.xml" target="unpack-xmi-model">
+      <property name="model.name" value="testmodel"/>
+      <property name="model.src" value="${src.java}/org/flymine/model/testmodel"/>
+    </ant>
+  </target>
+
   <!-- generate testmodel from xmi -->
   <target name="prepare-model-generation-test" depends="compile-main, prepare-testmodel" >
      <taskdef
@@ -207,7 +223,7 @@
     <model-generation
       type="xmi"
       modelname="testmodel"      
-      source="${build.tmp}/TestModel_.xmi"
+      source="${build.tmp}/testmodel_.xmi"
       destdir="${build.model}/testmodel"
     />     
   </target>
@@ -219,29 +235,9 @@
     </taskdef>
   </target>
 
-  <!-- has model been unzipped? -->
-  <target name="unpack-testmodel.check" depends="prepare, prepare-testmodel">
-    <uptodate property="unpack-testmodel.uptodate">
-      <srcfiles dir="${src.java}/org/flymine/model/testmodel" includes="**/*.zargo"/>
-      <mapper type="glob" from="*.zargo" to="${build.tmp}/*_.xmi" />
-    </uptodate>
-  </target>
-  
-  <!-- unzip testmodel -->
-  <target name="unpack-testmodel" depends="unpack-testmodel.check"
-          description="unpacks the testmodel from .zargo file"
-          unless="unpack-testmodel.uptodate">
-    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.tmp}">
-      <!-- <patternset>
-        <include name="**/*.xmi"/>
-      </patternset> -->
-    </unzip>
-    <touch file="${build.tmp}/TestModel_.xmi" />
-  </target>
-
   <!-- is our java source older than the model? -->
   <target name="testmodel-java.check" depends="unpack-testmodel">
-    <uptodate property="testmodel-java.outofdate" targetfile="${build.tmp}/TestModel_.xmi">
+    <uptodate property="testmodel-java.outofdate" targetfile="${build.tmp}/testmodel_.xmi">
       <srcfiles dir="${build.model}/testmodel" includes="**/*.java"/>
     </uptodate>
   </target>
@@ -263,7 +259,7 @@
 
   <!-- is our repository descriptor older than the model? -->
   <target name="testmodel-repository.check" depends="unpack-testmodel">
-    <uptodate property="testmodel-repository.outofdate" targetfile="${build.tmp}/TestModel_.xmi">
+    <uptodate property="testmodel-repository.outofdate" targetfile="${build.tmp}/testmodel_.xmi">
       <srcfiles dir="${build.model}/testmodel" 
           includes="**/*.xml"
           excludes="testmodel_model.xml" />
@@ -380,9 +376,6 @@
   </target>
 
 
-
-
-
   <!-- Production build targets (currently uses ace model) -->
   
   <!-- generate acedb model from acemodel file -->
@@ -492,8 +485,6 @@
   <target name="build-production" depends ="insert-acedb-data"
           description="build the production FlyMine system with acedb model" >
   </target>
-
-
 
 
   <!-- Unit test targets -->
@@ -909,7 +900,7 @@
     <delete dir="${build.schema}"/>
     <delete file="velocity.log" />
     <delete file="${build}/flymine.log" />
-    <delete file="${build}/TestModel_.xmi" />
+    <delete file="${build}/testmodel_.xmi" />
     <antcall target="prepare" />
   </target>
   
