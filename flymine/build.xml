@@ -445,6 +445,16 @@
     </insert-xml-data>
   </target>
 
+  <!-- index the testmodel database -->
+  <target name="create-indexes-testmodel" depends="build-db-testmodel">
+    <taskdef
+      name="create-indexes"
+      classname="org.flymine.task.CreateIndexesTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+
+    <create-indexes database="db.unittest" model="testmodel"/>
+  </target>
 
   <!-- Data Translation targets -->
 
