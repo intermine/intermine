@@ -352,7 +352,7 @@
   </target>
 
 
-  <!-- Production build targets (currently uses ace model) -->
+  <!-- Stress build targets (currently uses ace model) -->
   
   <!-- generate acedb model from acemodel file -->
   <target name="build-acedb" depends="compile-main">
@@ -404,7 +404,7 @@
   </target>
 
 
-  <!-- Production build targets (currently uses ace model) -->
+  <!-- Production build targets (currently uses testmodel) -->
   
   <!-- generate production model -->
   <target name="build-productionmodel" depends="compile-main">
