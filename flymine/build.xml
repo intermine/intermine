@@ -1166,6 +1166,9 @@
     <mkdir dir="${build.webapp}/intermine"/>
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine"/>
     <move file="${build.webapp}/intermine/WEB-INF/web.xml" todir="${build.tmp}"/>
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
+      <fileset dir="${resources}/webapp" includes="*.properties"/>
+    </copy>
 
     <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="model.name" value="genomic"/>
