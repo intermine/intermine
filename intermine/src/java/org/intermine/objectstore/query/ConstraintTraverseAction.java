@@ -22,6 +22,7 @@ public interface ConstraintTraverseAction
     /**
      * The apply() method is called by ConstraintHelper.traverseConstraints() for each Constraint
      * and sub-Constraint.
+     * @param c the Constraint that was found
      */
     public void apply(Constraint c);
 }
