@@ -14,10 +14,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -25,6 +28,9 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.sql.Database;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
+import org.intermine.sql.writebatch.FlushJob;
+import org.intermine.sql.writebatch.TableBatch;
 import org.intermine.model.InterMineObject;
 
 import org.apache.log4j.Logger;
@@ -695,23 +701,27 @@ public class DatabaseUtil
         s.execute(tableCreateSql);
 
         Iterator bagIter = bag.iterator();
+        TableBatch tableBatch = new TableBatch();
+        String colNames[] = new String[] {"value"};
 
         while (bagIter.hasNext()) {
             Object o = bagIter.next();
 
             if (c.isInstance(o)) {
-                String objectString = TypeUtil.objectToString(o);
-                if (c.equals(String.class)) {
-                    objectString = "'" + StringUtil.duplicateQuotes(objectString) + "'";
-                } else {
-                    if (o instanceof InterMineObject) {
-                        objectString = "" + ((InterMineObject) o).getId();
-                    }
+                if (o instanceof InterMineObject) {
+                    o = ((InterMineObject) o).getId();
+                } else if (o instanceof Date) {
+                    o = new Long(((Date) o).getTime());
                 }
-
-                String objectSql = "INSERT INTO " + tableName + " values(" + objectString + ")";
-                s.execute(objectSql);
+                tableBatch.addRow(null, colNames, new Object[] {o});
             }
+        }
+        List flushJobs = (new BatchWriterPostgresCopyImpl()).write(con, Collections
+             .singletonMap(tableName, tableBatch), null);
+        Iterator flushJobIter = flushJobs.iterator();
+        while (flushJobIter.hasNext()) {
+            FlushJob fj = (FlushJob) flushJobIter.next();
+            fj.flush();
         }
 
         String indexCreateSql = "CREATE INDEX " + tableName + "_index ON " + tableName + "(value)";

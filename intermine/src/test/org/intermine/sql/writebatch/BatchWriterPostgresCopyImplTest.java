@@ -32,7 +32,9 @@ public class BatchWriterPostgresCopyImplTest extends BatchWriterTestCase
     }
 
     public BatchWriter getWriter() {
-        return new BatchWriterPostgresCopyImpl();
+        BatchWriterPostgresCopyImpl bw = new BatchWriterPostgresCopyImpl();
+        bw.setThreshold(getThreshold());
+        return bw;
     }
 
     public void testAnalyseLargeTable() throws Exception {

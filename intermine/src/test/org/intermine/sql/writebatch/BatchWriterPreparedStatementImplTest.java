@@ -22,7 +22,9 @@ public class BatchWriterPreparedStatementImplTest extends BatchWriterTestCase
     }
 
     public BatchWriter getWriter() {
-        return new BatchWriterPreparedStatementImpl();
+        BatchWriterPreparedStatementImpl bw = new BatchWriterPreparedStatementImpl();
+        bw.setThreshold(getThreshold());
+        return bw;
     }
 }
 

@@ -45,7 +45,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     /**
      * @see BatchWriterSimpleImpl#doInserts
      */
-    protected int doInserts(String name, TableBatch table) throws SQLException {
+    protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
@@ -57,7 +57,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     LOG.warn("Database with Connection " + con.getClass().getName()
                             + " is incompatible with the PostgreSQL COPY command - falling"
                             + " back to prepared statements");
-                    super.doInserts(name, table);
+                    super.doInserts(name, table, batches);
                 } else {
                     SensibleByteArrayOutputStream baos = new SensibleByteArrayOutputStream();
                     DataOutputStream dos = new DataOutputStream(baos);
@@ -99,7 +99,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     String sql = sqlBuffer.toString();
                     dos.writeShort(-1);
                     dos.flush();
-                    retval.add(new FlushJobPostgresCopyImpl(copyManager, sql, baos.toByteArray()));
+                    batches.add(new FlushJobPostgresCopyImpl(copyManager, sql,
+                                baos.toByteArray()));
                 }
             } catch (IOException e) {
                 throw new SQLException(e.toString());
@@ -137,60 +138,56 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         } else if (o instanceof BigDecimal) {
             BigInteger unscaledValue = ((BigDecimal) o).unscaledValue();
             int signum = ((BigDecimal) o).signum();
-            if (signum == 0) {
-                // Write a zero
-            } else {
-                if (signum == -1) {
-                    unscaledValue = unscaledValue.negate();
-                }
-                int scale = ((BigDecimal) o).scale();
-                int nBaseScale = (scale + 3) / 4;
-                int nBaseScaleRemainder = scale % 4;
-                List digits = new ArrayList();
-                if (nBaseScaleRemainder == 1) {
-                    BigInteger res[] = unscaledValue.divideAndRemainder(TEN);
-                    int digit = res[1].intValue() * 1000;
-                    digits.add(new Integer(digit));
-                    unscaledValue = res[0];
-                } else if (nBaseScaleRemainder == 2) {
-                    BigInteger res[] = unscaledValue.divideAndRemainder(HUNDRED);
-                    int digit = res[1].intValue() * 100;
-                    digits.add(new Integer(digit));
-                    unscaledValue = res[0];
-                } else if (nBaseScaleRemainder == 3) {
-                    BigInteger res[] = unscaledValue.divideAndRemainder(THOUSAND);
-                    int digit = res[1].intValue() * 10;
-                    digits.add(new Integer(digit));
-                    unscaledValue = res[0];
-                }
-                while (!unscaledValue.equals(BigInteger.ZERO)) {
-                    BigInteger res[] = unscaledValue.divideAndRemainder(TEN_THOUSAND);
-                    digits.add(new Integer(res[1].intValue()));
-                    unscaledValue = res[0];
-                }
-                dos.writeInt(8 + (2 * digits.size()));
-                dos.writeShort(digits.size());
-                dos.writeShort(digits.size() - nBaseScale - 1);
-                dos.writeShort(signum == 1 ? 0x0000 : 0x4000);
-                dos.writeShort(scale);
-                //StringBuffer log = new StringBuffer("Writing BigDecimal ")
-                //    .append(o.toString())
-                //    .append(" as (digitCount = ")
-                //    .append(Integer.toString(digits.size()))
-                //    .append(", weight = ")
-                //    .append(Integer.toString(digits.size() - nBaseScale - 1))
-                //    .append(", sign = ")
-                //    .append(Integer.toString(signum == 1 ? 0x0000 : 0x4000))
-                //    .append(", dscale = ")
-                //    .append(Integer.toString(scale))
-                //    .append(")");
-                for (int i = digits.size() - 1; i >= 0; i--) {
-                    int digit = ((Integer) digits.get(i)).intValue();
-                    dos.writeShort(digit);
-                //    log.append(" " + digit);
-                }
-                //LOG.error(log.toString());
+            if (signum == -1) {
+                unscaledValue = unscaledValue.negate();
             }
+            int scale = ((BigDecimal) o).scale();
+            int nBaseScale = (scale + 3) / 4;
+            int nBaseScaleRemainder = scale % 4;
+            List digits = new ArrayList();
+            if (nBaseScaleRemainder == 1) {
+                BigInteger res[] = unscaledValue.divideAndRemainder(TEN);
+                int digit = res[1].intValue() * 1000;
+                digits.add(new Integer(digit));
+                unscaledValue = res[0];
+            } else if (nBaseScaleRemainder == 2) {
+                BigInteger res[] = unscaledValue.divideAndRemainder(HUNDRED);
+                int digit = res[1].intValue() * 100;
+                digits.add(new Integer(digit));
+                unscaledValue = res[0];
+            } else if (nBaseScaleRemainder == 3) {
+                BigInteger res[] = unscaledValue.divideAndRemainder(THOUSAND);
+                int digit = res[1].intValue() * 10;
+                digits.add(new Integer(digit));
+                unscaledValue = res[0];
+            }
+            while (!unscaledValue.equals(BigInteger.ZERO)) {
+                BigInteger res[] = unscaledValue.divideAndRemainder(TEN_THOUSAND);
+                digits.add(new Integer(res[1].intValue()));
+                unscaledValue = res[0];
+            }
+            dos.writeInt(8 + (2 * digits.size()));
+            dos.writeShort(digits.size());
+            dos.writeShort(digits.size() - nBaseScale - 1);
+            dos.writeShort(signum == 1 ? 0x0000 : 0x4000);
+            dos.writeShort(scale);
+            //StringBuffer log = new StringBuffer("Writing BigDecimal ")
+            //    .append(o.toString())
+            //    .append(" as (digitCount = ")
+            //    .append(Integer.toString(digits.size()))
+            //    .append(", weight = ")
+            //    .append(Integer.toString(digits.size() - nBaseScale - 1))
+            //    .append(", sign = ")
+            //    .append(Integer.toString(signum == 1 ? 0x0000 : 0x4000))
+            //    .append(", dscale = ")
+            //    .append(Integer.toString(scale))
+            //    .append(")");
+            for (int i = digits.size() - 1; i >= 0; i--) {
+                int digit = ((Integer) digits.get(i)).intValue();
+                dos.writeShort(digit);
+            //    log.append(" " + digit);
+            }
+            //LOG.error(log.toString());
         } else {
             throw new IllegalArgumentException("Cannot store values of type " + o.getClass());
         }
@@ -200,7 +197,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
      * @see BatchWriterSimpleImpl#doIndirectionInserts
      */
     protected int doIndirectionInserts(String name,
-            IndirectionTableBatch table) throws SQLException {
+            IndirectionTableBatch table, List batches) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             try {
                 CopyManager copyManager = null;
@@ -210,7 +207,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                 if (copyManager == null) {
                     LOG.warn("Database is incompatible with the PostgreSQL COPY command - falling"
                             + " back to prepared statements");
-                    super.doIndirectionInserts(name, table);
+                    super.doIndirectionInserts(name, table, batches);
                 } else {
                     SensibleByteArrayOutputStream baos = new SensibleByteArrayOutputStream();
                     DataOutputStream dos = new DataOutputStream(baos);
@@ -233,7 +230,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                         + table.getRightColName() + ") FROM STDIN BINARY";
                     dos.writeShort(-1);
                     dos.flush();
-                    retval.add(new FlushJobPostgresCopyImpl(copyManager, sql, baos.toByteArray()));
+                    batches.add(new FlushJobPostgresCopyImpl(copyManager, sql,
+                                baos.toByteArray()));
                 }
             } catch (IOException e) {
                 throw new SQLException(e.toString());

@@ -36,20 +36,36 @@ import org.apache.log4j.Logger;
 public class BatchWriterSimpleImpl implements BatchWriter
 {
     private static final Logger LOG = Logger.getLogger(BatchWriterSimpleImpl.class);
+    protected int deleteTempTableSize = 200;
 
     protected Connection con;
-    protected Statement simpleBatch;
-    protected int simpleBatchSize;
-    protected List retval;
 
+    protected Statement preDeleteBatch;
+    protected List deleteBatches;
+    protected Statement postDeleteBatch;
+    protected List addBatches;
+    protected Statement lastBatch;
+
+    /**
+     * This sets the threshold above which a temp table will be used for deletes.
+     *
+     * @param deleteTempTableSize the threshold
+     */
+    public void setThreshold(int deleteTempTableSize) {
+        this.deleteTempTableSize = deleteTempTableSize;
+    }
+    
     /**
      * @see BatchWriter#write
      */
     public List write(Connection con, Map tables, Set filter) throws SQLException {
-        retval = new ArrayList();
         this.con = con;
-        simpleBatch = con.createStatement();
-        simpleBatchSize = 0;
+        // Initialise object for action. Note this code is NOT re-entrant.
+        preDeleteBatch = null;
+        deleteBatches = new ArrayList();
+        postDeleteBatch = null;
+        addBatches = new ArrayList();
+        lastBatch = null;
         Map activityMap = new HashMap();
         Iterator tableIter = tables.entrySet().iterator();
         while (tableIter.hasNext()) {
@@ -60,10 +76,11 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 Table table = (Table) tableEntry.getValue();
                 if (table instanceof TableBatch) {
                     activity += 2 * doDeletes(name, (TableBatch) table);
-                    activity += doInserts(name, (TableBatch) table);
+                    activity += doInserts(name, (TableBatch) table, addBatches);
                 } else {
                     activity += 2 * doIndirectionDeletes(name, (IndirectionTableBatch) table);
-                    activity += doIndirectionInserts(name, (IndirectionTableBatch) table);
+                    activity += doIndirectionInserts(name, (IndirectionTableBatch) table,
+                            addBatches);
                 }
                 table.clear();
                 if (activity > 0) {
@@ -71,13 +88,27 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 }
             }
         }
-        if (simpleBatchSize > 0) {
-            retval.add(new FlushJobStatementBatchImpl(simpleBatch));
+        List retval = new ArrayList();
+        if (preDeleteBatch != null) {
+            retval.add(new FlushJobStatementBatchImpl(preDeleteBatch));
+        }
+        retval.addAll(deleteBatches);
+        if (postDeleteBatch != null) {
+            retval.add(new FlushJobStatementBatchImpl(postDeleteBatch));
+        }
+        retval.addAll(addBatches);
+        if (lastBatch != null) {
+            retval.add(new FlushJobStatementBatchImpl(lastBatch));
         }
         if (!activityMap.isEmpty()) {
             retval.add(new FlushJobUpdateStatistics(activityMap, this, con));
         }
-        simpleBatch = null;
+        // Help the garbage collector
+        preDeleteBatch = null;
+        deleteBatches = null;
+        postDeleteBatch = null;
+        addBatches = null;
+        lastBatch = null;
         return retval;
     }
 
@@ -86,10 +117,11 @@ public class BatchWriterSimpleImpl implements BatchWriter
      *
      * @param name the name of the table
      * @param table the table batch
+     * @param batches the List of batches into which new flushjobs should be placed
      * @return the number of rows inserted
      * @throws SQLException if an error occurs
      */
-    protected int doInserts(String name, TableBatch table) throws SQLException {
+    protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer preambleBuffer = new StringBuffer("INSERT INTO ").append(name)
@@ -107,12 +139,12 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 Map.Entry insertEntry = (Map.Entry) insertIter.next();
                 Object inserts = insertEntry.getValue();
                 if (inserts instanceof Object[]) {
-                    addToSimpleBatch(insertString(preamble, colNames.length, (Object[]) inserts));
+                    addToLastBatch(insertString(preamble, colNames.length, (Object[]) inserts));
                 } else {
                     Iterator iter = ((List) inserts).iterator();
                     while (iter.hasNext()) {
                         Object values[] = (Object[]) iter.next();
-                        addToSimpleBatch(insertString(preamble, colNames.length, values));
+                        addToLastBatch(insertString(preamble, colNames.length, values));
                     }
                 }
             }
@@ -145,31 +177,46 @@ public class BatchWriterSimpleImpl implements BatchWriter
     protected int doDeletes(String name, TableBatch table) throws SQLException {
         String idField = table.getIdField();
         if ((idField != null) && (!table.getIdsToDelete().isEmpty())) {
-            StringBuffer sqlBuffer = new StringBuffer("DELETE FROM ").append(name).append(" WHERE ")
-                .append(idField).append(" IN (");
-            boolean needComma = false;
-            int statementSize = 0;
-            Iterator iter = table.getIdsToDelete().iterator();
-            while (iter.hasNext()) {
-                Object idValue = iter.next();
-                if (needComma) {
-                    sqlBuffer.append(", ");
+            if (table.getIdsToDelete().size() > deleteTempTableSize) {
+                String tempTableName = "deletes_from_" + name;
+                addToPreDeleteBatch("CREATE TABLE " + tempTableName + " (value integer)");
+                TableBatch tableBatch = new TableBatch();
+                String colNames[] = new String[] {"value"};
+                Iterator iter = table.getIdsToDelete().iterator();
+                while (iter.hasNext()) {
+                    tableBatch.addRow(null, colNames, new Object[] {iter.next()});
                 }
-                needComma = true;
-                sqlBuffer.append(DatabaseUtil.objectToString(idValue));
-                statementSize++;
-                if (statementSize >= 500) {
-                    statementSize = 0;
+                doInserts(tempTableName, tableBatch, deleteBatches);
+                addToPostDeleteBatch("DELETE FROM " + name + " WHERE " + idField
+                        + " IN (SELECT value FROM " + tempTableName + ")");
+                addToPostDeleteBatch("DROP TABLE " + tempTableName);
+            } else {
+                StringBuffer sqlBuffer = new StringBuffer("DELETE FROM ").append(name)
+                    .append(" WHERE ").append(idField).append(" IN (");
+                boolean needComma = false;
+                int statementSize = 0;
+                Iterator iter = table.getIdsToDelete().iterator();
+                while (iter.hasNext()) {
+                    Object idValue = iter.next();
+                    if (needComma) {
+                        sqlBuffer.append(", ");
+                    }
+                    needComma = true;
+                    sqlBuffer.append(DatabaseUtil.objectToString(idValue));
+                    statementSize++;
+                    if (statementSize >= 500) {
+                        statementSize = 0;
+                        sqlBuffer.append(")");
+                        addToPostDeleteBatch(sqlBuffer.toString());
+                        sqlBuffer = new StringBuffer("DELETE FROM ").append(name).append(" WHERE ")
+                            .append(idField).append(" IN (");
+                        needComma = false;
+                    }
+                }
+                if (statementSize > 0) {
                     sqlBuffer.append(")");
-                    addToSimpleBatch(sqlBuffer.toString());
-                    sqlBuffer = new StringBuffer("DELETE FROM ").append(name).append(" WHERE ")
-                        .append(idField).append(" IN (");
-                    needComma = false;
+                    addToPostDeleteBatch(sqlBuffer.toString());
                 }
-            }
-            if (statementSize > 0) {
-                sqlBuffer.append(")");
-                addToSimpleBatch(sqlBuffer.toString());
             }
             return table.getIdsToDelete().size();
         }
@@ -188,31 +235,42 @@ public class BatchWriterSimpleImpl implements BatchWriter
             IndirectionTableBatch table) throws SQLException {
         Set rows = new CombinedSet(table.getRowsToDelete(), table.getRowsToInsert());
         if (!rows.isEmpty()) {
-            StringBuffer sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
-            boolean needComma = false;
-            int statementSize = 0;
-            Iterator dIter = rows.iterator();
-            while (dIter.hasNext()) {
-                Row row = (Row) dIter.next();
-                if (needComma) {
-                    sql.append(" OR ");
+            if (rows.size() > deleteTempTableSize) {
+                String tempTableName = "deletes_from_" + name;
+                addToPreDeleteBatch("CREATE TABLE " + tempTableName + " (a integer, b integer)");
+                IndirectionTableBatch tableBatch = new IndirectionTableBatch("a", "b", rows);
+                doIndirectionInserts(tempTableName, tableBatch, deleteBatches);
+                addToPostDeleteBatch("DELETE FROM " + name + " WHERE (" + table.getLeftColName()
+                        + ", " + table.getRightColName() + ") IN (SELECT a, b FROM "
+                        + tempTableName + ")");
+                addToPostDeleteBatch("DROP TABLE " + tempTableName);
+            } else {
+                StringBuffer sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
+                boolean needComma = false;
+                int statementSize = 0;
+                Iterator dIter = rows.iterator();
+                while (dIter.hasNext()) {
+                    Row row = (Row) dIter.next();
+                    if (needComma) {
+                        sql.append(" OR ");
+                    }
+                    sql.append("(").append(table.getLeftColName()).append(" = ")
+                        .append(row.getLeft()).append(" AND ").append(table.getRightColName())
+                        .append(" = ").append(row.getRight()).append(")");
+                    needComma = true;
+                    statementSize++;
+                    if (statementSize >= 500) {
+                        statementSize = 0;
+                        sql.append(")");
+                        addToPostDeleteBatch(sql.toString());
+                        sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
+                        needComma = false;
+                    }
                 }
-                sql.append("(").append(table.getLeftColName()).append(" = ")
-                    .append(row.getLeft()).append(" AND ").append(table.getRightColName())
-                    .append(" = ").append(row.getRight()).append(")");
-                needComma = true;
-                statementSize++;
-                if (statementSize >= 500) {
-                    statementSize = 0;
+                if (statementSize > 0) {
                     sql.append(")");
-                    addToSimpleBatch(sql.toString());
-                    sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
-                    needComma = false;
+                    addToPostDeleteBatch(sql.toString());
                 }
-            }
-            if (statementSize > 0) {
-                sql.append(")");
-                addToSimpleBatch(sql.toString());
             }
         }
         return table.getRowsToDelete().size();
@@ -223,11 +281,12 @@ public class BatchWriterSimpleImpl implements BatchWriter
      *
      * @param name the name of the table
      * @param table the IndirectionTableBatch
+     * @param batches the List of flushjobs to add further actions to
      * @return the number of rows inserted
      * @throws SQLException if an error occurs
      */
     protected int doIndirectionInserts(String name,
-            IndirectionTableBatch table) throws SQLException {
+            IndirectionTableBatch table, List batches) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             String preamble = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
                 + table.getRightColName() + ") VALUES (";
@@ -236,26 +295,49 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 Row row = (Row) insertIter.next();
                 StringBuffer sql = new StringBuffer(preamble).append(row.getLeft()).append(", ")
                     .append(row.getRight()).append(")");
-                addToSimpleBatch(sql.toString());
+                addToLastBatch(sql.toString());
             }
         }
         return table.getRowsToInsert().size();
     }
 
     /**
-     * Adds a statement to the simpleBatch, and flushes if it is too big.
+     * Adds a statement to the preDeleteBatch.
      *
      * @param sql the statement
      * @throws SQLException if an error occurs
      */
-    protected void addToSimpleBatch(String sql) throws SQLException {
-        //LOG.debug("Batching " + sql);
-        simpleBatch.addBatch(sql);
-        simpleBatchSize += sql.length();
-        if (simpleBatchSize > 10000000) {
-            retval.add(new FlushJobStatementBatchImpl(simpleBatch));
-            simpleBatchSize = 0;
+    protected void addToPreDeleteBatch(String sql) throws SQLException {
+        if (preDeleteBatch == null) {
+            preDeleteBatch = con.createStatement();
         }
+        preDeleteBatch.addBatch(sql);
+    }
+
+    /**
+     * Adds a statement to the postDeleteBatch.
+     *
+     * @param sql the statement
+     * @throws SQLException if an error occurs
+     */
+    protected void addToPostDeleteBatch(String sql) throws SQLException {
+        // Note that this is a fudge - in subclasses you wil almost certainly want to override this
+        // method to make it actually do what the prototype says. The fudge exists in order to speed
+        // up the SimpleImpl by using only one Statement batch.
+        addToPreDeleteBatch(sql);
+    }
+
+    /**
+     * Adds a statement to the lastBatch.
+     *
+     * @param sql the statement
+     * @throws SQLException if an error occurs
+     */
+    protected void addToLastBatch(String sql) throws SQLException {
+        // Note that this is a fudge - in subclasses you wil almost certainly want to override this
+        // method to make it actually do what the prototype says. The fudge exists in order to speed
+        // up the SimpleImpl by using only one Statement batch.
+        addToPreDeleteBatch(sql);
     }
 
     private static class CombinedSet extends AbstractSet

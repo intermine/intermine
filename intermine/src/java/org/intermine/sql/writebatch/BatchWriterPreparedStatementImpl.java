@@ -10,15 +10,11 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -33,67 +29,9 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     private static final Logger LOG = Logger.getLogger(BatchWriterPreparedStatementImpl.class);
 
     /**
-     * @see BatchWriter#write
-     */
-    public List write(Connection con, Map tables, Set filter) throws SQLException {
-        retval = new ArrayList();
-        this.con = con;
-        simpleBatch = con.createStatement();
-        simpleBatchSize = 0;
-        Map activityMap = new HashMap();
-        Iterator tableIter = tables.entrySet().iterator();
-        while (tableIter.hasNext()) {
-            Map.Entry tableEntry = (Map.Entry) tableIter.next();
-            String name = (String) tableEntry.getKey();
-            if ((filter == null) || filter.contains(name)) {
-                int activity;
-                Table table = (Table) tableEntry.getValue();
-                if (table instanceof TableBatch) {
-                    activity = 2 * doDeletes(name, (TableBatch) table);
-                } else {
-                    activity = 2 * doIndirectionDeletes(name, (IndirectionTableBatch) table);
-                }
-                if (activity > 0) {
-                    activityMap.put(name, new Integer(activity));
-                }
-            }
-        }
-        if (simpleBatchSize > 0) {
-            retval.add(new FlushJobStatementBatchImpl(simpleBatch));
-        }
-        simpleBatch = null;
-        tableIter = tables.entrySet().iterator();
-        while (tableIter.hasNext()) {
-            Map.Entry tableEntry = (Map.Entry) tableIter.next();
-            String name = (String) tableEntry.getKey();
-            if ((filter == null) || filter.contains(name)) {
-                int activity;
-                Table table = (Table) tableEntry.getValue();
-                if (table instanceof TableBatch) {
-                    activity = doInserts(name, (TableBatch) table);
-                } else {
-                    activity = doIndirectionInserts(name, (IndirectionTableBatch) table);
-                }
-                table.clear();
-                if (activity > 0) {
-                    Integer oldActivity = (Integer) activityMap.get(name);
-                    if (oldActivity != null) {
-                        activity += oldActivity.intValue();
-                    }
-                    activityMap.put(name, new Integer(activity));
-                }
-            }
-        }
-        if (!activityMap.isEmpty()) {
-            retval.add(new FlushJobUpdateStatistics(activityMap, this, con));
-        }
-        return retval;
-    }
-
-    /**
      * @see BatchWriterSimpleImpl#doInserts
      */
-    protected int doInserts(String name, TableBatch table) throws SQLException {
+    protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer sqlBuffer = new StringBuffer("INSERT INTO ").append(name).append(" (");
@@ -134,7 +72,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                     }
                 }
             }
-            retval.add(new FlushJobStatementBatchImpl(prepS));
+            batches.add(new FlushJobStatementBatchImpl(prepS));
             return table.getIdsToInsert().size();
         }
         return 0;
@@ -144,7 +82,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
      * @see BatchWriterSimpleImpl#doIndirectionInserts
      */
     protected int doIndirectionInserts(String name,
-            IndirectionTableBatch table) throws SQLException {
+            IndirectionTableBatch table, List batches) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             String sql = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
                 + table.getRightColName() + ") VALUES (?, ?)";
@@ -156,8 +94,34 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                 prepS.setInt(2, row.getRight());
                 prepS.addBatch();
             }
-            retval.add(new FlushJobStatementBatchImpl(prepS));
+            batches.add(new FlushJobStatementBatchImpl(prepS));
         }
         return table.getRowsToInsert().size();
+    }
+
+    /**
+     * Adds a statement to the postDeleteBatch.
+     *
+     * @param sql the statement
+     * @throws SQLException if an error occurs
+     */
+    protected void addToPostDeleteBatch(String sql) throws SQLException {
+        if (postDeleteBatch == null) {
+            postDeleteBatch = con.createStatement();
+        }
+        postDeleteBatch.addBatch(sql);
+    }
+
+    /**
+     * Adds a statement to the lastBatch.
+     *
+     * @param sql the statement
+     * @throws SQLException if an error occurs
+     */
+    protected void addToLastBatch(String sql) throws SQLException {
+        if (lastBatch == null) {
+            lastBatch = con.createStatement();
+        }
+        lastBatch.addBatch(sql);
     }
 }
