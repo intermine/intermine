@@ -36,7 +36,6 @@ public class DBRetrieverTask extends Task
     protected String database;
     protected String model;
     protected String osName;
-    protected File destFile;
 
     /**
      * Set the database name
@@ -63,14 +62,6 @@ public class DBRetrieverTask extends Task
     }
 
     /**
-     * Set the destination file
-     * @param destFile the destination file
-     */
-    public void setDestFile(File destFile) {
-        this.destFile = destFile;
-    }
-
-    /**
      * Run the task
      * @throws BuildException if a problem occurs
      */
@@ -80,9 +71,6 @@ public class DBRetrieverTask extends Task
         }
         if (model == null) {
             throw new BuildException("model attribute is not set");
-        }
-        if (destFile == null) {
-            throw new BuildException("destFile attribute is not set");
         }
 
         try {
