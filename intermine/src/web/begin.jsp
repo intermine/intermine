@@ -23,15 +23,19 @@
   </tr>
   <tr>
     <td valign="top">
-    
-      <c:forEach items="${categories}" var="category">
+      <c:forEach items="${CATEGORIES}" var="category">
         <b><c:out value="${category}"/></b>
         <p>
-          <c:set var="subnames" value="${subcategories[category]}"/>
+          <c:set var="subnames" value="${CATEGORY_CLASSES[category]}"/>
           <c:forEach items="${subnames}" var="subname">
             <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&className=${subname}">${subname}</a>,
           </c:forEach>
-        </p>
+          <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+            <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
+          </c:if>
+          <br/>
+          <span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/classChooser"><fmt:message key="begin.view.all.classes"/></html:link></span>
+        </p>  
       </c:forEach>
       
     </td>
@@ -115,10 +119,9 @@
         <br/>
       </c:forEach>
       <br/>
-      <html:link action="/templates">
-        <fmt:message key="begin.templates.view.all"/>
-        <img class="arrow" src="images/right-arrow.png" alt="->"/>
-      </html:link>
+      <span class="smallnote">
+        <fmt:message key="begin.or"/> <html:link action="/templates"><fmt:message key="begin.templates.view.all"/></html:link>
+      </span>
       
     </td>
   </tr>
