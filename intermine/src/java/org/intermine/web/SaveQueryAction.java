@@ -32,7 +32,6 @@ import org.apache.struts.Globals;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -73,11 +72,8 @@ public class SaveQueryAction extends Action
             saveQuery(request, queryName, qNodes, view, resultsInfo);
         } catch (ObjectStoreException e) {
             ActionMessages actionMessages = new ActionMessages();
-            String key = (e instanceof ObjectStoreQueryDurationException)
-                ? "errors.query.estimatetimetoolong"
-                : "errors.query.objectstoreerror";
-            ActionError error = new ActionError(key);
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, error);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionError("errors.query.objectstoreerror"));
             saveMessages(request, actionMessages);
         }
 
