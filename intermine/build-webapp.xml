@@ -9,7 +9,7 @@
   </target>
   
   <target name="compile-webapp" depends="compile-userprofile">
-    <javac destdir="${build.java}" listfiles="yes">
+    <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="class.path"/>
       <src path="${build.src.java}"/>
       <include name="org/intermine/web/**"/>
