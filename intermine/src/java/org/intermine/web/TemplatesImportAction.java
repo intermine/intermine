@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * Imports templates in XML format.
@@ -61,9 +62,8 @@ public class TemplatesImportAction extends InterMineAction
             imported++;
         }
         
-        String msg = getResources(request).getMessage("importTemplates.done",
-                                                    new Integer(deleted), new Integer(imported));
-        session.setAttribute(Constants.MESSAGE, msg);
+        recordMessage(new ActionMessage("importTemplates.done",
+                                        new Integer(deleted), new Integer(imported)), request);
         
         return mapping.findForward("begin");
     }
