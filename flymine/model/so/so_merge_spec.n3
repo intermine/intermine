@@ -9,7 +9,7 @@
 
 
 :BioEntity a owl:Class ;
-    owl:equivalentClass so:SequenceFeatureOntology, so:So.
+    owl:equivalentClass so:SequenceOntology, so:So.
 
 # replace Transcript__genes collection with Transcript_gene reference
 null:Transcript__genes a owl:ObjectProperty;
