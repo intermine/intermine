@@ -248,7 +248,7 @@ public class UniprotDataTranslator extends DataTranslator
                     Item comment = createItem(tgtNs + "Comment", "");
                     comment.addAttribute(new Attribute("type", srcCommentType));
                     comment.addAttribute(new Attribute("text", srcCommentText));
-                    comment.addReference(new Reference("source", getDbId("Uniprot")));
+                    comment.addReference(new Reference("source", getDbId("UniProt")));
                     comments.addRefId(comment.getIdentifier());
                     retval.add(comment);
                 }
@@ -436,7 +436,7 @@ public class UniprotDataTranslator extends DataTranslator
                                 Item synonym = createSynonym(gene.getIdentifier(),
                                     (type.equals("primary") || type.equals("synonym"))
                                                              ? "name" : type,
-                                                             name, getDbId("Uniprot"));
+                                                             name, getDbId("UniProt"));
                                 geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }
