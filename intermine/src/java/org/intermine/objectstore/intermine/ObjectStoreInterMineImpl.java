@@ -40,6 +40,7 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -342,9 +343,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     }
                 }
             }
-            QueryNode firstOrderBy = null;
+            QueryOrderable firstOrderBy = null;
             try {
-                firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
+                firstOrderBy = (QueryOrderable) q.getOrderBy().iterator().next();
             } catch (NoSuchElementException e) {
                 firstOrderBy = (QueryNode) q.getSelect().iterator().next();
             }

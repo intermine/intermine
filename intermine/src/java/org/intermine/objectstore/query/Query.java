@@ -149,23 +149,23 @@ public class Query implements FromElement
     }
 
     /**
-     * Add a QueryNode to the ORDER BY clause of this Query
+     * Add a QueryOrderable to the ORDER BY clause of this Query
      *
      * @param node the node to add
      * @return the updated Query
      */
-    public Query addToOrderBy(QueryNode node) {
+    public Query addToOrderBy(QueryOrderable node) {
         orderBy.add(node);
         return this;
     }
 
     /**
-     * Remove a QueryNode from the ORDER BY clause
+     * Remove a QueryOrderable from the ORDER BY clause
      *
      * @param node the node to remove
      * @return the updated Query
      */
-    public Query deleteFromOrderBy(QueryNode node) {
+    public Query deleteFromOrderBy(QueryOrderable node) {
         orderBy.remove(node);
         return this;
     }

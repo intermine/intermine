@@ -349,7 +349,7 @@ public class IqlQueryParser
         return (QueryNode) retval;
     }
 
-    private static Object processNewQueryNodeOrReference(AST ast, Query q) {
+    private static QueryOrderable processNewQueryNodeOrReference(AST ast, Query q) {
         switch (ast.getType()) {
             case IqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild(), q);
@@ -381,7 +381,7 @@ public class IqlQueryParser
      * @param q the Query to build
      * @return a QueryNode object corresponding to the input
      */
-    private static Object processNewField(AST ast, Query q) {
+    private static QueryOrderable processNewField(AST ast, Query q) {
         if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                         + ast.getType() + "]");
@@ -680,7 +680,7 @@ public class IqlQueryParser
      */
     private static void processOrderClause(AST ast, Query q) {
         do {
-            q.addToOrderBy(processNewQueryNode(ast, q));
+            q.addToOrderBy(processNewQueryNodeOrReference(ast, q));
             ast = ast.getNextSibling();
         } while (ast != null);
     }

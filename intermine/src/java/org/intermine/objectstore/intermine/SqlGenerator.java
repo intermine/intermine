@@ -40,6 +40,7 @@ import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.Constraint;
@@ -938,12 +939,27 @@ public class SqlGenerator
         orderBy.addAll(q.getSelect());
         Iterator orderByIter = orderBy.iterator();
         while (orderByIter.hasNext()) {
-            QueryNode node = (QueryNode) orderByIter.next();
+            QueryOrderable node = (QueryOrderable) orderByIter.next();
             if (!(node instanceof QueryValue)) {
                 retval.append(needComma ? ", " : " ORDER BY ");
                 needComma = true;
                 if (node instanceof QueryClass) {
                     queryClassToString(retval, (QueryClass) node, q, schema, ID_ONLY, state);
+                } else if (node instanceof QueryObjectReference) {
+                    QueryObjectReference ref = (QueryObjectReference) node;
+                    StringBuffer buffer = new StringBuffer();
+                    Map fieldNameToFieldDescriptor = schema.getModel().getFieldDescriptorsForClass(
+                            ref.getQueryClass().getType());
+                    ReferenceDescriptor refDesc = (ReferenceDescriptor) fieldNameToFieldDescriptor
+                        .get(ref.getFieldName());
+                    buffer.append((String) state.getFieldToAlias(ref.getQueryClass())
+                            .get(ref.getFieldName()))
+                        .append(".")
+                        .append(DatabaseUtil.getColumnName(refDesc));
+                    retval.append(buffer.toString());
+                    buffer.append(" AS ")
+                        .append(state.getOrderByAlias());
+                    state.addToOrderBy(buffer.toString());
                 } else {
                     queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                     if (!q.getSelect().contains(node)) {

@@ -152,5 +152,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("IndexOf", new IqlQuery("SELECT INDEXOF(a1_.name, 'oy') AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("Substring", new IqlQuery("SELECT SUBSTR(a1_.name, 2, 2) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("Substring2", new IqlQuery("SELECT SUBSTR(a1_.name, 2) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("OrderByReference", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.department", null));
     }
 }
