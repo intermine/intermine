@@ -1,12 +1,33 @@
-Architecture
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<artheader>
+<date>2002-6-5</date>
+<title>Functional requirements</title>
+<authorgroup>
+<author>
+<firstname>Gos</firstname>
+<surname>Micklem</surname>
+</author>
+<author>
+<firstname>Andrew</firstname>
+<surname>Varley</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+<title>Architecture</title>
 
 
-Ace models.wrm represents a "schema of everything". Approx 78 classes,
+<para>Ace models.wrm represents a "schema of everything". Approx 78 classes,
 600+ crosslinks, half 1->n, half n->n. We will write a converter from
 ace to XMI/XML Schema to test whether Castor can cope with a model of
-this complexity.
+this complexity.</para>
 
-On first sight, this does not allow us to optimise the schema without
+<para>On first sight, this does not allow us to optimise the schema without
 interfeing with the things we get for free from Castor (O/R mapping,
 schema etc.). However, we intend to create flattened tables, together
 with meta data which records the mapping of auto-generated tables to
@@ -23,15 +44,18 @@ separate. The final (queryable) database may not actually need the
 original (non-flattened) tables in it. We believe that Oracle/Sybase
 cannot already do this. Is this what DiscoveryLink does?? If
 successful, this could be useful in its own right as a database tool
-that could be incorporated in MySql/PostgreSQL.
+that could be incorporated in MySql/PostgreSQL.</para>
 
-The alternative to the above is to maintain 2 automatically generated
+<para>The alternative to the above is to maintain 2 automatically generated
 systems - one using a "normal" schema (like Castor), the other using a
 flattened schema. We believe that we would soon get into a mess with
-this.
+this.</para>
 
-We think it likely that we will not be able to serve clones of the
+<para>We think it likely that we will not be able to serve clones of the
 entire Flymine schema from different webserver blades because of
 space/CPU restrictions, and also the fact that it will take around 10
 hours to transfer a 300Gb database to the webservers (using 100Mb
-ethernet).
+ethernet).</para>
+
+</sect1>
+</article>

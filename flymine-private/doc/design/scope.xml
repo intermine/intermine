@@ -1,3 +1,33 @@
-Gough SCOP superfamily HMMs.
-SCOP/CATH et al structural databases.
-Interpro.
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<artheader>
+<date>2002-6-5</date>
+<title>Functional requirements</title>
+<authorgroup>
+<author>
+<firstname>Gos</firstname>
+<surname>Micklem</surname>
+</author>
+<author>
+<firstname>Andrew</firstname>
+<surname>Varley</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+<title>Scope</title>
+
+
+<ulist>
+<item>Gough SCOP superfamily HMMs.</item>
+<item>SCOP/CATH et al structural databases.</item>
+<item>Interpro.</item>
+</ulink>
+
+</sect1>
+
+</article>
