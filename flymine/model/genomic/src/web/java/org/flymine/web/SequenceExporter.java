@@ -38,11 +38,11 @@ import org.intermine.web.results.PagedTable;
 import org.intermine.model.InterMineObject;
 
 import org.flymine.model.genomic.Contig;
-import org.flymine.biojava.FlyMineSequence;
-import org.flymine.biojava.FlyMineSequenceFactory;
+import org.flymine.web.biojava.FlyMineSequence;
+import org.flymine.web.biojava.FlyMineSequenceFactory;
 
 /**
- * An implementation of TableExporter that exports Employee objects using the BioJava sequence and
+ * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
  * feature writers.
  *
  * @author Kim Rutherford

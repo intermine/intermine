@@ -1,4 +1,4 @@
-package org.flymine.biojava;
+package org.flymine.web.biojava;
 
 /*
  * Copyright (C) 2002-2004 FlyMine
