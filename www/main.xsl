@@ -115,30 +115,6 @@
     </a>
   </xsl:template>
   
-  <xsl:template name="menulink">
-    <xsl:param name="url"/>
-    <xsl:param name="title"/>
-    <a>
-      <xsl:attribute name="href">
-        <xsl:choose>
-          <xsl:when test="starts-with($url,'http')">
-            <xsl:value-of select="$url"/>
-          </xsl:when>
-          <xsl:when test="substring(@url, string-length(@url)-3) = '.xml'">
-            <xsl:value-of select="$basedir"/>
-            <xsl:value-of select="substring(@url,1,string-length(@url)-3)"/>
-            <xsl:value-of select="$outputext"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="$url"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
-      
-      <xsl:value-of select="$title"/>
-    </a>
-  </xsl:template>
-  
   <xsl:template match="address">
     <address>
       <xsl:apply-templates/>
