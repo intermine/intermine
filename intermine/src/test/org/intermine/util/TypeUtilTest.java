@@ -41,30 +41,6 @@ public class TypeUtilTest extends TestCase
         assertEquals(fieldValue, m.getTitle());
     }
 
-    public void testGetElementTypeNull() throws Exception {
-        Collection c = null;
-        try {
-            TypeUtil.getElementType(c);
-            fail("Expected NullPointerException");
-        } catch (RuntimeException e) {
-        }
-    }
-
-    public void testGetElementTypeEmpty() throws Exception {
-        Collection c = new ArrayList();
-        try {
-            TypeUtil.getElementType(c);
-            fail("Expected NoSuchElementException");
-        } catch (RuntimeException e) {
-        }
-    }
-
-    public void testGetElementType() throws Exception {
-        Collection c = new ArrayList();
-        c.add(new String());
-        assertEquals(String.class, TypeUtil.getElementType(c));
-    }
-
     public void testGetFieldInfos() throws Exception {
         Class c = Address.class;
 

@@ -18,8 +18,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -232,75 +230,6 @@ public class TypeUtil
     }
 
     /**
-     * Gets a map from field to getter for a class. Fields that do not have a getter do not appear
-     * in this map.
-     *
-     * @param c the Class
-     * @return a mapping from field to the getter used to read that field
-     * @throws IntrospectionException if an error occurs
-     */
-    public static Map getFieldToGetter(Class c) throws IntrospectionException {
-        synchronized (classToFieldToGetter) {
-            Map retval = (Map) classToFieldToGetter.get(c);
-            if (retval == null) {
-                PropertyDescriptor[] pd = Introspector.getBeanInfo(c).getPropertyDescriptors();
-                retval = new HashMap();
-                Map fieldToSetter = new HashMap();
-                for (int i = 0; i < pd.length; i++) {
-                    try {
-                        Method getter = pd[i].getReadMethod();
-                        if (getter != null) {
-                            if ((!getter.getName().equals("getClass"))
-                                && (!getter.getName().equals("getId"))) {
-                                Field field = c.getDeclaredField(pd[i].getName());
-                                retval.put(field, getter);
-                                Method setter = pd[i].getWriteMethod();
-                                fieldToSetter.put(field, setter);
-                            }
-                        }
-                    } catch (NoSuchFieldException e) {
-                    }
-                }
-                classToFieldToGetter.put(c, retval);
-                classToFieldToSetter.put(c, fieldToSetter);
-            }
-            return retval;
-        }
-    }
-
-    /**
-     * Gets a map from field to setter for a class.
-     *
-     * @param c the Class
-     * @return a mappin from field to the setter used to write to that field
-     * @throws IntrospectionException if an error occurs
-     */
-    public static Map getFieldToSetter(Class c) throws IntrospectionException {
-        synchronized (classToFieldToGetter) {
-            if (!classToFieldToSetter.containsKey(c)) {
-                getFieldToGetter(c);
-            }
-            return (Map) classToFieldToSetter.get(c);
-        }
-    }
-
-    /**
-     * Get the type of the elements of a collection
-     *
-     * @param col the collection
-     * @return the Class of the elements of the collection
-     */
-    public static Class getElementType(Collection col) {
-        if (col == null) {
-            throw new NullPointerException("Collection cannot be null");
-        }
-        if (col.size() == 0) {
-            throw new NoSuchElementException("Collection cannot be empty");
-        }
-        return col.iterator().next().getClass();
-    }
-
-    /**
      * Make all nested objects top-level in returned collection
      *
      * @param obj a top-level object or collection of such objects
@@ -435,6 +364,15 @@ public class TypeUtil
          */
         public Method getSetter() {
             return setter;
+        }
+
+        /**
+         * Returns the type of the field.
+         *
+         * @return a Class object
+         */
+        public Class getType() {
+            return getter.getReturnType();
         }
     }
 }
