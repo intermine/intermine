@@ -3,7 +3,7 @@ package org.flymine.util;
 import junit.framework.*;
 
 import java.sql.Connection;
-import org.flymine.sql.ConnectionFactory;
+import org.flymine.sql.DatabaseFactory;
 
 public class DatabaseUtilTest extends TestCase
 {
@@ -14,7 +14,7 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        con = ConnectionFactory.getConnection("db.unittest");
+        con = DatabaseFactory.getDatabase("db.unittest").getConnection();
     }
 
     public void tearDown() throws Exception {
@@ -42,7 +42,7 @@ public class DatabaseUtilTest extends TestCase
 
     public void testTableExistsNullTable() throws Exception {
         try {
-            DatabaseUtil.tableExists(ConnectionFactory.getConnection("db.unittest"), null);
+            DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -52,7 +52,7 @@ public class DatabaseUtilTest extends TestCase
     public void testTableExists() throws Exception {
         synchronized (con) {
             createTable();
-            assertTrue(DatabaseUtil.tableExists(ConnectionFactory.getConnection("db.unittest"), "table1"));
+            assertTrue(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "table1"));
             dropTable();
         }
     }
@@ -60,7 +60,7 @@ public class DatabaseUtilTest extends TestCase
     public void testTableNotExists() throws Exception {
         synchronized (con) {
             createTable();
-            assertTrue(!(DatabaseUtil.tableExists(ConnectionFactory.getConnection("db.unittest"), "table2")));
+            assertTrue(!(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "table2")));
             dropTable();
         }
     }

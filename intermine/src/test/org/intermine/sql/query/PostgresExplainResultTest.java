@@ -2,7 +2,7 @@ package org.flymine.sql.query;
 
 import junit.framework.*;
 
-import org.flymine.sql.ConnectionFactory;
+import org.flymine.sql.DatabaseFactory;
 
 public class PostgresExplainResultTest extends TestCase
 {
@@ -28,7 +28,7 @@ public class PostgresExplainResultTest extends TestCase
 
     public void testConstructNullQuery() throws Exception {
         try {
-            er = new PostgresExplainResult(null, ConnectionFactory.getConnection("db.unittest"));
+            er = new PostgresExplainResult(null, DatabaseFactory.getDatabase("db.unittest").getConnection());
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {

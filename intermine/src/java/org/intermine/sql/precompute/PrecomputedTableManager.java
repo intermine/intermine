@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.sql.*;
 import org.flymine.util.DatabaseUtil;
-import org.flymine.sql.ConnectionFactory;
+import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.Query;
 
 /**
@@ -36,7 +36,7 @@ public class PrecomputedTableManager
 
         Connection con = null;
         try {
-            con = ConnectionFactory.getConnection(dbName);
+            con = DatabaseFactory.getDatabase(dbName).getConnection();
             synchroniseWithDatabase(con);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(dbName + "is invalid: " + e.getMessage());
@@ -136,7 +136,7 @@ public class PrecomputedTableManager
     protected void addTableToDatabase(PrecomputedTable pt) throws SQLException {
         Connection con = null;
         try {
-            con = ConnectionFactory.getConnection(dbName);
+            con = DatabaseFactory.getDatabase(dbName).getConnection();
 
             // Create the table
             Statement stmt = con.createStatement();
@@ -168,7 +168,7 @@ public class PrecomputedTableManager
     protected void deleteTableFromDatabase(String name) throws SQLException {
         Connection con = null;
         try {
-            con = ConnectionFactory.getConnection(dbName);
+            con = DatabaseFactory.getDatabase(dbName).getConnection();
             // Drop the table
             Statement stmt = con.createStatement();
             stmt.execute("DROP TABLE " + name);

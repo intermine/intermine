@@ -4,7 +4,7 @@ import junit.framework.*;
 import java.sql.*;
 import javax.sql.*;
 import java.io.IOException;
-import org.flymine.sql.ConnectionFactory;
+import org.flymine.sql.DatabaseFactory;
 
 public class DatabaseWriterTest extends TestCase
 {
@@ -16,7 +16,7 @@ public class DatabaseWriterTest extends TestCase
     }
 
     protected void setUp() throws Exception {
-        con = ConnectionFactory.getConnection("db.unittest");
+        con = DatabaseFactory.getDatabase("db.unittest").getConnection();
         writer = new DatabaseWriter(con, "table1");
     }
 

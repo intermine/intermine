@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.flymine.util.DatabaseUtil;
-import org.flymine.sql.ConnectionFactory;
+import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.*;
 
 public class PrecomputedTableManagerTest extends TestCase
@@ -37,7 +37,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     protected void createTable() throws Exception {
         // Set up some tables in the database
-        Connection con = ConnectionFactory.getConnection("db.unittest");
+        Connection con = DatabaseFactory.getDatabase("db.unittest").getConnection();
         Statement stmt = con.createStatement();
         stmt.addBatch("CREATE TABLE tabletest(col1 int, col2 int)");
         for (int i = 1; i<100; i++) {
@@ -50,7 +50,7 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     protected void deleteTable() throws Exception {
-        Connection con = ConnectionFactory.getConnection("db.unittest");
+        Connection con = DatabaseFactory.getDatabase("db.unittest").getConnection();
         Statement stmt = con.createStatement();
         stmt.addBatch("DROP TABLE tabletest");
         stmt.addBatch("DROP TABLE precompute_index");
@@ -138,7 +138,7 @@ public class PrecomputedTableManagerTest extends TestCase
                 createTable();
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
-                assertTrue(DatabaseUtil.tableExists(ConnectionFactory.getConnection("db.unittest"), "precomp1"));
+                assertTrue(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "precomp1"));
             }
             finally {
                 ptm.delete(pt1);
@@ -156,7 +156,7 @@ public class PrecomputedTableManagerTest extends TestCase
                 ptm.add(pt1);
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
-                assertTrue(!(DatabaseUtil.tableExists(ConnectionFactory.getConnection("db.unittest"), "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "precomp1")));
             }
             finally {
                 deleteTable();
