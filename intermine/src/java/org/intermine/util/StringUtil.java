@@ -77,4 +77,15 @@ public class StringUtil
         
         return sb.toString();
     }
+
+    private static long differentNumber = 0;
+    
+    /**
+     * Returns a String that is different every time
+     *
+     * @return a String that is different every time
+     */
+    public static synchronized String uniqueString() {
+        return "P" + (differentNumber++) + "_";
+    }
 }

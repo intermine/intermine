@@ -1,6 +1,8 @@
 package org.flymine.util;
 
 import junit.framework.*;
+import java.util.Set;
+import java.util.HashSet;
 
 public class StringUtilTest extends TestCase
 {
@@ -51,11 +53,20 @@ public class StringUtilTest extends TestCase
         }
     }
 
-   public void testToSameInitialCase() throws Exception {
-       assertEquals("dog", StringUtil.toSameInitialCase("dog", null));
-       assertEquals("a", StringUtil.toSameInitialCase("a", "dog"));
-       assertEquals("A", StringUtil.toSameInitialCase("a", "Dog"));
-       assertEquals("Ant", StringUtil.toSameInitialCase("ant", "D"));
-       assertEquals("ant", StringUtil.toSameInitialCase("Ant", "d"));
-   }
+    public void testToSameInitialCase() throws Exception {
+        assertEquals("dog", StringUtil.toSameInitialCase("dog", null));
+        assertEquals("a", StringUtil.toSameInitialCase("a", "dog"));
+        assertEquals("A", StringUtil.toSameInitialCase("a", "Dog"));
+        assertEquals("Ant", StringUtil.toSameInitialCase("ant", "D"));
+        assertEquals("ant", StringUtil.toSameInitialCase("Ant", "d"));
+    }
+
+    public void testUniqueString() throws Exception {
+        Set set = new HashSet();
+        for (int i = 0; i < 100; i++) {
+            String n = StringUtil.uniqueString();
+            assertFalse(set.contains(n));
+            set.add(n);
+        }
+    }
 }
