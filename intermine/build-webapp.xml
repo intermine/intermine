@@ -79,17 +79,6 @@
                    password="${webservice.password}"
                    path="${webservice.path}"
                    war="file://${war}"/>
-    <unzip src="${war}" dest="${build.tmp}">
-      <patternset>
-        <include name="WEB-INF/deploy-ObjectStore.wsdd"/>
-      </patternset>
-    </unzip>
-    <!-- This should probably be a waitfor task -->
-    <java classname="org.apache.axis.client.AdminClient" fork="true">
-      <classpath refid="class.path"/>
-      <arg value="-l ${webservice.baseurl}/${webservice.path}/servlet/AxisServlet"/>
-      <arg value="${build.tmp}/WEB-INF/deploy-ObjectStore.wsdd"/>
-    </java>
   </target>
 
   <target name="remove-webservice"
