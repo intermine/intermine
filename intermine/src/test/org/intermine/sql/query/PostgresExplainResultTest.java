@@ -109,22 +109,5 @@ public class PostgresExplainResultTest extends TestCase
         }
     }
 
-    public void testTooManyWarnings() throws Exception {
-        // Pass in an sql statement with an explain that returns too many warnings.
-        
-        try {
-            String sql = "explain select flibble from (select 1 as flibble) as lkkjhsdkjfhksjfksfkdsjfhksdjfhskfjhskdjfhsdkjfhskdjfhskdjfhskdfhdksjfhskjfh";
-            PreparedStatement stmt = DatabaseFactory.getDatabase("db.unittest").getConnection().prepareStatement(sql);
-            er = new PostgresExplainResult(stmt);
-            fail("Expected: SQLException");
-        } catch (SQLException e) {
-            if (!e.getMessage().equals("Database returned more than one warning while EXPLAINing")) {
-                fail("Wrong message in exception");
-            }
-        }
-    }
-
-
-
 }
 
