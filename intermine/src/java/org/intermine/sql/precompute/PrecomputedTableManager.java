@@ -194,7 +194,8 @@ public class PrecomputedTableManager
                 List orderBy = pt.getQuery().getOrderBy();
                 if (!orderBy.isEmpty()) {
                     AbstractValue firstOrderBy = ((AbstractValue) orderBy.get(0));
-                    SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap().get(firstOrderBy));
+                    SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap()
+                            .get(firstOrderBy));
                     if (firstOrderByValue != null) {
                         addIndex(pt.getName(), firstOrderByValue.getAlias(), con);
                     }
