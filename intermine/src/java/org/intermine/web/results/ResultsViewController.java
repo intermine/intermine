@@ -35,9 +35,23 @@ import org.flymine.objectstore.query.Results;
  */
 public class ResultsViewController extends TilesAction
 {
-    static final String DISPLAYABLERESULTS_NAME = "resultsTable";
-    static final String SAVEDBAGS_NAME = "savedBags";
-    static final String SAVEDBAGSINVERSE_NAME = "savedBagsInverse";
+    /**
+     * The name of the attribute used to store the results map in the
+     * session object
+     */
+    public static final String DISPLAYABLERESULTS_NAME = "resultsTable";
+
+    /** 
+     * The name of the attribute used to store the saved bags Map in the
+     * session object
+     */
+    public static final String SAVEDBAGS_NAME = "savedBags";
+
+    /**
+     * The name of the attribute used to store the saved bags to saved bag
+     * name Map in the session object
+     */ 
+    public static final String SAVEDBAGSINVERSE_NAME = "savedBagsInverse";
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
