@@ -407,25 +407,26 @@ function setBorderStyle(path, style)
             </c:otherwise>
           </c:choose>
           <c:if test="${!empty PROFILE.savedBags}">
-            <br/>
-            <fmt:message key="query.bagConstraint"/>
-            <html:select property="bagOp">
-              <c:forEach items="${bagOps}" var="bagOp">
-                <html:option value="${bagOp.key}">
-                  <c:out value="${bagOp.value}"/>
-                </html:option>
-              </c:forEach>
-            </html:select>
-            <html:select property="bagValue">
-              <c:forEach items="${PROFILE.savedBags}" var="bag">
-                <html:option value="${bag.key}">
-                  <c:out value="${bag.key}"/>
-                </html:option>
-              </c:forEach>
-            </html:select>
-            <html:submit property="bag">
-              <fmt:message key="query.submitConstraint"/>
-            </html:submit>
+            <p style="text-align: left;">
+              <fmt:message key="query.bagConstraint"/>
+              <html:select property="bagOp">
+                <c:forEach items="${bagOps}" var="bagOp">
+                  <html:option value="${bagOp.key}">
+                    <c:out value="${bagOp.value}"/>
+                  </html:option>
+                </c:forEach>
+              </html:select>
+              <html:select property="bagValue">
+                <c:forEach items="${PROFILE.savedBags}" var="bag">
+                  <html:option value="${bag.key}">
+                    <c:out value="${bag.key}"/>
+                  </html:option>
+                </c:forEach>
+              </html:select>
+              <html:submit property="bag">
+                <fmt:message key="query.submitConstraint"/>
+              </html:submit>
+            </p>
           </c:if>
         </html:form>
         
