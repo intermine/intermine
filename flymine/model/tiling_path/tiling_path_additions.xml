@@ -3,9 +3,10 @@
 <class name="org.flymine.model.genomic.PCRProduct" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <reference name="forwardPrimer" referenced-type="org.flymine.model.genomic.ForwardPrimer"/>
   <reference name="reversePrimer" referenced-type="org.flymine.model.genomic.ReversePrimer"/>
+  <collection name="primers" referenced-type="org.flymine.model.genomic.Primer" reverse-reference="pcrProduct"/>
 </class>
 <class name="org.flymine.model.genomic.Primer" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <reference name="pcrProduct" referenced-type="org.flymine.model.genomic.PCRProduct"/>
+  <reference name="pcrProduct" referenced-type="org.flymine.model.genomic.PCRProduct" reverse-reference="primers"/>
 </class>
 <class name="org.flymine.model.genomic.ForwardPrimer" extends="org.flymine.model.genomic.Primer" is-interface="true">
 </class>
