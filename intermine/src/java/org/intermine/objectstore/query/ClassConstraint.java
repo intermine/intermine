@@ -28,7 +28,7 @@ import org.flymine.util.Util;
 public class ClassConstraint extends Constraint
 {
     protected QueryClass qc1, qc2;
-    protected QueryOp type;
+    protected ConstraintOp type;
     protected Object obj;
 
     /**
@@ -38,7 +38,7 @@ public class ClassConstraint extends Constraint
      * @param type define EQUALS or NOT_EQUALS
      * @param qc2 second QueryClass for comparison
      */
-    public ClassConstraint(QueryClass qc1, QueryOp type, QueryClass qc2) {
+    public ClassConstraint(QueryClass qc1, ConstraintOp type, QueryClass qc2) {
         this(qc1, type, qc2, false);
     }
 
@@ -50,7 +50,7 @@ public class ClassConstraint extends Constraint
      * @param qc2 second QueryClass for comparison
      * @param negated reverse the constraint logic if true
      */
-    public ClassConstraint(QueryClass qc1, QueryOp type, QueryClass qc2, boolean negated) {
+    public ClassConstraint(QueryClass qc1, ConstraintOp type, QueryClass qc2, boolean negated) {
         if (qc1 == null) {
             throw new NullPointerException("qc1 cannot be null");
         }
@@ -88,7 +88,7 @@ public class ClassConstraint extends Constraint
      * @param type define EQUALS or NOT_EQUALS
      * @param obj example object
      */
-    public ClassConstraint(QueryClass qc, QueryOp type, Object obj) {
+    public ClassConstraint(QueryClass qc, ConstraintOp type, Object obj) {
         this(qc, type, obj, false);
     }
 
@@ -100,7 +100,7 @@ public class ClassConstraint extends Constraint
      * @param obj example object
      * @param negated reverse the constraint logic if true
      */
-    public ClassConstraint(QueryClass qc1, QueryOp type, Object obj, boolean negated) {
+    public ClassConstraint(QueryClass qc1, ConstraintOp type, Object obj, boolean negated) {
         if (qc1 == null) {
             throw new NullPointerException("obj cannot be null");
         }
@@ -136,7 +136,7 @@ public class ClassConstraint extends Constraint
      *
      * @return the operation type
      */
-    public QueryOp getType() {
+    public ConstraintOp getType() {
         return type;
     }
 
@@ -213,14 +213,14 @@ public class ClassConstraint extends Constraint
     /**
      * Classes are equal to one another
      */
-    public static final QueryOp EQUALS = QueryOp.EQUALS;
+    public static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
     
     /**
      * Classes are not equal to one another
      */
-    public static final QueryOp NOT_EQUALS = QueryOp.NOT_EQUALS;
+    public static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
 
-    protected static final QueryOp[] VALID_OPS = new QueryOp[] {EQUALS, NOT_EQUALS};
+    protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {EQUALS, NOT_EQUALS};
 
     /**
      * Return a list of the valid operations for constructing a constraint of this type

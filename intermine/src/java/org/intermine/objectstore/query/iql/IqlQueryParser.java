@@ -758,7 +758,7 @@ public class FqlQueryParser
         AST subAST = ast.getFirstChild();
         QueryNode left = processNewQueryNode(subAST, q);
         subAST = subAST.getNextSibling();
-        QueryOp op = null;
+        ConstraintOp op = null;
         switch (subAST.getType()) {
             case FqlTokenTypes.EQ:
                 op = SimpleConstraint.EQUALS;

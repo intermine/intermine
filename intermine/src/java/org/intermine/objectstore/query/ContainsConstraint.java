@@ -25,7 +25,7 @@ public class ContainsConstraint extends Constraint
 {
     protected QueryReference ref;
     protected QueryClass cls;
-    protected QueryOp type;
+    protected ConstraintOp type;
 
     /**
      * Constructor for ContainsConstraint.
@@ -34,7 +34,7 @@ public class ContainsConstraint extends Constraint
      * @param type specify CONTAINS or DOES_NOT_CONTAIN
      * @param cls the QueryClass to to be tested against reference
      */
-    public ContainsConstraint(QueryReference ref, QueryOp type, QueryClass cls) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp type, QueryClass cls) {
         this(ref, type, cls, false);
     }
 
@@ -46,7 +46,8 @@ public class ContainsConstraint extends Constraint
      * @param cls the QueryClass to be tested
      * @param negated reverse the constraint logic if true
      */
-    public ContainsConstraint(QueryReference ref, QueryOp type, QueryClass cls, boolean negated) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp type, QueryClass cls,
+                              boolean negated) {
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
@@ -81,7 +82,7 @@ public class ContainsConstraint extends Constraint
      *
      * @return the operation type
      */
-    public QueryOp getType() {
+    public ConstraintOp getType() {
         return type;
     }
 
@@ -147,14 +148,15 @@ public class ContainsConstraint extends Constraint
     /**
      * QueryCollection does contain the specified QueryClass.
      */
-    public static final QueryOp CONTAINS = QueryOp.CONTAINS;
+    public static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
 
     /**
      * QueryCollection does not contain the specified QueryClass.
      */
-    public static final QueryOp DOES_NOT_CONTAIN = QueryOp.DOES_NOT_CONTAIN;
+    public static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
 
-    protected static final QueryOp[] VALID_OPS = new QueryOp[] {CONTAINS, DOES_NOT_CONTAIN};
+    protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {CONTAINS,
+                                                                          DOES_NOT_CONTAIN};
 
     /**
      * Return a list of the valid operations for constructing a constraint of this type

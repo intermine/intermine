@@ -27,7 +27,7 @@ import org.flymine.util.Util;
 public class SimpleConstraint extends Constraint
 {
     protected QueryEvaluable qe1, qe2;
-    protected QueryOp type;
+    protected ConstraintOp type;
 
     /**
      * Construct a Constraint.  Check that java types of QueryEvaluables are compatible with the
@@ -38,7 +38,7 @@ public class SimpleConstraint extends Constraint
      * @param qe2 second QueryEvaluable for comparison
      * @throws IllegalArgumentException if type does not correspond to a defined operation
      */
-    public SimpleConstraint(QueryEvaluable qe1, QueryOp type, QueryEvaluable qe2) {
+    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type, QueryEvaluable qe2) {
         this(qe1, type, qe2, false);
     }
 
@@ -52,7 +52,8 @@ public class SimpleConstraint extends Constraint
      * @param negated reverse constraint logic if true
      * @throws IllegalArgumentException if type does not correspond to a defined operation
      */
-    public SimpleConstraint(QueryEvaluable qe1, QueryOp type, QueryEvaluable qe2, boolean negated) {
+    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type, QueryEvaluable qe2,
+                            boolean negated) {
         if (qe1 == null) {
             throw new NullPointerException("qe1 cannot be null");
         }
@@ -86,7 +87,7 @@ public class SimpleConstraint extends Constraint
      * @param type define type of comparison
      * @throws IllegalArgumentException if type does not correspond to a defined operation
      */
-    public SimpleConstraint(QueryEvaluable qe1, QueryOp type) {
+    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type) {
         this(qe1, type, false);
     }
 
@@ -99,7 +100,7 @@ public class SimpleConstraint extends Constraint
      * @param negated reverse constraint logic if true
      * @throws IllegalArgumentException if type does not correspond to a defined operation
      */
-    public SimpleConstraint(QueryEvaluable qe1, QueryOp type, boolean negated) {
+    public SimpleConstraint(QueryEvaluable qe1, ConstraintOp type, boolean negated) {
         if (qe1 == null) {
             throw new NullPointerException("qe1 cannot be null");
         }
@@ -124,7 +125,7 @@ public class SimpleConstraint extends Constraint
      *
      * @return integer value of operation type
      */
-    public QueryOp getType() {
+    public ConstraintOp getType() {
         return type;
     }
         
@@ -133,7 +134,7 @@ public class SimpleConstraint extends Constraint
      *
      * @return integer value of operation type
      */
-    public QueryOp getRealType() {
+    public ConstraintOp getRealType() {
         return negate(type);
     }
 
@@ -198,54 +199,54 @@ public class SimpleConstraint extends Constraint
     /**
      * require that the two arguments are either equal numerically or are identical strings
      */
-    public static final QueryOp EQUALS = QueryOp.EQUALS;
+    public static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
 
     /**
      * require that the two arguments are not equal numerically or not identical strings
      */
-    public static final QueryOp NOT_EQUALS = QueryOp.NOT_EQUALS;
+    public static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
 
     /**
      * require that the first argument is less than the second (numeric only)
      */
-    public static final QueryOp LESS_THAN = QueryOp.LESS_THAN;
+    public static final ConstraintOp LESS_THAN = ConstraintOp.LESS_THAN;
 
     /**
      * require that the first argument is less than or equal to the second (numeric only)
      */
-    public static final QueryOp LESS_THAN_EQUALS = QueryOp.LESS_THAN_EQUALS;
+    public static final ConstraintOp LESS_THAN_EQUALS = ConstraintOp.LESS_THAN_EQUALS;
 
     /**
      * require that the first argument is greater than the second (numeric only)
      */
-    public static final QueryOp GREATER_THAN = QueryOp.GREATER_THAN;
+    public static final ConstraintOp GREATER_THAN = ConstraintOp.GREATER_THAN;
 
     /**
      * require that the first argument is greater than or equal to the second (numeric only)
      */
-    public static final QueryOp GREATER_THAN_EQUALS = QueryOp.GREATER_THAN_EQUALS;
+    public static final ConstraintOp GREATER_THAN_EQUALS = ConstraintOp.GREATER_THAN_EQUALS;
 
     /**
      * require that the first argument is a substring of the second (string only)
      */
-    public static final QueryOp MATCHES = QueryOp.MATCHES;
+    public static final ConstraintOp MATCHES = ConstraintOp.MATCHES;
 
     /**
      * require that the first argument is not a substring of the second (string only)
      */
-    public static final QueryOp DOES_NOT_MATCH = QueryOp.DOES_NOT_MATCH;
+    public static final ConstraintOp DOES_NOT_MATCH = ConstraintOp.DOES_NOT_MATCH;
 
     /**
      * require that the specified argument is null
      */
-    public static final QueryOp IS_NULL = QueryOp.IS_NULL;
+    public static final ConstraintOp IS_NULL = ConstraintOp.IS_NULL;
 
     /**
      * require that the specified argument is not null
      */
-    public static final QueryOp IS_NOT_NULL = QueryOp.IS_NOT_NULL;
+    public static final ConstraintOp IS_NOT_NULL = ConstraintOp.IS_NOT_NULL;
 
-    protected static final QueryOp[] NUMBER_OPS = {
+    protected static final ConstraintOp[] NUMBER_OPS = {
         EQUALS,
         NOT_EQUALS,
         LESS_THAN,
@@ -253,15 +254,15 @@ public class SimpleConstraint extends Constraint
         GREATER_THAN,
         GREATER_THAN_EQUALS};
 
-    protected static final QueryOp[] DATE_OPS = NUMBER_OPS;
+    protected static final ConstraintOp[] DATE_OPS = NUMBER_OPS;
 
-    protected static final QueryOp[] STRING_OPS = {
+    protected static final ConstraintOp[] STRING_OPS = {
         EQUALS,
         NOT_EQUALS,
         MATCHES,
         DOES_NOT_MATCH};
 
-    protected static final QueryOp[] BOOLEAN_OPS = {
+    protected static final ConstraintOp[] BOOLEAN_OPS = {
         EQUALS,
         NOT_EQUALS};
 
@@ -271,7 +272,7 @@ public class SimpleConstraint extends Constraint
      * @param op the operator to negate
      * @return integer value of operation type
      */
-    protected static QueryOp negate(QueryOp op) {
+    protected static ConstraintOp negate(ConstraintOp op) {
         if (op == EQUALS) {
             return NOT_EQUALS;
         } else if (op == NOT_EQUALS) {
@@ -304,7 +305,7 @@ public class SimpleConstraint extends Constraint
      * @param arg2 the second argument
      * @return whether the comparison is valid
      */
-    public static boolean validComparison(Class arg1, QueryOp op, Class arg2) {
+    public static boolean validComparison(Class arg1, ConstraintOp op, Class arg2) {
         if (arg2 == null) {
             return op == IS_NULL || op == IS_NOT_NULL;
         }

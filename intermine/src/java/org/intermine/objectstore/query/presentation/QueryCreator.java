@@ -86,8 +86,8 @@ public class QueryCreator
             String fieldValue = (String) fieldEntry.getValue();
             if (!"".equals(fieldValue)) {
                 FieldDescriptor field = cld.getFieldDescriptorByName((String) fieldEntry.getKey());
-                int opCode = Integer.parseInt((String) fieldOps.get(field.getName()));
-                QueryOp op = QueryOp.getOpForIndex(opCode);
+                Integer opCode = Integer.valueOf((String) fieldOps.get(field.getName()));
+                ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
                 Constraint c = null;
                 if (field instanceof AttributeDescriptor) {
                     QueryField qf = new QueryField(qc, field.getName());

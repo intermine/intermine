@@ -25,7 +25,7 @@ import org.flymine.util.Util;
 public class SubqueryConstraint extends Constraint
 {
     protected Query subquery;
-    protected QueryOp type;
+    protected ConstraintOp type;
     protected QueryEvaluable qe;
     protected QueryClass cls;    
 
@@ -36,7 +36,7 @@ public class SubqueryConstraint extends Constraint
      * @param type required type of constraint
      * @param qe item to match against subquery select
      */
-    public SubqueryConstraint(Query query, QueryOp type, QueryEvaluable qe) {
+    public SubqueryConstraint(Query query, ConstraintOp type, QueryEvaluable qe) {
         this(query, type, qe, false);
     }
 
@@ -48,7 +48,7 @@ public class SubqueryConstraint extends Constraint
      * @param qe item to match against subquery select
      * @param negated reverse the constraint logic if true
      */
-    public SubqueryConstraint(Query query, QueryOp type, QueryEvaluable qe, boolean negated) {
+    public SubqueryConstraint(Query query, ConstraintOp type, QueryEvaluable qe, boolean negated) {
 
         if (query == null) {
             throw new NullPointerException("query cannot be null");
@@ -104,7 +104,7 @@ public class SubqueryConstraint extends Constraint
      * @param type required type of constraint
      * @param cls item to match against subquery select
      */
-    public SubqueryConstraint(Query query, QueryOp type, QueryClass cls) {
+    public SubqueryConstraint(Query query, ConstraintOp type, QueryClass cls) {
         this(query, type, cls, false);
     }
 
@@ -116,7 +116,7 @@ public class SubqueryConstraint extends Constraint
      * @param cls item to match against subquery select
      * @param negated reverse the constraint logic if true
      */
-    public SubqueryConstraint(Query query, QueryOp type, QueryClass cls, boolean negated) {
+    public SubqueryConstraint(Query query, ConstraintOp type, QueryClass cls, boolean negated) {
         if (query == null) {
             throw new NullPointerException("query cannot be null");
         }
@@ -168,7 +168,7 @@ public class SubqueryConstraint extends Constraint
      *
      * @return type of operation
      */
-    public QueryOp getType() {
+    public ConstraintOp getType() {
         return type;
     }
 
@@ -244,14 +244,15 @@ public class SubqueryConstraint extends Constraint
     /**
      * require that argument is contained within select of subquery
      */
-    public static final QueryOp CONTAINS = QueryOp.CONTAINS;
+    public static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
 
     /**
      * require that argument is not contained in select of subquery
      */
-    public static final QueryOp DOES_NOT_CONTAIN = QueryOp.DOES_NOT_CONTAIN;
+    public static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
 
-    protected static final QueryOp[] VALID_OPS = new QueryOp[] {CONTAINS, DOES_NOT_CONTAIN};
+    protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {CONTAINS,
+                                                                          DOES_NOT_CONTAIN};
 
     /**
      * Return a list of the valid operations for constructing a constraint of this type

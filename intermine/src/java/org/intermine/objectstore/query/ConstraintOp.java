@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Operations used in building constraints
  * @author Mark Woodbridge
  */
-public class QueryOp
+public class ConstraintOp
 {
     private static List values = new ArrayList();
     private final String name; 
@@ -25,59 +25,59 @@ public class QueryOp
     /**
      * Require that the two arguments are equal
      */
-    public static final QueryOp EQUALS = new QueryOp("=");
+    public static final ConstraintOp EQUALS = new ConstraintOp("=");
     /**
      * Require that the two arguments are not equal
      */
-    public static final QueryOp NOT_EQUALS = new QueryOp("!=");
+    public static final ConstraintOp NOT_EQUALS = new ConstraintOp("!=");
     /**
      * Require that the first argument is less than the second
      */
-    public static final QueryOp LESS_THAN = new QueryOp("<");
+    public static final ConstraintOp LESS_THAN = new ConstraintOp("<");
     /**
      * Require that the first argument is less than or equal to the second
      */
-    public static final QueryOp LESS_THAN_EQUALS = new QueryOp("<=");
+    public static final ConstraintOp LESS_THAN_EQUALS = new ConstraintOp("<=");
     /**
      * Require that the first argument is greater than the second
      */
-    public static final QueryOp GREATER_THAN = new QueryOp(">");
+    public static final ConstraintOp GREATER_THAN = new ConstraintOp(">");
     /**
      * Require that the first argument is greater than or equal to the second
      */
-    public static final QueryOp GREATER_THAN_EQUALS = new QueryOp(">=");
+    public static final ConstraintOp GREATER_THAN_EQUALS = new ConstraintOp(">=");
     /**
      * Require that the two arguments match
      */
-    public static final QueryOp MATCHES = new QueryOp("LIKE");
+    public static final ConstraintOp MATCHES = new ConstraintOp("LIKE");
     /**
      * Require that the two arguments do not match
      */
-    public static final QueryOp DOES_NOT_MATCH = new QueryOp("NOT LIKE");
+    public static final ConstraintOp DOES_NOT_MATCH = new ConstraintOp("NOT LIKE");
     /**
      * Require that the argument is null
      */
-    public static final QueryOp IS_NULL = new QueryOp("IS NULL");
+    public static final ConstraintOp IS_NULL = new ConstraintOp("IS NULL");
     /**
      * Require that the argument is not null
      */
-    public static final QueryOp IS_NOT_NULL = new QueryOp("IS NOT NULL");
+    public static final ConstraintOp IS_NOT_NULL = new ConstraintOp("IS NOT NULL");
     /**
      * Require that the first argument contains the second
      */
-    public static final QueryOp CONTAINS = new QueryOp("CONTAINS");
+    public static final ConstraintOp CONTAINS = new ConstraintOp("CONTAINS");
     /**
      * Require that the first argument does not contain the second
      */
-    public static final QueryOp DOES_NOT_CONTAIN = new QueryOp("DOES NOT CONTAIN");
+    public static final ConstraintOp DOES_NOT_CONTAIN = new ConstraintOp("DOES NOT CONTAIN");
 
-    private QueryOp(String name) { 
+    private ConstraintOp(String name) { 
         this.name = name;
         values.add(this);
     } 
     
     /**
-     * Get the String representation of this QueryOp
+     * Get the String representation of this ConstraintOp
      * @return a String
      */
     public String toString() {
@@ -85,7 +85,7 @@ public class QueryOp
     }
     
     /**
-     * Get an index for this QueryOp
+     * Get an index for this ConstraintOp
      * (Only for use in webapp)
      * @return the index
      */
@@ -94,12 +94,12 @@ public class QueryOp
     }
 
     /**
-     * Convert an index to a QueryOp
+     * Convert an index to a ConstraintOp
      * (Only for use in webapp)
      * @param index the index
-     * @return the QueryOp
+     * @return the ConstraintOp
      */
-    public static QueryOp getOpForIndex(int index) {
-        return (QueryOp) values.get(index);
+    public static ConstraintOp getOpForIndex(Integer index) {
+        return (ConstraintOp) values.get(index.intValue());
     }
 }

@@ -121,7 +121,7 @@ public class QueryBuildController extends TilesAction
             Iterator opIter = SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType()))
                 .iterator();
             while (opIter.hasNext()) {
-                QueryOp op = (QueryOp) opIter.next();
+                ConstraintOp op = (ConstraintOp) opIter.next();
                 opString.put(op.getIndex(), op.toString());
             }
             fieldOps.put(attr.getName(), opString);
@@ -132,7 +132,7 @@ public class QueryBuildController extends TilesAction
             Map opString = new LinkedHashMap();
             Iterator opIter = ContainsConstraint.validOps().iterator();
             while (opIter.hasNext()) {
-                QueryOp op = (QueryOp) opIter.next();
+                ConstraintOp op = (ConstraintOp) opIter.next();
                 opString.put(op.getIndex(), op.toString());
             }
             fieldOps.put(ref.getName(), opString);
