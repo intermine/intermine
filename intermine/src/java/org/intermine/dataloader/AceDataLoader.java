@@ -49,7 +49,7 @@ public class AceDataLoader extends AbstractDataLoader
             // Go through each class in the model and get a dump of the objects of
             // that class
 
-            Collection clazzNames = model.getNames();
+            Collection clazzNames = model.getClassNames();
             Iterator clazzIter = clazzNames.iterator();
             while (clazzIter.hasNext()) {
                 String clazzName = (String) clazzIter.next();
