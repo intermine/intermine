@@ -1,23 +1,31 @@
 package org.flymine.objectstore.query;
 
-import junit.framework.TestCase;
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
+import junit.framework.Test;
+
+import org.flymine.objectstore.SetupDataTestCase;
 
 /**
  * Test for testing the parser on the flymine query object.
  *
  * @author Matthew Wakeling
  */
-public class QueryParserTest extends ObjectStoreQueriesTestCase
+public class QueryParserTest extends SetupDataTestCase
 {
     public QueryParserTest(String arg) {
         super(arg);
     }
 
+    public static Test suite() {
+        return SetupDataTestCase.buildSuite(QueryParserTest.class);
+    }
+
+    public void setUp() {
+    }
+
     /**
      * Set up all the results expected for a given subset of queries
      */
-    public void setUpResults() {
+    public static void setUpResults() {
         results.put("SelectSimpleObject", "select a1_ from Company as a1_");
         results.put("SubQuery", "select a1_.a1_.name AS a2_, a1_.a2_ AS a3_ from (select a1_, 5 as a2_ from Company as a1_) as a1_");
         results.put("WhereSimpleEquals", "select a1_.name as a2_ from Company as a1_ where a1_.vatNumber = 1234");
@@ -134,7 +142,7 @@ public class QueryParserTest extends ObjectStoreQueriesTestCase
             assertEquals("a.Company.name is not available, because Company is not in the SELECT list of subquery a", e.getMessage());
         }
     }
-    
+
     public void testNormalExpressions() throws Exception {
         Query q = new Query("select 1 + Company.vatNumber as a, 3 - 4 as b, 5 * 6 as c, 7 / 8 as d from Company", "org.flymine.model.testmodel");
         assertEquals("SELECT 1 + Company.vatNumber AS a, 3 - 4 AS b, 5 * 6 AS c, 7 / 8 AS d FROM org.flymine.model.testmodel.Company AS Company", q.toString());
