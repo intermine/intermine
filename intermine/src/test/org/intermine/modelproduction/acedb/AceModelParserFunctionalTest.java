@@ -1,3 +1,5 @@
+package org.flymine.modelproduction.acedb;
+
 /*
  * Copyright (C) 2002-2003 FlyMine
  *
@@ -7,8 +9,6 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-package org.flymine.modelproduction.acedb;
 
 import java.io.InputStream;
 import java.util.Set;
