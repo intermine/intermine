@@ -91,8 +91,8 @@ public class MainController extends TilesAction
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
             }
             
-            String parentType = "" + node.getParentType();
-            if (parentType.equals("null") == false) {
+            String parentType = node.getParentType();
+            if (parentType != null) {
                 String parentClassName = MainHelper.getClass(parentType, os.getModel()).getName();
                 List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
                 if (fieldNames != null && node.getType() != null) {
