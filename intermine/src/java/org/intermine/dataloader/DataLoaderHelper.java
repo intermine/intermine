@@ -20,9 +20,25 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.MetaDataException;
 import org.flymine.metadata.Model;
+import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
+import org.flymine.objectstore.query.ConstraintOp;
+import org.flymine.objectstore.query.ConstraintSet;
+import org.flymine.objectstore.query.ContainsConstraint;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryField;
+import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.QueryObjectReference;
+import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.PropertiesUtil;
 
@@ -38,17 +54,14 @@ public class DataLoaderHelper
     protected static Map sourceKeys = new HashMap();
  
     /**
-     * Retrieve a map from key name to PrimaryKey object
+     * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
+     * that exist on a particular class, without performing any recursion.
      *
      * @param cld the ClassDescriptor to fetch primary keys for
      * @return the Map from key names to PrimaryKeys
      */
     protected static Map getPrimaryKeys(ClassDescriptor cld) {
         Map keyMap = new HashMap();
-        for (Iterator i = cld.getSuperDescriptors().iterator(); i.hasNext();) {
-            ClassDescriptor superCld = (ClassDescriptor) i.next();
-            keyMap.putAll(getPrimaryKeys(superCld));
-        }
         Properties keys = getKeyProperties(cld.getModel());
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
@@ -63,7 +76,11 @@ public class DataLoaderHelper
     }
 
     /**
-     * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor
+     * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor. The Set
+     * contains all the primary keys that exist on a particular class that are used by the
+     * source, without performing any recursion. The Model.getClassDescriptorsForClass()
+     * method is recommended if you wish for all the primary keys of the class' parents
+     * as well.
      *
      * @param cld the ClassDescriptor
      * @param source the Source
@@ -75,8 +92,10 @@ public class DataLoaderHelper
         Set keySet = new HashSet();
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         String keyList = (String) keys.get(cldName);
-        for (StringTokenizer st = new StringTokenizer(keyList, ", "); st.hasMoreTokens();) {
-            keySet.add(map.get(st.nextToken()));
+        if (keyList != null) {
+            for (StringTokenizer st = new StringTokenizer(keyList, ", "); st.hasMoreTokens();) {
+                keySet.add(map.get(st.nextToken()));
+            }
         }
         return keySet;
     }
@@ -136,5 +155,114 @@ public class DataLoaderHelper
             throw new RuntimeException(e);
         }
         return keys;
+    }
+
+    /**
+     * Generates a query that searches for all objects in the database equivalent to a given
+     * example object according to the primary keys defined for the given source.
+     *
+     * @param model a Model
+     * @param obj the Object to take as an example
+     * @param source the Source database
+     * @return a Query
+     * @throws MetaDataException if anything goes wrong
+     */
+    public static Query createPKQuery(Model model, FlyMineBusinessObject obj,
+            Source source) throws MetaDataException {
+        try {
+            Query q = new Query();
+            QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
+            q.addFrom(qcFMBO);
+            q.addToSelect(qcFMBO);
+            ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
+
+            Set classDescriptors = model.getClassDescriptorsForClass(obj.getClass());
+            Iterator cldIter = classDescriptors.iterator();
+            while (cldIter.hasNext()) {
+                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+                if (!primaryKeys.isEmpty()) {
+                    Query subQ = new Query();
+                    QueryClass qc = new QueryClass(cld.getType());
+                    subQ.addFrom(qc);
+                    subQ.addToSelect(qc);
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    Iterator pkSetIter = primaryKeys.iterator();
+                    while (pkSetIter.hasNext()) {
+                        PrimaryKey pk = (PrimaryKey) pkSetIter.next();
+                        Iterator pkIter = pk.getFieldNames().iterator();
+                        while (pkIter.hasNext()) {
+                            String fieldName = (String) pkIter.next();
+                            FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+                            if (fd instanceof AttributeDescriptor) {
+                                Object value = TypeUtil.getFieldValue(obj, fieldName);
+                                if (value == null) {
+                                    cs.addConstraint(new SimpleConstraint(new QueryField(qc,
+                                                    fieldName), ConstraintOp.IS_NULL));
+                                } else {
+                                    cs.addConstraint(new SimpleConstraint(new QueryField(qc,
+                                                    fieldName), ConstraintOp.EQUALS,
+                                                new QueryValue(value)));
+                                }
+                            } else if (fd instanceof CollectionDescriptor) {
+                                throw new MetaDataException("A collection cannot be part of"
+                                        + " a primary key");
+                            } else if (fd instanceof ReferenceDescriptor) {
+                                FlyMineBusinessObject refObj = (FlyMineBusinessObject)
+                                    TypeUtil.getFieldValue(obj, fieldName);
+                                if (refObj == null) {
+                                    cs.addConstraint(new ContainsConstraint(
+                                                new QueryObjectReference(qc, fieldName),
+                                                ConstraintOp.IS_NULL));
+                                } else {
+                                    QueryClass qc2 = new QueryClass(((ReferenceDescriptor) fd)
+                                            .getReferencedClassDescriptor().getType());
+                                    subQ.addFrom(qc2);
+                                    cs.addConstraint(new ContainsConstraint(
+                                                new QueryObjectReference(qc, fieldName),
+                                                ConstraintOp.CONTAINS, qc2));
+                                    cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
+                                                createPKQuery(model, refObj, source)));
+                                }
+                            }
+                        }
+                    }
+                    subQ.setConstraint(cs);
+                    where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
+                }
+            }
+            q.setConstraint(where);
+            return q;
+        } catch (Exception e) {
+            throw new MetaDataException(e);
+        }
+    }
+
+    /**
+     * Returns true if the given field is a member of any primary key on the given class, for the
+     * given source.
+     *
+     * @param model the Model in which to find ClassDescriptors
+     * @param clazz the Class in which to look
+     * @param fieldName the name of the field to check
+     * @param source the Source that the keys belong to
+     * @return true if the field is a primary key
+     */
+    public static boolean fieldIsPrimaryKey(Model model, Class clazz, String fieldName,
+            Source source) {
+        Set classDescriptors = model.getClassDescriptorsForClass(clazz);
+        Iterator cldIter = classDescriptors.iterator();
+        while (cldIter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+            Iterator pkIter = primaryKeys.iterator();
+            while (pkIter.hasNext()) {
+                PrimaryKey pk = (PrimaryKey) pkIter.next();
+                if (pk.getFieldNames().contains(fieldName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

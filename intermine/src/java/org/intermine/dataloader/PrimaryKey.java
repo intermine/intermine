@@ -11,7 +11,7 @@ package org.flymine.dataloader;
  */
 
 import java.util.Set;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 
 /**
@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
  */
 public class PrimaryKey
 {
-    Set fieldNames = new HashSet();
+    Set fieldNames = new LinkedHashSet();
 
     /**
      * Constructor

@@ -36,7 +36,7 @@ public class AceDataLoaderDriver
         try {
             AceURL aceURL = new AceURL("acedb://" + user + ':' + password + '@'
                                        + host + ':' + port);
-            IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias, null);
+            IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias);
             AceDataLoader dl = new AceDataLoader(iw);
             dl.processAce(aceURL);
         } catch (Exception e) {

@@ -13,14 +13,17 @@ package org.flymine.dataloader;
 import java.util.List;
 import java.util.Set;
 
+import org.flymine.metadata.MetaDataException;
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.model.datatracking.Source;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
+import org.flymine.objectstore.query.SingletonResults;
 
 /**
  * Abstract implementation of ObjectStoreIntegrationWriter.  To retain
@@ -33,19 +36,46 @@ import org.flymine.objectstore.query.ResultsInfo;
 
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
-    protected String dataSource;
     protected ObjectStoreWriter osw;
 
     /**
      * Constructs a new instance of an IntegrationWriter
      *
-     * @param dataSource the name of the data source
      * @param osw an instance of an ObjectStoreWriter, which we can use to access the database
      */
-    public IntegrationWriterAbstractImpl(String dataSource, ObjectStoreWriter osw) {
-        this.dataSource = dataSource;
+    public IntegrationWriterAbstractImpl(ObjectStoreWriter osw) {
         this.osw = osw;
     }
+
+    /**
+     * Returns a Set of objects from the database that are equivalent to the given object, according
+     * to the primary keys defined by the given Source.
+     *
+     * @param obj the Object to look for
+     * @param source the data Source
+     * @return a Set of FlyMineBusinessObjects
+     * @throws ObjectStoreException if an error occurs
+     */
+    public Set getEquivalentObjects(FlyMineBusinessObject obj, Source source)
+            throws ObjectStoreException {
+        Query q = null;
+        try {
+            q = DataLoaderHelper.createPKQuery(getModel(), obj, source);
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
+        }
+        return new SingletonResults(q, this);
+    }
+
+
+
+
+
+
+
+
+
+    /* The following methods are implementing the ObjectStoreWriter interface */
 
     /**
      * Search database for object matching the given object id
@@ -57,16 +87,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
         return osw.getObjectById(id);
     }
-
-    /**
-     * Store an object in this ObjectStore, abstract.
-     *
-     * @param o the object to store
-     * @param skeleton is this a skeleton object?
-     * @throws ObjectStoreException if an error occurs during storage of the object
-     */
-    public abstract void store(FlyMineBusinessObject o, boolean skeleton)
-        throws ObjectStoreException;
 
     /**
      * Store an object in this ObjectStore, delegates to internal ObjectStoreWriter.

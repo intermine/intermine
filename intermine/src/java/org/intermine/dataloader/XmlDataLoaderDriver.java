@@ -33,7 +33,7 @@ public class XmlDataLoaderDriver
         throws BuildException {
 
         try {
-            IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias, null);
+            IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias);
             XmlDataLoader dl = new XmlDataLoader(iw);
             dl.processXml(new FileInputStream(file));
         } catch (Exception e) {

@@ -11,6 +11,7 @@ package org.flymine.dataloader;
  */
 
 import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.model.datatracking.Source;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 
@@ -24,24 +25,12 @@ import org.flymine.objectstore.ObjectStoreException;
 
 public interface IntegrationWriter extends ObjectStoreWriter
 {
-
-    /**
-     * Given a new object from a data source find whether corresponding object exists in ObjectStore
-     * and if so which fields the current data source has permission to write to.
-     *
-     * @param obj the example object
-     * @return details of database object and which fields can be overwrittern
-     * @throws ObjectStoreException if anything goes wrong
-     */
-    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj)
-        throws ObjectStoreException;
-
     /**
      * Store an object in this ObjectStore.
      *
      * @param o the object to store
-     * @param skeleton is this a skeleton object?
+     * @param source the data source that provided this object
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(FlyMineBusinessObject o, boolean skeleton) throws ObjectStoreException;
+    public void store(FlyMineBusinessObject o, Source source) throws ObjectStoreException;
 }

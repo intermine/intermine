@@ -29,12 +29,11 @@ public class IntegrationWriterFactory
     /**
      * Return an IntegrationWriter configured using properties file
      * @param alias identifier for properties defining integration/writer parameters
-     * @param dataSource name of data source being loaded
      * @return instance of a concrete IntegrationWriter according to property
      * @throws ObjectStoreException if anything goes wrong
      */
 
-    public static IntegrationWriter getIntegrationWriter(String alias, String dataSource)
+    public static IntegrationWriter getIntegrationWriter(String alias)
         throws ObjectStoreException {
         if (alias == null) {
             throw new NullPointerException("Integration alias cannot be null");
@@ -67,11 +66,8 @@ public class IntegrationWriterFactory
         try {
             Class integrationWriterClass = Class.forName(integrationWriterClassName);
             Constructor c = integrationWriterClass.getConstructor(
-                                                                  new Class[] {
-                                                                      String.class,
-                                                                      ObjectStoreWriter.class});
-            iw = (IntegrationWriterAbstractImpl) c.newInstance(new Object[]
-                {dataSource, writer});
+                    new Class[] {ObjectStoreWriter.class });
+            iw = (IntegrationWriterAbstractImpl) c.newInstance(new Object[] {writer });
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified IntegrationWriter class '"
                                            + integrationWriterClassName
@@ -79,7 +75,7 @@ public class IntegrationWriterFactory
         } catch (NoSuchMethodException e) {
             throw new ObjectStoreException("Cannot find appropriate constructor for "
                                            + "IntegrationWriter: " + integrationWriterClassName 
-                                           + "(String, ObjectStoreWriter)"
+                                           + "(ObjectStoreWriter)"
                                            + " - check properties file");
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate IntegrationWriter "
