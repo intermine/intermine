@@ -16,6 +16,10 @@ K. Mizuguchi.
 Dr. G Micklem is supported by the BBSRC and the Isaac Newton Trust.
 </para>
 
+<para>
+One developer post is supported by The Cambridge-MIT Institute.
+</para>
+
 <table>
     <tbody>
         <row>
@@ -32,6 +36,11 @@ Dr. G Micklem is supported by the BBSRC and the Isaac Newton Trust.
 	  <entry>
 	    <ulink url="http://www.trin.cam.ac.uk">
 	      <inlinegraphic fileref="/images/trinity.gif" format="GIF"/>
+	    </ulink>
+	  </entry>
+	  <entry>
+	    <ulink url="http://www.cambridge-mit.org">
+	      <inlinegraphic fileref="/images/cmi.gif" format="GIF"/>
 	    </ulink>
 	  </entry>
 	</row>
