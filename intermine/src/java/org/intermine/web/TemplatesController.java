@@ -43,7 +43,7 @@ public class TemplatesController extends Action
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
+        Map templateQueries = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
         String category = request.getParameter("category");
         
         List templates = new ArrayList();
