@@ -99,10 +99,18 @@ public class QueryOptimiser
     public static BestQuery optimise(String query, Query originalQuery, Object precompLookup,
             Connection explainConnection)  throws SQLException {
         Database database = null;
+        PrecomputedTableManager ptm = null;
         if (precompLookup instanceof Database) {
             database = (Database) precompLookup;
+            ptm = PrecomputedTableManager.getInstance(database);
+        } else if (precompLookup instanceof Connection) {
+            ptm = PrecomputedTableManager.getInstance((Connection) precompLookup);
+        } else if (precompLookup instanceof PrecomputedTableManager) {
+            ptm = (PrecomputedTableManager) precompLookup;
+        } else {
+            throw new SQLException("Cannot get a PrecomputedTableManager for lookup object "
+                    + precompLookup);
         }
-        PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
         if (ptm.getPrecomputedTables().isEmpty()) {
             return new BestQueryFallback(null, query);
         }

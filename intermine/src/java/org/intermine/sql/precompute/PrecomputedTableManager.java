@@ -210,8 +210,10 @@ public class PrecomputedTableManager
 
             // Create the table
             Statement stmt = con.createStatement();
-            LOG.info("Creating new precomputed table " + pt.getName());
             String sql = pt.getSQLString();
+            BestQuery bq = QueryOptimiser.optimise(sql, null, this, con);
+            sql = "CREATE TABLE " + pt.getName() + " AS " + bq.getBestQueryString();
+            LOG.info("Creating new precomputed table " + sql);
             stmt.execute(sql);
 
             String orderByField = pt.getOrderByField();
