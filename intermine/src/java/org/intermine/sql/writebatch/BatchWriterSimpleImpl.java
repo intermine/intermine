@@ -165,8 +165,8 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     sql.append(" OR ");
                 }
                 sql.append("(").append(table.getLeftColName()).append(" = ")
-                    .append(row.getLeft()).append(" AND ").append(table.getRightColName()).append(" = ")
-                    .append(row.getRight()).append(")");
+                    .append(row.getLeft()).append(" AND ").append(table.getRightColName())
+                    .append(" = ").append(row.getRight()).append(")");
                 needComma = true;
             }
             sql.append(")");
