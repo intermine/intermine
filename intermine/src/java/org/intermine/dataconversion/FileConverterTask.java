@@ -36,7 +36,7 @@ public class FileConverterTask extends Task
     protected String osName;
 
     /**
-     * Set the data source ('orthologue' or 'mage') and thus the expected file format
+     * Set the data source ('orthologue', 'mage' or 'rnai') and thus the expected input file format
      * @param source the source
      */
     public void setSource(String source) {
@@ -84,6 +84,8 @@ public class FileConverterTask extends Task
                 converter = new OrthologueConverter(reader, writer);
             } else if ("mage".equals(source)) {
                 converter = new MageConverter(reader, writer);
+            } else if ("rnai".equals(source)) {
+                converter = new RNAiConverter(reader, writer);
             } else {
                 throw new IllegalArgumentException("'source' parameter has an invalid value");
             }
