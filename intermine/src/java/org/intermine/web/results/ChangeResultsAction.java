@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
 
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the
@@ -30,66 +31,6 @@ import org.intermine.web.Constants;
  */
 public class ChangeResultsAction extends DispatchAction
 {
-    /**
-     * Change to the next results page
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
-     */
-    public ActionForward next(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-        HttpSession session = request.getSession();
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
-
-        pt.nextPage();
-
-        return mapping.findForward("results");
-    }
-
-    /**
-     * Change to the previous results page
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
-     */
-    public ActionForward previous(ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-        HttpSession session = request.getSession();
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
-
-        pt.previousPage();
-
-        return mapping.findForward("results");
-    }
-
-    /**
-     * Change to the first results page
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
-     */
-    public ActionForward first(ActionMapping mapping, ActionForm form,
-                               HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-        HttpSession session = request.getSession();
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
-
-        pt.firstPage();
-
-        return mapping.findForward("results");
-    }
-
     /**
      * Change to the last results page
      * @param mapping The ActionMapping used to select this instance
@@ -105,9 +46,10 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        pt.lastPage();
+        int page = ((pt.getExactSize() - 1) / pt.getPageSize());
+        pt.setPageAndPageSize(page, pt.getPageSize());
 
-        return mapping.findForward("results");
+        return makeResultsForward(mapping.findForward("results"), pt);
     }
 
     /**
@@ -128,7 +70,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         ((Column) pt.getColumns().get(index)).setVisible(false);
 
-        return mapping.findForward("results");
+        return makeResultsForward(mapping.findForward("results"), pt);
     }
 
     /**
@@ -149,7 +91,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         ((Column) pt.getColumns().get(index)).setVisible(true);
 
-        return mapping.findForward("results");
+        return makeResultsForward(mapping.findForward("results"), pt);
     }
 
     /**
@@ -170,7 +112,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnLeft(index);
 
-        return mapping.findForward("results");
+        return makeResultsForward(mapping.findForward("results"), pt);
     }
 
     /**
@@ -191,7 +133,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnRight(index);
 
-        return mapping.findForward("results");
+        return makeResultsForward(mapping.findForward("results"), pt);
     }
 
     /**
@@ -209,7 +151,19 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         session.setAttribute(Constants.RESULTS_TABLE,
                              session.getAttribute(Constants.QUERY_RESULTS));
-        //SessionMethods.getObjectDetailsTrail(session).reset();
         return mapping.findForward("results");
+    }
+    
+    /**
+     * Create a forward with parameters setting start item and page size.
+     * 
+     * @param results ActionForward to results action
+     * @param pt PagedTable
+     * @return an ActionForward with parameters
+     */
+    protected ActionForward makeResultsForward(ActionForward results, PagedTable pt) {
+        return new ForwardParameters(results)
+                .addParameter("page", "" + pt.getPage())
+                .addParameter("size", "" + pt.getPageSize()).forward();
     }
 }

@@ -136,6 +136,26 @@ public abstract class PagedTable
     }
 
     /**
+     * Get the page index.
+     * @return current page index
+     */
+    public int getPage() {
+        return (startRow / pageSize);
+    }
+    
+    /**
+     * Set the page size and page together.
+     * 
+     * @param page page number
+     * @param size page size
+     */
+    public void setPageAndPageSize(int page, int size) {
+        this.pageSize = size;
+        startRow = size * page;
+        updateRows();
+    }
+    
+    /**
      * Get the index of the last row of this page
      * @return the index
      */
@@ -239,4 +259,6 @@ public abstract class PagedTable
      * @return the maximum retrieved index
      */
     public abstract int getMaxRetrievableIndex();
+
+    
 }
