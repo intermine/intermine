@@ -67,6 +67,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("BagConstraint2", bagConstraint2());
         queries.put("InterfaceReference", interfaceReference());
         queries.put("InterfaceCollection", interfaceCollection());
+        queries.put("ContainsObject", containsObject());
     }
 
     public static Collection setUpData() throws Exception {
@@ -422,4 +423,20 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.setConstraint(cs);
         return q1;
     }
+
+    /*
+      select department
+      from Department
+      where department.manager = <manager>
+    */
+      public static Query containsObject() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryReference qr1 = new QueryObjectReference(qc1, "manager");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA1"));
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        q1.setConstraint(cc1);
+        return q1;
+      }
 }

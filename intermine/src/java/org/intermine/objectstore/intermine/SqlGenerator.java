@@ -368,6 +368,7 @@ public class SqlGenerator
             Query q, Model model) throws ObjectStoreException {
         QueryReference arg1 = c.getReference();
         QueryClass arg2 = c.getQueryClass();
+        FlyMineBusinessObject arg2Obj = c.getObject();
         Map fieldNameToFieldDescriptor = model.getFieldDescriptorsForClass(arg1.getQueryClass()
                 .getType());
         ReferenceDescriptor arg1Desc = (ReferenceDescriptor)
@@ -386,7 +387,11 @@ public class SqlGenerator
             } else {
                 state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
                         + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
-                queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
+                if (arg2 == null) {
+                    objectToString(state.getWhereBuffer(), arg2Obj);
+                } else {
+                    queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
+                }
             }
         } else if (arg1 instanceof QueryCollectionReference) {
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {

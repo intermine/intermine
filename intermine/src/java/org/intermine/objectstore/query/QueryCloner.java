@@ -144,6 +144,9 @@ public class QueryCloner
                         ConstraintOp.IS_NOT_NULL)) {
                 return new ContainsConstraint((QueryObjectReference) cloneThing(
                             origC.getReference(), fromElementMap), origC.getOp());
+            } else if (origC.getQueryClass() == null) {
+                return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
+                            fromElementMap), origC.getOp(), origC.getObject());
             } else {
                 return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
                             fromElementMap), origC.getOp(),

@@ -145,6 +145,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("ContractorB"), data.get("CompanyB") } };
         results.put("ContainsDuplicatesMN", toList(r));
 
+        r = new Object[][] { { data.get("DepartmentA1") } };
+        results.put("ContainsObject", toList(r));
+
         r = new Object[][] { { data.get("CompanyA"), new Long(1) },
                              { data.get("CompanyB"), new Long(2) } };
         results.put("SimpleGroupBy", toList(r));

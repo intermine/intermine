@@ -534,6 +534,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.setConstraint(cc1);
         return q1;
     }
+
     /*
       select department, manager
       from Department, Manager

@@ -809,15 +809,20 @@ public class FqlQueryParser
                                             + firstString + "." + secondString + " does not exist"
                                             + ", or is not a collection or object reference");
                         }
-                        // Now we have a collection or object reference. Now we need a class.
-                        QueryNode qc = processNewQueryNode(subAST.getNextSibling(), q);
-                        if (qc instanceof QueryClass) {
+                        // Now we have a collection or object reference. Now we need a class or object.
+                        if (subAST.getNextSibling().getType() == FqlTokenTypes.QUESTION_MARK) {
                             return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
-                                    (QueryClass) qc);
+                                    (FlyMineBusinessObject) iterator.next());
                         } else {
-                            throw new IllegalArgumentException("Collection or object reference "
-                                    + firstString + "." + secondString + " cannot contain "
-                                    + "anything but a QueryClass");
+                            QueryNode qc = processNewQueryNode(subAST.getNextSibling(), q);
+                            if (qc instanceof QueryClass) {
+                                return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
+                                        (QueryClass) qc);
+                            } else {
+                                throw new IllegalArgumentException("Collection or object reference "
+                                        + firstString + "." + secondString + " cannot contain "
+                                        + "anything but a QueryClass or FlyMineBusinessObject");
+                            }
                         }
                     } else {
                         throw new IllegalArgumentException("Path expression for collection cannot "

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.Util;
 
@@ -30,6 +31,7 @@ public class ContainsConstraint extends Constraint
 {
     protected QueryReference ref;
     protected QueryClass cls;
+    protected FlyMineBusinessObject obj;
 
     /**
      * Constructor for ContainsConstraint.
@@ -69,8 +71,39 @@ public class ContainsConstraint extends Constraint
         this.ref = ref;
         this.op = op;
         this.cls = cls;
+        this.obj = null;
     }
 
+    /**
+     * Constructor for ContainsConstraint.
+     *
+     * @param ref the target QueryReference
+     * @param op specify CONTAINS or DOES_NOT_CONTAIN
+     * @param obj the FlyMineBusinessObject to be tested against reference
+     */
+    public ContainsConstraint(QueryReference ref, ConstraintOp op, FlyMineBusinessObject obj) {
+        if (ref == null) {
+            throw new NullPointerException("ref cannot be null");
+        }
+        if (!(ref instanceof QueryObjectReference)) {
+            throw new IllegalArgumentException("Cannot compare a collection reference to an object");
+        }
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
+        }
+        if (!VALID_OPS.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
+        }
+        if (obj == null) {
+            throw new NullPointerException("obj cannot be null");
+        }
+
+        this.ref = ref;
+        this.op = op;
+        this.obj = obj;
+        this.cls = null;
+    }
+    
     /**
      * Constructor for ContainsConstraint.
      *
@@ -93,6 +126,7 @@ public class ContainsConstraint extends Constraint
         this.ref = ref;
         this.op = op;
         this.cls = null;
+        this.obj = null;
     }
 
     /**
@@ -114,6 +148,15 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
+     * Returns the FlyMineBusinessObject of the constraint.
+     *
+     * @return the FlyMineBusinessObject
+     */
+    public FlyMineBusinessObject getObject() {
+        return obj;
+    }
+
+    /**
      * Test whether two ContainsConstraints are equal, overrides Object.equals()
      *
      * @param obj the object to compare with
@@ -122,9 +165,10 @@ public class ContainsConstraint extends Constraint
     public boolean equals(Object obj) {
         if (obj instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) obj;
-            return ref.equals(cc.ref)
-                    && op == cc.op
-                    && Util.equals(cls, cc.cls);
+            return this.ref.equals(cc.ref)
+                    && this.op == cc.op
+                    && Util.equals(this.obj, cc.obj)
+                    && Util.equals(this.cls, cc.cls);
         }
         return false;
     }
@@ -137,7 +181,8 @@ public class ContainsConstraint extends Constraint
     public int hashCode() {
         return ref.hashCode()
             + 3 * op.hashCode()
-            + 7 * (cls == null ? 0 : cls.hashCode());
+            + 7 * (cls == null ? 0 : cls.hashCode())
+            + 11 * (obj == null ? 0 : obj.hashCode());
     }
 
     /** List of possible operations */

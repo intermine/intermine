@@ -272,10 +272,14 @@ public class FqlQuery
             ConstraintOp op = c.getOp();
             if (op.equals(ConstraintOp.IS_NULL) || op.equals(ConstraintOp.IS_NOT_NULL)) {
                 return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName() + " "
-                    + c.getOp().toString();
+                    + op.toString();
+            } else if (c.getQueryClass() == null) {
+                parameters.add(c.getObject());
+                return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName()
+                    + " " + op.toString() + " ?";
             } else {
                 return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName()
-                    + " " + c.getOp().toString() + " " + q.getAliases().get(c.getQueryClass());
+                    + " " + op.toString() + " " + q.getAliases().get(c.getQueryClass());
             }
         } else if (cc instanceof ConstraintSet) {
             ConstraintSet c = (ConstraintSet) cc;

@@ -57,7 +57,7 @@ public class ContainsConstraintTest extends TestCase {
 
     public void testNullConstructor3() throws Exception {
         try {
-            constraint = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, null);
+            constraint = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, (QueryClass) null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }

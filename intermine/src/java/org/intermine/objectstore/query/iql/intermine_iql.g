@@ -235,9 +235,14 @@ bag_constraint: (abstract_value "in" )=> abstract_value "in"! QUESTION_MARK!
         { #bag_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint)); }
     ;
 
-contains_constraint: (thing "contains" )=> thing "contains"! thing
+contains_constraint: (thing "contains" QUESTION_MARK)=> thing "contains"! QUESTION_MARK
         { #contains_constraint = #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"],
                 #contains_constraint); }
+        | (thing "contains" )=> thing "contains"! thing
+        { #contains_constraint = #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"],
+                #contains_constraint); }
+        | (thing "does" "not" "contain" QUESTION_MARK)=> thing "does"! "not"! "contain"! QUESTION_MARK
+        { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }
         | thing "does"! "not"! "contain"! thing
         { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }
     ;

@@ -73,6 +73,9 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         results.put("ContainsN1", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.name = 'CompanyA')", null));
         results.put("ContainsMN", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Contractor AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE (a1_.companys CONTAINS a2_ AND a1_.name = 'ContractorA')", null));
         results.put("ContainsDuplicatesMN", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Contractor AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE a1_.oldComs CONTAINS a2_", null));
+        fq = new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Department AS a1_ WHERE a1_.manager CONTAINS ?", null);
+        fq.setParameters(Collections.singletonList(data.get("EmployeeA1")));
+        results.put("ContainsObject", fq);
         results.put("SimpleGroupBy", new FqlQuery("SELECT DISTINCT a1_, COUNT(*) AS a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a3_ WHERE a1_.departments CONTAINS a3_ GROUP BY a1_", null));
         results.put("MultiJoin", new FqlQuery("SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_, org.flymine.model.testmodel.Manager AS a3_, org.flymine.model.testmodel.Address AS a4_ WHERE (a1_.departments CONTAINS a2_ AND a2_.manager CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a3_.name = 'EmployeeA1')", null));
         results.put("SelectComplex", new FqlQuery("SELECT DISTINCT AVG(a1_.vatNumber) + 20 AS a3_, a2_.name AS a4_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_ GROUP BY a2_", null));
