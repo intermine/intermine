@@ -137,6 +137,7 @@
     </c:choose>
     <c:if test="${!classStatus.last}"><hr/></c:if>
   </c:forEach>
+  <br/>
   <c:if test="${EDITING_ALIAS == null}">
     <c:if test="${!empty QUERY_CLASSES}">
       <html:submit property="buttons(runQuery)">
