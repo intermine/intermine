@@ -92,21 +92,24 @@ public class ObjectStoreDummyImplTest extends TestCase
         Query q = new Query();
         os.setResultsSize(10);
         Results res = os.execute(q);
-        res.setBatchSize(10);
 
-        // Get the first 10 rows in a batch
-        List rows = os.execute(q, 0, 9);
-        assertEquals(10, rows.size());
+        // Get the first 8 rows in a batch
+        List rows = os.execute(q, 0, 7);
+        assertEquals(8, rows.size());
 
-        // Try and get the next 10
+        // Try and get the next 7
+        rows = os.execute(q, 8, 14);
+        assertEquals(2, rows.size());
+
+        // Try and get rows 10 to 19
         rows = os.execute(q, 10, 19);
         assertEquals(0, rows.size());
 
-        // Stupidly try and get the next 10
+        // Stupidly try and get beyond the end
         try {
-            rows = os.execute(q, 20, 29);
-            fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreException e) {
+            rows = os.execute(q, 15, 21);
+            fail("Expected: ArrayIndexOutOfBoundsException");
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
 
 
