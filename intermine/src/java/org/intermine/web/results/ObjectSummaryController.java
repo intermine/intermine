@@ -85,7 +85,6 @@ public class ObjectSummaryController extends TilesAction
                 primaryKeyFieldsMap.put(fieldName, fieldName);
             }
             context.putAttribute("primaryKeyFields", primaryKeyFieldsMap);
-            org.intermine.web.LogMe.log("i", "setting primaryKeyFields " + primaryKeyFieldsMap);
         } else {
             context.putAttribute("leafClds", new ArrayList());
             context.putAttribute("primaryKeyFields", new HashMap());
