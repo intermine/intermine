@@ -4,7 +4,7 @@
 
 <!-- errorMessages.jsp -->
 <logic:messagesPresent>
-  <div class="errors">
+  <div class="topBar errors">
     <html:messages id="error">
       <c:out value="${error}"/><br/>
     </html:messages>
@@ -13,7 +13,7 @@
 </logic:messagesPresent>
 
 <c:if test="${!empty ERRORS}">
-  <div class="errors">
+  <div class="topBar errors">
     <c:forEach items="${ERRORS}" var="error">
       <c:out value="${error}"/><br/>
     </c:forEach>
@@ -23,7 +23,7 @@
 </c:if>
 
 <logic:messagesPresent message="true">
-  <div class="messages">
+  <div class="topBar messages">
     <html:messages id="message" message="true">
       <c:out value="${message}"/><br/>
     </html:messages>
@@ -32,7 +32,7 @@
 </logic:messagesPresent>
 
 <c:if test="${!empty MESSAGES}">
-  <div class="messages">
+  <div class="topBar messages">
     <c:forEach items="${MESSAGES}" var="message">
       <c:out value="${message}"/><br/>
     </c:forEach>
