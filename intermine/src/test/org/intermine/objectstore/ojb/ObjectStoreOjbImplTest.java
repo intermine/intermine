@@ -21,6 +21,9 @@ public class ObjectStoreOjbImplTest extends ObjectStoreAbstractImplTestCase
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreTestCase.os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+
+        results.put("InterfaceReference", NO_RESULT);
+        results.put("InterfaceCollection", NO_RESULT);
     }
 
     public ObjectStoreOjbImplTest(String arg) throws Exception {

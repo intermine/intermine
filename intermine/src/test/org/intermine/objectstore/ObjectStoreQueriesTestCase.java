@@ -170,6 +170,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("EmptyNandConstraintSet", emptyNandConstraintSet());
         queries.put("EmptyNorConstraintSet", emptyNorConstraintSet());
         queries.put("BagConstraint", bagConstraint());
+        queries.put("InterfaceField", interfaceField());
     }
 
     /*
@@ -929,6 +930,20 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         set.add("CompanyA");
         set.add(new Integer(5));
         q1.setConstraint(new BagConstraint(new QueryField(c1, "name"), ConstraintOp.IN, set));
+        return q1;
+    }
+
+    /*
+      SHOULD PICK UP THE MANAGERS, CONTRACTORS AND ALL EMPLOYEES
+      select employable
+      from Employable where Employable.name = "EmployeeA1"
+    */
+    public static Query interfaceField() throws Exception {
+        QueryClass qc1 = new QueryClass(Employable.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        q1.setConstraint(new SimpleConstraint(new QueryField(qc1, "name"), ConstraintOp.EQUALS, new QueryValue("EmployeeA1")));
         return q1;
     }
 }

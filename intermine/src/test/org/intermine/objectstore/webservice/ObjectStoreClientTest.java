@@ -26,6 +26,10 @@ public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
         osai = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest-client");
         os = new ObjectStoreSafeImpl(osai);
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+
+        // TODO: remove these when we move to the new ojb-less objectstore
+        results.put("InterfaceReference", NO_RESULT);
+        results.put("InterfaceCollection", NO_RESULT);
     }
 
     public ObjectStoreClientTest(String arg) {

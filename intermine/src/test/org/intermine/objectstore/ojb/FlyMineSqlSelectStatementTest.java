@@ -13,9 +13,14 @@ package org.flymine.objectstore.ojb;
 import junit.framework.Test;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
+import org.apache.ojb.broker.metadata.ClassDescriptor;
+import org.apache.ojb.broker.metadata.CollectionDescriptor;
+import org.apache.ojb.broker.metadata.FieldDescriptor;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
@@ -96,6 +101,9 @@ public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
         results.put("EmptyNorConstraintSet", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE true ORDER BY a1_.ID");
         results.put("BagConstraint", "SELECT DISTINCT Company.ID AS \"CompanyID\", Company.addressId AS \"CompanyaddressId\", Company.cEOId AS \"CompanycEOId\", Company.name AS \"Companyname\", Company.vatNumber AS \"CompanyvatNumber\" FROM Company AS Company WHERE (Company.name = 'CompanyA' OR Company.name = 'goodbye' OR Company.name = 'hello') ORDER BY Company.ID");
         results.put("BagConstraint2", "SELECT DISTINCT Company.ID AS \"CompanyID\", Company.addressId AS \"CompanyaddressId\", Company.cEOId AS \"CompanycEOId\", Company.name AS \"Companyname\", Company.vatNumber AS \"CompanyvatNumber\" FROM Company AS Company WHERE (Company.ID = " + id2 + ") ORDER BY Company.ID");
+        results.put("InterfaceField", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.businessAddressId AS a1_businessAddressId, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a1_.salary AS a1_salary, a1_.title AS a1_title FROM (SELECT 'org.flymine.model.testmodel.Contractor' AS CLASS, ID, NULL AS addressId, NULL AS age, businessAddressId, NULL AS companyId, NULL AS departmentId, NULL AS departmentThatRejectedMeId, NULL AS fullTime, name, personalAddressId, NULL AS salary, NULL AS title FROM Contractor UNION SELECT CLASS, ID, addressId, age, NULL AS businessAddressId, companyId, departmentId, departmentThatRejectedMeId, fullTime, name, NULL AS personalAddressId, salary, title FROM Employee) AS a1_ WHERE a1_.name = 'EmployeeA1' ORDER BY a1_.ID");
+        results.put("InterfaceReference", NO_RESULT);
+        results.put("InterfaceCollection", NO_RESULT);
     }
 
     public void executeTest(String type) throws Exception {
@@ -330,6 +338,15 @@ public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
         throw (new Exception(s1.getStatement()));
     }
 
+    public void testThing() throws Exception {
+        QueryClass qc1 = new QueryClass(Thing.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement(q1, dr);
+        throw (new Exception(s1.getStatement()));
+    }
+
     public void testEmployeeGetExtentClasses() throws Exception {
         ClassDescriptor cld = dr.getDescriptorFor(Employee.class);
         outputData(cld);
@@ -347,6 +364,11 @@ public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
 
     public void testCEOGetExtentClasses() throws Exception {
         ClassDescriptor cld = dr.getDescriptorFor(CEO.class);
+        outputData(cld);
+    }
+
+    public void testThingGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Thing.class);
         outputData(cld);
     }
 

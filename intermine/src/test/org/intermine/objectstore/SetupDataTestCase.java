@@ -28,6 +28,7 @@ import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.objectstore.query.QueryCollectionReference;
+import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
@@ -53,6 +54,8 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("WhereClassObject", whereClassObject());
         queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
         queries.put("BagConstraint2", bagConstraint2());
+        queries.put("InterfaceReference", interfaceReference());
+        queries.put("InterfaceCollection", interfaceCollection());
     }
 
     public static void oneTimeTearDown() throws Exception {
@@ -122,7 +125,12 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
             Method name = null;
             try {
                 name = o.getClass().getMethod("getName", new Class[] {});
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                try {
+                    name = o.getClass().getMethod("getAddress", new Class[] {});
+                } catch (Exception e2) {
+                }
+            }
             if(name!=null) {
                 data.put((String)name.invoke(o, new Object[] {}), o);
             } else {
@@ -202,6 +210,40 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         set.add(data.get("CompanyA"));
         set.add(new Integer(5));
         q1.setConstraint(new BagConstraint(c1, ConstraintOp.IN, set));
+        return q1;
+    }
+
+    /*
+     * select HasAddress from HasAddress, Address where HasAddress.address CONTAINS Address AND Address = <address>
+     */
+    public static Query interfaceReference() throws Exception {
+        QueryClass qc1 = new QueryClass(HasAddress.class);
+        QueryClass qc2 = new QueryClass(Address.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "address"), ConstraintOp.CONTAINS, qc2));
+        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, data.get("Contractor Business Street, AVille")));
+        q1.setConstraint(cs);
+        return q1;
+    }
+
+    /*
+     * select HasSecretarys from HasSecretarys, Secretary where HasSecretarys.secretarys CONTAINS Secretary AND Secretary = <secretary>
+     */
+    public static Query interfaceCollection() throws Exception {
+        QueryClass qc1 = new QueryClass(HasSecretarys.class);
+        QueryClass qc2 = new QueryClass(Secretary.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ConstraintOp.CONTAINS, qc2));
+        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, data.get("Secretary1")));
+        q1.setConstraint(cs);
         return q1;
     }
 }

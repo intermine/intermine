@@ -3,6 +3,11 @@
     <class name="org.flymine.model.testmodel.Employable" extends="org.flymine.model.testmodel.Thing" is-interface="true">
         <attribute name="name" type="java.lang.String" primary-key="true"/>
     </class>
+    <class name="org.flymine.model.testmodel.HasAddress" is-interface="true">
+        <reference name="address" referenced-type="org.flymine.model.testmodel.Address" primary-key="true"/>
+    </class>
+    <class name="org.flymine.model.testmodel.HasSecretarys" is-interface="true">
+        <collection name="secretarys" referenced-type="org.flymine.model.testmodel.Secretary" ordered="true" primary-key="false"/></class>
     <class name="org.flymine.model.testmodel.Contractor" implements="org.flymine.model.testmodel.Employable org.flymine.model.testmodel.ImportantPerson" is-interface="false">
         <attribute name="name" type="java.lang.String" primary-key="true"/>
         <reference name="personalAddress" referenced-type="org.flymine.model.testmodel.Address" primary-key="true"/>
@@ -11,7 +16,7 @@
         <collection name="oldComs" referenced-type="org.flymine.model.testmodel.Company" ordered="true" reverse-reference="oldContracts" primary-key="false"/></class>
     <class name="org.flymine.model.testmodel.Manager" extends="org.flymine.model.testmodel.Employee" implements="org.flymine.model.testmodel.ImportantPerson" is-interface="false">
         <attribute name="title" type="java.lang.String" primary-key="false"/></class>
-    <class name="org.flymine.model.testmodel.Employee" implements="org.flymine.model.testmodel.Employable" is-interface="false">
+    <class name="org.flymine.model.testmodel.Employee" implements="org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress" is-interface="false">
         <attribute name="name" type="java.lang.String" primary-key="true"/>
         <attribute name="fullTime" type="boolean" primary-key="false"/>
         <attribute name="age" type="int" primary-key="true"/>
@@ -24,7 +29,7 @@
         <reference name="manager" referenced-type="org.flymine.model.testmodel.Manager" primary-key="false"/>
         <collection name="employees" referenced-type="org.flymine.model.testmodel.Employee" ordered="true" reverse-reference="department" primary-key="false"/>
         <collection name="rejectedEmployee" referenced-type="org.flymine.model.testmodel.Employee" ordered="true" reverse-reference="departmentThatRejectedMe" primary-key="false"/></class>
-    <class name="org.flymine.model.testmodel.Company" implements="org.flymine.model.testmodel.RandomInterface" is-interface="false">
+    <class name="org.flymine.model.testmodel.Company" implements="org.flymine.model.testmodel.RandomInterface org.flymine.model.testmodel.HasAddress org.flymine.model.testmodel.HasSecretarys" is-interface="false">
         <attribute name="name" type="java.lang.String" primary-key="true"/>
         <attribute name="vatNumber" type="int" primary-key="false"/>
         <reference name="address" referenced-type="org.flymine.model.testmodel.Address" primary-key="true"/>
@@ -36,9 +41,10 @@
     <class name="org.flymine.model.testmodel.Address" implements="org.flymine.model.testmodel.Thing" is-interface="false">
         <attribute name="address" type="java.lang.String" primary-key="true"/></class>
     <class name="org.flymine.model.testmodel.RandomInterface" is-interface="true"></class>
-    <class name="org.flymine.model.testmodel.CEO" extends="org.flymine.model.testmodel.Manager" is-interface="false">
+    <class name="org.flymine.model.testmodel.CEO" extends="org.flymine.model.testmodel.Manager" implements="org.flymine.model.testmodel.HasSecretarys" is-interface="false">
         <attribute name="salary" type="int" primary-key="false"/>
-        <reference name="company" referenced-type="org.flymine.model.testmodel.Company" reverse-reference="cEO" primary-key="false"/></class>
+        <reference name="company" referenced-type="org.flymine.model.testmodel.Company" reverse-reference="cEO" primary-key="false"/>
+        <collection name="secretarys" referenced-type="org.flymine.model.testmodel.Secretary" ordered="true" primary-key="false"/></class>
     <class name="org.flymine.model.testmodel.ImportantPerson" is-interface="true"></class>
     <class name="org.flymine.model.testmodel.Secretary" is-interface="false">
         <attribute name="name" type="java.lang.String" primary-key="true"/></class>

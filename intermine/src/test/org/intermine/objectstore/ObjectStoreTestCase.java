@@ -209,6 +209,11 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         results.put("BagConstraint", Collections.singletonList(Collections.singletonList(data.get("CompanyA"))));
 
         results.put("BagConstraint2", Collections.singletonList(Collections.singletonList(data.get("CompanyA"))));
+
+        r = new Object[][] { { data.get("EmployeeA1") } };
+        results.put("InterfaceField", toList(r));
+        results.put("InterfaceReference", toList(r));
+        results.put("InterfaceCollection", toList(r));
     }
 
     /**

@@ -32,7 +32,7 @@ public class LiteRendererTest extends TestCase
         field.set(d, new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<object id=\"1234\" implements=\"org.flymine.model.testmodel.Employee org.flymine.model.testmodel.Employable\">"
+        String expected = "<object id=\"1234\" implements=\"org.flymine.model.testmodel.Employee org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress\">"
             + "<field name=\"fullTime\" value=\"false\"/>"
             + "<field name=\"name\" value=\"Employee1\"/>"
             // Take the following line out when OJB ditched
