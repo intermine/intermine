@@ -243,6 +243,9 @@
 
   <!-- ============================================================================== -->
 
+  <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+    <classpath refid="models.class.path"/>
+  </taskdef>
 
   <!-- ========== MODEL GENERATION/MERGING TARGETS - ORGANISED BY SOURCE ========== -->
 
@@ -794,10 +797,6 @@
       <property name="db.name" value="db.ensembl-dros-tgt-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.ensembl-dros-tgt-items"/>
   </target>
 
@@ -867,10 +866,6 @@
       <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.ensembl-anoph-tgt-items"/>
   </target>
 
@@ -939,10 +934,6 @@
       <property name="db.name" value="db.chado-tgt-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.chado-tgt-items"/>
   </target>
 
@@ -985,10 +976,6 @@
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-tgt-items"/>
   </target>
 
@@ -1026,10 +1013,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
 
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1100,10 +1083,6 @@
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-tgt-items"/>
   </target>
 
@@ -1142,10 +1121,6 @@
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-tgt-items"/>
   </target>
 
@@ -1181,10 +1156,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
 
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1225,10 +1196,6 @@
       <property name="db.name" value="db.common-src-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-src-items"/>
   </target>
 
@@ -1254,10 +1221,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-    
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
     
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1291,10 +1254,6 @@
       <fileset dir="/shared/data/taxonomy" includes="taxonomy.dat"/>
     </convert-file>
     
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-tgt-items"/>
   </target>
 
@@ -1352,10 +1311,6 @@
       <property name="db.name" value="db.common-src-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-src-items"/>
   </target>
 
@@ -1382,10 +1337,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
 
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1422,9 +1373,7 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-src-items"/>
     </ant>
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
+
     <analyse-db database="db.common-src-items"/>
   </target>
   
@@ -1449,9 +1398,7 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
+
     <analyse-db database="db.common-tgt-items"/>
   </target>
   
@@ -1486,10 +1433,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
 
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1526,10 +1469,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
 
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1590,10 +1529,6 @@
       <property name="db.name" value="db.common-src-items"/>
     </ant>
 
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.common-src-items"/>
   </target>
 
@@ -1620,10 +1555,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
 
     <analyse-db database="db.common-tgt-items"/>
   </target>
@@ -1653,12 +1584,22 @@
     </ant>
   </target>
 
-  <target name="create-indexes-production">
+  <target name="create-indexes-production" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.production"/>
       <property name="objectstore.name" value="os.production"/>
+    </ant>
+  </target>
+
+  <target name="create-indexes-production-attribute" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.production"/>
+      <property name="objectstore.name" value="os.production"/>
+      <property name="create.attribute.indexes" value="true"/>
     </ant>
   </target>
 
@@ -1693,20 +1634,12 @@
 
   <target name="analyse-db-production" depends="prepare">
     <!-- analyse database -->
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.production" full="true"/>
 
   </target>
 
   <target name="analyse-protein-production" depends="prepare">
     <!-- analyse protein class in production database -->
-    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
-    </taskdef>
-
     <analyse-db database="db.production" model="genomic" className="org.flymine.model.genomic.Protein"/>
 
   </target>
@@ -1769,10 +1702,14 @@
                            outputFile="${summarise.output.properties}"/>
   </target>
 
-
   <target name="post-process">
     <antcall target="calculate-locations"/>
+    <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
+    <antcall target="analyse-db-production"/>
+    <antcall target="transfer-sequences"/>
+    <antcall target="create-indexes-production-attribute"/>
+    <antcall target="analyse-db-production"/>
   </target>
 
   <!-- ========== OBJECTSTORE EXPORT TARGETS ========== -->
