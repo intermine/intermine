@@ -44,6 +44,20 @@ public class InterMineModelParser implements ModelParser
     }
 
     /**
+     * Read source model information in InterMine XML format and
+     * create a set of ClassDescriptors.
+     *
+     * @param reader the source model to parse
+     * @return a set of
+     * @throws Exception if Model not created successfully
+     */
+    public Set generateClassDescriptors(Reader reader) throws Exception {
+        ModelHandler handler = new ModelHandler();
+        SAXParser.parse(new InputSource(reader), handler);
+        return handler.classes;
+    }
+
+    /**
      * Extension of DefaultHandler to handle metadata file
      */
     class ModelHandler extends DefaultHandler
