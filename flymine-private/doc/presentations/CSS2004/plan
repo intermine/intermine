@@ -205,20 +205,20 @@ DL 6	        This also simplifies the getEquivalentObjects query, as it may not 
 DL 7	        If an object has been previously seen, it is unlikely that it will be actually needed, so one can put in a ProxyReference instead. We can reify the ProxyReference if we need it (1 minute)
 DL 7	        Handily, ProxyReference is an InterMineObject, so when an object pointing to it is stored, it is stored with a correct pointer to the existing object with that ID in the database (2 minutes)
 	    GetEquivalentObjects calls can be made long before the data is needed (10 minutes)
-	        Consider the circumstance where an object is presented to be stored twice. The first time getEquivalentObjects runs a search, and the second time it returns a ProxyReference from the ID map. Consider also that the results of a getEquivalentObject query cannot be changed by any action other than that of storing an object equivalent to the one we are interested in.
-	        If we can make the assumption: we will never attempt to store an object that is equivalent to a previously-stored object (after some point in time) that the ID map does not recognise
-	            we can then allow the getEquivalentObjects call to use "old" data, as old as that point in time.
-	        This assumption is false for objects that have a null ID, because the ID map does not recognise them, so this cannot be applied to such objects
+DL 8	        Consider the circumstance where an object is presented to be stored twice. The first time getEquivalentObjects runs a search, and the second time it returns a ProxyReference from the ID map. Consider also that the results of a getEquivalentObject query cannot be changed by any action other than that of storing an object equivalent to the one we are interested in.
+DL 8	        If we can make the assumption: we will never attempt to store an object that is equivalent to a previously-stored object (after some point in time) that the ID map does not recognise we can then allow the getEquivalentObjects call to use "old" data, as old as that point in time.
+-----------	        This assumption is false for objects that have a null ID, because the ID map does not recognise them, so this cannot be applied to such objects
 	        This allows a performance boost for several reasons:
-	            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
-	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
-	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
+DL 9	            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
+DL 10	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
+DL 11	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
+DL 12	        Knowing when to stop
 	Other tips: (8 minutes - 122 minutes so far)
-	    Get the database indexes right (1 minute)
-	    Profile your program, and work out where it is spending its time, then optimise that bit (1 minute)
-	    Use StringBuffer, rather than concatenating Strings (1 minute)
-	    Remove any unneccessary features that slow down the system - eg the InterMineObject table and OBJECT field (2 minutes)
-	    Throw a bigger computer at it (1 minute)
-	    Moore's law: (2 minutes)
-	    Beware round-trip times (again)
-	    SQL_ASCII rather than UNICODE
+Other 1	    Get the database indexes right (1 minute)
+Other 1	    Profile your program, and work out where it is spending its time, then optimise that bit (1 minute)
+Other 1	    Use StringBuffer, rather than concatenating Strings (1 minute)
+Other 1	    Remove any unneccessary features that slow down the system - eg the InterMineObject table and OBJECT field (2 minutes)
+Other 2	    Throw a bigger computer at it (1 minute)
+Other 2	    Beware round-trip times (again)
+Other 3	    SQL_ASCII rather than UNICODE
+Other 3	    Moore's law: (2 minutes)
