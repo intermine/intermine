@@ -2,9 +2,16 @@ package org.flymine.dataloader;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
+import java.util.Iterator;
+import java.beans.IntrospectionException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.util.TypeUtil;
 
 /**
  * Simple implementation of IntegrationWriter - assumes that this is the only (or first) data source
@@ -40,17 +47,43 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException {
         Object dbObj = osw.getObjectByExample(obj);
         IntegrationDescriptor retval = new IntegrationDescriptor();
-        if (nonSkeletons.contains(dbObj)) {
-            // This data was written by us in the past. Therefore, the database version overrides
-            // everything, except collections.
-            int i = 1;
-            // Fill in everything.
-        } else {
+
+        try {
+            Class cls = obj.getClass();
+            retval.put(cls.getDeclaredField("id"),
+                       cls.getMethod("getId", new Class[] {}).invoke(dbObj, new Object[] {}));
+
+            if (nonSkeletons.contains(dbObj)) {
+                // This data was written by us in the past. Therefore, the database version
+                // overrides everything, except collections.
+                Map fieldToGetter = TypeUtil.getFieldToGetter(obj.getClass());
+                Iterator iter = fieldToGetter.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iter.next();
+                    Field field = (Field) entry.getKey();
+                    int fieldType = describeRelation(field);
+
+                    Method method = (Method) entry.getValue();
+                    Object value = method.invoke(obj, new Object[] {});
+                    retval.put(field, value);
+                }
+            }
+            //        } else {
             // This data was not written for real in the past by us. Therefore, we do not need to
             // fill in anything (except id) in the return value.
-            int i = 1;
+            //        }
+            return retval;
+        } catch (IntrospectionException e) {
+            throw new ObjectStoreException("Something horribly wrong with the model", e);
+        } catch (NoSuchFieldException e) {
+            throw new ObjectStoreException("Something even worse wrong with the model", e);
+        } catch (NoSuchMethodException e) {
+            throw new ObjectStoreException("Something nasty with the model", e);
+        } catch (IllegalAccessException e) {
+            throw new ObjectStoreException("Something upset in java", e);
+        } catch (InvocationTargetException e) {
+            throw new ObjectStoreException("Something weird in java", e);
         }
-        return retval;
     }
 
     /**
