@@ -12,8 +12,6 @@ package org.flymine.postprocess;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.symbol.IllegalSymbolException;
@@ -28,8 +26,6 @@ import org.intermine.util.DynamicUtil;
 
 import org.intermine.objectstore.query.ResultsRow;
 import org.flymine.model.genomic.*;
-
-import org.apache.log4j.Logger;
 
 /**
  * Transfer sequences from the Contig objects to the other objects that are located on the Contigs
