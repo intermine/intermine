@@ -502,7 +502,7 @@
   </target>
 
    <!-- run cachmap test in a separate jvm with memory limit -->
-  <target name="test-cachemap" depends="compile-test"
+  <target name="test-cachemap" 
           description="perform cache map test in a separate jvm" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
