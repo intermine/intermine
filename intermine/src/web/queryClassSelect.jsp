@@ -7,8 +7,6 @@
 
 <!-- queryClassSelect.jsp -->
 <html:form action="/queryClassSelect">
-  <fmt:message key="query.addclass"/>
-  <br/>
   <html:select property="className" size="20">
     <c:forEach items="${classes}" var="entry">
       <html:option value="${entry.key}">
