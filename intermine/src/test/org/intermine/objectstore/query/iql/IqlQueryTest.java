@@ -42,13 +42,10 @@ public class FqlQueryTest extends FqlQueryTestCase
         assertEquals(type + " has failed", fq.getQueryString(), fqGenerated.getQueryString());;
         assertEquals(type + " has failed", fq.getParameters(), fqGenerated.getParameters());;
 
-        // Remove this if when Fql parsing updated to recognise '?'
-        if ((!type.equals("WhereClassObject")) && (!type.equals("SelectClassObjectSubquery"))) {
-            // This is testing whether the FqlQueries above are parsed into the correct query
-            // This really duplicates FqlQueryParserTest but here we call the FqlQuery.toQuery() method
-            Query parsed = fq.toQuery();
-            assertEquals(type + " has failed", orig, parsed);
-        }
+        // This is testing whether the FqlQueries above are parsed into the correct query
+        // This really duplicates FqlQueryParserTest but here we call the FqlQuery.toQuery() method
+        Query parsed = fq.toQuery();
+        assertEquals(type + " has failed", orig, parsed);
     }
 
     public void testConstructNullQuery() throws Exception {
