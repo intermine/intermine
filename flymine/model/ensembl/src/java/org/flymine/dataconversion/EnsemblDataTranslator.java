@@ -31,7 +31,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.ontology.OntologyUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -45,6 +44,7 @@ import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
+import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
 
@@ -126,8 +126,8 @@ public class EnsemblDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
 
         Collection result = new HashSet();
-        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
-        String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
+        String srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
+        String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
@@ -262,7 +262,7 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     protected Item createLocation(Item srcItem, Item tgtItem, String idPrefix, String locPrefix,
                                   boolean srcItemIsChild) {
-        String namespace = OntologyUtil.getNamespaceFromURI(tgtItem.getClassName());
+        String namespace = XmlUtil.getNamespaceFromURI(tgtItem.getClassName());
 
         Item location = createItem(namespace + "Location", "");
 

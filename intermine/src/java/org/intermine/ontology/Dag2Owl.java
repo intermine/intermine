@@ -29,6 +29,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlUtil;
 
 /**
  * Processes list of root DagTerms to produce the equivalent OWL OntModel
@@ -62,7 +63,7 @@ public class Dag2Owl
      * @param namespace the namespace to use in generating URI-based identifiers
      */
     public Dag2Owl(String namespace) {
-        this.namespace = OntologyUtil.correctNamespace(namespace);
+        this.namespace = XmlUtil.correctNamespace(namespace);
         ontModel = ModelFactory.createOntologyModel();
         owlClass = ontModel.createResource(OWL_NS + "Class");
         owlInverseOf = ontModel.createProperty(OWL_NS + "inverseOf");

@@ -27,6 +27,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.metadata.*;
+import org.intermine.util.XmlUtil;
 
 /**
  * Converts an OWL description of a business model to a Java business model
@@ -65,7 +66,7 @@ public class Owl2InterMine
      * @throws Exception if anything goes wrong
      */
     public Model process(OntModel ontModel, String tgtNs) throws Exception {
-        tgtNs = OntologyUtil.correctNamespace(tgtNs);
+        tgtNs = XmlUtil.correctNamespace(tgtNs);
         attributes = new HashMap();
         references = new HashMap();
         collections = new HashMap();
@@ -214,7 +215,7 @@ public class Owl2InterMine
         while (r.hasNext()) {
             OntResource or = (OntResource) r.next();
             if (or.getNameSpace() != null && (or.getNameSpace().equals(tgtNs)
-                                  || or.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)
+                                  || or.getNameSpace().equals(XmlUtil.XSD_NAMESPACE)
                                   || or.getURI().equals(OntologyUtil.RDFS_NAMESPACE + "Literal"))) {
                 if (range == null) {
                     range = or;
@@ -237,8 +238,8 @@ public class Owl2InterMine
             String javaType;
             if (range.getURI().equals(OntologyUtil.RDFS_NAMESPACE + "Literal")) {
                 javaType = "java.lang.String";
-            } else if (range.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
-                javaType = OntologyUtil.xmlToJavaType(range.getLocalName());
+            } else if (range.getNameSpace().equals(XmlUtil.XSD_NAMESPACE)) {
+                javaType = XmlUtil.xmlToJavaType(range.getLocalName());
             } else {
                 throw new Exception("DatatypeProperty: " + prop.getURI().toString()
                                     + " has a range that is not a datatype ("

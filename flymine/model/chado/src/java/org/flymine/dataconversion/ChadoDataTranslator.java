@@ -24,7 +24,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.ontology.OntologyUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -35,6 +34,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.DataTranslator;
+import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
 
@@ -64,7 +64,7 @@ public class ChadoDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
 
         Collection result = new HashSet();
-        String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
+        String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {

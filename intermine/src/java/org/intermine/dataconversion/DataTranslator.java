@@ -10,6 +10,8 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -19,8 +21,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.io.File;
-import java.io.FileReader;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
@@ -31,18 +31,18 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import org.intermine.InterMineException;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.ontology.SubclassRestriction;
 import org.intermine.objectstore.ObjectStoreException;
-
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.util.XmlUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 
 import org.apache.log4j.Logger;
@@ -166,7 +166,7 @@ public class DataTranslator
         }
 
         // if class is not in target namespace then don't bother translating it
-        if (!OntologyUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
+        if (!XmlUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
             return null;
         }
 
@@ -186,7 +186,7 @@ public class DataTranslator
                     throw new InterMineException("no target attribute found for " + attSrcURI
                                                + " in class " + tgtClsName);
                 }
-                if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
+                if (XmlUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
                     Attribute newAtt = new Attribute();
                     newAtt.setName(attTgtURI.split("__")[1]);
                     newAtt.setValue(att.getValue());
@@ -205,7 +205,7 @@ public class DataTranslator
                 throw new InterMineException("no target reference found for " + refSrcURI
                                            + " in class " + tgtClsName);
             }
-            if (OntologyUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
+            if (XmlUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
                 Reference newRef = new Reference();
                 newRef.setName(refTgtURI.split("__")[1]);
                 newRef.setRefId(ref.getRefId());
@@ -223,7 +223,7 @@ public class DataTranslator
                 throw new InterMineException("no target collection found for " + colSrcURI
                                            + " in class " + tgtClsName);
             }
-            if (OntologyUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
+            if (XmlUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
                 ReferenceList newCol = new ReferenceList();
                 newCol.setName(colTgtURI.split("__")[1]);
                 newCol.setRefIds(col.getRefIds());

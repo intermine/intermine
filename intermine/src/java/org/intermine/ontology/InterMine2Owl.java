@@ -22,10 +22,11 @@ import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 
 import org.intermine.metadata.*;
-import org.intermine.util.TypeUtil;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlUtil;
 
 /**
  * Convert a InterMine metadata model to a Jena OntModel.
@@ -67,7 +68,7 @@ public class InterMine2Owl
                         OntologyUtil.generatePropertyName(fld));
                     prop.setDomain(ontCls);
                     prop.setRange(ont.createResource(
-                        OntologyUtil.javaToXmlType(((AttributeDescriptor) fld).getType())));
+                        XmlUtil.javaToXmlType(((AttributeDescriptor) fld).getType())));
                 } else {
                     ReferenceDescriptor rfd = (ReferenceDescriptor) fld;
                     ObjectProperty prop = getObjectProperty(rfd, ont);

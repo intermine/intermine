@@ -22,6 +22,8 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.File;
 
+import org.intermine.util.XmlUtil;
+
 /**
  * This class (simplistically) converts a daml+oil schema to owl by swapping the daml namespace
  * for the owl one and translating all renamed tags
@@ -46,7 +48,7 @@ public class Daml2Owl extends URL2Model
      * @throws IOException if something goes wrong in accessing the input
      */
     protected OntModel process(Reader in, String baseURI) throws IOException {
-        this.baseURI = OntologyUtil.correctNamespace(baseURI);
+        this.baseURI = XmlUtil.correctNamespace(baseURI);
         return process(in);
     }
 
