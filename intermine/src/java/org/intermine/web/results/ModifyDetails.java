@@ -29,6 +29,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.*;
 import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
 
 /**
  * Action to handle events from the object details page
@@ -52,10 +53,12 @@ public class ModifyDetails extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
-
-        ((DisplayObject) session.getAttribute("object")).setVerbosity(fieldName, true);
-
-        return mapping.findForward("objectDetails");
+        DisplayObject object = (DisplayObject) session.getAttribute("object");
+        
+        object.setVerbosity(fieldName, true);
+        
+        return new ForwardParameters(mapping.findForward("objectDetails"))
+            .addParameter("id", "" + object.getId()).forward();
     }
 
     /**
@@ -74,10 +77,12 @@ public class ModifyDetails extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
+        DisplayObject object = (DisplayObject) session.getAttribute("object");
+        
+        object.setVerbosity(fieldName, false);
 
-        ((DisplayObject) session.getAttribute("object")).setVerbosity(fieldName, false);
-
-        return mapping.findForward("objectDetails");
+        return new ForwardParameters(mapping.findForward("objectDetails"))
+            .addParameter("id", "" + object.getId()).forward();
     }
 
     /**
