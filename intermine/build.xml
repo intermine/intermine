@@ -343,6 +343,20 @@
   </target>
 
 
+  <target name="insert-data" depends="generate-repository-testmodel, compile-testmodel">
+    <taskdef
+          name="insert-ace-data"
+          classname="org.flymine.task.InsertAceDataTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+
+    <insert-ace-data objectStore="os.unittest" user="andy" password="abc123" host="localhost" port="23100">
+      <classpath refid="test.class.path"/>
+    </insert-ace-data>
+
+  </target>
+
+
   <!-- force all the unit tests to be redone -->
   <target name="junit-clean" depends="prepare">
     <delete>
