@@ -301,7 +301,7 @@ public class OJBModelOutput extends ModelOutput
         if (type.equals("java.lang.String")) {
             return "LONGVARCHAR";
         }
-        if (type.equals("boolean")) {
+        if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
             return "INTEGER";
         }
         if (type.equals("float") || type.equals("java.lang.Float")) {
@@ -322,7 +322,7 @@ public class OJBModelOutput extends ModelOutput
      * @return an XML attribute string for the ojb mapping file
      */
     protected static String generateConversion(String type) {
-        if (type.equals("boolean")) {
+        if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
             return " conversion=\""
                 + "org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion\"";
         }
