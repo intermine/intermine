@@ -66,6 +66,7 @@ public class UniprotDataTranslator extends DataTranslator
     private static final Logger LOG = Logger.getLogger(UniprotDataTranslator.class);
 
     private String databaseId = null;
+    private Item database = null;
     private String drosophilaId = null;
     private String caenorhabditisId = null;
     private Map pubMedIdToPublicationId = new HashMap();
@@ -76,7 +77,6 @@ public class UniprotDataTranslator extends DataTranslator
     private int caenorhabditisCount = 0;
 
     private static final String SRC_NS = "http://www.flymine.org/model#";
-    private static final String TGT_NS = "http://www.flymine.org/model/genomic#";
 
     /**
      * @see DataTranslator
@@ -86,114 +86,69 @@ public class UniprotDataTranslator extends DataTranslator
         this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
     }
-
     /**
      * @see DataTranslator#getItemIterator
      */
-    public Iterator getItemIterator() throws ObjectStoreException {
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qc1 = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc1);
-        q.addToSelect(qc1);
-        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "className"),
-                ConstraintOp.EQUALS, new QueryValue(SRC_NS + "EntryType"));
-        QueryClass qc2 = new QueryClass(org.intermine.model.fulldata.ReferenceList.class);
-        q.addFrom(qc2);
-        ContainsConstraint cc1 = new ContainsConstraint(new QueryObjectReference(qc2, "item"),
-                ConstraintOp.CONTAINS, qc1);
-        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
-                ConstraintOp.EQUALS, new QueryValue("organisms"));
-        QueryClass qc3 = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc3);
-        SimpleConstraint sc3 = new SimpleConstraint(new QueryField(qc2, "refIds"),
-                ConstraintOp.EQUALS, new QueryField(qc3, "identifier"));
-        QueryClass qc4 = new QueryClass(org.intermine.model.fulldata.Reference.class);
-        q.addFrom(qc4);
-        ContainsConstraint cc2 = new ContainsConstraint(new QueryObjectReference(qc4, "item"),
-                ConstraintOp.CONTAINS, qc3);
-        SimpleConstraint sc4 = new SimpleConstraint(new QueryField(qc4, "name"),
-                ConstraintOp.EQUALS, new QueryValue("dbReference"));
-        QueryClass qc5 = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc5);
-        SimpleConstraint sc5 = new SimpleConstraint(new QueryField(qc4, "refId"),
-                ConstraintOp.EQUALS, new QueryField(qc5, "identifier"));
-        QueryClass qc6 = new QueryClass(org.intermine.model.fulldata.Attribute.class);
-        q.addFrom(qc6);
-        ContainsConstraint cc3 = new ContainsConstraint(new QueryObjectReference(qc6, "item"),
-                ConstraintOp.CONTAINS, qc5);
-        SimpleConstraint sc6 = new SimpleConstraint(new QueryField(qc6, "name"),
-                ConstraintOp.EQUALS, new QueryValue("id"));
-        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.OR);
-        SimpleConstraint sc7 = new SimpleConstraint(new QueryField(qc6, "value"),
-                ConstraintOp.EQUALS, new QueryValue("7227"));
-        SimpleConstraint sc8 = new SimpleConstraint(new QueryField(qc6, "value"),
-                ConstraintOp.EQUALS, new QueryValue("6239"));
-        cs1.addConstraint(sc7);
-        cs1.addConstraint(sc8);
-        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-        cs2.addConstraint(sc1);
-        cs2.addConstraint(cc1);
-        cs2.addConstraint(sc2);
-        cs2.addConstraint(sc3);
-        cs2.addConstraint(cc2);
-        cs2.addConstraint(sc4);
-        cs2.addConstraint(sc5);
-        cs2.addConstraint(cc3);
-        cs2.addConstraint(sc6);
-        cs2.addConstraint(cs1);
-        q.setConstraint(cs2);
-        // TODO: This query will fetch all the Drosophila & Caenorhabditis entries that have only
-        // one organism. There are three that have multiple organisms, but we can add those later.
-        return ((ObjectStoreItemReader) srcItemReader).itemIterator(q);
+     public Iterator getItemIterator() throws ObjectStoreException {
+         Query q = new Query();
+         q.setDistinct(false);
+         QueryClass qc1 = new QueryClass(org.intermine.model.fulldata.Item.class);
+         q.addFrom(qc1);
+         q.addToSelect(qc1);
+         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "className"),
+                                   ConstraintOp.EQUALS, new QueryValue(SRC_NS + "EntryType"));
+         q.setConstraint(sc1);
+         return ((ObjectStoreItemReader) srcItemReader).itemIterator(q);
+     }
+
+
+    public void translate(ItemWriter tgtItemWriter)
+        throws ObjectStoreException, InterMineException {
+        tgtItemWriter.store(ItemHelper.convert(getDatabase()));
+        super.translate(tgtItemWriter);
     }
+
 
     /**
      * @see DataTranslator#translateItem
      */
     protected Collection translateItem(Item srcItem) throws ObjectStoreException, InterMineException {
-        // This Item should be an EntryType.
+        // This Item should be an EntryType - should only have proteins associated with one organism.
         if ((SRC_NS + "EntryType").equals(srcItem.getClassName())) {
             // First things first: find out the taxonid of the organism of this entry.
             int taxonId = 0;
             List organisms = getItemsInCollection(srcItem.getCollection("organisms"));
             Iterator organismIter = organisms.iterator();
             while (organismIter.hasNext()) {
+                // Drosophila melanogaster = 7227
+                // Caenorhabditis elegans 6239
+                // Anopheles gambiae = 7165
                 Item organism = (Item) organismIter.next();
                 Item dbReference = ItemHelper.convert(srcItemReader.getItemById(organism
                             .getReference("dbReference").getRefId()));
                 String type = getAttributeValue(dbReference, "type");
                 if ("NCBI Taxonomy".equals(type)) {
                     String taxonString = getAttributeValue(dbReference, "id");
-                    if ("7227".equals(taxonString)) {
-                        // Drosophila melanogaster
+                    if ("7227".equals(taxonString) || "6239".equals(taxonString) || "7165".equals(taxonString)) {
                         if (taxonId != 0) {
                             throw new IllegalStateException("Attempting to set taxon id to "
-                                    + taxonString + " when it is already " + taxonId);
+                                                            + taxonString + " when it is already " + taxonId);
                         }
-                        taxonId = 7227;
-                    } else if ("6239".equals(taxonString)) {
-                        // Caenorhabditis elegans
-                        if (taxonId != 0) {
-                            throw new IllegalStateException("Attempting to set taxon id to "
-                                    + taxonString + " when it is already " + taxonId);
-                        }
-                        taxonId = 6239;
+                        taxonId = Integer.parseInt(taxonString);
                     }
                 }
             }
+
+            // should remove hard coding of organism types in translator
             if (taxonId != 0) {
                 // We have a recognised organism
                 Set retval = new HashSet();
-                if (databaseId == null) {
-                    Item database = new Item(getUniqueIdentifier(), TGT_NS + "Database", "");
-                    database.addAttribute(new Attribute("title", "UniProt"));
-                    databaseId = database.getIdentifier();
-                    retval.add(database);
-                }
-                Item protein = new Item(getUniqueIdentifier(), TGT_NS + "Protein", "");
+
+                // set up protein, same for all organisms
+                Item protein = createItem(tgtNs + "Protein", "");
                 String proteinName = getAttributeValue(srcItem, "name");
                 protein.addAttribute(new Attribute("identifier", proteinName));
+                retval.add(createSynonym(protein.getIdentifier(), "identifier", proteinName));
                 List srcAccessions = getItemsInCollection(srcItem.getCollection("accessions"));
                 if (srcAccessions.isEmpty()) {
                     LOG.info("Entry " + proteinName + " does not have any accessions");
@@ -201,18 +156,20 @@ public class UniprotDataTranslator extends DataTranslator
                     Item srcPrimaryAccession = (Item) srcAccessions.get(0);
                     protein.addAttribute(new Attribute("primaryAccession", getAttributeValue(
                                     srcPrimaryAccession, "accession")));
+                    // all accessions should be Synonyms
                     Iterator srcAccIter = srcAccessions.iterator();
                     while (srcAccIter.hasNext()) {
                         Item srcAccession = (Item) srcAccIter.next();
                         String srcAccessionString = getAttributeValue(srcAccession, "accession");
-                        Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym", "");
-                        synonym.addAttribute(new Attribute("value", srcAccessionString));
-                        synonym.addAttribute(new Attribute("type", "accession"));
-                        synonym.addReference(new Reference("subject", protein.getIdentifier()));
-                        synonym.addReference(new Reference("source", databaseId));
-                        retval.add(synonym);
+                        retval.add(createSynonym(protein.getIdentifier(), "accession", srcAccessionString));
                     }
                 }
+                // add UniProt Database to evidence collection
+                ReferenceList evidence = new ReferenceList("evidence", new ArrayList());
+                evidence.addRefId(getDatabaseId());
+                protein.addCollection(evidence);
+
+                // collection of Comments
                 List srcComments = getItemsInCollection(srcItem.getCollection("comments"));
                 Iterator srcComIter = srcComments.iterator();
                 while (srcComIter.hasNext()) {
@@ -220,11 +177,11 @@ public class UniprotDataTranslator extends DataTranslator
                     String srcCommentType = getAttributeValue(srcComment, "type");
                     String srcCommentText = getAttributeValue(srcComment, "text");
                     if ((srcCommentType != null) && (srcCommentText != null)) {
-                        Item comment = new Item(getUniqueIdentifier(), TGT_NS + "Comment", "");
+                        Item comment = createItem(tgtNs + "Comment", "");
                         comment.addAttribute(new Attribute("type", srcCommentType));
                         comment.addAttribute(new Attribute("text", srcCommentText));
                         comment.addReference(new Reference("subject", protein.getIdentifier()));
-                        comment.addReference(new Reference("source", databaseId));
+                        comment.addReference(new Reference("source", getDatabaseId()));
                         retval.add(comment);
                     }
                 }
@@ -241,18 +198,13 @@ public class UniprotDataTranslator extends DataTranslator
                         if (srcProteinNameEvidence != null) {
                             srcProteinNameString += " (Evidence " + srcProteinNameEvidence + ")";
                         }
-                        Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym", "");
-                        synonym.addAttribute(new Attribute("type", "name"));
-                        synonym.addAttribute(new Attribute("value", srcProteinNameString));
-                        synonym.addReference(new Reference("subject", protein.getIdentifier()));
-                        synonym.addReference(new Reference("source", databaseId));
-                        retval.add(synonym);
+                        retval.add(createSynonym(protein.getIdentifier(), "name", srcProteinNameString));
                     }
                 }
                 Reference geneOrganismReference = null;
                 if (taxonId == 7227) {
                     if (drosophilaId == null) {
-                        Item drosophila = new Item(getUniqueIdentifier(), TGT_NS + "Organism", "");
+                        Item drosophila = createItem(tgtNs + "Organism", "");
                         drosophila.addAttribute(new Attribute("taxonId", "7227"));
                         retval.add(drosophila);
                         drosophilaId = drosophila.getIdentifier();
@@ -265,8 +217,7 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 } else if (taxonId == 6239) {
                     if (caenorhabditisId == null) {
-                        Item caenorhabditis = new Item(getUniqueIdentifier(), TGT_NS + "Organism",
-                                "");
+                        Item caenorhabditis = createItem(tgtNs + "Organism", "");
                         caenorhabditis.addAttribute(new Attribute("taxonId", "6239"));
                         retval.add(caenorhabditis);
                         caenorhabditisId = caenorhabditis.getIdentifier();
@@ -298,8 +249,7 @@ public class UniprotDataTranslator extends DataTranslator
                                 .get(pubMedString);
                             pubLinkCount++;
                             if (publicationId == null) {
-                                Item publication = new Item(getUniqueIdentifier(), TGT_NS
-                                        + "Publication", "");
+                                Item publication = createItem("" + "Publication", "");
                                 publication.addAttribute(new Attribute("pubMedId", pubMedString));
                                 retval.add(publication);
                                 publicationId = publication.getIdentifier();
@@ -328,6 +278,7 @@ public class UniprotDataTranslator extends DataTranslator
                     String geneIdentifier = null;
                     List srcGeneNames = getItemsInCollection(srcGene.getCollection("names"));
                     String primaryGeneName = null;
+                    String tmpGeneName = null;
                     Set geneNames = new HashSet();
                     {
                         Iterator srcGeneNameIter = srcGeneNames.iterator();
@@ -340,57 +291,16 @@ public class UniprotDataTranslator extends DataTranslator
                             geneNames.add(new String(getAttributeValue(srcGeneName, "name")));
                         }
                         if ((primaryGeneName == null) && (!srcGeneNames.isEmpty())) {
-                            primaryGeneName = new String(getAttributeValue((Item) srcGeneNames
+                            LOG.error("no primaryGeneName found for protein: " + proteinName);
+                            // tmpGeneName just used for logging
+                            tmpGeneName = new String(getAttributeValue((Item) srcGeneNames
                                         .get(0), "name"));
+                        } else {
+                            tmpGeneName = primaryGeneName;
                         }
                     }
+                    String geneOrganismDbId = null;
                     if (taxonId == 7227) {
-                        // Drosophila - take the gene id from the FlyBase dbReference that has a
-                        // property type = "gene designation" value = the primary gene name
-                        if (primaryGeneName == null) {
-                            throw new InterMineException("primaryGeneName is null for Drosophila"
-                                    + " gene for protein with name " + proteinName);
-                        }
-                        List srcDbReferences = getItemsInCollection(srcItem
-                                .getCollection("dbReferences"), "type", "FlyBase");
-                        Iterator srcDbRefIter = srcDbReferences.iterator();
-                        while (srcDbRefIter.hasNext()) {
-                            Item srcDbReference = (Item) srcDbRefIter.next();
-                            String type = getAttributeValue(srcDbReference, "type");
-                            if ("FlyBase".equals(type)) {
-                                if ((srcDbReferences.size() == 1) && (srcGenes.size() == 1)) {
-                                    geneIdentifier = new String(getAttributeValue(srcDbReference,
-                                                "id"));
-                                } else {
-                                    List srcProperties = getItemsInCollection(srcDbReference
-                                            .getCollection("propertys"));
-                                    Iterator srcPropertyIter = srcProperties.iterator();
-                                    while (srcPropertyIter.hasNext()) {
-                                        Item srcProperty = (Item) srcPropertyIter.next();
-                                        String srcPropertyValue = getAttributeValue(srcProperty,
-                                                "value");
-                                        if ("gene designation".equals(getAttributeValue(srcProperty,
-                                                        "type"))
-                                                && (geneNames.contains(srcPropertyValue)
-                                                    || geneNames.contains(srcPropertyValue
-                                                        .substring(srcPropertyValue
-                                                            .lastIndexOf("\\") + 1)))) {
-                                            geneIdentifier = new String(getAttributeValue(
-                                                        srcDbReference, "id"));
-                                        }
-                                    }
-                                }
-                            } else {
-                                LOG.error("Found a non-FlyBase dbReference when it should have been"
-                                        + " filtered out");
-                            }
-                        }
-                        if (geneIdentifier == null) {
-                            LOG.warn("Could not find identifier for Drosophila gene with name "
-                                    + primaryGeneName + " for protein with name " + proteinName);
-                        }
-                    } else if (taxonId == 6239) {
-                        // Caenorhabditis - get the gene id from the ORF name
                         Iterator srcGeneNameIter = srcGeneNames.iterator();
                         while (srcGeneNameIter.hasNext()) {
                             Item srcGeneName = (Item) srcGeneNameIter.next();
@@ -398,23 +308,54 @@ public class UniprotDataTranslator extends DataTranslator
                                 geneIdentifier = new String(getAttributeValue(srcGeneName, "name"));
                             }
                         }
-                        if (geneIdentifier == null) {
-                            LOG.warn("Could not find identifier for C. Elegans gene with name "
-                                    + primaryGeneName + " for protein with name " + proteinName);
+                        geneOrganismDbId = getDbReferenceValue(srcItem, "FlyBase", geneNames);
+                    } else if (taxonId == 6239) {
+                        // C elagans
+                        // Gene.name = primaryGeneName
+                        // Gene.identifier = name with type ORF
+                        // Gene.organismDbId = dbReference with type = WormBase corresponding to geneIdentifier
+                        // if identifier
+                        Iterator srcGeneNameIter = srcGeneNames.iterator();
+                        while (srcGeneNameIter.hasNext()) {
+                            Item srcGeneName = (Item) srcGeneNameIter.next();
+                            if ("ORF".equals(getAttributeValue(srcGeneName, "type"))) {
+                                geneIdentifier = new String(getAttributeValue(srcGeneName, "name"));
+                            }
                         }
+
+                        geneOrganismDbId = getDbReferenceValue(srcItem, "WormBase", geneNames);
+
+                    }
+                    System.out.println("name: " + primaryGeneName + "\tidentifier: " + geneIdentifier + "\torgansismDbId: " + geneOrganismDbId);
+                    if (geneOrganismDbId == null) {
+                        LOG.warn("Could not find organismDbId for " + taxonId + " " + (geneIdentifier == null ? "" : "(no geneIdentifier)")
+                                 + " for gene with name " + tmpGeneName + " for protein with name " + proteinName);
+                    }
+                    if (geneIdentifier == null) {
+                        LOG.warn("Could not find geneIdentifier for " + taxonId + " " + (geneOrganismDbId == null ? "" : "(no geneOrganismDbId)")
+                                 + " gene with name " + tmpGeneName + " for protein with name " + proteinName);
                     }
                     if (geneIdentifier != null) {
                         // We have a gene id.
                         String geneId = (String) geneIdentifierToId.get(geneIdentifier);
                         if (geneId == null) {
-                            Item gene = new Item(getUniqueIdentifier(), TGT_NS + "Gene", "");
-                            gene.addAttribute(new Attribute("organismDbId", geneIdentifier));
+                            Item gene = createItem(tgtNs + "Gene", "");
+                            gene.addAttribute(new Attribute("identifier", geneIdentifier));
                             if (primaryGeneName != null) {
-                                gene.addAttribute(new Attribute("identifier", primaryGeneName));
+                                gene.addAttribute(new Attribute("name", primaryGeneName));
+                            }
+                            if (geneOrganismDbId != null) {
+                                gene.addAttribute(new Attribute("organismDbId", geneOrganismDbId));
                             } else {
-                                gene.addAttribute(new Attribute("identifier", geneIdentifier));
+                                LOG.error("geneOrganismDbId was null" + geneIdentifier);
                             }
                             gene.addReference(geneOrganismReference);
+
+                            // add UniProt Database to evidence collection
+                            ReferenceList evidence1 = new ReferenceList("evidence", new ArrayList());
+                            evidence1.addRefId(getDatabaseId());
+                            protein.addCollection(evidence1);
+
                             ReferenceList geneSynonyms = new ReferenceList("synonyms",
                                     new ArrayList());
                             String primaryName = null;
@@ -423,18 +364,7 @@ public class UniprotDataTranslator extends DataTranslator
                                 Item srcGeneName = (Item) srcGeneNameIter.next();
                                 String type = getAttributeValue(srcGeneName, "type");
                                 String name = getAttributeValue(srcGeneName, "name");
-                                if ("primary".equals(type)) {
-                                    gene.addAttribute(new Attribute("name", name));
-                                } else {
-                                    Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym",
-                                                            "");
-                                    synonym.addAttribute(new Attribute("value", name));
-                                    synonym.addAttribute(new Attribute("type", type));
-                                    synonym.addReference(new Reference("subject",
-                                                                       gene.getIdentifier()));
-                                    synonym.addReference(new Reference("source", databaseId));
-                                    retval.add(synonym);
-                                }
+                                retval.add(createSynonym(gene.getIdentifier(), type, name));
                             }
                             gene.addCollection(geneSynonyms);
                             geneId = gene.getIdentifier();
@@ -446,21 +376,90 @@ public class UniprotDataTranslator extends DataTranslator
                             protein.addCollection(geneCollection);
                         }
                         geneCollection.addRefId(geneId);
+                    } else {
+                        LOG.error("geneIdentifier was null " + taxonId + " for protein " + proteinName);
                     }
                 }
                 retval.add(protein);
                 return retval;
             }
-        } else {
-            LOG.warn("Found non-EntryType Item");
         }
         return Collections.EMPTY_SET;
+    }
+
+
+    private Item createSynonym(String subjectId, String type, String value) {
+        Item synonym = createItem(tgtNs + "Synonym", "");
+        synonym.addReference(new Reference("subject", subjectId));
+        synonym.addAttribute(new Attribute("type", type));
+        synonym.addAttribute(new Attribute("value", value));
+        synonym.addReference(new Reference("source", getDatabaseId()));
+        return synonym;
+    }
+
+    private String getDatabaseId() {
+        if (databaseId == null) {
+            databaseId = getDatabase().getIdentifier();
+        }
+        return databaseId;
+    }
+
+    private Item getDatabase() {
+        if (database == null) {
+            database = createItem(tgtNs + "Database", "");
+            database.addAttribute(new Attribute("title", "UniProt"));
+        }
+        return database;
+    }
+
+    protected String getDbReferenceValue(Item srcItem, String dbName, Set geneNames) throws ObjectStoreException {
+        // Drosophila - take the gene id from the FlyBase dbReference that has a
+        // property type = "gene designation" value = the primary gene name
+        String geneIdentifier = null;
+        List srcDbRefs = getItemsInCollection(srcItem.getCollection("dbReferences"), "type", dbName);
+        Iterator srcDbRefIter = srcDbRefs.iterator();
+        while (srcDbRefIter.hasNext()) {
+            Item srcDbReference = (Item) srcDbRefIter.next();
+            String type = getAttributeValue(srcDbReference, "type");
+            if (dbName.equals(type)) {
+                // uncomment to set geneIdentifier if there is no propertys collection present (?)
+                //if ((srcDbRefs.size() == 1) && (srcGenes.size() == 1)) {
+                //    geneIdentifier = new String(getAttributeValue(srcDbReference,"id"));
+                //} else {
+                List srcProperties = getItemsInCollection(srcDbReference.getCollection("propertys"));
+                Iterator srcPropertyIter = srcProperties.iterator();
+                while (srcPropertyIter.hasNext()) {
+                    Item srcProperty = (Item) srcPropertyIter.next();
+                    String srcPropertyValue = getAttributeValue(srcProperty, "value");
+                    if ("gene designation".equals(getAttributeValue(srcProperty, "type"))
+                        && (geneNames.contains(srcPropertyValue)
+                            || geneNames.contains(srcPropertyValue
+                                                  .substring(srcPropertyValue
+                                                             .lastIndexOf("\\") + 1)))) {
+                        geneIdentifier = new String(getAttributeValue(
+                                                                      srcDbReference, "id"));
+                    }
+                }
+                if (geneIdentifier == null) {
+                    LOG.error("Found dbRefs (" + srcDbRefs.size() + ") but unable to match gene designation");
+                }
+            } else {
+                LOG.error("Found a non-FlyBase dbReference when it should have been"
+                          + " filtered out");
+            }
+        }
+        return geneIdentifier;
     }
 
     public List getItemsInCollection(ReferenceList col) throws ObjectStoreException {
         return getItemsInCollection(col, null, null);
     }
 
+
+    /**
+     * Given a ReferenceList fetch items and return a list of Items in the order that their
+     * identifiers appear in the original ReferenceList.
+     */
     public List getItemsInCollection(ReferenceList col, String attributeName, String attributeValue)
         throws ObjectStoreException {
         if ((col == null) || col.getRefIds().isEmpty()) {
@@ -487,15 +486,24 @@ public class UniprotDataTranslator extends DataTranslator
             description.add(new FieldNameAndValue(attributeName, attributeValue, false));
         }
         List unconvertedResults = srcItemReader.getItemsByDescription(description);
-        List retval = new ArrayList();
+        Map itemMap = new HashMap();
         Iterator uncoIter = unconvertedResults.iterator();
         while (uncoIter.hasNext()) {
-            org.intermine.model.fulldata.Item item = (org.intermine.model.fulldata.Item) uncoIter
-                .next();
-            retval.add(ItemHelper.convert(item));
+            Item item = ItemHelper.convert((org.intermine.model.fulldata.Item) uncoIter.next());
+            itemMap.put(item.getIdentifier(), item);
+        }
+        // now put items in same order as identifiers in ReferenceList
+        List retval = new ArrayList();
+        refIdIter = col.getRefIds().iterator();
+        while (refIdIter.hasNext()) {
+            Item tmpItem = (Item) itemMap.get(refIdIter.next());
+            if (tmpItem != null) {
+                retval.add(tmpItem);
+            }
         }
         return retval;
     }
+
 
     public static String getAttributeValue(Item item, String name) {
         Attribute attribute = item.getAttribute(name);
@@ -505,9 +513,6 @@ public class UniprotDataTranslator extends DataTranslator
         return null;
     }
 
-    public String getUniqueIdentifier() {
-        return "0_" + (idSequence++);
-    }
 
     /**
      * Main method
