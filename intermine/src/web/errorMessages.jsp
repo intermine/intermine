@@ -12,6 +12,16 @@
   <br/>
 </logic:messagesPresent>
 
+<c:if test="${!empty ERRORS}">
+  <div class="errors">
+    <c:forEach items="${ERRORS}" var="error">
+      <c:out value="${error}"/><br/>
+    </c:forEach>
+  </div>
+  <br/>
+  <c:remove var="ERRORS" scope="session"/>
+</c:if>
+
 <logic:messagesPresent message="true">
   <div class="messages">
     <html:messages id="message" message="true">
@@ -21,12 +31,15 @@
   <br/>
 </logic:messagesPresent>
 
-<c:if test="${!empty MESSAGE}">
+<c:if test="${!empty MESSAGES}">
   <div class="messages">
-    <c:out value="${MESSAGE}"/>
+    <c:forEach items="${MESSAGES}" var="message">
+      <c:out value="${message}"/><br/>
+    </c:forEach>
   </div>
   <br/>
-  <c:remove var="MESSAGE" scope="session"/>
+  <c:remove var="MESSAGES" scope="session"/>
 </c:if>
+
 
 <!-- /errorMessages.jsp -->
