@@ -40,14 +40,13 @@
                 <listitem>Secure POP (incoming mail):
                     <itemizedlist>
                         <listitem>server: mail.flymine.org</listitem>
-                        <listitem>port: 995 [the change should be automatic when you select &quot;user SSL encryption&quot;]</listitem>
+                        <listitem>port (internal network only for now): 995 [the change should be automatic when you select &quot;user SSL encryption&quot;]</listitem>
                     </itemizedlist>
                 </listitem>
                 <listitem>Secure IMAP (incoming mail):
                     <itemizedlist>
                         <listitem>server: mail.flymine.org</listitem>
-                        <listitem>port on the internal network: 993 [the change should be automatic when you select &quot;user SSL encryption&quot;]</listitem>
-                        <listitem>port from outside: 22993</listitem>
+                        <listitem>port: 993 [the change should be automatic when you select &quot;user SSL encryption&quot;]</listitem>
                     </itemizedlist>
                 </listitem>
                 <listitem>Outgoing mail/SMTP (on the internal network only):
@@ -93,6 +92,12 @@
         </sect2>
 
         <sect2>
+            <title>Imap Server</title>
+
+            <para>The previous "University of Washington IMAP" server has been replaced by Cyrus Imap. Among the new features, the most useful might be possibility of creating nested folders. Messages are kept on specific repository and are not visible at the filesystem level for a normal user (they are owned by "cyrus"). The (user) email filtering is done by "sieve" not by exim.</para>
+        </sect2>
+
+         <sect2>
             <title>Server</title>
 
             <para>The mail server (<filename>flymine.flymine.org</filename>) resides in the DMZ and is actually shared with some other services like DNS, CVS, Web, etc... The integrity of data is provided by disk mirroring. There is currently no backup policy.</para>
