@@ -84,6 +84,7 @@
   <path id="demo.class.path">
     <fileset dir="../../intermine-www/dist" includes="*.jar"/>
     <pathelement path="../../intermine-www/build/resources/test"/>
+    <pathelement path="../../intermine-www/build/model/testmodel"/>
     <pathelement path="../../intermine-www/build/resources"/>
   </path>
 
