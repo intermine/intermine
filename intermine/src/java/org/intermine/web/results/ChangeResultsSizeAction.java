@@ -126,8 +126,9 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         Map savedBags = (Map) session.getAttribute("savedBags");
+        Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
         Results results = (Results) session.getAttribute("results");
-        String [] selectedObjects = changeResultsForm.getSelectedObjects();
+        String[] selectedObjects = changeResultsForm.getSelectedObjects();
 
         Collection bag = (Collection) savedBags.get(bagName);
 
@@ -146,11 +147,11 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
             int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
 
             bag.add(((ResultsRow) results.get(row)).get(column));
-
         }
 
         // Save the altered bag in the savedBags map
         savedBags.put(bagName, bag);
+        savedBagsInverse.put(bag, bagName);
     }
 
     /**

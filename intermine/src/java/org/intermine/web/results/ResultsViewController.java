@@ -12,6 +12,7 @@ package org.flymine.web.results;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.IdentityHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ public class ResultsViewController extends TilesAction
 {
     protected static final String DISPLAYABLERESULTS_NAME = "resultsTable";
     protected static final String SAVEDBAGS_NAME = "savedBags";
+    protected static final String SAVEDBAGSINVERSE_NAME = "savedBagsInverse";
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -53,34 +55,42 @@ public class ResultsViewController extends TilesAction
      *
      * @exception ServletException if a servlet error occurs
      */
- public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws ServletException {
-    HttpSession session = request.getSession();
-
-    Results results = (Results) session.getAttribute("results");
-
-    // Do we already have a configuration object? If we do, update the
-    // new one to inherit properties off the old one
-    DisplayableResults drOrig = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
-    DisplayableResults drNew = new DisplayableResults(results);
-    if (drOrig != null) {
-        drNew.update(drOrig);
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) throws ServletException {
+        HttpSession session = request.getSession();
+        
+        Results results = (Results) session.getAttribute("results");
+        
+        // Do we already have a configuration object? If we do, update the
+        // new one to inherit properties off the old one
+        DisplayableResults drOrig = (DisplayableResults)
+            session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults drNew = new DisplayableResults(results);
+        if (drOrig != null) {
+            drNew.update(drOrig);
+        }
+        
+        // Do we have any saved bags - if not add an empty map to the session
+        Map savedBags = (Map) session.getAttribute(SAVEDBAGS_NAME);
+        if (savedBags == null) {
+            savedBags = new HashMap();
+        }
+        
+        Map savedBagsInverse = (Map) session.getAttribute(SAVEDBAGSINVERSE_NAME);
+        if (savedBagsInverse == null) {
+            savedBagsInverse = new IdentityHashMap();
+        }
+        
+        // Put required things on the request or session or tile context
+        
+        // The DisplayableResults object
+        session.setAttribute(DISPLAYABLERESULTS_NAME, drNew);
+        
+        // The savedBags Map
+        session.setAttribute(SAVEDBAGS_NAME, savedBags);
+        session.setAttribute(SAVEDBAGSINVERSE_NAME, savedBagsInverse);
+        
+        return null;
     }
-
-    // Do we have any saved bags - if not add an empty map to the session
-    Map savedBags = (Map) session.getAttribute(SAVEDBAGS_NAME);
-    if (savedBags == null) {
-        savedBags = new HashMap();
-    }
-
-    // Put required things on the request or session or tile context
-
-    // The DisplayableResults object
-    session.setAttribute(DISPLAYABLERESULTS_NAME, drNew);
-
-    // The savedBags Map
-    session.setAttribute(SAVEDBAGS_NAME, savedBags);
-
-    return null;
-  }
 }
