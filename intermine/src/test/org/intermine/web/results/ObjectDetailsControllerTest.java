@@ -11,21 +11,36 @@ package org.intermine.web.results;
  */
 
 import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.struts.tiles.ComponentContext;
 
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.Constants;
 
+import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 
 import servletunit.struts.MockStrutsTestCase;
 
 public class ObjectDetailsControllerTest extends MockStrutsTestCase
 {
+    ObjectStore os;
+
+    public void setUp() throws Exception {
+        super.setUp();
+        Department d = new Department();
+        Set classes = new HashSet();
+        classes.add(Company.class);
+        d.setCompany((Company) DynamicUtil.createObject(classes));
+        os = new ObjectStoreDummyImpl();
+        os.cacheObjectById(new Integer(42), d);
+        ((ObjectStoreDummyImpl) os).setModel(Model.getInstanceByName("testmodel"));
+    }
+
     public ObjectDetailsControllerTest(String arg1) {
         super(arg1);
     }
@@ -35,15 +50,12 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initObjectDetails");
 
-        ObjectStore os = ObjectStoreFactory.getObjectStore();
-        Results r = os.execute(new IqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
-        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
-        System.out.println(d);
-
-        addRequestParameter("id", d.getId().toString());
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        addRequestParameter("id", "42");
 
         actionPerform();
 
+        verifyNoActionErrors();
         assertNotNull(context.getAttribute("leafClds"));
         assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Department")));
     }
@@ -53,16 +65,13 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initObjectDetails");
 
-        ObjectStore os = ObjectStoreFactory.getObjectStore();
-        Results r = os.execute(new IqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
-        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
-        System.out.println(d);
-
-        addRequestParameter("id", d.getId().toString());
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        addRequestParameter("id", "42");
         addRequestParameter("field", "company");
 
         actionPerform();
 
+        verifyNoActionErrors();
         assertNotNull(context.getAttribute("leafClds"));
         assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company")));
     }

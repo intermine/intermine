@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,8 +27,8 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.Constants;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -58,12 +60,14 @@ public class ResultsCellController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Object o = request.getAttribute("object");
 
         Set leafClds = new HashSet();
 
         if (o instanceof InterMineObject) {
-            Model model = ObjectStoreFactory.getObjectStore().getModel();
             for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
                 leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
             }

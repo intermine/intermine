@@ -10,8 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.io.InputStream;
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
@@ -21,6 +19,7 @@ import org.apache.struts.config.ModuleConfig;
 
 import org.intermine.metadata.Model;
 import org.intermine.web.config.WebConfig;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
@@ -32,7 +31,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 
 public class InitialiserPlugin implements PlugIn
 {
-
     /**
      * Init method called at Servlet initialisation
      *
@@ -50,12 +48,14 @@ public class InitialiserPlugin implements PlugIn
         ServletContext context = servlet.getServletContext();
 
         try {
-            InputStream is = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
-            WebConfig wc = WebConfig.parse(is);
-            context.setAttribute("webconfig", wc);
-
-            Model model = ObjectStoreFactory.getObjectStore().getModel();
+            WebConfig wc =
+                WebConfig.parse(context.getResourceAsStream("/WEB-INF/webconfig-model.xml"));
+            ObjectStore os = ObjectStoreFactory.getObjectStore();
+            Model model = os.getModel();
+            
+            context.setAttribute(Constants.OBJECTSTORE, os);
             context.setAttribute(Constants.MODEL, model);
+            context.setAttribute("webconfig", wc);
         } catch (Exception e) {
             throw new ServletException("there was a problem while initialising", e);
         }

@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,10 +27,10 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.Constants;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -60,16 +62,19 @@ public class ObjectDetailsController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        Integer id = new Integer((String) request.getParameter("id"));
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
 
-        ObjectStore os = ObjectStoreFactory.getObjectStore();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Integer id = new Integer((String) request.getParameter("id"));
+        String field = request.getParameter("field");
 
         InterMineObject o = os.getObjectById(id);
-        
-        String field = request.getParameter("field");
+
         if (field != null) {
             o = (InterMineObject) TypeUtil.getFieldValue(o, field);
         }
+
         if (o == null) {
             return null;
         }

@@ -19,6 +19,11 @@ package org.intermine.web;
 public interface Constants
 {
     /**
+     * The attribute name to use when storing the ObjectStore in the ServletContext.
+     */
+    public static final String OBJECTSTORE = "OBJECTSTORE";
+
+    /**
      * The attribute name to use when storing the Model in the ServletContext.
      */
     public static final String MODEL = "MODEL";
