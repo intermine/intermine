@@ -77,7 +77,7 @@ Full details:<br/><br/>
           </html:link>
         </c:when>
         <c:otherwise>
-          <html:link action="/modifyDetails?method=verbosify&field=${entry.key}" anchor="${entry.key}">
+          <html:link action="/modifyDetails?method=verbosify&field=${entry.key}">
             <img border="0" src="images/plus.png" alt="+"/>
           </html:link>
         </c:otherwise>
@@ -125,9 +125,19 @@ Full details:<br/><br/>
         <table rules="all" style="margin-left: 20px" cellpadding="5">
           <thead style="text-align: center">
             <tr>
-              <td/>
+              <td rowspan="2"/>
               <c:forEach items="${collection.table.keyAttributes}" var="fd">
-                <td><b>${fd.name}</b></td>
+                <td rowspan="2"><b>${fd.name}</b></td>
+              </c:forEach>
+              <c:forEach items="${collection.table.keyReferences}" var="entry">
+                <td colspan="${fn:length(entry.value)}"><b>${entry.key.name}</b></td>
+              </c:forEach>
+            </tr>
+            <tr>
+              <c:forEach items="${collection.table.keyReferences}" var="entry">
+                <c:forEach items="${entry.value}" var="fd">
+                  <td><b>${fd.name}</b></td>
+                </c:forEach>
               </c:forEach>
             </tr>
           </thead>
