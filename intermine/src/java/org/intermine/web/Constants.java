@@ -33,6 +33,21 @@ public interface Constants
     public static final String TEMPLATE_QUERIES = "TEMPLATE_QUERIES";
     
     /**
+     * ServletContext attribute maps category name to List of TemplateQuerys
+     */
+    public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
+    
+    /**
+     * ServletContext attribute maps category name to List of class names.
+     */
+    public static final String CATEGORY_CLASSES = "CATEGORY_CLASSES";
+    
+    /**
+     * ServletContext attribute, List of category names.
+     */
+    public static final String CATEGORIES = "CATEGORIES";
+    
+    /**
      * ServletContext attribute, provides an interface for actions and
      * controllers to query some model meta-data like class counts and
      * field enumerations.
