@@ -117,7 +117,8 @@ public class BestQueryExplainer extends BestQuery
 
         long elapsed = System.currentTimeMillis() - start.getTime();
         if ((timeLimit >= 0) && (elapsed > timeLimit)) {
-            throw new BestQueryException("Optimiser reached time limit");
+            throw new BestQueryException("Optimiser reached time limit (limit = " + timeLimit
+                    + "ms, elapsed = " + elapsed + "ms)");
         }
         if (bestCandidate != null) {
             // throw BestQueryException if the bestQuery will take less time to run than the
@@ -215,13 +216,13 @@ public class BestQueryExplainer extends BestQuery
             if (bestCandidate != null) {
                 long elapsed = System.currentTimeMillis() - start.getTime();
                 if ((timeLimit >= 0) && (elapsed > timeLimit)) {
-                    System.out .println("QueryOptimiser: bailing out early: Time limit reached");
+                    //System.out .println("QueryOptimiser: bailing out early: Time limit reached");
                     return bestCandidate;
                 }
                 if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
-                    System.out .println("QueryOptimiser: bailing out early: Explain time: "
-                            + bestCandidate.getExplain().getTime() + ", elapsed time: " + elapsed
-                            + ", time limit: " + timeLimit);
+                    //System.out .println("QueryOptimiser: bailing out early: Explain time: "
+                    //        + bestCandidate.getExplain().getTime() + ", elapsed time: " + elapsed
+                    //        + ", time limit: " + timeLimit);
                     return bestCandidate;
                 }
             }
