@@ -73,7 +73,7 @@ public class SaveQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
         }
         
-        SessionMethods.saveQuery(request, queryName, query);
+        SessionMethods.saveQuery(session, queryName, query);
 
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
         if (messages == null) {
