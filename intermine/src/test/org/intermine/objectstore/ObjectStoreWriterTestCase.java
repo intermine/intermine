@@ -27,7 +27,7 @@ public class ObjectStoreWriterTestCase extends TestCase
     protected Company company1, company2;
     protected Department department1;
     protected CEO employee1;
-    protected Contractor contractor1, contractor2, contractor3;
+    protected Contractor contractor1, contractor2, contractor3, contractor4;
 
     protected Address addressTemplate;
     protected Company companyTemplate;
@@ -76,6 +76,11 @@ public class ObjectStoreWriterTestCase extends TestCase
         contractor3.setName("Contractor 3");
         contractor3.setBusinessAddress(address1);
         contractor3.setPersonalAddress(address1);
+
+        contractor4 = new Contractor();
+        contractor4.setName("Contractor 4");
+        contractor4.setBusinessAddress(address1);
+        contractor4.setPersonalAddress(address1);
 
         addressTemplate = new Address();
         addressTemplate.setAddress("Employee Street, BVille");
@@ -197,14 +202,13 @@ public class ObjectStoreWriterTestCase extends TestCase
     public void testStoreObjectWithReferencedObject() throws Exception {
 
         Department department2 = null;
+        Department department3 = null;
 
         try {
-            writer.beginTransaction();
             writer.store(address1);
             writer.store(company1);
             writer.store(department1);
             writer.store(employee1);
-            writer.commitTransaction();
 
             // Check that the department is referenced
             Object returned = writer.getObjectByExample(employeeTemplate);
@@ -215,14 +219,11 @@ public class ObjectStoreWriterTestCase extends TestCase
             department2 = new Department();
             department2.setName("Department 2");
             department2.setCompany(company1);
-            writer.beginTransaction();
             writer.store(department2);
-            writer.commitTransaction();
+
             // Override the department
             employee1.setDepartment(department2);
-            writer.beginTransaction();
             writer.store(employee1);
-            writer.commitTransaction();
 
             // Check that the new department is referenced
             returned = writer.getObjectByExample(employeeTemplate);
@@ -232,17 +233,33 @@ public class ObjectStoreWriterTestCase extends TestCase
 
             // Set department to null
             employee1.setDepartment(null);
-            writer.beginTransaction();
             writer.store(employee1);
-            writer.commitTransaction();
 
-            // TODO: currently the department does not get set to null in the database
-            // - it stays at whatever it was previously - this is not what we want
             // Check that the department is not referenced
             returned = writer.getObjectByExample(employeeTemplate);
 
-            //assertEquals(employee1, returned);
-            //assertEquals(null, ((Employee) returned).getDepartment());
+            assertEquals(employee1, returned);
+            assertEquals(null, ((Employee) returned).getDepartment());
+
+
+            // Store a reference to department that is not yet in the database
+            department3 = new Department();
+            department3.setName("Department 3 (not in db)");
+            department3.setCompany(company1);
+            employee1.setDepartment(department3);
+            writer.store(employee1);
+
+            // Now store department3
+            writer.store(department3);
+
+            // Check that the department3 is referenced, even though it was not
+            // previously in database
+            returned = writer.getObjectByExample(employeeTemplate);
+
+            assertEquals(employee1, returned);
+            assertEquals(department3, ((Employee) returned).getDepartment());
+
+
         } finally {
             writer.delete(employee1);
             writer.delete(department1);
@@ -288,14 +305,25 @@ public class ObjectStoreWriterTestCase extends TestCase
             assertTrue(returnedCompany.getDepartments().contains(department1));
             assertTrue(returnedCompany.getDepartments().contains(department2));
 
+            // Remove one
+            company1.getDepartments().remove(department1);
+            department1.setCompany(company2);
+            writer.store(company1);
+            writer.store(department1);
+
+            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            assertEquals(1, returnedCompany.getDepartments().size());
+            assertTrue(returnedCompany.getDepartments().contains(department2));
+
             // Set to empty collection in original object - department links should disappear
-            // TODO: make it so
 
             company1.getDepartments().clear();
+            department2.setCompany(company2);
+            writer.store(department2);
             writer.store(company1);
 
             returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
-            //assertEquals(0, returnedCompany.getDepartments().size());
+            assertEquals(0, returnedCompany.getDepartments().size());
 
         } finally {
             writer.delete(department1);
@@ -313,18 +341,18 @@ public class ObjectStoreWriterTestCase extends TestCase
 
         try {
 
-            // Add Companies to contractors
-            contractor1.getCompanys().add(company1);
-            contractor2.getCompanys().add(company1);
-            contractor1.getCompanys().add(company2);
-            contractor2.getCompanys().add(company2);
+            // Add contractors to companies
+            company1.getContractors().add(contractor1);
+            company2.getContractors().add(contractor1);
+            company1.getContractors().add(contractor2);
+            company2.getContractors().add(contractor2);
 
             writer.store(address1);
-            writer.store(company1);
-            writer.store(company2);
             writer.store(contractor1);
             writer.store(contractor2);
             writer.store(contractor3);
+            writer.store(company1);
+            writer.store(company2);
 
             // Check we have collections filled on both sides
 
@@ -346,15 +374,13 @@ public class ObjectStoreWriterTestCase extends TestCase
             company1.getContractors().add(contractor3);
             contractor3.getCompanys().add(company1);
             writer.store(company1);
-            writer.store(contractor3);
             returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
 
-            // TODO: these should pass
             assertNotNull(returnedCompany);
-            //assertEquals(3, returnedCompany.getContractors().size());
-            //assertTrue(returnedCompany.getContractors().contains(contractor1));
-            //assertTrue(returnedCompany.getContractors().contains(contractor2));
-            //assertTrue(returnedCompany.getContractors().contains(contractor3));
+            assertEquals(3, returnedCompany.getContractors().size());
+            assertTrue(returnedCompany.getContractors().contains(contractor1));
+            assertTrue(returnedCompany.getContractors().contains(contractor2));
+            assertTrue(returnedCompany.getContractors().contains(contractor3));
 
             returnedContractor = (Contractor) writer.getObjectByExample(contractor3Template);
 
@@ -363,12 +389,21 @@ public class ObjectStoreWriterTestCase extends TestCase
             assertTrue(returnedContractor.getCompanys().contains(company1));
 
             // Delete a contractor from company1's collection
+            company1.getContractors().remove(contractor2);
+            writer.store(company1);
+            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+
+            assertNotNull(returnedCompany);
+            assertEquals(2, returnedCompany.getContractors().size());
+            assertTrue(returnedCompany.getContractors().contains(contractor1));
+            assertTrue(returnedCompany.getContractors().contains(contractor3));
 
 
         } finally {
             writer.delete(contractor1);
             writer.delete(contractor2);
             writer.delete(contractor3);
+            writer.delete(contractor4);
             writer.delete(company1);
             writer.delete(company2);
             writer.delete(address1);
