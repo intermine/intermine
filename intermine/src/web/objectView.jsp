@@ -26,7 +26,7 @@
         <nobr>
           <b>
             <c:forEach var="cld" items="${leafClds}">
-              <c:out value="${cld.unqualifiedName}"/>
+              <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
             </c:forEach>
           </b>
           [<html:link action="/objectDetails?id=${object.id}">
