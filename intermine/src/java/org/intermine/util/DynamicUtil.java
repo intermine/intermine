@@ -31,7 +31,6 @@ import org.flymine.metadata.ClassDescriptor;
  */
 public class DynamicUtil
 {
-    protected static final Logger LOG = Logger.getLogger(DynamicUtil.class);
 
     /**
      * Cannot construct
@@ -48,9 +47,6 @@ public class DynamicUtil
      * @throws ClassNotFoundException if any class cannot be found
      */
     public static Object createObject(Model model, Set interfaces) throws ClassNotFoundException {
-        // Need to go up the ClassDescriptor inheritence tree so that the
-        // created object can be cast to everything
-
         Set expandedInterfaces = new HashSet();
         Iterator intIter = interfaces.iterator();
         while (intIter.hasNext()) {
@@ -63,30 +59,10 @@ public class DynamicUtil
             if (!cld.isInterface()) {
                 throw new IllegalArgumentException(intName + " is not an interface");
             }
-            addInterface(cld, expandedInterfaces);
         }
 
         // Now create the object
-        return DynamicBean.create(null, convertToClassArray(expandedInterfaces));
-
-    }
-
-    /**
-     * Add an interface (and its parents) to a Set
-     *
-     * @param cld the ClassDescriptor of the interface to add
-     * @param set the set of interfaces to add to
-     */
-    protected static void addInterface(ClassDescriptor cld, Set set) {
-        // Add this interface
-        set.add(cld.getName());
-
-        // Recurse up the inheritence hierarchy
-        Collection ints = cld.getInterfaceDescriptors();
-        Iterator iter = ints.iterator();
-        while (iter.hasNext()) {
-            addInterface((ClassDescriptor) iter.next(), set);
-        }
+        return DynamicBean.create(null, convertToClassArray(interfaces));
 
     }
 
