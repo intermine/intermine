@@ -12,7 +12,7 @@
   <c:otherwise>
     <font class="resultsCellValue">
       <nobr>
-        <c:out value="${object}"/>
+        <c:out value="${object}" default="null"/>
       </nobr>
     </font>
   </c:otherwise>
