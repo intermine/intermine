@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 
+<!-- saveQuery.jsp -->
 <c:if test="${query != null}">
   <html:form action="/saveQuery">
     <html:text property="queryName"/>
@@ -10,3 +11,4 @@
     </html:submit>
   </html:form>
 </c:if>
+<!-- /saveQuery.jsp -->
