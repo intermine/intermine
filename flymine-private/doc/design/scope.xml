@@ -22,11 +22,11 @@
 <title>Scope</title>
 
 
-<ulist>
-<item>Gough SCOP superfamily HMMs.</item>
-<item>SCOP/CATH et al structural databases.</item>
-<item>Interpro.</item>
-</ulink>
+<itemizedlist>
+<listitem>Gough SCOP superfamily HMMs.</listitem>
+<listitem>SCOP/CATH et al structural databases.</listitem>
+<listitem>Interpro.</listitem>
+</itemizedlist>
 
 </sect1>
 
