@@ -76,6 +76,9 @@
     </c:choose>
     <c:if test="${!classStatus.last}"><hr/></c:if>
   </c:forEach>
-  <html:submit property="action"><fmt:message key="query.run"/></html:submit>
+  <%-- only display the run query button if at least one queryclass is present --%>
+  <c:if test="${queryClass != null}">
+    <html:submit property="action"><fmt:message key="query.run"/></html:submit>
+  </c:if>
 </html:form>
 <!-- /queryBuild.jsp -->
