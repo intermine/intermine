@@ -27,19 +27,19 @@ public class FlyMineSequence extends SimpleSequence
      * The LocatedSequenceFeature that was passed to the constructor.
      */
     private LocatedSequenceFeature feature = null;
-    
+
     /**
      * The Protein that was passed to the constructor.
      */
     private Protein protein = null;
-    
+
     /**
      * Create a new FlyMineSequence from a LocatedSequenceFeature
      * @param symbols a DNA SymbolList created from the LocatedSequenceFeature
      * @param feature the LocatedSequenceFeature
      */
     FlyMineSequence (SymbolList symbols, LocatedSequenceFeature feature) {
-        super(symbols, null, feature.getName(), null);
+        super(symbols, null, feature.getIdentifier(), null);
         this.feature = feature;
     }
 
