@@ -12,71 +12,78 @@
 		
 		Plan:
 		Introduction (9 minutes):
-		    Who I am, and what I do (1 minute)
-		    Caveats for this talk - ie what this talk does not do (1 minute):
-		        OJB, Hibernate, etc.
-		    Warning: this talk has InterMine & Flymine as its base (1 minute)
-		    Assumptions that this talk makes (3 minutes):
-		        You don't have a tyrannical DBA breathing down your neck and changing the DB schema under your feet (1 minute)
-		        You want to build a database from data sources and present it to the data users as a read-only database (only half of the talk assumes this) (1 minute)
-		        You wish to use complicated data (1 minute)
-		    What I will be covering: (3 minutes)
-		        Multiple inheritance and CGLib
-		        Collections and references
-		        Objectstores - brief introduction
-		        Queries and results
-		        ObjectStoreWriter and transaction processing
-		        Inserting the data:
-		            Models, ontologies, and OWL
-		            Data transformations and why a simple pipe won't work
-		            DBConverter and DataTranslator
-		            DataLoader
+Title		    Who I am, and what I do (1 minute)
+Intro 1		    Caveats for this talk - ie what this talk does not do (1 minute):
+Intro 1		        OJB, Hibernate, etc.
+Intro 1		    Warning: this talk has InterMine & Flymine as its base (1 minute)
+Intro 2		    Assumptions that this talk makes (3 minutes):
+Intro 2		        You don't have a tyrannical DBA breathing down your neck and changing the DB schema under your feet (1 minute)
+Intro 2		        You want to build a database from data sources and present it to the data users as a read-only database (only half of the talk assumes this) (1 minute)
+Intro 2		        You wish to use complicated data (1 minute)
+Intro 3		    What I will be covering: (3 minutes)
+Intro 3		        Multiple inheritance and CGLib
+Intro 3		        Collections and references
+Intro 3		        Objectstores - brief introduction
+Intro 3		        Queries and results
+Intro 3		        ObjectStoreWriter and transaction processing
+Intro 3		        Inserting the data:
+Intro 3		            Models, ontologies, and OWL
+Intro 3		            Data transformations and why a simple pipe won't work
+Intro 3		            DBConverter and DataTranslator
+Intro 3		            DataLoader
 		Multiple inheritance and CGLib (11 minutes)
-		    Motivation - I'm using biological data, and it doesn't fit (3 minutes)
-		    Classes in the model that implement multiple interfaces (2 minutes)
-		    Interfaces in the model that can have direct implementations (2 minutes)
-		    Objects in the database that are no particular class from the model, but dynamically implement and extend various classes and interfaces from the model (3 minutes)
-		    Objects that implement no other interface than InterMineObject (1 minute)
+MI 1, 2, 3		    Motivation - I'm using biological data, and it doesn't fit (3 minutes)
+MI 4		    Interfaces in the model that can have direct implementations (2 minutes)
+MI 5		    Classes in the model that implement multiple interfaces (2 minutes)
+MI 5		    Objects in the database that are no particular class from the model, but dynamically implement and extend various classes and interfaces from the model (3 minutes)
+MI 6		    Objects that implement no other interface than InterMineObject (1 minute)
+MI 7		    What the model describes
+MI 8		    Using CGLib to create objects of a dynamic class
+MI 9		    Characteristics of such dynamic objects
 		Schemas (13 minutes)
-		    Map all classes onto one table (cheap read & write, really bad data density affects performance, plus field type conflicts) (3 minutes)
-		    Map every class onto an individual table, put each object into only one table (cheap write, read must use UNIONs) (3 minutes)
-		    Map every class onto an individual table, with only the new fields stored in the table, and write each object into all applicable tables (write must use multiple tables, read must use JOIN) (3 minutes)
-		    Map every class onto an individual table, put each object into all applicable tables, have an OBJECT field (cheap & simple reads, write must use multiple tables, quite bad data density, but that does not affect read performance) (4 minutes)
-		Collections and references (3 minutes)
-		    Proxies
-		        Advantages and disadvantages - more in the performance talk
+DS 1		    Map all classes onto one table (cheap read & write, really bad data density affects performance, plus field type conflicts) (3 minutes)
+DS 2		    Map every class onto an individual table, put each object into only one table (cheap write, read must use UNIONs) (3 minutes)
+DS 3		    Map every class onto an individual table, with only the new fields stored in the table, and write each object into all applicable tables (write must use multiple tables, read must use JOIN) (3 minutes)
+DS 4		    Map every class onto an individual table, put each object into all applicable tables, have an OBJECT field (cheap & simple reads, write must use multiple tables, quite bad data density, but that does not affect read performance) (4 minutes)
+DS 5		    Extension to that mapping: truncated classes
+Members 1		Collections and references (3 minutes)
+Members 1,2		    Proxies
 		ObjectStores (7 minutes)
-		    Take queries and return results (2 minutes)
-		    Different implementations for different tasks (3 minutes)
-		        ObjectStoreInterMineImpl
-		        ObjectStorePassThruImpl
-		            ObjectStoreFastCollectionsForTranslatorImpl
-		            ObjectStoreFastCollectionsImpl
-		            ObjectStoreItemPathFollowingImpl
-		            ObjectStoreSafeImpl
-		        ObjectStoreTranslatingImpl
-		        ObjectStoreClient (with ObjectStoreServer)
-		    Caches (2 minutes)
+OS 1		    Take queries and return results (2 minutes)
+OS 1		    Provides lookup by ID
+OS 1		    Different implementations for different tasks (3 minutes)
+OS 1		        ObjectStoreInterMineImpl
+OS 1		        ObjectStorePassThruImpl
+--------		            ObjectStoreFastCollectionsForTranslatorImpl
+--------		            ObjectStoreFastCollectionsImpl
+--------		            ObjectStoreItemPathFollowingImpl
+--------		            ObjectStoreSafeImpl
+--------		        ObjectStoreTranslatingImpl
+OS 1		        ObjectStoreClient (with ObjectStoreServer)
+OS 2		    Caches (2 minutes)
 		Queries and results (27 minutes - 70 minutes so far)
-		    Queries are effectively a description of the results (3 minutes)
-		    Results are Collections of rows (3 minutes)
-		    Results can be multi-column, where each column can be an object, field, constant, or computed value (4 minutes)
-		    Results could be single-column. You could create a special single-column results Collection that is a collection of objects rather than a collection of rows, and use that as a Collection proxy (3 minutes)
-		    Changing the Query - don't. Or use ObjectStoreSafeImpl (3 minutes)
-		    SQL generation and results parsing (5 minutes)
-		    Batching reads, so the Results object is even more lazy (3 minutes)
-		    Maintaining consistency of results by imposing ORDER BY onto the SQL (3 minutes)
+Q&R 1		    Queries are effectively a description of the results (3 minutes)
+Q&R 2		    Results are Collections of rows (3 minutes)
+Q&R 2		    Results can be multi-column, where each column can be an object, field, constant, or computed value (4 minutes)
+Q&R 3		    Results could be single-column. You could create a special single-column results Collection that is a collection of objects rather than a collection of rows, and use that as a Collection proxy (3 minutes)
+Q&R 3		    Results are loaded on-demand
+Q&R 4		    Creating results is done with a query and objectstore, but doesn't actually run a query until it is accessed.
+Q&R 4		    Batching reads, so the Results object is even more lazy. PrefetchManager
+Q&R 5		    SQL generation and results parsing (5 minutes)
+Q&R 6		    Maintaining consistency of results by imposing ORDER BY onto the SQL (3 minutes)
+Q&R 7		    Changing the Query - don't. Or use ObjectStoreSafeImpl (3 minutes)
 		ObjectStoreWriter and transaction processing (12 minutes - 82 minutes so far)
-		    Attached to the ObjectStore (1 minute)
-		    Delete (2 minutes)
-		    Store: (4 minutes)
-		        Setting IDs in the objects and related objects
-		        Deleting any previous object - and the limitations
-		        Merging collections, overwriting everything else
-		    Transactions: (5 minutes)
-		        Beginning (2 minutes)
-		        The state of the ObjectStore during a transaction (1 minute)
-		        Ending (and flushing caches) (2 minutes)
+OSW 1, 2		    Attached to the ObjectStore (1 minute)
+OSW 2		    All operations rely on ID
+OSW 2		    Delete (2 minutes)
+OSW 3		    Store: (4 minutes)
+OSW 3		        Setting IDs in the objects and related objects
+OSW 3		        Deleting any previous object - and the limitations
+OSW 3		        Merging collections, overwriting everything else
+OSW 4		    Transactions: (5 minutes)
+OSW 4		        Beginning (2 minutes)
+OSW 4		        The state of the ObjectStore during a transaction (1 minute)
+OSW 4		        Ending (and flushing caches) (2 minutes)
 		Inserting the data: (23 minutes - 105 minutes so far)
 		    Models, ontologies, and OWL (7 minutes)
 		        Ontologies - basically big models, but useful for biology, and make use of multiple inheritance (2 minutes)
@@ -199,35 +206,36 @@ Track 2		    Write this lot to the DB in a separate thread/connection
 Track 3	1:30  34:55	    The reader must be able to read this second map until after the data is committed to the database, or entries will go missing while they are being written
 Track 3		    When the flush is finished, the second map is atomically removed, freeing memory for new entries.
 Track 3		    If entries are created faster than they can be written, you must block the user.
+Track 4	2:00  36:55	    Picture.
 		Speeding up the DataLoader
-DL 1	1:45  36:40	    The DataLoader is more tricky than the other two stages to speed up.
-DL 2, DL 3	2:00  38:40	        The overwhelming bottleneck is the getEquivalentObjects() query
+DL 1	1:45  38:40	    The DataLoader is more tricky than the other two stages to speed up.
+DL 2, DL 3	2:00  40:40	        The overwhelming bottleneck is the getEquivalentObjects() query
 DL 3		        This query searches for equivalent objects in the destination database. For each object to be stored, all connected objects need to be matched up against their equivalent objects in the destination in order to store the object with its collections and references properly (1 minute)
 		    The ID Map (5 minutes)
-DL 4	1:00  39:40	        However, we only need to getEquivalentObjects() for each object once (1 minute)
+DL 4	1:00  41:40	        However, we only need to getEquivalentObjects() for each object once (1 minute)
 DL 4		        So, we make an assumption: if we see an object for the second time, we can recognise it by ID, and return the same results as last time (1 minute)
 DL 4		        In fact, the last time we saw that object, we merged ALL the equivalent objects together into one object in the destination database (1 minute)
-DL 5	1:20  41:00	        Therefore there is a mapping between source object and destination object, indexed by ID, and we can create an efficient ID to ID map for this purpose (1 minute)
-DL 6	1:30  42:30	        This converts a complex query into a getObjectById(), which may hit the cache.
+DL 5	1:20  43:00	        Therefore there is a mapping between source object and destination object, indexed by ID, and we can create an efficient ID to ID map for this purpose (1 minute)
+DL 6	1:30  44:30	        This converts a complex query into a getObjectById(), which may hit the cache.
 DL 6		        This also simplifies the getEquivalentObjects query, as it may not need to recurse down primary key references
 		    Cheating, and avoiding getObjectById (3 minutes)
-DL 7	1:20  43:50	        If an object has been previously seen, it is unlikely that it will be actually needed, so one can put in a ProxyReference instead. We can reify the ProxyReference if we need it (1 minute)
+DL 7	1:20  45:50	        If an object has been previously seen, it is unlikely that it will be actually needed, so one can put in a ProxyReference instead. We can reify the ProxyReference if we need it (1 minute)
 DL 7		        Handily, ProxyReference is an InterMineObject, so when an object pointing to it is stored, it is stored with a correct pointer to the existing object with that ID in the database (2 minutes)
 		    GetEquivalentObjects calls can be made long before the data is needed (10 minutes)
-DL 8	1:00  44:50	        Consider the circumstance where an object is presented to be stored twice. The first time getEquivalentObjects runs a search, and the second time it returns a ProxyReference from the ID map. Consider also that the results of a getEquivalentObject query cannot be changed by any action other than that of storing an object equivalent to the one we are interested in.
+DL 8	1:00  46:50	        Consider the circumstance where an object is presented to be stored twice. The first time getEquivalentObjects runs a search, and the second time it returns a ProxyReference from the ID map. Consider also that the results of a getEquivalentObject query cannot be changed by any action other than that of storing an object equivalent to the one we are interested in.
 DL 8		        If we can make the assumption: we will never attempt to store an object that is equivalent to a previously-stored object (after some point in time) that the ID map does not recognise we can then allow the getEquivalentObjects call to use "old" data, as old as that point in time.
 -----------		        This assumption is false for objects that have a null ID, because the ID map does not recognise them, so this cannot be applied to such objects
 		        This allows a performance boost for several reasons:
-DL 9	1:00 45:50	            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
-DL 10	0:40 46:30	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
-DL 11	1:30 48:00	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
-DL 12	2:00 50:00	        Knowing when to stop
+DL 9	1:00  47:50	            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
+DL 10	0:40  48:30	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
+DL 11	1:30  50:00	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
+DL 12	2:00  52:00	        Knowing when to stop
 		Other tips: (8 minutes - 122 minutes so far)
-Other 1	1:30 51:30	    Get the database indexes right (1 minute)
+Other 1	1:30  53:30	    Get the database indexes right (1 minute)
 Other 1		    Profile your program, and work out where it is spending its time, then optimise that bit (1 minute)
 Other 1		    Use StringBuffer, rather than concatenating Strings (1 minute)
 Other 1		    Remove any unneccessary features that slow down the system - eg the InterMineObject table and OBJECT field (2 minutes)
-Other 2	1:40 53:10	    Throw a bigger computer at it (1 minute)
+Other 2	1:40  55:10	    Throw a bigger computer at it (1 minute)
 Other 2		    Beware round-trip times (again)
-Other 3	2:00 55:10	    SQL_ASCII rather than UNICODE
+Other 3	2:00  57:10	    SQL_ASCII rather than UNICODE
 Other 3		    Moore's law: (2 minutes)
