@@ -70,7 +70,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.flymine.objectstore.query.Query;
-
+import org.flymine.sql.query.ExplainResult;
 
 /**
  * This Implementation of JdbcAccess overrides executeQuery to
@@ -100,7 +100,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      * @param start the number of the first row to return, starting from zero
      * @param limit the maximum number of rows to return
      * @return the JDBC ResultSet and Statement
-     * @throws PersistenceBrokerException if anything goes worong
+     * @throws PersistenceBrokerException if anything goes wrong
      */
     public ResultSetAndStatement executeQuery(Query query, int start, int limit)
         throws PersistenceBrokerException {
@@ -117,7 +117,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
             DescriptorRepository dr = this.broker.getDescriptorRepository();
             String sql = gen.getPreparedSelectStatement(query, dr, start, limit);
 
-            // statementManager is used to serve statements and cache statements related to a
+            // StatementManager is used to serve statements and cache statements related to a
             // partcular class (wraps a ConnectionManager).  We only want something to get a
             // connection so deal directly with ConnectionManeger (?)
             // ...
@@ -155,5 +155,56 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
                     "ConnectionManager instance could not obtain a connection", e);
         }
         return retval;
+    }
+
+    /**
+     * Runs an EXPLAIN for given query with LIMIT and OFFSET values
+     *
+     * @param query should be a Flymine Query
+     * @param start the number of the first row to return, starting from zero
+     * @param limit the maximum number of rows to return
+     * @return parsed results of EXPLAIN
+     * @throws PersistenceBrokerException if anyhting goes wrong
+     */
+    public ExplainResult explainQuery(Query query, int start, int limit)
+        throws PersistenceBrokerException {
+
+        PreparedStatement stmt = null;
+        ExplainResult explain = null;
+
+        try {
+            SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
+                this.broker.serviceSqlGenerator();
+            DescriptorRepository dr = this.broker.getDescriptorRepository();
+
+            String sql = "EXPLAIN " + gen.getPreparedSelectStatement(query, dr, start, limit);
+
+            ConnectionManagerIF conMan = broker.serviceConnectionManager();
+            Connection conn = conMan.getConnection();
+            stmt = conn.prepareStatement(sql);
+
+            explain = ExplainResult.getInstance(stmt);
+        } catch (PersistenceBrokerException e) {
+            logger.error("PersistenceBrokerException during the explanantion of the query: "
+                         + e.getMessage(), e);
+            throw e;
+        } catch (SQLException e) {
+            logger.error("SQLException exlaining the query: " + e.getMessage(), e);
+            // PreparedStatement opened before try, must be released if a problem
+            throw new PersistenceBrokerSQLException(e);
+        } catch (LookupException e) {
+            throw new PersistenceBrokerException(
+                    "ConnectionManager instance could not obtain a connection", e);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                }
+            }
+            // pb.servicePlatform().afterStatementClose();
+        }
+
+        return explain;
     }
 }
