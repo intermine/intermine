@@ -172,6 +172,9 @@ null:assembly a owl:Class ;
     owl:equivalentClass e:karyotype .
 
 :ChromosomeBand__name a owl:DatatypeProperty ;
+    rdfs:subPropertyOf :BioEntity__name ;
+    rdfs:domain :ChromosomeBand ;
+    rdfs:range xsd:string ;
     owl:equivalentProperty e:karyotype__band .
 
 null:karyotype__chr_start a owl:DatatypeProperty ;
