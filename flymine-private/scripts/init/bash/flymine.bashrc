@@ -79,14 +79,10 @@ fi
 
 # Location that all logs will be written to
 if [ "${LOG:-unset}" = "unset" ]; then
-    if [ -w /shared/log ]; then
 	LOG=/shared/log; export LOG
-    else
-	if [ "${HOME:+set}" = "set" ] && [ -d $HOME/log ]; then
-	    LOG=${HOME}/log; export LOG
-	fi
-    fi
 fi
+
+alias log='cd $LOG'
 
 # Aliases for working with the private CVS tree
 
