@@ -33,6 +33,9 @@
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.tile"/>
   </definition>
+  <definition name="export.page" extends="layout.template">
+    <put name="body" value="export.tile"/>
+  </definition>
   <definition name="classChooser.page" extends="layout.template">
     <put name="body" value="classChooser.tile"/>
   </definition>
@@ -65,6 +68,7 @@
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
   <definition name="view.tile" path="/view.jsp">
     <put name="queryStatistics" value="queryStatistics.tile"/>
+    <put name="saveQuery" value="saveQuery.tile"/>
   </definition> 
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp">
     <put name="iqlQuery" value="iqlQuery.tile"/>
@@ -89,6 +93,7 @@
   </definition>
   <definition name="templates.tile" path="/templates.jsp"/>
   <definition name="help.tile" path="/help.jsp"/>
+  <definition name="export.tile" path="/export.jsp"/>
   <definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do"/>
   <definition name="objectSummary.tile" path="/objectSummary.jsp" controllerUrl="/initResultsCell.do"/>
   <definition name="objectDetailsPage.tile" path="/objectDetailsPage.jsp" controllerUrl="/initObjectDetails.do"/>
