@@ -8,7 +8,7 @@
 <div class="objectSummary">
   <c:choose>
     <c:when test="${empty leafClds}">
-      <c:out value="${object}"/>
+      <c:out value="${object}" default="null"/>
     </c:when>
     <c:otherwise>
       <nobr>

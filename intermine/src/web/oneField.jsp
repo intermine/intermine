@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
@@ -10,7 +10,8 @@
     <c:when test="${fieldDescriptor.attribute}">
       <c:if test="${fieldDescriptor.name != 'id'}">
         <div>
-          <c:out value="${fieldDescriptor.name}: ${object[fieldDescriptor.name]}"/>
+          <c:out value="${fieldDescriptor.name}"/>:
+          <c:out value="${object[fieldDescriptor.name]}" default="null"/>
         </div>
       </c:if>
     </c:when>
