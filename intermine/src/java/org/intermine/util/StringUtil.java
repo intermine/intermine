@@ -88,4 +88,15 @@ public class StringUtil
     public static synchronized String uniqueString() {
         return "P" + (differentNumber++) + "_";
     }
+
+    /**
+     * Sets the number that is used to generate the next uniqueString.
+     * NOTE: DO NOT USE THIS METHOD, unless you are absolutely sure no other thread is going to 
+     * go anywhere near StringUtil behind your back. This method is for testing purposes only.
+     *
+     * @param number the number to set
+     */
+    public static synchronized void setNextUniqueNumber(long number) {
+        differentNumber = number;
+    }
 }
