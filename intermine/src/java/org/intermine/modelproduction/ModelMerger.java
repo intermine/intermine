@@ -111,8 +111,9 @@ public class ModelMerger
      * 
      * @param classes starting collection of ClassDescriptors
      * @return a new mapping from class name to ClassDescriptors
+     * @throws ModelMergerException if an error occurs during model merging
      */
-    protected static Map removeRedundancy(Map classes) {
+    protected static Map removeRedundancy(Map classes) throws ModelMergerException {
         Map newSet = new HashMap();
         
         for (Iterator iter = classes.values().iterator(); iter.hasNext();) {
@@ -181,11 +182,19 @@ public class ModelMerger
         return supersStr;
     }
     
-    private static void findAllSuperclasses(ClassDescriptor cd, Map classes, Set names) {
+    private static void findAllSuperclasses(ClassDescriptor cd, Map classes, Set names)
+        throws ModelMergerException {
         Set supers = cd.getSuperclassNames();
         names.addAll(supers);
         for (Iterator iter = supers.iterator(); iter.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) classes.get((String) iter.next());
+            String superClassName = (String) iter.next();
+            ClassDescriptor cld = (ClassDescriptor) classes.get(superClassName);
+
+            if (cld == null) {
+                throw new ModelMergerException("cannot find superclass \"" + superClassName
+                                               + "\" of " + cd + " in the model");
+            }
+
             findAllSuperclasses(cld, classes, names);
         }
     }
