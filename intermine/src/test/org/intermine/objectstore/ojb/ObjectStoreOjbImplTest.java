@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.math.BigDecimal;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
@@ -23,6 +24,7 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
     public void setUp() throws Exception {
         super.setUp();
         os = ObjectStoreOjbImpl.getInstance(db);
+        //Thread.sleep(10000);
     }
 
     public void setUpResults() throws Exception {
@@ -88,55 +90,74 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         r = new Object[][] { { data.get("CompanyA") } };
         results.put("WhereClassObject", toList(r));
         
-
-
+        r = new Object[][] { { data.get("DepartmentA1"), data.get("EmployeeA1") } };
+        results.put("Contains11", toList(r));
          
-//          r = new Object[][] { { data.get("DepartmentA1"), data.get("EmployeeA1") } };
-//          results.put("Contains11", toList(r));
-         
-//          r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1") } };
-//          results.put("Contains1N", toList(r));
-         
-//          r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
-//                               { data.get("ContractorA"), data.get("CompanyB") } };
-//          results.put("ContainsMN", toList(r));        
-         
-//          r = new Object[][] { { data.get("CompanyA"), new Integer(1) },
-//                               { data.get("CompanyB"), new Integer(2) } };
-//          results.put("SimpleGroupBy", toList(r));
+        r = new Object[][] { { data.get("DepartmentA1"), data.get("EmployeeB1") },
+                             { data.get("DepartmentA1"), data.get("EmployeeB3") } };
+        results.put("ContainsNot11", toList(r));
+        results.put("ContainsNeg11", toList(r));
 
-//          r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA1"), ((Employee)data.get("EmployeeA1")).getAddress() } };
-//          results.put("MultiJoin", toList(r));
-
-//          r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1"), new Integer(3476), data.get("DepartmentA1") },
-//                               { data.get("CompanyA"), data.get("DepartmentB1"), new Integer(3476), data.get("DepartmentB1") },
-//                               { data.get("CompanyA"), data.get("DepartmentB2"), new Integer(3476), data.get("DepartmentB2") },
-//                               { data.get("CompanyB"), data.get("DepartmentA1"), new Integer(3476), data.get("DepartmentA1") },
-//                               { data.get("CompanyB"), data.get("DepartmentB1"), new Integer(3476), data.get("DepartmentB1") },
-//                               { data.get("CompanyB"), data.get("DepartmentB2"), new Integer(3476), data.get("DepartmentB2") } };
-//          results.put("SelectComplex", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1") } };
+        results.put("Contains1N", toList(r));
          
-//          r = new Object[][] { { data.get("EmployeeA1") },
-//                               { data.get("EmployeeA2") },
-//                               { data.get("EmployeeA3") },
-//                               { data.get("EmployeeB1") },
-//                               { data.get("EmployeeB2") },
-//                               { data.get("EmployeeB3") } };
-//          results.put("SelectClassAndSubClasses", toList(r));
+        r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
+                             { data.get("ContractorA"), data.get("CompanyB") } };
+        results.put("ContainsMN", toList(r));        
+         
+        r = new Object[][] { { data.get("CompanyA"), new Long(1) },
+                             { data.get("CompanyB"), new Long(2) } };
+        results.put("SimpleGroupBy", toList(r));
 
-//          r = new Object[][] { { data.get("EmployeeA1") },
-//                               { data.get("EmployeeA2") },
-//                               { data.get("EmployeeA3") },
-//                               { data.get("EmployeeB1") },
-//                               { data.get("EmployeeB2") },
-//                               { data.get("EmployeeB3") },
-//                               { data.get("ContractorA") },
-//                               { data.get("ContractorB") } };
-//          results.put("SelectInterfaceAndSubClasses", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA1"), ((Employee)data.get("EmployeeA1")).getAddress() } };
+        results.put("MultiJoin", toList(r));
+
+        r = new Object[][] { { new BigDecimal("3476.0000000000"), "DepartmentA1", data.get("DepartmentA1") },
+                             { new BigDecimal("3476.0000000000"), "DepartmentB1", data.get("DepartmentB1") },
+                             { new BigDecimal("3476.0000000000"), "DepartmentB2", data.get("DepartmentB2") } };
+        results.put("SelectComplex", toList(r));
+         
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") },
+                             { data.get("EmployeeB1") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") } };
+        results.put("SelectClassAndSubClasses", toList(r));
+
+        r = new Object[][] { { data.get("ContractorA") },
+                             { data.get("ContractorB") },
+                             { data.get("EmployeeB1") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") },
+                             { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") } };
+        results.put("SelectInterfaceAndSubClasses", toList(r));
+
+        r = new Object[][] { { data.get("CompanyA") },
+                             { data.get("CompanyB") },
+                             { data.get("DepartmentB1") },
+                             { data.get("DepartmentB2") },
+                             { data.get("DepartmentA1") } };
+        results.put("SelectInterfaceAndSubClasses2", toList(r));
+
+        r = new Object[][] { { data.get("ContractorA") },
+                             { data.get("ContractorB") },
+                             { data.get("EmployeeB1") },
+                             { data.get("EmployeeB3") },
+                             { data.get("EmployeeA1") } };
+        results.put("SelectInterfaceAndSubClasses3", toList(r));
     }
 
     public void executeTest(String type) throws Exception {
-        assertEquals(type + " has failed",results.get(type), os.execute((Query)queries.get(type), 0, 10));
+        List thingy = os.execute((Query)queries.get(type), 0, 10);
+        //System.out.println(type + ": " + thingy);
+        //System.out.flush();
+        //if ("SelectComplex".equals(type)) {
+        //    System.out.println(type + ": " + ((ResultsRow)thingy.get(0)).get(0).getClass());
+        //}
+        assertEquals(type + " has failed", results.get(type), thingy);
     }
 
     private List toList(Object[][] o) {

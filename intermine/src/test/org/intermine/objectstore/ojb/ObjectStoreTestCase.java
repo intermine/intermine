@@ -349,6 +349,7 @@ public abstract class QueryTestCase extends TestCase
       select department
       from Department
       where (select name from Department) contains department.name
+      order by Department.name
     */
     public Query whereSubQueryField() throws Exception {
         QueryClass c1 = new QueryClass(Department.class);
@@ -356,11 +357,14 @@ public abstract class QueryTestCase extends TestCase
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f1);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, f1);
+        QueryClass c2 = new QueryClass(Department.class);
+        QueryField f2 = new QueryField(c2, "name");
+        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, f2);
         Query q2 = new Query();
-        q2.addFrom(c1);
-        q2.addToSelect(c1);
+        q2.addFrom(c2);
+        q2.addToSelect(c2);
         q2.setConstraint(sqc1);
+        q2.addToOrderBy(f2);
         return q2;
     }
 
@@ -517,7 +521,7 @@ public abstract class QueryTestCase extends TestCase
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
-        QueryValue v1 = new QueryValue("DepartmentA");
+        QueryValue v1 = new QueryValue("DepartmentA1");
         QueryField qf1 = new QueryField(qc1, "name");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
         Query q1 = new Query();
@@ -544,7 +548,7 @@ public abstract class QueryTestCase extends TestCase
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
-        QueryValue v1 = new QueryValue("DepartmentA");
+        QueryValue v1 = new QueryValue("DepartmentA1");
         QueryField qf1 = new QueryField(qc1, "name");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.DOES_NOT_CONTAIN, qc2);
         Query q1 = new Query();
@@ -571,7 +575,7 @@ public abstract class QueryTestCase extends TestCase
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
-        QueryValue v1 = new QueryValue("DepartmentA");
+        QueryValue v1 = new QueryValue("DepartmentA1");
         QueryField qf1 = new QueryField(qc1, "name");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
         cc1.setNegated(true);
@@ -725,9 +729,9 @@ public abstract class QueryTestCase extends TestCase
     }
 
     /*
-      select company, avg(company.vatNumber) + 20, department.name, department
+      select avg(company.vatNumber) + 20, department.name, department
       from Company, Department
-      TODO: This query does not make sense
+      group by department
     */
     public Query selectComplex() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -738,12 +742,12 @@ public abstract class QueryTestCase extends TestCase
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addFrom(c2);
-        q1.addToSelect(c1);
         QueryExpression e1 = new QueryExpression(new QueryFunction(f2, QueryFunction.AVERAGE),
                 QueryExpression.ADD, new QueryValue(new Integer(20)));
         q1.addToSelect(e1);
         q1.addToSelect(f3);
         q1.addToSelect(c2);
+        q1.addToGroupBy(c2);
         return q1;
     }
 
@@ -751,12 +755,15 @@ public abstract class QueryTestCase extends TestCase
       SHOULD PICK UP THE MANAGERS AND ALL EMPLOYEES
       select employee
       from Employee
+      order by employee.name
     */
     public Query selectClassAndSubClasses() throws Exception {
         QueryClass qc1 = new QueryClass(Employee.class);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addFrom(qc1);
+        QueryField f1 = new QueryField(qc1, "name");
+        q1.addToOrderBy(f1);
         return q1;
     }
 
@@ -804,6 +811,8 @@ public abstract class QueryTestCase extends TestCase
         Contractor c1 = c1(), c2 = c2();
         p1.setContractors(Arrays.asList(new Object[] { c1, c2 }));
         p2.setContractors(Arrays.asList(new Object[] { c1, c2 }));
+        c1.setCompanys(Arrays.asList(new Object[] {p1, p2}));
+        c2.setCompanys(Arrays.asList(new Object[] {p1, p2}));
         map(flatten(Arrays.asList(new Object[] { p1, p2 })));
     }
 
@@ -944,5 +953,11 @@ public abstract class QueryTestCase extends TestCase
         p.setAddress(a1);
         p.setDepartments(Arrays.asList(new Object[] { d1, d2 }));
         return p;
+    }
+
+    public static void main(String args[]) throws Exception {
+        FlymineSqlSelectStatementTest obj = new FlymineSqlSelectStatementTest("test");
+        System.out.println("Populating database");
+        obj.setUp();
     }
 }
