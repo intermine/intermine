@@ -201,6 +201,11 @@
       <forward name="objectDetails" path="objectDetails.page"/>
       <forward name="results" path="results.page"/>
     </action>
+    
+    <action path="/editTemplate"
+            type="org.intermine.web.EditTemplateAction">
+      <forward name="templateBuilder" path="templateBuilder.page"/>
+    </action>
 
     <!-- Actions invoked using buttons - no other form input -->
     <action path="/viewAction"
@@ -217,6 +222,12 @@
             parameter="action">
       <forward name="buildBag" path="bagBuild.page"/>
     </action>
+    
+    <action path="/createTemplate"
+            type="org.intermine.web.CreateTemplateAction">
+      <forward name="templateBuilder" path="templateBuilder.page"/>
+      <forward name="query" path="query.page"/>
+    </action>
   
     <!-- Actions invoked using buttons - validating form -->
     <action path="/templateAction"
@@ -230,7 +241,6 @@
       <forward name="results" path="results.page"/>
     </action>
     
-    <!-- Actions invoked from begin.jsp browse form -->
     <action path="/browseAction"
             type="org.intermine.web.TemplateAction"
             name="templateForm"
@@ -279,18 +289,12 @@
       <forward name="query" path="query.page"/>
     </action>
 
-    <action path="/createTemplate"
-            type="org.intermine.web.CreateTemplateAction">
-      <forward name="templateBuilder" path="templateBuilder.page"/>
-      <forward name="query" path="query.page"/>
-    </action>
-
     <action path="/buildTemplate"
             type="org.intermine.web.BuildTemplateAction"
             name="buildTemplateForm"
             input="templateBuilder">
       <forward name="templateBuilder" path="templateBuilder.page"/>
-      <forward name="finish" path="query.page"/>
+      <forward name="finish" path="/begin.do" redirect="true"/> <!-- need to redirect -->
     </action>
 
     <action path="/queryClassSelect"
@@ -385,6 +389,8 @@
             type="org.intermine.web.TemplatesController"/>
         
     <action path="/initTemplateBuilder"
+            validate="false"
+            name="buildTemplateForm"
             type="org.intermine.web.BuildTemplateController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
