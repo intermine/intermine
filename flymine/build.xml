@@ -431,6 +431,36 @@
     <merge-genomic-additions additionsFile="${model}/phenotype/phenotype_additions.xml"/>
   </target>
 
+
+  <!-- FlyReg MODEL GENERATION -->
+
+  <!-- merge flyreg model additions with current genomic model -->
+  <target name="merge-flyreg-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/flyreg/flyreg_additions.xml"/>
+  </target>
+
+  <!-- Long Oligo MODEL GENERATION -->
+
+  <!-- merge long_oligo model additions with current genomic model -->
+  <target name="merge-long_oligo-model" depends="prepare-genomic-model">
+<!--     <merge-genomic-additions additionsFile="${model}/long_oligo/long_oligo_additions.xml"/> -->
+  </target>
+
+  <!-- Tiling Path MODEL GENERATION -->
+
+  <!-- merge tiling_path model additions with current genomic model -->
+  <target name="merge-tiling_path-model" depends="prepare-genomic-model">
+<!--    <merge-genomic-additions additionsFile="${model}/tiling_path/tiling_path_additions.xml"/>-->
+  </target>
+
+  <!-- drosdel MODEL GENERATION -->
+
+  <!-- merge drosdel model additions with current genomic model -->
+  <target name="merge-drosdel-model" depends="prepare-genomic-model">
+<!--    <merge-genomic-additions additionsFile="${model}/drosdel/drosdel_additions.xml"/>-->
+  </target>
+
+
   <!-- UNIPROT MODEL GENERATION -->
 
   <!-- convert UNIPROT XML-Schema to InterMine model XML -->
@@ -453,7 +483,8 @@
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
                 merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-model, merge-phenotype-model,
-                merge-go-model, merge-uniprot-model,
+                merge-go-model, merge-uniprot-model, merge-flyreg-model, 
+                merge-drosdel-model, merge-long_oligo-model, merge-tiling_path-model, 
                 merge-protein_structure-model, merge-so-model, merge-shortcuts">
   </target>
 
@@ -1312,15 +1343,16 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-file converter ="org.flymine.dataconversion.GFF3Converter"
-                  target="osw.flyreg-tgt-items"
-                  seqClsName = "Chromosome"
-                  orgAbbrev ="DM"
-                  infoSourceTitle = "FlyReg"
-                  model ="genomic">
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.flyreg-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="DM"
+                   infoSourceTitle="FlyReg"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.FlyRegGFF3RecordHandler">
       <fileset dir ="/shared/data/flyreg">
-        <include name ="*.gff"/>
-        <include name ="*.GFF"/>
+        <include name ="*.gff3"/>
+        <include name ="*.GFF3"/>
       </fileset>
     </retrieve-file>
 
