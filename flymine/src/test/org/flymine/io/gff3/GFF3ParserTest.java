@@ -87,7 +87,7 @@ public class GFF3ParserTest extends TestCase
         GFF3Record record1 = (GFF3Record) records.get(1);
 
         assertEquals("name1", record1.getName());
-        assertEquals("gene00001", record1.getParent());
+        assertEquals("gene00001", record1.getParents().get(0));
         assertNull(record1.getOntologyTerm());
 
         for (int i = 0; i < 22; i++) {
@@ -106,4 +106,15 @@ public class GFF3ParserTest extends TestCase
         }
         assertEquals(original, sb.toString());
     }
+
+    public void testParents() throws Exception {
+        String gff="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013:2;Parent=CG32013-RA,CG32013-RB\n";
+        StringBuffer sb = new StringBuffer();
+        Iterator iter = GFF3Parser.parse(new BufferedReader(new StringReader(gff)));
+        GFF3Record record = (GFF3Record) iter.next();
+
+        List expected = new ArrayList(Arrays.asList(new String[] {"CG32013-RA", "CG32013-RB"}));
+        assertEquals(expected, record.getParents());
+    }
+
 }
