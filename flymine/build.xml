@@ -643,7 +643,7 @@
                     target="osw.ensembl-anoph-tgt-items"
                     srcModel="ensembl"
                     tgtModel="genomic"
-                    organism="AG"/>
+                    organism="AGP"/>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1451,10 +1451,10 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165">
+    <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
       <fileset dir="/shared/data/uniprot">
         <include name="uniprot_sprot.xml"/>
-<!--        <include name="uniprot_trembl.xml"/>-->
+        <include name="uniprot_trembl.xml"/>
       </fileset>
     </filter-uniprot>
   </target>
