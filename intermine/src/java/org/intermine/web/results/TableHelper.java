@@ -49,10 +49,10 @@ public abstract class TableHelper
 
         // call this so that if an exception occurs we notice now rather than in the JSP code
         try {
-            r.size();
+            r.get(0);
         } catch (RuntimeException e) {
-            if (e.getCause() instanceof ObjectStoreQueryDurationException) {
-                throw (ObjectStoreQueryDurationException) e.getCause();
+            if (e.getCause() instanceof ObjectStoreException) {
+                throw (ObjectStoreException) e.getCause();
             } else {
                 throw e;
             }
