@@ -75,8 +75,13 @@ table.templateForm td {
 }
 
 table.templateBuilder td {
-  border-bottom: 1px solid #aaa;
+  border-bottom: 1px solid black;
   padding: 6px;
+}
+
+table.templateBuilder {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
 }
 
 table.templateBuilder th {
@@ -165,6 +170,9 @@ table.results tr.even {
 
 .type {
   color: grey;
+}
+.modelBrowser .type {
+  color: blue;
 }
 .collectionField {
   color: green;
