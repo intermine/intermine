@@ -772,7 +772,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-dros-src-items"/>
+      <property name="os.alias" value="os.ensembl-dros-src-items-std"/>
     </ant>
   </target>
 
@@ -802,7 +802,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-dros-tgt-items"/>
+      <property name="os.alias" value="os.ensembl-dros-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -844,7 +844,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-anoph-src-items"/>
+      <property name="os.alias" value="os.ensembl-anoph-src-items-std"/>
     </ant>
   </target>
 
@@ -874,7 +874,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-anoph-tgt-items"/>
+      <property name="os.alias" value="os.ensembl-anoph-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -916,7 +916,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.chado-src-items"/>
+      <property name="os.alias" value="os.chado-src-items-std"/>
     </ant>
   </target>
 
@@ -945,7 +945,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.chado-tgt-items"/>
+      <property name="os.alias" value="os.chado-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -990,7 +990,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.ensembl-orthologue-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1031,7 +1031,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.inparanoid-orthologue-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1079,7 +1079,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-src-items"/>
+      <property name="os.alias" value="os.rnai-src-items-std"/>
     </ant>
   </target>
 
@@ -1103,7 +1103,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.rnai-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1144,7 +1144,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.phenotype-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1183,7 +1183,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.psi-dag-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1225,7 +1225,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-src-items"/>
+      <property name="os.alias" value="os.psi-src-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1254,7 +1254,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.psi-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1349,7 +1349,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-src-items"/>
+      <property name="os.alias" value="os.mage-src-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1379,7 +1379,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.mage-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1418,7 +1418,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-src-items"/>
+      <property name="os.alias" value="os.protein-structure-src-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1446,7 +1446,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.protein-structure-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1484,7 +1484,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="osw.common-tgt-items"/>
+      <property name="os.alias" value="os.go-dag-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1523,7 +1523,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.go-annotation-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1598,7 +1598,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.uniprot-src-items"/>
+      <property name="os.alias" value="os.uniprot-src-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1629,7 +1629,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.common-tgt-items"/>
+      <property name="os.alias" value="os.uniprot-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -2567,7 +2567,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-human-src-items"/>
+      <property name="os.alias" value="os.ensembl-human-src-items-std"/>
     </ant>
   </target>
   
@@ -2587,7 +2587,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-human-tgt-items"/>
+      <property name="os.alias" value="os.ensembl-human-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
