@@ -352,12 +352,21 @@
 
   <!-- Models to build -->
 
-  <!-- Datatracking -->
+  <!-- Datatracking test -->
   <target name="build-db-datatrackingtest" depends="compile-datatracking">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="datatracking"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.datatrackingtest"/>
+    </ant>
+  </target>
+
+  <!-- Datatracking -->
+  <target name="build-db-datatracking" depends="compile-datatracking">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="datatracking"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.datatracking"/>
     </ant>
   </target>
   
@@ -611,8 +620,8 @@
     <retrieve-chado database="db.chado" model="chado" osName="osw.chado-src-items"/>
   </target>
 
-  <!-- Load data from chado-src-items into chado-main -->
-  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, build-db-datatrackingtest">
+  <!-- Load data from chado-items into chado-test -->
+  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, build-db-datatracking">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>

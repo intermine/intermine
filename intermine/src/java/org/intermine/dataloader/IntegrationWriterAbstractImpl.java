@@ -11,7 +11,9 @@ package org.flymine.dataloader;
  */
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -46,10 +48,12 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
     protected static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
 
+    protected static final int MAX_MAPPINGS = 1000000;
     protected ObjectStoreWriter osw;
     protected static final int SKELETON = 0;
     protected static final int FROM_DB = 1;
     protected static final int SOURCE = 2;
+    protected LinkedHashMap idMap = new LinkedHashMap(MAX_MAPPINGS * 14 / 10, 0.75F, true);
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -74,16 +78,31 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
         }
-        Query q = null;
-        try {
-            q = DataLoaderHelper.createPKQuery(getModel(), obj, source);
-        } catch (MetaDataException e) {
-            throw new ObjectStoreException(e);
+        String oText = obj.toString();
+        int oTextLength = oText.length();
+        System.out.println(" --------------- getEquivalentObjects() called on "
+                + oText.substring(0, oTextLength > 60 ? 60 : oTextLength));
+        Integer destId = (Integer) idMap.get(obj.getId());
+        if (destId == null) {
+            Query q = null;
+            try {
+                q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap);
+            } catch (MetaDataException e) {
+                throw new ObjectStoreException(e);
+            }
+            System.out.println(" --------------------------- " + q);
+            SingletonResults retval = new SingletonResults(q, this, getSequence());
+            retval.setNoOptimise();
+            retval.setNoExplain();
+            return retval;
+        } else {
+            if (osw.pilferObjectById(destId) == null) {
+                System.out.println(" --------------------------- Cache miss");
+            } else {
+                System.out.println(" --------------------------- Cache hit");
+            }
+            return Collections.singleton(osw.getObjectById(destId));
         }
-        SingletonResults retval = new SingletonResults(q, this, getSequence());
-        retval.setNoOptimise();
-        retval.setNoExplain();
-        return retval;
     }
 
     /**
@@ -232,6 +251,24 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         }
     }
 
+    /**
+     * Puts a mapping into idMap.
+     *
+     * @param sourceId the ID of the object from the source
+     * @param destId the ID of the object from the destination
+     */
+    public void assignMapping(Integer source, Integer dest) {
+        if ((source != null) && (dest != null))
+        idMap.put(source, dest);
+        int removeItems = idMap.size() - MAX_MAPPINGS;
+        if (removeItems > 10) {
+            Iterator iter = idMap.entrySet().iterator();
+            for (int i = 0; i < removeItems && iter.hasNext(); i++) {
+                iter.next();
+                iter.remove();
+            }
+        }
+    }
 
 
 

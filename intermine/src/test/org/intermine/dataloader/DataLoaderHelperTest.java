@@ -79,85 +79,57 @@ public class DataLoaderHelperTest extends QueryTestCase
         Source source = new Source();
         source.setName("testsource");
         Query q = new Query();
-        QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
-        q.addFrom(qcFMBO);
-        q.addToSelect(qcFMBO);
-        ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
-        Query subQ = new Query();
         QueryClass qc = new QueryClass(Employable.class);
-        subQ.addFrom(qc);
-        subQ.addToSelect(qc);
+        q.addFrom(qc);
+        q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("jkhsdfg")));
-        subQ.setConstraint(cs);
-        where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
-        q.setConstraint(where);
+        q.setConstraint(cs);
 
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, Collections.EMPTY_MAP));
     }
 
     public void testCreateQuery2() throws Exception {
         Source source = new Source();
         source.setName("testsource");
         Query q = new Query();
-        QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
-        q.addFrom(qcFMBO);
-        q.addToSelect(qcFMBO);
-        ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
-        Query subQ = new Query();
         QueryClass qc = new QueryClass(Employable.class);
-        subQ.addFrom(qc);
-        subQ.addToSelect(qc);
+        q.addFrom(qc);
+        q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.IS_NULL));
-        subQ.setConstraint(cs);
-        where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
-        q.setConstraint(where);
+        q.setConstraint(cs);
 
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, Collections.EMPTY_MAP));
     }
         
     public void testCreateQuery3() throws Exception {
         Source source = new Source();
         source.setName("testsource");
         Query q = new Query();
-        QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
-        q.addFrom(qcFMBO);
-        q.addToSelect(qcFMBO);
-        ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
-        Query subQ = new Query();
         QueryClass qc = new QueryClass(Company.class);
-        subQ.addFrom(qc);
-        subQ.addToSelect(qc);
+        q.addFrom(qc);
+        q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("jkhsdfg")));
         QueryClass address = new QueryClass(Address.class);
-        subQ.addFrom(address);
-        Query subSubQ = new Query();
-        QueryClass subQcFMBO = new QueryClass(FlyMineBusinessObject.class);
-        subSubQ.addFrom(subQcFMBO);
-        subSubQ.addToSelect(subQcFMBO);
-        ConstraintSet subWhere = new ConstraintSet(ConstraintOp.OR);
-        Query subSubSubQ = new Query();
+        q.addFrom(address);
+        Query subQ = new Query();
         QueryClass subQc = new QueryClass(Address.class);
-        subSubSubQ.addFrom(subQc);
-        subSubSubQ.addToSelect(subQc);
+        subQ.addFrom(subQc);
+        subQ.addToSelect(subQc);
         ConstraintSet subCs = new ConstraintSet(ConstraintOp.AND);
         subCs.addConstraint(new SimpleConstraint(new QueryField(subQc, "address"), ConstraintOp.EQUALS, new QueryValue("10 Downing Street")));
-        subSubSubQ.setConstraint(subCs);
-        subWhere.addConstraint(new SubqueryConstraint(subQcFMBO, ConstraintOp.IN, subSubSubQ));
-        subSubQ.setConstraint(subWhere);
+        subQ.setConstraint(subCs);
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "address"), ConstraintOp.CONTAINS, address));
-        cs.addConstraint(new SubqueryConstraint(address, ConstraintOp.IN, subSubQ));
-        subQ.setConstraint(cs);
-        where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
-        q.setConstraint(where);
+        cs.addConstraint(new SubqueryConstraint(address, ConstraintOp.IN, subQ));
+        q.setConstraint(cs);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
@@ -165,7 +137,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         a.setAddress("10 Downing Street");
         c.setAddress(a);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, Collections.EMPTY_MAP));
     }
 
     public void testCreateQuery4() throws Exception {
@@ -173,26 +145,19 @@ public class DataLoaderHelperTest extends QueryTestCase
         source.setName("testsource");
 
         Query q = new Query();
-        QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
-        q.addFrom(qcFMBO);
-        q.addToSelect(qcFMBO);
-        ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
-        Query subQ = new Query();
         QueryClass qc = new QueryClass(Company.class);
-        subQ.addFrom(qc);
-        subQ.addToSelect(qc);
+        q.addFrom(qc);
+        q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("jkhsdfg")));
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "address"), ConstraintOp.IS_NULL));
-        subQ.setConstraint(cs);
-        where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
-        q.setConstraint(where);
+        q.setConstraint(cs);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         c.setAddress(null);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, Collections.EMPTY_MAP));
     }
 
     public void testGetDescriptors() throws Exception {

@@ -74,6 +74,7 @@ public class DataTrackingTest extends TestCase {
     public void testSetSource() throws Exception {
         Department dept = new Department();
         dept.setId(new Integer(42));
+        DataTracking.clearObj(dept, osw);
         DataTracking.setSource(dept, "name", source1, osw);
         assertEquals(source1.getName(), DataTracking.getSource(dept, "name", osw).getName());
         DataTracking.setSource(dept, "name", source2, osw);

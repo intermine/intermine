@@ -134,6 +134,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         if (o == null) {
             return null;
         }
+        String oText = o.toString();
+        int oTextLength = oText.length();
+        //System//.out.println(" --------------- Store called on "
+        //        + o.substring(oTextLength > 60 ? 60 : oTextLength));
         Set equivalentObjects = getEquivalentObjects(o, source);
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();
@@ -152,14 +156,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 
         Map trackingMap = new HashMap();
         try {
+            Map fieldToEquivalentObjects = new HashMap();
             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(newObj.getClass());
             Iterator fieldIter = fieldDescriptors.entrySet().iterator();
             while (fieldIter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next()).getValue();
                 String fieldName = field.getName();
                 if (!"id".equals(fieldName)) {
-                    Source lastSource = null;
-
                     Set sortedEquivalentObjects;
                     
                     if (field instanceof CollectionDescriptor) {
@@ -177,27 +180,46 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     objIter = equivalentObjects.iterator();
                     while (objIter.hasNext()) {
                         FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+                        Source fieldSource = DataTracking.getSource(obj, fieldName, dataTracker);
+                        if ((equivalentObjects.size() == 1) && (fieldSource != null)
+                                && (fieldSource.equals(source) || (fieldSource.equals(skelSource)
+                                        && (type != SOURCE)))) {
+                            if (type != FROM_DB) {
+                                assignMapping(o.getId(), obj.getId());
+                            }
+                            return obj;
+                        }
                         if (getModel().getFieldDescriptorsForClass(obj.getClass())
                                 .containsKey(fieldName)) {
                             sortedEquivalentObjects.add(obj);
                         }
                     }
-                    
-                    objIter = sortedEquivalentObjects.iterator();
-                    while (objIter.hasNext()) {
-                        FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
-                        if (obj == o) {
-                            copyField(obj, newObj, source, skelSource, field, type);
-                            lastSource = (type == SOURCE ? source : skelSource);
-                        } else {
-                            Source fieldSource = DataTracking.getSource(obj, fieldName,
-                                    dataTracker);
-                            copyField(obj, newObj, fieldSource, fieldSource, field, FROM_DB);
-                            lastSource = fieldSource;
-                        }
-                    }
-                    trackingMap.put(fieldName, lastSource);
+                    fieldToEquivalentObjects.put(field, sortedEquivalentObjects);
                 }
+            }
+
+            Iterator fieldToEquivIter = fieldToEquivalentObjects.entrySet().iterator();
+            while (fieldToEquivIter.hasNext()) {
+                Source lastSource = null;
+                Map.Entry fieldToEquivEntry = (Map.Entry) fieldToEquivIter.next();
+                FieldDescriptor field = (FieldDescriptor) fieldToEquivEntry.getKey();
+                Set sortedEquivalentObjects = (Set) fieldToEquivEntry.getValue();
+                String fieldName = field.getName();
+                    
+                objIter = sortedEquivalentObjects.iterator();
+                while (objIter.hasNext()) {
+                    FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+                    if (obj == o) {
+                        copyField(obj, newObj, source, skelSource, field, type);
+                        lastSource = (type == SOURCE ? source : skelSource);
+                    } else {
+                        Source fieldSource = DataTracking.getSource(obj, fieldName,
+                                dataTracker);
+                        copyField(obj, newObj, fieldSource, fieldSource, field, FROM_DB);
+                        lastSource = fieldSource;
+                    }
+                }
+                trackingMap.put(fieldName, lastSource);
             }
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
@@ -225,6 +247,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             delete(objToDelete);
         }
 
+        if (type != FROM_DB) {
+            assignMapping(o.getId(), newObj.getId());
+        }
         return newObj;
     }
 

@@ -10,16 +10,17 @@ package org.flymine.dataloader;
  *
  */
 
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.List;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.flymine.metadata.AttributeDescriptor;
@@ -31,6 +32,7 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
+import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.ContainsConstraint;
@@ -41,6 +43,7 @@ import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SubqueryConstraint;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.PropertiesUtil;
 
@@ -238,17 +241,20 @@ public class DataLoaderHelper
      * @param model a Model
      * @param obj the Object to take as an example
      * @param source the Source database
+     * @param idMap a Map from source IDs to destination IDs
      * @return a Query
      * @throws MetaDataException if anything goes wrong
      */
     public static Query createPKQuery(Model model, FlyMineBusinessObject obj,
-            Source source) throws MetaDataException {
+            Source source, Map idMap) throws MetaDataException {
         try {
+            int subCount = 0;
             Query q = new Query();
             QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
             q.addFrom(qcFMBO);
             q.addToSelect(qcFMBO);
             ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
+            Query subQ = null;
 
             Set classDescriptors = model.getClassDescriptorsForClass(obj.getClass());
             Iterator cldIter = classDescriptors.iterator();
@@ -256,7 +262,7 @@ public class DataLoaderHelper
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
                 if (!primaryKeys.isEmpty()) {
-                    Query subQ = new Query();
+                    subQ = new Query();
                     QueryClass qc = new QueryClass(cld.getType());
                     subQ.addFrom(qc);
                     subQ.addToSelect(qc);
@@ -289,24 +295,41 @@ public class DataLoaderHelper
                                                 new QueryObjectReference(qc, fieldName),
                                                 ConstraintOp.IS_NULL));
                                 } else {
-                                    QueryClass qc2 = new QueryClass(((ReferenceDescriptor) fd)
-                                            .getReferencedClassDescriptor().getType());
-                                    subQ.addFrom(qc2);
-                                    cs.addConstraint(new ContainsConstraint(
-                                                new QueryObjectReference(qc, fieldName),
-                                                ConstraintOp.CONTAINS, qc2));
-                                    cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
-                                                createPKQuery(model, refObj, source)));
+                                    Integer destId = (Integer) idMap.get(refObj.getId());
+                                    if (destId == null) {
+                                        QueryClass qc2 = new QueryClass(((ReferenceDescriptor) fd)
+                                                .getReferencedClassDescriptor().getType());
+                                        subQ.addFrom(qc2);
+                                        cs.addConstraint(new ContainsConstraint(
+                                                    new QueryObjectReference(qc, fieldName),
+                                                    ConstraintOp.CONTAINS, qc2));
+                                        cs.addConstraint(new SubqueryConstraint(qc2,
+                                                    ConstraintOp.IN,
+                                                    createPKQuery(model, refObj, source, idMap)));
+                                    } else {
+                                        FlyMineBusinessObject destObj = (FlyMineBusinessObject)
+                                            DynamicUtil.createObject(Collections.singleton(
+                                                        FlyMineBusinessObject.class));
+                                        destObj.setId(destId);
+                                        cs.addConstraint(new ContainsConstraint(
+                                                    new QueryObjectReference(qc, fieldName),
+                                                    ConstraintOp.CONTAINS, destObj));
+                                    }
                                 }
                             }
                         }
                     }
                     subQ.setConstraint(cs);
                     where.addConstraint(new SubqueryConstraint(qcFMBO, ConstraintOp.IN, subQ));
+                    subCount++;
                 }
             }
             q.setConstraint(where);
-            return q;
+            if (subCount == 1) {
+                return subQ;
+            } else {
+                return q;
+            }
         } catch (Exception e) {
             throw new MetaDataException(e);
         }

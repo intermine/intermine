@@ -62,6 +62,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             iw.abortTransaction();
         }
         storeData();
+        iw.idMap.clear();
         iw.beginTransaction();
     }
 
@@ -70,6 +71,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.commitTransaction();
         removeDataFromTracker();
         removeDataFromStore();
+        iw.idMap.clear();
     }
 
     public static void oneTimeSetUp() throws Exception {
@@ -328,6 +330,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             ceo.setAddress(a2);
 
 
+            iw.idMap.clear();
             iw.store(c, source2, skelSource2); // method we are testing
             //          CompanyA ------- CEOA            CompanyA --.   - CEOA
             // Change                             to                 \
@@ -529,6 +532,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         con.addCompanys(companyB);
         companyB.addContractors(con);
 
+        iw.idMap.clear();
         iw.store(con, source2, skelSource2);
 
         rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
@@ -596,18 +600,22 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.getDataTracker().store(source);
 
         ObjectStoreWriter dataTracker = iw.getDataTracker();
+        DataTracking.clearObj(ca, dataTracker);
         DataTracking.setSource(ca, "name", source, dataTracker);
         DataTracking.setSource(ca, "address", source, dataTracker);
         DataTracking.setSource(ca, "vatNumber", source, dataTracker);
         DataTracking.setSource(ca, "cEO", source, dataTracker);
+        DataTracking.clearObj(conA, dataTracker);
         DataTracking.setSource(conA, "personalAddress", source, dataTracker);
         DataTracking.setSource(conA, "businessAddress", source, dataTracker);
         DataTracking.setSource(conA, "name", source, dataTracker);
         DataTracking.setSource(conA, "seniority", source, dataTracker);
+        DataTracking.clearObj(conC, dataTracker);
         DataTracking.setSource(conC, "personalAddress", source, dataTracker);
         DataTracking.setSource(conC, "businessAddress", source, dataTracker);
         DataTracking.setSource(conC, "name", source, dataTracker);
         DataTracking.setSource(conC, "seniority", source, dataTracker);
+        DataTracking.clearObj(conD, dataTracker);
         DataTracking.setSource(conD, "personalAddress", source, dataTracker);
         DataTracking.setSource(conD, "businessAddress", source, dataTracker);
         DataTracking.setSource(conD, "name", source, dataTracker);
@@ -640,6 +648,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         } catch (IllegalArgumentException e) {
         }
         
+        iw.idMap.clear();
         iw.store(con, source2, skelSource2); // method we are testing
 
         // Get objects (and test that there is only one copy of everything).
