@@ -15,9 +15,9 @@ import org.flymine.sql.query.ExplainResult;
  */
 public abstract class ObjectStoreAbstractImpl implements ObjectStore
 {
-    protected int maxOffset;
-    protected int maxLimit;
-    protected long maxTime;
+    protected int maxOffset = Integer.MAX_VALUE;
+    protected int maxLimit = Integer.MAX_VALUE;
+    protected long maxTime = Long.MAX_VALUE;
 
     /**
      * No argument constructor
@@ -73,15 +73,15 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * Checks the start and limit to see whether they are inside the
      * hard limits for this ObjectStore
      *
-     * @param offset the start row
+     * @param start the start row
      * @param limit the number of rows
      * @throws ObjectStoreLimitReachedException if the start is greater than the
      * maximum start allowed or the limit greater than the maximum
      * limit allowed
      */
-    protected void checkOffsetLimit(int offset, int limit) throws ObjectStoreLimitReachedException {
-        if (offset > maxOffset) {
-            throw (new ObjectStoreLimitReachedException("offset parameter (" + offset
+    protected void checkStartLimit(int start, int limit) throws ObjectStoreLimitReachedException {
+        if (start > maxOffset) {
+            throw (new ObjectStoreLimitReachedException("offset parameter (" + start
                                             + ") is greater than permitted maximum ("
                                             + maxOffset + ")"));
         }

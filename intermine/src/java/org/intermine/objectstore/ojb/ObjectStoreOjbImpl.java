@@ -14,6 +14,7 @@ import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStoreLimitReachedException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
@@ -31,7 +32,6 @@ public class ObjectStoreOjbImpl implements ObjectStore
     protected Database db;
     protected String model;
     protected long maxTime;
-    protected int maxRows;
     protected int maxLimit;
     protected int maxOffset;
     protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
@@ -43,7 +43,6 @@ public class ObjectStoreOjbImpl implements ObjectStore
     protected ObjectStoreOjbImpl() {
         Properties props = PropertiesUtil.getPropertiesStartingWith("os.query");
         props = PropertiesUtil.stripStart("os.query", props);
-        maxRows = Integer.parseInt((String) props.get("max-rows"));
         maxTime = Long.parseLong((String) props.get("max-time"));
         maxLimit = Integer.parseInt((String) props.get("max-limit"));
         maxOffset = Integer.parseInt((String) props.get("max-offset"));
@@ -137,12 +136,12 @@ public class ObjectStoreOjbImpl implements ObjectStore
         // check limit and offset are valid
         int limit = (end - start) + 1;
         if (start > maxOffset) {
-            throw (new ObjectStoreException("start parameter (" + start
+            throw (new ObjectStoreLimitReachedException("start parameter (" + start
                                             + ") is greater than permitted maximum ("
                                             + maxOffset + ")"));
         }
         if (limit > maxLimit) {
-            throw (new ObjectStoreException("number of rows required (" + limit
+            throw (new ObjectStoreLimitReachedException("number of rows required (" + limit
                                             + ") is greater than permitted maximum ("
                                             + maxLimit + ")"));
         }
@@ -154,11 +153,6 @@ public class ObjectStoreOjbImpl implements ObjectStore
             throw (new ObjectStoreException("Estimated time to run query(" + explain.getTime()
                                             + ") greater than permitted maximum ("
                                             + maxTime + ")"));
-        }
-        if (explain.getRows() > maxRows) {
-            throw (new ObjectStoreException("Estimated number of rows (" + explain.getRows()
-                                            + ") greater than permitted maximum ("
-                                            + maxRows + ")"));
         }
 
         List res = pb.execute(q, start, limit);

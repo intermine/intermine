@@ -1,7 +1,7 @@
 package org.flymine.objectstore;
 
 /**
- * An Exception that may be thrown by an ObjectStore.
+ * An Exception that may be thrown by an ObjectStore indicating a fatal error.
  *
  * @author Andrew Varley
  */

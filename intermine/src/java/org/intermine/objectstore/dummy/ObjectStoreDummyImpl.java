@@ -17,6 +17,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     private List rows = new ArrayList();
     private int resultsSize = 0;
     private int executeCalls = 0;
+    private int poisonRowNo = -1;
 
     /**
      * Construct an ObjectStoreDummyImpl
@@ -49,6 +50,15 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     }
 
     /**
+     * Sets a row number to throw an ObjectStoreException on.
+     *
+     * @param row the row which, if accessed will throw an ObjectStoreException
+     */
+    public void setPoisonRowNo(int row) {
+        poisonRowNo = row;
+    }
+
+    /**
      * Execute a Query on this ObjectStore
      *
      * @param q the Query to execute
@@ -72,15 +82,20 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int end) throws ObjectStoreException {
+        checkStartLimit(start, end - start + 1);
 
         List results = new ArrayList();
 
         // If we are asking for rows completely outside resultsSize, throw ObjectStoreException
         if (start > resultsSize) {
-            throw new ArrayIndexOutOfBoundsException("Start row outside results size");
+            return new ArrayList();
+            //throw new ArrayIndexOutOfBoundsException("Start row outside results size");
         }
 
         for (int i = start; ((i <= end) && (i < resultsSize)); i++) {
+            if (i == poisonRowNo) {
+                throw new ObjectStoreException("Poison row number " + i + " reached");
+            }
             if (i < rows.size()) {
                 results.add(rows.get(i));
             } else {

@@ -205,7 +205,8 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         try{
             List l1 = os.execute(q1, 10, 120);
             fail("Expected: ObjectStoreException");
-        }  catch (ObjectStoreException e) {
+        }  catch (IndexOutOfBoundsException e) {
+        } finally {
             os.maxLimit = before;
         }
     }
@@ -221,24 +222,11 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         try {
             List l1 = os.execute(q1, 100, 180);
             fail("Expected: ObjectStoreException");
-        }  catch (ObjectStoreException e) {
+        } catch (IndexOutOfBoundsException e) {
+        } finally {
             os.maxOffset = before;
         }
     }
-
-    public void testTooManyRows() throws Exception {
-        // try to run a query that returns more than max number of rows
-        int  before = os.maxRows;
-        os.maxRows = 0;
-        Query q1 = new Query();
-        try {
-            List l1 = os.execute((Query)queries.get("WhereClassClass"), 0, 10);
-            fail("Expected: ObjectStoreException");
-        }  catch (ObjectStoreException e) {
-            os.maxRows = before;
-        }
-    }
-
 
     public void testTooMuchTime()  throws Exception {
         // try to run a query that takes longer than max amount of time

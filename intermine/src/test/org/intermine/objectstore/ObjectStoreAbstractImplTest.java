@@ -23,15 +23,15 @@ public class ObjectStoreAbstractImplTest extends TestCase
     }
 
 
-    public void testCheckOffsetLimit() throws Exception {
+    public void testCheckStartLimit() throws Exception {
 
         try {
-            os.checkOffsetLimit(30,5);
+            os.checkStartLimit(30,5);
             fail("Expected ObjectStoreLimitReachedException");
         } catch (ObjectStoreLimitReachedException e) {
         }
         try {
-            os.checkOffsetLimit(10,15);
+            os.checkStartLimit(10,15);
             fail("Expected ObjectStoreLimitReachedException");
         } catch (ObjectStoreLimitReachedException e) {
         }

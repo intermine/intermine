@@ -2,11 +2,16 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.lang.reflect.Field;
 
+import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStoreLimitReachedException;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
@@ -55,7 +60,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetOutOfBounds() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         try {
             res.get(10);
             fail("Expected IndexOutOfBoundsException");
@@ -65,7 +72,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testRangeOutOfBounds() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(5);
         try {
             res.range(6,11);
@@ -76,7 +85,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetFromTwoBatches() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(5);
         ResultsRow row = (ResultsRow) res.get(6);
         assertEquals(1, os.getExecuteCalls());
@@ -87,7 +98,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testInvalidRange() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(10);
         // Don't let res call the ObjectStore
         res.os = null;
@@ -99,7 +112,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetAllRowsInOneRange() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(10);
         List rows = res.range(0,9);
         assertEquals(10, rows.size());
@@ -109,7 +124,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetPartialRowsFromTwoBatches() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(5);
         List rows = res.range(4,7);
         assertEquals(4, rows.size());
@@ -119,8 +136,16 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetAllRowsInTwoRanges() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(5);
+        Iterator iter = res.iterator();
+        int o = 0;
+        while (iter.hasNext()) {
+            assertEquals("" + o++, (String) ((ResultsRow) iter.next()).get(0));
+        }
+        assertEquals(10, res.size());
         List rows = res.range(0,9);
         assertEquals(10, rows.size());
         for (int i = 0; i < 10; i++) {
@@ -129,7 +154,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetAllRowsInTwoRangesTwice() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(5);
         List rows = res.range(0,9);
         // Call this a second time - the rows should be in the cache
@@ -143,7 +170,9 @@ public class ResultsTest extends TestCase
     }
 
     public void testSubList() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         List rows = res.subList(4,7);
         assertEquals(3, rows.size());
 
@@ -153,18 +182,24 @@ public class ResultsTest extends TestCase
     }
 
     public void testSize() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         assertEquals(10, res.size());
     }
 
     public void testSetBatchSize() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(10);
         assertEquals(10, res.batchSize);
     }
 
     public void testGetBatchNoForRow() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(10);
         assertEquals(0, res.getBatchNoForRow(6));
         assertEquals(1, res.getBatchNoForRow(14));
@@ -176,30 +211,29 @@ public class ResultsTest extends TestCase
     }
 
     public void testFetchBatchFromObjectStore() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(7);
 
         // Fetch the first batch - will be a full batch
         res.fetchBatchFromObjectStore(0);
         assertEquals(1, os.getExecuteCalls());
-        assertTrue(res.batches.containsKey(new Integer(0)));
 
         // Fetch the second batch - will be partial, but will now know size
         res.fetchBatchFromObjectStore(1);
-        assertEquals(10, res.size);
+        assertEquals(10, res.maxSize);
         assertEquals(2, os.getExecuteCalls());
-        assertTrue(res.batches.containsKey(new Integer(1)));
 
-        try {
-            res.fetchBatchFromObjectStore(2);
-            fail("Expected IndexOutOfBoundsException");
-        } catch (IndexOutOfBoundsException e) {
-        }
+        List list = res.fetchBatchFromObjectStore(2);
+        assertEquals(0, list.size());
     }
 
 
     public void testSetBatchSizeWhenInitialised() throws Exception {
-        Results res = os.execute(new Query());
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        Results res = os.execute(q);
         res.setBatchSize(10);
 
         res.get(0);
@@ -224,6 +258,7 @@ public class ResultsTest extends TestCase
         list.add(rr);
 
         Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
         Results r = os.execute(q);
         r.promoteProxies(list);
         Department resDept = (Department) ((List)list.get(0)).get(0);
@@ -285,4 +320,157 @@ public class ResultsTest extends TestCase
 
         return dept;
     }
+
+    public void testGarbageCollectionOnWeakHashMap() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(100000);
+        
+        Results res = os2.execute(q);
+        res.setBatchSize(200);
+        int count = 0;
+        Iterator iter = res.iterator();
+        while (iter.hasNext() && (count < 50000)) {
+            count++;
+            Object row = iter.next();
+        }
+        int mapSize = res.batches.size();
+        int mapCount = 0;
+        iter = res.batches.keySet().iterator();
+        while (iter.hasNext()) {
+            mapCount++;
+            Object obj = iter.next();
+        }
+        Results.LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
+        System.gc();
+        Results.LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
+        int newMapSize = res.batches.size();
+        int newMapCount = 0;
+        iter = res.batches.keySet().iterator();
+        while (iter.hasNext()) {
+            newMapCount++;
+            Object obj = iter.next();
+        }
+        Results.LOG.info("testGarbageCollectionOnWeakHashMap - original size: " + mapSize + ", new size: " + newMapSize);
+        Results.LOG.info("testGarbageCollectionOnWeakHashMap - original count: " + mapCount + ", new count: " + newMapCount);
+        assertTrue("new count " + newMapCount + " is not less than " + mapCount, newMapCount < mapCount);
+    }
+
+    public void testWorkingWithRemovals() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(5000);
+        
+        Results res = os2.execute(q);
+        res.setBatchSize(200);
+        int count = 0;
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            count++;
+            Object row = iter.next();
+            res.batches.clear();
+        }
+        assertEquals(5000, count);
+    }
+
+    public void testSizeUsesFewBatchFetches() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(5000);
+        
+        Results.LOG.info("testSizeUsesFewBatchFetches starting");
+        Results res = os2.execute(q);
+        res.setBatchSize(1);
+        res.batches = Collections.synchronizedMap(new HashMap());
+        assertEquals(5000, res.size());
+        assertTrue("Expected size to not need more than 25 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() <= 25);
+    }
+
+    public void testSizeUsesFewBatchFetches2() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(5000);
+        
+        Results.LOG.info("testSizeUsesFewBatchFetches2 starting");
+        Results res = os2.execute(q);
+        res.setBatchSize(30);
+        res.batches = Collections.synchronizedMap(new HashMap());
+        assertEquals(5000, res.size());
+        assertTrue("Expected size to not need more than 12 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() <= 12);
+    }
+
+    public void testIteratorPropagatesObjectStoreException() throws Exception {
+        Results.LOG.info("testIteratorPropagatesObjectStoreException starting");
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(10);
+        os2.setPoisonRowNo(7);
+        Results res = os2.execute(q);
+        res.setBatchSize(1);
+        
+        int count = 0;
+        try {
+            Iterator iter = res.iterator();
+            while (iter.hasNext()) {
+                Object obj = iter.next();
+                count++;
+            }
+            fail("Expected RuntimeException containing ObjectStoreException - count = " + count);
+        } catch (RuntimeException e) {
+            if (!(e.getCause() instanceof ObjectStoreException)) {
+                fail("Expected RuntimeException to contain an ObjectStoreException");
+            }
+            if (count != 7) {
+                fail("Expected to get the exception after 7 rows");
+            }
+        }
+    }
+
+    public void testIteratorPropagatesObjectStoreLimitReachedException() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(10);
+        os2.setMaxOffset(6);
+        Results res = os2.execute(q);
+        res.setBatchSize(1);
+        
+        int count = 0;
+        try {
+            Iterator iter = res.iterator();
+            while (iter.hasNext()) {
+                Object obj = iter.next();
+                count++;
+            }
+            fail("Expected ObjectStoreLimitReachedException - count = " + count);
+        } catch (ObjectStoreLimitReachedException e) {
+            if (count != 7) {
+                fail("Expected to get the exception after 7 rows");
+            }
+        }
+    }
+
+    public void testStrangeIteratorUsage() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(50);
+        
+        Results res = os2.execute(q);
+        res.setBatchSize(20);
+        int count = 0;
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            count++;
+            iter.hasNext();
+            Object row = iter.next();
+        }
+        assertEquals(50, count);
+    }
+
 }

@@ -106,13 +106,8 @@ public class ObjectStoreDummyImplTest extends TestCase
         assertEquals(0, rows.size());
 
         // Stupidly try and get beyond the end
-        try {
-            rows = os.execute(q, 15, 21);
-            fail("Expected: ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException e) {
-        }
-
-
+        rows = os.execute(q, 15, 21);
+        assertEquals(0, rows.size());
     }
 
 
@@ -127,4 +122,34 @@ public class ObjectStoreDummyImplTest extends TestCase
         assertEquals(2, os.getExecuteCalls());
     }
 
+    public void testPoisonRow() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        Query q = new Query();
+        os.setResultsSize(10);
+        Results res = os.execute(q);
+        os.setPoisonRowNo(7);
+        os.execute(q, 0, 4);
+        os.execute(q, 8, 9);
+        os.execute(q, 4, 6);
+        try {
+            os.execute(q, 0, 9);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+        }
+        try {
+            os.execute(q, 7, 9);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+        }
+        try {
+            os.execute(q, 7, 7);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+        }
+        try {
+            os.execute(q, 0, 7);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+        }
+    }
 }
