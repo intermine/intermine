@@ -30,7 +30,7 @@ import org.flymine.xml.full.ItemHelper;
  */
 public class OrthologueConverter extends FileConverter
 {
-    protected static final String ORTHOLOGUE_NS = "http://flymine.org/model/genomic#";
+    protected static final String ORTHOLOGUE_NS = "http://www.flymine.org/model/genomic#";
 
     protected Map proteins = new HashMap();
     protected Item db, analysis;

@@ -28,7 +28,7 @@ import org.flymine.xml.full.ItemHelper;
  */
 public class RNAiConverter extends FileConverter
 {
-    protected static final String RNAI_NS = "http://flymine.org/model/rnai#";
+    protected static final String RNAI_NS = "http://www.flymine.org/model/rnai#";
     
     protected Map genes = new HashMap();
     protected Map phenotypes = new HashMap();
