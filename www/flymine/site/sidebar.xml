@@ -7,20 +7,19 @@
     </section>
     <section>
         <heading>Documentation</heading>
-        <item><ulink url="/system">System</ulink></item>
-        <item><ulink url="/user">User</ulink></item>
-        <item><ulink url="/developer">Developer</ulink></item>
+        <item><ulink url="/software">Software</ulink></item>
+        <item><ulink url="/database">Database</ulink></item>
         <item><ulink url="/api">API<nbsp/>JavaDoc</ulink></item>
     </section>
     <section>
-        <heading><ulink url="/user/building">Download</ulink></heading>
+        <heading><ulink url="/software/building">Download<nbsp/>software</ulink></heading>
         <item><ulink url="http://download.flymine.org/releases/">Latest<nbsp/>release</ulink></item>
         <item><ulink url="http://download.flymine.org/nightly/">Nightly<nbsp/>build</ulink></item>
     </section>
     <section>
         <heading>CVS</heading>
         <item><ulink url="http://cvs.flymine.org">Browse</ulink></item>
-        <item><ulink url="/user/cvs">Anonymous</ulink></item>
+        <item><ulink url="/software/cvs-user">Anonymous</ulink></item>
     </section>
     <section>
         <heading><ulink url="http://mailman.flymine.org/listinfo/">Mailing<nbsp/>lists</ulink></heading>
