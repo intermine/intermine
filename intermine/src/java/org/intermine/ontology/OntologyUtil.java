@@ -378,19 +378,18 @@ public class OntologyUtil
         if (sr == null) {
             sr = new SubclassRestriction();
         }
-        Iterator j = model.listRestrictions();
-        while (j.hasNext()) {
-            Restriction res = (Restriction) j.next();
+        for (Iterator i = model.listRestrictions(); i.hasNext();) {
+            Restriction res = (Restriction) i.next();
             if (res.hasSubClass(cls, true) && res.isHasValueRestriction()) {
-                Iterator propIter = cls.listDeclaredProperties(true);
-                while (propIter.hasNext()) {
-                    OntProperty prop = (OntProperty) propIter.next();
-                    String propStr = "PROP: " + cls.toString() + ", " + prop.toString();
-                    Iterator p = prop.listDomain();
-                    while (p.hasNext()) {
-                        propStr += "$ " + ((OntResource) p.next()).toString();
-                    }
+                for (Iterator j = cls.listDeclaredProperties(true); j.hasNext();) {
+                    OntProperty prop = (OntProperty) j.next();
                     if (res.onProperty(prop)) {
+                        if (prop.getLocalName().indexOf("__") == -1) {
+                            throw new IllegalArgumentException("Attribute name '"
+                                                               + prop.getLocalName() 
+                                                               + "' is not of form "
+                                                               + "'className__propertyName'");
+                        }
                         String newPath = path + "." + prop.getLocalName().split("__")[1];
                         if (isDatatypeProperty(prop)) {
                             // add path/value restriction to SubclassRestriction
