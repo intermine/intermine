@@ -39,8 +39,9 @@ public class QueryValue implements QueryEvaluable
               || (value instanceof Boolean)
               || (value instanceof Date)
               || (value instanceof UnknownTypeValue))) {
-            throw new IllegalArgumentException("value must be a Number, String, Boolean, Date, "
-                    + "or unknown");
+            throw new IllegalArgumentException("value (" + value
+                                               + ") must be a Number, String, Boolean, "
+                                               + "Date or unknown but was: " + value.getClass());
         }
         this.value = value;
     }
