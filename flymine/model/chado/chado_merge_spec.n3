@@ -338,8 +338,8 @@ null:organism__comment a owl:DatatypeProperty ;
 null:feature__feature_cvterms a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature__feature_cvterms .
 
-null:feature__feature_dbxrefs a owl:ObjectProperty ;
-    owl:equivalentProperty chado:feature__feature_dbxrefs .
+#null:feature__feature_dbxrefs a owl:ObjectProperty ;
+#    owl:equivalentProperty chado:feature__feature_dbxrefs .
 
 null:feature__md5checksum a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature__md5checksum .
