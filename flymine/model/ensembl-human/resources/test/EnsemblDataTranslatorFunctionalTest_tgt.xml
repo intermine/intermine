@@ -100,12 +100,13 @@
 <reference name="object" ref_id="-1_12"/>
 <reference name="subject" ref_id="-1_42"/>
 </item>
-<item id="-1_49" class="http://www.flymine.org/model/genomic#Location">
+<item id="-1_48" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="11391868"/>
 <attribute name="endIsPartial" value="false"/>
 <attribute name="start" value="11391868"/>
 <attribute name="startIsPartial" value="false"/>
-<reference name="object" ref_id="-1_47"/>
+<attribute name="strand" value="0"/>
+<reference name="object" ref_id="-1_28"/>
 <reference name="subject" ref_id="14_31"/>
 </item>
 <item id="14_31" class="http://www.flymine.org/model/genomic#Marker">
@@ -118,10 +119,11 @@
 <reference ref_id="-1_2"/>
 </collection>
 <collection name="objects">
+<reference ref_id="-1_48"/>
 <reference ref_id="-1_49"/>
-<reference ref_id="-1_50"/>
 </collection>
 </item>
+
 <item id="-1_31" class="http://www.flymine.org/model/genomic#Contig">
 <attribute name="identifier" value="AB000878.1.1.33983"/>
 <attribute name="length" value="33983"/>
@@ -207,9 +209,9 @@
 </collection>
 </item>
 <item id="-1_27" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="123200000"/>
+<attribute name="end" value="124200000"/>
 <attribute name="endIsPartial" value="false"/>
-<attribute name="start" value="120000001"/>
+<attribute name="start" value="121000001"/>
 <attribute name="startIsPartial" value="false"/>
 <attribute name="strand" value="0"/>
 <reference name="object" ref_id="-1_28"/>
@@ -280,13 +282,7 @@
 <attribute name="title" value="embl"/>
 <attribute name="url" value="http://www.ebi.ac.uk/embl"/>
 </item>
-<item id="-1_47" class="http://www.flymine.org/model/genomic#Chromosome">
-<attribute name="identifier" value="1"/>
-<attribute name="length" value="245522847"/>
-<collection name="evidence">
-<reference ref_id="-1_2"/>
-</collection>
-</item>
+
 <item id="4_327" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value=" ENSG00000100109"/>
 <attribute name="name" value="TFIP11"/>
@@ -308,11 +304,11 @@
 </item>
 <item id="-1_28" class="http://www.flymine.org/model/genomic#Chromosome">
 <attribute name="identifier" value="1"/>
-<attribute name="length" value="246127941"/>
+<attribute name="length" value="245522847"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>
 </collection>
-</item>
+</item>_
 <item id="-1_23" class="http://www.flymine.org/model/genomic#TRNA">
 <attribute name="identifier" value="12_1"/>
 <reference name="organism" ref_id="-1_1"/>
@@ -337,7 +333,7 @@
 <reference name="object" ref_id="-1_40"/>
 <reference name="subject" ref_id="-1_39"/>
 </item>
-<item id="-1_48" class="http://www.flymine.org/model/genomic#Contig">
+<item id="-1_47" class="http://www.flymine.org/model/genomic#Contig">
 <attribute name="identifier" value="AL365274.17.1.171941"/>
 <attribute name="length" value="171941"/>
 <collection name="evidence">
@@ -446,12 +442,13 @@
 <reference name="object" ref_id="-1_25"/>
 <reference name="subject" ref_id="-1_23"/>
 </item>
-<item id="-1_50" class="http://www.flymine.org/model/genomic#Location">
+<item id="-1_49" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="43563"/>
 <attribute name="endIsPartial" value="false"/>
 <attribute name="start" value="43252"/>
 <attribute name="startIsPartial" value="false"/>
-<reference name="object" ref_id="-1_48"/>
+<attribute name="strand" value="0"/>
+<reference name="object" ref_id="-1_47"/>
 <reference name="subject" ref_id="14_31"/>
 </item>
 <item id="21_11941" class="http://www.flymine.org/model/genomic#Comment">

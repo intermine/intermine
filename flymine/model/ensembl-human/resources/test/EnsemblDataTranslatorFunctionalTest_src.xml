@@ -129,10 +129,10 @@
   </item>
   <item id="16_1" class="http://www.flymine.org/model/ensembl-human#karyotype">
     <attribute name="band" value="p11.1"/>    
-    <attribute name="seq_region_start" value="120000001"/>
-    <attribute name="seq_region_end" value="123200000"/>
+    <attribute name="seq_region_start" value="121000001"/>
+    <attribute name="seq_region_end" value="124200000"/>
     <attribute name="stain" value="acen"/>
-    <reference name="seq_region" ref_id="1_965502"/>
+    <reference name="seq_region" ref_id="1_965892"/>
   </item>
   
   <item id="23_1" class="http://www.flymine.org/model/ensembl-human#repeat_feature">
@@ -301,7 +301,7 @@
     <attribute name="seq_region_end" value="238821465"/>
     <attribute name="density_value" value="39.12"/>
     <reference name="density_type" ref_id="34_4"/>
-    <reference name="seq_region" ref_id="1_965502"/>
+    <reference name="seq_region" ref_id="1_965892"/>
   </item>
 
  <item id="34_4" class="http://www.flymine.org/model/ensembl-human#density_type">
@@ -341,11 +341,6 @@
     <reference name="coord_system" ref_id="30_4"/>
  </item>
 
-<item id="1_965502" class="http://www.flymine.org/model/ensembl-human#seq_region">
-    <attribute name="name" value="1"/>
-    <attribute name="length" value="246127941"/>
-    <reference name="coord_system" ref_id="30_1"/>
- </item>
 <item id="1_965452" class="http://www.flymine.org/model/ensembl-human#seq_region">
     <attribute name="name" value="21"/>
     <attribute name="length" value="46976097"/>
