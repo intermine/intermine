@@ -62,6 +62,9 @@ public class LoadQueryAction extends DispatchAction
             session.setAttribute(Constants.VIEW, queryInfo.getView());
         }
 
+        session.removeAttribute("path");
+        session.removeAttribute("prefix");
+
         return mapping.findForward("buildquery");
     }
 }
