@@ -13,11 +13,7 @@ package org.flymine.postprocess;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Collections;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -31,13 +27,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.objectstore.query.iql.IqlQuery;
 
-import org.intermine.model.InterMineObject;
+import org.intermine.util.StringUtil;
+
 import org.flymine.model.genomic.*;
 
 import org.apache.log4j.Logger;
@@ -92,6 +84,8 @@ public class FlyBaseUniProtRefsTask extends Task
     /**
      * Use the linkFile attribute (which is a file containing FlyBase Translation <-> UniProt
      * accession numbers) to link Translation objects to Protein objects in the ObjectStoreWriter.
+     * Sets the protein reference in the CDS objects.
+     * @throws BuildException if there is a problem while executing
      */
     public void execute()
         throws BuildException {
@@ -150,7 +144,6 @@ public class FlyBaseUniProtRefsTask extends Task
             Iterator uniprotIter = uniprotResults.iterator();
             while (uniprotIter.hasNext()) {
                 ResultsRow row = (ResultsRow) uniprotIter.next();
-                System.err.println ("results: " + row);
                 Protein protein = (Protein) row.get(0);
                 uniprotAccMap.put(protein.getPrimaryAccession(), protein);
             }
@@ -167,14 +160,11 @@ public class FlyBaseUniProtRefsTask extends Task
 
             cdsQuery.setConstraint(cdsBc);
 
-            System.err.println ("starting stores");
-
             Results cdsResults = getObjectStore().execute(cdsQuery);
             Iterator cdsIter = cdsResults.iterator();
 
             while (cdsIter.hasNext()) {
                 ResultsRow row = (ResultsRow) cdsIter.next();
-                System.err.println ("results: " + row);
                 CDS cds = (CDS) row.get(0);
                 String cdsId = cds.getIdentifier();
 
@@ -186,12 +176,10 @@ public class FlyBaseUniProtRefsTask extends Task
                 Protein protein = (Protein) uniprotAccMap.get(uniprotAcc);
 
                 if (protein == null) {
-                    throw new BuildException("uniprot accession number not found: "
-                                             + uniprotAcc);
+                    LOG.error("uniprot accession number not found: " + uniprotAcc);
                 }
 
                 CDS clonedCds = (CDS) PostProcessUtil.cloneInterMineObject(cds);
-                System.err.println ("setting " + protein.getIdentifier() + " in " + cds);
                 clonedCds.setProtein(protein);
                 getObjectStoreWriter().store(clonedCds);
             }
