@@ -73,7 +73,6 @@ public class PagedResults extends PagedTable
         try {
             return results.getInfo().getRows();
         } catch (ObjectStoreException e) {
-            org.intermine.web.LogMe.log("i", e);
             throw new RuntimeException(e);
         }
     }
@@ -85,7 +84,6 @@ public class PagedResults extends PagedTable
         try {
             return results.getInfo().getStatus() != ResultsInfo.SIZE;
         } catch (ObjectStoreException e) {
-            org.intermine.web.LogMe.log("i", e);
             throw new RuntimeException(e);
         }
     }
