@@ -1,20 +1,11 @@
-body {
-  font-family: arial, helvetica, sans-serif;
-  color: black;
-  background: #f4eeff
-}
-a {
-  color: #220077;
-  text-decoration: none
-}
-a:hover {
-  text-decoration: underline
-}
 img { 
   border: none;
 }
 form { 
   margin: 0px
+}
+body {
+  margin: 3px;
 }
 
 .links, .footer {
@@ -38,6 +29,10 @@ form {
   font-size: x-large;
   font-weight: bold;
   color: #220077;
+}
+.headerTitle a {
+  color: #220077;
+  text-decoration: none
 }
 .headerSubtitle {
   font-size: large;
