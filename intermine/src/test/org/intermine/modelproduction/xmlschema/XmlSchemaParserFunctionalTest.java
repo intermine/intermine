@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 public class XmlSchemaParserFunctionalTest extends TestCase
 {
     private static final String MODEL = "xmlschematest";
-    private static final String PKG = "org.intermine.model." + MODEL + ".";
+    private static final String PKG = "org.intermine.model." + MODEL;
     private String nameSpace = "http://www.intermine.org/model";
 
     public XmlSchemaParserFunctionalTest(String arg) {
@@ -35,14 +35,39 @@ public class XmlSchemaParserFunctionalTest extends TestCase
     }
 
     public void testProcess() throws Exception {
-        ModelParser parser1 = new XmlSchemaParser(nameSpace, MODEL);
-        Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
+        ModelParser parser1 = new InterMineModelParser();
+        Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xml"));
         Model model1 = parser1.process(reader1);
-        ModelParser parser2 = new InterMineModelParser();
-        Reader reader2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xml"));
+        ModelParser parser2 = new XmlSchemaParser(MODEL, PKG);
+        Reader reader2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
         Model model2 = parser2.process(reader2);
         assertEquals(model1, model2);
     }
 
+
+    public void testReferences() throws Exception {
+        ModelParser parser = new XmlSchemaParser(MODEL, PKG);
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
+        Model model = parser.process(reader);
+
+        ClassDescriptor companyCld = model.getClassDescriptorByName("org.intermine.model.xmlschematest.Company");
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("address", "org.intermine.model.xmlschematest.Address_Company", null);
+        assertEquals(rfd1, companyCld.getReferenceDescriptorByName("address"));
+        CollectionDescriptor cod1 = new CollectionDescriptor("departments", "org.intermine.model.xmlschematest.Department_Company",
+                                                             null, true);
+        assertEquals(cod1, companyCld.getCollectionDescriptorByName("departments"));
+
+        ClassDescriptor deptCld = model.getClassDescriptorByName("org.intermine.model.xmlschematest.Department_Company");
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("manager", "org.intermine.model.xmlschematest.Employee", null);
+        assertEquals(rfd2, deptCld.getReferenceDescriptorByName("manager"));
+        CollectionDescriptor cod2 = new CollectionDescriptor("employees", "org.intermine.model.xmlschematest.Employee",
+                                                             null, true);
+        assertEquals(cod2, deptCld.getCollectionDescriptorByName("employees"));
+
+
+        ClassDescriptor empCld = model.getClassDescriptorByName("org.intermine.model.xmlschematest.Employee");
+        ReferenceDescriptor rfd3 = new ReferenceDescriptor("businessAddress", "org.intermine.model.xmlschematest.Address_Company", null);
+        assertEquals(rfd3, empCld.getReferenceDescriptorByName("businessAddress"));
+    }
 }
 

@@ -1,20 +1,30 @@
 <?xml version="1.0"?>
-<model name="http://www.intermine.org/model" namespace="org:flymine:model:test#">
-  <class name="Employee" extends="Employable" is-interface="true">
+<model name="xmlschematest" namespace="org:flymine:model:test#">
+  <class name="org.intermine.model.xmlschematest.Employee" extends="org.intermine.model.xmlschematest.Employable" is-interface="true">
     <attribute name="age" type="java.lang.Integer"/>
     <attribute name="fullTime" type="java.lang.Boolean"/>
+    <reference name="businessAddress" referenced-type="org.intermine.model.xmlschematest.Address_Company"/>
   </class>
-  <class name="Company" is-interface="true">
+  <class name="org.intermine.model.xmlschematest.Company" is-interface="true">
     <attribute name="vatNumber" type="java.lang.Integer"/>
     <attribute name="name" type="java.lang.String"/>
-    <collection name="departments" referenced-type="Department_Company" ordered="true"/>
+    <reference name="address" referenced-type="org.intermine.model.xmlschematest.Address_Company"/>
+    <reference name="addressBook" referenced-type="org.intermine.model.xmlschematest.AddressBook_Company"/>
+    <collection name="departments" referenced-type="org.intermine.model.xmlschematest.Department_Company" ordered="true"/>
   </class>
-  <class name="Employable" is-interface="true">
+  <class name="org.intermine.model.xmlschematest.Employable" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
   </class>
-  <class name="Department_Company" is-interface="true">
+  <class name="org.intermine.model.xmlschematest.Department_Company" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <reference name="manager" referenced-type="Employee"/>
-    <collection name="employees" referenced-type="Employee" ordered="true"/>
+    <reference name="manager" referenced-type="org.intermine.model.xmlschematest.Employee"/>
+    <collection name="employees" referenced-type="org.intermine.model.xmlschematest.Employee" ordered="true"/>
+  </class>
+  <class name="org.intermine.model.xmlschematest.Address_Company" is-interface="true">
+    <attribute name="addressString" type="java.lang.String"/>
+    <attribute name="identifier" type="java.lang.String"/>
+  </class>
+  <class name="org.intermine.model.xmlschematest.AddressBook_Company" is-interface="true">
+    <collection name="addresss" referenced-type="org.intermine.model.xmlschematest.Address_Company" ordered="true"/>
   </class>
 </model>

@@ -196,6 +196,9 @@
     <pathelement location="${build.model}/acedbtest"/>
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/xmlschematest"/>
+
+    <pathelement location="${build.model}/test"/>
+
   </path>
 
   <path id="acedbtest.class.path">
@@ -436,12 +439,10 @@
 
   <!-- Test XML Schema -->
   <target name="test-xmlschema" depends="compile-main" >
-
-
     <ant antfile="build-model.xml" target="build-model-from-xmlschema" inheritRefs="true">
-      <property name="model.name" value="xmlschematest"/>
-      <property name="model.src" value="${model}/xmlschematest"/>
-      <property name="build.model.dir" value="${build.model}/xmlschematest"/>
+      <property name="model.name" value="test"/>
+      <property name="model.src" value="${model}/test"/>
+      <property name="build.model.dir" value="${build.model}/test"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
