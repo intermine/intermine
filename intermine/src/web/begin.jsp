@@ -27,4 +27,5 @@
     <fmt:message key="index.iqlquery"/>
   </html:link>
 </div>
+<br/>
 <!-- /begin.jsp -->
