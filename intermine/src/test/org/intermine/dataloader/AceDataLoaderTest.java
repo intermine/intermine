@@ -230,6 +230,22 @@ public class AceDataLoaderTest extends TestCase {
 
     }
 
+    public void testProcessObjectNullObject() throws Exception {
+        try {
+            loader.processAceObject(null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+
+    public void testProcessObjectsNullSet() throws Exception {
+        try {
+            loader.processAceObjects(null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+
     public void testProcessObjects() throws Exception {
         StaticAceSet set = new StaticAceSet(null, null, null);
         StaticAceObject obj1 = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
