@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.uniprot.org/support/docs/uniprot.xsd">
+<entry dataset="Swiss-Prot" created="1990-04-01" updated="1992-08-01">
+  <accession>P15711</accession>
+  <organism key="2">
+    <name type="scientific">Drosophila melanogaster</name>
+    <name type="common">Fruit fly</name>
+    <dbReference type="NCBI Taxonomy" id="7227" key="3"/>
+    <lineage>
+      <taxon>Eukaryota</taxon>
+      <taxon>Metazoa</taxon>
+      <taxon>Arthropoda</taxon>
+      <taxon>Hexapoda</taxon>
+      <taxon>Insecta</taxon>
+      <taxon>Pterygota</taxon>
+      <taxon>Neoptera</taxon>
+      <taxon>Endopterygota</taxon>
+      <taxon>Diptera</taxon>
+      <taxon>Brachycera</taxon>
+      <taxon>Muscomorpha</taxon>
+      <taxon>Ephydroidea</taxon>
+      <taxon>Drosophilidae</taxon>
+      <taxon>Drosophila</taxon>
+    </lineage>
+  </organism>
+</entry>
+</uniprot>

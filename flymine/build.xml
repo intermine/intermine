@@ -76,6 +76,7 @@
     <include name="junit*.jar"/>
     <include name="catalina-ant.jar"/>
     <include name="biojava*.jar"/>
+    <include name="xmlunit*.jar"/>
   </patternset>
 
   <!-- Checkstyle library -->
@@ -92,6 +93,12 @@
   <patternset id="lib.flymine">
     <include name="flymine.jar"/>
   </patternset>
+
+  <patternset id="lib.models">
+    <include name="**/lib/*.jar"/>
+  </patternset>
+
+  
 
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
@@ -145,6 +152,9 @@
     <pathelement location="${build.model}/taxonomy"/>
     <pathelement location="${build.model}/uniprot"/>
     <pathelement location="${build.model}/protein_structure"/>
+    <fileset dir="${model}">
+      <patternset refid="lib.models"/>
+    </fileset>
   </path>
 
   <path id="project.class.path">
@@ -193,7 +203,7 @@
 
     <!-- overwrite default.intermine.properties -->
     <copy todir="${build.resources}" file="${resources}/runtime/default.intermine.properties" overwrite="true"/>
-    <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties"/>
+    <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties" overwrite="true"/>
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
     </copy>
@@ -401,6 +411,7 @@
   <target name="convert-mage" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
       <property name="model.name" value="mage"/>
+      <property name="namespace" value="http://www.flymine.org/model/mage#"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -576,7 +587,6 @@
     <ant antfile="${build}/build-model.xml" target="generate-model-from-xmlschema" inheritRefs="true">
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.name" value="protein_structure"/>
-      <property name="package.prefix" value="org.flymine.model"/>
       <property name="namespace" value="http://www.flymine.org/model/protein_structure#"/>
     </ant>    
     <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
@@ -619,7 +629,6 @@
     <ant antfile="${build}/build-model.xml" target="generate-model-from-xmlschema" inheritRefs="true">
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.name" value="psi"/>
-      <property name="package.prefix" value="org.flymine.model"/>
       <property name="namespace" value="http://www.flymine.org/model/psi#"/>
     </ant>    
 
@@ -744,7 +753,7 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
                 merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                merge-ensembl-model, merge-ensembl-human-model,  merge-phenotype-model, 
+                merge-ensembl-model,  merge-ensembl-human-model, merge-phenotype-model, 
                 merge-go-model, merge-uniprot-model,
                 merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
@@ -1689,6 +1698,21 @@
     <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static"/>
   </target>
 
+  <target name="filter-uniprot" depends="prepare-build-model, compile-uniprot-java">
+    <taskdef
+      name="filter-uniprot"
+      classname="org.flymine.dataconversion.UniprotFilterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <filter-uniprot tgtDir="${build.tmp}" organisms="Drosophila melanogaster, Anopheles gambiae, Caenorhabditis elegans">
+      <fileset dir="/shared/data/uniprot">
+        <include name="uniprot_sprot.xml"/>
+        <include name="uniprot_trembl.xml"/>
+      </fileset>
+    </filter-uniprot>
+  </target> 
+
   <target name="retrieve-uniprot" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1704,20 +1728,19 @@
     <convert-xml schema="${model}/uniprot/uniprot.xsd"
                  model="uniprot"
                  osName="osw.uniprot-src-items">
-      <fileset dir="/shared/data/uniprot">
-        <include name="uniprot_sprot.xml"/>
-        <include name="uniprot_trembl.xml"/>
+      <fileset dir="${build.tmp}">
+        <include name="*_filtered.xml"/>
       </fileset>
     </convert-xml>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-src-items"/>
+      <property name="db.name" value="db.uniprot-src-items"/>
     </ant>
     
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.common-src-items"/>
+      <property name="db.name" value="db.uniprot-src-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1853,6 +1876,7 @@
     <grant database="db.production" user="PUBLIC" perm="SELECT"/>
 
   </target>
+
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
 
@@ -2130,7 +2154,7 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="fulltest" depends="clean, test-models-full, genomic-test"
+  <target name="fulltest" depends="clean, compile-genomic-model, build-db-genomic-test, create-indexes-genomic-test, test-models-inc, genomic-test"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
