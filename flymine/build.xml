@@ -923,7 +923,7 @@
   </target>
 
   <!-- create merged model from all source OWL ontologies -->
-  <target name="create-production-model" depends="remove-genomic, merge-rnai-model, 
+  <target name="create-production-model" depends="remove-genomic, compile-main, merge-rnai-model, 
        merge-ensembl-model, merge-chado-model, merge-so-model" >
     <antcall target="create-genomic-model"/>
   </target>
