@@ -10,11 +10,6 @@
 
       <item>FlyMine allows you to construct complex queries across multiple integrated data sources using a web interface</item>
 
-      <item>The FlyMine query builder consists of 3 main pages: <ulink url="manualClasschooser.xml">The class chooser page</ulink>, the main <ulink url="manualQuerybuilder.xml">query builder</ulink> page and the <ulink url="manualResultdisplay.xml">result display.</ulink></item>
-      <item>To start a new FlyMine query select "<ulink url= "/classChooser.do">start a new query with a particular class</ulink>" from the main page.  This will take you to the <ulink url="manualClasschooser.xml">class chooser page</ulink>.  Select the class with which to start your query and press "select".  This will take you to the main <ulink url="manualQuerybuilder.xml">query builder</ulink> page.</item>
-
-      <item>The main query builder page is composed of 3 sections: a <ulink url="manualModelbrowser.xml">model browser</ulink>, a <ulink url="manualConstraintslist.xml">constraints list</ulink> and an <ulink url="manualOutputfields.xml">output fields list</ulink>.  The output fields list will initially just say: No fields selected for output.  </item>
-
      <item>
        Building a simple query using the FlyMine query builder involves the following steps:  (These are descibed in more detail below).
       </item> 

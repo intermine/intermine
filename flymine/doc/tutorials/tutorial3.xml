@@ -5,26 +5,30 @@
 
 
     <sect1>
-       <title>Tutorial3: Show all the orthologues between Drosophila melanogaster and Anopheles gambiae and the method used to determine them</title>
+       <title>Tutorial3: Show all the orthologues between <span class="organism">Drosophila melanogaster</span> and <span class="organism">Anopheles gambiae</span> and the method used to determine them.</title>
 
 
        <para>This page will guide you through the query: Show all the
-       orthologues between Drosophila melanogaster and Anopheles gambiae and
-       the method used to determine them.  The aim of this query tutorial is
-       to show you how relations between BioEntity objects (eg genes) are
-       linked via a subject and an object class and how to get information
-       form the Evidence class.  This query involves:  
+       orthologues between <span class="organism">Drosophila
+       melanogaster</span> and <span class="organism">Anopheles
+       gambiae</span> and the method used to determine them.  The aim
+       of this query tutorial is to show you how a relation between
+       BioEntity objects (eg genes) is linked via a subject and an
+       object and how to get information from the Evidence
+       class.  This query involves:
        </para>
 
    
         <para>
           <orderedlist>
              <listitem>Selecting the Orthologue class.</listitem>
-             <listitem>Constraining the objects of the relations to Drosophila
-             melanogaster and constraining the subjects of the relations to
-             Anopheles gambiae.</listitem> 
-             <listitem>Constraining and adding fields from the Evidence class
-             to show how the orthologues were determined.</listitem> 
+             <listitem>Constraining the objects of the relations to
+             <span class="organism">Drosophila melanogaster</span> and
+             constraining the subjects of the relations to <span
+             class="organism">Anopheles gambiae</span>.</listitem>
+             <listitem>Constraining and adding fields from the
+             Evidence class to show how the orthologues were
+             determined.</listitem>
           </orderedlist>
         </para>
 
@@ -38,24 +42,27 @@
 	  </entry>
 
 
-          <listitem>The model browser will now be displaying the Orthologue
-          class and it's fields.  The orthologue class is a subclass
-          (specialisation) of the Relation class. The Relation class links two
-          BioEntity objects that have some type of relationship with each
-          other. Every relation has a subject and an object. If two genes are
-          orthologues, one of the genes will be the subject of the relation
-          and the other the object. You need to add constraints to specify
-          that you want the objects of the orthologue relations to be
-          BioEntity objects (in this case genes) from Drosophila melanogaster and
-          the subjects of the relation to be BioEntity objects from Anopheles
-          gambiae.  The Relation class has three fields: evidence, object and
-          subject.  Expand the object field.  The object field has a link
-          (reference) to the Organism class.  Expand the organism class.
-          Click on the constrain arrow next to the name field of the Organism
-          class and add the constraint: LIKE %melanogaster.  Click on 'Add to
-          results' to add this to the constraints list.  In the same way,
-          constrain the Organism name field of the subject to: LIKE
-          %gambiae.</listitem>   
+          <listitem>The model browser will now be displaying the
+          Orthologue class and it's fields.  The orthologue class is a
+          subclass (specialisation) of the Relation class. The
+          Relation class links two BioEntity objects that have some
+          type of relationship with each other. Every relation has a
+          subject and an object. If two genes are orthologues, one of
+          the genes will be the subject of the relation and the other
+          the object. You need to add constraints to specify that you
+          want the objects of the orthologue relations to be BioEntity
+          objects (in this case genes) from <span
+          class="organism">Drosophila melanogaster</span> and the
+          subjects of the relation to be BioEntity objects from <span
+          class="organism">Anopheles gambiae</span>.  The Relation
+          class has three fields: evidence, object and subject.
+          Expand the object field.  The object field has a link
+          (reference) to the Organism class.  Expand the organism
+          class.  Click on the constrain arrow next to the name field
+          of the Organism class and add the constraint: LIKE
+          %melanogaster.  Click on 'Add to results' to add this to the
+          constraints list.  In the same way, constrain the Organism
+          name field of the subject to: LIKE %gambiae.</listitem>
 
 
 
