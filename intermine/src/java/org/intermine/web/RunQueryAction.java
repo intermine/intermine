@@ -13,7 +13,6 @@ package org.flymine.web;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Properties;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -24,7 +23,6 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCloner;
 import org.flymine.objectstore.query.Results;
-import org.flymine.util.PropertiesUtil;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query. The query to run
@@ -62,10 +60,7 @@ public class RunQueryAction extends Action
 
         Query q = (Query) session.getAttribute("query");
 
-        Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
-        props = PropertiesUtil.stripStart("objectstoreserver", props);
-        String osAlias = props.getProperty("os");
-        ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
+        ObjectStore os = ObjectStoreFactory.getObjectStore();
 
         Results results = os.execute(QueryCloner.cloneQuery(q));
         session.setAttribute("results", results);

@@ -13,7 +13,6 @@ package org.flymine.objectstore.webservice;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
@@ -24,7 +23,6 @@ import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.metadata.Model;
-import org.flymine.util.PropertiesUtil;
 
 /**
  * The server side of an ObjectStore webservice. This should be run in
@@ -42,19 +40,10 @@ public class ObjectStoreServer
      * Construct an ObjectStoreServer that communicates with an ObjectStore
      * given by the objectstoreserver.os property
      *
-     * @throws Exception if the property 'objectstoreserver.os' is missing or invalid
+     * @throws Exception if the property 'os.default' is missing or invalid
      */
     public ObjectStoreServer() throws Exception {
-        // Configure from properties:
-        // objectstoreserver.os = <name of objectstore to refer requests to>
-         Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
-         props = PropertiesUtil.stripStart("objectstoreserver", props);
-         String osAlias = props.getProperty("os");
-         if (osAlias == null) {
-             throw new ObjectStoreException("No 'os' property specified for ObjectStoreServer"
-                                            + " (check properties file)");
-         }
-         this.os = ObjectStoreFactory.getObjectStore(osAlias);
+        this(ObjectStoreFactory.getObjectStore());
     }
 
     /**
