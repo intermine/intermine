@@ -224,11 +224,6 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         trans1.addReference(new Reference("organism", "-1_1"));
         trans1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_6"))));
         trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
-        Item synonym1 = createItem(tgtNs + "Synonym", "1_6", "");
-        synonym1.addAttribute(new Attribute("type", "accession"));
-        synonym1.addAttribute(new Attribute("value", "TRANSLATION1"));
-        synonym1.addReference(new Reference("subject", "1_1"));
-        synonym1.addReference(new Reference("source", "-1_2"));
 
         Item trans2 = createItem(tgtNs + "Transcript", "2_1", "");
         trans2.addAttribute(new Attribute("identifier", "2_1"));
@@ -236,14 +231,8 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         trans2.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_12"))));
         trans2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_13"))));
         trans2.addReference(new Reference("organism", "-1_1"));
-        Item synonym2 = createItem(tgtNs + "Synonym", "2_6", "");
-        synonym2.addAttribute(new Attribute("type", "accession"));
-        synonym2.addAttribute(new Attribute("value", "TRANSLATION2"));
-        synonym2.addReference(new Reference("subject", "2_2"));
-        synonym2.addReference(new Reference("source", "-1_2"));
 
-
-        Set expected = new HashSet(Arrays.asList(new Object[] {protein, trans1, trans2, synonym0, synonym1, synonym2}));
+        Set expected = new HashSet(Arrays.asList(new Object[] {protein, trans1, trans2, synonym0}));
 
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
