@@ -169,6 +169,7 @@
     </fileset>
     <pathelement location="${build.model}/datatracking"/>
     <pathelement location="${build.model}/fulldata"/>
+    <pathelement location="${build.model}/userprofile"/>
   </path>
 
   <path id="checkstyle.class.path">
@@ -185,9 +186,7 @@
     <pathelement location="${build.model}/acedbtest"/>
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/xmlschematest"/>
-
     <pathelement location="${build.model}/test"/>
-
   </path>
 
   <path id="acedbtest.class.path">
@@ -271,7 +270,7 @@
     <echo message="InterMine build file - available targets are:"/>
     <echo message=""/>
     <echo message="compile-main           --> compiles the source code"/>
-    <echo message="build-testmodel        --> generate testmodel class and mapping files"/>
+    <echo message="compile-testmodel      --> generate testmodel class and mapping files"/>
     <echo message="build-db-unittest      --> create the unittest database tables"/>
     <echo message="insert-data-unittest   --> store testmodel test data"/>
     <echo message="test-main              --> runs the unit tests"/>
@@ -280,7 +279,6 @@
     <echo message=""/>
     <echo message="See 'ant -projecthelp' for full target list"/>
   </target>
-
 
 
   <!-- Compilation targets -->
@@ -329,17 +327,26 @@
   </target>
 
   <target name="compile-main" depends="compile-datatracking, compile-fulldata"
-    description="compile the java source">
+          description="compile the java source">
     <javac destdir="${build.java}" listfiles="yes">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
+      <exclude name="org/intermine/web/**"/> 
     </javac>
   </target>
-
+  
 
   <!-- Models to build -->
 
-  <!-- Fulldata -->
+  <!-- testmodel -->
+  <target name="compile-testmodel" depends="compile-main" >
+    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <property name="model.src" value="${model}/testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
   <target name="build-db-fulldatatest" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -348,16 +355,7 @@
     </ant>
   </target>
 
-  <!-- Testmodel -->
-  <target name="build-testmodel" depends="compile-main" >
-    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${model}/testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-    </ant>
-  </target>
-
-  <target name="build-db-unittest" depends="build-testmodel">
+  <target name="build-db-unittest" depends="compile-testmodel">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -431,7 +429,7 @@
   <!-- Unit test targets -->
 
   <!-- compile the tests -->
-  <target name="compile-test" depends="build-testmodel, build-acedbtest"
+  <target name="compile-test" depends="compile-testmodel, build-acedbtest"
           description="compile the java test source" >
     <copy todir="${build.src.test}">
       <fileset dir="${src.test}">
@@ -602,7 +600,51 @@
 
   <!-- Webapp targets -->
 
-  <target name="prepare-webapp" depends="prepare,jar-intermine">
+  <target name="compile-userprofile" depends="precompile-main">
+    <!--copy todir="${build.model}/fulldata" file="${model}/fulldata/fulldata_keyDefs.properties"/-->
+    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
+      <property name="model.name" value="userprofile"/>
+      <property name="model.src" value="${model}/userprofile"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-webapp" depends="compile-main, compile-userprofile">
+    <javac destdir="${build.java}" listfiles="yes">
+      <classpath refid="project.class.path"/>
+      <src path="${build.src.java}"/>
+      <include name="org/intermine/web/**"/>
+    </javac>
+  </target>
+  
+  <target name="jar-intermine-webapp" depends="prepare-dist, compile-webapp">
+    <condition property="version" value="${DTSTAMP}">
+      <not>
+        <isset property="version" />
+      </not>
+    </condition>
+
+    <echo message="Creating jar file version ${version}" />
+
+    <manifest file="${build.tmp}/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Specification-Title" value="InterMine"/>
+      <attribute name="Specification-Version" value="${version}"/>
+      <attribute name="Specification-Vendor" value="InterMine"/>
+      <attribute name="Implementation-Title" value="InterMine"/>
+      <attribute name="Implementation-Version" value="${version}"/> 
+      <attribute name="Implementation-Vendor" value="InterMine"/>
+    </manifest>
+
+    <jar destfile="${dist}/intermine-webapp.jar" manifest="${build.tmp}/MANIFEST.MF">
+      <fileset dir="${build.java}" includes="org/intermine/web/**"/>
+      <fileset dir="${build.model}/userprofile" excludes="tmp/**"/>
+      <fileset file="${build.resources}/intermine.properties"/>
+      <fileset file="${build.resources}/log4j.properties"/>
+    </jar>
+  </target>
+
+  <target name="prepare-webapp" depends="jar-intermine, jar-intermine-webapp">
     <mkdir dir="${build.webapp}/intermine"/>
     <mkdir dir="${build.webapp}/intermine/images"/>
     <mkdir dir="${build.webapp}/intermine/model"/>
@@ -610,7 +652,6 @@
     <mkdir dir="${build.webapp}/intermine/WEB-INF"/>
     <mkdir dir="${build.webapp}/intermine/WEB-INF/classes"/>
     <mkdir dir="${build.webapp}/intermine/WEB-INF/lib"/>
-    <mkdir dir="${build.webapp}/intermine/WEB-INF/src"/>
 
     <copy todir="${build.webapp}/intermine">
       <fileset dir="${src.webapp}"/>
@@ -656,7 +697,6 @@
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="model.src" value="${model}/testmodel"/>
     </ant>
-
     <antcall target="build-webapp"/>
   </target>
 
@@ -783,7 +823,7 @@
     <delete dir="${build.tmp}/jars"/>
   </target>
 
-  <target name="jar-testmodel" depends="prepare-dist, build-testmodel"
+  <target name="jar-testmodel" depends="prepare-dist, compile-testmodel"
           description="create a jar of the testmodel">
     <ant antfile="build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
