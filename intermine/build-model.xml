@@ -27,8 +27,9 @@
   <!-- Summarise object store properties -->
   <property name="os.summary.properties.file" 
             value="${build.model.dir}/objectstoresummary.config.properties" />
+  <property name="summarise.output.properties.filename" value="objectstoresummary.properties"/>
   <property name="summarise.output.properties" 
-            value="${build.model.dir}/objectstoresummary.properties"/>
+            value="${build.model.dir}/${summarise.output.properties.filename}"/>
   
   
   <path id="compile.class.path">
@@ -325,18 +326,22 @@
                     attributeIndexes="${create.attribute.indexes}"/>
   </target>
 
-  <target name="precompute-queries" depends="compile-java">
+  <target name="precompute-queries" depends="compile-java, summarise-objectstore">
     <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-queries alias="${objectstore.name}" modelName="${model.name}"/>
+    <precompute-queries alias="${objectstore.name}" 
+                        summaryPropertiesFile="${summarise.output.properties.filename}"
+                        minRows="${precompute.minRows}"/>
   </target>
 
-  <target name="precompute-queries-test" depends="compile-java">
+  <target name="precompute-queries-test" depends="compile-java, summarise-objectstore">
     <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-queries alias="${objectstore.name}" modelName="${model.name}" testMode="true"/>
+    <precompute-queries alias="${objectstore.name}" testMode="true"
+                        summaryPropertiesFile="${summarise.output.properties.filename}" 
+                        minRows="${precompute.minRows}"/>
   </target>
 
   <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"
