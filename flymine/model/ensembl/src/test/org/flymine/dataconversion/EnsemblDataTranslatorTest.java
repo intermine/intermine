@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import java.util.Map;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.Collection;
 import java.io.InputStreamReader;
