@@ -298,8 +298,7 @@
             name="buildBagForm"/>
 
     <action path="/initTemplate"
-            type="org.intermine.web.TemplateController"
-            name="templateForm"/>
+            type="org.intermine.web.TemplateController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
@@ -327,10 +326,10 @@
 
   <plug-in className="org.intermine.web.InitialiserPlugin"/>
 
-  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+  <!--plug-in className="org.apache.struts.validator.ValidatorPlugIn">
     <set-property property="pathnames"
                   value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
-  </plug-in>
+  </plug-in-->
 
   <plug-in className="org.apache.struts.tiles.TilesPlugin">
     <set-property property="definitions-config"

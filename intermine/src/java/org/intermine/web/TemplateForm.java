@@ -10,11 +10,16 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import java.util.Map;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Locale;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
@@ -25,8 +30,7 @@ import org.apache.struts.action.ActionErrors;
  */
 public class TemplateForm extends ActionForm
 {
-    protected String queryName;
-    protected Map attributeOps, attributeValues;
+    protected Map attributeOps, attributeValues, parsedAttributeValues;
 
     /**
      * Constructor
@@ -34,22 +38,6 @@ public class TemplateForm extends ActionForm
     public TemplateForm() {
         super();
         reset();
-    }
-
-    /**
-     * Set the query name
-     * @param queryName the query name
-     */
-    public void setQueryName(String queryName) {
-        this.queryName = queryName;
-    }
-
-    /**
-     * Get the query name
-     * @return the query name
-     */
-    public String getQueryName() {
-        return queryName;
     }
 
     /**
@@ -121,10 +109,37 @@ public class TemplateForm extends ActionForm
     }
 
     /**
+     * Get a parsed attribute value
+     * @param key the key
+     * @return the value
+     */
+    public Object getParsedAttributeValues(String key) {
+        return parsedAttributeValues.get(key);
+    }
+
+    /**
      * @see ActionForm#validate
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        return null;
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
+        String queryName = (String) session.getAttribute("queryName");
+
+        TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
+        
+        ActionErrors errors = new ActionErrors();
+        
+        for (Iterator i = attributeValues.keySet().iterator(); i.hasNext();) {
+            String j = (String) i.next();
+            PathNode node = (PathNode) template.getNodes().get(Integer.parseInt(j) - 1);
+            Class fieldClass = MainHelper.getClass(node.getType());
+            parsedAttributeValues.put(j, MainForm.parseValue((String) attributeValues.get(j),
+                                                             fieldClass, locale, errors));
+        }
+
+        return errors;
     }
 
     /**
@@ -138,8 +153,8 @@ public class TemplateForm extends ActionForm
      * Reset the form
      */
     protected void reset() {
-        queryName = null;
         attributeOps = new HashMap();
         attributeValues = new HashMap();
+        parsedAttributeValues = new HashMap();
     }
 }

@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- footer.jsp -->
 <div id="footer">

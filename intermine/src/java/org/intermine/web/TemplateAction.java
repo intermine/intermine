@@ -23,7 +23,6 @@ import org.apache.struts.action.ActionMapping;
 import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.TypeUtil;
 
 /**
  * Action to handle submit from the template page
@@ -42,19 +41,17 @@ public class TemplateAction extends Action
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
+        String queryName = (String) session.getAttribute("queryName");
 
-        TemplateQuery template = (TemplateQuery) templateQueries.get(((TemplateForm)
-                                                                      form).getQueryName());
+        TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
         
-        for (int i = 0; i < template.getPaths().size(); i++) {
-            String path = (String) template.getPaths().get(i);
-            String op = (String) ((TemplateForm) form).getAttributeOps("" + (i + 1));
-            String value = (String) ((TemplateForm) form).getAttributeValues("" + (i + 1));
-
-            PathNode node = (PathNode) template.getQuery().getNodes().get(path);
+        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            int j = template.getNodes().indexOf(node);
+            String op = (String) ((TemplateForm) form).getAttributeOps("" + (j + 1));
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
-            Class fieldClass = MainHelper.getClass(node.getType());
-            Object constraintValue = TypeUtil.stringToObject(fieldClass, value);
+
+            Object constraintValue = ((TemplateForm) form).getParsedAttributeValues("" + (j + 1));
 
             node.getConstraints().set(0, new Constraint(constraintOp, constraintValue));
         }

@@ -25,7 +25,7 @@ public class TemplateQuery
 
     protected String description, indexedDescription;
     protected PathQuery query;
-    protected List paths = new ArrayList();
+    protected List nodes = new ArrayList();
 
     /**
      * Constructor
@@ -40,7 +40,7 @@ public class TemplateQuery
         StringBuffer sb = new StringBuffer();
         Matcher m = Pattern.compile(PATTERN).matcher(description);
         while (m.find()) {
-            paths.add(m.group(1));
+            nodes.add(query.getNodes().get(m.group(1)));
             m.appendReplacement(sb, "[" + (i++) + "]");
         }
         m.appendTail(sb);
@@ -64,11 +64,11 @@ public class TemplateQuery
     }
 
     /**
-     * Get the paths in the description, in order (eg. {Company.name})
-     * @return the paths
+     * Get the nodes from the description, in order (eg. {Company.name})
+     * @return the nodes
      */
-    public List getPaths() {
-        return paths;
+    public List getNodes() {
+        return nodes;
     }
 
     /**
