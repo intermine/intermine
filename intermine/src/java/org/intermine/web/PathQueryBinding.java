@@ -54,6 +54,25 @@ public class PathQueryBinding
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            marshal(query, queryName, modelName, writer);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+
+        return sw.toString();
+    }
+    
+    /**
+     * Marshal to an XMLStreamWriter.
+     *
+     * @param query the PathQuery
+     * @param queryName the name of the query
+     * @param modelName the model name
+     * @param writer the xml stream writer to write to
+     */
+    public void marshal(PathQuery query, String queryName, String modelName, 
+                                                                XMLStreamWriter writer) {
+        try {
             writer.writeStartElement("query");
             writer.writeAttribute("name", queryName);
             writer.writeAttribute("model", modelName);
@@ -85,8 +104,6 @@ public class PathQueryBinding
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
-        return sw.toString();
     }
 
     /**
