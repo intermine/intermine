@@ -248,7 +248,7 @@ public class MainHelper
      * @param ops a Collection of ConstraintOps
      * @return the Map from index to string
      */
-    protected static Map mapOps(Collection ops) {
+    public static Map mapOps(Collection ops) {
         Map opString = new LinkedHashMap();
         for (Iterator iter = ops.iterator(); iter.hasNext();) {
             ConstraintOp op = (ConstraintOp) iter.next();

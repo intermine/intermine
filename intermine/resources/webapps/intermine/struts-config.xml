@@ -13,6 +13,9 @@
     <form-bean name="loginForm"
                type="org.intermine.web.LoginForm"/>
 
+    <form-bean name="templateForm"
+               type="org.intermine.web.TemplateForm"/>
+
     <form-bean name="modifyQueryForm"
                type="org.intermine.web.ModifyQueryForm"/>
 
@@ -79,6 +82,9 @@
 
     <action path="/examples"
             forward="examples.page"/>
+
+    <action path="/template"
+            forward="template.page"/>
 
     <action path="/templates"
             forward="templates.page"/>
@@ -169,6 +175,15 @@
     </action>
   
     <!-- Actions invoked using buttons - validating form -->
+    <action path="/templateAction"
+            type="org.intermine.web.TemplateAction"
+            name="templateForm"
+            parameter="action"
+            input="template">
+      <forward name="template" path="template.page"/>
+      <forward name="query" path="query.page"/>
+    </action>
+
     <action path="/modifyQuery"
             type="org.intermine.web.ModifyQueryAction"
             name="modifyQueryForm"
@@ -281,6 +296,10 @@
     <action path="/initBagBuild"
             type="org.intermine.web.BuildBagController"
             name="buildBagForm"/>
+
+    <action path="/initTemplate"
+            type="org.intermine.web.TemplateController"
+            name="templateForm"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
