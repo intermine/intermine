@@ -9,10 +9,10 @@
 :Gene a owl:Class;
     rdfs:subClassOf :BioEntity.
 
-:Gene__wormBaseSequenceName;
+:Gene__wormBaseSequenceName a owl:DatatypeProperty;
     owl:equivalentProperty rnai:Gene__sequenceName.
 
-:Gene__GCGApprovedName;
+:Gene__GCGApprovedName a owl:DatatypeProperty;
     owl:equivalentProperty rnai:Gene__commonName.
 
 :Gene__properties a owl:ObjectProperty;
