@@ -257,6 +257,8 @@ public class CalculateLocations
      * @throws Exception if anything goes wrong
      */
     public void createLocations() throws Exception  {
+        osw.beginTransaction();
+
         // 0. Hold Chromosomes in map by id
         makeChromosomeMap();
 
@@ -305,7 +307,6 @@ public class CalculateLocations
 
         int i = 0, j = 0, k = 0;
         long start = System.currentTimeMillis();
-        osw.beginTransaction();
         while (resIter.hasNext()) {
             i++;
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -923,7 +924,6 @@ public class CalculateLocations
         }
         LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
 
-        osw.beginTransaction();
         int i = 0;
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -953,7 +953,6 @@ public class CalculateLocations
                 }
             }
         }
-        osw.commitTransaction();
         LOG.info("Stored " + i + " Locations between Supercontig and ChromosomeBand.");
     }
 
@@ -978,7 +977,6 @@ public class CalculateLocations
         }
         LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
 
-        osw.beginTransaction();
         int i = 0;
         int j = 0;
         long start = System.currentTimeMillis();
@@ -1032,7 +1030,6 @@ public class CalculateLocations
                          + ((60000L * i) / (now - start)) + " per minute)");
             }
         }
-        osw.commitTransaction();
         LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
         LOG.info("Stored " + j + " Locations between Contig and ChromosomeBand.");
     }
