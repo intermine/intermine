@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<article>
+  <artheader>
+    <date>2003-06-30</date>
+    <title>Basic tutorial for biologists</title>
+  </artheader>
+  <sect1>
+    <para>The tutorial consists of a simple model, some test data for this model and a Java program to query the data. It includes everything you will need to get it up and running:- the FlyMine jar, its dependencies, the necessary configuration files and a build script. Prerequisites for the tutorial are Java, PostgreSQL, Ant, and ArgoUML. These can be obtained at the following locations if you do not already have them on your system.</para>
+    <para>
+      <orderedlist>
+	<listitem><ulink url="http://java.sun.com/j2se/1.4.2/download.html">Java 1.4.2 SDK for different platforms is available here</ulink></listitem>
+	<listitem><ulink url="http://www.postgresql.org/">The latest version of PostgreSQL is on this site</ulink></listitem>
+	<listitem><ulink url="http://ant.apache.org/">Get the Ant tool here</ulink></listitem>
+	<listitem><ulink url="http://argouml.tigris.org/">ArgoUML can be obtained here</ulink></listitem>
+      </orderedlist>
+    </para>
+
+    <para>Running the tutorial involves a few simple steps:</para>
+    <para>
+      <orderedlist>
+        <listitem><ulink url="http://download.flymine.org/nightly/">Download</ulink> and unpack the latest FlyMine tutorial (flymine-tutorial-xxxxxx) using an unzipping utility.</listitem>
+        <listitem>Install the <ulink url="http://ant.apache.org">Ant</ulink> build tool following the installation instructions. Note that you must be able to access the <command>ant</command> commmand.</listitem>
+        <listitem>Install the <ulink url="http://www.postgresql.org">PostgreSQL</ulink> program and create a database named "tutorial" by using the <command>createdb</command> commmand.
+	  <para> (Note that the postmaster must be set up to accept TCP/IP connections ("tcpip_socket=true" in <command>postgresql.conf</command>) from "localhost" (host 127.0.0.1 in <command>pg_ident.conf</command>). Consult the PostgreSQL documentation for more details on configuring access control and database creation).</para></listitem>
+        <listitem>Change to the tutorial directory.</listitem>
+        <listitem>Modify the "flymine.properties" configuration file using any simple text editor you are comfortable with (e.g. emacs, notepad). The modifications should contain your database username (and password if necessary) where indicated within the code.</listitem>
+        <listitem>The command <command>ant run</command> will compile the FlyMine system, build a simple model, store some data corresponding to the model (by accessing the database), and run some queries to retrieve the data. 
+      </listitem></orderedlist>
+  <para>An example of how to build a simple query for this model can be found in (<command>src/java/org/flymine/tutorial/SimpleQuery.java</command>) and it demonstrates how to navigate the results, which can be compared to the test data found in (<command>resources/tutorial_data.xml</command>).</para>
+  <para>This concludes the instruction on the tutorial the next page will show you how to use this tutorial to create your own database.</para>
+    </para>
+  </sect1>
+</article>
