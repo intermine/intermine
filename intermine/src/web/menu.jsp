@@ -3,7 +3,7 @@
 <!-- menu.jsp -->
 <div class="links">
   <p>
-    <span class="menu-item"><html:link href="/index"><bean:message key="menu.about"/></html:link></span>
+    <span class="menu-item"><a href="/index"><fmt:message key="menu.about"/></a></span>
     <span class="menu-item"><a href="/team"><fmt:message key="menu.team"/></a></span>
     <span class="menu-item"><a href="/funding"><fmt:message key="menu.funding"/></a></span>
     <span class="menu-item"><a href="/software"><fmt:message key="menu.software"/></a></span>
