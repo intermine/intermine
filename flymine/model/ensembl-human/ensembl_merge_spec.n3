@@ -54,6 +54,10 @@ null:exon__seq_region a owl:ObjectProperty ;
     rdfs:domain :Gene;
     rdfs:range xsd:string.
 
+:Gene__comments a owl:ObjectProperty; 	 
+      rdfs:domain :Gene; 	 
+      rdfs:range :Comment.
+
 # e:gene__type is ensembl for all entries
 null:gene__type a owl:DatatypeProperty ;
     owl:equivalentProperty e:gene__type .
@@ -551,3 +555,7 @@ null:alt_allele a owl:Class ;
     rdfs:domain :Contig;
     rdfs:range xsd:integer.
 
+
+
+ 
+ 
