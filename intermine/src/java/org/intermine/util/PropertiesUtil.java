@@ -76,9 +76,9 @@ public class PropertiesUtil
         }
 
         Properties subset = new Properties();
-        Enumeration enum = props.keys();
-        while (enum.hasMoreElements()) {
-            String propertyName = (String) enum.nextElement();
+        Enumeration propertyEnum = props.keys();
+        while (propertyEnum.hasMoreElements()) {
+            String propertyName = (String) propertyEnum.nextElement();
             if (propertyName.startsWith(str)) {
                 subset.put(propertyName, props.get(propertyName));
             }
@@ -114,9 +114,9 @@ public class PropertiesUtil
             throw new NullPointerException("props cannot be null");
         }
         Properties ret = new Properties();
-        Enumeration enum = props.keys();
-        while (enum.hasMoreElements()) {
-            String propertyName = (String) enum.nextElement();
+        Enumeration propertyEnum = props.keys();
+        while (propertyEnum.hasMoreElements()) {
+            String propertyName = (String) propertyEnum.nextElement();
             if (propertyName.startsWith(str + ".")) {
                 ret.put(propertyName.substring(str.length() + 1), props.get(propertyName));
             }
