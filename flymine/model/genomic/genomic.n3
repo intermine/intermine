@@ -239,6 +239,9 @@
     rdfs:domain :ComputationalAnalysis;
     rdfs:range xsd:string.
 
+:ComputationalAnalysis__description a owl:DatatypeProperty;
+    rdfs:domain :ComputationalAnalysis;
+    rdfs:range xsd:string.
 
 :Experiment a owl:Class ;
     rdfs:subClassOf :Analysis .
