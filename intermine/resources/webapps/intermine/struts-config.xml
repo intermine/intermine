@@ -166,7 +166,7 @@
     </action>
 
     <!-- Action to delete a bag -->
-    <action path="/deleteQuery"
+    <action path="/deleteBag"
             type="org.intermine.web.DeleteBagAction">
       <forward name="history" path="history.page"/>
     </action>
@@ -181,8 +181,7 @@
     <!-- Action to chnge the displayed results in some way -->
     <action path="/changeResults"
             type="org.intermine.web.results.ChangeResultsAction"
-            parameter="method"
-            input="results">
+            parameter="method">
       <forward name="results" path="results.page"/>
     </action>
 
@@ -190,7 +189,8 @@
     <action path="/changeResultsSize"
             type="org.intermine.web.results.ChangeResultsSizeAction"
             name="changeResultsForm"
-            parameter="action">
+            parameter="action"
+            input="results">
       <forward name="results" path="results.page"/>
     </action>
 
