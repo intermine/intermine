@@ -49,8 +49,8 @@ public class FunctionTest extends TestCase
     public void testGetSQLString() throws Exception {
         assertEquals("COUNT(*)", f1.getSQLString());
         assertEquals("MAX(3)", f2.getSQLString());
-        assertEquals("2 + 3", f3.getSQLString());
-        assertEquals("2 - 3", f5.getSQLString());
+        assertEquals("(2 + 3)", f3.getSQLString());
+        assertEquals("(2 - 3)", f5.getSQLString());
     }
 
     public void testEquals() throws Exception {

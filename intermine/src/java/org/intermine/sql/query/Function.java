@@ -137,7 +137,7 @@ public class Function extends AbstractValue
                     throw (new IllegalStateException("This function needs two operands"));
                 }
                 Iterator iter = operands.iterator();
-                String retval = "";
+                String retval = "(";
                 boolean needComma = false;
                 while (iter.hasNext()) {
                     AbstractValue v = (AbstractValue) iter.next();
@@ -147,6 +147,7 @@ public class Function extends AbstractValue
                     needComma = true;
                     retval += v.getSQLString();
                 }
+                retval += ")";
                 return retval;
             }
         throw (new Error("Unknown operation"));

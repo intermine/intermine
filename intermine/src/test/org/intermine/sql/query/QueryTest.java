@@ -957,4 +957,9 @@ public class QueryTest extends TestCase
         q2.addWhere(c2);
         assertEquals(q2, q1);
     }
+
+    public void testExpressionWhereBracketsAreImportant() throws Exception {
+        Query q1 = new Query("select (5 - (6 + 7)) as a from t");
+        assertEquals("SELECT (5 - (6 + 7)) AS a FROM t", q1.getSQLString());
+    }
 }
