@@ -1,0 +1,17 @@
+<menu>
+    <section>
+        <heading>System information</heading>
+        <item><ulink url="http://www.flymine.org/usage">Web server usage</ulink></item>
+    </section>
+    <section>
+        <heading>Design documents</heading>
+        <item><ulink url="/internal/design/initial_thoughts">Initial thoughts</ulink></item>
+        <item><ulink url="/internal/design/design_issues">Design issues</ulink></item>
+        <item><ulink url="/internal/design/usage_scenarios">Usage scenarios</ulink></item>
+        <item><ulink url="/internal/design/functional_requirements">Functional requirements</ulink></item>
+    </section>
+    <section>
+        <heading>Reports</heading>
+        <item><ulink url="/internal/reports/ismb2002">ISMB 2002</ulink></item>
+    </section>
+</menu>
