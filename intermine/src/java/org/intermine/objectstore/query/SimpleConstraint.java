@@ -114,7 +114,7 @@ public class SimpleConstraint implements Constraint
 
         this.qe1 = qe1;
         this.qe2 = qe2;
-        this.negated = false;
+        this.negated = negated;
 
         if ((type < 1) || (type > 10)) {
             throw (new IllegalArgumentException("Invalid value for type: " + type));
