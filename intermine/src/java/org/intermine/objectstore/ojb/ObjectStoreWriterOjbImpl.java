@@ -35,6 +35,10 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
      */
     public ObjectStoreWriterOjbImpl(ObjectStore os) throws ObjectStoreException {
         super(os);
+        if (!(os instanceof ObjectStoreOjbImpl)) {
+            throw new ObjectStoreException("ObjectStoreWriterOjbImpl expected to be constructed "
+                                           + "with an ObjectStoreOjbImpl");
+        }
         try {
             pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         } catch (Exception e) {
