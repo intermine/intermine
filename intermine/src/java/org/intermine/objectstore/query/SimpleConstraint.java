@@ -274,4 +274,31 @@ public class SimpleConstraint implements Constraint
     public String getOpString() {
         return OPERATIONS[getRealType()];
     }
+
+    /**
+     * Test whether two SimpleConstraints are equal, overrides Object.equals()
+     *
+     * @param obj the object to compare with
+     * @return true if objects are equal
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof SimpleConstraint) {
+            SimpleConstraint sc = (SimpleConstraint) obj;
+            return (qe1.equals(sc.qe1)
+                    && (type == sc.type)
+                    && (negated == sc.negated)
+                    && ((qe2 != null) ? (qe2.equals(sc.qe2)) : (sc.qe2 == null)));
+        }
+        return false;
+    }
+    /**
+     * Get the hashCode for this object overrides Object.hashCode()
+     *
+     * @return the hashCode
+     */
+    public int hashCode() {
+        return qe1.hashCode() + (3 * type) + ((negated) ? 29 : 0)
+            + ((qe2 != null) ? qe2.hashCode() : 31);
+    }
+
 }
