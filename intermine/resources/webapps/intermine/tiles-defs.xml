@@ -30,11 +30,11 @@
     <put name="pageDescription" value="history.page.description"/>
   </definition>
   <definition name="begin.page" extends="layout.template">
-    <put name="body" value="/begin.jsp"/>
+    <put name="body" value="begin.jsp"/>
     <put name="pageDescription" value="begin.page.description"/>
   </definition>
   <definition name="templates.page" extends="layout.template">
-    <put name="body" value="/templates.jsp"/>
+    <put name="body" value="templates.jsp"/>
     <put name="pageDescription" value="templates.page.description"/>
   </definition>
   <definition name="help.page" extends="layout.template">
@@ -42,15 +42,15 @@
     <put name="pageDescription" value="help.page.description"/>
   </definition>
   <definition name="classChooser.page" extends="layout.template">
-    <put name="body" value="/queryClassSelect.jsp"/>
+    <put name="body" value="queryClassSelect.jsp"/>
     <put name="pageDescription" value="classChooser.page.description"/>
   </definition>
   <definition name="results.page" extends="layout.template">
-    <put name="body" value="/table.jsp"/>
+    <put name="body" value="table.jsp"/>
     <put name="pageDescription" value="results.page.description"/>
   </definition>
   <definition name="error.page" extends="layout.template">
-    <put name="body" value="/error.jsp"/>
+    <put name="body" value="error.jsp"/>
     <put name="pageDescription" value="error.page.description"/>
   </definition>
   <definition name="objectDetails.page" extends="layout.template">
@@ -66,7 +66,7 @@
     <put name="pageDescription" value="bagDetails.page.description"/>
   </definition>
   <definition name="documentation.page" extends="layout.template">
-    <put name="body" value="/docbook.jsp"/>
+    <put name="body" value="docbook.jsp"/>
     <put name="pageDescription" value="documentation.page.description"/>
   </definition>
   <definition name="tree.page" extends="layout.template">
