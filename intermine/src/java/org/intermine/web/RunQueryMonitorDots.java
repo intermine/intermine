@@ -72,7 +72,8 @@ public class RunQueryMonitorDots implements RunQueryMonitor
      * @throws IOException if writing to the response stream fails
      */
     public void forwardClient(String url) throws IOException {
-        writer.write("<script language=\"JavaScript\">document.location=\"" + url + "\"</script>\n\n");
+        writer.write("<script language=\"JavaScript\">document.location=\""
+                + url + "\"</script>\n\n");
         writer.flush();
     }
 }
