@@ -110,22 +110,22 @@ public class Results extends AbstractList
      * Returns a range of rows of results. Will fetch batches from the
      * underlying ObjectStore if necessary.
      *
-     * @param start the start index
-     * @param end the end index
+     * @param start the start index (inclusive)
+     * @param end the end index (inclusive)
      * @return the relevant ResultRows as a List
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      * @throws IndexOutOfBoundsException if end is beyond the number of rows in the results
      * @throws IllegalArgumentException if start &gt; end
      */
     public List range(int start, int end) throws ObjectStoreException {
-        if (start > end) {
-            throw new IllegalArgumentException("start=" + start + " > end=" + end);
+        if (start > end + 1) {
+            throw new IllegalArgumentException("start=" + start + " > (end + 1)=" + (end + 1));
         }
 
         // If we know the size of the results (ie. have had a last partial batch), check that
         // the end is within range
         if (end >= maxSize) {
-            throw new IndexOutOfBoundsException("end=" + end + " > size=" + maxSize);
+            throw new IndexOutOfBoundsException("(end + 1)=" + (end + 1) + " > size=" + maxSize);
         }
 
         int startBatch = getBatchNoForRow(start);
