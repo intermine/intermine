@@ -178,7 +178,7 @@ public class QueryBuildController extends TilesAction
                 Class type = ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getType();
                 for (Iterator i = q.getFrom().iterator(); i.hasNext();) {
                     FromElement e = (FromElement) i.next();
-                    if (e instanceof QueryClass && ((QueryClass) e).getType().equals(type)) {
+                    if (e instanceof QueryClass && type.isAssignableFrom(((QueryClass) e).getType())) {
                         aliases.add(q.getAliases().get((QueryClass) e));
                     }
                 }
