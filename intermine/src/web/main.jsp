@@ -53,7 +53,7 @@
               </span>
             </c:if>
             <span class="type">
-              <%--c:out value="${node.type}"/><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup--%>
+              <c:out value="${node.type}"/><c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup></c:if>
               <c:if test="${node.collection}">
                 <fmt:message key="query.collection"/>
               </c:if>
