@@ -54,15 +54,38 @@ public class ObjectStoreItemReader implements ItemReader
     }
 
     /**
-     * @see ItemReader#itemIterator
+     * Returns the default itemIterator Query.
+     *
+     * @return a Query
      */
-    public Iterator itemIterator() throws ObjectStoreException {
+    public Query getDefaultQuery() {
         Query q = new Query();
         // database has a hard time selecting distinct on object xml
         q.setDistinct(false);
         QueryClass qc = new QueryClass(Item.class);
         q.addFrom(qc);
         q.addToSelect(qc);
+        return q;
+    }
+
+    /**
+     * @see ItemReader#itemIterator
+     */
+    public Iterator itemIterator() throws ObjectStoreException {
+        SingletonResults sr = new SingletonResults(getDefaultQuery(), os, os.getSequence());
+        sr.setBatchSize(1000);
+        return sr.iterator();
+    }
+
+    /**
+     * Returns an iterator through the set of Items present in the source Item ObjectStore for the
+     * given Query.
+     *
+     * @param q the Query - must have one element in the SELECT list, which must be an Item Object
+     * @return an Iterator
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public Iterator itemIterator(Query q) throws ObjectStoreException {
         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
         sr.setBatchSize(1000);
         return sr.iterator();
@@ -73,7 +96,8 @@ public class ObjectStoreItemReader implements ItemReader
      */
     public Item getItemById(String objectId) throws ObjectStoreException {
         List results = getItemsByDescription(Collections.singleton(
-                    new FieldNameAndValue("identifier", objectId, false)));
+                    new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.IDENTIFIER, objectId,
+                        false)));
         if (results.size() > 1) {
             throw new IllegalStateException("Multiple Items in the objectstore with identifier "
                     + objectId + ", size = " + results.size()
