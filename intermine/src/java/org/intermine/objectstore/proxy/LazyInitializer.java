@@ -19,6 +19,7 @@ import net.sf.cglib.*;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -29,9 +30,10 @@ public class LazyInitializer implements MethodInterceptor
 {
     protected static final Logger LOG = Logger.getLogger(LazyInitializer.class);
 
-    private Query query;
     private Object realSubject;
     private ObjectStore os;
+    private Query query;
+    private Class type;
     private Integer id;
 
     /**
@@ -44,15 +46,17 @@ public class LazyInitializer implements MethodInterceptor
      */
     public static Object getDynamicProxy(Class cls, Query query, Integer id) {
         return Enhancer.enhance(cls, new Class[] {LazyReference.class},
-                                new LazyInitializer(query, id));
+                                new LazyInitializer(cls, query, id));
     }
 
     /**
      * Construct the interceptor using an object identifier
+     * @param cls the type of the real object
      * @param query the query that retrieves the real object
      * @param id the internal id of the real object
      */
-    LazyInitializer(Query query, Integer id) {
+    LazyInitializer(Class cls, Query query, Integer id) {
+        this.type = cls;
         this.query = query;
         this.id = id;
     }
@@ -81,6 +85,12 @@ public class LazyInitializer implements MethodInterceptor
             return null;
         }
         // org.flymine.objectstore.proxy.LazyReference methods
+        if (method.getName().equals("getType")) {
+            return type;
+        }
+        if (method.getName().equals("getFqlQuery")) {
+            return new FqlQuery(query);
+        }
         if (method.getName().equals("setObjectStore")) {
             this.os = (ObjectStore) args[0];
             return null;
@@ -88,7 +98,6 @@ public class LazyInitializer implements MethodInterceptor
         if (method.getName().equals("isMaterialised")) {
             return new Boolean(realSubject != null);
         }
-        // org.flymine.model method
         if (method.getName().equals("getId")) {
             return id;
         }
