@@ -88,4 +88,15 @@ public class TypeUtilTest extends TestCase
         assertEquals(expected, TypeUtil.getFieldToSetter(c));
         assertEquals(expected, TypeUtil.getFieldToSetter(c));
     }
+
+    public void testPackageName() throws Exception {
+        assertEquals("", TypeUtil.packageName("test"));
+        assertEquals("package", TypeUtil.packageName("package.test"));
+    }
+
+    public void testUnqualifiedName() throws Exception {
+        assertEquals("test", TypeUtil.unqualifiedName("test"));
+        assertEquals("test", TypeUtil.unqualifiedName("package.test"));
+    }
+
 }
