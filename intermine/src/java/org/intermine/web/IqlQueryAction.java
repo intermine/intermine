@@ -10,15 +10,19 @@ package org.flymine.web;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.util.MessageResources;
 
 import org.flymine.objectstore.query.fql.FqlQuery;
@@ -61,12 +65,19 @@ public class FqlQueryAction extends LookupDispatchAction
 
         FqlQueryForm queryform = (FqlQueryForm) form;
 
-        Query q = new FqlQuery(queryform.getQuerystring(),
-                               "org.flymine.model.testmodel").toQuery();
-        session.setAttribute(Constants.QUERY, q);
+        try {
+            Query q = new FqlQuery(queryform.getQuerystring(),
+                                   "org.flymine.model.testmodel").toQuery();
+            session.setAttribute(Constants.QUERY, q);
 
-        return (mapping.findForward("runquery"));
-
+            return mapping.findForward("runquery");
+        } catch (java.lang.IllegalArgumentException e) {
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("errors.fqlquery.illegalargument", e.getMessage());
+            errors.add("fqlquery", error);
+            saveErrors(request, errors);
+            return mapping.findForward("buildfqlquery");
+        }
     }
 
     /**
@@ -99,15 +110,22 @@ public class FqlQueryAction extends LookupDispatchAction
 
         String queryString = queryform.getQuerystring();
 
-        if (queryString == null || queryString.length() == 0) {
-            session.setAttribute(Constants.QUERY, null);
-        } else {
-            Query q = new FqlQuery(queryString, "org.flymine.model.testmodel").toQuery();
-            session.setAttribute(Constants.QUERY, q);
+        try {
+            if (queryString == null || queryString.length() == 0) {
+                session.setAttribute(Constants.QUERY, null);
+            } else {
+                Query q = new FqlQuery(queryString, "org.flymine.model.testmodel").toQuery();
+                session.setAttribute(Constants.QUERY, q);
+            }
+
+            return mapping.findForward("buildquery");
+        } catch (java.lang.IllegalArgumentException e) {
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("errors.fqlquery.illegalargument", e.getMessage());
+            errors.add("fqlquery", error);
+            saveErrors(request, errors);
+            return mapping.findForward("buildfqlquery");
         }
-
-        return (mapping.findForward("buildquery"));
-
     }
 
     /**
