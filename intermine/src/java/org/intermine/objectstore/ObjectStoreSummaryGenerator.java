@@ -98,12 +98,12 @@ public class ObjectStoreSummaryGenerator
                 sb.append(FIELD_DELIM);
             }
 
-            String fieldValue = ((ResultsRow) results.get(i)).get(0);
+            Object fieldValue = ((ResultsRow) results.get(i)).get(0);
 
             if (fieldValue == null) {
-                sb.append();
-            } else {
                 sb.append(NULL_MARKER);
+            } else {
+                sb.append(fieldValue);
             }
         }
 
