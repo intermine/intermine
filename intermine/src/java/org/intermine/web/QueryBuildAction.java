@@ -62,6 +62,10 @@ public class QueryBuildAction extends LookupDispatchAction
         ServletContext servletContext = session.getServletContext();
         Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
 
+        if (queryClasses.size() == 0) {
+            throw new Exception("There are no classes present in the query");
+        }
+        
         Query q = QueryBuildHelper.createQuery(queryClasses, model, savedBags);
         session.setAttribute(Constants.QUERY, q);
         session.setAttribute(Constants.QUERY_CLASSES, null);
