@@ -37,14 +37,27 @@ public class MergeModelsFunctionalTest extends XMLTestCase
 
     // test adding a class
     public void testAddClass() throws Exception {
-        String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
+        String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\">" +
+                            "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                            "</class>" +
+                          "</model>";
         Model model = parser.process(new StringReader(modelStr));
 
-        String addition = "<class name=\"org.intermine.model.testmodel.Department\" extends=\"org.intermine.model.testmodel.RandomInterface\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class>";
+        String addition =   "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
+                                "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                            "</class>";
         Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
 
-        String expected = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class><class name=\"org.intermine.model.testmodel.Department\" extends=\"org.intermine.model.testmodel.RandomInterface\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
-        //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        String expected = "<model name=\"testmodel\" namespace=\"testmodel#\">" +
+                            "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                            "</class>" +
+                            "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
+                                "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                            "</class>" +
+                          "</model>";
+        assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
     }
 
 
@@ -58,20 +71,63 @@ public class MergeModelsFunctionalTest extends XMLTestCase
 
 
     // test adding subclass
-    // + where subclass relation atlready exists
-    public void testSubclass() throws Exception {
-        String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
+    public void testSubclassExisting() throws Exception {
+        String modelStr =   "<model name=\"testmodel\" namespace=\"testmodel#\">" +
+                                "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                    "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                                "</class>" +
+                            "</model>";
         Model model = parser.process(new StringReader(modelStr));
 
-        String addition = "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"department\" type=\"java.lang.String\"/></class>";
+        String addition =   "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                "<attribute name=\"department\" type=\"java.lang.String\"/>" +
+                            "</class>";
         Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
 
-        String expected = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class>></model>";
+        String expected =   "<model name=\"testmodel\" namespace=\"testmodel#\">" +
+                                "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                    "<attribute name=\"department\" type=\"java.lang.String\"/>" +
+                                "</class>" +
+                                "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                    "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                                "</class>" +
+                            "</model>";
         //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
+    }
+    
+    // test adding subclass
+    public void testSuperclassExisting() throws Exception {
+        String modelStr =   "<model name=\"testmodel\" namespace=\"testmodel#\">" +
+                                "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" is-interface=\"false\">" +
+                                    "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                                "</class>" +
+                            "</model>";
+        Model model = parser.process(new StringReader(modelStr));
+
+        String addition = "<model name=\"additions\" namespace=\"testmodel#\">" + 
+                            "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                            "</class>" +
+                            "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                            "</class>" +
+                          "</model>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+
+        String expected =   "<model name=\"testmodel\" namespace=\"testmodel#\">" +
+                                "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                    "<attribute name=\"department\" type=\"java.lang.String\"/>" +
+                                "</class>" +
+                                "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
+                                    "<attribute name=\"name\" type=\"java.lang.String\"/>" +
+                                "</class>" +
+                            "</model>";
+        //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
     }
 
     // test adding a attribute to an existing class
-    public void testAddAtribute() throws Exception {
+    public void testAddAttribute() throws Exception {
         String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
         Model model = parser.process(new StringReader(modelStr));
 
@@ -79,7 +135,8 @@ public class MergeModelsFunctionalTest extends XMLTestCase
         Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
 
         String expected = "<model name=\"testmodel\" namespace=\"testmodel#\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/><attribute name=\"age\" type=\"java.lang.Integer\"/></class></model>";
-        //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        //assertXMLEqual(expected, xml);
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
     }
 
     public void testAddReference() throws Exception {
@@ -90,21 +147,36 @@ public class MergeModelsFunctionalTest extends XMLTestCase
         String addition = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/></class>";
         Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
 
-        String expected = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/></class></model>";
+        String expected = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/></class></model>";
         //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
     }
 
 
     public void testAddCollection() throws Exception {
-        String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"></class></model>";
+        String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\">" +
+                "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\">" +
+                "</class>" +
+                "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
+                "</class>" +
+                "</model>";
         Model model = parser.process(new StringReader(modelStr));
 
         // add Company.departments
-        String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/></class>";
+        String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">" +
+                          "<collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/>" +
+                          "</class>";
         Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
 
-        String expected = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/></class></model>";
-        //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        String expected = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\">" +
+                "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\">" +
+                "<collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/>" +
+                "</class>" +
+                "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
+                "</class>" +
+                "</model>";
+                //assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
     }
 
 
@@ -144,11 +216,11 @@ public class MergeModelsFunctionalTest extends XMLTestCase
         additionClds = parser.generateClassDescriptors(new StringReader(addition));
         model = parser.process(new StringReader(modelStr));
 
-        //try {
-            //ModelMerger.mergeModel(model, additionClds);
-            //fail("Expected ModelMergerException");
-        //} catch (ModelMergerException e) {
-        //}
+        try {
+            ModelMerger.mergeModel(model, additionClds);
+            fail("Expected ModelMergerException");
+        } catch (ModelMergerException e) {
+        }
     }
 
 
@@ -174,11 +246,11 @@ public class MergeModelsFunctionalTest extends XMLTestCase
         additionClds = parser.generateClassDescriptors(new StringReader(addition));
         model = parser.process(new StringReader(modelStr));
 
-        //try {
-            //ModelMerger.mergeModel(model, additionClds);
-            //fail("Expected ModelMergerException");
-        //} catch (ModelMergerException e) {
-        //}
+        try {
+            ModelMerger.mergeModel(model, additionClds);
+            fail("Expected ModelMergerException");
+        } catch (ModelMergerException e) {
+        }
     }
 
 
