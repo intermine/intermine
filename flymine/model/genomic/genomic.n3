@@ -254,6 +254,32 @@
     rdfs:domain :Synonym ;
     rdfs:range xsd:string .
 
+:Comment a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Comment__source ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Comment__subject ] .
+
+:Comment__type a owl:DatatypeProperty;
+    rdfs:domain :Comment;
+    rdfs:range xsd:string.
+
+:Comment__text a owl:DatatypeProperty;
+    rdfs:domain :Comment;
+    rdfs:range xsd:string.
+
+# This subject field needs to point to a BioEntity object. This will need to be performed in code in the translator.
+:Comment__subject a owl:ObjectProperty;
+    rdfs:domain :Comment;
+    rdfs:range :BioEntity.
+
+:Comment__source a owl:ObjectProperty;
+    rdfs:domain :Comment;
+    rdfs:range :InfoSource.
 
 # ----------- AnalysisResult is an outcome of some form of analysis ------------ #
 
