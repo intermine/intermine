@@ -17,11 +17,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.TreeMap;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Date;
 
 import org.intermine.metadata.ClassDescriptor;
@@ -82,12 +80,9 @@ public class MainHelper
         List sortedNodes = new ArrayList();
 
         // compare FieldDescriptors by name
-        Comparator comparator = new Comparator () {
+        Comparator comparator = new Comparator() {
             public int compare(Object o1, Object o2) {
                 return ((FieldDescriptor) o1).getName().compareTo(((FieldDescriptor) o2).getName());
-            }
-            public boolean equals(Object obj) {
-                return false;
             }
         };
 

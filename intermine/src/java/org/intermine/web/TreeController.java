@@ -20,7 +20,9 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Map;
+import java.util.Comparator;
 
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
@@ -90,7 +92,14 @@ public class TreeController extends TilesAction
                                parent.getSubDescriptors().size() == 0,
                                openClasses.contains(parent.getName())));
         if (openClasses.contains(parent.getName())) {
-            for (Iterator i = parent.getSubDescriptors().iterator(); i.hasNext();) {
+            Set sortedClds = new TreeSet(new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        return ((ClassDescriptor) o1).getName().compareTo(((ClassDescriptor) o2)
+                                                                          .getName());
+                    }
+                });
+            sortedClds.addAll(parent.getSubDescriptors());
+            for (Iterator i = sortedClds.iterator(); i.hasNext();) {
                 nodes.addAll(makeNodes((ClassDescriptor) i.next(), openClasses, depth + 1,
                                        classCounts));
             }
