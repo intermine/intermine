@@ -10,11 +10,16 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.Statement;
+
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.metadata.Model;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.flymine.ObjectStoreFlyMineImpl;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
@@ -76,8 +81,20 @@ public class DBRetrieverTask extends Task
             Model m = Model.getInstanceByName(model);
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             new DBConverter(m, db, new DirectDBReader(db),
-                            new BufferedItemWriter(
-                                                   new ObjectStoreItemWriter(osw))).process();
+                    new BufferedItemWriter(new ObjectStoreItemWriter(osw))).process();
+            ObjectStore os = osw.getObjectStore();
+            if (os instanceof ObjectStoreFlyMineImpl) {
+                Connection c = null;
+                try {
+                    c = ((ObjectStoreFlyMineImpl) os).getConnection();
+                    Statement s = c.createStatement();
+                    s.execute("CREATE INDEX reference__refid ON reference (refid)");
+                    s.execute("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
+                    s.execute("ANALYSE");
+                } finally {
+                    ((ObjectStoreFlyMineImpl) os).releaseConnection(c);
+                }
+            }
         } catch (Exception e) {
             throw new BuildException(e);
         }
