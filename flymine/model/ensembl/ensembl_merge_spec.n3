@@ -91,6 +91,9 @@ null:gene_description a owl:Class ;
     rdfs:subPropertyOf :LocatedSequenceFeature__sequence;
     owl:equivalentProperty e:contig__dna .
 
+null:contig__clone a owl:ObjectProperty;
+    owl:equivalentClass e:contig__clone.
+
 # need to define here also
 :LocatedSequenceFeature__sequence a owl:ObjectProperty;
     rdfs:domain :LocatedSequenceFeature;
@@ -109,35 +112,9 @@ null:dna__created a owl:DatatypeProperty;
 
 # EnsemblConverter needs to move embl_acc to :Synonym
 
-:Clone a owl:Class ;
-    rdfs:subClassOf :BioEntity ;
-    owl:equivalentClass e:clone .
-
-:Clone__identifier a owl:DatatypeProperty ;
-    rdfs:subPropertyOf :BioEntity__identifier;
-    rdfs:domain :Clone;
-    rdfs:range xsd:string;
-    owl:equivalentProperty e:clone__name.    
-
-
-:Clone__htgPhase a owl:DatatypeProperty ;
-    owl:equivalentProperty e:clone__htg_phase .
-
-null:clone__embl_acc a owl:DatatypeProperty ;
-    owl:equivalentProperty e:clone__embl_acc .
-
-null:clone__version a owl:DatatypeProperty ;
-    owl:equivalentProperty e:clone__version .
-
-null:clone__embl_version a owl:DatatypeProperty ;
-    owl:equivalentProperty e:clone__embl_version .
-
-null:clone__created a owl:DatatypeProperty ;
-    owl:equivalentProperty e:clone__created .
-
-null:clone__modified a owl:DatatypeProperty ;
-    owl:equivalentProperty e:clone__modified .
-
+# Clone in this case is an ensembl invention, remove
+null:clone a owl:Class;
+    owl:equivalentClass e:clone.
 
 # ---------- repeat_feaure is a RepeatRegion -----------#
 
