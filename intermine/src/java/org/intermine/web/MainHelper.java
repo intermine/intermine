@@ -13,8 +13,13 @@ package org.intermine.web;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Date;
@@ -59,12 +64,12 @@ public class MainHelper
             className = path.substring(0, path.indexOf("."));
             subPath = path.substring(path.indexOf(".") + 1);
         }
-        Map nodes = new TreeMap();
+        Map nodes = new LinkedHashMap();
         nodes.put(className, new MetadataNode(className));
         makeNodes(getClassDescriptor(className, model), subPath, className, nodes);
         return nodes.values();
     }
-    
+
     /**
      * Recursive method used to add nodes to a set representing a path from a given ClassDescriptor
      * @param cld the root ClassDescriptor
@@ -74,7 +79,33 @@ public class MainHelper
      */
     protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
                                     Map nodes) {
+        List sortedNodes = new ArrayList();
+
+        // compare FieldDescriptors by name
+        Comparator comparator = new Comparator () {
+            public int compare(Object o1, Object o2) {
+                return ((FieldDescriptor) o1).getName().compareTo(((FieldDescriptor) o2).getName());
+            }
+            public boolean equals(Object obj) {
+                return false;
+            }
+        };
+
+        Set attributeNodes = new TreeSet(comparator);
+        Set referenceAndCollectionNodes = new TreeSet(comparator);
         for (Iterator i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
+            FieldDescriptor fd = (FieldDescriptor) i.next();
+            if (!fd.isReference() && !fd.isCollection()) {
+                attributeNodes.add(fd);
+            } else {
+                referenceAndCollectionNodes.add(fd);
+            }
+        }
+
+        sortedNodes.addAll(attributeNodes);
+        sortedNodes.addAll(referenceAndCollectionNodes);
+
+        for (Iterator i = sortedNodes.iterator(); i.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
             String fieldName = fd.getName();
 
@@ -102,6 +133,7 @@ public class MainHelper
 
             MetadataNode parent = (MetadataNode) nodes.get(currentPath);
             MetadataNode node = new MetadataNode(parent, fieldName, cld.getModel(), button);
+
             nodes.put(node.getPath(), node);
             if (fieldName.equals(head)) {
                 ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
@@ -141,7 +173,7 @@ public class MainHelper
         for (Iterator i = query2.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
-            
+
             if (path.indexOf(".") == -1) {
                 QueryClass qc = new QueryClass(getClass(node.getType(), model));
                 q.addFrom(qc);
@@ -149,7 +181,7 @@ public class MainHelper
             } else {
                 String fieldName = node.getFieldName();
                 QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-                
+
                 if (node.isAttribute()) {
                     QueryField qf = new QueryField(parentQc, fieldName);
                     queryBits.put(path, qf);
@@ -172,11 +204,11 @@ public class MainHelper
                 Constraint c = (Constraint) j.next();
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
                     cs.addConstraint(new BagConstraint(qn,
-                                                       c.getOp(), 
+                                                       c.getOp(),
                                                        (Collection) savedBags.get(c.getValue())));
                 } else { //assume, for now, that it's a SimpleConstraint
                     cs.addConstraint(new SimpleConstraint((QueryField) qn,
-                                                          c.getOp(), 
+                                                          c.getOp(),
                                                           new QueryValue(c.getValue())));
                 }
             }
@@ -186,10 +218,10 @@ public class MainHelper
         for (Iterator i = view.iterator(); i.hasNext();) {
             q.addToSelect((QueryNode) queryBits.get((String) i.next()));
         }
-        
+
         return q;
     }
-    
+
     /**
      * Instantiate a class by unqualified name
      * The name should be "InterMineObject" or the name of class in the model provided
@@ -230,7 +262,7 @@ public class MainHelper
         }
         return cls;
     }
-    
+
     /**
      * Get the metadata for a class by unqualified name
      * The name is looked up in the provided model
