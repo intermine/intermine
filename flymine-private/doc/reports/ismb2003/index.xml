@@ -298,7 +298,7 @@ external databases.
 
 <sect2>
 <title>Japanese data warehouse project</title>
-<ulink url="data_warehouse">[poster]</ulink>
+<ulink url="data_warehouse.sxi">[poster]</ulink>
 
 <para>
 Does query rewriting (in Perl) to use automatically use aggregate
