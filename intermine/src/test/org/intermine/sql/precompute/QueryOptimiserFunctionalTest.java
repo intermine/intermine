@@ -24,6 +24,8 @@ import org.intermine.sql.DatabaseTestCase;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.query.*;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.StringUtil;
 
 import org.apache.log4j.Logger;
@@ -41,8 +43,12 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         super(arg1);
     }
 
+    private Database database = null;
     protected Database getDatabase() throws Exception {
-        return DatabaseFactory.getDatabase("db.unittest");
+        if (database == null) {
+            database = DatabaseFactory.getDatabase("db.unittest");
+        }
+        return database;
     }
 
     /**
@@ -87,23 +93,43 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         } catch (SQLException e) {
             con.rollback();
         }
+        try {
+            stmt.execute("DROP TABLE table4");
+        } catch (SQLException e) {
+            con.rollback();
+        }
+        Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
         Random random = new Random(27278383973L);
         stmt.addBatch("CREATE TABLE table1(col1 int, col2 int)");
+        stmt.addBatch("CREATE TABLE table2(col1 int, col2 int)");
+        stmt.addBatch("CREATE TABLE table3(col1 int, col2 int)");
+        stmt.addBatch("CREATE TABLE table4(col1 int, col2 int, col3 int)");
+        stmt.executeBatch();
+        stmt.clearBatch();
+        String colnames[] = new String[] {"col1", "col2"};
         for (int i = 1; i<=DATA_SIZE; i++) {
-            stmt.addBatch("INSERT INTO table1 VALUES(" + i + ", " + (DATA_SIZE + 1 - i) + ")" );
+            batch.addRow(con, "table1", null, colnames, new Object[] {new Integer(i), new Integer(DATA_SIZE + 1 - i)});
+            //stmt.addBatch("INSERT INTO table1 VALUES(" + i + ", " + (DATA_SIZE + 1 - i) + ")" );
         }
+        for (int i = 1; i<DATA_SIZE; i++) {
+            batch.addRow(con, "table2", null, colnames, new Object[] {new Integer(i), new Integer(random.nextInt(DATA_SIZE/10))});
+            //stmt.addBatch("INSERT INTO table2 VALUES(" + i + ", " + random.nextInt(DATA_SIZE/10) + ")" );
+        }
+        for (int i = 1; i<DATA_SIZE; i++) {
+            batch.addRow(con, "table3", null, colnames, new Object[] {new Integer(i), new Integer(random.nextInt(DATA_SIZE/10))});
+            //stmt.addBatch("INSERT INTO table3 VALUES(" + i + ", " + random.nextInt(DATA_SIZE/10) + ")" );
+        }
+        colnames = new String[] {"col1", "col2", "col3"};
+        for (int i = 0; i < 50000; i++) {
+            batch.addRow(con, "table4", null, colnames, new Object[] {new Integer(random.nextInt(10)), new Integer(random.nextInt(10)), new Integer(random.nextInt(10))});
+            //String sql = "INSERT INTO table4 VALUES(" + random.nextInt(10) + ", " + random.nextInt(10) + ", " + random.nextInt(10) + ")";
+            //stmt.addBatch(sql);
+        }
+        batch.close(con);
         stmt.addBatch("CREATE INDEX table1_index1 ON table1(col1)");
         stmt.addBatch("CREATE INDEX table1_index2 ON table1(col2)");
-        stmt.addBatch("CREATE TABLE table2(col1 int, col2 int)");
-        for (int i = 1; i<DATA_SIZE; i++) {
-            stmt.addBatch("INSERT INTO table2 VALUES(" + i + ", " + random.nextInt(DATA_SIZE/10) + ")" );
-        }
         stmt.addBatch("CREATE INDEX table2_index1 ON table2(col1)");
         stmt.addBatch("CREATE INDEX table2_index2 ON table2(col2)");
-        stmt.addBatch("CREATE TABLE table3(col1 int, col2 int)");
-        for (int i = 1; i<DATA_SIZE; i++) {
-            stmt.addBatch("INSERT INTO table3 VALUES(" + i + ", " + random.nextInt(DATA_SIZE/10) + ")" );
-        }
         stmt.addBatch("CREATE INDEX table3_index1 ON table3(col1)");
         stmt.addBatch("CREATE INDEX table3_index2 ON table3(col2)");
         stmt.executeBatch();
@@ -129,6 +155,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         queries.put("halfOftable2HalfOfTable3groupByAvg", "SELECT table2.col1, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 AND table2.col1 < " + (DATA_SIZE/2) + " AND table3.col1 < " + (DATA_SIZE/2) + " GROUP BY table2.col1 ORDER BY table2.col1");
         queries.put("table2Table3groupByAvg", "SELECT table2.col1, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
         queries.put("table2Table3groupByAvgHaving", "SELECT table2.col1 AS wotsit, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 HAVING avg(table2.col2 + table3.col2) > " + (DATA_SIZE/5) + " ORDER BY table2.col1");
+        queries.put("table4Sorted", "SELECT table4.col1, table4.col2, table4.col3 FROM table4 ORDER BY table4.col1, table4.col2, table4.col3");
     }
 
     // Add some precomputed tables into the database
@@ -140,6 +167,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         precomps.put("precomp_table2Table3onCol1", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col1 = table3.col1 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
         precomps.put("precomp_halfOfTable2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2 FROM table2 WHERE table2.col1 < " + (DATA_SIZE/2));
         precomps.put("precomp_halfOfTable3", "SELECT table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table3 WHERE table3.col1 < " + (DATA_SIZE/2));
+        precomps.put("precomp_table4", "SELECT table4.col1 AS col1, table4.col2 AS col2, table4.col3 AS col3 FROM table4 ORDER BY table4.col1, table4.col3, table4.col2");
 
         PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(getDatabase());
         Iterator precompsIter = precomps.keySet().iterator();
@@ -196,13 +224,13 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         Set optimisedQueries = bestQuery.getQueries();
         // optimisedQueries now contains the set of queries we need to see all give the same results
 
+        System.out.println(type + "(" + optimisedQueries.size() + " choices): " + optimisedQueries);
+
         Iterator queriesIter = optimisedQueries.iterator();
         while (queriesIter.hasNext()) {
             Query optimisedQuery = (Query) queriesIter.next();
             checkResultsForQueries(q, optimisedQuery);
         }
-
-        System.out.println(type + "(" + optimisedQueries.size() + " choices)");
 
         // Now try the optimise() method. We don't know which of the
         // set of queries we are actually going to get back, but we
@@ -210,12 +238,11 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 
         String optimisedQuery = QueryOptimiser.optimise(queryString, getDatabase());
         if (queryString.equals(optimisedQuery)) {
-            System.out.println(": ORIGINAL ");
+            System.out.println(": ORIGINAL " + optimisedQuery);
         } else {
-            System.out.println(": OPTIMISED ");
+            System.out.println(": OPTIMISED " + queryString + " -> " + optimisedQuery);
         }
         checkResultsForQueries(q, new Query(optimisedQuery));
-
     }
 
     /**

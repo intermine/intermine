@@ -395,11 +395,62 @@ public class QueryOptimiser
                     addNonCoveredFrom(currentQuery.getFrom(), precompQuery.getFrom(),
                             newQuery.getFrom());
 
-                    // Populate the WHERE clause of newQuery with the contents of the WHERE clause
-                    // of currentQuery, leaving out those constraints in whereConstraintEqualsSet.
+                    // Populate the HAVING clause of newQuery with the contents of the HAVING clause
+                    // of currentQuery.
+                    reconstructAbstractConstraints(currentQuery.getHaving(), precomputedSqlTable,
+                            valueMap, precompQuery.getFrom(), false, newQuery.getHaving(),
+                            Collections.EMPTY_SET, null, 0, null);
+
+                    // Now populate the ORDER BY clause of newQuery from the contents of the ORDER
+                    // BY clause of currentQuery.
+                    Field orderByField = null;
                     List precompOrderBy = precompQuery.getOrderBy();
                     if ((precomputedTable.getOrderByField() == null) || (!query.getGroupBy()
                                 .isEmpty())) {
+                        reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
+                                valueMap, precompQuery.getFrom(), false, newQuery.getOrderBy());
+                    } else {
+                        List tempOrderBy = new ArrayList();
+                        reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
+                                valueMap, precompQuery.getFrom(), false, tempOrderBy);
+                        List newOrderBy = newQuery.getOrderBy();
+
+                        // Now, we have a chance to improve the performance of the query by
+                        // substituting the orderby_field instead of certain elements of the order
+                        // by list. The only useful way to do this is if the order by clause of
+                        // the precomputed table exactly matches the start of the order by clause
+                        // of the original query.
+
+                        Iterator orderByIter = tempOrderBy.iterator();
+                        if (precompOrderBy.size() <= tempOrderBy.size()) {
+                            boolean matches = true;
+                            for (int i = 0; (i < precompOrderBy.size()) && matches; i++) {
+                                Field nextPrecompOrderBy = new Field(((SelectValue) valueMap
+                                            .get(precompOrderBy.get(i))).getAlias(),
+                                        precomputedSqlTable);
+                                AbstractValue origValue = (AbstractValue) orderByIter.next();
+                                matches = origValue.equals(nextPrecompOrderBy);
+                            }
+
+                            if (matches) {
+                                orderByField = new Field(precomputedTable.getOrderByField(),
+                                        precomputedSqlTable);
+                                newOrderBy.add(orderByField);
+                            } else {
+                                orderByIter = tempOrderBy.iterator();
+                            }
+                        }
+                        while (orderByIter.hasNext()) {
+                            newOrderBy.add(orderByIter.next());
+                        }
+                        if ((orderByField != null) && currentQuery.isDistinct()) {
+                            newQuery.addSelect(new SelectValue(orderByField, "orderby_field"));
+                        }
+                    }
+
+                    // Populate the WHERE clause of newQuery with the contents of the WHERE clause
+                    // of currentQuery, leaving out those constraints in whereConstraintEqualsSet.
+                    if ((orderByField == null) || (!query.getGroupBy().isEmpty())) {
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, null, 0, null);
@@ -409,72 +460,9 @@ public class QueryOptimiser
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, firstPrecompOrderBy,
-                                precompOrderBy.size(), new Field(precomputedTable.getOrderByField(),
-                                    precomputedSqlTable));
+                                precompOrderBy.size(), orderByField);
                     }
 
-                    // Populate the HAVING clause of newQuery with the contents of the HAVING clause
-                    // of currentQuery.
-                    reconstructAbstractConstraints(currentQuery.getHaving(), precomputedSqlTable,
-                            valueMap, precompQuery.getFrom(), false, newQuery.getHaving(),
-                            Collections.EMPTY_SET, null, 0, null);
-
-                    // Now populate the ORDER BY clause of newQuery from the contents of the ORDER
-                    // BY clause of currentQuery.
-                    if ((precomputedTable.getOrderByField() == null) || (!query.getGroupBy()
-                                .isEmpty())) {
-                        reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
-                                valueMap, precompQuery.getFrom(), false, newQuery.getOrderBy());
-                    } else {
-                        List tempOrderBy = new ArrayList();
-                        reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
-                                valueMap, precompQuery.getFrom(), false, tempOrderBy);
-                        // Now, we have a chance to improve the performance of the query by
-                        // substituting the orderby_field instead of certain elements of the order
-                        // by list.
-                        List newOrderBy = newQuery.getOrderBy();
-                        Iterator precompOrderByIter = precompOrderBy.iterator();
-                        Field nextPrecompOrderBy = new Field(((SelectValue) valueMap
-                                    .get(precompOrderByIter.next())).getAlias(),
-                                precomputedSqlTable);
-                        Field firstPrecompOrderBy = nextPrecompOrderBy;
-                        int inARow = 0;
-                        Field orderByField = null;
-                        Iterator orderByIter = tempOrderBy.iterator();
-                        while (orderByIter.hasNext()) {
-                            AbstractValue origValue = (AbstractValue) orderByIter.next();
-                            //System.out .println("Comparing " + origValue.getSQLString() + " to "
-                            //        + nextPrecompOrderBy.getSQLString());
-                            if (origValue.equals(nextPrecompOrderBy)) {
-                                inARow++;
-                                //System.out .println("inARow now " + inARow);
-                                if (!precompOrderByIter.hasNext()) {
-                                    precompOrderByIter = precompOrderBy.iterator();
-                                }
-                            } else {
-                                if (inARow >= 1) {
-                                    orderByField = new Field(precomputedTable.getOrderByField(),
-                                                precomputedSqlTable);
-                                    newOrderBy.add(orderByField);
-                                }
-                                inARow = 0;
-                                precompOrderByIter = precompOrderBy.iterator();
-                                //System.out .println("inARow now " + inARow);
-                                newOrderBy.add(origValue);
-                            }
-                            nextPrecompOrderBy = new Field(((SelectValue) valueMap
-                                        .get(precompOrderByIter.next())).getAlias(),
-                                    precomputedSqlTable);
-                        }
-                        if (inARow >= 1) {
-                            orderByField = new Field(precomputedTable.getOrderByField(),
-                                        precomputedSqlTable);
-                            newOrderBy.add(orderByField);
-                        }
-                        if ((orderByField != null) && currentQuery.isDistinct()) {
-                            newQuery.addSelect(new SelectValue(orderByField, "orderby_field"));
-                        }
-                    }
                     // Now populate the GROUP BY clause of newQuery from the contents of the GROUP
                     // BY clause of currentQuery.
                     reconstructAbstractValues(currentQuery.getGroupBy(), precomputedSqlTable,
