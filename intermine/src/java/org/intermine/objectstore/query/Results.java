@@ -14,6 +14,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
+import org.flymine.util.TypeUtil;
 
 /**
  * Results representation as a List of ResultRows
@@ -279,15 +280,16 @@ public class Results extends AbstractList
                 while (rowIter.hasNext()) {
                     Object obj = (Object) rowIter.next();
                     Class objClass = obj.getClass();
-                    Field fields[] = objClass.getDeclaredFields();
-                    for (int i = 0; i < fields.length; i++) {
-                        fields[i].setAccessible(true);
-                        Object field = fields[i].get(obj);
-                        if (field instanceof LazyCollection) {
-                            Query query = ((LazyCollection) field).getQuery();
-                            fields[i].set(obj, new SingletonResults(query, os));
-                        } else if (field instanceof LazyReference) {
-                            ((LazyReference) field).setObjectStore(os);
+                    Iterator fields = TypeUtil.getFields(objClass).iterator();
+                    while (fields.hasNext()) {
+                        Field field = (Field) fields.next();
+                        field.setAccessible(true);
+                        Object fieldVal = field.get(obj);
+                        if (fieldVal instanceof LazyCollection) {
+                            Query query = ((LazyCollection) fieldVal).getQuery();
+                            field.set(obj, new SingletonResults(query, os));
+                        } else if (fieldVal instanceof LazyReference) {
+                            ((LazyReference) fieldVal).setObjectStore(os);
                         }
                     }
                 }
