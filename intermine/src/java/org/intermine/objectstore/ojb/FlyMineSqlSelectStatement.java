@@ -514,8 +514,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
      * @return the converted String
      */
     protected String simpleConstraintToString(SimpleConstraint sc) {
-        if ((sc.getType() == SimpleConstraint.IS_NULL)
-            || (sc.getType() == SimpleConstraint.IS_NOT_NULL)) {
+        if (sc.getArg2() == null) {
             return queryEvaluableToString(sc.getArg1()) + " " + sc.getOpString();
         }
         return queryEvaluableToString(sc.getArg1()) + " " + sc.getOpString()

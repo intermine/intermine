@@ -231,8 +231,7 @@ public class FqlQuery
     public static String constraintToString(Query q, Constraint cc, List parameters) {
         if (cc instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) cc;
-            if ((c.getType() == SimpleConstraint.IS_NULL)
-                    || (c.getType() == SimpleConstraint.IS_NOT_NULL)) {
+            if (c.getArg2() == null) {
                 return nodeToString(q, c.getArg1()) + " " + c.getOpString();
             } else {
                 return nodeToString(q, c.getArg1()) + " " + c.getOpString()
