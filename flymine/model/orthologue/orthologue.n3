@@ -1,0 +1,36 @@
+@prefix :        <http://www.flymine.org/model/genomic#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+:Protein a owl:Class;
+    rdfs:subClassOf :BioEntity.
+
+:Protein__swissProtId a owl:DatatypeProperty;
+    rdfs:domain :Protein;
+    rdfs:range xsd:string.
+
+:Orthologue a owl:Class;
+    rdfs:subClassOf :LinkRelation.
+
+:Orthologue__confidence a owl:DatatypeProperty;
+    rdfs:domain :Orthologue;
+    rdfs:range xsd:float.
+
+:Paralogue a owl:Class;
+    rdfs:subClassOf :LinkRelation.
+
+:Paralogue__confidence a owl:DatatypeProperty;
+    rdfs:domain :Paralogue;
+    rdfs:range xsd:float.
+
+:INPARANOIDResult a owl:Class;
+    rdfs:subClassOf :ComputationalResult.
+
+:INPARANOIDResult__confidence a owl:DatatypeProperty;
+    rdfs:domain :INPARANOIDResult;
+    rdfs:range xsd:float.
+
+:INPARANOIDAnalysis a owl:Class;
+    rdfs:subClassOf :ComputationalAnalysis.
