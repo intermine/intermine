@@ -129,4 +129,10 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     protected DatabaseSchema getSchema() {
         return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")));
     }
+    public String getRegisterOffset1() {
+        return "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id";
+    }
+    public String getRegisterOffset2() {
+        return "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND ";
+    }
 }

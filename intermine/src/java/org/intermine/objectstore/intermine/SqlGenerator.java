@@ -126,9 +126,25 @@ public class SqlGenerator
         try {
             synchronized (q) {
                 Map schemaCache = getCacheForSchema(schema);
-                TreeMap cached = (TreeMap) schemaCache.get(q);
-                if (cached != null) {
-                    SortedMap headMap = cached.headMap(new Integer(start + 1));
+                CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
+                if (cacheEntry != null) {
+                    if ((cacheEntry.getLastOffset() - start >= 100000)
+                            || (start - cacheEntry.getLastOffset() >= 10000)) {
+                        QueryNode firstOrderBy = null;
+                        try {
+                            firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
+                        } catch (NoSuchElementException e) {
+                            firstOrderBy = (QueryNode) q.getSelect().iterator().next();
+                        }
+                        if (firstOrderBy instanceof QueryClass) {
+                            firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
+                        }
+                        String sql = generate(q, schema, db, new SimpleConstraint((QueryEvaluable)
+                                    firstOrderBy, ConstraintOp.GREATER_THAN, new QueryValue(value)),
+                                QUERY_NORMAL);
+                        cacheEntry.setLast(start, sql);
+                    }
+                    SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
                     Integer lastKey = null;
                     try {
                         lastKey = (Integer) headMap.lastKey();
@@ -150,16 +166,17 @@ public class SqlGenerator
                 if (firstOrderBy instanceof QueryClass) {
                     firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                 }
-                String sql = generate(q, schema, db, new SimpleConstraint((QueryEvaluable)
+                String sql;
+                sql = generate(q, schema, db, new SimpleConstraint((QueryEvaluable)
                             firstOrderBy, ConstraintOp.GREATER_THAN, new QueryValue(value)),
                         QUERY_NORMAL);
-                if (cached == null) {
-                    cached = new TreeMap();
-                    schemaCache.put(q, cached);
+                if (cacheEntry == null) {
+                    cacheEntry = new CacheEntry(start, sql);
+                    schemaCache.put(q, cacheEntry);
                 }
-                cached.put(new Integer(start), sql);
+                cacheEntry.getCached().put(new Integer(start), sql);
                 LOG.info("Created cache entry for offset " + start + " (cache contains "
-                        + cached.keySet() + ") for query " + q + ", sql = " + sql);
+                        + cacheEntry.getCached().keySet() + ") for query " + q + ", sql = " + sql);
             }
         } catch (ObjectStoreException e) {
             LOG.error("Error while registering offset for query " + q + ": " + e);
@@ -182,9 +199,9 @@ public class SqlGenerator
             throws ObjectStoreException {
         synchronized (q) {
             Map schemaCache = getCacheForSchema(schema);
-            TreeMap cached = (TreeMap) schemaCache.get(q);
-            if (cached != null) {
-                SortedMap headMap = cached.headMap(new Integer(start + 1));
+            CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
+            if (cacheEntry != null) {
+                SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
                 Integer lastKey = null;
                 try {
                     lastKey = (Integer) headMap.lastKey();
@@ -192,17 +209,26 @@ public class SqlGenerator
                 }
                 if (lastKey != null) {
                     int offset = lastKey.intValue();
-                    return cached.get(lastKey)
-                        + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
-                            + (start == offset ? "" : " OFFSET " + (start - offset)));
+                    if ((offset > cacheEntry.getLastOffset())
+                            || (cacheEntry.getLastOffset() > start)) {
+                        return cacheEntry.getCached().get(lastKey)
+                            + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                                + (start == offset ? "" : " OFFSET " + (start - offset)));
+                    } else {
+                        return cacheEntry.getLastSQL()
+                            + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                                + (start == cacheEntry.getLastOffset() ? "" : " OFFSET "
+                                    + (start - cacheEntry.getLastOffset())));
+                    }
                 }
             }
             String sql = generate(q, schema, db, null, QUERY_NORMAL);
-            if (cached == null) {
+            /*if (cached == null) {
                 cached = new TreeMap();
                 schemaCache.put(q, cached);
             }
             cached.put(new Integer(0), sql);
+            */
             return sql + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
                         + (start == 0 ? "" : " OFFSET " + start));
         }
@@ -1004,6 +1030,35 @@ public class SqlGenerator
 
         public Database getDb() {
             return db;
+        }
+    }
+
+    private static class CacheEntry
+    {
+        private TreeMap cached = new TreeMap();
+        private int lastOffset;
+        private String lastSQL;
+
+        public CacheEntry(int lastOffset, String lastSQL) {
+            this.lastOffset = lastOffset;
+            this.lastSQL = lastSQL;
+        }
+
+        public TreeMap getCached() {
+            return cached;
+        }
+
+        public void setLast(int lastOffset, String lastSQL) {
+            this.lastOffset = lastOffset;
+            this.lastSQL = lastSQL;
+        }
+
+        public int getLastOffset() {
+            return lastOffset;
+        }
+
+        public String getLastSQL() {
+            return lastSQL;
         }
     }
 }

@@ -251,8 +251,51 @@ public class SqlGeneratorTest extends SetupDataTestCase
         }
     }
 
+    public void testRegisterOffset() throws Exception {
+        DatabaseSchema schema = getSchema();
+        Query q = new Query();
+        QueryClass c1 = new QueryClass(Company.class);
+        q.addFrom(c1);
+        q.addToSelect(c1);
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        SqlGenerator.registerOffset(q, 5, schema, db, new Integer(10));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
+        SqlGenerator.registerOffset(q, 11000, schema, db, new Integer(20));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 20 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
+        SqlGenerator.registerOffset(q, 21000, schema, db, new Integer(30));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
+        SqlGenerator.registerOffset(q, 21005, schema, db, new Integer(31));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
+        SqlGenerator.registerOffset(q, 11002, schema, db, new Integer(29));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
+        SqlGenerator.registerOffset(q, 101000, schema, db, new Integer(40));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 21000", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset2() + "a1_.id > 40 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 101005, Integer.MAX_VALUE, schema, db));
+    }
+
     protected DatabaseSchema getSchema() {
         return new DatabaseSchema(model, Collections.EMPTY_LIST);
+    }
+    public String getRegisterOffset1() {
+        return "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";
+    }
+    public String getRegisterOffset2() {
+        return "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE ";
     }
 }
 
