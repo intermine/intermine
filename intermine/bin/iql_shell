@@ -16,6 +16,7 @@ for i in $INTERMINE/dist/*.jar ; do
 done
 
 CP=$CP:.
+CP=$CP:$INTERMINE/resources/test:$INTERMINE/resources/runtime:~
 
 if test -z "$LD_LIBRARY_PATH" ; then
     export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
