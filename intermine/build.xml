@@ -909,7 +909,7 @@
 
   <target name="remove-webapp"
     description="remove the web application from the server">
-     <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
+     <ant antfile="build-webapp.xml" target="remove-webapp" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
     </ant>    
   </target>
