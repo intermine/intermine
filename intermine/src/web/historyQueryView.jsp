@@ -37,6 +37,7 @@
         </tr>
       </c:forEach>
     </table>
+    <br/><br/>
   </c:if>
 </div>
 <!-- /historyQueryView.jsp -->

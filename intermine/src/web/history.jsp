@@ -11,7 +11,6 @@
   <c:otherwise>
     <html:form action="/createBoolean">
       <tiles:get name="historyBagView"/>
-      <br/>
       <tiles:get name="historyQueryView"/>
       <%--
         <html:submit property="action">
