@@ -97,9 +97,8 @@ public class ItemHelper
         for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
             org.intermine.model.fulldata.ReferenceList refs
                 = (org.intermine.model.fulldata.ReferenceList) i.next();
-            ReferenceList newRefs = new ReferenceList();
-            newRefs.setName(refs.getName());
-            newRefs.setRefIds(StringUtil.tokenize(refs.getRefIds()));
+            ReferenceList newRefs = new ReferenceList(refs.getName(),
+                                                      StringUtil.tokenize(refs.getRefIds()));
             newItem.addCollection(newRefs);
         }
 

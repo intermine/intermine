@@ -135,8 +135,7 @@ public class FullRenderer
                 if (Collection.class.isAssignableFrom(value.getClass())) {
                     Collection col = (Collection) value;
                     if (col.size() > 0) {
-                        ReferenceList refList = new ReferenceList();
-                        refList.setName(fieldname);
+                        ReferenceList refList = new ReferenceList(fieldname);
                         for (Iterator j = col.iterator(); j.hasNext();) {
                             refList.addRefId(((InterMineObject) j.next()).getId().toString());
                         }
