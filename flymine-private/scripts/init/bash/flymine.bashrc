@@ -1,5 +1,6 @@
 # This script will run the appropriate tasks for the group
 
+# Make files non-world readable by default
 umask 0027
 
 # for TASK in production sybase java lims perl; do
@@ -41,12 +42,46 @@ SunOS)
     ;;
 esac
 
-#LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
-EDITOR=emacs; export EDITOR
-VISUAL="emacs -nw"; export VISUAL
-XTERMMOUSE=no; export XTERMMOUSE
-LESSCHARSET=latin1; export LESSCHARSET
+# Set up some defaults. These can be overridden in user profiles.
+
+if [ "${EDITOR:-unset}" = "unset" ]; then
+    EDITOR=emacs; export EDITOR
+fi
+
+if [ "${VISUAL:-unset}" = "unset" ]; then
+    VISUAL="emacs -nw"; export VISUAL
+fi
+
+#XTERMMOUSE=no; export XTERMMOUSE
+#LESSCHARSET=latin1; export LESSCHARSET
 
 if [ "${HOME:+set}" = "set" ]; then
     alias rmallbak="find $HOME/. \( -name .snapshot -prune \) -o \( -name '*~' -o -name '.*~' -o -name '*#' \) -print -exec rm {} \;"
 fi
+
+if [ "${CVSTREE:-unset}" = "unset" ]; then
+    if [ "${HOME:+set}" = "set" ] && [ -d $HOME/cvs ]; then
+	CVSTREE=$HOME/cvs; export CVSTREE
+    fi
+fi
+
+if [ "${FLYMINE:-unset}" = "unset" ]; then
+    if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/flymine ]; then
+	FLYMINE=$CVSTREE/flymine; export FLYMINE
+    fi
+fi
+
+if [ "${FLYMINE_PRIVATE:-unset}" = "unset" ]; then
+    if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/flymine-private ]; then
+	FLYMINE_PRIVATE=$CVSTREE/flymine-private; export FLYMINE_PRIVATE
+    fi
+fi
+
+
+# Aliases for working with the private CVS tree
+
+if [ "${FLYMINE_PRIVATE:+set}" = "set" ]; then
+    alias doc='cd $FLYMINE_PRIVATE/doc'
+    alias scr='cd $FLYMINE_PRIVATE/scripts'
+fi
+
