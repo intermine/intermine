@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletContext;
 
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -23,8 +24,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
-import org.apache.struts.util.MessageResources;
 
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 
@@ -58,16 +60,15 @@ public class IqlQueryAction extends LookupDispatchAction
                              HttpServletRequest request,
                              HttpServletResponse response)
         throws Exception {
-
-        // Extract attributes we will need
-        MessageResources messages = getResources(request);
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
 
         IqlQueryForm queryform = (IqlQueryForm) form;
 
         try {
-            Query q = new IqlQuery(queryform.getQuerystring(),
-                                   "org.intermine.model.testmodel").toQuery();
+            Query q = new IqlQuery(queryform.getQuerystring(), model.getPackageName()).toQuery();
             session.setAttribute(Constants.QUERY, q);
 
             return mapping.findForward("runquery");
@@ -101,11 +102,11 @@ public class IqlQueryAction extends LookupDispatchAction
                               HttpServletRequest request,
                               HttpServletResponse response)
         throws Exception {
-
-        // Extract attributes we will need
-        MessageResources messages = getResources(request);
         HttpSession session = request.getSession();
-
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
+        
         IqlQueryForm queryform = (IqlQueryForm) form;
 
         String queryString = queryform.getQuerystring();
@@ -114,7 +115,7 @@ public class IqlQueryAction extends LookupDispatchAction
             if (queryString == null || queryString.length() == 0) {
                 session.setAttribute(Constants.QUERY, null);
             } else {
-                Query q = new IqlQuery(queryString, "org.intermine.model.testmodel").toQuery();
+                Query q = new IqlQuery(queryString, model.getPackageName()).toQuery();
                 session.setAttribute(Constants.QUERY, q);
             }
 
@@ -140,5 +141,4 @@ public class IqlQueryAction extends LookupDispatchAction
         map.put("button.view", "view");
         return map;
     }
-
 }

@@ -12,9 +12,9 @@
     <html:submit property="action">
       <fmt:message key="button.run"/>
     </html:submit>
-    <html:submit property="action">
+    <%-- html:submit property="action">
       <fmt:message key="button.view"/>
-    </html:submit>
+    </html:submit --%>
     <html:reset>
       <fmt:message key="button.reset"/>
     </html:reset>
