@@ -21,17 +21,29 @@ import java.util.ArrayList;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.Model;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.ConstraintOp;
+import org.flymine.objectstore.query.*;
+import org.flymine.testing.OneTimeTestCase;
+
+import org.flymine.model.testmodel.Department;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
 
-public class QueryBuildHelperTest extends TestCase
+public class QueryBuildHelperTest extends QueryTestCase
 {
+    Model model;
+
     public QueryBuildHelperTest (String testName) {
         super(testName);
+    }
+    
+    public static Test suite() {
+        return OneTimeTestCase.buildSuite(QueryBuildHelperTest.class);
+    }
+
+    public void setUp() throws Exception {
+        super.setUp();
+        model = Model.getInstanceByName("testmodel");
     }
     
     public void testAliasClass() throws Exception {
@@ -64,16 +76,53 @@ public class QueryBuildHelperTest extends TestCase
     }
 
     public void testCreateQuery() throws Exception{
+        Class cls = Department.class;
+        
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(cls.getName());
+        d.getConstraintNames().add("name_0");
+        d.getFieldNames().put("name_0", "name");
+        d.getFieldOps().put("name_0", ConstraintOp.NOT_EQUALS);
+        d.getFieldValues().put("name_0", "Frank");
+        
+        Query q = new Query();
+        QueryClass qc = new QueryClass(cls);
+        q.alias(qc, "Department_0");
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.NOT_EQUALS, new QueryValue("Frank"));
+        q.setConstraint(sc);
+
+        Map queryClasses = new HashMap();
+        queryClasses.put("Department_0", d);
+        
+        assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, new HashMap()));
     }
 
     public void testToStrings() throws Exception {
+        Map input = new HashMap();
+        input.put("key1", new Integer(42));
+        input.put("key2", "dave");
+        
+        Map expected = new HashMap();
+        expected.put("key1", "42");
+        expected.put("key2", "dave");
+
+        assertEquals(expected, QueryBuildHelper.toStrings(input));
     }
 
     public void testGetAllFieldNames() throws Exception {
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        
+        List expected = Arrays.asList(new Object[] {
+            "rejectedEmployee", "employees", "manager", "name", "company"
+        });
+        
+        assertEquals(expected, QueryBuildHelper.getAllFieldNames(cld));
     }
 
     public void testGetValidOpsNoBagsPresent() throws Exception {
-        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");      
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
         Map result = QueryBuildHelper.getValidOps(cld, false);
         
         assertEquals(QueryBuildHelper.mapOps(SimpleConstraint.validOps(String.class)), result.get("name"));
@@ -107,8 +156,47 @@ public class QueryBuildHelperTest extends TestCase
     }
 
     public void testGetQueryClasses() throws Exception {
+        Class cls = Department.class;
+        Query q = new Query();
+        QueryClass qc = new QueryClass(cls);
+        q.alias(qc, "Department_0");
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.NOT_EQUALS, new QueryValue("Frank"));
+        q.setConstraint(sc);
+
+        
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(cls.getName());
+        d.getConstraintNames().add("name_0");
+        d.getFieldNames().put("name_0", "name");
+        d.getFieldOps().put("name_0", ConstraintOp.NOT_EQUALS);
+        d.getFieldValues().put("name_0", "Frank");
+
+        Map queryClasses = new HashMap();
+        queryClasses.put("Department_0", d);
+
+        assertEquals(queryClasses, QueryBuildHelper.getQueryClasses(q, new HashMap()));
     }
 
     public void testToDisplayable() throws Exception {
+        Class cls = Department.class;
+        
+        Query q = new Query();
+        QueryClass qc = new QueryClass(cls);
+        q.alias(qc, "Department_0");
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.NOT_EQUALS, new QueryValue("Frank"));
+        q.setConstraint(sc);
+
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(cls.getName());
+        d.getConstraintNames().add("name_0");
+        d.getFieldNames().put("name_0", "name");
+        d.getFieldOps().put("name_0", ConstraintOp.NOT_EQUALS);
+        d.getFieldValues().put("name_0", "Frank");
+
+        assertEquals(d, QueryBuildHelper.toDisplayable(qc, q, new HashMap()));
     }
 }
