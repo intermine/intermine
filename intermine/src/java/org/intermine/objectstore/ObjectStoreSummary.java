@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Iterator;
@@ -55,7 +56,16 @@ public class ObjectStoreSummary
                 String fieldValuesString = (String) properties.get(key);
                 String[] fieldValues =
                     StringUtil.split(fieldValuesString, ObjectStoreSummaryGenerator.FIELD_DELIM);
-                List fieldValuesList = Arrays.asList(fieldValues);
+
+                List fieldValuesList = new ArrayList();
+
+                for (int i = 0; i < fieldValues.length; i++) {
+                    if (fieldValues[i].equals(ObjectStoreSummaryGenerator.NULL_MARKER)) {
+                        fieldValuesList.add(null);                        
+                    } else {
+                        fieldValuesList.add(fieldValues[i]);
+                    }
+                }
                 
                 fieldValuesMap.put(getFieldValuesKey(className, fieldName), fieldValuesList);
             }
