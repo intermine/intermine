@@ -172,10 +172,38 @@ public class DisplayQueryClass
     }
 
     /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof DisplayQueryClass)) {
+            return false;
+        }
+
+        DisplayQueryClass d = (DisplayQueryClass)o;
+
+        return d.getType().equals(getType())
+            && d.getConstraintNames().equals(getConstraintNames())
+            && d.getFieldNames().equals(getFieldNames())
+            && d.getFieldOps().equals(getFieldOps())
+            && d.getFieldValues().equals(getFieldValues());
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return getType().hashCode()
+            ^ getConstraintNames().hashCode()
+            ^ getFieldNames().hashCode()
+            ^ getFieldOps().hashCode()
+            ^ getFieldValues().hashCode();
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {
-        return type + " " + " " + constraintNames + " " + fieldNames + " " + fieldOps + " "
+        return type + " " + constraintNames + " " + fieldNames + " " + fieldOps + " "
             + fieldValues;
     }
 }
