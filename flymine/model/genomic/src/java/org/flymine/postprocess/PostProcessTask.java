@@ -127,12 +127,16 @@ public class PostProcessTask extends Task
             } else {
                 throw new BuildException("unknown type: " + type);
             }
-            osw.close();
+        } catch (BuildException e) {
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace(System.out);
             throw new BuildException(e);
         } finally {
-            osw.close();
+            try {
+                osw.close();
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
         }
     }
 }
