@@ -105,7 +105,7 @@ public class ModifyBagAction extends Action
 
         String[] selectedBags = mbf.getSelectedBags();
         Set combined = new InterMineBag((Collection) savedBags.get(selectedBags[0]));
-        for (int i = 1; i < mbf.getSelectedBags().length; i++) {
+        for (int i = 1; i < selectedBags.length; i++) {
             combined.retainAll((Collection) savedBags.get(selectedBags[i]));
         }
         savedBags.put(BagHelper.findNewBagName(savedBags), combined);

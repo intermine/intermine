@@ -94,14 +94,13 @@ public class BuildBagAction extends LookupDispatchAction
         Map savedBags = BagHelper.getSavedBags(session);
         BagHelper.saveBag(bag, newBagName, savedBags);
 
-        String forwardPath = mapping.findForward("bagDetails").getPath() + "?bagName=" + newBagName;
-
         ActionMessages actionMessages = new ActionMessages();
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
                            new ActionError("bagBuild.saved", newBagName));
         saveMessages(request, actionMessages);
 
-        return new ActionForward(forwardPath);
+        request.setParameter("bagName", newBagName);
+        return new ActionForward(mapping.findForward("bagDetails"));
     }
 
     /**

@@ -12,23 +12,23 @@ package org.intermine.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * Form bean to used in combining bags
+ * Form bean to used in combining queries
  * @author Mark Woodbridge
  */
-public class ModifyBagForm extends ActionForm
+public class ModifyQueryForm extends ActionForm
 {
-    protected String[] selectedBags;
+    protected String[] selectedQueries;
 
     /**
      * Constructor
      */
-    public ModifyBagForm() {
+    public ModifyQueryForm() {
         initialise();
     }
 
@@ -36,25 +36,25 @@ public class ModifyBagForm extends ActionForm
      * Initialiser
      */
    public void initialise() {
-        selectedBags = new String[0];
+        selectedQueries = new String[0];
     }
 
     /**
-     * Sets the selected bags
+     * Sets the selected queries
      *
-     * @param selectedBags the selected bags
+     * @param selectedQueries the selected queries
      */
-    public void setSelectedBags(String[] selectedBags) {
-        this.selectedBags = selectedBags;
+    public void setSelectedQueries(String[] selectedQueries) {
+        this.selectedQueries = selectedQueries;
     }
 
     /**
-     * Gets the selected bags
+     * Gets the selected queries
      *
-     * @return the selected bags
+     * @return the selected queries
      */
-    public String[] getSelectedBags() {
-        return selectedBags;
+    public String[] getSelectedQueries() {
+        return selectedQueries;
     }
 
     /**
@@ -63,10 +63,10 @@ public class ModifyBagForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = null;
 
-        if (selectedBags.length == 0) {
+        if (selectedQueries.length == 0) {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.modifyBag.none"));
+                       new ActionError("errors.modifyQuery.none"));
         }
 
         return errors;

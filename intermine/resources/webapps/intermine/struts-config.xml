@@ -10,6 +10,9 @@
 
   <form-beans>
 
+    <form-bean name="modifyQueryForm"
+               type="org.intermine.web.ModifyQueryForm"/>
+
     <form-bean name="modifyBagForm"
                type="org.intermine.web.ModifyBagForm"/>
 
@@ -58,7 +61,7 @@
     <!-- Actions that just forward elsewhere - only used by jsps -->
     <action path="/query"
             forward="query.page"/>
-
+    
     <action path="/iqlQuery"
             forward="iqlQuery.page"/>
 
@@ -87,29 +90,28 @@
             forward="begin.page"/>
 
     <!-- Actions invoked using links -->
-    <action path="/modifyQuery"
-            type="org.intermine.web.ModifyQueryAction"
+    <action path="/modifyQueryChange"
+            type="org.intermine.web.ModifyQueryChangeAction"
             parameter="method">
       <forward name="query" path="query.page"/>
-      <forward name="history" path="history.page"/>
     </action>
-      
+    
     <action path="/mainChange"
             type="org.intermine.web.MainChange"
             parameter="method">
       <forward name="query" path="query.page"/>
     </action>
-
+    
     <action path="/viewChange"
             type="org.intermine.web.ViewChange"
             parameter="method">
       <forward name="query" path="query.page"/>
     </action>
-
+    
     <action path="/exportAction"
             type="org.intermine.web.ExportAction"
             parameter="method"/>
-
+    
     <action path="/changeResults"
             type="org.intermine.web.results.ChangeResultsAction"
             parameter="method">
@@ -138,15 +140,24 @@
       <forward name="bagDetails" path="bagDetails.page"/>
       <forward name="buildBag" path="bagBuild.page"/>
     </action>
-
+  
+    <!-- Actions invoked using buttons - validating form -->
+    <action path="/modifyQuery"
+            type="org.intermine.web.ModifyQueryAction"
+            name="modifyQueryForm"
+            parameter="action"
+            input="history">
+      <forward name="history" path="history.page"/>
+    </action>
+    
     <action path="/modifyBag"
             type="org.intermine.web.ModifyBagAction"
             name="modifyBagForm"
-            parameter="action">
+            parameter="action"
+            input="history">
       <forward name="history" path="history.page"/>
     </action>
-  
-    <!-- Actions invoked using buttons - validating form -->
+
     <action path="/changeResultsSize"
             type="org.intermine.web.results.ChangeResultsSizeAction"
             name="changeResultsForm"
