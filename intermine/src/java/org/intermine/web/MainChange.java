@@ -139,7 +139,7 @@ public class MainChange extends DispatchAction
         //and change metadata view if relevant
         if (!node.isAttribute()) {
             session.setAttribute("prefix", path);
-            path = MainHelper.getType(path, model);
+            path = node.getType();
             session.setAttribute("path", path);
         }
         

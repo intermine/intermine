@@ -31,7 +31,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.SimpleConstraint;
@@ -87,16 +86,12 @@ public class MainController extends TilesAction
         //set up the node on which we are editing constraints
         if (request.getAttribute("editingNode") != null) {
             RightNode node = (RightNode) request.getAttribute("editingNode");
-            if (node.getPath().indexOf(".") != -1
-                && MainHelper.getFieldDescriptor(node.getPath(), model).isAttribute()) {
-                AttributeDescriptor attr = (AttributeDescriptor) MainHelper
-                    .getFieldDescriptor(node.getPath(), model);
-                Map attibuteOps = MainHelper.
-                    mapOps(SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType())));
-                request.setAttribute("attributeOps", attibuteOps);
+            if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
+                Class type = MainHelper.getClass(node.getType());
+                Map attributeOps = MainHelper.mapOps(SimpleConstraint.validOps(type));
+                request.setAttribute("attributeOps", attributeOps);
             } else {
-                ClassDescriptor cld = MainHelper
-                    .getClassDescriptor(MainHelper.getType(node.getPath(), model), model);
+                ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
                 request.setAttribute("subclasses", getChildren(cld));
             }
             if (session.getAttribute(Constants.SAVED_BAGS) != null) {

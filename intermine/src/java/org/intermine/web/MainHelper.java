@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Date;
 
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -110,54 +110,6 @@ public class MainHelper
     }
 
     /**
-     * Method to return a String representing the unqualified type of the item referenced by a path
-     * @param path the path
-     * @param model the metadata used to resolve the types of fields in the path
-     * @return the type
-     */
-    public static String getType(String path, Model model) {
-        if (path.indexOf(".") == -1) {
-            return path;
-        }
-
-        FieldDescriptor fd = getFieldDescriptor(path, model);
-        if (fd.isAttribute()) {
-            return TypeUtil.unqualifiedName(((AttributeDescriptor) fd).getType());
-        } else {
-            return TypeUtil.unqualifiedName(((ReferenceDescriptor) fd).
-                                            getReferencedClassDescriptor().getType().getName());
-        }
-    }
-
-    /**
-     * Return the metadata for a field identified by a path into a model (eg Gene.organism.name)
-     * @param path the path
-     * @param model the model
-     * @return the metadata for the field
-     *
-     */
-    public static FieldDescriptor getFieldDescriptor(String path, Model model) {
-        if (path.indexOf(".") == -1) {
-            return null;
-        }
-        String className = path.substring(0, path.indexOf("."));
-        path = path.substring(path.indexOf(".") + 1);
-        ClassDescriptor cld = getClassDescriptor(className, model);
-        FieldDescriptor fd;
-        for (;;) {
-            if (path.indexOf(".") == -1) {
-                fd = cld.getFieldDescriptorByName(path);
-                break;
-            } else {
-                fd = cld.getFieldDescriptorByName(path.substring(0, path.indexOf(".")));
-                cld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                path = path.substring(path.indexOf(".") + 1);
-            }
-        }
-        return fd;
-    }
-
-    /**
      * Add a node to the query using a path, adding parent nodes if necessary
      * @param qNodes the current Node map (from path to Node)
      * @param path the path for the new Node
@@ -218,13 +170,12 @@ public class MainHelper
             String fieldName = node.getFieldName();
             QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
 
-            FieldDescriptor fd = getFieldDescriptor(path, model);
-            if (fd.isAttribute()) {
+            if (node.isAttribute()) {
                 QueryField qf = new QueryField(parentQc, fieldName);
                 queryBits.put(path, qf);
             } else {
                 QueryReference qr = null;
-                if (fd.isReference()) {
+                if (node.isReference()) {
                     qr = new QueryObjectReference(parentQc, fieldName);
                 } else {
                     qr = new QueryCollectionReference(parentQc, fieldName);
@@ -278,6 +229,27 @@ public class MainHelper
         }
     }
 
+    /**
+     * Instantiate a class by unqualified name
+     * The name should be "Date" or that of a primitive container class such as "Integer"
+     * @param className the name of the class
+     * @return the relevant Class
+     */
+    public static Class getClass(String className) {
+        Class cls = TypeUtil.instantiate(className);
+        if (cls == null) {
+            if ("Date".equals(className)) {
+                cls = Date.class;
+            } else {
+                try {
+                    cls = Class.forName("java.lang." + className);
+                } catch (Exception e) {
+                }
+            }
+        }
+        return cls;
+    }
+    
     /**
      * Get the metadata for a class by unqualified name
      * The name is looked up in the provided model

@@ -26,8 +26,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
 
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -176,15 +174,14 @@ public class MainForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
 
         ActionErrors errors = new ActionErrors();
 
         if (request.getParameter("attribute") != null) {
-            AttributeDescriptor attr = (AttributeDescriptor)
-                MainHelper.getFieldDescriptor(path, model);
-            Class fieldClass = TypeUtil.instantiate(attr.getType());
+            RightNode node = (RightNode) qNodes.get(path);
+            Class fieldClass = MainHelper.getClass(node.getType());
             if (Date.class.equals(fieldClass)) {
                 DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,
                                                             locale);
