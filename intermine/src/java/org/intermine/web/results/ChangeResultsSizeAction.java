@@ -143,7 +143,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
             // to pick out the object from the underlying results
             int commaIndex = selectedObject.indexOf(",");
             int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
-            int row = Integer.parseInt(selectedObject.substring(commaIndex+1));
+            int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
 
             bag.add(((ResultsRow) results.get(row)).get(column));
 
