@@ -27,8 +27,6 @@ import org.flymine.io.gff3.GFF3Record;
 
 public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
 {
-    private final Map geneIdMap = new HashMap();
-
     /**
      * Create a new LongOligoGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -41,8 +39,6 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) {
-        String geneNs = getTargetModel().getNameSpace() + "Gene";
-
         Item oligo = getFeature();
 
         String dist3p = (String) ((List) record.getAttributes().get("dist3p")).get(0);
