@@ -144,7 +144,8 @@ public class SimpleConstraint implements Constraint
                 throw (new IllegalArgumentException("Invalid type for boolean arguments: " + type));
             }
         } else {
-            throw (new IllegalArgumentException("Invalid pair of arguments: " + qe1Type + qe2Type));
+            throw (new IllegalArgumentException("Invalid pair of arguments: " + qe1Type + ", "
+                        + qe2Type));
         }
 
         this.type = type;
