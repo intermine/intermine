@@ -5,8 +5,10 @@
 <!-- historyQueryView.jsp -->
 <c:if test="${!empty PROFILE.savedQueries}">
   <html:form action="/modifyQuery">
-    <fmt:message key="query.savedqueries.header"/>
-    <br/><br/>
+    <div class="heading">
+      <fmt:message key="query.savedqueries.header"/>
+    </div>
+    <div class="body">
     <table class="results" cellspacing="0">
       <tr>
         <th>
@@ -43,6 +45,7 @@
     <html:submit property="delete">
       <fmt:message key="history.delete"/>
     </html:submit>
+    </div>
   </html:form>
 </c:if>
 <!-- /historyQueryView.jsp -->

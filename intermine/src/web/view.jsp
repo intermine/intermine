@@ -7,20 +7,23 @@
 <tiles:importAttribute/>
 
 <!-- view.jsp -->
-<c:choose>
+  <div class="heading">
+    <fmt:message key="view.notEmpty.description"/>
+  </div>
+  <c:choose>
   <c:when test="${empty QUERY.view}">
-    <fmt:message key="view.empty.description"/>
+    <div class="body">
+      <fmt:message key="view.empty.description"/>
+    </div>
   </c:when>
   <c:otherwise>
     <div class="view">
-      <div class="paneTitle">
-        <fmt:message key="view.notEmpty.description"/>
-      </div>
-      <%--      <c:if test="${QUERY.view.size > 1}">--%>  <%-- FIXME with JSTL fn:length --%>
-      <div>
-        <fmt:message key="view.columnOrderingTip"/>
-      </div>
-      <%--      </c:if>--%>
+      <div class="body">
+      <c:if test="${fn:length(QUERY.view) > 1}">
+        <div>
+          <fmt:message key="view.columnOrderingTip"/>
+        </div>
+      </c:if>
       <br/>
       
       <div>
@@ -28,11 +31,6 @@
           <div class="viewpath" id="showing${fn:replace(path,".","")}"
                           onMouseOver="enterPath('${fn:replace(path,".","")}')"
                           onMouseOut="exitPath('${fn:replace(path,".","")}')">
-            <div>
-              <nobr>
-                <c:out value="${path}"/>
-              </nobr>
-            </div>
             <div>
               <nobr>
                 <c:if test="${!status.first}">
@@ -68,6 +66,16 @@
                 ]
               </nobr>
             </div>
+            <div>
+              <nobr>
+                <c:if test="${not fn:contains(path, '.')}">
+                  <span class="type">${path}</span>
+                </c:if>
+                <c:if test="${fn:contains(path, '.')}">
+                  <span class="type">${fn:substringBefore(path, ".")}</span>.${fn:substringAfter(path, ".")}
+                </c:if>
+              </nobr>
+            </div>
           </div>
         </c:forEach>
       </div>
@@ -80,19 +88,24 @@
         </html:form>
       </div>
     </div>
-    <br/>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td align="left">
-          <tiles:get name="saveQuery"/>
-        </td>
-        <c:if test="${!empty PROFILE.username}">
-          <td align="right">
-            <tiles:get name="createTemplate"/>
+    </div>
+    <div class="heading">
+      <fmt:message key="view.actions"/>
+    </div>
+    <div class="body">
+      <table width="100%">
+        <tr>
+          <td align="left">
+            <tiles:get name="saveQuery"/>
           </td>
-        </c:if>
-      </tr>
-    </table>
+          <c:if test="${!empty PROFILE.username}">
+            <td align="right">
+              <tiles:get name="createTemplate"/>
+            </td>
+          </c:if>
+        </tr>
+      </table>
+    </div>
   </c:otherwise>
 </c:choose>
 <!-- /view.jsp -->

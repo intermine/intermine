@@ -6,8 +6,10 @@
 <!-- historyBagView.jsp -->
 <c:if test="${!empty PROFILE.savedBags}">
   <html:form action="/modifyBag">
-    <fmt:message key="query.savedbags.header"/>
-    <br/><br/>
+    <div class="heading">
+      <fmt:message key="query.savedbags.header"/>
+    </div>
+    <div class="body">
     <table class="results" cellspacing="0">
       <tr>
         <th>
@@ -50,6 +52,7 @@
         <fmt:message key="history.intersect"/>
       </html:submit>
     </c:if>
+  </div>
   </html:form>
 </c:if>
 <!-- /historyBagView.jsp -->
