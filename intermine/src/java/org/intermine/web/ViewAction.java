@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,17 +18,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.Globals;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
-import org.intermine.objectstore.query.Query;
 import org.intermine.web.results.ChangeResultsForm;
-import org.intermine.web.results.PagedResults;
-import org.intermine.web.results.TableHelper;
 
 /**
  * Action to handle buttons on view tile
