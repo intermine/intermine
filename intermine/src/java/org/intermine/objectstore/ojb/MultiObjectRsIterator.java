@@ -141,11 +141,8 @@ public class MultiObjectRsIterator extends RsIterator
                         } else {
                             m_cld = dr.getDescriptorFor(Class.forName(rowClass));
                         }
-                        itemProxyClass = m_cld.getProxyClass();
                         itemExtentClass = null;
-                        
                         obj = getObjectFromResultSet();
-                        // Invoke events on PersistenceBrokerAware instances and listeners
                         m_broker.fireBrokerEvent(obj, PersistenceBrokerImpl.EVENT_AFTER_LOOKUP);
                     } else {
                         int columnIndex = m_rsAndStmt.m_rs.findColumn(alias);
@@ -156,7 +153,6 @@ public class MultiObjectRsIterator extends RsIterator
                     m_rsAndStmt.m_rs = rsTemp;
                 }
                 m_current_row++;
-
                 return results;
             } else {
                 throw new NoSuchElementException();
