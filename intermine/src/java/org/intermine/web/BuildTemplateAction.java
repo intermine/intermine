@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 import org.intermine.objectstore.ObjectStore;
 
@@ -65,8 +66,7 @@ public class BuildTemplateAction extends InterMineAction
             session.removeAttribute(Constants.EDITING_TEMPLATE);
             String key = (editing == null) ? "templateBuilder.templateCreated"
                                            : "templateBuilder.templateUpdated";
-            String msg = getResources(request).getMessage(key, template.getName());
-            session.setAttribute(Constants.MESSAGE, msg);
+            recordMessage(new ActionMessage(key, template.getName()), request);
             tf.reset();
             // Replace template if needed
             if (editing != null) {
