@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.lang.reflect.Field;
 
-
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PBKey;
@@ -23,7 +22,6 @@ import org.apache.ojb.broker.metadata.CollectionDescriptor;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
 
-
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyInitializer;
@@ -33,12 +31,13 @@ import org.flymine.sql.query.ExplainResult;
 import org.flymine.util.RelationType;
 
 /**
- * Extension of PersistenceBrokerImpl to allow execution of ObjectStore queries
+ * Extension of PersistenceBrokerImpl to implement PersistenceBrokerFlyMine
  *
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
+public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl 
+    implements PersistenceBrokerFlyMine
 {
     //protected static final org.apache.log4j.Logger LOG =
     //org.apache.log4j.Logger.getLogger(PersistenceBrokerFlyMineImpl.class);
@@ -61,12 +60,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     }
 
     /**
-     * Executes a query with start and limit result indices
-     *
-     * @param query the ObjectStore query
-     * @param start start index
-     * @param limit maximum number of rows to return
-     * @return a list of ResultsRows
+     * @see PersistenceBrokerFlyMine#execute
      */
     public List execute(Query query, int start, int limit) {
         List results = new ArrayList();
@@ -78,23 +72,14 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     }
 
     /**
-     * Runs EXPLAIN on the given query with start and limit result indices
-     *
-     * @param query the ObjectStore query
-     * @param start start index
-     * @param limit maximum number of rows to return
-     * @return parsed results of the EXPLAIN
+     *  @see PersistenceBrokerFlyMine#explain
      */
     public ExplainResult explain(Query query, int start, int limit) {
         return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).explainQuery(query, start, limit);
     }
 
-
     /**
-     * Runs a COUNT(*) on the given query
-     *
-     * @param query the query Object
-     * @return count of rows produced by the query
+     * @see PersistenceBrokerFlyMine#count
      */
     public int count(Query query) {
         return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).countQuery(query);
@@ -265,29 +250,21 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     }
 
     /**
-     * Sets the database object that this PersistenceBroker object carries around.
-     *
-     * @param db the Database object
+     * @see PersistenceBrokerFlyMine#setDatabase
      */
     public void setDatabase(Database db) {
         database = db;
     }
 
     /**
-     * Gets the database object from this PersistenceBroker object.
-     *
-     * @return the Database object
+     * @see PersistenceBrokerFlyMine#getDatabase
      */
     public Database getDatabase() {
         return database;
     }
 
     /**
-     * Return an integer describing the type of relationship the given field represents,
-     * where relationship types are 1:1, 1:N, N:1, M:N and "not a relationship".
-     *
-     * @param field object describing the field in question
-     * @return int to describe the relationship type
+     * @see PersistenceBrokerFlyMine#describeRelation
      */
     public int describeRelation(Field field) {
         Class cls = field.getDeclaringClass();
@@ -331,5 +308,4 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
             return RelationType.NOT_RELATION;
         }
     }
-
 }
