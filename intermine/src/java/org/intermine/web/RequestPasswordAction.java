@@ -45,7 +45,7 @@ public class RequestPasswordAction extends Action
 {
     protected static final Logger LOG = Logger.getLogger(RequestPasswordAction.class);
 
-    protected Random random = new Random();
+    protected static Random random = new Random();
 
     /** 
      * Method called when user has finished updating a constraint
@@ -99,7 +99,7 @@ public class RequestPasswordAction extends Action
      * Generate a random 8-letter String of lower-case characters
      * @return the String
      */
-    protected String generatePassword() {
+    public static String generatePassword() {
         String s = "";
         for (int i = 0; i < 8; i++) {
             s += (char) ('a' + random.nextInt(26));
@@ -114,7 +114,7 @@ public class RequestPasswordAction extends Action
      * @param webProperties properties such as the from address
      * @return true if sending was successful
      */
-    protected boolean email(String to, String password, Map webProperties) {
+    public static boolean email(String to, String password, Map webProperties) {
         try {
             String host = (String) webProperties.get("mail.host");
             String from = (String) webProperties.get("mail.from");
