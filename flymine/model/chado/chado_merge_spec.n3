@@ -19,8 +19,43 @@ null:featureprop a owl:Class ;
 
 # ------------ chado:feature_relationship ------------ #
 
+# feature_relationship maps either to SimpleRelation or RankedRelation
+# if subject of relationship is exon -> RankedRelation
+
 :RankedRelation a owl:Class ;
-    owl:equivalentClass chado:feature_relationship .
+      rdfs:subClassOf chado:feature_relationship ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature_relationship__subject ;
+           owl:hasValue
+             [ rdfs:subClassOf chado:feature ;
+               rdfs:subClassOf 
+                 [ a owl:Restriction ;
+                   owl:onProperty chado:feature__type ;
+                   owl:hasValue
+                     [  rdfs:subClassOf chado:cvterm ;
+                        rdfs:subClassOf
+                          [ a owl:Restriction ;
+                            owl:onProperty chado:cvterm__name ;
+                            owl:hasValue "exon"
+                          ] ;
+                        rdfs:subClassOf
+                          [ a owl:Restriction ;
+                            owl:onProperty chado:cvterm__cv ;
+                            owl:hasValue
+                               [ rdfs:subClassOf chado:cv ;
+                                  rdfs:subClassOf
+                                    [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "SO"
+                                   ]
+                               ]
+                          ]
+                    ]
+                ]
+            ]
+       ] .
+
 
 :RankedRelation__rank a owl:DatatypeProperty ;
     owl:equivalentProperty chado:feature_relationship__rank .
@@ -37,8 +72,21 @@ null:featureprop a owl:Class ;
     rdfs:subPropertyOf :Relation__object ;
     owl:equivalentProperty chado:feature_relationship__object .
 
-# TODO do not want chado:feature_relationship converted to type -> restricted subclasses?
-# relationship types are partof and producedby
+:SimpleRelation a owl:Class ;
+    owl:equivalentClass chado:feature_relationship .
+
+:SimpleRelation__subject a owl:ObjectProperty;
+    rdfs:domain :SimpleRelation ;
+    rdfs:range :BioEntity ;
+    rdfs:subPropertyOf :Relation__subject ;
+    owl:equivalentProperty chado:feature_relationship__subject .
+
+:SimpleRelation__object a owl:ObjectProperty;
+    rdfs:domain :SimpleRelation ;
+    rdfs:range :BioEntity ;
+    rdfs:subPropertyOf :Relation__object ;
+    owl:equivalentProperty chado:feature_relationship__object .
+
 null:feature_relationship__type a owl:ObjectProperty ;
       owl:equivalentClass chado:feature_relationship__type .
 
@@ -104,20 +152,18 @@ null:feature_cvterm a owl:Class ;
 
 :Synonym a owl:Class ;
     owl:equivalentClass chado:feature_synonym ; 
-    owl:equivalentClass chado:dbxref .
+    owl:equivalentClass chado:feature_dbxref .
 
 :Synonym__subject a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature_synonym__feature ;
-    owl:equivalentProperty chado:dbxref__feature .
+    owl:equivalentProperty chado:feature_dbxref__feature .
 
+# ChadoDataTranslator promotes feature_dbxref.dbxref.db
 :Synonym__source a owl:ObjectProperty ;
-    owl:equivalentProperty chado:feature_synonym__pub ;
-    owl:equivalentProperty chado:dbxref__db .
+    owl:equivalentProperty chado:feature_synonym__pub .
 
-# DataTranslator - how will this work??
-:Synonym__synonym a owl:DatatypeProperty ; 
-    owl:equivalentProperty chado:synonym__name ;
-    owl:equivalentProperty chado:dbxref__accession .
+# ChadoDataTranslator promotes feature_synonym.synonym.name as Synonym__synonym
+# ChadoDataTranslator promotes feature_dbxref.dbxref.accession  as Synonym__synonym
 
 null:feature_synonym__synonym a owl:ObjectProperty ;
       owl:equivalentProperty chado:feature_synonym__synonym .
@@ -127,23 +173,15 @@ null:synonym a owl:Class ;
 
 # false for all in chado, what does it mean?
 null:feature_synonym__is_internal a owl:DatatypeProperty ;
-      owl:equivalentProperty chado:feature_synonym__is_internal .
+    owl:equivalentProperty chado:feature_synonym__is_internal .
+ 
+:Synonym__isCurrent a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:feature_synonym__is_current ;
+    owl:equivalentProperty chado:feature_dbxref__is_current .
  
 # no data in dbxref__pubs
-null:dbxref__pubs a owl:ObjectProperty ;
-      owl:equivalentProperty chado:dbxref__pubs .
-
-# no data in dbxref__description field
-null:dbxref__description a owl:ObjectProperty ;
-      owl:equivalentProperty chado:dbxref__description .
-
-# in chado dbxref points to organism, why?
-null:dbxref__organisms a owl:ObjectProperty ;
-      owl:equivalentProperty chado:dbxref__organisms .
-
-#TODO sort out relationship of feature_dbxref with feature.dbxref
-null:feature_dbxref a owl:Class ;
-      owl:equivalentClass chado:feature_dbxref .
+null:dbxref a owl:Class ;
+    owl:equivalentClass chado:dbxref .
 
 
 # ------------ chado:analysis and chado:analysisfeature ----------- #
@@ -158,7 +196,7 @@ null:feature_dbxref a owl:Class ;
     rdfs:domain :ComputationalResult ;
     rdfs:range :Analysis ;
     rdfs:subPropertyOf :AnalysisResult__analysis ;
-    owl:equivalentClass chado:analysisfeature__analysis .
+    owl:equivalentProperty chado:analysisfeature__analysis .
 
 null:analysisfeature__normscore a owl:DatatypeProperty ;
     owl:equivalentClass chado:analysisfeature__normscore .
@@ -176,7 +214,6 @@ null:analysisfeature__significance a owl:DatatypeProperty ;
 :ComputationalAnalysis__algorithm a owl:DatatypeProperty ;
     owl:equivalentProperty chado:analysis__program .
 
-# TODO all other fields currently nulled
 null:analysis__name a owl:DatatypeProperty ;
     owl:equivalentClass chado:analysis__name .
 
@@ -282,13 +319,15 @@ null:organism__comment a owl:DatatypeProperty ;
     rdfs:domain :LocatedSequenceFeature ;
     rdfs:range :Synonym ;
     rdfs:subPropertyOf :BioEntity__synonyms ;
+    rdfs:domain :LocatedSequenceFeature ;
+    rdfs:range :Synonym ;
     owl:equivalentProperty chado:feature__dbxref ;
     owl:equivalentProperty chado:feature__feature_synonyms .
 
 :LocatedSequenceFeature__organism a owl:ObjectProperty ;
+    rdfs:subPropertyOf :BioEntity__organism ;
     rdfs:domain :LocatedSequenceFeature ;
     rdfs:range :Organism ;
-    rdfs:subPropertyOf :BioEntity__organism ;
     owl:equivalentProperty chado:feature__organism .
 
 null:feature__feature_cvterms a owl:ObjectProperty ;
@@ -296,7 +335,6 @@ null:feature__feature_cvterms a owl:ObjectProperty ;
 
 null:feature__md5checksum a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature__md5checksum .
-
 
 
 :BAC a owl:Class ;
