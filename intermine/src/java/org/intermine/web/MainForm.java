@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
 
 import org.intermine.util.TypeUtil;
+import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * The main form, using for editing constraints
@@ -177,11 +178,12 @@ public class MainForm extends ActionForm
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
         ActionErrors errors = new ActionErrors();
-
+        ConstraintOp constraintOp = (getAttributeOp() == null) ? null : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
+        
         if (request.getParameter("attribute") != null) {
             PathNode node = (PathNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
-            parsedAttributeValue = parseValue(attributeValue, fieldClass, locale, errors);
+            parsedAttributeValue = parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
         }
 
         if (errors.size() > 0) {
@@ -199,8 +201,9 @@ public class MainForm extends ActionForm
      * @param errors ActionErrors to which any parse errors are added
      * @return the parsed value
      */
-    public static Object parseValue(String value, Class type, Locale locale, ActionErrors errors) {
+    public static Object parseValue(String value, Class type, ConstraintOp constraintOp, Locale locale, ActionErrors errors) {
         Object parsedValue = null;
+        
         if (Date.class.equals(type)) {
             DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT, locale);
             try {
@@ -208,6 +211,20 @@ public class MainForm extends ActionForm
             } catch (ParseException e) {
                 errors.add(ActionErrors.GLOBAL_ERROR,
                            new ActionError("errors.date", value, df.format(new Date())));
+            }
+        } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
+            // Is the expression valid? We need a non-zero length string at least 
+            if (value.length() == 0)
+                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.like", value));
+            else
+            {
+                if (value.charAt(0) == '*')
+                    value = '%'+value.substring(1);
+                if (value.charAt(value.length()-1) == '*')
+                    value = value.substring(0, value.length()-1)+'%';
+                if (value.charAt(0) != '%' && value.charAt(value.length()-1) != '%')
+                    value = '%'+value+'%';
+                parsedValue = value;
             }
         } else {
             try {

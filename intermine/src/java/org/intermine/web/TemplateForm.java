@@ -24,6 +24,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
 
+import org.intermine.objectstore.query.ConstraintOp;
+
 /**
  * Form to handle input from the template page
  * @author Mark Woodbridge
@@ -126,7 +128,7 @@ public class TemplateForm extends ActionForm
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
         String queryName = (String) session.getAttribute("queryName");
-
+        
         TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
         
         ActionErrors errors = new ActionErrors();
@@ -135,8 +137,9 @@ public class TemplateForm extends ActionForm
             String j = (String) i.next();
             PathNode node = (PathNode) template.getNodes().get(Integer.parseInt(j) - 1);
             Class fieldClass = MainHelper.getClass(node.getType());
+            ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf((String) getAttributeOps(j)));
             parsedAttributeValues.put(j, MainForm.parseValue((String) attributeValues.get(j),
-                                                             fieldClass, locale, errors));
+                                                             fieldClass, constraintOp, locale, errors));
         }
 
         return errors;
