@@ -115,44 +115,48 @@ public class SqlGenerator
      * @param db the Database that the ObjectStore uses
      * @param value a value, such that adding a WHERE component first_order_field &gt; value with
      * OFFSET 0 is equivalent to the original query with OFFSET offset
-     * @throws ObjectStoreException if something goes wrong
      */
     public static void registerOffset(Query q, int start, Model model, Database db,
-            Object value) throws ObjectStoreException {
-        synchronized (q) {
-            TreeMap cached = (TreeMap) sqlCache.get(q);
-            if (cached != null) {
-                SortedMap headMap = cached.headMap(new Integer(start + 1));
-                Integer lastKey = null;
-                try {
-                    lastKey = (Integer) headMap.lastKey();
-                } catch (NoSuchElementException e) {
-                }
-                if (lastKey != null) {
-                    int offset = lastKey.intValue();
-                    if (start - offset < 100000) {
-                        return;
+            Object value) {
+        try {
+            synchronized (q) {
+                TreeMap cached = (TreeMap) sqlCache.get(q);
+                if (cached != null) {
+                    SortedMap headMap = cached.headMap(new Integer(start + 1));
+                    Integer lastKey = null;
+                    try {
+                        lastKey = (Integer) headMap.lastKey();
+                    } catch (NoSuchElementException e) {
+                    }
+                    if (lastKey != null) {
+                        int offset = lastKey.intValue();
+                        if (start - offset < 100000) {
+                            return;
+                        }
                     }
                 }
+                QueryNode firstOrderBy = null;
+                try {
+                    firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
+                } catch (NoSuchElementException e) {
+                    firstOrderBy = (QueryNode) q.getSelect().iterator().next();
+                }
+                if (firstOrderBy instanceof QueryClass) {
+                    firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
+                }
+                String sql = generate(q, model, db, new SimpleConstraint((QueryEvaluable)
+                            firstOrderBy, ConstraintOp.GREATER_THAN, new QueryValue(value)),
+                        QUERY_NORMAL);
+                if (cached == null) {
+                    cached = new TreeMap();
+                    sqlCache.put(q, cached);
+                }
+                cached.put(new Integer(start), sql);
+                LOG.info("Created cache entry for offset " + start + " (cache contains "
+                        + cached.keySet() + ") for query " + q + ", sql = " + sql);
             }
-            QueryNode firstOrderBy = null;
-            try {
-                firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
-            } catch (NoSuchElementException e) {
-                firstOrderBy = (QueryNode) q.getSelect().iterator().next();
-            }
-            if (firstOrderBy instanceof QueryClass) {
-                firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
-            }
-            String sql = generate(q, model, db, new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                        ConstraintOp.GREATER_THAN, new QueryValue(value)), QUERY_NORMAL);
-            if (cached == null) {
-                cached = new TreeMap();
-                sqlCache.put(q, cached);
-            }
-            cached.put(new Integer(start), sql);
-            LOG.info("Created cache entry for offset " + start + " (cache contains "
-                    + cached.keySet() + ") for query " + q + ", sql = " + sql);
+        } catch (ObjectStoreException e) {
+            LOG.error("Error while registering offset for query " + q + ": " + e);
         }
     }
 
