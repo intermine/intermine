@@ -13,19 +13,19 @@ import org.apache.tools.ant.Project;
 public class InsertAceDataTask extends ClassPathTask
 {
 
-    protected String store;
+    protected String integrationWriter;
     protected String user;
     protected String password;
     protected String host;
     protected int port;
 
     /**
-     * Set the ObjectStore
+     * Set the IntegrationWriter alias
      *
-     * @param store the name of the ObjectStore
+     * @param integrationWriter the name of the IntegrationWriter
      */
-    public void setObjectStore(String store) {
-        this.store = store;
+    public void setIntegrationWriter(String integrationWriter) {
+        this.integrationWriter = integrationWriter;
     }
 
     /**
@@ -69,8 +69,8 @@ public class InsertAceDataTask extends ClassPathTask
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (this.store == null) {
-            throw new BuildException("objectstore attribute is not set");
+        if (this.integrationWriter == null) {
+            throw new BuildException("integrationWriter attribute is not set");
         }
         if (user == null) {
             throw new BuildException("user attribute is not set");
@@ -86,6 +86,7 @@ public class InsertAceDataTask extends ClassPathTask
         }
 
         try {
+
             Object driver = loadClass("org.flymine.task.AceDataLoaderDriver");
 
             // Have to execute the loadData method by reflection as
@@ -97,7 +98,7 @@ public class InsertAceDataTask extends ClassPathTask
                                                                                  String.class,
                                                                                  String.class,
                                                                                  int.class });
-            method.invoke(driver, new Object [] {store,
+            method.invoke(driver, new Object [] {integrationWriter,
                                                  user,
                                                  password,
                                                  host,

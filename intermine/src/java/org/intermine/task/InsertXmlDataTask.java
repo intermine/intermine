@@ -6,23 +6,23 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 
 /**
- * Uses an ObjectStoreWriter to insert XML data from a file
+ * Uses an IntegrationWriterWriter to insert XML data from a file
  *
  * @author Andrew Varley
  */
 public class InsertXmlDataTask extends ClassPathTask
 {
 
-    protected String store;
+    protected String integrationWriter;
     protected File file;
 
     /**
-     * Set the ObjectStore
+     * Set the IntegrationWriter
      *
-     * @param store the name of the ObjectStore
+     * @param integrationWriter the name of the IntegrationWriter
      */
-    public void setObjectStore(String store) {
-        this.store = store;
+    public void setIntegrationWriter(String integrationWriter) {
+        this.integrationWriter = integrationWriter;
     }
 
     /**
@@ -40,8 +40,8 @@ public class InsertXmlDataTask extends ClassPathTask
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (this.store == null) {
-            throw new BuildException("objectstore attribute is not set");
+        if (this.integrationWriter == null) {
+            throw new BuildException("integrationWriter attribute is not set");
         }
         if (this.file == null) {
             throw new BuildException("file attribute is not set");
@@ -56,7 +56,7 @@ public class InsertXmlDataTask extends ClassPathTask
 
             Method method = driver.getClass().getMethod("loadData", new Class[] {String.class,
                                                                                  File.class });
-            method.invoke(driver, new Object [] {store,
+            method.invoke(driver, new Object [] {integrationWriter,
                                                  file });
         } catch (Exception e) {
             e.printStackTrace();
