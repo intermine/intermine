@@ -117,14 +117,12 @@ public class BestQueryExplainer extends BestQuery
 
         long elapsed = System.currentTimeMillis() - start.getTime();
         if ((timeLimit >= 0) && (elapsed > timeLimit)) {
-            System.out.println("Optimiser reached time limit");
             throw new BestQueryException("Optimiser reached time limit");
         }
         if (bestCandidate != null) {
             // throw BestQueryException if the bestQuery will take less time to run than the
             // amount of time we have spent optimising so far
             if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
-                System.out.println("Giving up");
                 throw (new BestQueryException("Explain time: "
                             + bestCandidate.getExplain().getTime() + ", elapsed time: "
                             + elapsed));

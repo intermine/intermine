@@ -84,10 +84,14 @@ public class QueryOptimiserContext
      * @return a boolean
      */
     public boolean isVerbose() {
-        return (MODE_VERBOSE == mode) || (MODE_VERBOSE_LIST == mode) || (MODE_VERBOSE_SUMMARY == mode);
+        return (MODE_VERBOSE == mode) || (MODE_VERBOSE_LIST == mode)
+            || (MODE_VERBOSE_SUMMARY == mode);
     }
 
-    public static QueryOptimiserContext DEFAULT = new QueryOptimiserContext() {
+    /**
+     * The default context - normal operation with no time limit.
+     */
+    public static final QueryOptimiserContext DEFAULT = new QueryOptimiserContext() {
         public void setMode(String mode) {
             throw new IllegalStateException("This is the default QueryOptimiserContext - it cannot"
                     + " be altered");
