@@ -10,16 +10,15 @@ package org.flymine.objectstore.query;
  *
  */
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.flymine.objectstore.query.fql.FqlQuery;
 
 /**
  * This class provides an implementation-independent abstract representation of a query
@@ -272,187 +271,8 @@ public class Query implements FromElement
      * @return a String representation
      */
     public String toString() {
-        boolean needComma = false;
-        String retval = "SELECT ";
-        Iterator selectIter = select.iterator();
-        while (selectIter.hasNext()) {
-            QueryNode qn = (QueryNode) selectIter.next();
-            if (needComma) {
-                retval += ", ";
-            }
-            needComma = true;
-            String nodeAlias = (String) aliases.get(qn);
-            if (qn instanceof QueryClass) {
-                retval += nodeToString(qn);
-            } else {
-                retval += nodeToString(qn) + (nodeAlias == null ? "" : " AS " + nodeAlias);
-            }
-        }
-        needComma = false;
-        retval += " FROM ";
-        Iterator qcIter = queryClasses.iterator();
-        while (qcIter.hasNext()) {
-            FromElement fe = (FromElement) qcIter.next();
-            String classAlias = (String) aliases.get(fe);
-            if (needComma) {
-                retval += ", ";
-            }
-            needComma = true;
-            if (fe instanceof QueryClass) {
-                retval += fe.toString() + (classAlias == null ? "" : " AS " + classAlias);
-            } else {
-                retval += "(" + fe.toString() + ")" + (classAlias == null ? "" : " AS "
-                        + classAlias);
-            }
-        }
-        retval += (constraint == null ? "" : " WHERE " + constraintToString(constraint));
-        if (!groupBy.isEmpty()) {
-            retval += " GROUP BY ";
-            Iterator groupIter = groupBy.iterator();
-            needComma = false;
-            while (groupIter.hasNext()) {
-                QueryNode qn = (QueryNode) groupIter.next();
-                if (needComma) {
-                    retval += ", ";
-                }
-                needComma = true;
-                retval += nodeToString(qn);
-            }
-        }
-        if (!orderBy.isEmpty()) {
-            retval += " ORDER BY ";
-            Iterator orderIter = orderBy.iterator();
-            needComma = false;
-            while (orderIter.hasNext()) {
-                QueryNode qn = (QueryNode) orderIter.next();
-                if (needComma) {
-                    retval += ", ";
-                }
-                needComma = true;
-                retval += nodeToString(qn);
-            }
-        }
-        return retval;
-    }
-
-    private String nodeToString(QueryNode qn) {
-        String nodeAlias = (String) aliases.get(qn);
-        if (qn instanceof QueryClass) {
-            return nodeAlias;
-        } else if (qn instanceof QueryField) {
-            QueryField qf = (QueryField) qn;
-            return aliases.get(qf.getFromElement()) + "." + qf.getFieldName()
-                + (qf.getSecondFieldName() == null ? "" : "." + qf.getSecondFieldName());
-        } else if (qn instanceof QueryValue) {
-            Object obj = ((QueryValue) qn).getValue();
-            if (obj instanceof String) {
-                return "'" + obj + "'";
-            } else if (obj instanceof Date) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                return "'" + format.format((Date) obj) + "'";
-            } else {
-                return obj.toString();
-            }
-        } else if (qn instanceof QueryExpression) {
-            QueryExpression qe = (QueryExpression) qn;
-            if (qe.getOperation() == QueryExpression.SUBSTRING) {
-                return "SUBSTR(" + nodeToString(qe.getArg1()) + ", " + nodeToString(qe.getArg2())
-                    + ", " + nodeToString(qe.getArg3()) + ")";
-            } else {
-                String retval = nodeToString(qe.getArg1());
-                switch (qe.getOperation()) {
-                    case QueryExpression.ADD:
-                        retval += " + ";
-                        break;
-                    case QueryExpression.SUBTRACT:
-                        retval += " - ";
-                        break;
-                    case QueryExpression.MULTIPLY:
-                        retval += " * ";
-                        break;
-                    case QueryExpression.DIVIDE:
-                        retval += " / ";
-                        break;
-                    default:
-                        throw (new IllegalArgumentException("Invalid QueryExpression operation: "
-                                    + qe.getOperation()));
-                }
-                retval += nodeToString(qe.getArg2());
-                return retval;
-            }
-        } else if (qn instanceof QueryFunction) {
-            QueryFunction qf = (QueryFunction) qn;
-            if (qf.getOperation() == QueryFunction.COUNT) {
-                return "COUNT(*)";
-            } else {
-                String retval = null;
-                switch (qf.getOperation()) {
-                    case QueryFunction.SUM:
-                        retval = "SUM(";
-                        break;
-                    case QueryFunction.AVERAGE:
-                        retval = "AVG(";
-                        break;
-                    case QueryFunction.MIN:
-                        retval = "MIN(";
-                        break;
-                    case QueryFunction.MAX:
-                        retval = "MAX(";
-                        break;
-                    default:
-                        throw (new IllegalArgumentException("Invalid QueryFunction operation: "
-                                    + qf.getOperation()));
-                }
-                retval += nodeToString(qf.getParam()) + ")";
-                return retval;
-            }
-        } else {
-            return qn.toString();
-        }
-    }
-
-    private String constraintToString(Constraint cc) {
-        if (cc instanceof SimpleConstraint) {
-            SimpleConstraint c = (SimpleConstraint) cc;
-            if ((c.getType() == SimpleConstraint.IS_NULL)
-                    || (c.getType() == SimpleConstraint.IS_NOT_NULL)) {
-                return nodeToString(c.getArg1()) + c.getOpString();
-            } else {
-                return nodeToString(c.getArg1()) + c.getOpString() + nodeToString(c.getArg2());
-            }
-        } else if (cc instanceof SubqueryConstraint) {
-            SubqueryConstraint c = (SubqueryConstraint) cc;
-            return (c.getQueryEvaluable() == null ? nodeToString(c.getQueryClass())
-                    : nodeToString(c.getQueryEvaluable())) + (c.isNotIn() ? " NOT IN (" : " IN (")
-                    + c.getQuery().toString() + ")";
-        } else if (cc instanceof ClassConstraint) {
-            ClassConstraint c = (ClassConstraint) cc;
-            return nodeToString(c.getArg1()) + (c.isNotEqual() ? " != " : " = ")
-                + (c.getArg2QueryClass() == null ? "<example object: "
-                        + c.getArg2Object().toString() + ">" : nodeToString(c.getArg2QueryClass()));
-        } else if (cc instanceof ContainsConstraint) {
-            ContainsConstraint c = (ContainsConstraint) cc;
-            QueryReference ref = c.getReference();
-            return aliases.get(ref.getQueryClass()) + "." + ref.getFieldName()
-                + (c.isNotContains() ? " DOES NOT CONTAIN " : " CONTAINS ")
-                + aliases.get(c.getQueryClass());
-        } else if (cc instanceof ConstraintSet) {
-            ConstraintSet c = (ConstraintSet) cc;
-            boolean needComma = false;
-            String retval = (c.isNegated() ? "( NOT (" : "(");
-            Iterator conIter = c.getConstraints().iterator();
-            while (conIter.hasNext()) {
-                Constraint subC = (Constraint) conIter.next();
-                if (needComma) {
-                    retval += (c.getDisjunctive() ? " OR " : " AND ");
-                }
-                needComma = true;
-                retval += constraintToString(subC);
-            }
-            return retval + (c.isNegated() ? "))" : ")");
-        } else {
-            throw new IllegalArgumentException("Unknown constraint type: " + cc);
-        }
+        FqlQuery fq = new FqlQuery(this);
+        return fq.toString();
     }
 
     /**
