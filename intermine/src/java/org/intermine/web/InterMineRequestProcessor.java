@@ -23,7 +23,7 @@ import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.Globals;
 
 /**
- * A RequestProcessor that sends you back to start if your session isn't valid
+ * A RequestProcessor that sends you back to the start if your session isn't valid
  * @author Mark Woodbridge
  */
 public class InterMineRequestProcessor extends TilesRequestProcessor
@@ -42,22 +42,19 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         try {
-            if (!request.isRequestedSessionIdValid()) {
-                if (request.getAttribute(Globals.MESSAGE_KEY) == null) {
-                    if (!START_PATHS.contains(processPath(request, response))) {
-                        ActionErrors messages = new ActionErrors();
-                        messages.add(ActionErrors.GLOBAL_ERROR,
-                                     new ActionError("errors.session.nosession"));
-                        request.setAttribute(Globals.ERROR_KEY, messages);
-                        processForwardConfig(request, response,
-                                             new ActionForward(LOGON_PATH + ".do"));
-                    }
-                }
+            if (!request.isRequestedSessionIdValid()
+                && request.getAttribute(Globals.MESSAGE_KEY) == null
+                && !START_PATHS.contains(processPath(request, response))) {
+                ActionErrors messages = new ActionErrors();
+                messages.add(ActionErrors.GLOBAL_ERROR,
+                             new ActionError("errors.session.nosession"));
+                request.setAttribute(Globals.ERROR_KEY, messages);
+                processForwardConfig(request, response, new ActionForward(LOGON_PATH + ".do"));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+        
         return true;
     }
 }
