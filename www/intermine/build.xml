@@ -1,9 +1,11 @@
-<project name="intermine" default="www-intermine" basedir=".">
+<project name="intermine-www" default="www-intermine" basedir=".">
+    <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+
+    <property file="${build.properties.local}"/>
     <property name="src.www" location="site"/>
     <property name="src.doc" location="../../intermine/doc"/>
     <property name="build.www" location="build"/>
     <property name="dist.www" location="dist"/>
-    <property name="intermine.basedir" location="/preview2"/>
 
 <copy todir="${build.www}">
     <fileset dir="${src.www}">
@@ -37,7 +39,7 @@
     <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
         style="../main.xsl" includes="**/*.xml" force="false">
         <param name="branding" expression="intermine" />
-        <param name="basedir" expression="${intermine.basedir}" />
+        <param name="basedir" expression="${www.location}" />
         <param name="outputext" expression="html" />
         <param name="file" expression="systemId()" />
         <param name="sourceref" expression="${build.www}" />
@@ -45,5 +47,22 @@
             <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
         </factory>
     </style>
+</target>
+
+<target name="release-www" depends="www-intermine"
+    description="releases the static website to the webserver">
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <chmod perm="a+rx" type="dir">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
+    </exec>
 </target>
 </project>
