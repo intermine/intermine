@@ -40,10 +40,10 @@ public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
         Query q1 = new FqlQuery("select a1_ from Company as a1_", "org.flymine.model.testmodel").toQuery();
         Query q2 = new FqlQuery("select a1_ from Company as a1_", "org.flymine.model.testmodel").toQuery();
 
-        assertEquals(((ObjectStoreClient) os).getQueryId(q1), ((ObjectStoreClient) os).getQueryId(q1));
-        assertEquals(((ObjectStoreClient) os).getQueryId(q2), ((ObjectStoreClient) os).getQueryId(q2));
+        assertEquals(((ObjectStoreClient) osai).getQueryId(q1), ((ObjectStoreClient) osai).getQueryId(q1));
+        assertEquals(((ObjectStoreClient) osai).getQueryId(q2), ((ObjectStoreClient) osai).getQueryId(q2));
 
-        assertTrue(((ObjectStoreClient) os).getQueryId(q1) != ((ObjectStoreClient) os).getQueryId(q2));
+        assertTrue(((ObjectStoreClient) osai).getQueryId(q1) != ((ObjectStoreClient) osai).getQueryId(q2));
     }
 
 }
