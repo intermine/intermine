@@ -44,11 +44,11 @@ public interface Constants
     public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
     
     /**
-     * ServletContext attribute maps a class name to a Map of template names to field name - the
-     * field name is the one that should be set when a template is linked to from the object details
-     * page.
+     * ServletContext attribute maps a class name to a Map of template names to simple expressions -
+     * the expression describes a field that should be set when a template is linked to from the
+     * object details page.  eg. Gene.identifier
      */
-    public static final String CLASS_TEMPLATE_FIELDNAMES = "CLASS_TEMPLATE_FIELDNAMES";
+    public static final String CLASS_TEMPLATE_EXPRS = "CLASS_TEMPLATE_EXPRS";
     
     /**
      * ServletContext attribute maps category name to List of class names.
