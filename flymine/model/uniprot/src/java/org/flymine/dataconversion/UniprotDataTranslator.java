@@ -348,21 +348,19 @@ public class UniprotDataTranslator extends DataTranslator
                         dbId = getDbId("FlyMine");
                     }
                 } else if (taxonId == 6239) { // C. Elegans
-                    // TODO temporarily allow ORF id to be organismDbId and WBGene as identifier
-                    geneOrganismDbId = geneIdentifier;
-                    geneIdentifier = getDbReferenceValue(srcItem, "WormBase", geneNames);
+                    geneOrganismDbId = getDbReferenceValue(srcItem, "WormBase", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
                         dbId = getDbId("WormBase");
                     }
-                }
+                } // no genes created for A. gambiae
 
                 // output gene identifier details
                 if (outputIdentifiers) {
                     try {
                         fw.write(taxonId + "\tprotein: " + proteinName + "\tname: "
                                  + primaryGeneName + "\tidentifier: " + geneIdentifier
-                                 + "\torgansismDbId: " + geneOrganismDbId
+                                 + "\torganismDbId: " + geneOrganismDbId
                                  + System.getProperty("line.separator"));
                     } catch (IOException e) {
                         throw new InterMineException(e);
