@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2003-1-8</date>
+<title>Obtaining FlyMine source code using CVS</title>
+<authorgroup>
+<author>
+<firstname>Andrew</firstname>
+<surname>Varley</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+<title>Introduction</title>
+<para>This document details how to obtain FlyMine source code from the CVS server.</para>
+</sect1>
+
+<sect1>
+<title>Instructions</title>
+
+<itemizedlist>
+
+<listitem><command>cd</command> to the directory into which you intend
+to check out the source.</listitem>
+
+<listitem>Issue the command <command>cvs
+-d :ext:cvs-internal.flymine.org/cvs co flymine</command>.</listitem>
+
+<listitem><command>cd flymine</command>.</listitem>
+
+<listitem><command>ant -projecthelp</command> gives a list of all the
+possible build targets.</listitem>
+
+</itemizedlist>
+
+<para>Once you have checked out the source from the CVS server, the
+command <command>cvs update</command> will obtain any updates to the
+code made by the development team. You should issue this command
+regularly.</para>
+
+</sect1>
+
+</article>
