@@ -100,4 +100,38 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         assertEquals(10, dr.getStart());
     }
 
+    public void testHide() throws Exception {
+        setRequestPathInfo("/changeResults");
+        addRequestParameter("method", "hideColumn");
+        addRequestParameter("columnAlias", "c");
+
+        getSession().setAttribute("results", results);
+        getSession().setAttribute("resultsTable", dr);
+        dr.getColumn("c").setVisible(true);
+        assertTrue(dr.getColumn("c").isVisible());
+
+        actionPerform();
+
+        assertFalse(dr.getColumn("c").isVisible());
+        verifyForward("results");
+        verifyNoActionErrors();
+    }
+
+    public void testShow() throws Exception {
+        setRequestPathInfo("/changeResults");
+        addRequestParameter("method", "showColumn");
+        addRequestParameter("columnAlias", "c");
+
+        getSession().setAttribute("results", results);
+        getSession().setAttribute("resultsTable", dr);
+        dr.getColumn("c").setVisible(false);
+        assertFalse(dr.getColumn("c").isVisible());
+
+        actionPerform();
+
+        assertTrue(dr.getColumn("c").isVisible());
+        verifyForward("results");
+        verifyNoActionErrors();
+    }
+
 }
