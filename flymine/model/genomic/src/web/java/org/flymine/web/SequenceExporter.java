@@ -39,6 +39,7 @@ import org.intermine.web.results.PagedTable;
 import org.intermine.model.InterMineObject;
 
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
 
@@ -161,8 +162,14 @@ public class SequenceExporter implements TableExporter
                 if (row.size() > 1) {
                     annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, header.toString());
                 } else {
-                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                           "sequence_" + writtenSequencesCount);
+                    if (object instanceof BioEntity) {
+                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                               ((BioEntity) object).getIdentifier());
+                    } else {
+                        // last resort
+                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                               "sequence_" + writtenSequencesCount);
+                    }
                 }
 
                 if (outputStream == null) {
