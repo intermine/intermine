@@ -9,4 +9,9 @@
       <displayer src="/model/companiesHouse.jsp"/>
     </longdisplayers>
   </class>
+  <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
+    <longdisplayers>
+      <displayer src="/model/debtField.jsp"/>
+    </longdisplayers>
+  </class>
 </webconfig>
