@@ -114,5 +114,9 @@
       </para>
     </section>
     
+    <startbutton>
+      Start a query...
+    </startbutton>
+    
   </column>
 </article>
