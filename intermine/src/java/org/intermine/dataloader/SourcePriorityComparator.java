@@ -13,7 +13,7 @@ package org.intermine.dataloader;
 import java.util.Comparator;
 
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 
 /**
@@ -28,7 +28,7 @@ public class SourcePriorityComparator implements Comparator
     private DataTracker dataTracker;
     private FieldDescriptor field;
     private Source def;
-    private FlyMineBusinessObject defObj;
+    private InterMineObject defObj;
 
     /**
      * Constructs a new Comparator for comparing objects for priority for a given field.
@@ -36,11 +36,11 @@ public class SourcePriorityComparator implements Comparator
      * @param dataTracker the data tracker
      * @param field the FieldDescriptor the comparison is for
      * @param def the default Source
-     * @param defObj a FlyMineBusinessObject that came from a data source, not from the destination
+     * @param defObj a InterMineObject that came from a data source, not from the destination
      * objectstore, and should be associated with the default source
      */
     public SourcePriorityComparator(DataTracker dataTracker, FieldDescriptor field,
-            Source def, FlyMineBusinessObject defObj) {
+            Source def, InterMineObject defObj) {
         this.dataTracker = dataTracker;
         this.field = field;
         this.def = def;
@@ -48,19 +48,19 @@ public class SourcePriorityComparator implements Comparator
     }
 
     /**
-     * Compares two objects. These objects must both be FlyMineBusinessObjects.
+     * Compares two objects. These objects must both be InterMineObjects.
      *
      * @param o1 the first object
      * @param o2 the second object
      * @return a negative integer, zero, or a positive integer as the first argument is less than,
      * equal to, or greater than the second
-     * @throws ClassCastException if either of the two objects is not a FlyMineBusinessObject
+     * @throws ClassCastException if either of the two objects is not a InterMineObject
      * @throws RuntimeException if an error occurs in the underlying data tracking objectstore
      */
     public int compare(Object o1, Object o2) {
-        if ((o1 instanceof FlyMineBusinessObject) && (o2 instanceof FlyMineBusinessObject)) {
-            FlyMineBusinessObject f1 = (FlyMineBusinessObject) o1;
-            FlyMineBusinessObject f2 = (FlyMineBusinessObject) o2;
+        if ((o1 instanceof InterMineObject) && (o2 instanceof InterMineObject)) {
+            InterMineObject f1 = (InterMineObject) o1;
+            InterMineObject f2 = (InterMineObject) o2;
             Source source1 = null;
             Source source2 = null;
             if (o1 == defObj) {
@@ -93,6 +93,6 @@ public class SourcePriorityComparator implements Comparator
             return retval;
         }
         throw new ClassCastException("Trying to compare priorities for objects that are not"
-                + " FlyMineBusinessObjects");
+                + " InterMineObjects");
     }
 }

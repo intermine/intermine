@@ -286,7 +286,7 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select Company, Department from Company, Department where Company.departments contains Department.name", "org.intermine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because Department.name is not a class");
         } catch (IllegalArgumentException e) {
-            assertEquals("Collection or object reference Company.departments cannot contain anything but a QueryClass or FlyMineBusinessObject", e.getMessage());
+            assertEquals("Collection or object reference Company.departments cannot contain anything but a QueryClass or InterMineObject", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select Company, Department from Company, Department where Company contains Department", "org.intermine.model.testmodel"));

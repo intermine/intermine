@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.FlyMineModelParser;
 import org.intermine.util.TypeUtil;
@@ -110,7 +110,7 @@ public class Model
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
 
         ClassDescriptor flymineBusinessObject = new ClassDescriptor(
-                "org.intermine.model.FlyMineBusinessObject", null, true,
+                "org.intermine.model.InterMineObject", null, true,
                 Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
         orderedClds.add(flymineBusinessObject);
@@ -247,7 +247,7 @@ public class Model
         sb.append("<model name=\"" + name + "\" namespace=\"" + nameSpace + "\">");
         for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
-            if (!"org.intermine.model.FlyMineBusinessObject".equals(cld.getName())) {
+            if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
             }
         }
@@ -264,7 +264,7 @@ public class Model
      * @return a Set of ClassDescriptor objects
      */
     public Set getClassDescriptorsForClass(Class c) {
-        if (!FlyMineBusinessObject.class.isAssignableFrom(c)) {
+        if (!InterMineObject.class.isAssignableFrom(c)) {
             return Collections.EMPTY_SET;
         }
         synchronized (classToClassDescriptorSet) {
@@ -283,12 +283,12 @@ public class Model
                         }
                         Class superClass = toAdd.getSuperclass();
                         if ((superClass != null)
-                                && (FlyMineBusinessObject.class.isAssignableFrom(superClass))) {
+                                && (InterMineObject.class.isAssignableFrom(superClass))) {
                             stack.push(superClass);
                         }
                         Class[] interfaces = toAdd.getInterfaces();
                         for (int i = 0; i < interfaces.length; i++) {
-                            if (FlyMineBusinessObject.class.isAssignableFrom(interfaces[i])) {
+                            if (InterMineObject.class.isAssignableFrom(interfaces[i])) {
                                 stack.push(interfaces[i]);
                             }
                         }
@@ -310,7 +310,7 @@ public class Model
      * @return a Map of FieldDescriptor objects
      */
     public Map getFieldDescriptorsForClass(Class c) {
-        if (!FlyMineBusinessObject.class.isAssignableFrom(c)) {
+        if (!InterMineObject.class.isAssignableFrom(c)) {
             return Collections.EMPTY_MAP;
         }
         synchronized (classToFieldDescriptorMap) {

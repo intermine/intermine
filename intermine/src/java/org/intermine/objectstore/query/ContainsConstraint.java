@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.Util;
 
@@ -31,7 +31,7 @@ public class ContainsConstraint extends Constraint
 {
     protected QueryReference ref;
     protected QueryClass cls;
-    protected FlyMineBusinessObject obj;
+    protected InterMineObject obj;
 
     /**
      * Constructor for ContainsConstraint.
@@ -79,9 +79,9 @@ public class ContainsConstraint extends Constraint
      *
      * @param ref the target QueryReference
      * @param op specify CONTAINS or DOES_NOT_CONTAIN
-     * @param obj the FlyMineBusinessObject to be tested against reference
+     * @param obj the InterMineObject to be tested against reference
      */
-    public ContainsConstraint(QueryReference ref, ConstraintOp op, FlyMineBusinessObject obj) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp op, InterMineObject obj) {
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
@@ -149,11 +149,11 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
-     * Returns the FlyMineBusinessObject of the constraint.
+     * Returns the InterMineObject of the constraint.
      *
-     * @return the FlyMineBusinessObject
+     * @return the InterMineObject
      */
-    public FlyMineBusinessObject getObject() {
+    public InterMineObject getObject() {
         return obj;
     }
 

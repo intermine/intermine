@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
@@ -54,7 +54,7 @@ public class ItemWriterTestCase extends TestCase {
     
     public void tearDown() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
         Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
@@ -62,7 +62,7 @@ public class ItemWriterTestCase extends TestCase {
         Iterator iter = toDelete.iterator();
         osw.beginTransaction();
         while (iter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            InterMineObject obj = (InterMineObject) iter.next();
             System.out.println("Deleting " + obj);
             osw.delete(obj);
         }

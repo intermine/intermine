@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.objectstore.ObjectStore;
@@ -570,7 +570,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         
         iw.store(e, source, skelSource);
         
-        FlyMineBusinessObject re = iw.getObjectByExample(e, Collections.singleton("name"));
+        InterMineObject re = iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
         assertTrue(re instanceof Broke);
         assertTrue(re instanceof Employee);

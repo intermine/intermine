@@ -24,7 +24,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
@@ -64,11 +64,11 @@ public class ObjectDetailsController extends TilesAction
 
         ObjectStore os = ObjectStoreFactory.getObjectStore();
 
-        FlyMineBusinessObject o = os.getObjectById(id);
+        InterMineObject o = os.getObjectById(id);
         
         String field = request.getParameter("field");
         if (field != null) {
-            o = (FlyMineBusinessObject) TypeUtil.getFieldValue(o, field);
+            o = (InterMineObject) TypeUtil.getFieldValue(o, field);
         }
         if (o == null) {
             return null;

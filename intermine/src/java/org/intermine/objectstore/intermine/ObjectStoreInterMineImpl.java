@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -205,8 +205,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
                     if (!lastObj.equals(thisObj)) {
                         done = true;
                         SqlGenerator.registerOffset(q, start + rowNo + 1, model, db,
-                                (thisObj instanceof FlyMineBusinessObject
-                                    ? ((FlyMineBusinessObject) thisObj).getId() : thisObj));
+                                (thisObj instanceof InterMineObject
+                                    ? ((InterMineObject) thisObj).getId() : thisObj));
                     }
                     rowNo--;
                 }
@@ -300,7 +300,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
      * This method is overridden in order to improve the performance of the operation - this
      * implementation does not bother with the EXPLAIN call to the underlying SQL database.
      */
-    protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+    protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
         String sql = SqlGenerator.generateQueryForId(id);
         String currentColumn = null;
         Connection c = null;
@@ -320,7 +320,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
                     throw new ObjectStoreException("More than one object in the database has this"
                             + " primary key");
                 }
-                FlyMineBusinessObject retval = LiteParser.parse(currentColumn, this);
+                InterMineObject retval = LiteParser.parse(currentColumn, this);
                 //if (currentColumn.length() < CACHE_LARGEST_OBJECT) {
                     cacheObjectById(retval.getId(), retval);
                 //} else {

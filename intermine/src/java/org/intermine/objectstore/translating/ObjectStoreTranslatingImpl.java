@@ -26,7 +26,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
@@ -118,9 +118,9 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                 Iterator rowIter = ((ResultsRow) resIter.next()).iterator();
                 while (rowIter.hasNext()) {
                     Object o = rowIter.next();
-                    if (o instanceof FlyMineBusinessObject) {
-                        FlyMineBusinessObject fmbo =
-                            translator.translateFromDbObject((FlyMineBusinessObject) o);
+                    if (o instanceof InterMineObject) {
+                        InterMineObject fmbo =
+                            translator.translateFromDbObject((InterMineObject) o);
                         row.add(fmbo);
                         cacheObjectById(fmbo.getId(), fmbo);
                     } else {
@@ -162,7 +162,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
+    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
         throws ObjectStoreException {
         throw new UnsupportedOperationException("getObjectByExample not supported by"
         + "ObjectStoreTranslatingImpl");
@@ -186,8 +186,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStoreAbstractImpl#internalGetObjectById
      */
-    public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        FlyMineBusinessObject retval = super.internalGetObjectById(id);
+    public InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
+        InterMineObject retval = super.internalGetObjectById(id);
         //Exception e = new Exception("internalGetObjectById called for "
         //        + retval.getClass().toString() + " with id " + id);
         //e.fillInStackTrace();

@@ -15,7 +15,7 @@ import java.util.List;
 import java.io.InputStream;
 
 import org.intermine.FlyMineException;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
 
@@ -51,7 +51,7 @@ public class XmlDataLoader extends DataLoader
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                iw.store((FlyMineBusinessObject) iter.next());
+                iw.store((InterMineObject) iter.next());
             }
         } catch (ObjectStoreException e) {
             throw new FlyMineException("Problem with store method", e);

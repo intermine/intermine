@@ -24,7 +24,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.util.DynamicUtil;
 
@@ -62,7 +62,7 @@ public class ResultsCellController extends TilesAction
 
         Set leafClds = new HashSet();
 
-        if (o instanceof FlyMineBusinessObject) {
+        if (o instanceof InterMineObject) {
             Model model = ObjectStoreFactory.getObjectStore().getModel();
             for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
                 leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));

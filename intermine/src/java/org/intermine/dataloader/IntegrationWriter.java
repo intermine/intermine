@@ -10,7 +10,7 @@ package org.intermine.dataloader;
  *
  */
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,7 +37,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @param skelSource the data Source to which to attribute skeleton data
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    public void store(FlyMineBusinessObject o, Source source, Source skelSource)
+    public void store(InterMineObject o, Source source, Source skelSource)
         throws ObjectStoreException;
 
     /**

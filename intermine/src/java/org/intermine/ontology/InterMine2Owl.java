@@ -48,7 +48,7 @@ public class FlyMine2Owl
         Iterator i = model.getClassDescriptors().iterator();
         while (i.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) i.next();
-            if (cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
+            if (cld.getName().equals("org.intermine.model.InterMineObject")) {
                 continue;
             }
 

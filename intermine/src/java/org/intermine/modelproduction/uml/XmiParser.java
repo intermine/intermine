@@ -307,7 +307,7 @@ public class XmiParser implements ModelParser
         return stripIllegal(name);
     }
 
-    // converts 'any' found in MAGE-OM to FlyMineBusinessObject - not a long term
+    // converts 'any' found in MAGE-OM to InterMineObject - not a long term
     // solution, awaiting handling of collections of java.lang objects
     private String qualify(String type) {
         if ((type.equals("String")) || (type.equals("Integer"))
@@ -322,7 +322,7 @@ public class XmiParser implements ModelParser
             return "java.lang.String";
         }
         if (type.equals("any")) {
-            return "org.intermine.model.FlyMineBusinessObject";
+            return "org.intermine.model.InterMineObject";
         }
         return type;
     }

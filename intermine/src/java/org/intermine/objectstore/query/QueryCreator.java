@@ -21,7 +21,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 
@@ -42,7 +42,7 @@ public class QueryCreator
      */
     public static Query createQueryForId(Integer id) {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
@@ -117,7 +117,7 @@ public class QueryCreator
      * @return a Query
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query createQueryForExampleObject(Model model, FlyMineBusinessObject obj,
+    public static Query createQueryForExampleObject(Model model, InterMineObject obj,
             Set fieldNames) throws ObjectStoreException {
         Query q = new Query();
         Class cls = obj.getClass();
@@ -146,7 +146,7 @@ public class QueryCreator
                     QueryObjectReference qor = new QueryObjectReference(qc, fieldName);
                     cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, subQc));
                     cs.addConstraint(new ClassConstraint(subQc, ConstraintOp.EQUALS, 
-                                (FlyMineBusinessObject) TypeUtil.getFieldValue(obj, fieldName)));
+                                (InterMineObject) TypeUtil.getFieldValue(obj, fieldName)));
                 } else {
                     throw new IllegalArgumentException("Illegal field name for example: "
                             + fieldName);

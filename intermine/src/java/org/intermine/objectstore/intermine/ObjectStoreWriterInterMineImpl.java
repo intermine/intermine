@@ -26,7 +26,7 @@ import java.util.Set;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -206,7 +206,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     /**
      * @see ObjectStoreWriter#store
      */
-    public void store(FlyMineBusinessObject o) throws ObjectStoreException {
+    public void store(InterMineObject o) throws ObjectStoreException {
         // TODO:
         // Important: If we are not in a transaction, we still want any store or delete operation
         // to be atomic, even though it uses multiple statements.
@@ -233,8 +233,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             while (fieldIter.hasNext()) {
                 Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
                 TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldEntry.getValue();
-                if (FlyMineBusinessObject.class.isAssignableFrom(fieldInfo.getType())) {
-                    FlyMineBusinessObject obj = (FlyMineBusinessObject) TypeUtil.getFieldProxy(o,
+                if (InterMineObject.class.isAssignableFrom(fieldInfo.getType())) {
+                    InterMineObject obj = (InterMineObject) TypeUtil.getFieldProxy(o,
                             fieldInfo.getName());
                     if ((obj != null) && (obj.getId() == null)) {
                         obj.setId(getSerial());
@@ -244,7 +244,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                     if (!(coll instanceof Results)) {
                         Iterator collIter = coll.iterator();
                         while (collIter.hasNext()) {
-                            FlyMineBusinessObject obj = (FlyMineBusinessObject) collIter.next();
+                            InterMineObject obj = (InterMineObject) collIter.next();
                             if (obj.getId() == null) {
                                 obj.setId(getSerial());
                             }
@@ -310,7 +310,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                     + ") VALUES (" + o.getId().toString() + ", ";
                                 Iterator collIter = coll.iterator();
                                 while (collIter.hasNext()) {
-                                    FlyMineBusinessObject inCollection = (FlyMineBusinessObject)
+                                    InterMineObject inCollection = (InterMineObject)
                                         collIter.next();
                                     StringBuffer indirectSql = new StringBuffer(leftHandSide);
                                     indirectSql.append(inCollection.getId().toString())
@@ -339,7 +339,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 logFlushBatch();
             }
             try {
-                FlyMineBusinessObject toCache = LiteParser.parse(xml, this);
+                InterMineObject toCache = LiteParser.parse(xml, this);
                 cacheObjectById(toCache.getId(), toCache);
             } catch (Exception e) {
             }
@@ -389,7 +389,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     /**
      * @see ObjectStoreWriter#delete
      */
-    public void delete(FlyMineBusinessObject o) throws ObjectStoreException {
+    public void delete(InterMineObject o) throws ObjectStoreException {
         // TODO:
         // Important: If we are not in a transaction, we still want any store or delete operation
         // to be atomic, even though it uses multiple statements.
@@ -546,7 +546,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      *
      * This method is overridden in order to flush matches properly before the read.
      */
-    protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+    protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
         flushBatch();
         return super.internalGetObjectById(id);
     }

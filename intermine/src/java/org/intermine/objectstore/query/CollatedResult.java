@@ -12,7 +12,7 @@ package org.intermine.objectstore.query;
 
 import java.util.Iterator;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 
 /**
@@ -147,7 +147,7 @@ public class CollatedResult extends Results
 
                 if (node instanceof QueryClass) {
                     // add a ClassConstraint, ie. this QueryClass = example
-                    FlyMineBusinessObject value = (FlyMineBusinessObject) row.get(index);
+                    InterMineObject value = (InterMineObject) row.get(index);
                     constraintSet.addConstraint(new ClassConstraint((QueryClass) node,
                                 ConstraintOp.EQUALS, value));
                 } else {
@@ -180,7 +180,7 @@ public class CollatedResult extends Results
                 int index = q.getSelect().indexOf(node);
                 if (node instanceof QueryClass) {
                     // add a ClassConstraint, ie. this QueryClass = example
-                    FlyMineBusinessObject value = (FlyMineBusinessObject) row.get(index);
+                    InterMineObject value = (InterMineObject) row.get(index);
                     constraintSet.addConstraint(new ClassConstraint((QueryClass) node,
                                                                     ConstraintOp.EQUALS,
                                                                     value));

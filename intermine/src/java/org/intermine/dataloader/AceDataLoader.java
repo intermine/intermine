@@ -30,7 +30,7 @@ import org.acedb.Reference;
 import org.acedb.staticobj.StaticAceObject;
 
 import org.intermine.FlyMineException;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.AttributeDescriptor;
@@ -144,7 +144,7 @@ public class AceDataLoader extends DataLoader
                     throw new NullPointerException("name is null");
                 }
                 AceObject aceObj = (AceObject) aceSet.retrieve(name);
-                FlyMineBusinessObject obj = processAceObject(aceObj);
+                InterMineObject obj = processAceObject(aceObj);
                 //iw.getObjectStore().prefetchObjectByExample(obj);
                 /*synchronized (this) {
                     try {
@@ -186,7 +186,7 @@ public class AceDataLoader extends DataLoader
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected FlyMineBusinessObject processAceObject(AceObject aceObject)
+    protected InterMineObject processAceObject(AceObject aceObject)
         throws AceException, FlyMineException {
         if (aceObject == null) {
             throw new NullPointerException("aceObject must not be null");
@@ -195,7 +195,7 @@ public class AceDataLoader extends DataLoader
 
         String clsName = pkgName
             + AceModelParser.formatAceName(((AceObject) aceObject).getClassName());
-        FlyMineBusinessObject currentObject = instantiate(clsName);
+        InterMineObject currentObject = instantiate(clsName);
         Object identifier = aceObject.getName();
 //         if ("".equals(identifier)) {
 //             identifier = null;
@@ -407,10 +407,10 @@ public class AceDataLoader extends DataLoader
         return false;
     }
 
-    private FlyMineBusinessObject instantiate(String clsName) {
-        FlyMineBusinessObject obj = null;
+    private InterMineObject instantiate(String clsName) {
+        InterMineObject obj = null;
         try {
-            obj = (FlyMineBusinessObject) Class.forName(clsName).newInstance();
+            obj = (InterMineObject) Class.forName(clsName).newInstance();
         } catch (Exception e) {
             LOG.error("Cannot instantiate '" + clsName + "':" + e);
         }

@@ -26,7 +26,7 @@ import java.util.Set;
 import java.io.FileWriter;
 import java.io.File;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -91,14 +91,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         try {
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
-                FlyMineBusinessObject o = (FlyMineBusinessObject) ((Map.Entry) iter.next())
+                InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
                     .getValue();
                 o.setId(null);
             }
             storeDataWriter.beginTransaction();
             iter = data.entrySet().iterator();
             while (iter.hasNext()) {
-                FlyMineBusinessObject o = (FlyMineBusinessObject) ((Map.Entry) iter.next())
+                InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
                     .getValue();
                 storeDataWriter.store(o);
             }
@@ -128,14 +128,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         try {
             storeDataWriter.beginTransaction();
             Query q = new Query();
-            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+            QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
             Set dataToRemove = new SingletonResults(q, storeDataWriter.getObjectStore(),
                     storeDataWriter.getObjectStore().getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
-                FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
+                InterMineObject toDelete = (InterMineObject) iter.next();
                 storeDataWriter.delete(toDelete);
             }
             storeDataWriter.commitTransaction();

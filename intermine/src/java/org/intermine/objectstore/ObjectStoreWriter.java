@@ -10,7 +10,7 @@ package org.intermine.objectstore;
  *
  */
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 
 /**
  * Store, update, and delete objects
@@ -54,7 +54,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(FlyMineBusinessObject o) throws ObjectStoreException;
+    public void store(InterMineObject o) throws ObjectStoreException;
 
     /**
      * Delete an object from this ObjectStore
@@ -62,7 +62,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param o the object to delete
      * @throws ObjectStoreException if an error occurs during deletion of the object
      */
-    public void delete(FlyMineBusinessObject o) throws ObjectStoreException;
+    public void delete(InterMineObject o) throws ObjectStoreException;
 
     /**
      * Check whether the ObjectStoreWriter is performing a transaction

@@ -21,7 +21,7 @@ import java.util.TreeSet;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -105,9 +105,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     }
     
     /**
-     * @see IntegrationWriterAbstractImpl#store(FlyMineBusinessObject, Source, Source, int)
+     * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
      */
-    protected FlyMineBusinessObject store(FlyMineBusinessObject o, Source source, Source skelSource,
+    protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         if (o == null) {
             return null;
@@ -118,7 +118,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         //LOG.error("store() called on " + oText);
         Set equivalentObjects = getEquivalentObjects(o, source);
         if ((equivalentObjects.size() == 1) && (type == SKELETON)) {
-            FlyMineBusinessObject onlyEquivalent = (FlyMineBusinessObject)
+            InterMineObject onlyEquivalent = (InterMineObject)
                 equivalentObjects.iterator().next();
             if (onlyEquivalent instanceof ProxyReference) {
                 //LOG.error("store() finished trivially for object " + oText);
@@ -128,19 +128,19 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();
         if (equivalentIter.hasNext()) {
-            newId = ((FlyMineBusinessObject) equivalentIter.next()).getId();
+            newId = ((InterMineObject) equivalentIter.next()).getId();
         }
         Set classes = new HashSet();
         classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
         Iterator objIter = equivalentObjects.iterator();
         while (objIter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+            InterMineObject obj = (InterMineObject) objIter.next();
             if (obj instanceof ProxyReference) {
                 obj = ((ProxyReference) obj).getObject();
             }
             classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
         }
-        FlyMineBusinessObject newObj = (FlyMineBusinessObject) DynamicUtil.createObject(classes);
+        InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
         newObj.setId(newId);
 
         Map trackingMap = new HashMap();
@@ -168,7 +168,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     }
                     objIter = equivalentObjects.iterator();
                     while (objIter.hasNext()) {
-                        FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+                        InterMineObject obj = (InterMineObject) objIter.next();
                         Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
                         if ((equivalentObjects.size() == 1) && (fieldSource != null)
                                 && (fieldSource.equals(source) || (fieldSource.equals(skelSource)
@@ -198,7 +198,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     
                 objIter = sortedEquivalentObjects.iterator();
                 while (objIter.hasNext()) {
-                    FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+                    InterMineObject obj = (InterMineObject) objIter.next();
                     if (obj == o) {
                         copyField(obj, newObj, source, skelSource, field, type);
                         lastSource = (type == SOURCE ? source : skelSource);
@@ -232,7 +232,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
 
         while (equivalentIter.hasNext()) {
-            FlyMineBusinessObject objToDelete = (FlyMineBusinessObject) equivalentIter.next();
+            InterMineObject objToDelete = (InterMineObject) equivalentIter.next();
             delete(objToDelete);
         }
 

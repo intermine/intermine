@@ -10,7 +10,7 @@ package org.intermine.objectstore.proxy;
  *
  */
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -19,7 +19,7 @@ import org.intermine.objectstore.ObjectStoreException;
  *
  * @author Matthew Wakeling
  */
-public class ProxyReference implements FlyMineBusinessObject
+public class ProxyReference implements InterMineObject
 {
     private ObjectStore os;
     private Integer id;
@@ -38,9 +38,9 @@ public class ProxyReference implements FlyMineBusinessObject
     /**
      * Gets the real object from the database.
      *
-     * @return a FlyMineBusinessObject
+     * @return a InterMineObject
      */
-    public FlyMineBusinessObject getObject() {
+    public InterMineObject getObject() {
         try {
             return os.getObjectById(id);
         } catch (ObjectStoreException e) {

@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
@@ -59,7 +59,7 @@ public class XmlDataLoaderTest extends TestCase
     public void tearDown() throws Exception {
         Iterator deleteIter = toDelete.iterator();
         while (deleteIter.hasNext()) {
-            FlyMineBusinessObject o = (FlyMineBusinessObject) deleteIter.next();
+            InterMineObject o = (InterMineObject) deleteIter.next();
             writer.delete(o);
         }
         if (file != null) {
@@ -153,7 +153,7 @@ public class XmlDataLoaderTest extends TestCase
         assertEquals(5678, c2.getVatNumber());
 
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         List objects = new SingletonResults(q, writer);

@@ -45,7 +45,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.dataloader.IntegrationWriterSingleSourceImpl;
 import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.dataloader.DataLoader;
@@ -66,7 +66,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
 
     public void tearDown() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
         Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
@@ -74,7 +74,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
         Iterator iter = toDelete.iterator();
         osw.beginTransaction();
         while (iter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            InterMineObject obj = (InterMineObject) iter.next();
             System.out.println("Deleting " + obj);
             osw.delete(obj);
         }
@@ -114,15 +114,15 @@ public class EnsemblDataTranslatorTest extends TestCase {
         ItemToObjectTranslator t = new ItemToObjectTranslator(Model.getInstanceByName("genomic"), osw.getObjectStore());
         ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName("genomic"), osw.getObjectStore(), t);
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setDistinct(false);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
-            //FlyMineBusinessObject obj = t.translateFromDbObject((FlyMineBusinessObject) iter.next());
-            FlyMineBusinessObject o = (FlyMineBusinessObject) iter.next();
+            //InterMineObject obj = t.translateFromDbObject((InterMineObject) iter.next());
+            InterMineObject o = (InterMineObject) iter.next();
         }
     }
 

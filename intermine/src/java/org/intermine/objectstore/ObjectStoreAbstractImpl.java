@@ -17,7 +17,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCreator;
 import org.intermine.objectstore.query.Results;
@@ -90,16 +90,16 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * @see ObjectStore#getObjectById
      */
-    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
+    public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         getObjectOps++;
         if (getObjectOps % 1000 == 0) {
             LOG.info("getObjectById called " + getObjectOps + " times. Cache hits: "
                     + getObjectHits + ". Prefetches: " + getObjectPrefetches);
         }
         boolean contains = true;
-        FlyMineBusinessObject cached = null;
+        InterMineObject cached = null;
         synchronized (cache) {
-            cached = (FlyMineBusinessObject) cache.get(id);
+            cached = (InterMineObject) cache.get(id);
             if (cached == null) {
                 contains = cache.containsKey(id);
             }
@@ -108,9 +108,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             getObjectHits++;
             return cached;
         }
-        FlyMineBusinessObject fromDb = internalGetObjectById(id);
+        InterMineObject fromDb = internalGetObjectById(id);
         synchronized (cache) {
-            cached = (FlyMineBusinessObject) cache.get(id);
+            cached = (InterMineObject) cache.get(id);
             if (cached == null) {
                 contains = cache.containsKey(id);
             }
@@ -130,7 +130,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @return an object from the database
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+    protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
         Results results = execute(QueryCreator.createQueryForId(id));
         results.setNoOptimise();
         results.setNoExplain();
@@ -140,7 +140,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                                                + "this primary key");
         }
         if (results.size() == 1) {
-            FlyMineBusinessObject o = (FlyMineBusinessObject) ((ResultsRow) results.get(0)).get(0);
+            InterMineObject o = (InterMineObject) ((ResultsRow) results.get(0)).get(0);
             return o;
         }
         return null;
@@ -171,7 +171,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * @see ObjectStore#cacheObjectById
      */
-    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
+    public Object cacheObjectById(Integer id, InterMineObject obj) {
         synchronized (cache) {
             cache.put(id, obj);
         }
@@ -191,9 +191,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * @see ObjectStore#pilferObjectById
      */
-    public FlyMineBusinessObject pilferObjectById(Integer id) {
+    public InterMineObject pilferObjectById(Integer id) {
         synchronized (cache) {
-            return (FlyMineBusinessObject) cache.get(id);
+            return (InterMineObject) cache.get(id);
         }
     }
 
@@ -230,7 +230,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * @see ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
+    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
         Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
         Results results = execute(query);
@@ -242,7 +242,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                                                + query.toString());
         }
         if (results.size() == 1) {
-            FlyMineBusinessObject j = (FlyMineBusinessObject) ((ResultsRow) results.get(0)).get(0);
+            InterMineObject j = (InterMineObject) ((ResultsRow) results.get(0)).get(0);
             return j;
         }
         return null;

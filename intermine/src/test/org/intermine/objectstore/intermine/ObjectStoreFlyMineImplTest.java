@@ -12,7 +12,7 @@ package org.intermine.objectstore.flymine;
 
 import junit.framework.Test;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
@@ -37,13 +37,13 @@ public class ObjectStoreFlyMineImplTest extends ObjectStoreAbstractImplTestCase
 
     public void testLargeOffset() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         Query q2 = QueryCloner.cloneQuery(q);
         SingletonResults r = new SingletonResults(q, os, os.getSequence());
         r.setBatchSize(2);
-        FlyMineBusinessObject o = (FlyMineBusinessObject) r.get(5);
+        InterMineObject o = (InterMineObject) r.get(5);
         SqlGenerator.registerOffset(q2, 6, os.getModel(), ((ObjectStoreFlyMineImpl) os).db, o.getId());
         SingletonResults r2 = new SingletonResults(q2, os, os.getSequence());
         r2.setBatchSize(2);

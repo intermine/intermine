@@ -20,7 +20,7 @@ import java.util.Map;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.XmlHelper;
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 
 import org.apache.log4j.Logger;
 
@@ -47,7 +47,7 @@ public class LiteRenderer
      * @param model the parent model
      * @return the XML for that object
      */
-    public static String renderXml(FlyMineBusinessObject obj, Model model) {
+    public static String renderXml(InterMineObject obj, Model model) {
         Item item = objectToItem(obj, model);
         return renderXml(item);
     }
@@ -107,7 +107,7 @@ public class LiteRenderer
      * @param model the parent model
      * @return the XML for that object
      */
-    public static String render(FlyMineBusinessObject obj, Model model) {
+    public static String render(InterMineObject obj, Model model) {
         Item item = objectToItem(obj, model);
         int charLen = 300;
         Iterator i = item.getFields().iterator();
@@ -155,13 +155,13 @@ public class LiteRenderer
 
 
     /**
-     * Convert the FlyMineBusinessObject to Lite XML Item.
+     * Convert the InterMineObject to Lite XML Item.
      *
      * @param obj the object to convert
      * @param model the parent FlyMine model
      * @return the generated item
      */
-    protected static Item objectToItem(FlyMineBusinessObject obj, Model model) {
+    protected static Item objectToItem(InterMineObject obj, Model model) {
         Item item = new Item();
         item.setClassName(XmlHelper.getClassName(obj, model));
         item.setImplementations(getImplements(obj));

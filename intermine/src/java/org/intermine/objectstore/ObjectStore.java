@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -63,7 +63,7 @@ public interface ObjectStore
      * @return the object from the ObjectStore or cache, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
-    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException;
+    public InterMineObject getObjectById(Integer id) throws ObjectStoreException;
 
     /**
      * Prefetches an object into the objectstore getObjectById cache. This method doesn't
@@ -102,7 +102,7 @@ public interface ObjectStore
      * for the purpose of ensuring the entry does not expire from the cache. To endure this, the
      * caller merely needs to keep a strong reference to this returned value.
      */
-    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj);
+    public Object cacheObjectById(Integer id, InterMineObject obj);
 
     /**
      * Completely empties the getObjectById cache. The objectstore must guarantee that the
@@ -118,7 +118,7 @@ public interface ObjectStore
      * @param id the ID of the object
      * @return the object, or null
      */
-    public FlyMineBusinessObject pilferObjectById(Integer id);
+    public InterMineObject pilferObjectById(Integer id);
 
     /**
      * Explain a Query (give estimate for execution time and number of rows).
@@ -157,10 +157,10 @@ public interface ObjectStore
      *
      * @param o an example object
      * @param fieldNames a Set of fieldnames
-     * @return a FlyMineBusinessObject from the objectstore, or null if none fits
+     * @return a InterMineObject from the objectstore, or null if none fits
      * @throws ObjectStoreException if an underlying error occurs
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
+    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
         throws ObjectStoreException;
 
     /**

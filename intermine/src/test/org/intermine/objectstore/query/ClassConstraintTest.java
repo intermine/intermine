@@ -12,7 +12,7 @@ package org.intermine.objectstore.query;
 
 import java.util.Collections;
 import junit.framework.TestCase;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Manager;
@@ -135,7 +135,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testNullConstructor2QCObj() throws Exception {
         try {
-            constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, (FlyMineBusinessObject) null);
+            constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, (InterMineObject) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {

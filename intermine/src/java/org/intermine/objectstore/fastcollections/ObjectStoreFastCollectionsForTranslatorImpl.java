@@ -23,7 +23,7 @@ import java.util.TreeSet;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -120,7 +120,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         Set toIds = new TreeSet();
                         Iterator rowIter = retval.iterator();
                         while (rowIter.hasNext()) {
-                            FlyMineBusinessObject o = (FlyMineBusinessObject)
+                            InterMineObject o = (InterMineObject)
                                 ((ResultsRow) rowIter.next()).get(0);
                             Map fromColls = new HashMap();
                             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(o
@@ -179,7 +179,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         Iterator toIdIter = toIds.iterator();
                         while (toIdIter.hasNext()) {
                             Integer toId = (Integer) toIdIter.next();
-                            FlyMineBusinessObject toObj = os.pilferObjectById(toId);
+                            InterMineObject toObj = os.pilferObjectById(toId);
                             if (toObj != null) {
                                 idToObj.put(toId, toObj);
                                 toIdIter.remove();
@@ -217,7 +217,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
 
                             Query subQ = new Query();
                             subQ.setDistinct(false);
-                            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+                            QueryClass qc = new QueryClass(InterMineObject.class);
                             subQ.addFrom(qc);
                             subQ.addToSelect(qc);
                             QueryField qf = new QueryField(qc, "id");
@@ -233,7 +233,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             l.setBatchSize(limit * 2);
                             Iterator lIter = l.iterator();
                             while (lIter.hasNext()) {
-                                FlyMineBusinessObject o = (FlyMineBusinessObject) lIter.next();
+                                InterMineObject o = (InterMineObject) lIter.next();
                                 idToObj.put(o.getId(), o);
                                 doneAlready.add(o.getId());
                             }
@@ -244,7 +244,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         Iterator fromIter = froms.entrySet().iterator();
                         while (fromIter.hasNext()) {
                             Map.Entry fromEntry = (Map.Entry) fromIter.next();
-                            FlyMineBusinessObject objToPopulate = (FlyMineBusinessObject) fromEntry
+                            InterMineObject objToPopulate = (InterMineObject) fromEntry
                                 .getKey();
                             Map collectionsToPopulate = (Map) fromEntry.getValue();
                             Iterator collectionIter = collectionsToPopulate.entrySet().iterator();
@@ -258,7 +258,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                     Iterator contentIter = collectionContents.iterator();
                                     while (contentIter.hasNext()) {
                                         Integer idToAdd = (Integer) contentIter.next();
-                                        FlyMineBusinessObject objToAdd = (FlyMineBusinessObject)
+                                        InterMineObject objToAdd = (InterMineObject)
                                             idToObj.get(idToAdd);
                                         if (objToAdd == null) {
                                             objToAdd = new ProxyReference(os, idToAdd);
@@ -269,7 +269,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                             substituteCollection);
                                 } else {
                                     Integer id = (Integer) contents;
-                                    FlyMineBusinessObject objToAdd = (FlyMineBusinessObject)
+                                    InterMineObject objToAdd = (InterMineObject)
                                         idToObj.get(id);
                                     if (objToAdd != null) {
                                         TypeUtil.setFieldValue(objToPopulate, collectionName,

@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -54,7 +54,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
 
     public void tearDown() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
@@ -63,7 +63,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         Iterator iter = toDelete.iterator();
         osw.beginTransaction();
         while (iter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            InterMineObject obj = (InterMineObject) iter.next();
             System.out.println("Deleting " + obj);
             osw.delete(obj);
         }
@@ -78,7 +78,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         ObjectStore os = new ObjectStoreTranslatingImpl(model, sub, translator);
 
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         List objects = new SingletonResults(q, os, os.getSequence());

@@ -13,7 +13,7 @@ package org.intermine.dataloader;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -58,7 +58,7 @@ public class ObjectStoreDataLoader extends DataLoader
             times[i] = -1;
         }
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setDistinct(false);
@@ -72,7 +72,7 @@ public class ObjectStoreDataLoader extends DataLoader
         res.setBatchSize(1000);
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            InterMineObject obj = (InterMineObject) iter.next();
             //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {
             //    String objText = obj.toString();
             //    int objTextLen = objText.length();

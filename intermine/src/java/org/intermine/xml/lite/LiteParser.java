@@ -22,7 +22,7 @@ import org.apache.commons.digester.*;
 
 import org.xml.sax.SAXException;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -61,7 +61,7 @@ public class LiteParser
      * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class cannot be found
      */
-    public static FlyMineBusinessObject parseXml(InputStream is, ObjectStore os)
+    public static InterMineObject parseXml(InputStream is, ObjectStore os)
         throws IOException, SAXException, ClassNotFoundException {
 
         if (is == null) {
@@ -87,12 +87,12 @@ public class LiteParser
         digester.addSetNext("object/field", "addField");
         digester.addSetNext("object/reference", "addReference");
 
-        FlyMineBusinessObject retval = convertToObject(((Item) digester.parse(is)), os);
+        InterMineObject retval = convertToObject(((Item) digester.parse(is)), os);
         return retval;
     }
 
     /**
-     * Parse string representation of a FlyMineBusinessObject as used in databases.
+     * Parse string representation of a InterMineObject as used in databases.
      *
      * @param objStr the string to parse
      * @param os the ObjectStore with which to associate any new lazy objects
@@ -100,7 +100,7 @@ public class LiteParser
      * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class cannot be found
      */
-    public static FlyMineBusinessObject parse(String objStr, ObjectStore os)
+    public static InterMineObject parse(String objStr, ObjectStore os)
         throws IOException, ClassNotFoundException {
         String a[] = objStr.split(DELIM);
 
@@ -134,7 +134,7 @@ public class LiteParser
      * @return the converted object
      * @throws ClassNotFoundException if a class cannot be found
      */
-    protected static FlyMineBusinessObject convertToObject(Item item, ObjectStore os)
+    protected static InterMineObject convertToObject(Item item, ObjectStore os)
             throws ClassNotFoundException {
         Class clazz = null;
         if ((item.getClassName() != null) && (!"".equals(item.getClassName()))) {
@@ -153,15 +153,15 @@ public class LiteParser
             }
         }
 
-        FlyMineBusinessObject obj = null;
+        InterMineObject obj = null;
         if (intClasses.isEmpty()) {
             try {
-                obj = (FlyMineBusinessObject) clazz.newInstance();
+                obj = (InterMineObject) clazz.newInstance();
             } catch (Exception e) {
                 throw new ClassNotFoundException(e.getMessage());
             }
         } else {
-            obj = (FlyMineBusinessObject) DynamicBean.create(clazz,
+            obj = (InterMineObject) DynamicBean.create(clazz,
                     (Class []) intClasses.toArray(new Class [] {}));
         }
 

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.ObjectStore;
@@ -107,7 +107,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
-                FlyMineBusinessObject o = (FlyMineBusinessObject) ((Map.Entry) iter.next())
+                InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
                     .getValue();
                 iw.store(o, source, skelSource);
             }
@@ -137,14 +137,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         try {
             dataTracker.beginTransaction();
             Query q = new Query();
-            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+            QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
             Set dataToRemove = new SingletonResults(q, dataTracker.getObjectStore(),
                     dataTracker.getObjectStore().getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
-                FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
+                InterMineObject toDelete = (InterMineObject) iter.next();
                 dataTracker.delete(toDelete);
             }
             dataTracker.commitTransaction();
@@ -164,14 +164,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         try {
             writer.beginTransaction();
             Query q = new Query();
-            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+            QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
             Set dataToRemove = new SingletonResults(q, writer.getObjectStore(),
                     writer.getObjectStore().getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
-                FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
+                InterMineObject toDelete = (InterMineObject) iter.next();
                 writer.delete(toDelete);
             }
             writer.commitTransaction();
@@ -684,7 +684,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         iw.store(e, source, skelSource);  // method we are testing
         
-        FlyMineBusinessObject re = iw.getObjectByExample(e, Collections.singleton("name"));
+        InterMineObject re = iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
         assertTrue(re instanceof Broke);
         assertTrue(re instanceof Employee);

@@ -95,7 +95,7 @@ public class DBConverter extends DataConverter
                 for (Iterator cldIter = model.getClassDescriptors().iterator();
                      cldIter.hasNext();) {
                     ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                    if (!cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
+                    if (!cld.getName().equals("org.intermine.model.InterMineObject")) {
                         if (idsProvided(cld) && !idIsUnique(cld)) {
                             buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
                         }
@@ -109,7 +109,7 @@ public class DBConverter extends DataConverter
 
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                if (!cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
+                if (!cld.getName().equals("org.intermine.model.InterMineObject")) {
                     processClassDescriptor(cld);
                 }
             }
@@ -319,7 +319,7 @@ public class DBConverter extends DataConverter
                 if (value != null && !TypeUtil.objectToString(value).equals("0")) {
                     String refClsName = ((ReferenceDescriptor) fd).getReferencedClassDescriptor()
                         .getName();
-                    if ("org.intermine.model.FlyMineBusinessObject".equals(refClsName)) {
+                    if ("org.intermine.model.InterMineObject".equals(refClsName)) {
                         refClsName = ((String) row.get(fieldName + "_object_type")).toLowerCase();
                     } else {
                         refClsName = TypeUtil.unqualifiedName(refClsName);

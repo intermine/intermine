@@ -54,8 +54,8 @@ public class JavaModelOutputTest extends TestCase
                 buffer.append(line + ENDL);
             }
 
-            String expected = "public class Class1 implements org.intermine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
-                + INDENT + "// Attr: org.intermine.model.FlyMineBusinessObject.id" + ENDL
+            String expected = "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
+                + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
                 + INDENT + "protected java.lang.Integer id;" + ENDL
                 + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
                 + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
@@ -78,8 +78,8 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = "package package.name;" + ENDL + ENDL
-            + "public class Class1 implements org.intermine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
-            + INDENT + "// Attr: org.intermine.model.FlyMineBusinessObject.id" + ENDL
+            + "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
+            + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
@@ -96,7 +96,7 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = "package package.name;" + ENDL + ENDL
-            + "public interface Interface1 extends org.intermine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
+            + "public interface Interface1 extends org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
@@ -123,8 +123,8 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "package package.name;" + ENDL + ENDL
-            + "public class Class1 implements org.intermine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
-            + INDENT + "// Attr: org.intermine.model.FlyMineBusinessObject.id" + ENDL
+            + "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
+            + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
@@ -144,7 +144,7 @@ public class JavaModelOutputTest extends TestCase
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1 implements package.name.Interface1, package.name.Interface2" + ENDL + "{" + ENDL
-            + INDENT + "// Attr: org.intermine.model.FlyMineBusinessObject.id" + ENDL
+            + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
@@ -168,7 +168,7 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "package package.name;" + ENDL + ENDL
-            + "public class Class1 implements org.intermine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
+            + "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
             + INDENT + "// Attr: package.name.Class1.atd1" + ENDL
             + INDENT + "protected java.lang.String atd1;" + ENDL
             + INDENT + "public java.lang.String getAtd1() { return atd1; }" + ENDL
@@ -184,7 +184,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL
             + INDENT + "public void proxyRfd1(org.intermine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL
             + INDENT + "public Object proxGetRfd1() { return rfd1; }" + ENDL + ENDL
-            + INDENT + "// Attr: org.intermine.model.FlyMineBusinessObject.id" + ENDL
+            + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
@@ -337,7 +337,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected int atd1;" + ENDL
             + INDENT + "public int getAtd1() { return atd1; }" + ENDL
             + INDENT + "public void setAtd1(int atd1) { this.atd1 = atd1; }" + ENDL + ENDL
-            + INDENT + "// Attr: org.intermine.model.FlyMineBusinessObject.id" + ENDL
+            + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL

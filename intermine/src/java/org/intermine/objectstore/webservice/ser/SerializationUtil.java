@@ -19,7 +19,7 @@ import javax.xml.namespace.QName;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.lite.LiteParser;
 import org.intermine.xml.lite.LiteRenderer;
@@ -41,7 +41,7 @@ public class SerializationUtil
      * Register type mappings for the 5 built-in FlyMine types that are sent over the wire
      * Note that Axis only allows mappings for concrete classes (not superclasses or interfaces)
      * In particular this means that we only map ArrayLists (everything else is converted) and
-     * we map FlyMineBusinessObjects at the client/server level rather than at serialization time
+     * we map InterMineObjects at the client/server level rather than at serialization time
      * @param tm the type mapping to register to
      */
     public static void registerDefaultMappings(TypeMapping tm) {
@@ -89,9 +89,9 @@ public class SerializationUtil
      * @param os the ObjectStore used by LiteParser to parse the string
      * @return the corresponding object
      */
-    public static FlyMineBusinessObject stringToObject(FlyMineBusinessString string,
+    public static InterMineObject stringToObject(FlyMineBusinessString string,
                                                        ObjectStore os) {
-        FlyMineBusinessObject obj = null;
+        InterMineObject obj = null;
         try {
             obj = LiteParser.parseXml(new ByteArrayInputStream(string.getString().getBytes()), os);
             os.cacheObjectById(obj.getId(), obj);
@@ -102,7 +102,7 @@ public class SerializationUtil
     }
 
     /**
-     * Recurse through a collection converting FlyMineBusinessObjects
+     * Recurse through a collection converting InterMineObjects
      * to FlyMineBusinessStrings suitable for sending over the wire
      * @param c the Collection
      * @param model the relevant model, used by LiteRenderer
@@ -114,8 +114,8 @@ public class SerializationUtil
             Object o = i.next();
             if (o instanceof Collection) {
                 l.add(collectionToStrings((Collection) o, model));
-            } else if (o instanceof FlyMineBusinessObject) {
-                l.add(objectToString((FlyMineBusinessObject) o, model));
+            } else if (o instanceof InterMineObject) {
+                l.add(objectToString((InterMineObject) o, model));
             } else {
                 l.add(o);
             }
@@ -129,13 +129,13 @@ public class SerializationUtil
      * @param model the model used by LiteRendered to render the object
      * @return the corresponding FlyMineBusinessString
      */
-    public static FlyMineBusinessString objectToString(FlyMineBusinessObject obj, Model model) {
+    public static FlyMineBusinessString objectToString(InterMineObject obj, Model model) {
         return new FlyMineBusinessString(LiteRenderer.renderXml(obj, model));
     }
 
     /**
      * Recurse through a collection converting FlyMineBusinessStrings
-     * sent over the wire to FlyMineBusinessObjects
+     * sent over the wire to InterMineObjects
      * @param c the Collection
      * @param os the relevant ObjectStore, used by LiteRenderer
      * @return the corresponding list

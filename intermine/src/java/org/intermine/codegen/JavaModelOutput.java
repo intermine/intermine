@@ -41,7 +41,7 @@ public class JavaModelOutput extends ModelOutput
         while (iter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             String cldName = cld.getName();
-            if (!"org.intermine.model.FlyMineBusinessObject".equals(cldName)) {
+            if (!"org.intermine.model.InterMineObject".equals(cldName)) {
                 String pkg = TypeUtil.packageName(cldName);
                 String cls = TypeUtil.unqualifiedName(cld.getName());
                 File dir = new File(file, pkg.replaceAll("[.]", File.separator));

@@ -30,7 +30,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -250,13 +250,13 @@ public class DataLoaderHelper
      * @return a Query
      * @throws MetaDataException if anything goes wrong
      */
-    public static Query createPKQuery(Model model, FlyMineBusinessObject obj,
+    public static Query createPKQuery(Model model, InterMineObject obj,
             Source source, IntToIntMap idMap) throws MetaDataException {
         try {
             int subCount = 0;
             Query q = new Query();
             q.setDistinct(false);
-            QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
+            QueryClass qcFMBO = new QueryClass(InterMineObject.class);
             q.addFrom(qcFMBO);
             q.addToSelect(qcFMBO);
             ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
@@ -295,7 +295,7 @@ public class DataLoaderHelper
                                 throw new MetaDataException("A collection cannot be part of"
                                         + " a primary key");
                             } else if (fd instanceof ReferenceDescriptor) {
-                                FlyMineBusinessObject refObj = (FlyMineBusinessObject)
+                                InterMineObject refObj = (InterMineObject)
                                     TypeUtil.getFieldProxy(obj, fieldName);
                                 if (refObj == null) {
                                     cs.addConstraint(new ContainsConstraint(
@@ -320,9 +320,9 @@ public class DataLoaderHelper
                                                     ConstraintOp.IN,
                                                     createPKQuery(model, refObj, source, idMap)));
                                     } else {
-                                        FlyMineBusinessObject destObj = (FlyMineBusinessObject)
+                                        InterMineObject destObj = (InterMineObject)
                                             DynamicUtil.createObject(Collections.singleton(
-                                                        FlyMineBusinessObject.class));
+                                                        InterMineObject.class));
                                         destObj.setId(destId);
                                         cs.addConstraint(new ContainsConstraint(
                                                     new QueryObjectReference(qc, fieldName),

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.xml.XmlHelper;
 
 import org.apache.log4j.Logger;
@@ -55,17 +55,17 @@ public class FullRenderer
     }
 
     /**
-     * Render a FlyMineBusinessObject as Xml in Full Data format.
+     * Render a InterMineObject as Xml in Full Data format.
      * @param obj an object to render
      * @param model the parent model
      * @return the XML for object
      */
-    public static String render(FlyMineBusinessObject obj, Model model) {
+    public static String render(InterMineObject obj, Model model) {
         return render(toItem(obj, model));
     }
 
     /**
-     * Convert a collection of FlyMineBusinessObjects to Item format.
+     * Convert a collection of InterMineObjects to Item format.
      * @param objects objects to convert
      * @param model the parent model
      * @return a list of Full Data Items
@@ -75,7 +75,7 @@ public class FullRenderer
 
         Iterator objIter = objects.iterator();
         while (objIter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+            InterMineObject obj = (InterMineObject) objIter.next();
             items.add(toItem(obj, model));
         }
         return items;
@@ -100,12 +100,12 @@ public class FullRenderer
     }
 
     /**
-     * Convert a FlyMineBusinessObject to Item format.
+     * Convert a InterMineObject to Item format.
      * @param obj object to convert
      * @param model the parent model
      * @return a new Full Data Item
      */
-    public static Item toItem(FlyMineBusinessObject obj, Model model) {
+    public static Item toItem(InterMineObject obj, Model model) {
         if (obj.getId() == null) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
@@ -141,14 +141,14 @@ public class FullRenderer
                         ReferenceList refList = new ReferenceList();
                         refList.setName(fieldname);
                         for (Iterator j = col.iterator(); j.hasNext();) {
-                            refList.addRefId(((FlyMineBusinessObject) j.next()).getId().toString());
+                            refList.addRefId(((InterMineObject) j.next()).getId().toString());
                         }
                         item.addCollection(refList);
                     }
-                } else if (value instanceof FlyMineBusinessObject) {
+                } else if (value instanceof InterMineObject) {
                     Reference ref = new Reference();
                     ref.setName(fieldname);
-                    ref.setRefId(((FlyMineBusinessObject) value).getId().toString());
+                    ref.setRefId(((InterMineObject) value).getId().toString());
                     item.addReference(ref);
                 } else {
                     if (!fieldname.equalsIgnoreCase("id")) {
@@ -239,7 +239,7 @@ public class FullRenderer
      * @param model the parent model
      * @return space separated list of extended/implemented classes/interfaces
      */
-    protected static String getImplements(FlyMineBusinessObject obj, Model model) {
+    protected static String getImplements(InterMineObject obj, Model model) {
         StringBuffer sb = new StringBuffer();
 
         Class [] interfaces = obj.getClass().getInterfaces();
@@ -248,7 +248,7 @@ public class FullRenderer
         for (int i = 0; i < interfaces.length; i++) {
             ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
             if (cld != null && cld.isInterface()
-                    && !cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
+                    && !cld.getName().equals("org.intermine.model.InterMineObject")) {
                 sb.append(model.getNameSpace().toString()
                           + TypeUtil.unqualifiedName(interfaces[i].getName()))
                     .append(" ");

@@ -13,7 +13,7 @@ package org.intermine.objectstore.query;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -51,7 +51,7 @@ public class QueryField implements QueryEvaluable
         if (Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
         }
-        if (FlyMineBusinessObject.class.isAssignableFrom(field.getReturnType())) {
+        if (InterMineObject.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
         }
         this.qc = qc;

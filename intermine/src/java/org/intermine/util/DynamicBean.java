@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 import net.sf.cglib.*;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 
 /**
@@ -72,8 +72,8 @@ public class DynamicBean implements MethodInterceptor
         throws Throwable {
         // java.lang.Object methods
         if (method.getName().equals("equals")) {
-            if (args[0] instanceof FlyMineBusinessObject) {
-                Integer otherId = ((FlyMineBusinessObject) args[0]).getId();
+            if (args[0] instanceof InterMineObject) {
+                Integer otherId = ((InterMineObject) args[0]).getId();
                 Integer thisId = (Integer) map.get("Id");
                 return Boolean.valueOf((otherId != null) && (thisId != null)
                         && thisId.equals(otherId));
@@ -111,8 +111,8 @@ public class DynamicBean implements MethodInterceptor
                 needComma = true;
                 if (fieldValue instanceof ProxyReference) {
                     retval.append(fieldName + "=" + ((ProxyReference) fieldValue).getId());
-                } else if (fieldValue instanceof FlyMineBusinessObject) {
-                    retval.append(fieldName + "=" + ((FlyMineBusinessObject) fieldValue).getId());
+                } else if (fieldValue instanceof InterMineObject) {
+                    retval.append(fieldName + "=" + ((InterMineObject) fieldValue).getId());
                 } else if (fieldValue instanceof Collection) {
                     retval.append(fieldName + ":Collection");
                 } else {

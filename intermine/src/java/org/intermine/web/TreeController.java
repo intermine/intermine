@@ -51,13 +51,13 @@ public class TreeController extends TilesAction
         Set openClasses = (Set) session.getAttribute("openClasses");
         if (openClasses == null) {
             openClasses = new HashSet();
-            openClasses.add("org.intermine.model.FlyMineBusinessObject");
+            openClasses.add("org.intermine.model.InterMineObject");
             session.setAttribute("openClasses", openClasses);
         }
 
         String rootClass = (String) request.getAttribute("rootClass");
         if (rootClass == null) {
-            rootClass = "org.intermine.model.FlyMineBusinessObject";
+            rootClass = "org.intermine.model.InterMineObject";
         }
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);

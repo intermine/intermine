@@ -82,7 +82,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
-            + INDENT + "<table name=\"FlyMineBusinessObject\">" + ENDL
+            + INDENT + "<table name=\"InterMineObject\">" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
@@ -112,7 +112,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
-            + INDENT + "<table name=\"FlyMineBusinessObject\">" + ENDL
+            + INDENT + "<table name=\"InterMineObject\">" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL

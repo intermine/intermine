@@ -17,7 +17,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStore;
@@ -85,7 +85,7 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
     public void testTranslation() throws Exception {
         ObjectStore os2 = new ObjectStoreTranslatingImpl(Model.getInstanceByName("testmodel"), ObjectStoreFactory.getObjectStore("os.unittest"), new CompanyTranslator());
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
         Results res = os2.execute(q);
@@ -103,11 +103,11 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
             return query;
         }
 
-        public FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o) {
+        public InterMineObject translateToDbObject(InterMineObject o) {
             return o;
         }
 
-        public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o) {
+        public InterMineObject translateFromDbObject(InterMineObject o) {
             return o;
         }
     }
@@ -125,11 +125,11 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
             return q;
         }
 
-        public FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o) {
+        public InterMineObject translateToDbObject(InterMineObject o) {
             return o;
         }
 
-        public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o) {
+        public InterMineObject translateFromDbObject(InterMineObject o) {
             if (o instanceof Company) {
                 Bank bank = new Bank();
                 bank.setId(((Company) o).getId());

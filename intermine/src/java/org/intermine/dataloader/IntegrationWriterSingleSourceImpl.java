@@ -19,7 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -87,9 +87,9 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriterAbstractImpl#store(FlyMineBusinessObject, Source, Source, int)
+     * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
      */
-    protected FlyMineBusinessObject store(FlyMineBusinessObject o, Source source, Source skelSource,
+    protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         if (o == null) {
             return null;
@@ -98,16 +98,16 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();
         if (equivalentIter.hasNext()) {
-            newId = ((FlyMineBusinessObject) equivalentIter.next()).getId();
+            newId = ((InterMineObject) equivalentIter.next()).getId();
         }
         Set classes = new HashSet();
         classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
         Iterator objIter = equivalentObjects.iterator();
         while (objIter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+            InterMineObject obj = (InterMineObject) objIter.next();
             classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
         }
-        FlyMineBusinessObject newObj = (FlyMineBusinessObject) DynamicUtil.createObject(classes);
+        InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
         newObj.setId(newId);
 
         if (type == SKELETON) {
@@ -115,7 +115,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         }
         objIter = equivalentObjects.iterator();
         while (objIter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+            InterMineObject obj = (InterMineObject) objIter.next();
             copyFields(obj, newObj, source, skelSource, FROM_DB);
         }
         if (type == SOURCE) {
@@ -124,14 +124,14 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         store(newObj);
  
         while (equivalentIter.hasNext()) {
-            FlyMineBusinessObject objToDelete = (FlyMineBusinessObject) equivalentIter.next();
+            InterMineObject objToDelete = (InterMineObject) equivalentIter.next();
             delete(objToDelete);
         }
 
         return newObj;
     }
 
-    private void copyFields(FlyMineBusinessObject srcObj, FlyMineBusinessObject dest,
+    private void copyFields(InterMineObject srcObj, InterMineObject dest,
             Source source, Source skelSource, int type) throws ObjectStoreException {
         try {
             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(srcObj.getClass());

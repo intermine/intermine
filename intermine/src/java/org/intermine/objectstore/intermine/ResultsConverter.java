@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -67,7 +67,7 @@ public class ResultsConverter
                     String alias = (String) q.getAliases().get(node);
                     if (node instanceof QueryClass) {
                         Integer idField = new Integer(sqlResults.getInt(alias + "id"));
-                        FlyMineBusinessObject obj = os.pilferObjectById(idField);
+                        InterMineObject obj = os.pilferObjectById(idField);
                         if (obj == null) {
                             String objectField = sqlResults.getString(alias);
                             currentColumn = objectField;

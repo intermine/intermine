@@ -17,7 +17,7 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 
 public class ResultsCellControllerTest extends MockStrutsTestCase
@@ -38,7 +38,7 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
         assertNotNull(context.getAttribute("leafClds"));
         assertTrue(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
         assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
-        assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(FlyMineBusinessObject.class.getName())));
+        assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
     }
 
     public void testNonBusinessObject() throws Exception {

@@ -12,7 +12,7 @@ package org.intermine.objectstore.webservice.ser;
 
 /**
  * This class is a wrapper for the XML string used to represent
- * FlyMineBusinessObjects when they are serialized
+ * InterMineObjects when they are serialized
  * @author Mark Woodbridge
  */
 public class FlyMineBusinessString

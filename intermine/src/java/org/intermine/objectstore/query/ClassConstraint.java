@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.Util;
 
@@ -32,7 +32,7 @@ import org.intermine.util.Util;
 public class ClassConstraint extends Constraint
 {
     protected QueryClass qc1, qc2;
-    protected FlyMineBusinessObject obj;
+    protected InterMineObject obj;
 
     /**
      * Construct ClassConstraint
@@ -81,7 +81,7 @@ public class ClassConstraint extends Constraint
      * @param op define EQUALS or NOT_EQUALS
      * @param obj example object
      */
-    public ClassConstraint(QueryClass qc, ConstraintOp op, FlyMineBusinessObject obj) {
+    public ClassConstraint(QueryClass qc, ConstraintOp op, InterMineObject obj) {
         if (qc == null) {
             throw new NullPointerException("qc cannot be null");
         }
@@ -131,9 +131,9 @@ public class ClassConstraint extends Constraint
     /**
      * Returns the Object argument 2
      *
-     * @return FlyMineBusinessObject arg2
+     * @return InterMineObject arg2
      */
-    public FlyMineBusinessObject getArg2Object() {
+    public InterMineObject getArg2Object() {
         return obj;
     }
 

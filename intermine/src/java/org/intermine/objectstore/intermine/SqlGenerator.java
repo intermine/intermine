@@ -32,7 +32,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
@@ -92,7 +92,7 @@ public class SqlGenerator
      * @return a String suitable for passing to an SQL server
      */
     public static String generateQueryForId(Integer id) {
-        return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM FlyMineBusinessObject AS a1_ WHERE a1_.id"
+        return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM InterMineObject AS a1_ WHERE a1_.id"
             + " = " + id.toString() + " LIMIT 2";
     }
 
@@ -425,7 +425,7 @@ public class SqlGenerator
             Model model) throws ObjectStoreException {
         QueryClass arg1 = c.getArg1();
         QueryClass arg2QC = c.getArg2QueryClass();
-        FlyMineBusinessObject arg2O = c.getArg2Object();
+        InterMineObject arg2O = c.getArg2Object();
         queryClassToString(state.getWhereBuffer(), arg1, q, model, ID_ONLY, state);
         state.addToWhere(" " + c.getOp().toString() + " ");
         if (arg2QC != null) {
@@ -433,7 +433,7 @@ public class SqlGenerator
         } else if (arg2O.getId() != null) {
             objectToString(state.getWhereBuffer(), arg2O);
         } else {
-            throw new ObjectStoreException("ClassConstraint cannot contain a FlyMineBusinessObject"
+            throw new ObjectStoreException("ClassConstraint cannot contain a InterMineObject"
                     + " without an ID set");
         }
     }
@@ -451,7 +451,7 @@ public class SqlGenerator
             Query q, Model model) throws ObjectStoreException {
         QueryReference arg1 = c.getReference();
         QueryClass arg2 = c.getQueryClass();
-        FlyMineBusinessObject arg2Obj = c.getObject();
+        InterMineObject arg2Obj = c.getObject();
         Map fieldNameToFieldDescriptor = model.getFieldDescriptorsForClass(arg1.getQueryClass()
                 .getType());
         ReferenceDescriptor arg1Desc = (ReferenceDescriptor)
@@ -561,10 +561,10 @@ public class SqlGenerator
             throws ObjectStoreException {
         if (value instanceof UnknownTypeValue) {
             buffer.append(value.toString());
-        } else if (value instanceof FlyMineBusinessObject) {
-            Integer id = ((FlyMineBusinessObject) value).getId();
+        } else if (value instanceof InterMineObject) {
+            Integer id = ((InterMineObject) value).getId();
             if (id == null) {
-                throw new ObjectStoreException("FlyMineBusinessObject found"
+                throw new ObjectStoreException("InterMineObject found"
                         + " without an ID set");
             }
             buffer.append(id.toString());

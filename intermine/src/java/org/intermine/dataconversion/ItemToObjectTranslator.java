@@ -25,7 +25,7 @@ import java.io.StringWriter;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Reference;
@@ -154,7 +154,7 @@ public class ItemToObjectTranslator extends Translator
               && from.size() == 1
               && qn == from.iterator().next()
               && qn instanceof QueryClass
-              && ((QueryClass) qn).getType().equals(FlyMineBusinessObject.class))) {
+              && ((QueryClass) qn).getType().equals(InterMineObject.class))) {
             throw new ObjectStoreException("Query cannot be translated: " + query);
         }
 
@@ -201,14 +201,14 @@ public class ItemToObjectTranslator extends Translator
     /**
      * @see Translator#translateToDbObject
      */
-    public FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o) {
+    public InterMineObject translateToDbObject(InterMineObject o) {
         return o;
     }
 
     /**
      * @see Translator#translateFromDbObject
      */
-    public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o)
+    public InterMineObject translateFromDbObject(InterMineObject o)
         throws MetaDataException {
         if (!(o instanceof Item)) {
             return o;
@@ -230,7 +230,7 @@ public class ItemToObjectTranslator extends Translator
                     + identifierToId(item.getIdentifier()) + ") - classname = "
                     + item.getClassName() + ", size = " + itemSize);
         }
-        FlyMineBusinessObject obj = (FlyMineBusinessObject)
+        InterMineObject obj = (InterMineObject)
             DynamicUtil.instantiateObject(
                 OntologyUtil.generateClassNames(item.getClassName(), model),
                 OntologyUtil.generateClassNames(item.getImplementations(), model));
@@ -271,7 +271,7 @@ public class ItemToObjectTranslator extends Translator
 
             for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
                 ReferenceList refs = (ReferenceList) i.next();
-                QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+                QueryClass qc = new QueryClass(InterMineObject.class);
                 QueryField qf = new QueryField(qc, "id");
                 BagConstraint bc =
                     new BagConstraint(qf, ConstraintOp.IN,

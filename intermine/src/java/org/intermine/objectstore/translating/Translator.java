@@ -14,7 +14,7 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 
 /**
  * Interface specifying operations required for inline translation of queries and data objects
@@ -44,10 +44,10 @@ public abstract class Translator
 
     /**
     * Translate an object entering the ObjectStore
-    * @param o the FlyMineBusinessObject to translate
+    * @param o the InterMineObject to translate
     * @return the translated object
     */
-    public abstract FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o);
+    public abstract InterMineObject translateToDbObject(InterMineObject o);
 
     /**
      * Translate an object exiting the ObjectStore
@@ -55,6 +55,6 @@ public abstract class Translator
      * @return the translated object
      * @throws MetaDataException if item has a field that isn't in FlyMine model
      */
-    public abstract FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o)
+    public abstract InterMineObject translateFromDbObject(InterMineObject o)
         throws MetaDataException;
 }

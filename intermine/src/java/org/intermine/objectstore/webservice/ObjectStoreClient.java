@@ -26,7 +26,7 @@ import org.apache.axis.client.Service;
 import javax.xml.namespace.QName;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -185,7 +185,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStore#getObjectById
      */
-    public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+    public InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
         return SerializationUtil.stringToObject((FlyMineBusinessString)
                                                 remoteMethod("getObjectById", new Object[] {id}),
                                                 this);

@@ -22,7 +22,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -73,10 +73,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      *
      * @param obj the Object to look for
      * @param source the data Source
-     * @return a Set of FlyMineBusinessObjects
+     * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    public Set getEquivalentObjects(FlyMineBusinessObject obj, Source source)
+    public Set getEquivalentObjects(InterMineObject obj, Source source)
             throws ObjectStoreException {
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
@@ -112,7 +112,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see IntegrationWriter#store
      */
-    public void store(FlyMineBusinessObject o, Source source, Source skelSource)
+    public void store(InterMineObject o, Source source, Source skelSource)
             throws ObjectStoreException {
         if (o == null) {
             throw new NullPointerException("Object o should not be null");
@@ -135,10 +135,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param source the data Source to which to attribute the data
      * @param skelSource the data Source to which to attribute skeleton data
      * @param type the type of action required, from SOURCE, SKELETON, or FROM_DB
-     * @return the FlyMineBusinessObject that was written to the database
+     * @return the InterMineObject that was written to the database
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    protected abstract FlyMineBusinessObject store(FlyMineBusinessObject o, Source source,
+    protected abstract InterMineObject store(InterMineObject o, Source source,
             Source skelSource, int type) throws ObjectStoreException;
 
     /**
@@ -155,7 +155,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws IllegalAccessException should never happen
      * @throws ObjectStoreException if an error ocurs in the underlying objectstore
      */
-    protected void copyField(FlyMineBusinessObject srcObj, FlyMineBusinessObject dest,
+    protected void copyField(InterMineObject srcObj, InterMineObject dest,
             Source source, Source skelSource, FieldDescriptor field, int type)
             throws IllegalAccessException, ObjectStoreException {
         String fieldName = field.getName();
@@ -173,14 +173,14 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             TypeUtil.setFieldValue(dest, fieldName,
                                     TypeUtil.getFieldProxy(srcObj, fieldName));
                         } else {
-                            FlyMineBusinessObject sourceTarget = (FlyMineBusinessObject)
+                            InterMineObject sourceTarget = (InterMineObject)
                                 TypeUtil.getFieldProxy(srcObj, fieldName);
                             if (sourceTarget instanceof ProxyReference) {
                                 if (idMap.get(sourceTarget.getId()) == null) {
                                     sourceTarget = ((ProxyReference) sourceTarget).getObject();
                                 }
                             }
-                            FlyMineBusinessObject target = store(sourceTarget, source, skelSource,
+                            InterMineObject target = store(sourceTarget, source, skelSource,
                                     SKELETON);
                             TypeUtil.setFieldValue(dest, fieldName, target);
                         }
@@ -188,7 +188,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                     break;
                 case FieldDescriptor.ONE_ONE_RELATION:
                     if ((type == FROM_DB) || (type == SOURCE)) {
-                        FlyMineBusinessObject loser = (FlyMineBusinessObject)
+                        InterMineObject loser = (InterMineObject)
                             TypeUtil.getFieldValue(dest, fieldName);
                         ReferenceDescriptor reverseRef = ((ReferenceDescriptor) field)
                             .getReverseReferenceDescriptor();
@@ -204,13 +204,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             }
                             store(loser);
                         }
-                        FlyMineBusinessObject target = null;
+                        InterMineObject target = null;
                         if (type == SOURCE) {
-                            target = store((FlyMineBusinessObject)
+                            target = store((InterMineObject)
                                     TypeUtil.getFieldValue(srcObj, fieldName), source, skelSource,
                                     SKELETON);
                         } else {
-                            target = (FlyMineBusinessObject) TypeUtil.getFieldValue(srcObj,
+                            target = (InterMineObject) TypeUtil.getFieldValue(srcObj,
                                     fieldName);
                         }
                         if (target != null) {
@@ -218,7 +218,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                 LOG.error("Reifying object for modification in place");
                                 target = ((ProxyReference) target).getObject();
                             }
-                            FlyMineBusinessObject targetsReferent = (FlyMineBusinessObject)
+                            InterMineObject targetsReferent = (InterMineObject)
                                 TypeUtil.getFieldValue(target, reverseRef.getName());
                             if ((targetsReferent != null) && (!targetsReferent.equals(dest))) {
                                 invalidateObjectById(targetsReferent.getId());
@@ -237,7 +237,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
                         Iterator colIter = col.iterator();
                         while (colIter.hasNext()) {
-                            FlyMineBusinessObject colObj = (FlyMineBusinessObject) colIter.next();
+                            InterMineObject colObj = (InterMineObject) colIter.next();
                             invalidateObjectById(colObj.getId());
                             ReferenceDescriptor reverseRef = ((CollectionDescriptor) field)
                                 .getReverseReferenceDescriptor();
@@ -258,7 +258,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
                         Iterator colIter = col.iterator();
                         while (colIter.hasNext()) {
-                            FlyMineBusinessObject colObj = (FlyMineBusinessObject) colIter.next();
+                            InterMineObject colObj = (InterMineObject) colIter.next();
                             if (type == FROM_DB) {
                                 destCol.add(colObj);
                             } else {
@@ -302,7 +302,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return the retrieved object
      * @throws ObjectStoreException if an error occurs retieving the object
      */
-    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
+    public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return osw.getObjectById(id);
     }
 
@@ -312,7 +312,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(FlyMineBusinessObject o) throws ObjectStoreException {
+    public void store(InterMineObject o) throws ObjectStoreException {
         osw.store(o);
     }
 
@@ -322,7 +322,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param o the object to delete
      * @throws ObjectStoreException if an error occurs during deletion of the object
      */
-    public void delete(FlyMineBusinessObject o) throws ObjectStoreException {
+    public void delete(InterMineObject o) throws ObjectStoreException {
         osw.delete(o);
     }
 
@@ -406,7 +406,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.intermine.objectstore.ObjectStore#cacheObjectById
      */
-    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
+    public Object cacheObjectById(Integer id, InterMineObject obj) {
         return osw.cacheObjectById(id, obj);
     }
 
@@ -420,7 +420,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.intermine.objectstore.ObjectStore#pilferObjectById
      */
-    public FlyMineBusinessObject pilferObjectById(Integer id) {
+    public InterMineObject pilferObjectById(Integer id) {
         return osw.pilferObjectById(id);
     }
     
@@ -448,7 +448,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.intermine.objectstore.ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
+    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
         return osw.getObjectByExample(o, fieldNames);
     }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -56,7 +56,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * @see ObjectStore#getObjectById
      */
-    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
+    public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return os.getObjectById(id);
     }
 
@@ -77,7 +77,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * @see ObjectStore#cacheObjectById
      */
-    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj2) {
+    public Object cacheObjectById(Integer id, InterMineObject obj2) {
         return os.cacheObjectById(id, obj2);
     }
 
@@ -91,7 +91,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * @see ObjectStore#pilferObjectById
      */
-    public FlyMineBusinessObject pilferObjectById(Integer id) {
+    public InterMineObject pilferObjectById(Integer id) {
         return os.pilferObjectById(id);
     }
 
@@ -119,7 +119,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * @see ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
+    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
         return os.getObjectByExample(o, fieldNames);
     }

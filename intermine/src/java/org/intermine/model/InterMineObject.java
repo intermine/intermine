@@ -16,7 +16,7 @@ package org.intermine.model;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public interface FlyMineBusinessObject
+public interface InterMineObject
 {
     /**
      * Getter for the ID field - ensures that every object in the database has an ID.

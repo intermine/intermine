@@ -23,7 +23,7 @@ import java.util.Set;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -110,7 +110,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                     while (rowIter.hasNext()) {
                         Object o = ((ResultsRow) rowIter.next()).get(0);
                         bagMap.put(o, o);
-                        int id = ((FlyMineBusinessObject) o).getId().intValue();
+                        int id = ((InterMineObject) o).getId().intValue();
                         lowestId = (lowestId < id ? lowestId : id);
                         highestId = (highestId > id ? highestId : id);
                     }
@@ -215,9 +215,9 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
         Iterator lIter = l.iterator();
         while (lIter.hasNext()) {
             ResultsRow row = (ResultsRow) lIter.next();
-            FlyMineBusinessObject fromObj = (FlyMineBusinessObject)
+            InterMineObject fromObj = (InterMineObject)
                 bagMap.get(row.get(0));
-            FlyMineBusinessObject toObj = (FlyMineBusinessObject) row.get(1);
+            InterMineObject toObj = (InterMineObject) row.get(1);
             Collection fromCollection = (Collection) TypeUtil.getFieldValue(
                     fromObj, fieldName);
             fromCollection.add(toObj);

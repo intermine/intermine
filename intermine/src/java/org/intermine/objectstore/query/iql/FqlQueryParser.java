@@ -22,7 +22,7 @@ import java.util.Set;
 
 import antlr.collections.AST;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.*;
 
 /**
@@ -813,7 +813,7 @@ public class FqlQueryParser
                         // object.
                         if (subAST.getNextSibling().getType() == FqlTokenTypes.QUESTION_MARK) {
                             return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
-                                    (FlyMineBusinessObject) iterator.next());
+                                    (InterMineObject) iterator.next());
                         } else {
                             QueryNode qc = processNewQueryNode(subAST.getNextSibling(), q);
                             if (qc instanceof QueryClass) {
@@ -822,7 +822,7 @@ public class FqlQueryParser
                             } else {
                                 throw new IllegalArgumentException("Collection or object reference "
                                         + firstString + "." + secondString + " cannot contain "
-                                        + "anything but a QueryClass or FlyMineBusinessObject");
+                                        + "anything but a QueryClass or InterMineObject");
                             }
                         }
                     } else {
@@ -925,11 +925,11 @@ public class FqlQueryParser
                             if (op == ConstraintOp.EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
                                         ConstraintOp.EQUALS,
-                                        (FlyMineBusinessObject) iterator.next());
+                                        (InterMineObject) iterator.next());
                             } else if (op == ConstraintOp.NOT_EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
                                         ConstraintOp.NOT_EQUALS,
-                                        (FlyMineBusinessObject) iterator.next());
+                                        (InterMineObject) iterator.next());
                             } else {
                                 throw new IllegalArgumentException("Operation is not valid for "
                                                                    + "comparing a class to an "

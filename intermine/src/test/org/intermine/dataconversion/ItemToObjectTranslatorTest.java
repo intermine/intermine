@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Arrays;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Reference;
@@ -76,7 +76,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         expected.addToSelect(qc);
         
         Query original = new Query();
-        QueryClass qc2 = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc2 = new QueryClass(InterMineObject.class);
         original.addFrom(qc2);
         original.addToSelect(qc2);
         
@@ -93,7 +93,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         expected.setConstraint(sc);
         
         Query original = new Query();
-        QueryClass qc2 = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc2 = new QueryClass(InterMineObject.class);
         original.addFrom(qc2);
         original.addToSelect(qc2);
         QueryField qf2 = new QueryField(qc2, "id");
@@ -113,7 +113,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         expected.setConstraint(bc);
         
         Query original = new Query();
-        QueryClass qc2 = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc2 = new QueryClass(InterMineObject.class);
         original.addFrom(qc2);
         original.addToSelect(qc2);
         QueryField qf2 = new QueryField(qc2, "id");
@@ -162,7 +162,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         dbCol1.setItem(dbItem);
         dbItem.addCollections(dbCol1);
 
-        FlyMineBusinessObject result = translator.translateFromDbObject(dbItem);
+        InterMineObject result = translator.translateFromDbObject(dbItem);
         assertTrue(result instanceof Department);
         assertTrue(result instanceof Broke);
         
@@ -177,7 +177,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         Collection c = ((Department) result).getEmployees();
         assertTrue(c instanceof SingletonResults);
         Query expected = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         expected.addFrom(qc);
         expected.addToSelect(qc);
         QueryField qf = new QueryField(qc, "id");

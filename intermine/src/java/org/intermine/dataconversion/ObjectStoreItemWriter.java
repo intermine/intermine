@@ -13,7 +13,7 @@ package org.intermine.dataconversion;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -45,15 +45,15 @@ public class ObjectStoreItemWriter implements ItemWriter
      */
     public void store(Item item) throws ObjectStoreException {
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-            osw.store((FlyMineBusinessObject) i.next());
+            osw.store((InterMineObject) i.next());
             transactionCounter++;
         }
         for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-            osw.store((FlyMineBusinessObject) i.next());
+            osw.store((InterMineObject) i.next());
             transactionCounter++;
         }
         for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-            osw.store((FlyMineBusinessObject) i.next());
+            osw.store((InterMineObject) i.next());
             transactionCounter++;
         }
         osw.store(item);

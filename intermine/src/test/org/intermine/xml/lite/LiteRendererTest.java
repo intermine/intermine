@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.intermine.util.TypeUtil;
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.metadata.Model;
 
@@ -126,7 +126,7 @@ public class LiteRendererTest extends TestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<object class=\"org.intermine.model.testmodel.Types\" implements=\"org.intermine.model.FlyMineBusinessObject\">"
+        String expected = "<object class=\"org.intermine.model.testmodel.Types\" implements=\"org.intermine.model.InterMineObject\">"
             + "<field name=\"booleanObjType\" value=\"true\"/>"
             + "<field name=\"doubleType\" value=\"1.3\"/>"
             + "<field name=\"floatType\" value=\"1.2\"/>"

@@ -15,7 +15,7 @@ import junit.framework.*;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.metadata.Model;
@@ -39,7 +39,7 @@ public class QueryCreatorTest extends QueryTestCase
 
     public void testCreateQueryForId() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,

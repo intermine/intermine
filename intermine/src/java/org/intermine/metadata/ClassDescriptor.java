@@ -77,8 +77,8 @@ public class ClassDescriptor
 
         if (supers != null) {
             superNames.addAll(StringUtil.tokenize(supers));
-        } else if (!"org.intermine.model.FlyMineBusinessObject".equals(name)) {
-            superNames.add("org.intermine.model.FlyMineBusinessObject");
+        } else if (!"org.intermine.model.InterMineObject".equals(name)) {
+            superNames.add("org.intermine.model.InterMineObject");
         }
 
         this.isInterface = isInterface;
