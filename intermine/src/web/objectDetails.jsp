@@ -7,7 +7,7 @@
 
 <!-- objectDetails.jsp -->
 <c:set var="helpUrl" 
-       value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualDetailedresults.html"/>
+       value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
 
 <im:box helpUrl="${helpUrl}"
         titleKey="objectDetails.heading.details">
@@ -249,7 +249,7 @@ Summary for selected
 
 <c:if test="${showTemplatesFlag == 'true'}">
   <c:set var="helpUrl" 
-         value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualTemplatequeries.html"/>
+         value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualTemplatequeries.html"/>
   
   <im:box helpUrl="${helpUrl}"
           titleKey="objectDetails.heading.templates">

@@ -42,17 +42,9 @@
       <tiles:insert page="/contextHelp.jsp"/>
       
       <%-- Construct help page key --%>
-      <fmt:message key="${pageName}.help" var="help"/>
       <fmt:message key="${pageName}.help.link" var="helplink"/>
-      <c:if test="${!empty help}">
-        <c:choose>
-          <c:when test="${empty helplink}">
-            <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"/>
-          </c:when>
-          <c:otherwise>
-            <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}${helplink}"/>
-          </c:otherwise>
-        </c:choose>
+      <c:if test="${!empty helplink}">
+        <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}${helplink}"/>
       </c:if>
       <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
         <tiles:get name="body"/>
