@@ -175,8 +175,8 @@ public class FlyMineTorqueModelOutput extends ModelOutput
             .append("\">" + ENDL)
             .append(generateColumn(column1, "int"))
             .append(generateColumn(column2, "int"))
-            .append(generateIndex(table, column1))
-            .append(generateIndex(table, column2))
+            //.append(generateIndex(table, column1))
+            //.append(generateIndex(table, column2))
             .append(INDENT + "</table>" + ENDL);
         return sb.toString();
     }
