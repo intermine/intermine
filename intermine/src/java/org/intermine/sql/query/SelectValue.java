@@ -76,4 +76,13 @@ public class SelectValue implements SQLStringable
     public AbstractValue getValue() {
         return v;
     }
+
+    /**
+     * Gets the alias from this object.
+     *
+     * @return the alias of this object
+     */
+    public String getAlias() {
+        return alias;
+    }
 }

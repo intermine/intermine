@@ -190,5 +190,15 @@ public class Function extends AbstractValue
         }
         return state;
     }
+
+    /**
+     * Returns true if this function is an aggregate function.
+     *
+     * @return true if function is COUNT, MAX, MIN, SUM, or AVG
+     */
+    public boolean isAggregate() {
+        return (operation == COUNT) || (operation == MAX) || (operation == MIN)
+            || (operation == SUM) || (operation == AVG);
+    }
 }
 
