@@ -41,7 +41,7 @@ public class MainForm extends ActionForm
     protected String loopQueryOp, loopQueryValue;
 
     protected String path;
-
+    protected String nullConstraint;
     protected Object parsedAttributeValue;
 
     /**
@@ -188,6 +188,26 @@ public class MainForm extends ActionForm
         this.path = path;
     }
 
+    /**
+     * Get the null/not null constraint value. Returned value will be
+     * either "NULL" or "NotNULL".
+     *
+     * @return null/not null constraint value
+     */
+    public String getNullConstraint() {
+        return nullConstraint;
+    }
+    
+    /**
+     * Set the null/not null constraint. Parameter should be
+     * either "NULL" or "NotNULL".
+     *
+     * @param nullConstraint null/not null constraint
+     */
+    public void setNullConstraint(String nullConstraint) {
+        this.nullConstraint = nullConstraint;
+    }
+    
     /**
      * Gets the value of parsedAttributeValue
      *
@@ -337,5 +357,6 @@ public class MainForm extends ActionForm
         attributeValue = null;
         subclassValue = null;
         path = null;
+        nullConstraint = "NULL";
     }
 }

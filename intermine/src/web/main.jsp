@@ -255,14 +255,14 @@
         <div class="body">
           <c:choose>
             <c:when test="${empty editingNode.fieldName}">
-        <span class="type">
-              <c:out value="${editingNode.path}"/>
-        </span>
+              <span class="type">
+                <c:out value="${editingNode.path}"/>
+              </span>
             </c:when>
             <c:otherwise>
-        <span class="attributeField">
-              <c:out value="${editingNode.fieldName}"/>
-        </span>
+              <span class="attributeField">
+                <c:out value="${editingNode.fieldName}"/>
+              </span>
             </c:otherwise>
           </c:choose>
           <c:choose>
@@ -358,7 +358,7 @@
                           <%-- might want to show up arrow --%>
                           <c:if test="${!empty attributeOptions}">
                             <im:vspacer height="5"/><br/>
-                            <img src="images/up-arrow.gif" alt="^^^" border="0"/><br/>
+                            <img src="images/up-arrow.gif" alt="^^^" border="0" height="13" width="13"/><br/>
                             <im:vspacer height="5"/><br/>
                           </c:if>
                         </span>
@@ -441,6 +441,16 @@
               </html:select>
               <html:submit property="bag">
                 <fmt:message key="query.submitConstraint"/>
+              </html:submit>
+            </p>
+          </c:if>
+          <c:if test="${!editingNode.collection}">
+            <p style="text-align: left;">
+              <html:radio property="nullConstraint" value="NULL"/><fmt:message key="query.constraint.null"/>
+              <html:radio property="nullConstraint" value="NotNULL"/><fmt:message key="query.constraint.notnull"/>
+              &nbsp;
+              <html:submit property="nullnotnull">
+                 <fmt:message key="query.submitConstraint"/>
               </html:submit>
             </p>
           </c:if>
