@@ -354,11 +354,21 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Set the cutoff value used to decide if a bag should be put in a table.
+     *
      * @param minBagTableSize don't use a table to represent bags if the bag is smaller than this
      * value
      */
     public void setMinBagTableSize(int minBagTableSize) {
         this.minBagTableSize = minBagTableSize;
+    }
+
+    /**
+     * Returns the cutoff value used to decide if a bag should be put in a table.
+     *
+     * @return an int
+     */
+    public int getMinBagTableSize() {
+        return minBagTableSize;
     }
 
     /**
@@ -707,7 +717,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
         Map bagTableNames = new CacheMap();
 
-        if (minBagTableSize != -1) {
+        if (getMinBagTableSize() != -1) {
             if (queryBagTables.get(q) == null) {
                 createTempBagTables(c, q, bagTableNames, minBagTableSize);
 
