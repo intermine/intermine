@@ -146,7 +146,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl implements Object
     /**
      * @see ObjectStore#execute
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
         throws ObjectStoreException {
         checkStartLimit(start, limit);
 
@@ -177,7 +177,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl implements Object
     /**
      * @see ObjectStore#count
      */
-    public int count(Query q) throws ObjectStoreException {
+    public int count(Query q, int sequence) throws ObjectStoreException {
         return ((Integer) remoteMethod("count", new Object [] {getQueryId(q)})).intValue();
     }
 
@@ -205,5 +205,19 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl implements Object
                          (Integer) remoteMethod("registerQuery", new Object[] {fq}));
         }
         return (Integer) queryIds.get(q);
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return true;
+    }
+
+    /**
+     * @see ObjectStore#getSequence
+     */
+    public int getSequence() {
+        return 0;
     }
 }

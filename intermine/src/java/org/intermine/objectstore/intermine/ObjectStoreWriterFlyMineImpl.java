@@ -181,7 +181,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         try {
             // Make sure this object has an ID
             if (o.getId() == null) {
-                o.setId(getSequence());
+                o.setId(getSerial());
             }
 
             // Make sure all objects pointed to have IDs
@@ -194,7 +194,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                     FlyMineBusinessObject obj = (FlyMineBusinessObject) TypeUtil.getFieldValue(o,
                             fieldInfo.getName());
                     if ((obj != null) && (obj.getId() == null)) {
-                        obj.setId(getSequence());
+                        obj.setId(getSerial());
                     }
                 } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
                     Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
@@ -202,7 +202,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                     while (collIter.hasNext()) {
                         FlyMineBusinessObject obj = (FlyMineBusinessObject) collIter.next();
                         if (obj.getId() == null) {
-                            obj.setId(getSequence());
+                            obj.setId(getSerial());
                         }
                     }
                 }
@@ -318,7 +318,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * @return an Integer
      * @throws SQLException if a problem occurs
      */
-    public Integer getSequence() throws SQLException {
+    public Integer getSerial() throws SQLException {
         Connection c = null;
         try {
             if (sequenceOffset >= SEQUENCE_MULTIPLE) {
@@ -448,7 +448,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             }
             c.commit();
             c.setAutoCommit(true);
-            os.flushObjectById(this);
+            os.flushObjectById();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error committing transaction", e);
         } finally {
@@ -469,8 +469,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             }
             c.rollback();
             c.setAutoCommit(true);
-            os.flushObjectById(this);
-            flushObjectById();
+            os.flushObjectById();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error aborting transaction", e);
         } finally {
@@ -483,10 +482,10 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      *
      * This method is overridden in order to flush batches properly before the read.
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
         throws ObjectStoreException {
         flushBatch();
-        return super.execute(q, start, limit, optimise);
+        return super.execute(q, start, limit, optimise, sequence);
     }
     
     /**
@@ -494,9 +493,9 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * 
      * This method is overridden in order to flush batches properly before the read.
      */
-    public int count(Query q) throws ObjectStoreException {
+    public int count(Query q, int sequence) throws ObjectStoreException {
         flushBatch();
-        return super.count(q);
+        return super.count(q, sequence);
     }
 
     /**
@@ -547,5 +546,12 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     private synchronized void outputLog() {
         LOG.error(getModel().getName() + ": Performed " + logOps + " write statements so far in "
                 + logBatch + " batches. Average batch size: " + (logOps / logBatch));
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return false;
     }
 }

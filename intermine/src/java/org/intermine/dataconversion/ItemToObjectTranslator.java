@@ -164,7 +164,8 @@ public class ItemToObjectTranslator extends Translator
                 q.addToSelect(qc);
                 q.addFrom(qc);
                 q.setConstraint(bc);
-                TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os));
+                TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os,
+                            os.getSequence()));
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);

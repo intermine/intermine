@@ -48,7 +48,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
 
         os.addRow(row);
         os.setResultsSize(1);
-        List rows = os.execute(new Query(), 0, 1, true);
+        List rows = os.execute(new Query(), 0, 1, true, 0);
 
         assertEquals(1, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
@@ -64,7 +64,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         q.addToSelect(new QueryClass(Department.class));
 
         os.setResultsSize(1);
-        List rows = os.execute(q, 0, 1, true);
+        List rows = os.execute(q, 0, 1, true, 0);
 
         assertEquals(1, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
@@ -87,7 +87,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
 
         os.addRow(row);
         os.setResultsSize(2);
-        List rows = os.execute(q, 0, 2, true);
+        List rows = os.execute(q, 0, 2, true, 0);
 
         assertEquals(2, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
@@ -117,19 +117,19 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         Results res = os.execute(q);
 
         // Get the first 8 rows in a batch
-        List rows = os.execute(q, 0, 8, true);
+        List rows = os.execute(q, 0, 8, true, 0);
         assertEquals(8, rows.size());
 
         // Try and get the next 7
-        rows = os.execute(q, 8, 7, true);
+        rows = os.execute(q, 8, 7, true, 0);
         assertEquals(2, rows.size());
 
         // Try and get rows 10 to 19
-        rows = os.execute(q, 10, 10, true);
+        rows = os.execute(q, 10, 10, true, 0);
         assertEquals(0, rows.size());
 
         // Stupidly try and get beyond the end
-        rows = os.execute(q, 15, 10, true);
+        rows = os.execute(q, 15, 10, true, 0);
         assertEquals(0, rows.size());
     }
 
@@ -139,9 +139,9 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         Query q = new Query();
         os.setResultsSize(10);
         Results res = os.execute(q);
-        os.execute(q, 1, 3, true);
+        os.execute(q, 1, 3, true, 0);
         assertEquals(1, os.getExecuteCalls());
-        os.execute(q, 5, 2, true);
+        os.execute(q, 5, 2, true, 0);
         assertEquals(2, os.getExecuteCalls());
     }
 
@@ -150,26 +150,26 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         Query q = new Query();
         os.setResultsSize(10);
         os.setPoisonRowNo(7);
-        os.execute(q, 0, 5, true);
-        os.execute(q, 8, 2, true);
-        os.execute(q, 4, 3, true);
+        os.execute(q, 0, 5, true, 0);
+        os.execute(q, 8, 2, true, 0);
+        os.execute(q, 4, 3, true, 0);
         try {
-            os.execute(q, 0, 10, true);
+            os.execute(q, 0, 10, true, 0);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
         try {
-            os.execute(q, 7, 3, true);
+            os.execute(q, 7, 3, true, 0);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
         try {
-            os.execute(q, 7, 1, true);
+            os.execute(q, 7, 1, true, 0);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
         try {
-            os.execute(q, 0, 8, true);
+            os.execute(q, 0, 8, true, 0);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
@@ -179,6 +179,6 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(12);
         Query q = new Query();
-        assertEquals(os.count(q), 12);
+        assertEquals(os.count(q, 0), 12);
     }
 }

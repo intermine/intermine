@@ -45,7 +45,7 @@ public class ResultsTest extends TestCase
 
     public void testConstructNullQuery() throws Exception {
         try {
-            Results res = new Results(null, new ObjectStoreDummyImpl());
+            Results res = new Results(null, new ObjectStoreDummyImpl(), 0);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -54,7 +54,7 @@ public class ResultsTest extends TestCase
 
     public void testConstructNullObjectStore() throws Exception {
         try {
-            Results res = new Results(new Query(), null);
+            Results res = new Results(new Query(), null, 0);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {

@@ -29,10 +29,12 @@ public class SingletonResults extends Results implements Set
      *
      * @param q the Query that produces this Results
      * @param os the ObjectStore that can be used to get results rows from
+     * @param sequence a number representing the state of the ObjectStore, which should be quoted
+     * back to the ObjectStore when requests are made
      * @throws IllegalArgumentException if q does not return a single column of type QueryClass
      */
-     public SingletonResults(Query q, ObjectStore os) {
-         super(q, os);
+     public SingletonResults(Query q, ObjectStore os, int sequence) {
+         super(q, os, sequence);
 
          // Test that this Query returns a single column of type QueryClass
          if (q.getSelect().size() != 1) {

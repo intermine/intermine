@@ -139,19 +139,12 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
     }
 
     /**
-     * Executes a Query on this ObjectStore, asking for a certain range of rows to be returned.
-     * This will usually only be called by the Resutls object returned from execute().
-     *
-     * @param q the Query to execute
-     * @param start the first row to return, numbered from zero
-     * @param limit the maximum number of rows to return
-     * @param optimise true if the query should be optimised
-     * @return a List of ResultRows
-     * @throws ObjectStoreException if an error occurs during the running of the Query
+     * @see ObjectStore#execute(Query, int, int, boolean, int)
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
         throws ObjectStoreException {
         checkStartLimit(start, limit);
+        checkSequence(sequence);
 
         String sql = SqlGenerator.generate(q, start, limit, model);
         Connection c = null;
@@ -209,13 +202,11 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
     }
 
     /**
-     * Runs a COUNT(*) for the given query, returning the number of rows the query will produce.
-     *
-     * @param q the Query to explain
-     * @return the number of rows to be produced by the query
-     * @throws ObjectStoreException if an error occurs counting the query
+     * @see ObjectStore#count
      */
-    public int count(Query q) throws ObjectStoreException {
+    public int count(Query q, int sequence) throws ObjectStoreException {
+        checkSequence(sequence);
+
         String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
         Connection c = null;
         try {
@@ -239,20 +230,11 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @see ObjectStoreAbstractImpl#flushObjectById
      */
     public void flushObjectById() {
-        flushObjectById((ObjectStoreWriter) null);
-    }
-
-    /**
-     * Does flushObjectById on itself and all ObjectStoreWriters attached to itself.
-     *
-     * @param except an ObjectStoreWriter to not call flush on
-     */
-    public void flushObjectById(ObjectStoreWriter except) {
         super.flushObjectById();
         Iterator writerIter = writers.iterator();
         while (writerIter.hasNext()) {
             ObjectStoreWriter writer = (ObjectStoreWriter) writerIter.next();
-            if ((writer != this) && (writer != except)) {
+            if (writer != this) {
                 writer.flushObjectById();
             }
         }
@@ -298,5 +280,12 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
         } finally {
             releaseConnection(c);
         }
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return true;
     }
 }

@@ -41,6 +41,12 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         return buildSuite(ObjectStoreTranslatingImplTest.class);
     }
     
+    public void testLimitTooHigh() throws Exception {
+    }
+
+    public void testOffsetTooHigh() throws Exception {
+    }
+
     public void testGetObjectByExampleNull() throws Exception {
         try {
             super.testGetObjectByExampleNull();

@@ -81,7 +81,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public Results execute(Query q) throws ObjectStoreException {
-        Results res = new Results(q, this);
+        Results res = new Results(q, this, 0);
         return res;
     }
 
@@ -97,7 +97,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @return a list of ResultsRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
         throws ObjectStoreException {
         checkStartLimit(start, limit);
         if (executeTime > maxTime) {
@@ -237,7 +237,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @return the number of rows to be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q) throws ObjectStoreException {
+    public int count(Query q, int sequence) throws ObjectStoreException {
         return this.resultsSize;
     }
 
@@ -253,5 +253,19 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      */
     public Model getModel() {
         return this.model;
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return true;
+    }
+
+    /**
+     * @see ObjectStore#getSequence
+     */
+    public int getSequence() {
+        return 0;
     }
 }

@@ -51,9 +51,9 @@ public class ObjectStoreSafeImpl implements ObjectStore
     /**
      * @see ObjectStore#execute(Query, int, int, boolean)
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
             throws ObjectStoreException {
-        return os.execute(QueryCloner.cloneQuery(q), start, limit, optimise);
+        return os.execute(QueryCloner.cloneQuery(q), start, limit, optimise, sequence);
     }
 
     /**
@@ -108,8 +108,8 @@ public class ObjectStoreSafeImpl implements ObjectStore
     /**
      * @see ObjectStore#count
      */
-    public int count(Query q) throws ObjectStoreException {
-        return os.count(QueryCloner.cloneQuery(q));
+    public int count(Query q, int sequence) throws ObjectStoreException {
+        return os.count(QueryCloner.cloneQuery(q), sequence);
     }
 
     /**
@@ -125,5 +125,19 @@ public class ObjectStoreSafeImpl implements ObjectStore
     public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
             throws ObjectStoreException {
         return os.getObjectByExample(o, fieldNames);
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return os.isMultiConnection();
+    }
+
+    /**
+     * @see ObjectStore#getSequence
+     */
+    public int getSequence() {
+        return os.getSequence();
     }
 }

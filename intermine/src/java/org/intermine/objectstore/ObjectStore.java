@@ -44,10 +44,14 @@ public interface ObjectStore
      * @param start the start row
      * @param limit the maximum number of rows to return
      * @param optimise true if it is expected that optimising the query will improve performance
+     * @param sequence a number representing the state of the database corresponding to when the
+     * action that resulted in this execute was started. This number must match the ObjectStore's
+     * internal sequence number or a DataChangedException is thrown. The sequence number is
+     * incremented each time the data in the objectstore is changed
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
         throws ObjectStoreException;
 
     /**
@@ -128,10 +132,14 @@ public interface ObjectStore
      * Counts the number of rows the query will produce
      *
      * @param q Flymine Query on which to count rows
+     * @param sequence a number representing the state of the database corresponding to when the
+     * action that resulted in this execute was started. This number must match the ObjectStore's
+     * internal sequence number or a DataChangedException is thrown. The sequence number is
+     * incremented each time the data in the objectstore is changed
      * @return the number of rows that will be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q) throws ObjectStoreException;
+    public int count(Query q, int sequence) throws ObjectStoreException;
 
     /**
      * Return the metadata associated with this ObjectStore
@@ -153,4 +161,22 @@ public interface ObjectStore
      */
     public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
         throws ObjectStoreException;
+
+    /**
+     * Return whether or not this ObjectStore gives a performance improvement when multiple
+     * simultaneous are made. Note that ALL Objectstore must be multi-threading safe. If this
+     * method returns true, then the ObjectStore probably handles multiple connections to the
+     * database. The Results class uses this to work out whether or not to do prefetching.
+     *
+     * @return true if one should do multiple simultaneous operations
+     */
+    public boolean isMultiConnection();
+
+    /**
+     * Return the sequence number representing the state of the ObjectStore. This number is
+     * incremented each time the data in the ObjectStore is changed.
+     *
+     * @return an integer
+     */
+    public int getSequence();
 }

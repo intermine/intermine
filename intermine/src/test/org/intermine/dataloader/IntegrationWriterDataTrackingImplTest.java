@@ -39,10 +39,13 @@ import org.flymine.testing.OneTimeTestCase;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 
+import org.apache.log4j.Logger;
+
 public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
 {
     protected static ObjectStore os;
     protected static IntegrationWriterDataTrackingImpl iw;
+    protected static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImplTest.class);
 
     public IntegrationWriterDataTrackingImplTest(String arg) {
         super(arg);
@@ -55,11 +58,16 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
     public void setUp() throws Exception {
         super.setUp();
         strictTestQueries = false;
+        if (iw.isInTransaction()) {
+            iw.abortTransaction();
+        }
         storeData();
+        iw.beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
+        iw.commitTransaction();
         removeDataFromTracker();
         removeDataFromStore();
     }
@@ -84,17 +92,18 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
         s.execute("vacuum analyze");
         ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
 
-        Source source = new Source();
-        source.setName("storedata");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("storedata");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
         try {
             iw.beginTransaction();
-            iw.getDataTracker().beginTransaction();
+
+            Source source = new Source();
+            source.setName("storedata");
+            source.setSkeleton(false);
+            iw.getDataTracker().store(source);
+            Source skelSource = new Source();
+            skelSource.setName("storedata");
+            skelSource.setSkeleton(true);
+            iw.getDataTracker().store(skelSource);
+
             //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
@@ -103,11 +112,10 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
                 iw.store(o, source, skelSource);
             }
             //DataTracking.releasePrecached(iw.getDataTracker());
+            
             iw.commitTransaction();
-            iw.getDataTracker().commitTransaction();
         } catch (Exception e) {
             iw.abortTransaction();
-            iw.getDataTracker().abortTransaction();
             throw new Exception(e);
         }
 
@@ -131,10 +139,12 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
             QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, dataTracker);
+            Set dataToRemove = new SingletonResults(q, dataTracker, dataTracker.getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
-                dataTracker.delete((FlyMineBusinessObject) iter.next());
+                FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
+                System.out.println("Deleting " + toDelete);
+                dataTracker.delete(toDelete);
             }
             dataTracker.commitTransaction();
         } catch (Exception e) {

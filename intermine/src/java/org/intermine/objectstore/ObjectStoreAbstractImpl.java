@@ -43,6 +43,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int getObjectOps = 0;
     protected int getObjectHits = 0;
     protected int getObjectPrefetches = 0;
+    protected int sequence;
 
     /**
      * No-arg constructor for testing purposes
@@ -61,6 +62,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         maxLimit = Integer.parseInt((String) props.get("max-limit"));
         maxOffset = Integer.parseInt((String) props.get("max-offset"));
         maxTime = Long.parseLong((String) props.get("max-time"));
+        java.util.Random rand = new java.util.Random();
+        sequence = rand.nextInt();
+        LOG.error("Creating new " + getClass().getName() + " with sequence = " + sequence);
     }
 
     /**
@@ -71,7 +75,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public Results execute(Query q) throws ObjectStoreException {
-        return new Results(q, this);
+        return new Results(q, this, getSequence());
     }
 
     /**
@@ -150,6 +154,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void invalidateObjectById(Integer id) {
         synchronized (cache) {
             cache.remove(id);
+            //sequence++;
         }
     }
 
@@ -169,6 +174,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void flushObjectById() {
         synchronized (cache) {
             cache.clear();
+            //sequence++;
         }
     }
 
@@ -230,6 +236,28 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             return j;
         }
         return null;
+    }
+
+    /**
+     * Checks a number against the sequence number, and throws an exception if they do not match.
+     *
+     * @param sequence an integer
+     * @throws DataChangedException if the sequence numbers do not match
+     */
+    public void checkSequence(int sequence) throws DataChangedException {
+        if (sequence != getSequence()) {
+            throw new DataChangedException("Sequence numbers do not match - was given " + sequence
+                    + " but needed " + getSequence());
+        }
+    }
+
+    /**
+     * Returns the current sequence number.
+     *
+     * @return an integer
+     */
+    public int getSequence() {
+        return sequence;
     }
 }
 

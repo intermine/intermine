@@ -37,6 +37,7 @@ public class Results extends AbstractList
 {
     protected Query query;
     protected ObjectStore os;
+    protected int sequence;
     protected boolean optimise = true;
 
     protected int minSize = 0;
@@ -76,8 +77,10 @@ public class Results extends AbstractList
      *
      * @param query the Query that produces this Results
      * @param os the ObjectStore that can be used to get results rows from
+     * @param sequence a number representing the state of the ObjectStore, which should be quoted
+     * back to the ObjectStore when requests are made
      */
-     public Results(Query query, ObjectStore os) {
+     public Results(Query query, ObjectStore os, int sequence) {
          if (query == null) {
              throw new NullPointerException("query must not be null");
          }
@@ -88,6 +91,7 @@ public class Results extends AbstractList
 
          this.query = query;
          this.os = os;
+         this.sequence = sequence;
      }
 
     /**
@@ -141,9 +145,11 @@ public class Results extends AbstractList
             //LOG.debug("This access not sequential                            Result "
             //        + query.hashCode() + "         access " + start + " - " + end);
         }
-        if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD
-            && getBatchNoForRow(maxSize) > endBatch
-            && !batches.containsKey(new Integer(endBatch + 1))) {
+        if ((os != null)
+                && os.isMultiConnection()
+                && (sequential > PREFETCH_SEQUENTIAL_THRESHOLD)
+                && (getBatchNoForRow(maxSize) > endBatch)
+                && !batches.containsKey(new Integer(endBatch + 1))) {
             PrefetchManager.addRequest(this, endBatch + 1);
         }
         lastGet = end;
@@ -225,7 +231,7 @@ public class Results extends AbstractList
 
         List rows = null;
         try {
-            rows = os.execute(query, start, limit, optimise);
+            rows = os.execute(query, start, limit, optimise, sequence);
 
             synchronized (this) {
                 // Now deal with a partial batch, so we can update the maximum size
@@ -306,7 +312,7 @@ public class Results extends AbstractList
         } else if (minSize * 2 + batchSize < maxSize) {
             // Do a count, because it will probably be a little faster.
             try {
-                maxSize = os.count(query);
+                maxSize = os.count(query, sequence);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("ObjectStore error has occured (in size)", e);
             }

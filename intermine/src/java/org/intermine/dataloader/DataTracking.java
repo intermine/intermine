@@ -98,7 +98,7 @@ public class DataTracking
                 q.addFrom(qc1);
                 q.addToSelect(qc1);
 
-                SingletonResults res = new SingletonResults(q, os);
+                SingletonResults res = new SingletonResults(q, os, os.getSequence());
                 Iterator resIter = res.iterator();
                 while (resIter.hasNext()) {
                     Field fieldObj = (Field) resIter.next();
@@ -251,7 +251,7 @@ public class DataTracking
                 q.addFrom(qc1);
                 q.addToSelect(qc1);
 
-                SingletonResults res = new SingletonResults(q, os);
+                SingletonResults res = new SingletonResults(q, os, os.getSequence());
                 Iterator resIter = res.iterator();
                 while (resIter.hasNext()) {
                     Field fieldObj = (Field) resIter.next();

@@ -49,7 +49,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        List objects = new SingletonResults(q, os);
+        List objects = new SingletonResults(q, os, os.getSequence());
 
         assertEquals(items, FullRenderer.toItems(objects, model));
     }

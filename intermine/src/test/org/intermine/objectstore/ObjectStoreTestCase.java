@@ -352,21 +352,21 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void testCountNoGroupByNotDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(false);
-        int count = os.count(q);
+        int count = os.count(q, os.getSequence());
         assertEquals(8, count);
     }
 
     public void testCountNoGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(true);
-        int count = os.count(q);
+        int count = os.count(q, os.getSequence());
         assertEquals(4, os.execute(q).size());
     }
 
    public void testCountGroupByNotDistinct() throws Exception {
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(false);
-        int count = os.count(q);
+        int count = os.count(q, os.getSequence());
         assertEquals(2, count);
     }
 
@@ -374,7 +374,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     // distinct doesn't actually do anything to group by reuslt
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(true);
-        int count = os.count(q);
+        int count = os.count(q, os.getSequence());
         assertEquals(2, count);
     }
 

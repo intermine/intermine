@@ -76,7 +76,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
         }
-        return new SingletonResults(q, this);
+        return new SingletonResults(q, this, getSequence());
     }
 
     /**
@@ -323,9 +323,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.flymine.objectstore.ObjectStore#execute
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
             throws ObjectStoreException {
-        return osw.execute(q, start, limit, optimise);
+        return osw.execute(q, start, limit, optimise, sequence);
     }
 
     /**
@@ -373,8 +373,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.flymine.objectstore.ObjectStore#count
      */
-    public int count(Query q) throws ObjectStoreException {
-        return osw.count(q);
+    public int count(Query q, int sequence) throws ObjectStoreException {
+        return osw.count(q, sequence);
     }
 
     /**
@@ -397,5 +397,19 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void close() {
         osw.close();
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return osw.isMultiConnection();
+    }
+
+    /**
+     * @see ObjectStore#getSequence
+     */
+    public int getSequence() {
+        return osw.getSequence();
     }
 }

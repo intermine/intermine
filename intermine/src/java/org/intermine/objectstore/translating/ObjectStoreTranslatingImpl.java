@@ -50,21 +50,11 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStore#execute(Query, int, int, boolean)
      */
-    public List execute(Query q, int start, int limit, boolean optimise)
+    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
     throws ObjectStoreException {
-        checkStartLimit(start, limit);
-        
-        ResultsInfo estimate = estimate(q);
-        if (estimate.getComplete() > maxTime) {
-            throw new ObjectStoreException("Estimated time to run query ("
-                                           + estimate.getComplete()
-                                           + ") greater than permitted maximum ("
-                                           + maxTime + ")");
-        }
-        
         Query q2 = translator.translateQuery(q);
         List results = new ArrayList();
-        Iterator resIter = os.execute(q2, start, limit, optimise).iterator();
+        Iterator resIter = os.execute(q2, start, limit, optimise, sequence).iterator();
         while (resIter.hasNext()) {
             ResultsRow row = new ResultsRow();
             Iterator rowIter = ((ResultsRow) resIter.next()).iterator();
@@ -95,8 +85,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStore#count
      */
-    public int count(Query q) throws ObjectStoreException {
-        return os.count(translator.translateQuery(q));
+    public int count(Query q, int sequence) throws ObjectStoreException {
+        return os.count(translator.translateQuery(q), sequence);
     }
     
     /**
@@ -106,5 +96,19 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         throws ObjectStoreException {
         throw new UnsupportedOperationException("getObjectByExample not supported by"
         + "ObjectStoreTranslatingImpl");
+    }
+
+    /**
+     * @see ObjectStore#isMultiConnection
+     */
+    public boolean isMultiConnection() {
+        return os.isMultiConnection();
+    }
+
+    /**
+     * @see ObjectStore#getSequence
+     */
+    public int getSequence() {
+        return os.getSequence();
     }
 }

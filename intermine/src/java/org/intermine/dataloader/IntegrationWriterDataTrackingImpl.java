@@ -194,5 +194,29 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 
         return newObj;
     }
+
+    /**
+     * @see IntegrationWriterAbstractImpl#beginTransaction
+     */
+    public void beginTransaction() throws ObjectStoreException {
+        osw.beginTransaction();
+        dataTracker.beginTransaction();
+    }
+
+    /**
+     * @see IntegrationWriterAbstractImpl#commitTransaction
+     */
+    public void commitTransaction() throws ObjectStoreException {
+        osw.commitTransaction();
+        dataTracker.commitTransaction();
+    }
+
+    /**
+     * @see IntegrationWriterAbstractImpl#abortTransaction
+     */
+    public void abortTransaction() throws ObjectStoreException {
+        osw.abortTransaction();
+        dataTracker.abortTransaction();
+    }
 }
 
