@@ -24,7 +24,7 @@ public class DataTrackingTest extends TestCase {
     protected Source source1, source2;
     
     public void setUp() throws Exception {
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.datatrackingtest");
         source1 = new Source();
         source1.setName("Source1");
         osw.store(source1);
