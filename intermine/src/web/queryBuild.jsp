@@ -28,37 +28,49 @@
     
     <c:choose>
       <c:when test="${alias == editingAlias}">
-        
-        <c:forEach items="${queryClass.constraintNames}" var="constraintName">
-          <c:out value="${queryClass.fieldNames[constraintName]}"/>
-          <html:select property="fieldOps(${constraintName})">
-            <c:forEach items="${validOps[queryClass.fieldNames[constraintName]]}" var="validOp">
-              <html:option value="${validOp.key}"><c:out value="${validOp.value}"/></html:option>
+
+        <c:choose>
+
+          <c:when test="${allFieldNames != null}">
+            <c:forEach items="${queryClass.constraintNames}" var="constraintName">
+              <c:out value="${queryClass.fieldNames[constraintName]}"/>
+              <html:select property="fieldOps(${constraintName})">
+                <c:forEach items="${validOps[queryClass.fieldNames[constraintName]]}" var="validOp">
+                  <html:option value="${validOp.key}">
+                    <c:out value="${validOp.value}"/>
+                  </html:option>
+                </c:forEach>
+              </html:select> 
+              <html:text property="fieldValues(${constraintName})"/>
+              <c:if test="${constraintErrors != null}">
+                <c:if test="${null != constraintErrors[constraintName]}">
+                  <c:out value="${constraintErrors[constraintName]}"/>
+                </c:if>
+              </c:if>
+              <br/>
             </c:forEach>
-          </html:select> 
-          <html:text property="fieldValues(${constraintName})"/>
-          <c:if test="${constraintErrors != null}">
-            <c:if test="${null != constraintErrors[constraintName]}">
-              <c:out value="${constraintErrors[constraintName]}"/>
-            </c:if>
-          </c:if>
-          <br/>
-        </c:forEach>
-        
-        <fmt:message key="query.addconstraint"/>
-        <html:select property="newFieldName">
-          <c:forEach items="${allFieldNames}" var="fieldName">
-            <html:option value="${fieldName}"><c:out value="${fieldName}"/></html:option>
-          </c:forEach>
-        </html:select>
-        <html:submit property="action"><fmt:message key="button.add"/></html:submit>
+            <fmt:message key="query.addconstraint"/>
+            <html:select property="newFieldName">
+              <c:forEach items="${allFieldNames}" var="fieldName">
+                <html:option value="${fieldName}"><c:out value="${fieldName}"/></html:option>
+              </c:forEach>
+            </html:select>
+            <html:submit property="action"><fmt:message key="button.add"/></html:submit>
+            <br/>
+          </c:when>
+
+          <c:otherwise>
+            <fmt:message key="query.nofield"/>
+          </c:otherwise>
+        </c:choose>
         <br/>
         <html:submit property="action"><fmt:message key="button.update"/></html:submit>
-        
+      
       </c:when>
       <c:otherwise>
-        
-        <c:forEach items="${queryClass.constraintNames}" var="constraintName" varStatus="constraintStatus">
+  
+        <c:forEach items="${queryClass.constraintNames}" var="constraintName" 
+                   varStatus="constraintStatus">
           <font class="queryViewConstraintLeft">
             <c:out value="${queryClass.fieldNames[constraintName]}"/>
           </font>
@@ -68,7 +80,7 @@
           <font class="queryViewConstraintRight">
             <c:out value="${queryClass.fieldValues[constraintName]}"/>
           </font>
-          <br/>
+            <br/>
         </c:forEach>
         
       </c:otherwise>
