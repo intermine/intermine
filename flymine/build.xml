@@ -579,6 +579,23 @@
     </java>
   </target>
  
+  <!-- merge additional shortcut fields with genomic model -->
+  <target name="merge-shortcuts" depends="prepare-genomic-model">
+    <copy file="${model}/genomic/shortcuts.n3" todir="${build.model}/genomic/"/>
+
+    <!-- combine additional shortcut reference/collection definitions -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/genomic/shortcuts.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+  </target>
+
 
   <!-- PHENOTYPE MODEL GENERATION -->
   <target name="merge-phenotype-model" depends="prepare-genomic-model">
@@ -596,7 +613,7 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-       merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
+       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
        merge-phenotype-model, merge-go-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>

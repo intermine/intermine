@@ -1,0 +1,65 @@
+# Base: 
+@prefix :        <http://www.flymine.org/model/genomic#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+:Chromosome a owl:Class.
+
+:Chromosome__transcripts a owl:ObjectProperty;
+    rdfs:domain :Chromosome;
+    rdfs:range :Transcript.
+
+:Chromosome__genes a owl:ObjectProperty;
+    rdfs:domain :Chromosome;
+    rdfs:range :Gene.
+
+:Chromosome__exons a owl:ObjectProperty;
+    rdfs:domain :Chromosome;
+    rdfs:range :Exon.
+
+:Transcript a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Transcript__chromosome ] .
+
+:Transcript__chromosome a owl:ObjectProperty;
+    owl:inverseOf :Chromosome__transcripts .
+
+
+:Exon a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Exon__chromosome ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Exon__gene ] .
+
+:Exon__chromosome a owl:ObjectProperty;
+    owl:inverseOf :Chromosome__exons.
+
+:Exon__gene a owl:ObjectProperty;
+    rdfs:domain :Exon;
+    rdfs:range :Gene.
+
+
+:Gene a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Gene__chromosome ] .
+
+:Gene__chromosome a owl:ObjectProperty;
+    owl:inverseOf :Chromosome__genes.
+
+:Gene__exons a owl:ObjectProperty;
+    owl:inverseOf :Exon__gene.
+
+
+
+
+
