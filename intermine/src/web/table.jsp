@@ -177,4 +177,8 @@
     <br/>
   </c:if>
 </html:form>
+
+<html:link action="/export">
+  <fmt:message key="results.export"/>
+</html:link>
 <!-- /table.jsp -->
