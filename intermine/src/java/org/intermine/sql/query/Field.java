@@ -8,15 +8,16 @@ package org.flymine.sql.query;
 public class Field extends AbstractValue
 {
     protected String name;
-    protected Table table;
+    protected AbstractTable table;
 
     /**
      * Constructor for this Field object.
      *
      * @param name the name of the field, as the database knows it
-     * @param table the name of the table to which the field belongs, as the database knows it
+     * @param table the name of the AbstractTable to which the field belongs, as the database
+     * knows it
      */
-    public Field(String name, Table table) {
+    public Field(String name, AbstractTable table) {
         if (name == null) {
             throw (new NullPointerException("Field names cannot be null"));
         }
@@ -34,8 +35,7 @@ public class Field extends AbstractValue
      * @return the String representation
      */
     public String getSQLString() {
-        String tableName = (table.getAlias() != null) ? table.getAlias() : table.getName();
-        return tableName + "." + name;
+        return table.getAlias() + "." + name;
     }
 
     /**
@@ -56,7 +56,7 @@ public class Field extends AbstractValue
     /**
      * Overrides Object.hashcode().
      *
-     * @return an arbitrary integer based on the name of the Table
+     * @return an arbitrary integer based on the contents of the Field
      */
     public int hashCode() {
         return name.hashCode() + table.hashCode();
