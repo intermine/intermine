@@ -50,7 +50,7 @@
     <para>
       For collection references:
       <programlisting>
-        -> MultiObjectRsIterator.next()
+        MultiObjectRsIterator.next()
         -> RsIterator.getObjectFromResultSet()
         -> PersistenceBroker.retrieveCollections()
         -> PersistenceBrokerFlyMine.retrieveCollection()
