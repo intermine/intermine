@@ -1,11 +1,14 @@
 package org.flymine.objectstore.query;
 
 /**
- * Constrain whether a QueryClass is equal to another QueryClass.  Effectively a
- * primary key comparison between objects in two constrained sets.  ????????/
+ * Constrain whether a QueryClass is equal/not equal to another
+ * QueryClass or an example of an object belonging to a
+ * QueryClass. Note: QueryClass = QueryClass makes no sense, but is
+ * allowed.
  *
  * @author Richard Smith
  * @author Mark Woodbridge
+ * @author Andrew Varley
  */
 
 public class ClassConstraint implements Constraint
@@ -24,8 +27,8 @@ public class ClassConstraint implements Constraint
     protected boolean negated;
     protected QueryClass qc1;
     protected QueryClass qc2;
+    protected Object obj;
     protected int type;
-
 
     /**
      * Construct ClassConstraint
@@ -61,6 +64,47 @@ public class ClassConstraint implements Constraint
         }
         this.qc1 = qc1;
         this.qc2 = qc2;
+        if ((type < 1) || (type > 2)) {
+            throw (new IllegalArgumentException("Invalid value for type: " + type));
+        }
+        this.type = type;
+        this.negated = negated;
+    }
+
+    /**
+     * Construct ClassConstraint
+     *
+     * @param qc QueryClass for comparison
+     * @param type define EQUALS or NOT_EQUALS
+     * @param obj example object
+     */
+    public ClassConstraint(QueryClass qc, int type, Object obj) {
+        this(qc, type, obj, false);
+    }
+
+    /**
+     * Construct ClassConstraint
+     *
+     * @param qc QueryClass for comparison
+     * @param type define EQUALS or NOT_EQUALS
+     * @param obj example object
+     * @param negated reverse the constraint logic if true
+     */
+    public ClassConstraint(QueryClass qc, int type, Object obj, boolean negated) {
+        if (qc == null) {
+            throw (new NullPointerException("obj cannot be null"));
+        }
+        if (obj == null) {
+            throw (new NullPointerException("obj cannot be null"));
+        }
+
+        if ((!(qc.getType().isAssignableFrom(obj.getClass()))
+             && !(obj.getClass().isAssignableFrom(qc.getType())))) {
+            throw (new IllegalArgumentException("Classes: " + qc.getType() + " and "
+                                                + obj.getClass() + "cannot be compared"));
+        }
+        this.qc1 = qc;
+        this.obj = obj;
         if ((type < 1) || (type > 2)) {
             throw (new IllegalArgumentException("Invalid value for type: " + type));
         }
