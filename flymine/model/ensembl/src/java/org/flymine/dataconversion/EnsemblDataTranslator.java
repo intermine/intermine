@@ -201,12 +201,15 @@ public class EnsemblDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, transRelation, "subjects", true, "object", false);
                     moveField(srcItem, transRelation, "translation", "subject");
                     result.add(transRelation);
-                    promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
+                    // display_labels are not unique
+                    //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
                     // if no name set the identifier as name (primary key)
                     if (!tgtItem.hasAttribute("name")) {
                         Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
                         if (stableId != null) {
                             moveField(stableId, tgtItem, "stable_id", "name");
+                        } else {
+                            tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
                         }
                     }
                 // stable_ids become syonyms, need ensembl Database as source
