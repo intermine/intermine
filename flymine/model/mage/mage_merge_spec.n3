@@ -107,14 +107,17 @@ null:DerivedBioAssay__propertySets a owl:ObjectProperty;
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
         owl:onProperty :MicroArrayExperimentalResult__reporter ] ;
-    rdfs:subClassOf
+   rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :MicroArrayExperimentalResult__tissue ] ;
+        owl:onProperty :MicroArrayExperimentalResult__assay ] ;
+   rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArrayExperimentalResult__material ] ;   
     owl:equivalentClass mage:BioAssayDatum.
 
-
-:MicroArrayExperimentalResult__assays a owl:ObjectProperty;
+:MicroArrayExperimentalResult__assay a owl:ObjectProperty;
     owl:inverseOf :MicroArrayAssay__results.
 
 :MicroArrayExperimentalResult__reporter a owl:ObjectProperty;
@@ -125,7 +128,11 @@ null:DerivedBioAssay__propertySets a owl:ObjectProperty;
     rdfs:domain :MicroArrayExperimentalResult;
     rdfs:range :BioEntity.
 
-:MicroArrayExperimentalResult__tissue a owl:ObjectProperty;
+:MicroArrayExperimentalResult__genes a owl:ObjectProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range :Gene.
+
+:MicroArrayExperimentalResult__tissues a owl:ObjectProperty;
     rdfs:domain :MicroArrayExperimentalResult;
     rdfs:range :LabeledExtract.
 
@@ -456,17 +463,12 @@ null:BioSource__propertySets a owl:ObjectProperty;
 :BioEntity a owl:Class;
     owl:equivalentClass mage:BioSequence.
 
-#:BioEntity__residues a owl:DatatypeProperty;
-#    owl:equivalentProperty mage:BioSequence__sequence.
-
-:BioEntity__microArrayExperimentalResults a owl:ObjectProperty;
-    rdfs:domain :BioEntity;
-    rdfs:range :MicroArrayExperimentalResult.
-
-
 :CDNAClone a owl:Class;
     rdfs:subClassOf :BioEntity.
 
+:CDNAClone__microArrayExperimentalResults a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayExperimentalResult__material.
+    
 :NuclearDNA a owl:Class;
     rdfs:subClassOf :BioEntity.
 
@@ -476,6 +478,9 @@ null:BioSource__propertySets a owl:ObjectProperty;
 :Gene__organismDbId a owl:DatatypePropoerty;
    rdfs:domain :Gene;
    rdfs:range xsd:string.
+
+:Gene__microArrayExperimentalResults a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayExperimentalResult__gene.
 
 :Vector a owl:Class;
     rdfs:subClassOf :BioEntity.
