@@ -31,7 +31,6 @@ import org.flymine.objectstore.query.presentation.QueryCreator;
  *
  * @author Andrew Varley
  */
-
 public class QueryAction extends LookupDispatchAction
 {
     /**
@@ -56,22 +55,22 @@ public class QueryAction extends LookupDispatchAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-
+        
         Query query = (Query) session.getAttribute("query");
         if (query == null) {
             query = new Query();
         }
 
-
         ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld"))
             .getClassDescriptor();
+        session.removeAttribute("cld");
+            
         QueryForm queryForm = (QueryForm) form;
         QueryCreator.addToQuery(query, cld.getName(), queryForm.getFields());
-
+        queryForm.reset(mapping, request);
         session.setAttribute("query", query);
-        session.removeAttribute("cld");
-
-        return (mapping.findForward("buildquery"));
+        
+        return mapping.findForward("buildquery");
     }
 
     /**
@@ -83,7 +82,6 @@ public class QueryAction extends LookupDispatchAction
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("button.submit", "submit");
-        map.put("button.view", "view");
         return map;
     }
 }
