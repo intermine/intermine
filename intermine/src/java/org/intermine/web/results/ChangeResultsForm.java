@@ -168,9 +168,6 @@ public class ChangeResultsForm extends ActionForm
         HttpSession session = request.getSession();
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
 
-        org.intermine.web.LogMe.log("i", "ChangeResultsForm.validate() getButton(): " +
-                                    getButton());
-
         if ("saveNewBag".equals(getButton())) {
             ActionErrors errors = null;
             if (newBagName.equals("")) {
@@ -198,7 +195,5 @@ public class ChangeResultsForm extends ActionForm
         selectedObjects = new String[] {};
         newBagName = null;
         buttons = new HashMap();
-
-        org.intermine.web.LogMe.log("i", "ChangeResultsForm.reset()");
     }
 }
