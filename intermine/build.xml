@@ -244,15 +244,15 @@
     <mkdir dir="${tutorial}/resources"/>
     <mkdir dir="${tutorial}/src/java/org/intermine/tutorial"/>
 
-    <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties"/>
     <copy todir="${build.resources}">
-      <fileset dir="${resources}/runtime" />
+      <fileset dir="${resources}/runtime"/>
     </copy>
     <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
+      <fileset file="${runtime.properties.local}"/>
       <fileset dir="${model}">
         <include name="testmodel/resources/**"/>
       </fileset>
-      <fileset dir="${resources}/test/">
+      <fileset dir="${resources}/test">
         <include name="**/*"/>
       </fileset>
     </copy>
@@ -338,7 +338,6 @@
 
   <!-- Models to build -->
 
-  <!-- testmodel -->
   <target name="compile-testmodel" depends="compile-main">
     <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
@@ -427,7 +426,6 @@
     <copy todir="${build.model}/xmitest" file="${model}/xmitest/xmitest.xml"/>
   </target>
 
-
   <!-- copy original .xsd file to model directory for XmlSchemaParserFunctionalTest -->
   <target name="copy-model-xmlschematest">
     <copy todir="${build.model}/xmlschematest" file="${model}/xmlschematest/xmlschematest.xsd"/>
@@ -443,7 +441,6 @@
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
-
 
 
   <!-- Unit test targets -->
@@ -515,7 +512,7 @@
 
   </target>
 
-  <target name="compile-test-webapp" depends="prepare-test, compile-webapp">
+  <target name="compile-test-webapp" depends="compile-webapp, prepare-test">
     <javac destdir="${build.test}" listfiles="yes">
       <classpath refid="test.class.path"/>
       <src path="${build.src.test}" />
@@ -645,7 +642,6 @@
        <reference torefid="class.path" refid="project.class.path"/>
     </ant>      
   </target>
-    
 
   <target name="compile-testmodel-web-java" depends="compile-webapp"
           description="Build the java code specific to the testmodel">
@@ -656,7 +652,7 @@
     </ant>    
   </target>
 
-  <target name="build-webapp" depends="jar"
+  <target name="build-webapp" depends="jar-intermine"
           description="Build webapp without including a model">
       <ant antfile="build-webapp.xml" target="build-webapp" inheritRefs="true">
        <property name="war" value="${dist.webapp}/intermine.war"/>
@@ -673,24 +669,34 @@
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="model.src" value="${model}/testmodel"/>
     </ant>
+    
+    <copy todir="${build.tmp}" file="${resources}/test/default.intermine.properties"/>
+    <patternset id="default-intermine-properties">
+      <include name="default.intermine.properties"/>
+    </patternset>
+    <ant antfile="build-webapp.xml" target="add-files-to-classes" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/intermine.war"/>
+      <property name="file.dir" value="${build.tmp}"/>
+      <reference torefid="file.names" refid="default-intermine-properties"/>
+    </ant>
+
   </target>
 
   <target name="build-testable-webapp" depends="build-testmodel-webapp"
-    description="Build webapp including the test model and test libraries">
-    <!-- now update war to include the test jars -->
-     <ant antfile="build-webapp.xml" target="add-lib-to-webapp" inheritRefs="true">
-       <property name="war" value="${dist.webapp}/intermine.war"/>       
-       <reference torefid="lib.toadd" refid="lib.webapptest"/>
-        <property name="lib.dir" value="${lib}"/>
-      </ant>
+          description="Build webapp including the test model and test libraries">
+    <ant antfile="build-webapp.xml" target="add-files-to-lib" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/intermine.war"/>       
+      <reference torefid="file.names" refid="lib.webapptest"/>
+      <property name="file.dir" value="${lib}"/>
+    </ant>
     <patternset id="webapp-properties">
       <include name="InterMineWebApp*.properties"/>
-     </patternset>
-    <ant antfile="build-webapp.xml" target="add-file-to-webapp" inheritRefs="true">
-        <property name="war" value="${dist.webapp}/intermine.war"/>
-        <reference torefid="file.toadd" refid="webapp-properties"/>
-        <property name="file.dir" value="${resources}/webapps/intermine"/>
-      </ant>    
+    </patternset>
+    <ant antfile="build-webapp.xml" target="add-files-to-root" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/intermine.war"/>
+      <reference torefid="file.names" refid="webapp-properties"/>
+      <property name="file.dir" value="${resources}/webapps/intermine"/>
+    </ant>    
   </target>
 
   <!-- Webservice targets -->
@@ -709,10 +715,6 @@
       </fileset>
     </copy>
 
-    <copy todir="${build.webapp}/webservice/WEB-INF/classes">
-      <fileset dir="${resources}/webapps/webservice" includes="default.intermine.properties"/>
-    </copy>
-
     <copy todir="${build.webapp}/webservice/WEB-INF/lib">
       <fileset dir="${lib}">
         <patternset refid="lib.common"/>
@@ -722,7 +724,7 @@
       <fileset dir="${dist}" includes="webservice*.jar"/>
       <fileset dir="${dist}" includes="intermine*.jar"/>
     </copy>
-    
+
     <copy todir="${build.webapp}/webservice/META-INF" file="${resources}/webapps/webservice/context.xml"/>
 
     <replace file="${build.webapp}/webservice/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webservice.path}"/>
@@ -731,14 +733,22 @@
       <fileset dir="${build.webapp}/webservice"/>
     </war>
   </target>
-
-  <target name="build-testable-webservice" depends="build-webservice,jar-testmodel"
-    description="Build the InterMine webservice including the test classes and libraries">
+  
+  <target name="build-testmodel-webservice" depends="build-webservice,jar-testmodel">
+    <war destfile="${dist.webapp}/webservice.war" update="true">
+      <lib dir="${dist}" includes="intermine-testmodel.jar" />
+      <classes file="${resources}/test/default.intermine.properties"/>
+      <classes file="${runtime.properties.local}"/>
+    </war>
+  </target>
+  
+  <target name="build-testable-webservice" depends="build-testmodel-webservice">
     <war destfile="${dist.webapp}/webservice.war" update="true">
       <lib dir="${lib}">
-        <patternset refid="lib.webapptest" />
+        <patternset refid="lib.webapptest"/>
       </lib>
       <lib dir="${dist}" includes="intermine-testmodel.jar" />
+      <classes file="${resources}/test/default.intermine.properties"/>
     </war>
   </target>
 
@@ -780,7 +790,6 @@
       <fileset dir="${build.java}"/>
       <fileset dir="${build.model}/fulldata"/>
       <fileset dir="${build.model}/datatracking"/>
-      <fileset file="${build.resources}/intermine.properties"/>
       <fileset file="${build.resources}/log4j.properties"/>
     </jar>
   </target>
