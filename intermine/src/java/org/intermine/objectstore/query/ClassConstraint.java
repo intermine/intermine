@@ -197,12 +197,12 @@ public class ClassConstraint implements Constraint
     }
 
     /**
-     * Returns a boolean whether or not the constraint is effectively "NOT EQUAL", rather than
-     * "EQUAL".
+     * Returns a boolean whether or not the constraint is effectively "NOT EQUALS", rather than
+     * "EQUALS".
      *
-     * @return true if the the query is NOT EQUAL
+     * @return true if the the query is NOT EQUALS
      */
     public boolean isNotEqual() {
-        return (type == 1 ? negated : !negated);
+        return (type == EQUALS ? negated : !negated);
     }
 }

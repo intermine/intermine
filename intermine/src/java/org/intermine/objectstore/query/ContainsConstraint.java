@@ -1,7 +1,5 @@
 package org.flymine.objectstore.query;
 
-
-
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.
  *
@@ -61,6 +59,7 @@ public class ContainsConstraint implements Constraint
         }
         this.type = type;
         this.negated = negated;
+        // TODO: Check that the reference class and cls are the same object class.
     }
 
     /**
@@ -90,7 +89,32 @@ public class ContainsConstraint implements Constraint
     public int getType() {
         return type;
     }
+
+    /**
+     * Returns the QueryReference of the constraint.
+     *
+     * @return the QueryReference
+     */
+    public QueryReference getReference() {
+        return ref;
+    }
+
+    /**
+     * Returns the QueryClass of the constraint.
+     *
+     * @return the QueryClass
+     */
+    public QueryClass getQueryClass() {
+        return cls;
+    }
+
+    /**
+     * Returns true if the constraint is effectively "DOES_NOT_CONTAIN", taking negated into
+     * account.
+     *
+     * @return true if it is DOES_NOT_CONTAIN
+     */
+    public boolean isNotContains() {
+        return (type == CONTAINS ? negated : !negated);
+    }
 }
-
-
-
