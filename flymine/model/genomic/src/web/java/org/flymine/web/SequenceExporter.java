@@ -96,10 +96,10 @@ public class SequenceExporter implements TableExporter
                 }
             }
         }
-        
+
         int realFeatureIndex = featureColumn.getIndex();
 
-        int writtenSequencesCount = 0; 
+        int writtenSequencesCount = 0;
 
         try {
             List rowList = pt.getAllRows();
@@ -129,7 +129,7 @@ public class SequenceExporter implements TableExporter
                     if (!thisColumn.isVisible()) {
                         continue;
                     }
-                    
+
                     // the column order from PagedTable.getList() isn't necessarily the order that
                     // the user has chosen for the columns
                     int realColumnIndex = thisColumn.getIndex();
@@ -159,8 +159,10 @@ public class SequenceExporter implements TableExporter
 
                 Annotation annotation = flyMineSequence.getAnnotation();
 
-                if (row.size() > 1) {
-                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, header.toString());
+                String headerString = header.toString();
+
+                if (row.size() > 1 && headerString.length() > 0) {
+                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
                     if (object instanceof BioEntity) {
                         annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
@@ -180,7 +182,7 @@ public class SequenceExporter implements TableExporter
                     outputStream = response.getOutputStream();
                 }
                 SeqIOTools.writeFasta(outputStream, flyMineSequence);
-                
+
                 writtenSequencesCount++;
             }
 
@@ -217,7 +219,7 @@ public class SequenceExporter implements TableExporter
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
                 Object columnType = ((Column) columns.get(i)).getType();
-                
+
                 if (columnType instanceof ClassDescriptor) {
                     ClassDescriptor cd = (ClassDescriptor) columnType;
                     if (validType(cd.getType())) {
