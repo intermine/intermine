@@ -1,6 +1,7 @@
 package org.flymine.sql.query;
 
 import junit.framework.*;
+import java.util.*;
 
 public class QueryTest extends TestCase
 {
@@ -231,6 +232,235 @@ public class QueryTest extends TestCase
         q2.addWhere(new Constraint(f1, Constraint.EQ, c1));
         q2.addWhere(new Constraint(f2, Constraint.EQ, c2));
         assertEquals(q2, q1);
+    }
+
+    public void testTreeParserRulesForConstraint() throws Exception {
+        // (aleft != aleft) becomes NOT (aleft = aright)
+        Query lq1 = new Query("select t.a from t where t.a != t.b");
+        Query lq2 = new Query("select t.a from t where not t.a = t.b");
+        assertEquals(lq1, lq2);
+
+        Query lq3 = new Query("select t.a from t where t.a = t.b");
+        assertTrue("Expected lq1 to not equal lq3", !lq1.equals(lq3));
+
+        // (bleft >= bright) becomes NOT (bleft < bright)
+        lq1 = new Query("select t.a from t where t.a >= t.b");
+        lq2 = new Query("select t.a from t where not t.a < t.b");
+        assertEquals(lq1, lq2);
+
+        // (cleft <= cright) becomes NOT (cright < cleft)
+        lq1 = new Query("select t.a from t where t.a <= t.b");
+        lq2 = new Query("select t.a from t where not t.a > t.b");
+        assertEquals(lq1, lq2);
+
+        // (dleft > dright) becomes (dright < dleft)
+        lq1 = new Query("select t.a from t where t.a < t.b");
+        lq2 = new Query("select t.a from t where t.b > t.a");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForNotConstraint() throws Exception {
+        // NOT (NOT a) becomes a
+        Query lq1 = new Query("select t.a from t where not not t.a = t.b");
+        Query lq2 = new Query("select t.a from t where t.a = t.b");
+        assertEquals(lq1, lq2);
+
+        // NOT (b OR c..OR..) becomes NOT b AND NOT (c..OR..)
+        lq1 = new Query("select t.a from t where NOT (t.b = t.x OR t.c = t.y)");
+        lq2 = new Query("select t.a from t where NOT t.b = t.x AND NOT t.c = t.y");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where NOT (t.b = t.x OR t.c = t.y OR t.c = t.z)");
+        lq2 = new Query("select t.a from t where NOT t.b = t.x AND NOT (t.c = t.y OR t.c = t.z)");
+        assertEquals(lq1, lq2);
+
+        // NOT (e AND f..AND..) becomes NOT e OR NOT (f..AND..)
+        lq1 = new Query("select t.a from t where NOT (t.b = t.x AND t.c = t.y)");
+        lq2 = new Query("select t.a from t where NOT t.b = t.x OR NOT t.c = t.y");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where NOT (t.b = t.x AND t.c = t.y AND t.c = t.z)");
+        lq2 = new Query("select t.a from t where NOT t.b = t.x OR NOT (t.c = t.y AND t.c = t.z)");
+        ConstraintSet a = (ConstraintSet) lq1.getWhere().iterator().next();
+        ConstraintSet b = (ConstraintSet) lq2.getWhere().iterator().next();
+        Iterator aIter = a.cons.iterator();
+        Iterator bIter = b.cons.iterator();
+        NotConstraint aA = (NotConstraint) aIter.next();
+        NotConstraint aB = (NotConstraint) aIter.next();
+        NotConstraint aC = (NotConstraint) aIter.next();
+        NotConstraint bA = (NotConstraint) bIter.next();
+        NotConstraint bB = (NotConstraint) bIter.next();
+        NotConstraint bC = (NotConstraint) bIter.next();
+        assertEquals(AbstractConstraint.EQUAL, aA.compare(bA));
+        assertEquals(AbstractConstraint.INDEPENDENT, aA.compare(bB));
+        assertEquals(AbstractConstraint.INDEPENDENT, aA.compare(bC));
+        assertEquals(AbstractConstraint.INDEPENDENT, aB.compare(bA));
+        assertEquals(AbstractConstraint.EQUAL, aB.compare(bB));
+        assertEquals(AbstractConstraint.INDEPENDENT, aB.compare(bC));
+        assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bA));
+        assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bB));
+        assertEquals(AbstractConstraint.EQUAL, aC.compare(bC));
+        assertEquals(AbstractConstraint.IMPLIES, a.internalCompare(b));
+        assertEquals(AbstractConstraint.IMPLIES, b.internalCompare(a));
+        assertEquals(AbstractConstraint.EQUAL, a.compare(b));
+        assertEquals(lq1.getSQLString(), lq2.getSQLString());
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForOrConstraint1() throws Exception {
+        // (a..OR..) OR b..OR.. becomes a..OR.. OR b..OR..
+        Query lq1 = new Query("select t.a from t where (t.a = t.y OR t.a = t.z) OR t.b = t.y");
+        Query lq2 = new Query("select t.a from t where t.a = t.y OR t.a = t.z OR t.b = t.y");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where (t.aa = t.y OR t.ab = t.z) OR t.ba = t.y OR t.bb = t.z");
+        lq2 = new Query("select t.a from t where t.aa = t.y OR t.ab = t.z OR t.ba = t.y OR t.bb = t.z");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForOrConstraint2() throws Exception {
+        // d..OR.. OR (e..OR..) OR f..OR.. becomes d..OR.. OR e..OR.. OR f..OR..
+        Query lq1 = new Query("select t.a from t where t.d = 1 OR (t.ea = 2 OR t.eb = 3) OR t.f = 4");
+        Query lq2 = new Query("select t.a from t where t.d = 1 OR t.ea = 2 OR t.eb = 3 OR t.f = 4");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.da = 1 OR t.db = 5 OR (t.ea = 2 OR t.eb = 3) OR t.f = 4");
+        lq2 = new Query("select t.a from t where t.da = 1 OR t.db = 5 OR t.ea = 2 OR t.eb = 3 OR t.f = 4");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.d = 1 OR (t.ea = 2 OR t.eb = 3) OR t.fa = 4 OR t.fb = 5");
+        lq2 = new Query("select t.a from t where t.d = 1 OR t.ea = 2 OR t.eb = 3 OR t.fa = 4 OR t.fb = 5");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.da = 1 OR t.db = 5 OR (t.ea = 2 OR t.eb = 3) OR t.fa = 4 OR t.fb = 5");
+        lq2 = new Query("select t.a from t where t.da = 1 OR t.db = 5 OR t.ea = 2 OR t.eb = 3 OR t.fa = 4 OR t.fb = 5");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForOrConstraint3() throws Exception {
+        // g..OR.. OR (h..OR..) becomes g..OR.. OR h..OR..
+        Query lq1 = new Query("select t.a from t where t.g = 1 OR (t.ha = 2 OR t.hb = 3)");
+        Query lq2 = new Query("select t.a from t where t.g = 1 OR t.ha = 2 OR t.hb = 3");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.ga = 1 OR t.gb = 4 OR (t.ha = 2 OR t.hb = 3)");
+        lq2 = new Query("select t.a from t where t.ga = 1 OR t.gb = 4 OR t.ha = 2 OR t.hb = 3");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForOrConstraint4() throws Exception {
+        // (i AND j..AND..) OR k..OR.. becomes (i OR k..OR..) AND ((j..AND..) OR k..OR..)
+        Query lq1 = new Query("select t.a from t where (t.i = 1 AND t.j = 2) OR t.k = 3");
+        Query lq2 = new Query("select t.a from t where (t.i = 1 OR t.k = 3) AND (t.j = 2 OR t.k = 3)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where (t.i = 1 AND t.ja = 2 AND t.jb = 4) OR t.k = 3");
+        lq2 = new Query("select t.a from t where (t.i = 1 OR t.k = 3) AND ((t.ja = 2 AND t.jb = 4) OR t.k = 3)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where (t.i = 1 AND t.j = 2) OR t.ka = 3 OR t.kb = 4");
+        lq2 = new Query("select t.a from t where (t.i = 1 OR t.ka = 3 OR t.kb = 4) AND (t.j = 2 OR t.ka = 3 OR t.kb = 4)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where (t.i = 1 AND t.ja = 2 AND t.jb = 4) OR t.ka = 3 OR t.kb = 5");
+        lq2 = new Query("select t.a from t where (t.i = 1 OR t.ka = 3 OR t.kb = 5) AND ((t.ja = 2 AND t.jb = 4) OR t.ka = 3 OR t.kb = 5)");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForOrConstraint5() throws Exception {
+        // l..OR.. OR (m AND n..AND..) OR o..OR.. becomes
+        //                      (l..OR.. OR m OR o..OR..) AND (l..OR.. OR (n..AND..) OR o..OR..)
+        Query lq1 = new Query("select t.a from t where t.l = 1 OR (t.m = 2 AND t.n = 3) OR t.o = 4");
+        Query lq2 = new Query("select t.a from t where (t.l = 1 OR t.m = 2 OR t.o = 4) AND (t.l = 1 OR t.n = 3 OR t.o = 4)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.la = 1 OR t.lb = 5 OR (t.m = 2 AND t.n = 3) OR t.o = 4");
+        lq2 = new Query("select t.a from t where (t.la = 1 OR t.lb = 5 OR t.m = 2 OR t.o = 4) AND (t.la = 1 OR t.lb = 5 OR t.n = 3 OR t.o = 4)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.l = 1 OR (t.m = 2 AND t.na = 3 AND t.nb = 6) OR t.o = 4");
+        lq2 = new Query("select t.a from t where (t.l = 1 OR t.m = 2 OR t.o = 4) AND (t.l = 1 OR (t.na = 3 AND t.nb = 6) OR t.o = 4)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.la = 1 OR t.lb = 5 OR (t.m = 2 AND t.na = 3 AND t.nb = 6) OR t.o = 4");
+        lq2 = new Query("select t.a from t where (t.la = 1 OR t.lb = 5 OR t.m = 2 OR t.o = 4) AND (t.la = 1 OR t.lb = 5 OR (t.na = 3 AND t.nb = 6) OR t.o = 4)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.l = 1 OR (t.m = 2 AND t.n = 3) OR t.oa = 4 OR t.ob = 7");
+        lq2 = new Query("select t.a from t where (t.l = 1 OR t.m = 2 OR t.oa = 4 OR t.ob = 7) AND (t.l = 1 OR t.n = 3 OR t.oa = 4 OR t.ob = 7)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.la = 1 OR t.lb = 5 OR (t.m = 2 AND t.n = 3) OR t.oa = 4 OR t.ob = 7");
+        lq2 = new Query("select t.a from t where (t.la = 1 OR t.lb = 5 OR t.m = 2 OR t.oa = 4 OR t.ob = 7) AND (t.la = 1 OR t.lb = 5 OR t.n = 3 OR t.oa = 4 OR t.ob = 7)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.l = 1 OR (t.m = 2 AND t.na = 3 AND t.nb = 6) OR t.oa = 4 OR t.ob = 7");
+        lq2 = new Query("select t.a from t where (t.l = 1 OR t.m = 2 OR t.oa = 4 OR t.ob = 7) AND (t.l = 1 OR (t.na = 3 AND t.nb = 6) OR t.oa = 4 OR t.ob = 7)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.la = 1 OR t.lb = 5 OR (t.m = 2 AND t.na = 3 AND t.nb = 6) OR t.oa = 4 OR t.ob = 7");
+        lq2 = new Query("select t.a from t where (t.la = 1 OR t.lb = 5 OR t.m = 2 OR t.oa = 4 OR t.ob = 7) AND (t.la = 1 OR t.lb = 5 OR (t.na = 3 AND t.nb = 6) OR t.oa = 4 OR t.ob = 7)");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForOrConstraint6() throws Exception {
+        // p..OR.. OR (q AND r..AND..) becomes (p..OR.. OR q) AND (p..OR.. OR (r..AND..))
+        Query lq1 = new Query("select t.a from t where t.p = 1 OR (t.q = 2 AND t.r = 3)");
+        Query lq2 = new Query("select t.a from t where (t.p = 1 OR t.q = 2) AND (t.p = 1 OR t.r = 3)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.pa = 1 OR t.pb = 4 OR (t.q = 2 AND t.r = 3)");
+        lq2 = new Query("select t.a from t where (t.pa = 1 OR t.pb = 4 OR t.q = 2) AND (t.pa = 1 OR t.pb = 4 OR t.r = 3)");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.p = 1 OR (t.q = 2 AND t.ra = 3 AND t.rb = 5)");
+        lq2 = new Query("select t.a from t where (t.p = 1 OR t.q = 2) AND (t.p = 1 OR (t.ra = 3 AND t.rb = 5))");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.pa = 1 OR t.pb = 4 OR (t.q = 2 AND t.ra = 3 AND t.rb = 5)");
+        lq2 = new Query("select t.a from t where (t.pa = 1 OR t.pb = 4 OR t.q = 2) AND (t.pa = 1 OR t.pb = 4 OR (t.ra = 3 AND t.rb = 5))");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForAndConstraint1() throws Exception {
+        // (a..AND..) AND b..AND.. becomes a..AND.. b..AND..
+        Query lq1 = new Query("select t.a from t where (t.aa = 1 AND t.ab = 2) AND t.b = 3");
+        Query lq2 = new Query("select t.a from t where t.aa = 1 AND t.ab = 2 AND t.b = 3");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where (t.aa = 1 AND t.ab = 2) AND t.ba = 3 AND t.bb = 4");
+        lq2 = new Query("select t.a from t where t.aa = 1 AND t.ab = 2 AND t.ba = 3 AND t.bb = 4");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForAndConstraint2() throws Exception {
+        // d..AND.. AND (e..AND..) AND f..AND.. becomes d..AND.. AND e..AND.. AND f..AND..
+        Query lq1 = new Query("select t.a from t where t.d = 1 AND (t.ea = 2 AND t.eb = 3) AND t.f = 4");
+        Query lq2 = new Query("select t.a from t where t.d = 1 AND t.ea = 2 AND t.eb = 3 AND t.f = 4");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.da = 1 AND t.db = 5 AND (t.ea = 2 AND t.eb = 3) AND t.f = 4");
+        lq2 = new Query("select t.a from t where t.da = 1 AND t.db = 5 AND t.ea = 2 AND t.eb = 3 AND t.f = 4");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.d = 1 AND (t.ea = 2 AND t.eb = 3) AND t.fa = 4 AND t.fb = 6");
+        lq2 = new Query("select t.a from t where t.d = 1 AND t.ea = 2 AND t.eb = 3 AND t.fa = 4 AND t.fb = 6");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.da = 1 AND t.db = 5 AND (t.ea = 2 AND t.eb = 3) AND t.fa = 4 AND t.fb = 6");
+        lq2 = new Query("select t.a from t where t.da = 1 AND t.db = 5 AND t.ea = 2 AND t.eb = 3 AND t.fa = 4 AND t.fb = 6");
+        assertEquals(lq1, lq2);
+    }
+
+    public void testTreeParserRulesForAndConstraint5() throws Exception {
+        // g..AND.. AND (h..AND..) becomes g..AND.. h..AND..
+        Query lq1 = new Query("select t.a from t where t.g = 1 AND (t.ha = 2 AND t.hb = 3)");
+        Query lq2 = new Query("select t.a from t where t.g = 1 AND t.ha = 2 AND t.hb = 3");
+        assertEquals(lq1, lq2);
+
+        lq1 = new Query("select t.a from t where t.ga = 1 AND t.gb = 4 AND (t.ha = 2 AND t.hb = 3)");
+        lq2 = new Query("select t.a from t where t.ga = 1 AND t.gb = 4 AND t.ha = 2 AND t.hb = 3");
+        assertEquals(lq1, lq2);
     }
 
     public void testWhereFieldLessThanField() throws Exception {

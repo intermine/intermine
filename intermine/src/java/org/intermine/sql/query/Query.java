@@ -15,7 +15,7 @@ package org.flymine.sql.query;
 import java.util.*;
 import java.io.*;
 import antlr.collections.AST;
-//import antlr.debug.misc.ASTFrame;
+import antlr.debug.misc.ASTFrame;
 
 /**
  * Represents an SQL query in parsed form.
@@ -879,13 +879,13 @@ public class Query implements SQLStringable
         int iters = 0;
         AST oldAst;
         do {
-//            out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
-//                        - startTime.getTime()) + " milliseconds.");
-//            out.println("\n==> Dump of AST <==");
-//            visitor.visit(ast);
+            out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
+                        - startTime.getTime()) + " milliseconds.");
+            out.println("\n==> Dump of AST <==");
+            visitor.visit(ast);
 
-//            ASTFrame frame = new ASTFrame("AST JTree Example", ast);
-//            frame.setVisible(true);
+            ASTFrame frame = new ASTFrame("AST JTree Example", ast);
+            frame.setVisible(true);
 
             oldAst = ast;
             SqlTreeParser treeparser = new SqlTreeParser();
