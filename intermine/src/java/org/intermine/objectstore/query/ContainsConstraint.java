@@ -21,17 +21,6 @@ package org.flymine.objectstore.query;
 
 public class ContainsConstraint implements Constraint
 {
-
-    /**
-     * QueryCollection does contain the specified QueryClass.
-     */
-    public static final int CONTAINS = 1;
-
-    /**
-     * QueryCollection does not contain the specified QueryClass.
-     */
-    public static final int DOES_NOT_CONTAIN = 2;
-
     protected boolean negated;
     protected QueryReference ref;
     protected QueryClass cls;
@@ -72,7 +61,7 @@ public class ContainsConstraint implements Constraint
             }
         }
 
-        if ((type < 1) || (type > 2)) {
+        if ((type < 0) || (type > 1)) {
             throw (new IllegalArgumentException("Invalid value for type: " + type));
         }
 
@@ -167,4 +156,37 @@ public class ContainsConstraint implements Constraint
     }
 
 
+    //-------------------------------------------------------------------------
+    
+    /**
+     * QueryCollection does contain the specified QueryClass.
+     */
+    public static final int CONTAINS = 0;
+
+    /**
+     * QueryCollection does not contain the specified QueryClass.
+     */
+    public static final int DOES_NOT_CONTAIN = 1;
+
+    protected static final String[] OPERATIONS = {
+        "CONTAINS",
+        "DOES NOT CONTAIN"};
+
+    /**
+     * Returns the String representation of the operation.
+     *
+     * @param type the operator code
+     * @return String representation
+     */
+    public static String getOpString(int type) {
+        return OPERATIONS[type];
+    }
+
+    /**
+     * Return the list of valid (binary) operator codes
+     * @return an array of character codes
+     */
+    public static int[] validOperators() {
+        return new int[] {CONTAINS, DOES_NOT_CONTAIN};
+    }
 }
