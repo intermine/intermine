@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import java.sql.Connection;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.HashSet;
 
 import org.flymine.sql.DatabaseFactory;
@@ -21,6 +22,8 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.metadata.CollectionDescriptor;
 
 public class DatabaseUtilTest extends TestCase
 {
@@ -105,6 +108,57 @@ public class DatabaseUtilTest extends TestCase
         FieldDescriptor attr = new AttributeDescriptor("attr1", false, "int");
 
         assertEquals(DatabaseUtil.generateSqlCompatibleName("attr1"), DatabaseUtil.getColumnName(attr));
+    }
+
+    public void testGetIndirectionTableNameRef() throws Exception {
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", "ref1", false);
+        Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
+
+        ReferenceDescriptor ref1 = new ReferenceDescriptor("ref1", false, "Class1", null);
+        Set refs = new HashSet(Arrays.asList(new Object[] {ref1}));
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), refs, new HashSet());
+
+        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
+        Model model = new Model("test", clds);
+
+        try {
+            DatabaseUtil.getIndirectionTableName(col1);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testGetIndirectionTableNameNull() throws Exception {
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", null, false);
+        Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
+
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+
+        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
+        Model model = new Model("test", clds);
+
+        assertEquals("Class1Col1", DatabaseUtil.getIndirectionTableName(col1));
+        assertEquals("Class1Id", DatabaseUtil.getInwardIndirectionColumnName(col1));
+        assertEquals("Class2Id", DatabaseUtil.getOutwardIndirectionColumnName(col1));
+    }
+
+    public void testGetIndirectionTableNameCol() throws Exception {
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", "col2", false);
+        Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
+
+        CollectionDescriptor col2 = new CollectionDescriptor("col2", false, "Class1", "col1", false);
+        cols = new HashSet(Arrays.asList(new Object[] {col2}));
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), cols);
+
+        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
+        Model model = new Model("test", clds);
+
+        assertEquals("Col1Col2", DatabaseUtil.getIndirectionTableName(col1));
+        assertEquals("Class1Id", DatabaseUtil.getInwardIndirectionColumnName(col1));
+        assertEquals("Class2Id", DatabaseUtil.getOutwardIndirectionColumnName(col1));
     }
 
     public void testGenerateSqlCompatibleName() throws Exception {
