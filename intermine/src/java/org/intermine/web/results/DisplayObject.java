@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.PrimaryKeyUtil;
@@ -22,6 +21,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -74,13 +74,10 @@ public class DisplayObject
                         references.put(fd.getName(),
                                        new DisplayReference((InterMineObject) fieldValue, model));
                     } else if (fd.isCollection()) {
-                        if (((Collection) fieldValue).size() > 0) {
-                            ClassDescriptor refCld =
-                                ((CollectionDescriptor) fd).getReferencedClassDescriptor();
-                            collections.put(fd.getName(),
-                                            new DisplayCollection((Collection) fieldValue,
-                                                                  refCld, model));
-                        }
+                        ClassDescriptor refCld =
+                            ((CollectionDescriptor) fd).getReferencedClassDescriptor();
+                        collections.put(fd.getName(), new DisplayCollection((SingletonResults)
+                                                                            fieldValue, refCld));
                     }
                 }
             }

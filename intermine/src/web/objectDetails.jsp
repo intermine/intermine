@@ -53,7 +53,7 @@ object<br/><br/>
   <table style="padding-left: 20px" cellspacing="10">
     <c:forEach items="${object.references}" var="entry">
       <tr>
-        <td valign="top"><b>${entry.key}</b></td>
+        <td valign="top"><html:link href="#${entry.key}"/><b>${entry.key}</b></td>
         <td>
           <c:set var="reference" value="${entry.value}"/>
           <c:choose>
@@ -63,7 +63,7 @@ object<br/><br/>
               </html:link>
             </c:when>
             <c:otherwise>
-              <html:link action="/modifyDetails?method=verbosify&field=${entry.key}">
+              <html:link action="/modifyDetails?method=verbosify&field=${entry.key}" anchor="${entry.key}">
                 <img border="0" src="images/plus.png" alt="+"/>
               </html:link>
             </c:otherwise>
@@ -101,33 +101,45 @@ object<br/><br/>
                 <img border="0" src="images/minus.png" alt="-"/>
               </html:link>
             </c:when>
-            <c:when test="${fn:length(collection.classes) > 0}">
+            <c:otherwise>
               <html:link action="/modifyDetails?method=verbosify&field=${entry.key}">
                 <img border="0" src="images/plus.png" alt="+"/>
               </html:link>
-            </c:when>
-            <c:otherwise>
-              <img border="0" src="images/blank.png" alt="+"/>
             </c:otherwise>
           </c:choose>
           ${collection.size} ${collection.cld.unqualifiedName} object(s)
           [<html:link action="/collectionDetails?id=${object.id}&field=${entry.key}">
-                 details...
-               </html:link>]<br/>
-          <c:if test="${collection.verbose and fn:length(collection.classes) > 0}">
-            <c:forEach items="${collection.classes}" var="entry2" varStatus="status">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${entry2.value}
-              <c:forEach items="${entry2.key}" var="cld">
-                ${cld.unqualifiedName}
-              </c:forEach>
-              object(s)
-              [<html:link action="/modifyDetails?method=filter&field=${entry.key}&index=${status.index}">
-                 details...
-               </html:link>]<br/>
-            </c:forEach>
-          </c:if>
+             view all
+           </html:link>]<br/>
         </td>
       </tr>
+      <c:if test="${collection.verbose}">
+        <tr>
+          <td/>
+          <td>
+            <table class="results" cellspacing="0">
+              <tr>
+                <th/>
+                <c:forEach items="${collection.table.columnNames}" var="columnName">
+                  <th>${columnName}</th>
+                </c:forEach>
+              </tr>
+              <c:forEach items="${collection.table.rows}" var="row" varStatus="status">
+                <tr>
+                  <td>
+                    <c:forEach items="${collection.table.types[status.index]}" var="cld">
+                      ${cld.unqualifiedName}
+                    </c:forEach>
+                  </td>
+                  <c:forEach items="${row}" var="obj">
+                    <td>${obj}</td>
+                  </c:forEach>
+                </tr>
+              </c:forEach>
+            </table>
+          </td>
+        </tr>
+      </c:if>
     </c:forEach>
   </table>
   <br/>
