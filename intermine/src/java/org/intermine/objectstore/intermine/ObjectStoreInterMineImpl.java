@@ -125,18 +125,23 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             throw new ObjectStoreException("No 'db' property specified for InterMine"
                                            + " objectstore (check properties file)");
         }
-        Database db;
-        try {
-            db = DatabaseFactory.getDatabase(dbAlias);
-        } catch (Exception e) {
-            throw new ObjectStoreException("Unable to get database for InterMine ObjectStore", e);
-        }
+        String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName();
+
         synchronized (instances) {
-            if (!(instances.containsKey(db))) {
-                instances.put(db, new ObjectStoreInterMineImpl(db, model));
+            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
+                .get(objectStoreDescription);
+            if (os == null) {
+                Database db;
+                try {
+                    db = DatabaseFactory.getDatabase(dbAlias);
+                } catch (Exception e) {
+                    throw new ObjectStoreException("Unable to get database for InterMine"
+                            + " ObjectStore", e);
+                }
+                os = new ObjectStoreInterMineImpl(db, model);
             }
+            return os;
         }
-        return (ObjectStoreInterMineImpl) instances.get(db);
     }
 
     /**
