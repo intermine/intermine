@@ -110,6 +110,7 @@
     <fileset dir="${build.webapp.intermine.lib}">
       <include name="*.jar"/>
     </fileset>
+    <pathelement location="${build.model}/genomic"/>
   </path>
 
   <path id="webservice.class.path">
@@ -2209,7 +2210,7 @@
     <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
       <property name="model.name" value="genomic"/>
-      <property name="objectstore.name" value="os.production"/>
+      <property name="db.name" value="db.production"/>
       <reference torefid="class.path" refid="webapp.class.path"/>
     </ant>
 
