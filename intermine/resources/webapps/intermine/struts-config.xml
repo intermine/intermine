@@ -16,6 +16,9 @@
     <form-bean name="templateForm"
                type="org.intermine.web.TemplateForm"/>
 
+    <form-bean name="browseForm"
+               type="org.intermine.web.TemplateForm"/>
+
     <form-bean name="modifyQueryForm"
                type="org.intermine.web.ModifyQueryForm"/>
 
@@ -258,7 +261,7 @@
     
     <action path="/browseAction"
             type="org.intermine.web.TemplateAction"
-            name="templateForm"
+            name="browseForm"
             input="begin">
       <forward name="begin" path="begin.page"/>
       <forward name="results" path="results.page"/>
