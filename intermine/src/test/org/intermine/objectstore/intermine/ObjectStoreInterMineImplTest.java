@@ -29,6 +29,7 @@ import junit.framework.Test;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -293,6 +294,44 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         expectedIndexMap.put("index" + tableName + "_field_a4_", "CREATE INDEX index" + tableName + "_field_a4_ ON " + tableName + " USING btree (a4_)");
         expectedIndexMap.put("index" + tableName + "_field_a4__nulls", "CREATE INDEX index" + tableName + "_field_a4__nulls ON " + tableName + " USING btree (((a4_ IS NULL)))");
         assertEquals(expectedIndexMap, indexMap);
+    }
+
+    public void testPrecomputeWithNullsInOrder() throws Exception {
+        Types t1 = new Types();
+        t1.setIntObjType(null);
+        t1.setLongObjType(new Long(234212354));
+        t1.setName("fred");
+        storeDataWriter.store(t1);
+        Types t2 = new Types();
+        t2.setIntObjType(new Integer(278652));
+        t2.setLongObjType(null);
+        t2.setName("fred");
+        storeDataWriter.store(t2);
+        
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Types.class);
+        QueryField into = new QueryField(qc, "intObjType");
+        QueryField longo = new QueryField(qc, "longObjType");
+        q.addFrom(qc);
+        q.addToSelect(into);
+        q.addToSelect(longo);
+        q.addToSelect(qc);
+        q.setDistinct(false);
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+
+        Results r = os.execute(q);
+        r.setBatchSize(1);
+        SqlGenerator.registerOffset(q, 1, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, new Integer(100000), new HashMap());
+        
+        ResultsRow row = (ResultsRow) r.get(1);
+        InterMineObject o = (InterMineObject) row.get(2);
+        assertEquals("Expected " + t2.toString() + " but got " + o.toString(), t2.getId(), o.getId());
+        row = (ResultsRow) r.get(2);
+        o = (InterMineObject) row.get(2);
+        assertEquals("Expected " + t1.toString() + " but got " + o.toString(), t1.getId(), o.getId());
+
+        storeDataWriter.delete(t1);
+        storeDataWriter.delete(t2);
     }
 
     public void testCancelMethods1() throws Exception {
