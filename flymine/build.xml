@@ -488,14 +488,6 @@
     </exec>
   </target>
 
-  <target name="release-jar" depends="jar"
-    description="releases the jar file to a release directory">
-    <exec executable="rsync">
-      <arg line="-e ssh -Cavz ${dist}/flymine.jar ${release.serverlocation}/" />
-    </exec>
-  </target>
-
-
   <!-- Cleaning-up targets -->
 
   <target name="clean"
