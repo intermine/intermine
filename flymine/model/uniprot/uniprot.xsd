@@ -609,15 +609,11 @@
         </xs:choice>
         <xs:attribute name="sequence" type="xs:string" use="optional"/>
     </xs:complexType>
-
-    <xs:group name="interactantGroup">
+    <xs:complexType name="interactantType">
         <xs:sequence>
             <xs:element name="id" type="xs:string" minOccurs="1"/>
             <xs:element name="label" type="xs:string" minOccurs="0"/>
         </xs:sequence>
-    </xs:group>
-    <xs:complexType name="interactantType">
-        <xs:group ref="interactantGroup" minOccurs="0"/>
         <xs:attribute name="intactId" type="xs:string" use="required"/>
     </xs:complexType>
 
