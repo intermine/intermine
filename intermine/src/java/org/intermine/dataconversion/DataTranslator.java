@@ -27,6 +27,7 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import org.flymine.FlyMineException;
 import org.flymine.xml.full.Attribute;
@@ -56,13 +57,13 @@ import org.apache.log4j.Logger;
 public class DataTranslator
 {
 
-    private ItemReader srcItemReader;
-    private OntModel model;
+    protected ItemReader srcItemReader;
     protected Map equivMap;       // lookup equivalent resources - excludes restricted subclass info
     protected Map templateMap;    // map of src class URI/SubclassRestriction templates possible
     protected Map restrictionMap; // map of SubclassRestrictions to target restricted subclass URI
     protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
-    private String tgtNs;
+    protected Map impMap;         // map class URI -> implementation string
+    protected String tgtNs;
 
     protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
     /**
@@ -75,11 +76,12 @@ public class DataTranslator
     public DataTranslator(ItemReader srcItemReader, OntModel model, String tgtNs) {
         this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
-        this.model = model;
-        this.templateMap = OntologyUtil.getRestrictionSubclassTemplateMap(model);
-        this.restrictionMap = OntologyUtil.getRestrictionSubclassMap(model);
-        buildPropertiesMap();
-        buildEquivalenceMap();  // use local version instead of OntologyUtil
+        Map subMap = OntologyUtil.getRestrictedSubclassMap(model);
+        this.templateMap = OntologyUtil.getRestrictionSubclassTemplateMap(model, subMap);
+        this.restrictionMap = OntologyUtil.getRestrictionSubclassMap(model, subMap);
+        buildPropertiesMap(model);
+        buildEquivalenceMap(model);  // use local version instead of OntologyUtil
+        model.close();
     }
 
     /**
@@ -90,20 +92,6 @@ public class DataTranslator
      * @throws FlyMineException if no target class/property name can be found
      */
 
-
-//         int i=0;
-//         String clsName = "";
-//         while (itemIter.hasNext()) {
-//             //tgtItemWriter.store(translateItem((Item) itemIter.next()));
-//             Item item = (Item) itemIter.next();
-//             if (!item.getClassName().equals(clsName)) {
-//                 clsName = item.getClassName();
-//                 i = 0;
-//             }
-//             if (item.getClassName().equals(clsName) && i < 100) {
-//                 translateItem(item);
-//             }
-//             i++;
 
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
@@ -148,6 +136,11 @@ public class DataTranslator
             }
         }
 
+        if (tgtClsName.equals(tgtNs + "Chromosome")) {
+            return null;
+        }
+
+        LOG.error("translating: " + srcItem.getIdentifier() + ": " + srcItem.getClassName() + " -> " + tgtClsName);
         // if class is not in target namespace then don't bother translating it
         if (!OntologyUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
             return null;
@@ -156,7 +149,7 @@ public class DataTranslator
         Item tgtItem = new Item();
         tgtItem.setIdentifier(srcItem.getIdentifier());
         tgtItem.setClassName(tgtClsName);
-        tgtItem.setImplementations(getImplementationsString(tgtClsName));
+        tgtItem.setImplementations((String) impMap.get(tgtClsName));
 
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
@@ -198,6 +191,7 @@ public class DataTranslator
         }
         return Collections.singleton(tgtItem);
     }
+
 
     /**
      * Given an item in src format and a template (a list of path expressions) create
@@ -278,39 +272,59 @@ public class DataTranslator
      * Classes in target OWL model specifically inherit superclass properties (inherited
      * properties are subPropertyOf parent property).  Build a map of class/
      * src_property_uri/tgt_property_uri.
+     * @param model the OntModel
      */
-    protected void buildPropertiesMap() {
+    protected void buildPropertiesMap(OntModel model) {
+        LOG.error("started buildPropertiesMap()");
         clsPropMap = new HashMap();
+        impMap = new HashMap();
 
-        Iterator clsIter = model.listClasses();
+        ExtendedIterator clsIter = model.listClasses();
         while (clsIter.hasNext()) {
             OntClass cls = (OntClass) clsIter.next();
             if (!cls.isAnon() && cls.getNameSpace().equals(tgtNs)) {
                 Map propMap = new HashMap();
-                Iterator propIter = cls.listDeclaredProperties(false);
+                ExtendedIterator propIter = cls.listDeclaredProperties(false);
                 while (propIter.hasNext()) {
                     OntProperty prop = (OntProperty) propIter.next();
                     if (prop.getNameSpace().equals(tgtNs) && prop.getSuperProperty() != null) {
-                        Iterator equivIter = prop.listEquivalentProperties();
+                        ExtendedIterator equivIter = prop.listEquivalentProperties();
                         while (equivIter.hasNext()) {
                             propMap.put(((OntProperty) equivIter.next()).getURI(), prop.getURI());
                         }
+                        equivIter.close();
                     }
                 }
+                propIter.close();
                 if (!propMap.isEmpty()) {
                     clsPropMap.put(cls.getURI(), propMap);
                 }
+
+                // build implementations map
+                String imps = "";
+                ExtendedIterator superIter = cls.listSuperClasses(false);
+                while (superIter.hasNext()) {
+                    OntClass sup = (OntClass) superIter.next();
+                    if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
+                        imps += sup.getURI() + " ";
+                    }
+                }
+                superIter.close();
+                impMap.put(cls.getURI(), imps.trim());
             }
         }
+        clsIter.close();
+        LOG.error("finished buildPropertiesMap()");
     }
 
 
     /**
      * Build a map of src/tgt resource URI.  Does not include resources
      * that are restricted subclasses or restrictions thereof.
+     * @param model the OntModel
      */
-    protected void buildEquivalenceMap() {
-
+    protected void buildEquivalenceMap(OntModel model) {
+        LOG.error("Started buildEquivalenceMap()");
         // build a set of all restricted subclass URIs and their properties
         Set subs = new HashSet(restrictionMap.values());
         Iterator i = clsPropMap.values().iterator();
@@ -321,7 +335,7 @@ public class DataTranslator
         // build equiv map excluding restricted subclass data
         equivMap = new HashMap();
 
-        Iterator stmtIter = model.listStatements();
+        ExtendedIterator stmtIter = model.listStatements();
         while (stmtIter.hasNext()) {
             Statement stmt = (Statement) stmtIter.next();
             if (stmt.getPredicate().getLocalName().equals("equivalentClass")
@@ -334,20 +348,29 @@ public class DataTranslator
                 }
             }
         }
+        stmtIter.close();
+        LOG.error("Finished buildEquivalenceMap()");
     }
 
-    private String getImplementationsString(String clsURI) {
-        String imps = "";
-        OntClass cls = model.getOntClass(clsURI);
-        Iterator superIter = cls.listSuperClasses(false);
-        while (superIter.hasNext()) {
-            OntClass sup = (OntClass) superIter.next();
-            if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
-                imps += sup.getURI() + " ";
+    private void buildImplementationsMap(OntModel model) {
+        impMap = new HashMap();
+        ExtendedIterator clsIter = model.listClasses();
+        while (clsIter.hasNext()) {
+            String imps = "";
+            OntClass cls = (OntClass) clsIter.next();
+            ExtendedIterator superIter = cls.listSuperClasses(false);
+            while (superIter.hasNext()) {
+                OntClass sup = (OntClass) superIter.next();
+                if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
+                    imps += sup.getURI() + " ";
+                }
             }
+            superIter.close();
+            impMap.put(cls.getURI(), imps.trim());
         }
-        return imps.trim();
+        clsIter.close();
     }
+
 
     /**
      * Main method
@@ -364,12 +387,15 @@ public class DataTranslator
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
+        ItemWriter tgtItemWriter = new BufferedItemWriter(new ObjectStoreItemWriter(oswTgt));
 
+        LOG.error("reading in model");
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
+        LOG.error("constructing DataTranslator");
         DataTranslator dt = new DataTranslator(srcItemReader, model, namespace);
-        LOG.warn("Calling DataTranslator.translate()");
+        model = null;
+        LOG.error("Calling DataTranslator.translate()");
         dt.translate(tgtItemWriter);
     }
 
