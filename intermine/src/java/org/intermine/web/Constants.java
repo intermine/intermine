@@ -38,6 +38,19 @@ public interface Constants
     public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
     
     /**
+     * ServletContext attribute maps a class name to a Map of category names to List of
+     * TemplateQuerys.
+     */
+    public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
+    
+    /**
+     * ServletContext attribute maps a class name to a Map of template names to field name - the
+     * field name is the one that should be set when a template is linked to from the object details
+     * page.
+     */
+    public static final String CLASS_TEMPLATE_FIELDNAMES = "CLASS_TEMPLATE_FIELDNAMES";
+    
+    /**
      * ServletContext attribute maps category name to List of class names.
      */
     public static final String CATEGORY_CLASSES = "CATEGORY_CLASSES";
