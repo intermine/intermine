@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
@@ -31,5 +31,7 @@
   </c:otherwise>
 </c:choose>
 <br/>
-<html:link action="/results">Return to results</html:link>
+<html:link action="/results">
+  <fmt:message key="results.return"/>
+</html:link>
 <!-- /details.jsp -->
