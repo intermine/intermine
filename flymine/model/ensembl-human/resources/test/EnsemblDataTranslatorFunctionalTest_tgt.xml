@@ -186,6 +186,7 @@
 <reference name="endExon" ref_id="0_2652"/>
 <reference name="organism" ref_id="-1_1"/>
 <reference name="startExon" ref_id="0_2654"/>
+<reference name="transcript" ref_id="3_478"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>
 </collection>

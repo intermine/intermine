@@ -54,8 +54,9 @@
   <attribute name="identifier" type="java.lang.String"/>
   <attribute name="translationStart" type="java.lang.Integer"/>
   <attribute name="translationEnd" type="java.lang.Integer"/>
+  <reference name="startExon" referenced-type="org.flymine.model.genomic.Exon"/>
   <reference name="endExon" referenced-type="org.flymine.model.genomic.Exon"/>
   <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="protein"/>
-  <reference name="startExon" referenced-type="org.flymine.model.genomic.Exon"/>
+  
 </class>
 </classes>

@@ -224,6 +224,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         //protein.addAttribute(new Attribute("idenitifer", "Q1001"));
         protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
         protein.addReference(new Reference("organism", "-1_1"));
+        protein.addReference(new Reference("transcript", "2_1"));
         protein.addCollection(new ReferenceList("subjects", new ArrayList(Arrays.asList(new Object[] {"-1_13","-1_19"}))));
         protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_12"))));
         protein.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));

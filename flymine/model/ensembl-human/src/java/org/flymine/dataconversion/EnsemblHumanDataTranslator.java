@@ -535,9 +535,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         String value = srcItem.getIdentifier();
         String uniprotId = null;
         String identifier = null;
+        String transcriptRefId = null;
         if (srcItem.hasReference("transcript")) {
-            Item transcript = ItemHelper.convert(srcItemReader.getItemById(
-                                    srcItem.getReference("transcript").getRefId()));
+            transcriptRefId = srcItem.getReference("transcript").getRefId();
+            Item transcript = ItemHelper.convert(srcItemReader.getItemById(transcriptRefId));
             if (transcript.hasReference("display_xref")) {
                 Item xref = ItemHelper.convert(srcItemReader.getItemById(
                                     transcript.getReference("display_xref").getRefId()));
@@ -589,6 +590,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
             if (identifier != null) {
                 protein.addAttribute(new Attribute("identifier", identifier));
+            }
+            if (transcriptRefId != null) {
+                protein.addReference(new Reference("transcript", transcriptRefId));
             }
             addReferencedItem(protein, getEnsemblDb(), "evidence", true, "", false);
             // set up additional references/collections
