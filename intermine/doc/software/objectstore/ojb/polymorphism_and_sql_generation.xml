@@ -41,7 +41,7 @@
 	Note that our mapping strategy is assumed to be that all absolute superclasses are allocated a table, and all subclasses of them are allocated to their superclass' table.
 <itemizedlist>
 	<listitem>Standard object class, <emphasis>which is the only thing mapped to its table</emphasis>.
-		It has no superclasses, and no subclasses, although it might inplement an interface<!-- (although these rules may all be broken if subclasses of a superclass are all mapped to individual tables)-->.
+		It has no superclasses, and no subclasses, although it might implement an interface<!-- (although these rules may all be broken if subclasses of a superclass are all mapped to individual tables)-->.
 		The interface is not an issue until we encounter the interface in the From list of a Query.
 		This type of class needs no intervention, and its table name may simply be added to the FROM list of the SQL query.
 	</listitem>

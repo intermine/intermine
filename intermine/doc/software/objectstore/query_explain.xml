@@ -60,7 +60,7 @@
 
   <sect1>
     <title>Proposed Implementation</title>
-    <para>Diagramatic overview of implementation (see notes below)</para>
+    <para>Diagrammatic overview of implementation (see notes below)</para>
       <inlinegraphic fileref="ojb/explain_implementation"/>
     <highlights>NOTES</highlights>
     <itemizedlist>

@@ -169,7 +169,7 @@
 		<title>Findings, and rules to follow</title>
 		<itemizedlist>
 			<listitem>Primary keys may not include references to other objects, either in an object reference or a collection, unless the reverse reference is a collection.
-				Therefore, the following types are permissable as parts of the primary key:
+				Therefore, the following types are permissible as parts of the primary key:
 				<itemizedlist>
 					<listitem>Any attribute of the object.</listitem>
 					<listitem>Object reference that is part of a one-to-many relationship.</listitem>
@@ -185,7 +185,7 @@
 						When loading data from the data source, always insert data into the database if it is not already there, but only override data (and that includes nulls) if the data source is the authority for the attribute being examined.
 						This method has drawbacks, in that the data in the database will depend on the order of running the different data loaders, for attributes in objects that were not present in the authoritative data source.
 						However, it would be simple to implement, and relatively quick to run.</listitem>
-					<listitem>For each attribute of each object class, define a heirarchy of data loaders, from least authoritative to most authoritative.
+					<listitem>For each attribute of each object class, define a hierarchy of data loaders, from least authoritative to most authoritative.
 						Store in an extra table in the database a record of which data source wrote <emphasis>every single</emphasis> attribute in the entire database.
 						This provides information to the currently running data loader as to whether it is more authoritative than the data source that wrote a particular piece of data.
 						One search of this table would be required for every object that is retrieved from the data source, and one insert/update would be required for every attribute that is updated or written into the database.
@@ -238,8 +238,8 @@
 
 	<sect1>
 		<title>Integration Management</title>
-		<para>To control the integration of data (i.e. the merging of data from different sources to give a consistent database), we think we will use method two from the list above, where one holds a heirarchy of data sources for each attribute name, and stores in a table the name of the data source that last wrote to a particular attribute.
-			An integration manager class reads a configuration file that stores these heirarchies, allowing a system to work out from the "last writer" information whether it overrides that data or not.
+		<para>To control the integration of data (i.e. the merging of data from different sources to give a consistent database), we think we will use method two from the list above, where one holds a hierarchy of data sources for each attribute name, and stores in a table the name of the data source that last wrote to a particular attribute.
+			An integration manager class reads a configuration file that stores these hierarchies, allowing a system to work out from the "last writer" information whether it overrides that data or not.
 			There are three methods of storing the "last writer" information in a table:</para>
 		<itemizedlist>
 			<listitem>Store all objects normally in the normal database, and have an extra table that stores a "last writer" for each attribute that was stored in the normal database.</listitem>

@@ -19,7 +19,7 @@
 
 <sect1>
 
-<para>This document presents examples of how a number of FlyMine use cases could be represented in a graphical query bulder.  Use Cases taken from  document by Gos Micklem, Andrew Varley</para>
+<para>This document presents examples of how a number of FlyMine use cases could be represented in a graphical query builder.  Use Cases taken from  document by Gos Micklem, Andrew Varley</para>
 
 
 <itemizedlist>
@@ -80,7 +80,7 @@ structure for a gene.</listitem>
 <para />
 <inlinegraphic fileref="use_case_9" align="center"/>
 <para />
-<listitem>Start with list of genes. Apply GO contraints (eg. signal
+<listitem>Start with list of genes. Apply GO constraints (eg. signal
 transduction). Return list of Swissprot IDs. Filter by organism
 type. Use Drosophila ones to pull out their chromosomal locations from
 ensembl. Match Dros. ones with Anoph. gene annotation, and find

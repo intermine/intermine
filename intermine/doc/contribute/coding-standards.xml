@@ -92,7 +92,7 @@ indent of 4 spaces.</listitem>
 with a gap of one space.</listitem>
 
 <listitem>Close curly braces to appear on new line, by themselves
-unless follwed by <function>else</function>,
+unless followed by <function>else</function>,
 <function>catch</function>, <function>finally</function> etc.</listitem>
 
 <listitem>Leave one space around operators (eg. <synopsis>if (a ==
@@ -138,7 +138,7 @@ directory.</listitem>
 <listitem>Any files no longer used should be removed using the command
 <command>cvs rm</command>.</listitem>
 
-<listitem>No code to be commited to CVS that breaks the build, unless
+<listitem>No code to be committed to CVS that breaks the build, unless
 for a very short time (eg. while committing a large set of changes)
 and with agreement from all developers.</listitem>
 
@@ -207,7 +207,7 @@ box.</listitem>
 <itemizedlist>
 
 <listitem>All logging to be done via log4j. No output messages to be
-written to stout or sterr.</listitem>
+written to stdout or stderr.</listitem>
 
 <listitem>Make use of the different logging levels available.</listitem>
 

@@ -41,7 +41,7 @@
     <item><ulink url="objectstore/results_prefetch">Results prefetching</ulink></item>
     <item><ulink url="objectstore/query_explain">Explain plans for FlyMine queries</ulink></item>
     <section>
-      <heading>OJB implemetation</heading>
+      <heading>OJB implementation</heading>
       <item><ulink url="objectstore/ojb/OJB-details">Details of O/R mapping layer</ulink></item>
       <item><ulink url="objectstore/ojb/ResultsToJdbc">How a results object accesses JDBC (directly through ObjectStoreOjbImpl)</ulink></item>
       <item><ulink url="objectstore/ojb/sql_gen_notes">SQL generation notes</ulink></item>

@@ -57,7 +57,7 @@ portions undocumented, or not conforming to the documentation.</para>
 <sect1>
 <title>Building FlyMine</title>
 
-<para>The only pre-requisite for building FlyMine is <ulink
+<para>The only prerequisite for building FlyMine is <ulink
 url="http://ant.apache.org">Ant</ulink>. This should be downloaded and
 installed on your machine.</para>
 
@@ -99,7 +99,7 @@ locally in order to be used.</para>
 <listitem>Edit the file <filename>flymine.properties</filename>,
 changing the locations of servers and datasources to match your local
 site. This file is commented so should be
-self-explainatory.</listitem>
+self-explanatory.</listitem>
 
 <listitem>Issue the command <command>ant build-db</command> to build
 the integrated database. This may take a very long time to complete,

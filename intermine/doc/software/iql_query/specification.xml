@@ -109,7 +109,7 @@
 				The textual representation is the first QueryClass, followed by "=" or "!=", followed by the second QueryClass.</listitem>
 			<listitem><highlights>ContainsConstraint</highlights> - This is a comparison between a reference type member of a QueryClass, and a QueryClass that the reference may contain.
 				There are two types of reference which can be present in an object - an object reference (which references a single object), and a collection reference (which is represented in the object as a Collection containing multiple objects).
-				Nevertheless, both types of reference are treated exactly the same in FQL - the only noticable difference between them being that collections are often named with a plural-like name (for instance "departments").
+				Nevertheless, both types of reference are treated exactly the same in FQL - the only noticeable difference between them being that collections are often named with a plural-like name (for instance "departments").
 				So, even though you may wish to write "<emphasis>Department.company = Company</emphasis>", the correct syntax is "<emphasis>Department.company CONTAINS Company</emphasis>".
 				The textual representation is a reference type (represented as the QueryClass followed by a dot, followed by the name of the reference), followed by "CONTAINS" or "DOES NOT CONTAIN", followed by the QueryClass being referred to.
 				For example - "<emphasis>Company.departments CONTAINS Department</emphasis>".</listitem>

@@ -18,7 +18,7 @@ unnecessary duplication of work.</para>
 <para>We prefer to accept patches against the current CVS
 repository. All code must adhere to the <ulink
 url="coding-standards">FlyMine coding standards</ulink> (note
-specifically that every metod of every class must have comprehensive
+specifically that every method of every class must have comprehensive
 unit tests), and not cause any existing unit tests to fail.</para>
 
 </sect1>
