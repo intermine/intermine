@@ -38,7 +38,6 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
 
     private PersistenceBroker broker;
     private JdbcAccessFlymineImpl ja;
-    private ObjectStore os;
     private Query q1, q2;
 
     public JdbcAccessFlymineImplTest(String arg) {
@@ -47,10 +46,6 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        Database db = DatabaseFactory.getDatabase("db.unittest");
-        ObjectStoreOjbImpl os = ObjectStoreOjbImpl.getInstance(db);
-        broker = os.getPersistenceBroker();
-
         broker = ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
         ja = (JdbcAccessFlymineImpl) broker.serviceJdbcAccess();
 
