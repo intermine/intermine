@@ -19,7 +19,7 @@
       <section>
          <heading>Browse the FlyMine model</heading>
         <item> 
-        The browse button allows you to browse the complete <ulink url="manualObjectmodel.xml">FlyMine object model</ulink>.  This shows all the classes in FlyMine, some of which do not yet have data associated with them 
+        The browse button allows you to browse the complete FlyMine object model.  This shows all the classes in FlyMine, some of which do not yet have data associated with them 
          </item>
          <item>The number on the right shows the number of objects associated with that class</item>
          <item>Click on a class name to begin your query with that class</item>

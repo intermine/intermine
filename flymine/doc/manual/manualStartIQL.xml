@@ -7,7 +7,7 @@
 
     <section>
       <heading>Perform a query using IQL</heading>
-      <item>IQL is the intermine query language.  See xxxxx, for the query definition.  </item>
+      <item>IQL is the intermine query language.  See <ulink url = "http://www.intermine.org/doc/software/howto_query.html">querying intermine</ulink> for more details.  </item>
   
 
 

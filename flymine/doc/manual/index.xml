@@ -15,7 +15,7 @@
     <section>
        <heading>The query interface</heading>
              <item><ulink url="manualStartingquery.xml">Starting a FlyMine query</ulink></item>
-             <item><ulink url="manualClasschooser.xml">The class selection page</ulink></item>
+             <item><ulink url="manualClasschooser.xml">The class chooser</ulink></item>
              <item><ulink url="manualQuerybuilder.xml">The FlyMine query builder</ulink></item> 
              <item><ulink url="manualModelbrowser.xml">The model browser</ulink></item>
              <item><ulink url="manualConstraintslist.xml">The constraints list</ulink></item>
