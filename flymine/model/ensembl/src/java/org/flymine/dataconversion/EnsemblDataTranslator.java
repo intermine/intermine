@@ -649,6 +649,28 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new FieldNameAndValue("className",
                     "http://www.flymine.org/model/ensembl#gene_stable_id", false));
         descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("(gene <- transcript.gene)");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "gene"));
+        desc.addConstraint(new FieldNameAndValue("className",
+                    "http://www.flymine.org/model/ensembl#transcript", false));
+        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
+                "(gene <- transcript.gene).translation");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("translation", "identifier"));
+        desc.addPath(desc2);
+        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
+                "((gene <- transcript.gene).translation <- object_xref.ensembl)");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "ensembl"));
+        desc3.addConstraint(new FieldNameAndValue("className",
+                    "http://www.flymine.org/model/ensembl#object_xref", false));
+        desc2.addPath(desc3);
+        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
+                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("xref", "identifier"));
+        desc3.addPath(desc4);
+        ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
+                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
+        desc5.addConstraint(new ItemPrefetchConstraintDynamic("external_db", "identifier"));
+        desc4.addPath(desc5);
         paths.put("http://www.flymine.org/model/ensembl#gene", descSet);
 
         desc = new ItemPrefetchDescriptor("contig.dna");
@@ -660,11 +682,10 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic("identifier", "ensembl"));
         desc.addConstraint(new FieldNameAndValue("className",
                     "http://www.flymine.org/model/ensembl#object_xref", false));
-        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
+        desc2 = new ItemPrefetchDescriptor(
                 "(translation <- object_xref.ensembl).xref");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("xref", "identifier"));
-        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
-                "(translation <- object_xref.ensembl).xref.external_db");
+        desc3 = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl).xref.external_db");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("external_db", "identifier"));
         desc2.addPath(desc3);
         desc.addPath(desc2);
