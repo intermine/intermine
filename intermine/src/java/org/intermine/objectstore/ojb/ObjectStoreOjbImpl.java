@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Properties;
 
-import org.apache.ojb.broker.*;
-import org.apache.ojb.broker.metadata.*;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.ta.PersistenceBrokerFactoryFactory;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
-import org.flymine.objectstore.*;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
@@ -21,11 +22,13 @@ import org.flymine.util.PropertiesUtil;
  * Implementation of ObjectStore that uses OJB as its underlying store.
  *
  * @author Andrew Varley
+ * @author Mark Woodbridge
  */
 public class ObjectStoreOjbImpl implements ObjectStore
 {
     protected static Map instances = new HashMap();
-    protected PersistenceBrokerFlyMineImpl pb = null;
+    protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
+    protected Database db;
     protected long maxTime;
     protected int maxRows;
     protected int maxLimit;
@@ -40,43 +43,15 @@ public class ObjectStoreOjbImpl implements ObjectStore
 
     /**
      * Constructs an ObjectStoreOjbImpl interfacing with an OJB instance
+     * NB There is one ObjectStore per Database, and it holds a PersistenceBrokerFactory
      *
      * @param db the database in which the model resides
-     * @throws ObjectStoreException if there is any problem with the underlying OJB instance
      * @throws NullPointerException if repository is null
      * @throws IllegalArgumentException if repository is invalid
      */
-    protected ObjectStoreOjbImpl(Database db) throws ObjectStoreException {
-        if (db == null) {
-            throw new NullPointerException("db cannot be null");
-        }
-
-        PersistenceBroker pbTemp;
-        ConnectionRepository cr = MetadataManager.getInstance().connectionRepository();
-        JdbcConnectionDescriptor jcd = new JdbcConnectionDescriptor();
-
-        jcd.setJcdAlias("ObjectStoreOjbImpl");
-        jcd.setDefaultConnection(true);
-
-        jcd.setDriver(db.getDriver());
-        jcd.setDbms(db.getPlatform());
-
-        String[] s = db.getURL().split(":");
-        jcd.setProtocol(s[0]);
-        jcd.setSubProtocol(s[1]);
-        jcd.setDbAlias(s[2]);
-
-        cr.addDescriptor(jcd);
-        PBKey key = new PBKey("ObjectStoreOjbImpl", db.getUser(), db.getPassword());
-        pbTemp = PersistenceBrokerFactory.createPersistenceBroker(key);
-
-        if (pbTemp instanceof PersistenceBrokerFlyMineImpl) {
-            pb = (PersistenceBrokerFlyMineImpl) pbTemp;
-        } else {
-            throw new IllegalArgumentException("ObjectStoreOjbImpl requires a "
-                                               + "PersistenceBrokerFlyMineImpl to be "
-                                               + "returned from PersistenceBrokerFactory");
-        }
+    protected ObjectStoreOjbImpl(Database db) {
+        this.db = db;
+        pbf = (PersistenceBrokerFactoryFlyMineImpl) PersistenceBrokerFactoryFactory.instance();
 
         Properties props = PropertiesUtil.getPropertiesStartingWith("os.query");
         props = PropertiesUtil.stripStart("os.query", props);
@@ -87,13 +62,15 @@ public class ObjectStoreOjbImpl implements ObjectStore
     }
 
     /**
-     * Gets the PersistenceBroker used by this
-     * ObjectStoreOjbImpl. Probably only useful for testing purposes.
+     * Gets the PersistenceBroker used by this ObjectStoreOjbImpl. 
+     * This should only be used in testing - if a broker pool is in use then these brokers
+     * are neither deleted or returned to the pool, which is wasteful.
+     * Besides, usage presumes that OJB is the underlying mapping tool.
      *
      * @return the PersistenceBroker this object is using
      */
     public PersistenceBroker getPersistenceBroker() {
-        return pb;
+        return pbf.createPersistenceBroker(db);
     }
 
     /**
@@ -150,6 +127,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
                                             + maxLimit + ")"));
         }
 
+        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db);
         ExplainResult explain = pb.explain(q, start, end);
 
         if (explain.getTime() > maxTime) {
@@ -167,6 +145,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
         for (int i = 0; i < res.size(); i++) {
             res.set(i, new ResultsRow(Arrays.asList((Object[]) res.get(i))));
         }
+        pb.close();
         return res;
     }
 
@@ -178,7 +157,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs explining the query
      */
     public ExplainResult estimate(Query q) throws ObjectStoreException {
-        return pb.explain(q, 0, 0);
+        return explain(q, 0, 0);
     }
 
     /**
@@ -192,8 +171,14 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs explining the query
      */
     public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException {
-        return pb.explain(q, start, end);
+        return explain(q, start, end);
     }
 
+    private ExplainResult explain(Query q, int start, int end) throws ObjectStoreException {
+        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db);
+        ExplainResult result = pb.explain(q, start, end);
+        pb.close();
+        return result;
+    }
 }
 
