@@ -107,7 +107,7 @@ xmlns="http://www.w3.org/1999/xhtml">
 </xsl:template>
 
 <xsl:template match="table">
-<table><xsl:apply-templates/></table>
+<table class="{title/text()}"><xsl:apply-templates/></table>
 </xsl:template>
 
 <xsl:template match="table/title">
