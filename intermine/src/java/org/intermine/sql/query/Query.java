@@ -836,7 +836,7 @@ public class Query implements SQLStringable
                 if (subAST.getType() != SqlTokenTypes.SQL_STATEMENT) {
                     throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
                 }
-                Query rightb = new Query();
+                Query rightb = new Query(aliasToTable);
                 rightb.processAST(subAST.getFirstChild());
                 return new SubQueryConstraint(leftb, rightb);
             default:

@@ -909,4 +909,52 @@ public class QueryTest extends TestCase
         assertEquals(q2, q1);
     }
 
+    public void testSubQueryScope() throws Exception {
+        Query q1 = new Query("select t1.f1 as v1, t2.f1 as v2 from t1, (select t3.f1 as v3 from t3 where t3.f1 = t1.f2) as t2");
+        Query q2 = new Query();
+        Table t1 = new Table("t1");
+        Field t1f1 = new Field("f1", t1);
+        Table t3 = new Table("t3");
+        Field t3f1 = new Field("f1", t3);
+        Field t1f2 = new Field("f2", t1);
+        Query q3 = new Query();
+        SelectValue sv1 = new SelectValue(t1f1, "v1");
+        SelectValue sv3 = new SelectValue(t3f1, "v3");
+        q3.addSelect(sv3);
+        q3.addFrom(t3);
+        Constraint c1 = new Constraint(t3f1, Constraint.EQ, t1f2);
+        q3.addWhere(c1);
+        SubQuery t2 = new SubQuery(q3, "t2");
+        Field t2f1 = new Field("f1", t2);
+        SelectValue sv2 = new SelectValue(t2f1, "v2");
+
+        q2.addSelect(sv1);
+        q2.addSelect(sv2);
+        q2.addFrom(t1);
+        q2.addFrom(t2);
+        assertEquals(q2, q1);
+    }
+
+    public void testSubQueryWhereScope() throws Exception {
+        Query q1 = new Query("select t1.f1 as v1 from t1 where t1.f1 in (select t3.f1 as v3 from t3 where t3.f1 = t1.f2)");
+        Table t3 = new Table("t3");
+        Field t3f1 = new Field("f1", t3);
+        Query q3 = new Query();
+        SelectValue sv3 = new SelectValue(t3f1, "v3");
+        q3.addSelect(sv3);
+        q3.addFrom(t3);
+        Table t1 = new Table("t1");
+        Field t1f2 = new Field("f2", t1);
+        Constraint c1 = new Constraint(t3f1, Constraint.EQ, t1f2);
+        q3.addWhere(c1);
+
+        Query q2 = new Query();
+        Field t1f1 = new Field("f1", t1);
+        SelectValue sv1 = new SelectValue(t1f1, "v1");
+        SubQueryConstraint c2 = new SubQueryConstraint(t1f1, q3);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addWhere(c2);
+        assertEquals(q2, q1);
+    }
 }
