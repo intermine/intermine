@@ -19,6 +19,7 @@ public class PrecomputedTableManager
     protected Map precomputedTables = new HashMap();
     protected String dbName = null;
     protected static final String TABLE_INDEX = "precompute_index";
+    protected static Map instances = new HashMap();
     Date lastChecked;
 
     /**
@@ -28,7 +29,7 @@ public class PrecomputedTableManager
      * @throws IllegalArgumentException if dbName is invalid
      * @throws SQLException if an error occurs in the underlying database
      */
-    public PrecomputedTableManager(String dbName) throws SQLException {
+    protected PrecomputedTableManager(String dbName) throws SQLException {
         if (dbName == null) {
             throw new NullPointerException("dbName cannot be null");
         }
@@ -36,9 +37,8 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = ConnectionFactory.getConnection(dbName);
+            synchroniseWithDatabase(con);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(dbName + "is invalid: " + e.getMessage());
-        } catch (SQLException e) {
             throw new IllegalArgumentException(dbName + "is invalid: " + e.getMessage());
         } finally {
             try {
@@ -49,8 +49,23 @@ public class PrecomputedTableManager
             }
         }
         this.dbName = dbName;
+    }
 
-        synchroniseWithDatabase();
+    /**
+     * Gets a PrecomputedTableManager instance for the given underlying database
+     *
+     * @param dbName the name of the underlying database
+     * @return the PrecomputedTableManager for this database
+     * @throws IllegalArgumentException if dbName is invalid
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    public static PrecomputedTableManager getInstance(String dbName) throws SQLException {
+        synchronized (instances) {
+            if (! (instances.containsKey(dbName))) {
+                instances.put(dbName, new PrecomputedTableManager(dbName));
+            }
+        }
+        return (PrecomputedTableManager) instances.get(dbName);
     }
 
     /**
@@ -177,34 +192,25 @@ public class PrecomputedTableManager
     /**
      * Synchronise with the underlying database
      *
+     * @param con a Connection to the database we are synchronising with
      * @throws SQLException if there is a problem in the underlying database
      */
-    protected void synchroniseWithDatabase() throws SQLException {
-        Connection con = null;
-        try {
-            con = ConnectionFactory.getConnection(dbName);
-            // Create index table if necessary
-            if (!DatabaseUtil.tableExists(con, TABLE_INDEX)) {
-                setupDatabase(con);
-            }
-            Statement stmt = con.createStatement();
-            ResultSet res = stmt.executeQuery("SELECT * FROM " + TABLE_INDEX);
+    protected void synchroniseWithDatabase(Connection con) throws SQLException {
+        // Create index table if necessary
+        if (!DatabaseUtil.tableExists(con, TABLE_INDEX)) {
+            setupDatabase(con);
+        }
+        Statement stmt = con.createStatement();
+        ResultSet res = stmt.executeQuery("SELECT * FROM " + TABLE_INDEX);
 
-            while (res.next()) {
-                String tableName = res.getString(1);
-                String queryString = res.getString(2);
-                try {
-                    precomputedTables.put(tableName,
-                                          new PrecomputedTable(new Query(queryString), tableName));
-                } catch (Exception e) {
-                    // This would be a poor query string in the TABLE_INDEX
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            // This would have been dealt with in the constructor
-        } finally {
-            if (con != null) {
-                con.close();
+        while (res.next()) {
+            String tableName = res.getString(1);
+            String queryString = res.getString(2);
+            try {
+                precomputedTables.put(tableName,
+                                      new PrecomputedTable(new Query(queryString), tableName));
+            } catch (Exception e) {
+                // This would be a poor query string in the TABLE_INDEX
             }
         }
 
