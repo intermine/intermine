@@ -43,7 +43,7 @@ import com.hp.hpl.jena.rdf.model.*;
 public class MergeOwl
 {
     protected OntModel tgtModel = null;
-    private final String tgtNamespace;
+    private final String tgtNs;
     protected Map equiv;
     protected Map subMap;
 
@@ -51,11 +51,11 @@ public class MergeOwl
      * Construct with a Reader for the merge spec (which becomes the initial target model) and
      * a namespace URI for the target model.
      * @param mergeSpec a Reader pointing to and OWL file defining the OWL merge
-     * @param tgtNamespace a String representing the URI of the target model namespace
+     * @param tgtNs a String representing the URI of the target model namespace
      * @throws IOException if problem with Reader occurs
      */
-    public MergeOwl(Reader mergeSpec, String tgtNamespace) throws IOException {
-        this.tgtNamespace = tgtNamespace;
+    public MergeOwl(Reader mergeSpec, String tgtNs) throws IOException {
+        this.tgtNs = tgtNs;
         MergeSpec2Owl m = new MergeSpec2Owl();
         tgtModel = m.process(mergeSpec);
     }
@@ -71,17 +71,17 @@ public class MergeOwl
     /**
      * Add a source OWL ontology to the target OWL ontology.
      * @param sourceOwl a Reader pointing to the source OWL document
-     * @param srcNamespace string represencting the URI namespace of source OWL document
+     * @param srcNs string represencting the URI namespace of source OWL document
      * @param format the format of sourceOwl, must be: RDF/XML, N-TRIPLE or N3
      */
-    protected void addToTargetOwl(Reader sourceOwl, String srcNamespace, String format) {
+    protected void addToTargetOwl(Reader sourceOwl, String srcNs, String format) {
         if (!(format.equals("RDF/XML") || format.equals("N-TRIPLE") || format.equals("N3"))) {
             throw new IllegalArgumentException(" format must be one of: RDF/XML. N-TRIPLE or N3."
                                                + "(was: " + format + ")");
         }
         OntModel source = ModelFactory.createOntologyModel();
         source.read(sourceOwl, null, format);
-        mergeByEquivalence(source, OntologyUtil.correctNamespace(srcNamespace));
+        mergeByEquivalence(source, OntologyUtil.correctNamespace(srcNs));
     }
 
     /**
@@ -91,12 +91,13 @@ public class MergeOwl
      * target model nothing needs to be done, otherwise transfers all statements directly
      * to new namespace in target model.
      * @param srcModel a Jena OntModel representing the source OWL
-     * @param srcNamespace the namespace of the source OWL ontology
+     * @param srcNs the namespace of the source OWL ontology
      */
-    protected void mergeByEquivalence(OntModel srcModel, String srcNamespace) {
-        // map of URIs (i.e. names of resources) in srcNamespace to equivalent Resources in target
-        equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNamespace);
+    protected void mergeByEquivalence(OntModel srcModel, String srcNs) {
+        // map of src URIs (i.e. class/property/individual names) to equivalent target resources
+        equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
 
+        // build map from source class to restricted subclasses
         subMap = new HashMap();
         Iterator clsIter = srcModel.listClasses();
         while (clsIter.hasNext()) {
@@ -112,64 +113,58 @@ public class MergeOwl
         // adding statements to Jena model by batch method is supposedly faster
         List statements = new ArrayList();
 
-        // transfer statements to target namespace
+        // transfer statements in source model to target namespace
         Iterator stmtIter = srcModel.listStatements();
         while (stmtIter.hasNext()) {
             Statement stmt = (Statement) stmtIter.next();
+
+            // Jena makes classes subClasses of themselves -> prevent this
+            if (stmt.getPredicate().getURI().equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")
+                && stmt.getObject().canAs(Resource.class) && !((Resource) stmt.getObject()).isAnon()
+                && stmt.getSubject().getURI().equals(((Resource) stmt.getObject()).getURI())) {
+                continue;
+            }
+
+           // add subject of statement to set
             HashSet subjects = new HashSet(Collections.singleton(stmt.getSubject()));
+            // also add restricted subclasses
             if (subMap.containsKey(stmt.getSubject())) {
                 subjects.addAll((Set) subMap.get(stmt.getSubject()));
             }
+            // for each subject
             Iterator subjIter = subjects.iterator();
             while (subjIter.hasNext()) {
                 Resource subject = (Resource) subjIter.next();
                 RDFNode tmpObj = stmt.getObject();  // RDFNode can be Resource or literal
+                // add object of statement to set
                 HashSet objects = new HashSet(Collections.singleton(tmpObj));
-                // transfer all statements to new subclasses EXCEPT other subClassOf
+                // also add restricted subclasses
                 if (tmpObj instanceof Resource && subMap.containsKey(tmpObj)
                     && !stmt.getPredicate().getURI()
-                                           .equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")) {
+                        .equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")) {
                     objects.addAll((Set) subMap.get(tmpObj));
                 }
-                Resource newSubject = subject;
-                Iterator objIter = objects.iterator();
-                while (objIter.hasNext()) {
-                    RDFNode object = (RDFNode) objIter.next();
-                    RDFNode newObject = object;
-                    if (!subject.isAnon() && subject.getNameSpace().equals(srcNamespace)) {
-                        if (stmt.getPredicate().getNameSpace()
-                                               .equals(OntologyUtil.RDF_NAMESPACE)
-                            && stmt.getPredicate().getLocalName().equals("type")) {
+                // lookup new subject and object, create statement
+                Resource newSubject = getTargetResource(subject, srcNs);
+                if (subject.isAnon() || subject.getNameSpace().equals(srcNs)
+                    || subject.getNameSpace().equals(tgtNs)) {
+                    Iterator objIter = objects.iterator();
+                    while (objIter.hasNext()) {
+                        RDFNode object = (RDFNode) objIter.next();
+                        RDFNode newObject = object;
 
-                            if (!equiv.containsKey(subject.getURI())) {
-                                newSubject = tgtModel.createResource(tgtNamespace
-                                                                     + subject.getLocalName());
-                                newObject = getTargetResource((Resource) object, srcNamespace);
-                                statements.add(tgtModel.createStatement(newSubject,
-                                    stmt.getPredicate(), newObject));
-                                addEquivalenceStatement(newSubject, (Resource) newObject,
-                                                        subject, statements);
-                            }
-                        } else if (stmt.getPredicate().getNameSpace()
-                                                      .equals(OntologyUtil.RDFS_NAMESPACE)
-                                   && stmt.getPredicate().getLocalName().equals("subClassOf")
-                                   && subject.equals(object)) {
-                            continue;  // stop business objects being subClasses of themselves
-                        } else {
-                            newSubject = getTargetResource(subject, srcNamespace);
-                            if (object instanceof Resource) {
-                                newObject = getTargetResource((Resource) object, srcNamespace);
-                            }
-                            statements.add(tgtModel.createStatement(newSubject, stmt.getPredicate(),
-                                                                    newObject));
-                        }
-                    } else if (subject.isAnon()) {
-                        newSubject = getTargetResource(subject, srcNamespace);
                         if (object instanceof Resource) {
-                            newObject = getTargetResource((Resource) object, srcNamespace);
+                            newObject = getTargetResource((Resource) object, srcNs);
                         }
                         statements.add(tgtModel.createStatement(newSubject, stmt.getPredicate(),
                                                                 newObject));
+
+                        // if declaration of a resource (rdf:type) then add an equivalence statement
+                        if (stmt.getPredicate().getURI().equals(OntologyUtil.RDF_NAMESPACE + "type")
+                            && !equiv.containsKey(subject.getURI())) {
+                            addEquivalenceStatement(newSubject, (Resource) newObject,
+                                                    subject, statements);
+                        }
                     }
                 }
             }
@@ -182,14 +177,14 @@ public class MergeOwl
      * Given a resource and the namespace of the source OWL find the equivalent resource
      * already in the target or create a new resource with this name in the target namespace.
      * @param res the resource to find or create
-     * @param srcNamespace namespace of the source OWL
+     * @param srcNs namespace of the source OWL
      * @return the equivalent or newly create Resource in the target namespace
      */
-    protected Resource getTargetResource(Resource res, String srcNamespace) {
+    protected Resource getTargetResource(Resource res, String srcNs) {
         if (equiv.containsKey(res.getURI())) {
             return (Resource) equiv.get(res.getURI());
-        } else if (!res.isAnon() && res.getNameSpace().equals(srcNamespace)) {
-            return tgtModel.createResource(tgtNamespace + res.getLocalName());
+        } else if (!res.isAnon() && res.getNameSpace().equals(srcNs)) {
+            return tgtModel.createResource(tgtNs + res.getLocalName());
         }
         return res;
     }
@@ -202,7 +197,7 @@ public class MergeOwl
      * @param target resource created in target namespace
      * @param obj object of the triple in source OWL - i.e. what the rdf:type actually is
      * @param original resource in source namespace to point equivalence statement at
-     * @param statements the list of statements generated for target model
+     * @param statements list of statements to add to
      */
     protected void addEquivalenceStatement(Resource target, Resource obj, Resource original,
                                            List statements) {
@@ -238,14 +233,14 @@ public class MergeOwl
         }
 
         String tgtModelName = args[0];
-        String tgtNamespace = args[1];
+        String tgtNs = args[1];
         String srcModelName = args[2];
-        String srcNamespace = args[3];
+        String srcNs = args[3];
         String srcFormat = args[4];
 
         File tgtModel = new File(tgtModelName);
-        MergeOwl merger = new MergeOwl(new FileReader(tgtModel), tgtNamespace);
-        merger.addToTargetOwl(new FileReader(new File(srcModelName)), srcNamespace, srcFormat);
+        MergeOwl merger = new MergeOwl(new FileReader(tgtModel), tgtNs);
+        merger.addToTargetOwl(new FileReader(new File(srcModelName)), srcNs, srcFormat);
         OntModel ont = merger.getTargetModel();
         ont.write(new FileWriter(tgtModel), "N3");
     }
