@@ -124,6 +124,8 @@ public class ViewChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
+        session.removeAttribute("changeResultsForm"); 
+
         try {
             session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
         } catch (ObjectStoreException e) {
