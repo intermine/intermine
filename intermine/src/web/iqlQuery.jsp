@@ -7,7 +7,7 @@
   <html:form action="/fqlquery" focus="querystring" onsubmit="return validateFqlQueryForm(this);">
     <fmt:message key="fqlquery.prompt"/>:
     <br/>
-    <html:textarea property="querystring" value="${QUERY}" rows="10" cols="80"/>
+    <html:textarea property="querystring" rows="10" cols="80"/>
     <br/>
     <html:submit property="action">
       <fmt:message key="button.run"/>
