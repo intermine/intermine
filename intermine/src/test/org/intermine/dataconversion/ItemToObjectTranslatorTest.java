@@ -47,7 +47,7 @@ import org.intermine.model.testmodel.Company;
 
 public class ItemToObjectTranslatorTest extends QueryTestCase
 {
-    protected ItemToObjectTranslator translator; 
+    protected ItemToObjectTranslator translator;
 
     public static Test suite() {
         return buildSuite(ItemToObjectTranslatorTest.class);
@@ -58,7 +58,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
     }
 
     public static void oneTimeSetUp() throws Exception {
-        QueryTestCase.oneTimeSetUp();        
+        QueryTestCase.oneTimeSetUp();
     }
 
     public void setUp() throws Exception {
@@ -74,12 +74,12 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         QueryClass qc = new QueryClass(Item.class);
         expected.addFrom(qc);
         expected.addToSelect(qc);
-        
+
         Query original = new Query();
         QueryClass qc2 = new QueryClass(InterMineObject.class);
         original.addFrom(qc2);
         original.addToSelect(qc2);
-        
+
         assertEquals(expected, translator.translateQuery(original));
     }
 
@@ -91,7 +91,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         QueryField qf = new QueryField(qc, "identifier");
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("fish_42"));
         expected.setConstraint(sc);
-        
+
         Query original = new Query();
         QueryClass qc2 = new QueryClass(InterMineObject.class);
         original.addFrom(qc2);
@@ -99,7 +99,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         QueryField qf2 = new QueryField(qc2, "id");
         SimpleConstraint sc2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue(new Integer(42)));
         original.setConstraint(sc2);
-        
+
         assertEquals(expected, translator.translateQuery(original));
     }
 
@@ -111,7 +111,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         QueryField qf = new QueryField(qc, "identifier");
         BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, Arrays.asList(new Object[] {"fish_12", "fish_15", "fish_19"}));
         expected.setConstraint(bc);
-        
+
         Query original = new Query();
         QueryClass qc2 = new QueryClass(InterMineObject.class);
         original.addFrom(qc2);
@@ -119,7 +119,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         QueryField qf2 = new QueryField(qc2, "id");
         BagConstraint bc2 = new BagConstraint(qf2, ConstraintOp.IN, Arrays.asList(new Object[] {new Integer(12), new Integer(15), new Integer(19)}));
         original.setConstraint(bc2);
-        
+
         assertEquals(expected, translator.translateQuery(original));
     }
 
@@ -165,15 +165,15 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         InterMineObject result = translator.translateFromDbObject(dbItem);
         assertTrue(result instanceof Department);
         assertTrue(result instanceof Broke);
-        
+
         assertEquals("Department1", ((Department) result).getName());
         assertEquals(10, ((Broke) result).getDebt());
-        
-        Map fieldMap = ((DynamicBean) ((net.sf.cglib.Factory) result).interceptor()).getMap();
+
+        Map fieldMap = ((DynamicBean) ((net.sf.cglib.proxy.Factory) result).getCallback(0)).getMap();
         ProxyReference o = (ProxyReference) fieldMap.get("Company");
         assertNotNull(o);
         assertEquals(new Integer(2), o.getId());
-        
+
         Collection c = ((Department) result).getEmployees();
         assertTrue(c instanceof SingletonResults);
         Query expected = new Query();

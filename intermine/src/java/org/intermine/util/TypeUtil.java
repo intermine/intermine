@@ -261,7 +261,9 @@ public class TypeUtil
                             if (Character.isLowerCase(fieldName.charAt(1))) {
                                 fieldName = StringUtil.decapitalise(fieldName);
                             }
-                            if (!getter.getName().equals("getClass")) {
+                            // cglib Factory interface has getCallBack() and getCallBacks() methods
+                            if (!getter.getName().equals("getClass")
+                                && !getter.getName().startsWith("getCallback")) {
                                 FieldInfo info = new FieldInfo(fieldName, getter, setter,
                                         proxySetter, proxyGetter);
                                 infos.put(fieldName, info);

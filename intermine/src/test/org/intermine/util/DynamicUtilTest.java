@@ -129,31 +129,31 @@ public class DynamicUtilTest extends TestCase
     public void testConstructors() throws Exception {
         Class c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
         Company obj = (Company) c.newInstance();
-        ((net.sf.cglib.Factory) obj).interceptor(new DynamicBean());
+        ((net.sf.cglib.proxy.Factory) obj).setCallback(0, new DynamicBean());
         obj.setName("Fred");
         assertEquals("Fred", obj.getName());
     }
-    
+
     public void testInstantiateObjectNullClassName() throws Exception {
         Object obj = DynamicUtil.instantiateObject(null, "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Broke);
     }
-    
+
     public void testInstantiateObjectEmptyClassName() throws Exception {
         Object obj = DynamicUtil.instantiateObject("", "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Broke);
     }
-    
+
     public void testInstantiateObjectNullImplementations() throws Exception {
         Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", null);
         assertTrue(obj instanceof Manager);
     }
-    
+
     public void testInstantiateObjectEmptyImplementations() throws Exception {
         Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "");
         assertTrue(obj instanceof Manager);
     }
-    
+
     public void testInstantiateObject() throws Exception {
         Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Manager);

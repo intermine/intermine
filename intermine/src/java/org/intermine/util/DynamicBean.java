@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import net.sf.cglib.*;
+import net.sf.cglib.proxy.*;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -53,8 +53,12 @@ public class DynamicBean implements MethodInterceptor
         if ((clazz != null) && clazz.isInterface()) {
             throw new IllegalArgumentException("clazz must not be an interface");
         }
-        return Enhancer.enhance(clazz, inter,
-                                new DynamicBean());
+        // If Enhancer.create() called with a null class it will alter java.lang.Object
+        // this causes a security exception if run with Kaffe JRE
+        //if ( clazz == null) {
+        //    clazz = DynamicBean.class;
+        //}
+        return Enhancer.create(clazz, inter, new DynamicBean());
     }
 
     /**

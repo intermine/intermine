@@ -75,7 +75,7 @@ public class LiteParserTest extends TestCase
 
     public void testParseDynamic() throws Exception {
 
-        String s = LiteRenderer.DELIM + "org.intermine.model.testmodel.Company net.sf.cglib.Factory"
+        String s = LiteRenderer.DELIM + "org.intermine.model.testmodel.Company net.sf.cglib.proxy.Factory"
             + LiteRenderer.DELIM + "raddress" + LiteRenderer.DELIM + "74328"
             + LiteRenderer.DELIM + "avatNumber" + LiteRenderer.DELIM + "100"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "CompanyC"
@@ -86,7 +86,7 @@ public class LiteParserTest extends TestCase
         assertEquals("CompanyC", obj1.getName());
         assertEquals(100, obj1.getVatNumber());
         assertEquals(new Integer(74350), obj1.getId());
-        Map fieldMap = ((DynamicBean) ((net.sf.cglib.Factory) obj1).interceptor()).getMap();
+        Map fieldMap = ((DynamicBean) ((net.sf.cglib.proxy.Factory) obj1).getCallback(0)).getMap();
         ProxyReference addressRef = (ProxyReference) fieldMap.get("Address");
         assertNotNull(addressRef);
         assertEquals(new Integer(74328), addressRef.getId());
@@ -105,7 +105,7 @@ public class LiteParserTest extends TestCase
         assertEquals("CompanyC", obj1.getName());
         assertEquals(100, obj1.getVatNumber());
         assertEquals(new Integer(74350), obj1.getId());
-        Map fieldMap = ((DynamicBean) ((net.sf.cglib.Factory) obj1).interceptor()).getMap();
+        Map fieldMap = ((DynamicBean) ((net.sf.cglib.proxy.Factory) obj1).getCallback(0)).getMap();
         ProxyReference addressRef = (ProxyReference) fieldMap.get("Address");
         assertNotNull(addressRef);
         assertEquals(new Integer(74328), addressRef.getId());

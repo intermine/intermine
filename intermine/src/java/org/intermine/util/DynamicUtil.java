@@ -19,7 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.cglib.*;
+import net.sf.cglib.proxy.*;
 
 import org.apache.log4j.Logger;
 
@@ -59,7 +59,7 @@ public class DynamicUtil
                 throw e2;
             }
             if (retval instanceof Factory) {
-                ((Factory) retval).interceptor(new DynamicBean());
+                ((Factory) retval).setCallback(0, new DynamicBean());
             }
             return retval;
         } else {
@@ -109,8 +109,8 @@ public class DynamicUtil
 
     /**
      * Return the Class for a set of Class objects. NOTE: Creating an instance of this class is not
-     * trivial: after calling Class.newInstance(), cast the Object to net.sf.cglib.Factory, and call
-     * interceptor(new org.intermine.util.DynamicBean()) on it.
+     * trivial: after calling Class.newInstance(), cast the Object to net.sf.cglib.proxy.Factory,
+     * and call interceptor(new org.intermine.util.DynamicBean()) on it.
      *
      * @param classes the classes and interfaces to extend/implement
      * @return the Class
@@ -149,14 +149,14 @@ public class DynamicUtil
      * @return a Set of Class objects
      */
     public static Set decomposeClass(Class clazz) {
-        if (net.sf.cglib.Factory.class.isAssignableFrom(clazz)) {
+        if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
             // Decompose
             Set retval = new LinkedHashSet();
             retval.add(clazz.getSuperclass());
             Class interfs[] = clazz.getInterfaces();
             for (int i = 0; i < interfs.length; i++) {
                 Class inter = interfs[i];
-                if (net.sf.cglib.Factory.class != inter) {
+                if (net.sf.cglib.proxy.Factory.class != inter) {
                     boolean notIn = true;
                     Iterator inIter = retval.iterator();
                     while (inIter.hasNext() && notIn) {
@@ -184,7 +184,7 @@ public class DynamicUtil
             return Collections.singleton(clazz);
         }
     }
-    
+
     /**
      * Create an outline business object from a class name and a list of interface names
      * @param className the class name
@@ -192,17 +192,17 @@ public class DynamicUtil
      * @return the materialised business object
      */
     public static Object instantiateObject(String className, String implementations) {
-        
+
         Set classNames = new HashSet();
-        
+
         if (className != null && !"".equals(className) && !"".equals(className.trim())) {
             classNames.add(className.trim());
         }
-        
+
         if (implementations != null) {
             classNames.addAll(StringUtil.tokenize(implementations));
         }
-        
+
         try {
             return DynamicUtil.createObject(convertToClasses(classNames));
         } catch (ClassNotFoundException e) {
