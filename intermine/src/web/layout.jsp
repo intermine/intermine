@@ -15,25 +15,12 @@
     <title><tiles:getAsString name="title"/></title>
   </head>
   
-  <body bgcolor="#f4eeff">
-    <table cellpadding="10" border="0" bordercolor="red" width="100%" align="center">
-      <tr>
-        <td valign="bottom" align="left" colspan="3"><tiles:get name="header"/></td>
-      </tr>
-      <tr>
-        <td valign="top" align="left" width="5%" height="10%" class="sidebar">
-          <tiles:get name="menu"/>
-        </td>
-        <td rowspan="2" valign="top" align="left" class="main"><tiles:get name="body"/></td>
-        <%--td valign="top" align="left" class="main" width="15%"><tiles:get name="right"/></td--%>
-      </tr>
-      <tr>
-        <td/>
-      </tr>
-      <tr>
-        <td colspan="3" align="center" class="footer"><tiles:get name="footer"/></td>
-      </tr>
-    </table>
+  <body>
+    <div class="main-layout">
+      <tiles:get name="header"/>
+      <tiles:get name="menu"/>
+      <tiles:get name="body"/>
+      <tiles:get name="footer"/>
+    </div>
   </body>
-  
 </html:html>
