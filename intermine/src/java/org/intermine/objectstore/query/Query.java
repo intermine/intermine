@@ -104,6 +104,15 @@ public class Query implements FromElement
     }
 
     /**
+     * Gets the GROUP BY clause of this Query
+     *
+     * @return the set of GROUP BY nodes
+     */
+    public Set getGroupBy() {
+        return Collections.unmodifiableSet(groupBy);
+    }
+
+    /**
      * Add a QueryNode to the ORDER BY clause of this Query
      *
      * @param node the node to add
