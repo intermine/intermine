@@ -460,6 +460,8 @@
         <pathelement path="${build.java}"/>
       </classpath>
     </depend>
+    <antcall target="summarise-testmodel-objectstore"/>
+    <copy todir="${build.resources.test}" file="${summarise.output.properties}"/>
   </target>
 
   <target name="compile-test" depends="prepare-test"
@@ -473,7 +475,7 @@
 
   <!-- run the tests -->
   <target name="test-main" 
-          depends="summarise-testmodel-objectstore, compile-test, build-db-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+          depends="compile-test, build-db-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
@@ -522,7 +524,7 @@
   </target>
 
   <target name="test-webapp"
-          depends="summarise-testmodel-objectstore, build-db-userprofile, build-testable-webapp, compile-webapp-tests"
+          depends="build-db-userprofile, build-testable-webapp, compile-webapp-tests"
           description="perform JUnit tests on web application" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
