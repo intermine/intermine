@@ -1,17 +1,22 @@
 <webconfig>
   <class className="org.intermine.model.testmodel.Company">
     <shortdisplayers>
-      <displayer src="/allFields.jsp"/>
+      <displayer src="/objectFields.jsp"/>
       <displayer src="/model/companiesHouse.jsp"/>
     </shortdisplayers>
     <longdisplayers>
-      <displayer src="/allFields.jsp"/>
+      <displayer src="/objectFields.jsp"/>
       <displayer src="/model/companiesHouse.jsp"/>
     </longdisplayers>
   </class>
   <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
     <longdisplayers>
       <displayer src="/model/debtField.jsp"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.testmodel.HasAddress" fieldName="address">
+    <longdisplayers>
+      <displayer src="/model/addressField.jsp"/>
     </longdisplayers>
   </class>
 </webconfig>
