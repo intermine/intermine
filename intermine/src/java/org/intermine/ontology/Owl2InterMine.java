@@ -316,7 +316,6 @@ public class Owl2InterMine
         return prop;
     }
 
-
     /**
      * Main method to convert OWL to InterMine model XML.
      * @param args srcFilename, RDF format, tgtFilename, modelname, package, tgtNs
@@ -327,14 +326,13 @@ public class Owl2InterMine
             throw new IllegalArgumentException("Usage: InterMine2Owl source_owl format"
                                                + " target_xml model_name package namespace");
         }
+
         String srcFilename = args[0];
         String format = args[1];
         String tgtFilename = args[2];
-        String modelName = args[3];
-        String pkg = args[4];
         String tgtNs = args[5];
 
-        Owl2InterMine o2i = new Owl2InterMine(modelName, pkg);
+        Owl2InterMine o2i = new Owl2InterMine(args[3], args[4]);
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(srcFilename)), null, format);
         Model tgt = o2i.process(model, tgtNs);
@@ -342,5 +340,4 @@ public class Owl2InterMine
         writer.write(tgt.toString());
         writer.close();
     }
-
 }

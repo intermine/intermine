@@ -33,10 +33,9 @@ public class ShutdownHook extends Thread
 {
     private static final Logger LOG = Logger.getLogger(ShutdownHook.class);
     private static Set objects = new HashSet();
-    private static ShutdownHook instance;
+    private static ShutdownHook instance = new ShutdownHook();
 
     static {
-        instance = new ShutdownHook();
         Runtime.getRuntime().addShutdownHook(instance);
     }
 
@@ -44,7 +43,6 @@ public class ShutdownHook extends Thread
      * Creates an instance.
      */
     private ShutdownHook() {
-        objects = new HashSet();
     }
 
     /**
@@ -53,7 +51,7 @@ public class ShutdownHook extends Thread
      * @param object the object
      */
     public static synchronized void registerObject(Object object) {
-        instance.objects.add(object);
+        objects.add(object);
     }
 
     /**
