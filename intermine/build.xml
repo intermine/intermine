@@ -720,7 +720,6 @@
     </copy>
     <copy todir="${build.webapp}/intermine/images">
       <fileset dir="${resources}/webapps/intermine/images"/>
-      <fileset dir="${src.www}/images"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF">
       <fileset dir="${resources}/webapps/intermine" excludes="web.xml images/**, *.properties"/>
