@@ -75,8 +75,7 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         FieldDescriptor fld = cldComp.getFieldDescriptorByName("id");
         Integer id = (Integer) fld.getPersistentField().get(comp);
 
-        assertEquals(stmt.getStatement(), "SELECT DISTINCT a1_.ID AS a1_ID, a1_.businessAddressId AS a1_businessAddressId, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId FROM Contractor AS a1_, Company AS a2_, CompanyContractor AS ind_a2_a1_CompanyContractor_ WHERE ((a2_.ID = " + id.intValue() + ") AND (a2_.ID = ind_a2_a1_CompanyContractor_.companyId AND a1_.ID = ind_a2_a1_CompanyContractor_.contractorId)) ORDER BY a1_.ID");
-
+        assertEquals(stmt.getStatement(), "SELECT DISTINCT a1_.ID AS a1_ID, a1_.businessAddressId AS a1_businessAddressId, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId FROM Contractor AS a1_, Company AS a2_, CompanysContractors AS ind_a2_a1_CompanysContractors_ WHERE ((a2_.ID = " + id.intValue() + ") AND (a2_.ID = ind_a2_a1_CompanysContractors_.companysId AND a1_.ID = ind_a2_a1_CompanysContractors_.contractorsId)) ORDER BY a1_.ID");
     }
 
     // test that field of materialized object is set to a LazyCollection

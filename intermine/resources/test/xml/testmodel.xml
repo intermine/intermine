@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list-bean>
-    <item name="CompanyA" vatNumber="1234" address="16" department="17"
-        contractor="2 4" oldContract="2 2 4 4" _xml-id="1"
+    <item name="CompanyA" vatNumber="1234" address="16" departments="17"
+        contractors="2 4" oldContracts="2 2 4 4" _xml-id="1"
         xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="ContractorA" personalAddress="15" businessAddress="14"
-        company="1 3" oldCom="1 1 3 3" _xml-id="2" xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-    <item name="CompanyB" vatNumber="5678" address="7" department="8 12"
-        contractor="2 4" oldContract="2 2 4 4" _xml-id="3"
+        companys="1 3" oldComs="1 1 3 3" _xml-id="2" xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="CompanyB" vatNumber="5678" address="7" departments="8 12"
+        contractors="2 4" oldContracts="2 2 4 4" _xml-id="3"
         xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="ContractorB" personalAddress="6" businessAddress="5"
-        company="1 3" oldCom="1 1 3 3" _xml-id="4" xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        companys="1 3" oldComs="1 1 3 3" _xml-id="4" xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Contractor Business Street, BVille" _xml-id="5"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Contractor Personal Street, BVille" _xml-id="6"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Company Street, BVille" _xml-id="7"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-    <item name="DepartmentB1" company="3" manager="9" employee="9 11"
+    <item name="DepartmentB1" company="3" manager="9" employees="9 11"
         _xml-id="8" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeB1" fullTime="true" age="40" department="8"
         address="10" _xml-id="9" title="Mr." salary="45000"
@@ -25,7 +25,7 @@
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeB2" fullTime="true" age="50" department="8"
         address="10" _xml-id="11" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-    <item name="DepartmentB2" company="3" manager="13" employee="13"
+    <item name="DepartmentB2" company="3" manager="13" employees="13"
         _xml-id="12" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeB3" fullTime="true" age="60" department="12"
         address="10" _xml-id="13" xsi:type="manager" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
@@ -36,7 +36,7 @@
     <item address="Company Street, AVille" _xml-id="16"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="DepartmentA1" company="1" manager="18"
-        employee="18 20 21" _xml-id="17" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        employees="18 20 21" _xml-id="17" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeA1" fullTime="true" age="10" department="17"
         address="19" _xml-id="18" xsi:type="manager" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Employee Street, AVille" _xml-id="19"
