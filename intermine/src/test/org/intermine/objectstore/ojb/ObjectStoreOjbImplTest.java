@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryCollectionReference;
@@ -160,13 +161,8 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
     }
 
     public void executeTest(String type) throws Exception {
-        List thingy = os.execute((Query)queries.get(type), 0, 10);
-        //System.out.println(type + ": " + thingy);
-        //System.out.flush();
-        //if ("SelectComplex".equals(type)) {
-        //    System.out.println(type + ": " + ((ResultsRow)thingy.get(0)).get(0).getClass());
-        //}
-        assertEquals(type + " has failed", results.get(type), thingy);
+        Results res = os.execute((Query)queries.get(type));
+        assertEquals(type + " has failed", results.get(type), res);
     }
 
     private List toList(Object[][] o) {
