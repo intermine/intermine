@@ -27,6 +27,7 @@ import org.apache.struts.Globals;
 
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.Annotation;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
@@ -37,8 +38,10 @@ import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
 import org.intermine.model.InterMineObject;
 
-import org.flymine.model.genomic.Contig;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
 
@@ -139,37 +142,39 @@ public class SequenceExporter implements TableExporter
                     header.append(" ");
                 }
 
-                FlyMineSequence sequence = null;
+                FlyMineSequence flyMineSequence;
 
-                if (object instanceof Contig) {
-                    Contig feature = (Contig) object;
-                    if (feature.getSequence().getResidues() != null) {
-                        sequence = FlyMineSequenceFactory.make(feature);
-                    }
+                if (object instanceof LocatedSequenceFeature) {
+                    LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+                    flyMineSequence = FlyMineSequenceFactory.make(feature);
                 } else {
                     Protein protein = (Protein) object;
-                    if (protein.getSequence().getResidues() != null) {
-                        sequence = FlyMineSequenceFactory.make(protein);
-                    }
+                    flyMineSequence = FlyMineSequenceFactory.make(protein);
                 }
 
-                if (sequence != null) {
-                    if (row.size() > 1) {
-                        sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                             header.toString());
-                    }
-
-                    if (outputStream == null) {
-                        // try to avoid opening the OutputStream until we know that the query is
-                        // going to work - this avoids some problems that occur when
-                        // getOutputStream() is called twice (once by this method and again to
-                        // write the error)
-                        outputStream = response.getOutputStream();
-                    }
-                    SeqIOTools.writeFasta(outputStream, sequence);
-
-                    writtenSequencesCount++;
+                if (flyMineSequence == null) {
+                    continue;
                 }
+
+                Annotation annotation = flyMineSequence.getAnnotation();
+
+                if (row.size() > 1) {
+                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, header.toString());
+                } else {
+                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                           "sequence_" + writtenSequencesCount);
+                }
+
+                if (outputStream == null) {
+                    // try to avoid opening the OutputStream until we know that the query is
+                    // going to work - this avoids some problems that occur when
+                    // getOutputStream() is called twice (once by this method and again to
+                    // write the error)
+                    outputStream = response.getOutputStream();
+                }
+                SeqIOTools.writeFasta(outputStream, flyMineSequence);
+                
+                writtenSequencesCount++;
             }
 
             if (outputStream != null) {
@@ -223,6 +228,8 @@ public class SequenceExporter implements TableExporter
      * @return true if we handle the type
      */
     protected boolean validType(Class type) {
-        return Contig.class.isAssignableFrom(type) || Protein.class.isAssignableFrom(type);
+        return
+            LocatedSequenceFeature.class.isAssignableFrom(type) ||
+            Protein.class.isAssignableFrom(type);
     }
 }
