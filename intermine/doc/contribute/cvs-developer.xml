@@ -21,6 +21,9 @@
 <sect1>
 <title>Instructions</title>
 
+<sect2>
+<title>From inside flymine.org domain</title>
+
 <itemizedlist>
 
 <listitem><command>cd</command> to the directory into which you intend
@@ -35,6 +38,44 @@ to check out the source.</listitem>
 possible build targets.</listitem>
 
 </itemizedlist>
+
+</sect2>
+
+<sect2>
+
+<title>From outside flymine.org domain</title>
+
+<para>The FlyMine cvs server is on a machine inside the firewall and
+does not have an external IP address. However, a port on the firewall
+is set up to forward ssh packets to the cvs server. You will require
+ssh access to the FlyMine system in order to use this machine. </para>
+
+<itemizedlist>
+
+<listitem>Create a wrapper script as follows:
+<programlisting>#!/bin/sh
+
+HOST=$1
+
+if [ "$HOST" == "cvs-internal.flymine.org" ]
+then
+   shift
+   ssh -p 22091 flywall.flymine.org $*
+else
+   ssh $*
+fi
+</programlisting>
+</listitem>
+
+<listitem>Issue the command <command>export
+CVS_RSH=/path/to/wrapper/script</command>. Put this in your
+<filename>.profile</filename>.</listitem>
+
+<listitem>Continue as above</listitem>
+
+</itemizedlist>
+
+</sect2>
 
 <para>Once you have checked out the source from the CVS server, the
 command <command>cvs update</command> will obtain any updates to the
