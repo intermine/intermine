@@ -20,9 +20,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
+import org.flymine.objectstore.query.QueryClass;
 
 /**
  * Implementation of <strong>Action</strong> that processes
@@ -62,14 +60,9 @@ public class QueryClassSelectAction extends Action
 
         QueryClassSelectForm queryClassSelectForm = (QueryClassSelectForm) form;
 
-        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
-        String cldName = queryClassSelectForm.getCldName();
-        if (!model.hasClassDescriptor(cldName)) {
-            throw new Exception("ClassDescriptor (" + cldName + ") not found in model ("
-                                + model.getName() + ")");
-        }
-        ClassDescriptor cld = model.getClassDescriptorByName(cldName);
-        session.setAttribute("cld", cld);
+        String className = queryClassSelectForm.getClassName();
+        QueryClass qc = new QueryClass(Class.forName(className));
+        session.setAttribute("queryClass", qc);
 
         return (mapping.findForward("buildquery"));
     }

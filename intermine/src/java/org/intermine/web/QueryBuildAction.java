@@ -21,14 +21,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.query.presentation.QueryCreator;
+
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
  *
- * @author Andrew Varley
+ * @author Richard Smith
+ * @author Mark Woodbridge
  */
 public class QueryBuildAction extends LookupDispatchAction
 {
@@ -60,15 +63,17 @@ public class QueryBuildAction extends LookupDispatchAction
             query = new Query();
         }
 
-        ClassDescriptor cld = (ClassDescriptor) session.getAttribute("cld");
-        session.removeAttribute("cld");
+        QueryClass qc = (QueryClass) session.getAttribute("queryClass");
+        session.removeAttribute("queryClass");
 
-        QueryBuildForm queryBuildForm = (QueryBuildForm) form;
-        QueryCreator.addToQuery(query, cld, queryBuildForm.getFieldValues(),
-                                queryBuildForm.getFieldOps());
-        queryBuildForm.reset(mapping, request);
-        session.setAttribute("query", query);
+        if (qc != null) {
+            Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+            QueryBuildForm queryBuildForm = (QueryBuildForm) form;
 
+            QueryCreator.addToQuery(query, qc, queryBuildForm.getFieldValues(),
+                                    queryBuildForm.getFieldOps(), model);
+            session.setAttribute("query", query);
+        }
         return mapping.findForward("buildquery");
     }
 

@@ -28,7 +28,10 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.metadata.ReferenceDescriptor;
+
 import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.query.*;
 
@@ -55,22 +58,32 @@ public class QueryBuildController extends TilesAction
 
         HttpSession session = request.getSession();
 
-        ClassDescriptor cld = (ClassDescriptor) session.getAttribute("cld");
-        if (cld != null) {
-            session.setAttribute("ops", getOps(cld));
-            Query query = (Query) session.getAttribute("query");
-            if (query != null) {
-                session.setAttribute("aliases", getAliases(cld, query));
+        QueryClass qc = (QueryClass) session.getAttribute("queryClass");
+        if (qc != null) {
+            Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+            if (!model.hasClassDescriptor(qc.getType().getName())) {
+                throw new Exception("ClassDescriptor (" + qc.getType().getName()
+                                    + ") not found in model (" + model.getName() + ")");
+            }
+            ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
+
+            // find valid constraint operations for each field
+            request.getSession().setAttribute("ops", getOps(cld));
+            request.setAttribute("cld", cld);
+
+            // if editing a QueryClass already on query need to populate form
+            Query q = (Query) session.getAttribute("query");
+            if (q != null) {
+                request.setAttribute("aliases", getAliases(cld, q));
+
+                String alias = (String) q.getAliases().get(qc);
+                if (alias != null) {
+                    populateQueryBuildForm((QueryBuildForm) form, q, qc);
+                    request.setAttribute("aliasStr", alias);
+                }
             }
         }
-
-        form.reset(mapping, request);
-        if (session.getAttribute("alias") != null) {
-            populateQueryBuildForm((QueryBuildForm) form, session);
-            request.setAttribute("aliasStr", session.getAttribute("alias"));
-            session.removeAttribute("alias");
-        }
-        return null;
+            return null;
     }
 
     /**
@@ -78,15 +91,13 @@ public class QueryBuildController extends TilesAction
      * constraints already on query.
      *
      * @param form the QueryBuildForm to populate
-     * @param session HttpSession to get alias and query from
+     * @param q the query being constructed
+     * @param qc the QueryClass being edited
      * @throws Exception if anything goes wrong
      */
-    protected void populateQueryBuildForm(QueryBuildForm form, HttpSession session)
+    protected void populateQueryBuildForm(QueryBuildForm form, Query q, QueryClass qc)
         throws Exception {
 
-        String alias = (String) session.getAttribute("alias");
-        Query q = (Query) session.getAttribute("query");
-        QueryClass qc = (QueryClass) q.getReverseAliases().get(alias);
         List constraints = ConstraintListCreator.createList(q, qc);
 
         Iterator iter = constraints.iterator();
@@ -139,7 +150,7 @@ public class QueryBuildController extends TilesAction
         }
         return fieldOps;
     }
-    
+
     /**
      * This method returns a map from field names (for fields that are references) to a list of
      * aliases of relevant QueryNodes in the select list. It does this by iterating over the

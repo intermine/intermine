@@ -1,3 +1,4 @@
+
 package org.flymine.web;
 
 /*
@@ -12,12 +13,19 @@ package org.flymine.web;
 
 import servletunit.struts.MockStrutsTestCase;
 
+import javax.servlet.http.HttpSession;
+
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.presentation.DisplayModel;
+import org.flymine.model.testmodel.Employee;
 
 public class QueryBuildActionTest extends MockStrutsTestCase
 {
+    protected Model model;
     protected ClassDescriptor cld;
 
     public QueryBuildActionTest(String testName) {
@@ -26,24 +34,74 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Types");
+        model = Model.getInstanceByName("testmodel");
+        cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
     public void testSubmitSuccessful() throws Exception {
+        HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Submit");
-        getSession().setAttribute("cld", cld);
+        session.setAttribute("query", new Query());
+        session.setAttribute("queryClass", new QueryClass(Employee.class));
+        session.setAttribute("model", new DisplayModel(model));
+
+        QueryBuildForm form = new QueryBuildForm();
+        form.setFieldValue("name", "Dave");
+        form.setFieldOp("name", String.valueOf(SimpleConstraint.EQUALS));
+        setActionForm(form);
+
         actionPerform();
-        assertNull(getSession().getAttribute("cld"));
         verifyForward("buildquery");
         verifyNoActionErrors();
-        assertNotNull(getSession().getAttribute("query"));
+        assertNotNull(session.getAttribute("query"));
+        assertNull(session.getAttribute("queryClass"));
+        assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
-    // commented out because we're overriding the ActionForm reset() method in QueryActionForm,
-    // which is called before the form is displayed, clearing anything we set in preparation for
-    // testing. The alternative is to use our own reset (clear()?) method and call it explicitly
-    // in QueryAction.
+    public void testSubmitSuccessfulNoQuery() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Submit");
+        session.setAttribute("queryClass", new QueryClass(Employee.class));
+        session.setAttribute("model", new DisplayModel(model));
+
+        QueryBuildForm form = new QueryBuildForm();
+        form.setFieldValue("name", "Dave");
+        form.setFieldOp("name", String.valueOf(SimpleConstraint.EQUALS));
+        setActionForm(form);
+
+        actionPerform();
+        verifyForward("buildquery");
+        verifyNoActionErrors();
+        assertNotNull(session.getAttribute("query"));
+        assertNull(session.getAttribute("queryClass"));
+        assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
+    }
+
+    public void testSubmitNoModel() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Submit");
+        session.setAttribute("queryClass", new QueryClass(Employee.class));
+        session.setAttribute("query", new Query());
+
+        QueryBuildForm form = new QueryBuildForm();
+        form.setFieldValue("name", "Dave");
+        form.setFieldOp("name", String.valueOf(SimpleConstraint.EQUALS));
+        setActionForm(form);
+
+        actionPerform();
+        verifyForward("error");
+        verifyActionErrors(new String[] {"exception.message"});
+        assertNotNull(getSession().getAttribute("query"));
+        assertNull(getSession().getAttribute("queryClass"));
+    }
+
+    //commented out because we're overriding the ActionForm reset() method in QueryActionForm,
+    //which is called before the form is displayed, clearing anything we set in preparation for
+    //testing. The alternative is to use our own reset (clear()?) method and call it explicitly
+    //in QueryAction.
 
 //     public void testSubmitSuccessfulConstraint() throws Exception {
 //         setRequestPathInfo("/query");
@@ -51,7 +109,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 //         QueryBuildForm queryBuildForm = new QueryBuildForm();
 //         queryBuildForm.setFieldValue("name", "bob");
 //         setActionForm(queryBuildForm);
-//         getSession().setAttribute("cld", new DisplayClassDescriptor(cld));
+//         getSession().setAttribute("cld", cld);
 //         actionPerform();
 //         queryBuildForm = (QueryBuildForm) getActionForm();
 //         assertNull(queryBuildForm.getFieldValue("name"));
@@ -61,16 +119,34 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 //         assertEquals("SELECT  FROM org.flymine.model.testmodel.Types AS a1_ WHERE (a1_.name = 'bob')", getSession().getAttribute("query").toString());
 //     }
 
+    public void testNoQueryClass() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Submit");
+        session.setAttribute("query", new Query());
+        session.setAttribute("model", new DisplayModel(model));
+
+        actionPerform();
+        verifyForward("error");
+        assertNotNull(session.getAttribute("query"));
+        assertNull(session.getAttribute("queryClass"));
+    }
+
      public void testSubmitUnparseable() {
+         HttpSession session = getSession();
          setRequestPathInfo("/query");
          addRequestParameter("action", "Submit");
+         session.setAttribute("query", new Query());
+         session.setAttribute("model", new DisplayModel(model));
+         session.setAttribute("queryClass", new QueryClass(Employee.class));
+
          QueryBuildForm queryBuildForm = new QueryBuildForm();
          queryBuildForm.setFieldValue("dateObjType", "not_a_date");
          setActionForm(queryBuildForm);
-         getSession().setAttribute("cld", cld);
+
          actionPerform();
          verifyForward("error");
-         //current behaviour is to create queryclass but not touch its constraints
-         assertNull(((Query) getSession().getAttribute("query")).getConstraint());
+         assertNotNull(session.getAttribute("query"));
+         assertNull(session.getAttribute("queryClass"));
      }
 }

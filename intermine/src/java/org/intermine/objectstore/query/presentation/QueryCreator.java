@@ -34,33 +34,38 @@ public class QueryCreator
      * generated from a map of fields/values.
      *
      * @param q a query to add QueryClass and constraints to
-     * @param cld ClassDescriptor for class to add to query
+     * @param qc QueryClass to add to query
      * @param fieldValues map of fieldname/value to build constraints from
      * @param fieldOps map of fieldname/operation to build constraints from
+     * @param model the business model
      * @throws FlyMineException if an error occurs
-     * @throws NullPointerException if any of the parameters are null
      */
-    public static void addToQuery(Query q, ClassDescriptor cld, Map fieldValues, Map fieldOps)
-        throws FlyMineException {
+    public static void addToQuery(Query q, QueryClass qc, Map fieldValues,
+                                  Map fieldOps, Model model) throws FlyMineException {
         if (q == null) {
-            throw new NullPointerException("Query parameter is null");
-        } else if (cld == null) {
-            throw new NullPointerException("cld parameter is null");
+            throw new NullPointerException("Query q parameter is null");
+        } else if (qc == null) {
+            throw new NullPointerException("QueryClass qc parameter is null");
         } else if (fieldValues == null) {
             throw new NullPointerException("fieldValues parameter is null");
         } else if (fieldOps == null) {
             throw new NullPointerException("fieldOps parameter is null");
-        } 
-
-        QueryClass qc;
-        try {
-            qc = new QueryClass(Class.forName(cld.getName()));
-        } catch (Exception e) {
-            throw new FlyMineException(e);
         }
-        q.addFrom(qc);
-        addConstraint(q, generateConstraints(qc, fieldValues, fieldOps, q.getReverseAliases(),
-                                             cld));
+
+        try {
+            // if QueryClass already on query, remove existing constraints and
+            // generate again
+            if (q.getFrom().contains(qc)) {
+                removeConstraints(q, qc);
+            } else {
+                q.addFrom(qc);
+            }
+            addConstraint(q, generateConstraints(qc, fieldValues, fieldOps,
+                                                 q.getReverseAliases(), model));
+        } catch (Exception e) {
+            throw new FlyMineException("Problem occurred adding class ("
+                                       + qc.getType().getName() + ") to query: " + e);
+        }
     }
 
     /**
@@ -69,17 +74,17 @@ public class QueryCreator
      * @param qc QueryClass to constrain
      * @param fieldValues map of fieldname/value to build constraints from
      * @param fieldOps map of fieldname/operation to build constraints from
-     * @param aliases map of aliases to QueryNodes and FromElements
-     * @param cld ClassDescriptor for the QueryClass Java type
+     * @param aliases map of alias/QueryNode of items on query
+     * @param model the business model
      * @return a populated ConstraintSet
-     * @throws FlyMineException if it goes wrong
+     * @throws Exception if it goes wrong
      */
     protected static ConstraintSet generateConstraints(QueryClass qc, Map fieldValues,
                                                        Map fieldOps, Map aliases,
-                                                       ClassDescriptor cld)
-        throws FlyMineException {
-        try {
+                                                       Model model) throws Exception {
         ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
+        ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
+
         Iterator iter = fieldValues.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry fieldEntry = (Map.Entry) iter.next();
@@ -102,11 +107,8 @@ public class QueryCreator
             }
         }
         return constraints;
-        } catch (Exception e) {
-            throw new FlyMineException("Problem occurred adding class (" + cld.getName()
-                                + ") to query", e);
-        }
     }
+
 
     /**
      * Adds the constraints in a ConstraintSet to those present in a Query
@@ -123,13 +125,48 @@ public class QueryCreator
             if (c == null) {
                 q.setConstraint(constraints);
             }  else if (c instanceof ConstraintSet) {
-                ((ConstraintSet) c).addConstraint(constraints);
+                // add all constraints, avoid nesting ConstraintSets
+                Iterator iter = constraints.getConstraints().iterator();
+                while (iter.hasNext()) {
+                    ((ConstraintSet) c).addConstraint((Constraint) iter.next());
+                }
             }  else { // any other type of constraint
                 constraints.addConstraint(c);
                 q.setConstraint(constraints);
             }
         }
     }
+
+
+    /**
+     * Remove all constraints related to a given QueryClass.
+     *
+     * @param q the query to remove constraints from
+     * @param qc remove all constraints relating to this QueryClass
+     * @throws Exception if failed to remove constraints
+     */
+    protected static void removeConstraints(Query q, QueryClass qc) throws Exception {
+        Constraint c = q.getConstraint();
+        if (c == null) {
+            return;
+        }
+
+        ConstraintSet cs;
+        if (!(c instanceof ConstraintSet)) {
+            cs = new ConstraintSet(ConstraintSet.AND);
+            cs.addConstraint(c);
+        } else {
+            cs = (ConstraintSet) c;
+        }
+
+        Iterator iter = ConstraintListCreator.createList(q, qc).iterator();
+        while (iter.hasNext()) {
+            // TODO will be simplified when refactoring of ConstraintListCreator done
+            Constraint constraint = ((AssociatedConstraint) iter.next()).getConstraint();
+            cs.removeConstraint(constraint);
+        }
+    }
+
 
     /**
      * Create a QueryValue by parsing a string for the appropriate class type

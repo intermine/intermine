@@ -13,31 +13,31 @@ package org.flymine.web;
 import org.apache.struts.action.ActionForm;
 
 /**
- * Form bean to represent the inputs to a text-based query
+ * Form bean for selection of a new query class.
  *
- * @author Andrew Varley
+ * @author Richard Smith
  */
 public class QueryClassSelectForm extends ActionForm
 {
 
-    protected String cldName;
+    protected String className;
 
     /**
      * Set the class name
      *
-     * @param cldName the class name
+     * @param className the class name
      */
-    public void setCldName(String cldName) {
-        this.cldName = cldName;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     /**
      * Get the class name
      *
-     * @return the query string
+     * @return the class name
      */
-    public String getCldName() {
-        return cldName;
+    public String getClassName() {
+        return className;
     }
 
 }

@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,9 @@ import org.flymine.objectstore.query.*;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.model.testmodel.Employee;
+import org.flymine.model.testmodel.Department;
+import org.flymine.model.testmodel.Company;
+
 
 public class QueryCreatorTest extends TestCase
 {
@@ -45,8 +49,7 @@ public class QueryCreatorTest extends TestCase
         ops.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
 
         Query q = new Query();
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
-        QueryCreator.addToQuery(q, cld, fields, ops);
+        QueryCreator.addToQuery(q, new QueryClass(Employee.class), fields, ops, model);
 
         ArrayList from = new ArrayList(q.getFrom());
         assertEquals(Employee.class, ((QueryClass) from.get(0)).getType());
@@ -65,30 +68,66 @@ public class QueryCreatorTest extends TestCase
         assertEquals(String.class, ((QueryValue) res2.getArg2()).getType());
     }
 
+
+    // Add a QueryClass and its constraints to a query then alter and add
+    // the same again - i.e. editing existing QueryClass
+    public void testAddToQueryExists() throws Exception {
+        Map fields1 = new HashMap();
+        fields1.put("name", "Dennis");
+        fields1.put("fullTime", "true");
+
+        Map ops1 = new HashMap();
+        ops1.put("name", SimpleConstraint.EQUALS.getIndex().toString());
+        ops1.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        QueryCreator.addToQuery(q, qc, fields1, ops1, model);
+        assertEquals(1, q.getFrom().size());
+        assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+
+
+        Map fields2 = new HashMap();
+        fields2.put("name", "Gerald");
+        fields2.put("fullTime", "true");
+        fields2.put("age", "43");
+
+        Map ops2 = new HashMap();
+        ops2.put("name", SimpleConstraint.EQUALS.getIndex().toString());
+        ops2.put("fullTime", SimpleConstraint.NOT_EQUALS.getIndex().toString());
+        ops2.put("age", SimpleConstraint.EQUALS.getIndex().toString());
+
+        QueryCreator.addToQuery(q, qc, fields2, ops2, model);
+        assertEquals(1, q.getFrom().size());
+        List list = new ArrayList(((ConstraintSet) q.getConstraint()).getConstraints());
+        assertFalse(list.get(0) instanceof ConstraintSet);
+        assertEquals(3, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+
+    }
+
     public void testAddToQueryNullParameters() throws Exception {
         Query q = new Query();
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
 
         try {
-            QueryCreator.addToQuery(null, cld, new HashMap(), new HashMap());
+            QueryCreator.addToQuery(null, new QueryClass(Employee.class), new HashMap(), new HashMap(), model);
             fail("Expected NullPointerException, q parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, null, new HashMap(), new HashMap());
+            QueryCreator.addToQuery(q, null, new HashMap(), new HashMap(), model);
             fail("Expected NullPointerException, clsName parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, cld, null, new HashMap());
+            QueryCreator.addToQuery(q, new QueryClass(Employee.class), null, new HashMap(), model);
             fail("Expected NullPointerException, fields parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, cld, new HashMap(), null);
+            QueryCreator.addToQuery(q, new QueryClass(Employee.class), new HashMap(), null, model);
             fail("Expected NullPointerException, ops parameter null");
         } catch (NullPointerException e) {
         }
@@ -106,7 +145,7 @@ public class QueryCreatorTest extends TestCase
         QueryClass qc = new QueryClass(Employee.class);
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
 
-        ConstraintSet c = QueryCreator.generateConstraints(qc, fields, ops, new HashMap(), cld);
+        ConstraintSet c = QueryCreator.generateConstraints(qc, fields, ops, new HashMap(), model);
         ArrayList list = new ArrayList(c.getConstraints());
         SimpleConstraint res1 = (SimpleConstraint) list.get(0);
         assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());
@@ -125,7 +164,7 @@ public class QueryCreatorTest extends TestCase
         try {
             QueryCreator.addConstraint(new Query(), null);
             fail("Expected NullPointerException");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
         }
     }
 
@@ -139,7 +178,7 @@ public class QueryCreatorTest extends TestCase
 
         assertEquals(sc, q.getConstraint());
     }
-    
+
     public void testAddConstraintToNull() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
@@ -169,6 +208,7 @@ public class QueryCreatorTest extends TestCase
         assertEquals(cs3, q.getConstraint());
     }
 
+
     public void testAddConstraintToConstraintSet() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
@@ -184,9 +224,36 @@ public class QueryCreatorTest extends TestCase
 
         ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
         cs3.addConstraint(sc1);
-        cs3.addConstraint(cs2);
+        cs3.addConstraint(sc2);
         assertEquals(cs3, q.getConstraint());
     }
+
+
+    public void testRemoveConstraintsSimple() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("company1"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("department1"));
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        q.setConstraint(c);
+
+        assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        QueryCreator.removeConstraints(q, qc1);
+        assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        QueryCreator.removeConstraints(q, qc2);
+        assertEquals(0, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+    }
+
 
     public void testCreateQueryValue() throws Exception {
         String value = null;

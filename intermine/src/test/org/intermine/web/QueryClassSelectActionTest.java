@@ -18,8 +18,7 @@ import servletunit.struts.MockStrutsTestCase;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.model.testmodel.Company;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.presentation.DisplayModel;
+
 
 public class QueryClassSelectActionTest extends MockStrutsTestCase {
 
@@ -38,34 +37,25 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase {
     public void testSelectSuccessful() throws Exception {
         setRequestPathInfo("/queryClassSelect");
         HttpSession session = getSession();
-        DisplayModel model = new DisplayModel(Model.getInstanceByName("testmodel"));
-        session.setAttribute("model", model);
-        addRequestParameter("cldName", "org.flymine.model.testmodel.Company");
+        QueryClassSelectForm form = new QueryClassSelectForm();
+        form.setClassName("org.flymine.model.testmodel.Company");
+        setActionForm(form);
         addRequestParameter("action", "Select");
         actionPerform();
         verifyForward("buildquery");
-        assertNotNull(session.getAttribute("cld"));
+        assertNotNull(session.getAttribute("queryClass"));
     }
 
-    public void testNoModelOnSession() throws Exception {
+
+    public void testNoClassNameSet() throws Exception {
         setRequestPathInfo("/queryClassSelect");
         HttpSession session = getSession();
-        addRequestParameter("cldName", "org.flymine.model.testmodel.Company");
+        QueryClassSelectForm form = new QueryClassSelectForm();
+        setActionForm(form);
         addRequestParameter("action", "Select");
         actionPerform();
         verifyForward("error");
-        assertNull(session.getAttribute("cld"));
-    }
-
-    public void testNoCldNameSet() throws Exception {
-        setRequestPathInfo("/queryClassSelect");
-        HttpSession session = getSession();
-        DisplayModel model = new DisplayModel(Model.getInstanceByName("testmodel"));
-        session.setAttribute("model", model);
-        addRequestParameter("action", "Select");
-        actionPerform();
-        verifyForward("error");
-        assertNull(session.getAttribute("cld"));
+        assertNull(session.getAttribute("queryClass"));
     }
 
 

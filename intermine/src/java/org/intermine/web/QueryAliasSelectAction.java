@@ -20,9 +20,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 
@@ -64,13 +61,9 @@ public class QueryAliasSelectAction extends Action
 
         String alias = queryAliasSelectForm.getAlias();
         Query q = (Query) session.getAttribute("query");
-        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
-
         QueryClass qc = (QueryClass) q.getReverseAliases().get(alias);
-        ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
 
-        session.setAttribute("cld", cld);
-        session.setAttribute("alias", alias);
+        session.setAttribute("queryClass", qc);
 
         return (mapping.findForward("buildquery"));
     }

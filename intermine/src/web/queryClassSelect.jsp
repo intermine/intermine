@@ -5,7 +5,7 @@
 
 <html:form action="/queryClassSelect">
     Add a new class to query<br/>
-    <html:select property="cldName">
+    <html:select property="className">
         <html:options name="model" property="classNames" labelName="model" labelProperty="unqualifiedClassNames"/>
     </html:select>
 
