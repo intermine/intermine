@@ -10,8 +10,8 @@ package org.flymine.web;
  *
  */
 
-import java.util.Set;
-import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.TreeSet;
 import java.util.Iterator;
 
@@ -63,14 +63,13 @@ public class QueryClassSelectController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
-        Set classNames = new TreeSet(model.getClassNames());
-        Set unqualifiedClassNames = new LinkedHashSet();
-        for (Iterator i = classNames.iterator(); i.hasNext();) {
-            unqualifiedClassNames.add(TypeUtil.unqualifiedName((String) i.next()));
+        Map classes = new LinkedHashMap();
+        for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
+            String className = (String) i.next();
+            classes.put(className, TypeUtil.unqualifiedName(className));
         }
         
-        request.setAttribute("classNames", classNames);
-        request.setAttribute("unqualifiedClassNames", unqualifiedClassNames);
+        request.setAttribute("classes", classes);
         
         return null;
     }
