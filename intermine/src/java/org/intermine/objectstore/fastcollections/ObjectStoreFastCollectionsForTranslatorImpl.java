@@ -89,8 +89,14 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
         try {
             objectStore = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            throw new IllegalArgumentException("ObjectStore '" + osAlias + "' not found in"
-                    + " properties");
+            // preserve ObjectStoreExceptions for more useful message
+            Throwable t = e.getCause();
+            if (t instanceof ObjectStoreException) {
+                throw (ObjectStoreException) t;
+            } else {
+                throw new IllegalArgumentException("ObjectStore '" + osAlias
+                                                   + "' not found in properties");
+            }
         }
         return new ObjectStoreFastCollectionsForTranslatorImpl(objectStore);
     }
