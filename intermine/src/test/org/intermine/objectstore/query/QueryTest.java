@@ -35,10 +35,10 @@ public class QueryTest extends TestCase
         QueryClass qn2 = new QueryClass(Department.class);
         QueryField qn3 = new QueryField(qn1, "name");
         query.addToSelect(qn1);
-        assertEquals("a1", (String) query.getAliases().get(qn1));
+        assertEquals("a1_", (String) query.getAliases().get(qn1));
         query.addToSelect(qn2);
-        assertEquals("a2", (String) query.getAliases().get(qn2));
+        assertEquals("a2_", (String) query.getAliases().get(qn2));
         query.addToSelect(qn3);
-        assertEquals("a3", (String) query.getAliases().get(qn3));
+        assertEquals("a3_", (String) query.getAliases().get(qn3));
     }
 }
