@@ -37,11 +37,48 @@ public class MainForm extends ActionForm
     protected String bagOp, bagValue;
     protected String attributeOp, attributeValue;
     protected String subclassValue;
+    protected String loopQueryOp, loopQueryValue;
 
     protected String path;
 
     protected Object parsedAttributeValue;
 
+    /**
+     * Gets the value of loopQueryOp
+     *
+     * @return the value of loopQueryOp
+     */
+    public String getLoopQueryOp()  {
+        return loopQueryOp;
+    }
+
+    /**
+     * Sets the value of loopQueryOp
+     *
+     * @param loopOp Value to assign to loopQueryOp
+     */
+    public void setLoopQueryOp(String loopOp) {
+        this.loopQueryOp = loopOp;
+    }
+
+    /**
+     * Gets the value of loopQueryValue
+     *
+     * @return the value of loopQueryValue
+     */
+    public String getLoopQueryValue()  {
+        return loopQueryValue;
+    }
+
+    /**
+     * Sets the value of loopQueryValue
+     *
+     * @param loopQuery value to assign to loopQueryValue
+     */
+    public void setLoopQueryValue(String loopQuery) {
+        this.loopQueryValue = loopQuery;
+    }
+    
     /**
      * Gets the value of bagOp
      *
@@ -275,6 +312,17 @@ public class MainForm extends ActionForm
             exp = '%' + exp + '%';
         }
         return exp;
+    }
+    
+    /**
+     * Convert a period delimited path into some nicer for the user - a path with > instead
+     * of dots.
+     *
+     * @param path  dot delimited path
+     * @return      path to display to user
+     */
+    public static String dotPathToNicePath(String path) {
+        return path.replaceAll("\\.", " > ");
     }
 
     /**
