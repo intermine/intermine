@@ -84,6 +84,7 @@
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
     <include name="xerces*.jar"/>
+    <include name="stax*.jar"/>
     <include name="xml-apis*.jar"/>
   </patternset>
 
