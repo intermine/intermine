@@ -20,6 +20,8 @@ import org.apache.torque.task.TorqueSQLExec;
 import org.apache.torque.task.TorqueSQLTask;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +36,7 @@ import org.flymine.sql.DatabaseFactory;
  */
 public class BuildDbTask extends Task
 {
+    protected static final String SEQUENCE_NAME = "serial";
     protected List filesets = new ArrayList();
     protected File destDir;
     protected Database database;
@@ -107,6 +110,14 @@ public class BuildDbTask extends Task
         isql.setSqlDbMap(destDir + "/sqldb.map");
         isql.setSrcDir(destDir.toString());
         isql.execute();
+
+        try {
+            Connection c = database.getConnection();
+            c.setAutoCommit(true);
+            c.createStatement().execute("create sequence " + SEQUENCE_NAME);
+            c.close();
+        } catch (SQLException e) {
+        }
     }
 
 //     public static void main(String[] args) {
