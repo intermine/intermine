@@ -532,7 +532,7 @@
 
   <!-- Load data from chado-items into chado-test -->
   <target name="load-chado" depends="prepare-build-model, convert-chado">
-    <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
+    <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -551,7 +551,7 @@
 
   <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
   <target name="load-ensembl-anopheles" depends="prepare-build-model, build-db-anoph-test, create-indexes-anoph-test">
-    <taskdef name="load-anoph" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
+    <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -560,7 +560,7 @@
 
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
   <target name="load-ensembl-drosophila" depends="prepare-build-model, build-db-dros-test, create-indexes-dros-test">
-    <taskdef name="load-dros" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
+    <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
