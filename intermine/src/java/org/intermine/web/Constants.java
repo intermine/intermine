@@ -183,4 +183,9 @@ public interface Constants
      * Refresh period specified on query poll page.
      */
     public static final int POLL_REFRESH_SECONDS = 2;
+
+    /**
+     * The session attribute that holds the DisplayObjectCache object for the session.
+     */
+    public static final String DISPLAY_OBJECT_CACHE = "DISPLAY_OBJECT_CACHE";
 }
