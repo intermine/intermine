@@ -65,6 +65,12 @@ if [ "${CVSTREE:-unset}" = "unset" ]; then
     fi
 fi
 
+if [ "${INTERMINE:-unset}" = "unset" ]; then
+    if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/intermine ]; then
+	INTERMINE=$CVSTREE/intermine; export INTERMINE
+    fi
+fi
+
 if [ "${FLYMINE:-unset}" = "unset" ]; then
     if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/flymine ]; then
 	FLYMINE=$CVSTREE/flymine; export FLYMINE
