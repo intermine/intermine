@@ -122,6 +122,9 @@
 
   <path id="models.class.path">
     <path refid="base.class.path"/>
+    <fileset dir="${dist}">
+      <include name="intermine*.jar" />
+    </fileset>
     <pathelement path="${build.resources.test}"/>
     <pathelement location="${build.model}/acedb"/>
     <pathelement location="${build.model}/mage"/>
@@ -1585,6 +1588,7 @@
       <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
+    <antcall target="test-report"/>
   </target>
 
   <target name="test-models-inc"
@@ -1719,6 +1723,15 @@
                      path="${webapp.path}"/>
   </target>
 
+
+  <target name="build-db-userprofile" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="userprofile"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.userprofile"/>
+      <property name="objectstore.name" value="os.userprofile"/>
+    </ant>
+  </target>
 
   <!-- MODEL COMPILATION TARGETS -->
 
