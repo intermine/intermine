@@ -181,7 +181,7 @@ public class DataTranslator
             Attribute att = (Attribute) i.next();
             if (!att.getName().equals("nonUniqueId")) {
                 String attSrcURI = srcItem.getClassName() + "__" + att.getName();
-                String attTgtURI = getTargetFieldURI(srcItem.getClassName(), attSrcURI);
+                String attTgtURI = getTargetFieldURI(srcItem.getClassName(), att.getName());
                 if (attTgtURI == null) {
                     throw new InterMineException("no target attribute found for " + attSrcURI
                                                + " in class " + tgtClsName);
