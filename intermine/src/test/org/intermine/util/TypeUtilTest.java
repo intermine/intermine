@@ -42,6 +42,17 @@ public class TypeUtilTest extends TestCase
         assertEquals(fieldValue, m.getTitle());
     }
 
+    public void testSetFieldValueNotExists() throws Exception {
+        Manager m = new Manager();
+        String fieldValue = "Accountant";
+        try {
+            TypeUtil.setFieldValue(m, "fieldThatDoesntExists", fieldValue);
+            fail("should have throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // correct
+        }
+    }
+
     public void testGetFieldInfos() throws Exception {
         Class c = Address.class;
 
