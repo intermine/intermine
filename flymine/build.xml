@@ -1337,9 +1337,9 @@
                    infoSourceTitle="FlyReg"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FlyRegGFF3RecordHandler">
-      <fileset dir ="/shared/data/flyreg">
-        <include name ="*.gff3"/>
-        <include name ="*.GFF3"/>
+      <fileset dir="/shared/data/flyreg">
+        <include name="*.gff3"/>
+        <include name="*.GFF3"/>
       </fileset>
     </retrieve-file>
 
@@ -1390,9 +1390,9 @@
                    infoSourceTitle="LongOligo"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
-      <fileset dir ="/shared/data/long_oligo">
-        <include name ="*.gff3"/>
-        <include name ="*.GFF3"/>
+      <fileset dir="/shared/data/long_oligo">
+        <include name="*.gff3"/>
+        <include name="*.GFF3"/>
       </fileset>
     </retrieve-file>
 
@@ -1443,9 +1443,9 @@
                    infoSourceTitle="TilingPath"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TilingPathGFF3RecordHandler">
-      <fileset dir ="/shared/data/tiling_path">
-        <include name ="*.gff3"/>
-        <include name ="*.GFF3"/>
+      <fileset dir="/shared/data/tiling_path">
+        <include name="*.gff3"/>
+        <include name="*.GFF3"/>
       </fileset>
     </retrieve-file>
 
