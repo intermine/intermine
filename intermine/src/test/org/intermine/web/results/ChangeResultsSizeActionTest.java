@@ -131,7 +131,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testSaveNewBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("action", "Save selections in new collection");
-        getSession().setAttribute("results", results);
+        getSession().setAttribute(Constants.RESULTS_TABLE, new DisplayableResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,0", "1,2"});
@@ -154,7 +154,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testAddToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("action", "Add selections to existing collection");
-        getSession().setAttribute("results", results);
+        getSession().setAttribute(Constants.RESULTS_TABLE, new DisplayableResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});
@@ -188,7 +188,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testAddSameToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("action", "Add selections to existing collection");
-        getSession().setAttribute("results", results);
+        getSession().setAttribute(Constants.RESULTS_TABLE, new DisplayableResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});

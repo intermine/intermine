@@ -15,18 +15,10 @@ import servletunit.struts.MockStrutsTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.fql.FqlQuery;
 
-public class RunQueryActionTest extends MockStrutsTestCase {
-
+public class RunQueryActionTest extends MockStrutsTestCase
+{
     public RunQueryActionTest(String testName) {
         super(testName);
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     public void testRunValidQuery() {
@@ -34,7 +26,7 @@ public class RunQueryActionTest extends MockStrutsTestCase {
         getSession().setAttribute("query", new FqlQuery("select c from Company as c", "org.flymine.model.testmodel").toQuery());
         actionPerform();
         verifyForward("results");
-        assertNotNull(getSession().getAttribute("results"));
+        assertNotNull(getRequest().getAttribute("results"));
         verifyNoActionErrors();
     }
 
@@ -42,6 +34,7 @@ public class RunQueryActionTest extends MockStrutsTestCase {
         setRequestPathInfo("/runQuery");
         actionPerform();
         verifyForward("buildquery");
-        assertNull(getSession().getAttribute("results"));
+        assertNull(getRequest().getAttribute("results"));
+        verifyNoActionErrors();
     }
 }

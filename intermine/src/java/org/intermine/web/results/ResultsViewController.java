@@ -53,7 +53,7 @@ public class ResultsViewController extends TilesAction
                                  HttpServletResponse response) throws ServletException {
         HttpSession session = request.getSession();
 
-        Results results = (Results) session.getAttribute("results");
+        Results results = (Results) request.getAttribute("results");
 
         // Do we already have a configuration object? If we do, update the
         // new one to inherit properties off the old one

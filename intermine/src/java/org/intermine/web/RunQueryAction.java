@@ -55,20 +55,19 @@ public class RunQueryAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
         HttpSession session = request.getSession();
 
         Query q = (Query) session.getAttribute("query");
 
         if (q == null) {
-            return (mapping.findForward("buildquery"));
+            return mapping.findForward("buildquery");
         } else {
             ObjectStore os = ObjectStoreFactory.getObjectStore();
 
             Results results = os.execute(QueryCloner.cloneQuery(q));
-            session.setAttribute("results", results);
+            request.setAttribute("results", results);
 
-            return (mapping.findForward("results"));
+            return mapping.findForward("results");
         }
     }
 }
