@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.ResultsRow;
 public class ObjectStoreSummaryGenerator
 {
     static final String FIELDS_SUFFIX = ".fields";
+    static final String NULL_MARKER = "___NULL___";
 
     /**
      * Get the number of instances of a particular class in the ObjectStore.
@@ -97,7 +98,13 @@ public class ObjectStoreSummaryGenerator
                 sb.append(FIELD_DELIM);
             }
 
-            sb.append(((ResultsRow) results.get(i)).get(0));
+            String fieldValue = ((ResultsRow) results.get(i)).get(0);
+
+            if (fieldValue == null) {
+                sb.append();
+            } else {
+                sb.append(NULL_MARKER);
+            }
         }
 
         return sb.toString();
@@ -131,6 +138,10 @@ public class ObjectStoreSummaryGenerator
 
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
 
+            if (cld == null) {
+                throw new ClassNotFoundException("class \"" + className +"\" is not in the model");
+            }
+            
             Set allClds = new HashSet();
             allClds.add(cld);
             allClds.addAll(os.getModel().getAllSubs(cld));
