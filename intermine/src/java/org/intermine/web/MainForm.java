@@ -90,4 +90,14 @@ public class MainForm extends ActionForm
     public void setPath(String path) {
         this.path = path;
     }
+
+    /**
+     * @see ActionForm#reset
+     */
+    public void reset() {
+        constraintOp = null;
+        constraintValue = null;
+        path = null;
+        subclass = null;
+    }
 }
