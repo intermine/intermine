@@ -1,5 +1,9 @@
 package org.flymine.util;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 /**
  * Collection of commonly used String utilities
  *
@@ -33,6 +37,26 @@ public class StringUtil
     }
 
     /**
+     * Returns a list of tokens delimited by whitespace in String s (useful when handling XML)
+     *
+     * @param str the String to tokenize
+     * @return the String tokens
+     * @throws NullPointerException if  str is null
+     */
+    public static List tokenize(String str) {
+         if (str == null) {
+            throw new NullPointerException("Cannot pass null arguments to tokenize");
+        }
+
+        List l = new ArrayList();
+        StringTokenizer st = new StringTokenizer(str);
+        while (st.hasMoreTokens()) {
+            l.add(st.nextToken());
+        }
+        return l;
+    }
+
+    /**
      * Returns a capitalised version of the given String
      *
      * @param str the String to capitalise
@@ -48,6 +72,35 @@ public class StringUtil
         return str.substring(0, 1).toUpperCase() + str.substring(1, str.length());
     }
 
+    /**
+     * Returns a decapitalised version of the given String
+     *
+     * @param str the String to decapitalise
+     * @return the decapitalised version of str
+     */
+    public static String decapitalise(String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() <= 1) {
+            return str.toLowerCase();
+        }
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
+    /**
+     * Returns a pluralised version of the given String
+     *
+     * @param str the String to pluralize
+     * @return the pluralised version of str
+     */
+    public static String pluralise(String str) {
+        if (str == null) {
+            return null;
+        }
+        return str + "s";
+    }
+    
     /**
      * Returns a string with the same initial letter case as the template string
      *
