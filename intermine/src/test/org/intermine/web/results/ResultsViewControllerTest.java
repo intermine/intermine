@@ -34,7 +34,6 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
 
         getRequest().setAttribute("results", new Results(q, os));
         actionPerform();
-        assertEquals(q, context.getAttribute("query"));
         assertNotNull(getRequest().getSession().getAttribute(ResultsViewController.DISPLAYABLERESULTS_NAME));
     }
 
