@@ -693,8 +693,7 @@
 
     <filter-chado tgtDir="${build.tmp}">
       <fileset dir="/shared/data/flybase/release_4_0/gff">
-        <!--include name="dmel-2L-r4.0.gff"/-->
-        <include name="*.gff"/>
+        <!include name="*.gff"/>
       </fileset>
     </filter-chado>
   </target>
@@ -712,16 +711,15 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <convert-file converter ="org.flymine.dataconversion.GFF3Converter"
-                    target="osw.chado-tgt-items"
-                    seqClsName = "Chromosome"
-                    orgAbbrev ="DM"
-                    infoSourceTitle = "FlyBase"
-                    model ="genomic"
-                    handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
+    <convert-file converter="org.flymine.dataconversion.GFF3Converter"
+                  target="osw.chado-tgt-items"
+                  seqClsName="Chromosome"
+                  orgAbbrev="DM"
+                  infoSourceTitle="FlyBase"
+                  model="genomic"
+                  handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
       <fileset dir="${build.tmp}">
-        <!--include name ="dmel-2L-r4.0.gff"/-->       
-        <include name ="*.gff"/>
+        <include name="*.gff"/>
       </fileset>
     </convert-file>
 
@@ -1729,21 +1727,26 @@
   <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
-                                           build-db-production,create-indexes-production,
-                                           load-static,
-                                           build-ensembl-drosophila-production,
-                                           build-ensembl-anopheles-production,
-                                           build-uniprot-production,
-                                           build-rnai-production,
-                                           build-psi-production,
-                                           build-orthologues-production,
-                                           build-phenotype-production,
-                                           build-go-production,
-                                           build-protein_structure-production,
-                                           analyse-db-production,
-                                           grant-db-production"/>
-
+  <target name="production-build" 
+          depends="create-production-model, 
+                   compile-genomic-model, 
+                   jar-genomic,
+                   build-db-production,
+                   create-indexes-production,
+                   load-static,
+                   build-flybase-production,
+                   read-flybase-chromosome-fasta,
+                   build-ensembl-anopheles-production,
+                   build-uniprot-production,
+                   build-rnai-production,
+                   build-psi-production,
+                   build-orthologues-production,
+                   build-phenotype-production,
+                   build-go-production,
+                   build-protein_structure-production,
+                   analyse-db-production,
+                   grant-db-production"/>
+  
   <target name="analyse-db-production" depends="prepare">
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
       <property name="db.name" value="db.production"/>
