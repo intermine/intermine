@@ -83,7 +83,7 @@
   <!-- (modelname_.xmi, modelname.argo, etc) -->
 
   
-  <target name="build-model" depends="prepare" >
+  <target name="build-model" depends="prepare" description="build tutorial model from an Argo UML file" >
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
       <property name="model.src" value="${model}/tutorial"/>
@@ -103,21 +103,20 @@
   </target>
   
   <!-- insert data into the database -->
-  <target name="insert-data" depends="build-db">
+  <target name="insert-data" depends="build-db" 
+       description="insert xml data to the tutorial">
     <taskdef
       name="insert-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="tutorial.class.path"/>
     </taskdef>
-
-    <echo message="${runtime.properties}"/>
     <insert-xml-data integrationWriter="integration.tutorial"  xmlFile="${resources}/tutorial_data.xml"  sourceName="tutorialsource">
       <classpath refid="tutorial.class.path"/>
     </insert-xml-data>
   </target>
 
   <!-- compile the source -->
-  <target name="compile" depends="build-model">
+  <target name="compile" depends="build-model" description="compile the source code">
     <javac destdir="${build.java}">
       <classpath refid="tutorial.class.path"/>
         <src path="${src.java}"/>
@@ -133,19 +132,20 @@
   </target>
 
   <!-- execute the tutorial -->
-  <target name="run" depends="clean, compile, insert-data">
+  <target name="run" depends="clean, compile, insert-data"
+       description="run the tutorial">
     <java classname="org.intermine.tutorial.SimpleQuery" dir="${build}" fork="true">
       <classpath refid="tutorial.class.path"/>
     </java>
   </target>
  
-  <target name="test" depends="clean, compile, insert-data">
+  <target name="test" depends="clean, compile, insert-data" 
+       description="do a tutorial test and fail if there are any errors">
     <antcall target="build-db"/>
-  
+ </target>
 
-  </target>
-
- <target name="build-webapp" depends="jar-model">
+ <target name="build-webapp" depends="jar-model" 
+      description="build webapp with the tutorial model">
    <ant antfile="build-webapp.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${build.webapp}/intermine.war"/>
       <property name="model.name" value="tutorial"/>
@@ -162,7 +162,8 @@
     </ant>
   </target>
 
-  <target name="release-webapp" depends="build-webapp, insert-data">
+  <target name="release-webapp" depends="build-webapp, insert-data"
+    description="release the tutorial web application to the server">
    <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${build.webapp}/intermine.war"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
