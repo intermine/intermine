@@ -100,6 +100,7 @@ public class MageDataTranslator extends DataTranslator
     private Map dbs = new HashMap();
     private Map dbRefs = new HashMap();
 
+    private Item expItem = new Item();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -202,8 +203,10 @@ public class MageDataTranslator extends DataTranslator
                 } else if (className.equals("Experiment")) {
                     // collection bioassays includes MeasuredBioAssay, PhysicalBioAssay
                     // and DerivedBioAssay, only keep DerivedBioAssay
-                    keepDBA(srcItem, tgtItem, srcNs);
-                    translateMicroArrayExperiment(srcItem, tgtItem);
+                    //keepDBA(srcItem, tgtItem, srcNs);
+                    expItem = translateMicroArrayExperiment(srcItem, tgtItem, srcNs);
+                    result.add(expItem);
+                    storeTgtItem = false;
                 } else if (className.equals("DerivedBioAssay")) {
                     translateMicroArrayAssay(srcItem, tgtItem);
                 } else if (className.equals("BioAssayDatum")) {
@@ -572,7 +575,7 @@ public class MageDataTranslator extends DataTranslator
      * @param tgtItem = flymine: MicroArrayExperiment
      * @param srcNs = mage: src namespace
      * @throws ObjectStoreException if problem occured during translating
-     */
+
     protected void keepDBA(Item srcItem, Item tgtItem, String srcNs)
         throws ObjectStoreException {
         ReferenceList rl = srcItem.getCollection("bioAssays");
@@ -589,15 +592,33 @@ public class MageDataTranslator extends DataTranslator
             }
             tgtItem.addCollection(newRl);
         }
-    }
+        }*/
 
     /**
      * @param srcItem = mage:Experiment
      * @param tgtItem = flymine: MicroArrayExperiment
+     * @param srcNs = mage: src namespace
+     * @return experiment Item
      * @throws ObjectStoreException if problem occured during translating
      */
-    protected void translateMicroArrayExperiment(Item srcItem, Item tgtItem)
+    protected Item translateMicroArrayExperiment(Item srcItem, Item tgtItem, String srcNs)
         throws ObjectStoreException {
+
+        ReferenceList rl = srcItem.getCollection("bioAssays");
+        ReferenceList newRl = new ReferenceList();
+        newRl.setName("assays");
+
+        // prefetch done
+        if (rl != null) {
+            for (Iterator i = rl.getRefIds().iterator(); i.hasNext(); ) {
+                Item baItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
+                if (baItem.getClassName().equals(srcNs + "DerivedBioAssay")) {
+                    newRl.addRefId(baItem.getIdentifier());
+                }
+            }
+            tgtItem.addCollection(newRl);
+        }
+
         if (srcItem.hasAttribute("name")) {
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
         }
@@ -638,6 +659,11 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
         }
+
+        if (expItem.getIdentifier() != "") {
+            tgtItem.setIdentifier(expItem.getIdentifier());
+        }
+        return tgtItem;
     }
 
     /**
@@ -682,6 +708,11 @@ public class MageDataTranslator extends DataTranslator
     public void translateMicroArrayExperimentalResult(Item srcItem, Item tgtItem, String normalised)
         throws ObjectStoreException {
         tgtItem.addAttribute(new Attribute("normalised", normalised));
+
+        if (srcItem.hasAttribute("value")) {
+            tgtItem.addAttribute(new Attribute("value", srcItem.getAttribute("value").getValue()));
+        }
+        tgtItem.addReference(new Reference("analysis", getAnalysisRef()));
 
         //create maer2Feature map, and maer set
         if (srcItem.hasReference("designElement")) {
@@ -1323,9 +1354,9 @@ public class MageDataTranslator extends DataTranslator
                     if (multiMaer != null) {
                         StringTokenizer token = new StringTokenizer(multiMaer);
                         while (token.hasMoreTokens()) {
-                            String st = token.nextToken();
-                            if (!maerIds.contains(st)) {
-                                maerIds.add(st);
+                            String stn = token.nextToken();
+                            if (!maerIds.contains(stn)) {
+                                maerIds.add(stn);
                             }
                         }
                     }
@@ -1484,6 +1515,10 @@ public class MageDataTranslator extends DataTranslator
         return organism;
     }
 
+    /**
+     * @param dbName = databaseName
+     * @return databaseItem
+     */
     private Item getDb(String dbName) {
         Item db = (Item) dbs.get(dbName);
         if (db == null) {
@@ -1495,6 +1530,10 @@ public class MageDataTranslator extends DataTranslator
         return db;
     }
 
+    /**
+     * @param dbName = databaseName
+     * @return databaseReference
+     */
     private Reference getSourceRef(String dbName) {
         Reference sourceRef = (Reference) dbRefs.get(dbName);
         if (sourceRef == null) {
@@ -1502,6 +1541,14 @@ public class MageDataTranslator extends DataTranslator
              dbRefs.put(dbName, sourceRef);
         }
         return sourceRef;
+    }
+
+    private String getAnalysisRef() {
+
+        if (expItem.getIdentifier() == "") {
+            expItem = createItem(tgtNs + "MicroArrayExperiment", "");
+        }
+        return expItem.getIdentifier();
     }
 
 
