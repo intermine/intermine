@@ -360,55 +360,7 @@ public class CreateReferencesTest extends TestCase {
 
     private void compareGeneGOTermsToExpected() throws Exception {
         osw.flushObjectById();
-        GOTerm expectedGOTerm = (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
-        expectedGOTerm.setId(storedGOTerm.getId());
-
-        Transcript expectedTranscript =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        expectedTranscript.setId(storedTranscript.getId());
-
-        SimpleRelation expectedTranscriptRelation =
-            (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
-        expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
-
-        Annotation expectedPhenotypeAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedPhenotypeAnnotation.setId(storedPhenotypeAnnotation.getId());
-
-        Annotation expectedGOTermAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedGOTermAnnotation.setId(storedGOTermAnnotation.getId());
-
-        Orthologue expectedOrthologue1 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue1.setId(storedOrthologue1.getId());
-
-        // in gene1 objects collection
-        Orthologue expectedOrthologue2 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue2.setId(storedOrthologue2.getId());
-
-        Protein expectedProtein =
-            (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        expectedProtein.setId(storedProtein.getId());
-            
-        Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setIdentifier("gene1");
-        expectedGene.setId(storedGene.getId());
-        expectedGene.setAnnotations(Arrays.asList(new Object[] {expectedPhenotypeAnnotation,
-                                                                expectedGOTermAnnotation}));
-        expectedGene.setSubjects(Arrays.asList(new Object[] {expectedOrthologue1,
-                                                             expectedTranscriptRelation}));
-        expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
-        expectedGene.setTranscripts(Arrays.asList(new Object[] {expectedTranscript}));
-        expectedGene.setGOTerms(Arrays.asList(new Object[] {expectedGOTerm}));
-        expectedGene.setProteins(Arrays.asList(new Object[] {expectedProtein}));
-
-        Item expGeneItem = toItem(expectedGene);
-
         ObjectStore os = osw.getObjectStore();
-
-        os.flushObjectById();
 
         Query q;
         Results res;
@@ -424,7 +376,11 @@ public class CreateReferencesTest extends TestCase {
 
         Gene resGene = (Gene) row.get(0);
         Item resGeneItem = toItem(resGene);
-        assertEquals(expGeneItem, resGeneItem);
+        
+        List resGOTerms = resGene.getGOTerms();
+
+        assertEquals(1, resGOTerms.size());
+        assertEquals(storedGOTerm, resGOTerms.get(0));
     }
 
     private void compareResultsToExpected() throws Exception {
@@ -521,11 +477,6 @@ public class CreateReferencesTest extends TestCase {
                                                   expectedChromosomeRelation, expectedExonRelation
                                               }));
 
-        Item expGeneItem = toItem(expectedGene);
-        Item expTranscriptItem = toItem(expectedTranscript);
-        Item expExonItem = toItem(expectedExon);
-        Item expChromosomeItem = toItem(expectedChromosome);
-
         ObjectStore os = osw.getObjectStore();
 
         os.flushObjectById();
@@ -543,6 +494,8 @@ public class CreateReferencesTest extends TestCase {
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
+        Item expTranscriptItem = toItem(expectedTranscript);
+
         Transcript resTranscript = (Transcript) row.get(0);
         Item resTranscriptItem = toItem(resTranscript);
         assertEquals(expTranscriptItem, resTranscriptItem);
@@ -557,6 +510,21 @@ public class CreateReferencesTest extends TestCase {
         row = (ResultsRow) res.iterator().next();
 
         Gene resGene = (Gene) row.get(0);
+
+        // fix the ID of the GOTerm - insertGeneAnnotationReferences() will have created a new
+        // object
+        List resGeneAnnotations = resGene.getAnnotations();
+
+        Annotation newGOTermAnnotation;
+        if (resGeneAnnotations.get(0).equals(expectedPhenotypeAnnotation)) {
+            newGOTermAnnotation = (Annotation) resGeneAnnotations.get(1);
+        } else {
+            newGOTermAnnotation = (Annotation) resGeneAnnotations.get(0);
+        }
+        expectedGOTermAnnotation.setId(newGOTermAnnotation.getId());
+
+
+        Item expGeneItem = toItem(expectedGene);
         Item resGeneItem = toItem(resGene);
         assertEquals(expGeneItem, resGeneItem);
 
@@ -567,6 +535,8 @@ public class CreateReferencesTest extends TestCase {
 
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
+
+        Item expChromosomeItem = toItem(expectedChromosome);
 
         Chromosome resChromosome = (Chromosome) row.get(0);
         Item resChromosomeItem = toItem(resChromosome);
@@ -580,6 +550,8 @@ public class CreateReferencesTest extends TestCase {
 
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
+
+        Item expExonItem = toItem(expectedExon);
 
         Exon resExon = (Exon) row.get(0);
         Item resExonItem = toItem(resExon);
@@ -649,7 +621,25 @@ public class CreateReferencesTest extends TestCase {
         Gene resGene = (Gene) row.get(0);
         Item resGeneItem = toItem(resGene);
 
-        assertEquals(expGeneItem, resGeneItem);
+        // the difference should be that expectedGOTermAnnotation has a different ID
+        assertFalse(expGeneItem.equals(resGeneItem));
+        List resGeneAnnotations = resGene.getAnnotations();
+        assertEquals(2, resGeneAnnotations.size());
+        assertTrue(resGeneAnnotations.contains(expectedPhenotypeAnnotation));
+        assertFalse(resGeneAnnotations.contains(expectedGOTermAnnotation));
+
+        Annotation newGOTermAnnotation;
+
+        if (resGeneAnnotations.get(0).equals(expectedPhenotypeAnnotation)) {
+            newGOTermAnnotation = (Annotation) resGeneAnnotations.get(1);
+        } else {
+            newGOTermAnnotation = (Annotation) resGeneAnnotations.get(0);
+        }
+
+        assertEquals(storedGOTermAnnotation.getProperty(), newGOTermAnnotation.getProperty());
+        assertEquals(storedGOTermAnnotation.getEvidence(), newGOTermAnnotation.getEvidence());
+        assertEquals(storedGOTermAnnotation.getQualifier(), newGOTermAnnotation.getQualifier());
+        assertEquals(expectedGene, newGOTermAnnotation.getSubject());
     }
 
     private void createData() throws Exception {
@@ -738,7 +728,8 @@ public class CreateReferencesTest extends TestCase {
         osw.beginTransaction();
         LOG.info("begun transaction in createData()");
         while (i.hasNext()) {
-            osw.store((InterMineObject) i.next());
+            InterMineObject object = (InterMineObject) i.next();
+            osw.store(object);
         }
         
         osw.commitTransaction();
