@@ -5,7 +5,7 @@
 
 
     <sect1>
-        <para>This page will guide you through a very simple query: show all the Drosohila melanogaster gene names in FlyMine. </para>
+        <para>This page will guide you through a very simple query: show all the Drosophila melanogaster gene names in FlyMine. </para>
 
      <para>
          <orderedlist>
@@ -16,7 +16,7 @@
 	  </entry>
       
 
-            <listitem>You need to constrain the organism name so that you only get gene names from D. melanogaster.  Expand the organism information  and click on the -> next to name.  This adds the organism name to the right hand side of the page, where you can add your constraint.  In the box type Drosphila melanogaster and press add to query.</listitem>
+            <listitem>You need to constrain the organism name so that you only get gene names from D. melanogaster.  Expand the organism information  and click on the -> next to name.  This adds the organism name to the right hand side of the page, where you can add your constraint.  In the box type Drosophila melanogaster and press add to query.</listitem>
 
 
 

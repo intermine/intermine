@@ -45,9 +45,9 @@
       <item>
         Data can be saved into 'bags' and stored in your query history.  To
         save your data to a bag select the required data and either add it to
-        an existing bag or save it to a new bag. Selecting the checkboxes next
+        an existing bag or save it to a new bag. Selecting the check-boxes next
         to the column headings will select the entire column for export.
-        Alternatively, individual items can be saved by selecting checkboxes
+        Alternatively, individual items can be saved by selecting check-boxes
         next to the items. Saved bags of data can be viewed from the History
         page (accessible form the menu bar).
       </item>
@@ -61,7 +61,16 @@
     <section>
       <heading>Exporting Data</heading>
       <item>
-        Data can be exported from the results page in various formats - currently as comma separated or tab separated files. Both are suitable for import into Excel or OpenOffice. By default, the entire data set will be exported, regardless of any selected checkboxes. However, if you do not wish to export certain columns these can be hidden using the 'hide' option in the column header. Note that for further data processing it is most useful to export columns containing simple values (such as gene names). Other columns containing objects (such as genes) will be exported in a human-readable textual representation similar to that displayed on the results display.
+        Data can be exported from the results page in various formats -
+        currently as comma separated or tab separated files. Both are suitable
+        for import into Excel or OpenOffice. By default, the entire data set
+        will be exported, regardless of any selected check-boxes. However, if
+        you do not wish to export certain columns these can be hidden using
+        the 'hide' option in the column header. Note that for further data
+        processing it is most useful to export columns containing simple
+        values (such as gene names). Other columns containing objects (such as
+        genes) will be exported in a human-readable textual representation
+        similar to that displayed on the results display. 
       </item>
     </section>
   </index>

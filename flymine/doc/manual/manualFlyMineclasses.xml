@@ -8,7 +8,7 @@
     <section>
       <heading>FlyMine classes</heading>
       <item><ulink url= "manualAnnotationclass.xml">Annotation</ulink> </item>
-      <item><ulink url= "manualAnalysisresultclass.xml">AnalysisReuslt</ulink> </item>
+      <item><ulink url= "manualAnalysisresultclass.xml">AnalysisResult</ulink> </item>
       <item><ulink url= "manualAnalysisclass.xml">Analysis</ulink> </item>
       <item><ulink url= "manualAuthorclass.xml">Author</ulink> </item>
       <item><ulink url= "manualBioEntityclass.xml">BioEntity</ulink> </item>
