@@ -117,7 +117,7 @@
             <c:if test="${viewPaths[fullpath] == null}">
               <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
                          title="${selectNodeTitle}">
-                <fmt:message key="query.showNode"/>
+                <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
               </html:link>
             </c:if>
             <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
@@ -125,7 +125,7 @@
             </fmt:message>
             <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
                        title="${addConstraintToTitle}">
-              <img class="arrow" src="images/right-arrow.gif" alt="->"/>
+              <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
             </html:link>
           </div>
         
@@ -195,10 +195,12 @@
                       </fmt:message>
                     </c:otherwise>
                   </c:choose>
+                  <%--
                   <html:link action="/mainChange?method=addConstraint&amp;path=${node.path}"
                              title="${addConstraintToTitle}">
-                    <fmt:message key="query.addConstraint"/>
+                    <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
                   </html:link>
+                  --%>
                   <c:if test="${!lockedPaths[node.path]}">
                     <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
                       <fmt:param value="${node.fieldName}"/>
