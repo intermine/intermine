@@ -1,4 +1,5 @@
-<menu>
+<?xml version="1.0" encoding="utf-8"?>
+<index>
     <section>
         <heading>System information</heading>
         <item><ulink url="http://www.flymine.org/usage">Web server usage</ulink></item>
@@ -54,4 +55,4 @@
         <item><ulink url="/internal/prototype/flychip_data.sxi">Loading FlyChip data</ulink></item>
     </section>
 
-</menu>
+</index>
