@@ -96,7 +96,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         Map queryClasses = new HashMap();
         queryClasses.put("Department_0", d);
         
-        assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, new HashMap()));
+        assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, new HashMap(), new HashMap()));
     }
 
     public void testCreateQueryWithBag() throws Exception{
@@ -130,15 +130,13 @@ public class QueryBuildHelperTest extends QueryTestCase
         Map queryClasses = new HashMap();
         queryClasses.put("Employee_0", d);
         
-        assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, savedBags));
+        assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, savedBags, new HashMap()));
     }
 
     public void testGetAllFieldNames() throws Exception {
         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");
         
-        List expected = Arrays.asList(new Object[] {
-            "rejectedEmployee", "employees", "manager", "name", "company"
-        });
+        List expected = Arrays.asList(new Object[] {"rejectedEmployee", "employees", "manager", "name", "company", "this class"});
         
         assertEquals(expected, QueryBuildHelper.getAllFieldNames(cld));
     }
@@ -198,7 +196,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         Map queryClasses = new HashMap();
         queryClasses.put("Department_0", d);
 
-        assertEquals(queryClasses, QueryBuildHelper.getQueryClasses(q, new HashMap()));
+        assertEquals(queryClasses, QueryBuildHelper.getQueryClasses(q, new HashMap(), new HashMap()));
     }
 
     public void testToDisplayable() throws Exception {
@@ -221,7 +219,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         d.getFieldOps().put("name_0", ConstraintOp.NOT_EQUALS);
         d.getFieldValues().put("name_0", "Frank");
 
-        assertEquals(d, QueryBuildHelper.toDisplayable(qc, q, new HashMap()));
+        assertEquals(d, QueryBuildHelper.toDisplayable(qc, q, new HashMap(), new HashMap()));
     }
     
     public void testGetValidAliases() throws Exception {
@@ -238,6 +236,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         queryClasses.put("Employee_0", d3);
         
         Map expected = new HashMap();
+        expected.put("this class", new ArrayList());
         expected.put("manager", new ArrayList());
         expected.put("company", Arrays.asList(new Object[] {"Company_0", "Company_1"}));
         expected.put("employees", Arrays.asList(new Object[] {"Employee_0"}));
@@ -245,7 +244,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         
         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
-        assertEquals(expected, QueryBuildHelper.getValidAliases(cld, queryClasses));
+        assertEquals(expected, QueryBuildHelper.getValidAliases(cld, queryClasses, new ArrayList(), new ArrayList()));
     }
 
     public void testToDisplayableWithBag() throws Exception {
@@ -276,7 +275,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         d.getFieldValues().put("age_0", "my_saved_bag");
 
         DisplayQueryClass resultDisplayQueryClass =
-            QueryBuildHelper.toDisplayable(qc, q, savedBagsInverse);
+            QueryBuildHelper.toDisplayable(qc, q, savedBagsInverse, new HashMap());
 
         assertEquals(d, resultDisplayQueryClass);
     }

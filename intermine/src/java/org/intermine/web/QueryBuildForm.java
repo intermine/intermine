@@ -264,6 +264,7 @@ public class QueryBuildForm extends ActionForm
         ServletContext servletContext = session.getServletContext();
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
@@ -286,25 +287,44 @@ public class QueryBuildForm extends ActionForm
 
             Map fieldDescriptors = model.
                 getFieldDescriptorsForClass(TypeUtil.instantiate(d.getType()));
-            FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(fieldName);
 
-            if (fd.isAttribute()) {
-                ActionError error = validateAttribute((AttributeDescriptor) fd, op, constraintName,
-                                                      fieldValue, locale, savedBags);
-                if (error == null) {
-                    parsedFieldOps.put(constraintName, op);
-                } else {
-                    errors.add(constraintName, error);
-                }
-            } else if (fd.isReference() || fd.isCollection()) {
-                //it's possible we presented the user with a blank drop-down
+            if (fieldName.equals("this class")) {
+                // we may have displayed an empty list - don't moan at user
                 if (fieldValue == null || fieldValue.equals("")) {
                     d.getConstraintNames().remove(constraintName);
                     d.getFieldNames().remove(constraintName);
                 } else {
-                    //don't need to check this - we constructed the drop-down
-                    parsedFieldOps.put(constraintName, op);
-                    parsedFieldValues.put(constraintName, fieldValue);
+                    if ((savedBags != null && savedBags.containsKey(fieldValue))
+                        || (savedQueries != null & savedQueries.containsKey(fieldValue))) {
+                        parsedFieldOps.put(constraintName, op);
+                        parsedFieldValues.put(constraintName, fieldValue);
+                    } else {
+                        errors.add(constraintName, new ActionError("errors.bagconstraint",
+                                                                   fieldValue));
+                    }
+                }
+            } else {
+                FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(fieldName);
+
+                if (fd.isAttribute()) {
+                    ActionError error = validateAttribute((AttributeDescriptor) fd, op,
+                                                          constraintName, fieldValue, locale,
+                                                          savedBags);
+                    if (error == null) {
+                        parsedFieldOps.put(constraintName, op);
+                    } else {
+                        errors.add(constraintName, error);
+                    }
+                } else if (fd.isReference() || fd.isCollection()) {
+                    //it's possible we presented the user with a blank drop-down
+                    if (fieldValue == null || fieldValue.equals("")) {
+                        d.getConstraintNames().remove(constraintName);
+                        d.getFieldNames().remove(constraintName);
+                    } else {
+                        //don't need to check this - we constructed the drop-down
+                        parsedFieldOps.put(constraintName, op);
+                        parsedFieldValues.put(constraintName, fieldValue);
+                    }
                 }
             }
         }
@@ -338,7 +358,7 @@ public class QueryBuildForm extends ActionForm
                                             ConstraintOp op, String fieldName, Object fieldValue,
                                             Locale locale, Map savedBags) {
         Class fieldClass = TypeUtil.instantiate(attributeDescriptor.getType());
-
+        
         try {
             if (BagConstraint.VALID_OPS.contains(op)) {
                 if (savedBags.containsKey(fieldValue)) {
@@ -350,7 +370,7 @@ public class QueryBuildForm extends ActionForm
                 }
             } else {
                 String stringFieldValue = (String) fieldValue;
-
+                
                 if (stringFieldValue != null) {
                     if (fieldClass.equals(Date.class)) {
                         DateFormat dateFormat =

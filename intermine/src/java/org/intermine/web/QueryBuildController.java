@@ -12,6 +12,8 @@ package org.intermine.web;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +49,7 @@ public class QueryBuildController extends TilesAction
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
         Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
+        Map savedQueriesInverse = (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Query q = (Query) session.getAttribute(Constants.QUERY);
@@ -57,7 +60,8 @@ public class QueryBuildController extends TilesAction
         
         //there's a query on the session but it hasn't been rendered yet
         if (q != null) {
-            queryClasses = QueryBuildHelper.getQueryClasses(q, savedBagsInverse);
+            queryClasses = QueryBuildHelper.getQueryClasses(q, savedBagsInverse,
+                                                            savedQueriesInverse);
 
             session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
             session.setAttribute(Constants.QUERY, null);
@@ -76,8 +80,16 @@ public class QueryBuildController extends TilesAction
             
             session.setAttribute("allFieldNames", QueryBuildHelper.getAllFieldNames(cld));
             
-            session.setAttribute("validAliases",
-                                 QueryBuildHelper.getValidAliases(cld, queryClasses));
+            Collection savedBagNames = (savedBagsInverse == null
+                                        ? new HashSet()
+                                        : savedBagsInverse.values());
+            Collection savedQueryNames = (savedQueriesInverse == null
+                                          ? new HashSet()
+                                          : savedQueriesInverse.values());
+            session.setAttribute("validAliases", QueryBuildHelper.getValidAliases(cld,
+                                                                                  queryClasses,
+                                                                                  savedBagNames,
+                                                                                  savedQueryNames));
         }
         
         return null;

@@ -40,6 +40,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -108,11 +109,12 @@ public class QueryBuildHelper
      * Create a Query from a Collection of DisplayQueryClasses
      * @param queryClasses the DisplayQueryClasses
      * @param model the relevant metadata
-     * @param savedBags the savedBags on the session
+     * @param savedBags the saved bags on the session
+     * @param savedQueries the saved queries on the session
      * @return the Query
      * @throws Exception if an error occurs in constructing the Query
      */
-    public static Query createQuery(Map queryClasses, Model model, Map savedBags)
+    public static Query createQuery(Map queryClasses, Model model, Map savedBags, Map savedQueries)
         throws Exception {
         Query q = new Query();
         Map mapping = new HashMap();
@@ -136,25 +138,38 @@ public class QueryBuildHelper
                 String fieldName = (String) d.getFieldName(constraintName);
                 ConstraintOp fieldOp = (ConstraintOp) d.getFieldOp(constraintName);
                 Object fieldValue = d.getFieldValue(constraintName);
-                FieldDescriptor fd = (FieldDescriptor) cld.getFieldDescriptorByName(fieldName);
-                if (fd.isAttribute()) {
+                
+                if (fieldName.equals("this class")) {
                     if (savedBags != null
-                        && savedBags.containsKey(fieldValue)
-                        && BagConstraint.VALID_OPS.contains(fieldOp)) {
+                        && savedBags.containsKey(fieldValue)) {
                         Collection bag = (Collection) savedBags.get(fieldValue);
-                        QueryHelper.addConstraint(q, fieldName, qc, fieldOp, bag);
-                    } else {
-                        QueryHelper.addConstraint(q, fieldName, qc,
-                                                  fieldOp, new QueryValue(fieldValue));
+                        QueryHelper.addConstraint(q, qc, new BagConstraint(qc, fieldOp, bag));
+                    } else if (savedQueries != null
+                               && savedQueries.containsKey(fieldValue)) {
+                        Query subQ = (Query) savedQueries.get(fieldValue);
+                        QueryHelper.addConstraint(q, qc, new SubqueryConstraint(qc, fieldOp, subQ));
                     }
-                } else if (fd.isReference()) {
-                    QueryReference qr = new QueryObjectReference(qc, fieldName);
-                    QueryClass qc2 = (QueryClass) q.getReverseAliases().get(fieldValue);
-                    QueryHelper.addConstraint(q, qc, new ContainsConstraint(qr, fieldOp, qc2));
-                } else if (fd.isCollection()) {
-                    QueryReference qr = new QueryCollectionReference(qc, fieldName);
-                    QueryClass qc2 = (QueryClass) q.getReverseAliases().get(fieldValue);
-                    QueryHelper.addConstraint(q, qc, new ContainsConstraint(qr, fieldOp, qc2));
+                } else {
+                    FieldDescriptor fd = (FieldDescriptor) cld.getFieldDescriptorByName(fieldName);
+                    if (fd.isAttribute()) {
+                        if (savedBags != null
+                            && savedBags.containsKey(fieldValue)
+                            && BagConstraint.VALID_OPS.contains(fieldOp)) {
+                            Collection bag = (Collection) savedBags.get(fieldValue);
+                            QueryHelper.addConstraint(q, fieldName, qc, fieldOp, bag);
+                        } else {
+                            QueryHelper.addConstraint(q, fieldName, qc,
+                                                      fieldOp, new QueryValue(fieldValue));
+                        }
+                    } else if (fd.isReference()) {
+                        QueryReference qr = new QueryObjectReference(qc, fieldName);
+                        QueryClass qc2 = (QueryClass) q.getReverseAliases().get(fieldValue);
+                        QueryHelper.addConstraint(q, qc, new ContainsConstraint(qr, fieldOp, qc2));
+                    } else if (fd.isCollection()) {
+                        QueryReference qr = new QueryCollectionReference(qc, fieldName);
+                        QueryClass qc2 = (QueryClass) q.getReverseAliases().get(fieldValue);
+                        QueryHelper.addConstraint(q, qc, new ContainsConstraint(qr, fieldOp, qc2));
+                    }
                 }
             }
         }
@@ -188,6 +203,7 @@ public class QueryBuildHelper
                 allFieldNames.add(fieldName);
             }
         }
+        allFieldNames.add("this class");
         return allFieldNames;
     }
     
@@ -220,6 +236,10 @@ public class QueryBuildHelper
                 fieldOps.put(fd.getName(), opString);
             }
         }
+        
+        //use bag constraints, which are the same as subquery ones
+        //no harm in adding both?
+        fieldOps.put("this class", QueryBuildHelper.mapOps(BagConstraint.VALID_OPS));
 
         return fieldOps;
     }
@@ -243,9 +263,10 @@ public class QueryBuildHelper
      * Take a Query and convert each of its QueryClasses to a DisplayQueryClass
      * @param q the Query
      * @param savedBagsInverse Map used to resolve bag names
+     * @param savedQueriesInverse Map used to resolve query names
      * @return Map a map from QueryClass alias to corresponding DisplayQueryClass
      */
-    public static Map getQueryClasses(Query q, Map savedBagsInverse) {
+    public static Map getQueryClasses(Query q, Map savedBagsInverse, Map savedQueriesInverse) {
         Map queryClasses = new LinkedHashMap();
         for (Iterator i = q.getFrom().iterator(); i.hasNext();) {
             FromElement fe = (FromElement) i.next();
@@ -254,8 +275,9 @@ public class QueryBuildHelper
             }
             QueryClass qc = (QueryClass) fe;
             
-            queryClasses.put((String) q.getAliases().get(qc),
-                             QueryBuildHelper.toDisplayable(qc, q, savedBagsInverse));
+            DisplayQueryClass d = QueryBuildHelper.toDisplayable(qc, q, savedBagsInverse,
+                                                                 savedQueriesInverse);
+            queryClasses.put((String) q.getAliases().get(qc), d);
         }
         return queryClasses;
     }
@@ -265,9 +287,11 @@ public class QueryBuildHelper
      * @param qc the QueryClass
      * @param q the Query the QueryClass is a part of
      * @param savedBagsInverse a map from bag to bag name for name resolution
+     * @param savedQueriesInverse a map from query to query name for name resolution
      * @return a DisplayQueryClass
      */
-    protected static DisplayQueryClass toDisplayable(QueryClass qc, Query q, Map savedBagsInverse) {
+    protected static DisplayQueryClass toDisplayable(QueryClass qc, Query q, Map savedBagsInverse,
+                                                     Map savedQueriesInverse) {
         DisplayQueryClass d = new DisplayQueryClass();
         d.setType(qc.getType().getName());
 
@@ -293,7 +317,14 @@ public class QueryBuildHelper
                 if (bc.getQueryNode() instanceof QueryField) {
                     fieldName = ((QueryField) bc.getQueryNode()).getFieldName();
                     fieldValue = (String) savedBagsInverse.get(bc.getBag());
+                } else if (bc.getQueryNode() instanceof QueryClass) {
+                    fieldName = "this class";
+                    fieldValue = (String) savedBagsInverse.get(bc.getBag());
                 }
+            } else if (c instanceof SubqueryConstraint) {
+                SubqueryConstraint sqc = (SubqueryConstraint) c;
+                fieldName = "this class";
+                fieldValue = (String) savedQueriesInverse.get(sqc.getQuery());
             }
             
             Integer num = (Integer) fieldNums.get(fieldName);
@@ -318,10 +349,14 @@ public class QueryBuildHelper
      * of class aliases in the query that could be part of a contains constraint on that field
      * @param cld metadata for the active QueryClass
      * @param queryClasses the DisplayQueryClass map
+     * @param savedBagNames the names of the saved bags on the sessino
+     * @param savedQueryNames the names of the saved queries on the session
      * @return the revelant Map
      * @throws Exception if an error occurs
      */
-    public static Map getValidAliases(ClassDescriptor cld, Map queryClasses) throws Exception {
+    public static Map getValidAliases(ClassDescriptor cld, Map queryClasses,
+                                      Collection savedBagNames, Collection savedQueryNames)
+        throws Exception {
         Map values = new HashMap();
 
         for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext();) {
@@ -343,6 +378,10 @@ public class QueryBuildHelper
                 }
             }
         }
+
+        List savedThings = new ArrayList(savedBagNames);
+        savedThings.addAll(savedQueryNames);
+        values.put("this class", savedThings);
 
         return values;
     }

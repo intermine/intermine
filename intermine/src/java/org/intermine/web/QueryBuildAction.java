@@ -91,6 +91,7 @@ public class QueryBuildAction extends Action
 
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
@@ -98,7 +99,7 @@ public class QueryBuildAction extends Action
             throw new Exception("There are no classes present in the query");
         }
         
-        Query q = QueryBuildHelper.createQuery(queryClasses, model, savedBags);
+        Query q = QueryBuildHelper.createQuery(queryClasses, model, savedBags, savedQueries);
         session.setAttribute(Constants.QUERY, q);
         session.removeAttribute(Constants.QUERY_CLASSES);
         session.removeAttribute(Constants.EDITING_ALIAS);
@@ -288,11 +289,13 @@ public class QueryBuildAction extends Action
 
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
         session.setAttribute(Constants.QUERY, QueryBuildHelper.createQuery(queryClasses, model,
-                                                                           savedBags));
+                                                                           savedBags,
+                                                                           savedQueries));
 
         return mapping.findForward("runquery");
     }
