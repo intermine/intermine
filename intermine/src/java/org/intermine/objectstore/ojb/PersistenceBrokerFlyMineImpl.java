@@ -26,9 +26,6 @@ import org.flymine.objectstore.query.*;
  */
 public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
 {
-    protected static final org.apache.log4j.Logger LOG = 
-        org.apache.log4j.Logger.getLogger(LazyInitializer.class);
-
     private Database database;
     
     /**
@@ -101,47 +98,39 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
         }
         
         if (rds.isLazy()) {
-            Object o = null;
             try {
-                o = referencedClass.getDeclaredConstructor(new Class[] {})
-                    .newInstance(new Object[] {});
-            } catch (Exception e) {
-            }
-            Query query = new Query();
-            QueryClass qc1 = new QueryClass(referencedClass);
-            QueryClass qc2 = new QueryClass(obj.getClass());
-            query.addToSelect(qc1);
-            query.addFrom(qc1);
-            query.addFrom(qc2);
-            ClassConstraint cc1 = new ClassConstraint(qc2, ClassConstraint.EQUALS, obj);
-            String[] s = obj.getClass().getName().split("[.]");
-            QueryReference qr = null;
-            try {
-                qr = new QueryObjectReference(qc2, rds.getAttributeName());
-            } catch (Exception e) {
-                throw new PersistenceBrokerException(e);
-            }
-            ContainsConstraint cc2 = 
-                new ContainsConstraint(qr, ContainsConstraint.CONTAINS, qc1);
-            ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);            
-            cs.addConstraint(cc1);
-            cs.addConstraint(cc2);
-            query.setConstraint(cs);
-            //TODO this pkVals stuff is a temporary measure until .equals is sensible
-            return (LazyReference) 
-                LazyInitializer.getDynamicProxy(referencedClass, query, (Integer) pkVals[0]);
-        }
-        
-        Class referencedProxy = rds.getItemProxyClass();
-        if (referencedProxy != null) {
-            try {
-                return referencedProxy.getDeclaredConstructor(new Class[] {})
-                    .newInstance(new Object[] {});
-            } catch (Exception e) {
+                Query query = new Query();
+                QueryClass qc1 = new QueryClass(referencedClass);
+                QueryClass qc2 = new QueryClass(obj.getClass());
+                query.addToSelect(qc1);
+                query.addFrom(qc1);
+                query.addFrom(qc2);
+                ClassConstraint cc1 = new ClassConstraint(qc2, ClassConstraint.EQUALS, obj);
+                QueryReference qr = new QueryObjectReference(qc2, rds.getAttributeName());
+                ContainsConstraint cc2 = 
+                    new ContainsConstraint(qr, ContainsConstraint.CONTAINS, qc1);
+                ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);            
+                cs.addConstraint(cc1);
+                cs.addConstraint(cc2);
+                query.setConstraint(cs);
+                //TODO this pkVals stuff is a temporary measure until .equals is sensible
+                return (LazyReference) 
+                    LazyInitializer.getDynamicProxy(referencedClass, query, (Integer) pkVals[0]);
+            } catch (NoSuchFieldException e) {
                 throw new PersistenceBrokerException(e);
             }
         } else {
-            return getObjectByIdentity(new Identity(referencedClass, pkVals));
+            Class referencedProxy = rds.getItemProxyClass();
+            if (referencedProxy != null) {
+                try {
+                    return referencedProxy.getDeclaredConstructor(new Class[] {})
+                        .newInstance(new Object[] {});
+                } catch (Exception e) {
+                    throw new PersistenceBrokerException(e);
+                }
+            } else {
+                return getObjectByIdentity(new Identity(referencedClass, pkVals));
+            }
         }
     }
 
