@@ -11,6 +11,7 @@ public class SimpleConstraintTest extends TestCase {
     private QueryEvaluable qeStr2;
     private QueryEvaluable qeNum1;
     private QueryEvaluable qeNum2;
+    private QueryEvaluable qeBool1;
 
     public SimpleConstraintTest(String arg1) {
         super(arg1);
@@ -21,6 +22,7 @@ public class SimpleConstraintTest extends TestCase {
         qeStr2 = new QueryValue("String2");
         qeNum1 = new QueryValue(new Integer(124));
         qeNum2 = new QueryValue(new Double(3.22));
+        qeBool1 = new QueryValue(new Boolean(true));
     }
 
 
@@ -121,6 +123,39 @@ public class SimpleConstraintTest extends TestCase {
         }
     }
 
+    public void testDualWrongTypeBoolean() throws Exception {
+        try {
+            constraint = new SimpleConstraint(qeBool1, SimpleConstraint.MATCHES, qeBool1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            constraint = new SimpleConstraint(qeBool1, SimpleConstraint.DOES_NOT_MATCH, qeBool1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            constraint = new SimpleConstraint(qeBool1, SimpleConstraint.GREATER_THAN, qeBool1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            constraint = new SimpleConstraint(qeBool1, SimpleConstraint.GREATER_THAN_EQUALS, qeBool1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+                try {
+            constraint = new SimpleConstraint(qeBool1, SimpleConstraint.LESS_THAN, qeBool1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            constraint = new SimpleConstraint(qeBool1, SimpleConstraint.LESS_THAN_EQUALS, qeBool1);
+            fail ("Expected: InvalidArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
     // create negated SimpleConstraints and check getRealType gives correct answer
     public void testGetRealType() throws Exception {
         try {
@@ -144,6 +179,11 @@ public class SimpleConstraintTest extends TestCase {
             assertEquals(c9.getRealType(), SimpleConstraint.IS_NOT_NULL);
             SimpleConstraint c10 = new SimpleConstraint(qeNum1, SimpleConstraint.IS_NOT_NULL, true);
             assertEquals(c10.getRealType(), SimpleConstraint.IS_NULL);
+            SimpleConstraint c11 = new SimpleConstraint(qeBool1, SimpleConstraint.EQUALS, qeBool1, true);
+            assertEquals(c1.getRealType(), SimpleConstraint.NOT_EQUALS);
+            SimpleConstraint c12 = new SimpleConstraint(qeBool1, SimpleConstraint.NOT_EQUALS, qeBool1, true);
+            assertEquals(c2.getRealType(), SimpleConstraint.EQUALS);
+
         } finally {
         }
 
