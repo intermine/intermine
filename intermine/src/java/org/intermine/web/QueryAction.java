@@ -71,15 +71,10 @@ public class QueryAction extends LookupDispatchAction
             query = new Query();
         }
 
-        try {
-            QueryCreator qc = new QueryCreator(query);
-            qc.generateConstraints(cld.getName(), queryForm.getFields());
-            session.setAttribute("query", query);
-        } catch (Throwable e) {
-            e.printStackTrace(System.err);
-            request.setAttribute("exception", e);
-            return (mapping.findForward("error"));
-        }
+        QueryCreator qc = new QueryCreator(query);
+        qc.generateConstraints(cld.getName(), queryForm.getFields());
+        session.setAttribute("query", query);
+
         return (mapping.findForward("buildquery"));
     }
 

@@ -62,21 +62,16 @@ public class QueryClassSelectAction extends LookupDispatchAction
 
         QueryClassSelectForm queryClassSelectForm = (QueryClassSelectForm) form;
 
-        try {
-            Model model = ((DisplayModel) session.getAttribute("model")).getModel();
-            String cldName = queryClassSelectForm.getCldName();
-            if (!model.hasClassDescriptor(cldName)) {
-                throw new Exception("ClassDescriptor (" + cldName + ") not found in model ("
-                                    + model.getName() + ")");
-            }
-            DisplayClassDescriptor cld =
-                new DisplayClassDescriptor(model.getClassDescriptorByName(cldName));
-            session.setAttribute("cld", cld);
-        } catch (Throwable e) {
-            e.printStackTrace(System.err);
-            request.setAttribute("exception", e);
-            return (mapping.findForward("error"));
-            }
+        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+        String cldName = queryClassSelectForm.getCldName();
+        if (!model.hasClassDescriptor(cldName)) {
+            throw new Exception("ClassDescriptor (" + cldName + ") not found in model ("
+                                + model.getName() + ")");
+        }
+        DisplayClassDescriptor cld =
+            new DisplayClassDescriptor(model.getClassDescriptorByName(cldName));
+        session.setAttribute("cld", cld);
+
         return (mapping.findForward("buildquery"));
     }
 

@@ -66,19 +66,14 @@ public class FqlQueryAction extends LookupDispatchAction
 
         FqlQueryForm queryform = (FqlQueryForm) form;
 
-        try {
-         Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
-         props = PropertiesUtil.stripStart("objectstoreserver", props);
-         String osAlias = props.getProperty("os");
-         ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
+        Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
+        props = PropertiesUtil.stripStart("objectstoreserver", props);
+        String osAlias = props.getProperty("os");
+        ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-         Results results = os.execute(new FqlQuery(queryform.getQuerystring(),
+        Results results = os.execute(new FqlQuery(queryform.getQuerystring(),
                                                    "org.flymine.model.testmodel").toQuery());
-         request.setAttribute("results", results);
-        } catch (Throwable e) {
-            e.printStackTrace(System.err);
-            return (mapping.findForward("error"));
-        }
+        request.setAttribute("results", results);
 
         return (mapping.findForward("results"));
 
@@ -112,14 +107,9 @@ public class FqlQueryAction extends LookupDispatchAction
 
         FqlQueryForm queryform = (FqlQueryForm) form;
 
-        try {
-            Query q = new FqlQuery(queryform.getQuerystring(), "org.flymine.model.testmodel")
-                .toQuery();
-            session.setAttribute("query", q);
-        } catch (Throwable e) {
-            e.printStackTrace(System.err);
-            return (mapping.findForward("error"));
-        }
+        Query q = new FqlQuery(queryform.getQuerystring(), "org.flymine.model.testmodel")
+            .toQuery();
+        session.setAttribute("query", q);
 
         return (mapping.findForward("buildquery"));
 
