@@ -1,0 +1,217 @@
+# Base: 
+@prefix :        <http://www.flymine.org/model/genomic#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix chado:   <http://www.flymine.org/model/chado#> .
+@prefix null:	 <http://www.flymine.org/model/null#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+# ---------------------------------------------------------------------------- #
+#                      Core Object Model Elements                              #
+# ---------------------------------------------------------------------------- #
+
+
+# TODO some type of chado:featureprop should map to subclasses of BioProperty, need to investigate
+null:featureprop a owl:Class ;
+    owl:equivalentClass chado:featureprop .
+
+# ------------ chado:feature_relationship ------------ #
+
+:RankedRelation a owl:Class ;
+    owl:equivalentClass chado:feature_relationship .
+
+:RankedRelation__rank a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:feature_relationship__rank .
+
+:RankedRelation__subject a owl:ObjectProperty;
+    rdfs:domain :RankedRelation ;
+    rdfs:range :BioEntity ;
+    rdfs:subPropertyOf :Relation__subject ;
+    owl:equivalentProperty chado:feature_relationship__subject .
+
+:RankedRelation__object a owl:ObjectProperty;
+    rdfs:domain :RankedRelation ;
+    rdfs:range :BioEntity ;
+    rdfs:subPropertyOf :Relation__object ;
+    owl:equivalentProperty chado:feature_relationship__object .
+
+# TODO do not want chado:feature_relationship converted to type -> restricted subclasses?
+:RankedRelation__type a owl:ObjectProperty ;
+      owl:equivalentClass chado:feature_relationship__type .
+
+
+# ------------ chado:featureloc ------------ #
+
+# chado:featureloc equivalent to Location with some name changes 
+# and some fields nor wanted.  
+# featureloc__strand and featureloc__phase map unaltered
+
+:Location a owl:Class ;
+    owl:equivalentClass chado:featureloc .
+
+:Location__subject a owl:ObjectProperty ;
+    rdfs:domain :Location ;
+    rdfs:range :BioEntity ;
+    rdfs:subPropertyOf :Relation__subject ;
+    owl:equivalentProperty chado:featureloc__feature .
+
+:Location__object a owl:ObjectProperty ;
+    rdfs:domain :Location ;
+    rdfs:range :BioEntity ;
+    rdfs:subPropertyOf :Relation__object ;
+    owl:equivalentProperty chado:featureloc__srcfeature .
+
+:Location__start a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__fmin .
+
+:Location__startIsPartial a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__is_fmin_partial .
+
+:Location__end a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__fmax .
+        
+:Location__endIsPartial a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__is_fmax_partial .
+
+null:Location__residue_info a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__residue_info .
+
+null:Location__locgroup a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__locgroup .
+
+null:Location__rank a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:featureloc__rank .
+
+
+# ------------ We don't need the chado cv, cvterm, structure ------------ # 
+
+null:cvterm a owl:Class ;
+    owl:equivalentClass chado:cvterm .
+
+null:cv a owl:Class ;
+    owl:equivalentClass chado:cv .
+
+null:cvterm_relationship a owl:Class ;
+    owl:equivalentClass chado:cvterm_relationship .
+
+
+# ------------ Synonyms link a BioEntity with name/id from an InfoSource ----------- #
+
+#:Synonym a owl:Class ;
+#    owl:equivalentClass chado:feature_synonym ; 
+#    owl:equivalentClass chado:dbxref .
+
+#:Synonym__subject a owl:ObjectProperty ;
+#    owl:equivalentProperty chado:feature_synonym__feature ;
+#    owl:equivalentProperty chado:dbxref__feature .
+
+:Synonym__source a owl:ObjectProperty ;
+    owl:equivalentProperty chado:feature_synonym__pub ;
+    owl:equivalentProperty chado:dbxref__db .
+
+# DataTranslator - how will this work??
+#:Synonym__synonym a owl:DatatypeProperty 
+#    owl:equivalentProperty chado:synonym__name ;
+#    owl:equivalentProperty chado:dbxref__accession .
+
+
+null:feature_synonym__synonym a owl:ObjectProperty ;
+      owl:equivalentProperty chado:feature_synonym__synonym .
+
+null:synonym a owl:Class ;
+      owl:equivalentClass chado:synonym .
+
+# false for all in chado, what does it mean?
+null:feature_synonym__is_internal a owl:DatatypeProperty ;
+      owl:equivalentProperty chado:feature_synonym__is_internal .
+ 
+# no data in dbxref__pubs
+null:dbxref__pubs a owl:ObjectProperty ;
+      owl:equivalentProperty chado:dbxref__pubs .
+
+# no data in dbxref__description field
+null:dbxref__description a owl:ObjectProperty ;
+      owl:equivalentProperty chado:dbxref__description .
+
+# in chado dbxref points to organism, why?
+null:dbxref__organisms a owl:ObjectProperty ;
+      owl:equivalentProperty chado:dbxref__organisms .
+
+#TODO sort out relationship of feature_dbxref with feature.dbxref
+null:feature_dbxref a owl:Class ;
+      owl:equivalentClass chado:feature_dbxref .
+
+
+# ------------ chado:analysis and chado:analysisfeature ----------- #
+
+:ComputationalResult a owl:Class ;
+      owl:equivalentClass chado:analysisfeature .
+
+:ComputationalAnalysis a owl:Class ;
+      owl:equivalentClass chado:analysis .
+
+# TODO analysis should have analysisprops applied to it
+null:analysisprop a owl:Class ;
+      owl:equivalentClass chado:analysisprop .
+
+
+# ---------- chado:pub and chado:db ------------#
+
+# pub__volume, pub__issue, pub__pages map unaltered
+:Publication a owl:Class ;
+    owl:equivalentClass chado:pub .
+
+# TODO is this mapping correct?  find out what pubplace means
+:Publication__journal a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__pubplace .
+
+:Publication__year a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__pyear .
+
+# link between publication and synonyms handled elsewhere
+null:pub__feature_synonyms a owl:ObjectProperty ;
+    owl:equivalentProperty chado:pub__feature_synonyms .
+
+null:Publication__series_name a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__series_name .
+
+null:Publication__volumetitle a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__volumetitle .
+
+null:Publication__publisher a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__publisher .
+
+null:Publication__miniref a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__miniref .
+
+:Author a owl:Class ;
+    owl:equivalentClass chado:author .
+
+:Database a owl:Class ;
+    owl:equivalentClass chado:db .
+
+:Database__title a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:db__name .
+
+# what does url prefix mean?  no data in chado
+null:db__urlprefix a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:db__urlprefix .
+
+
+
+# Organism will map to a phylogeny when that data is available
+:Organism a owl:Class ;
+    owl:equivalentClass chado:organism .
+
+
+# ---------------------------------------------------------------------------- #
+#                      Sequence Ontology Elements                              #
+# ---------------------------------------------------------------------------- #
+
+
+:LocatedSequenceFeature a owl:Class ;
+      rdfs:subClassOf :BioEntity ;
+      owl:equivalentClass chado:feature .
+
