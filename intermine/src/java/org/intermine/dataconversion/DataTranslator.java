@@ -10,18 +10,23 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.io.File;
+import java.io.FileReader;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.flymine.FlyMineException;
 import org.flymine.xml.full.Attribute;
@@ -31,6 +36,13 @@ import org.flymine.xml.full.ReferenceList;
 import org.flymine.ontology.OntologyUtil;
 import org.flymine.ontology.SubclassRestriction;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
+import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.xml.full.ItemHelper;
+
+import org.apache.log4j.Logger;
 
 /**
  * Convert data in FlyMine Full XML format conforming to a source OWL definition
@@ -42,7 +54,7 @@ import org.flymine.objectstore.ObjectStoreException;
 public class DataTranslator
 {
 
-    private ItemStore srcItemStore;
+    private ItemReader srcItemReader;
     private OntModel model;
     protected Map equivMap;       // lookup equivalent resources - excludes restricted subclass info
     protected Map templateMap;    // map of src class URI/SubclassRestriction templates possible
@@ -50,16 +62,17 @@ public class DataTranslator
     protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
     private String ns;
 
+    protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
     /**
      * Construct with a srcItemStore to read from an ontology model.
      * Use model to set up src/tgt maps required during translation.
-     * @param srcItemStore and ItemStore to run getItems() on
+     * @param srcItemReader the ItemReader from which to retrieve the source Items
      * @param model the merged ontology model
      * @param ns the target namespace in model
      */
-    public DataTranslator(ItemStore srcItemStore, OntModel model, String ns) {
+    public DataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
         this.ns = ns;
-        this.srcItemStore = srcItemStore;
+        this.srcItemReader = srcItemReader;
         this.model = model;
         this.templateMap = OntologyUtil.getRestrictionSubclassTemplateMap(model);
         this.restrictionMap = OntologyUtil.getRestrictionSubclassMap(model);
@@ -67,36 +80,32 @@ public class DataTranslator
         buildEquivalenceMap();  // use local version instead of OntologyUtil
     }
 
-
     /**
      * Convert all items in srcItemStore ant write resulting items to tgtItemStore.
      * Mapping between source and target models contained in ontology model.
-     * @param tgtItemStore and ItemStore to write converted target items to
+     * @param tgtItemWriter the ItemWriter used to store target items
      * @throws ObjectStoreException if error reading/writing an item
      * @throws FlyMineException if no target class/property name can be found
      */
-    public void translate(ItemStore tgtItemStore) throws ObjectStoreException, FlyMineException {
-        translateItems(srcItemStore.getItems(), tgtItemStore);
-    }
-
-
-    private void translateItems(Iterator itemIter, ItemStore tgtItemStore)
-        throws ObjectStoreException, FlyMineException {
-        while (itemIter.hasNext()) {
-            tgtItemStore.store(translateItem((Item) itemIter.next()));
+    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
+        for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
+            Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
+            for (Iterator j = translateItem(srcItem).iterator(); j.hasNext();) {
+                tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
+            }
         }
     }
 
     /**
      * Convert an Item in source format to an item conforming
-     * to target OWL, preforms transformation by restricted subclass
+     * to target OWL, performs transformation by restricted subclass
      * and equivalence.
      * @param srcItem item to convert
-     * @return converted item
+     * @return converted items
      * @throws ObjectStoreException if error reading/writing an item
      * @throws FlyMineException if no target class/property name can be found
      */
-    protected Item translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
+    protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
         String ns = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         Item tgtItem = new Item();
         tgtItem.setIdentifier(srcItem.getIdentifier());
@@ -122,6 +131,7 @@ public class DataTranslator
             }
         }
         tgtItem.setClassName(tgtClsName);
+        LOG.warn("translating item: " + srcItem.getClassName() + " to " + tgtClsName);
 
         // sort out implementations
         newImps += getImplementationsString(tgtClsName);
@@ -130,7 +140,11 @@ public class DataTranslator
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
             Attribute attr = (Attribute) i.next();
+            LOG.warn("Attribute: " + attr.getName() + ", " + attr.getValue());
             Attribute newAttr = new Attribute();
+            String attrTgtURI = getTargetFieldURI(tgtClsName, ns + attr.getName());
+            //            String srcName = OntologyUtil.getFragmentFromURI(srcItem.getClassName())
+            //    + "__" + attr.getName();
             newAttr.setName(OntologyUtil.getFragmentFromURI(
                 getTargetFieldURI(tgtClsName, ns + attr.getName())));
             newAttr.setValue(attr.getValue());
@@ -141,6 +155,8 @@ public class DataTranslator
         for (Iterator i = srcItem.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
             Reference newRef = new Reference();
+            //String srcName = OntologyUtil.getFragmentFromURI(srcItem.getClassName())
+            //    + "__" + ref.getName();
             newRef.setName(OntologyUtil.getFragmentFromURI(
                 getTargetFieldURI(tgtClsName, ns + ref.getName())));
             newRef.setRefId(ref.getRefId());
@@ -151,12 +167,14 @@ public class DataTranslator
         for (Iterator i = srcItem.getCollections().iterator(); i.hasNext();) {
             ReferenceList col = (ReferenceList) i.next();
             ReferenceList newCol = new ReferenceList();
+            //String srcName = OntologyUtil.getFragmentFromURI(srcItem.getClassName())
+            //   + "__" + col.getName();
             newCol.setName(OntologyUtil.getFragmentFromURI(
                 getTargetFieldURI(tgtClsName, ns + col.getName())));
             newCol.setRefIds(col.getRefIds());
             tgtItem.addCollection(newCol);
         }
-        return tgtItem;
+        return Collections.singleton(tgtItem);
     }
 
 
@@ -208,7 +226,7 @@ public class DataTranslator
             if (tokenizer.hasMoreTokens()  && item.hasReference(fieldName)) {
                 Reference ref = item.getReference(fieldName);
                 return buildRestriction(tokenizer,
-                         srcItemStore.getItemByIdentifier(ref.getRefId()));
+                         ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
             } else if (item.hasAttribute(fieldName)) {
                 return item.getAttribute(fieldName).getValue();
             }
@@ -309,5 +327,29 @@ public class DataTranslator
             }
         }
         return imps;
+    }
+
+    /**
+     * Main method
+     * @param args command line arguments
+     * @throws Exception if something goes wrong
+     */
+    public static void main (String[] args) throws Exception {
+        String srcOsName = args[0];
+        String tgtOswName = args[1];
+        String modelName = args[2];
+        String format = args[3];
+        String namespace = args[4];
+
+        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
+        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
+        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
+        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new FileReader(new File(modelName)), null, format);
+        DataTranslator dt = new DataTranslator(srcItemReader, model, namespace);
+        LOG.warn("Calling DataTranslator.translate()");
+        dt.translate(tgtItemWriter);
     }
 }
