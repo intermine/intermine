@@ -1,6 +1,7 @@
 package org.flymine.sql.query;
 
 // TODO: Tree parser to convert conditions to conjunctive normal form.
+//              Done.
 //       Handling subqueries that reference values from the scope of the surrounding Query.
 //              Note: one should probably delay parsing of subqueries until after all normal
 //              tables. This still doesn't allow for subqueries referencing variables created
@@ -9,7 +10,7 @@ package org.flymine.sql.query;
 //              Done.
 //       Handling conditions that go (A AND B OR C). I believe this is ((A AND B) OR C). Currently
 //              the parser rejects this.
-//       Handle "WHERE x in "'value1', 'value2') - translate to an OR_CONSTRAINT_SET
+//       Handle "WHERE x in ('value1', 'value2')" - translate to an OR_CONSTRAINT_SET
 
 import java.util.*;
 import java.io.*;
@@ -352,7 +353,7 @@ public class Query implements SQLStringable
                 processFromList(ast.getFirstChild());
                 break;
             case SqlTokenTypes.WHERE_CLAUSE:
-                //processWhereCondition(ast.getFirstChild());
+                processWhereClause(ast.getFirstChild());
                 break;
             default:
                 throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -676,11 +677,86 @@ public class Query implements SQLStringable
      *
      * @param ast an AST node to process
      */
-    /*
-    private void processAST(AST ast) {
+    private void processWhereClause(AST ast) {
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.AND_CONSTRAINT_SET:
+                    // Recurse - it's an AND set, equivalent to a WHERE_CLAUSE
+                    processWhereClause(ast.getFirstChild());
+                    break;
+                case SqlTokenTypes.OR_CONSTRAINT_SET:
+                case SqlTokenTypes.CONSTRAINT:
+                case SqlTokenTypes.NOT_CONSTRAINT:
+                case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                    addWhere(processNewAbstractConstraint(ast));
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+    }
+
+    /**
+     * Processes an AST node that describes an AbstractConstraint.
+     *
+     * @param ast an AST node to process
+     * @return an AbstractConstraint object corresponding to the input
+     */
+    public AbstractConstraint processNewAbstractConstraint(AST ast) {
+        AST subAST;
         switch (ast.getType()) {
-            case SqlTokenTypes.
-                */
+            case SqlTokenTypes.CONSTRAINT:
+                subAST = ast.getFirstChild();
+                AbstractValue left = processNewAbstractValue(subAST);
+                subAST = subAST.getNextSibling();
+                int op = 0;
+                switch (subAST.getType()) {
+                    case SqlTokenTypes.LT:
+                        op = Constraint.LT;
+                        break;
+                    case SqlTokenTypes.EQ:
+                        op = Constraint.EQ;
+                        break;
+                    case SqlTokenTypes.LITERAL_like:
+                        op = Constraint.LIKE;
+                        break;
+                    default:
+                        throw (new IllegalArgumentException("Unknown AST node: " + ast.getText()
+                                    + " [" + ast.getType() + "]"));
+                }
+                subAST = subAST.getNextSibling();
+                AbstractValue right = processNewAbstractValue(subAST);
+                return new Constraint(left, op, right);
+            case SqlTokenTypes.NOT_CONSTRAINT:
+                subAST = ast.getFirstChild();
+                AbstractConstraint a = processNewAbstractConstraint(subAST);
+                return new NotConstraint(a);
+            case SqlTokenTypes.OR_CONSTRAINT_SET:
+                ConstraintSet b = new ConstraintSet();
+                subAST = ast.getFirstChild();
+                do {
+                    b.add(processNewAbstractConstraint(subAST));
+                    subAST = subAST.getNextSibling();
+                } while (subAST != null);
+                return b;
+            case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                subAST = ast.getFirstChild();
+                AbstractValue leftb = processNewAbstractValue(subAST);
+                subAST = subAST.getNextSibling();
+
+                if (subAST.getType() != SqlTokenTypes.SQL_STATEMENT) {
+                    throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
+                }
+                Query rightb = new Query();
+                rightb.processAST(subAST.getFirstChild());
+                return new SubQueryConstraint(leftb, rightb);
+            default:
+                throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                            + ast.getType() + "]"));
+        }
+    }
     
     /**
      * A testing method - converts the argument into a Query object, and then converts it back to
@@ -701,12 +777,13 @@ public class Query implements SQLStringable
         
         antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
 
+        int iters = 0;
         AST oldAst;
         do {
-            out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
-                        - startTime.getTime()) + " milliseconds.");
-            out.println("\n==> Dump of AST <==");
-            visitor.visit(ast);
+//            out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
+//                        - startTime.getTime()) + " milliseconds.");
+//            out.println("\n==> Dump of AST <==");
+//            visitor.visit(ast);
 
 //            ASTFrame frame = new ASTFrame("AST JTree Example", ast);
 //            frame.setVisible(true);
@@ -715,6 +792,7 @@ public class Query implements SQLStringable
             SqlTreeParser treeparser = new SqlTreeParser();
             treeparser.start_rule(ast);
             ast = treeparser.getAST();
+            iters++;
         } while (!oldAst.equalsList(ast));
 
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
@@ -726,5 +804,7 @@ public class Query implements SQLStringable
         out.println("\n" + q.getSQLString());
         out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
                     - startTime.getTime()) + " milliseconds.");
+
+        out.println("Iterations required: " + iters);
     }
 }

@@ -189,7 +189,8 @@ or_constraint_set:
             #( te:OR_CONSTRAINT_SET #( tf:AND_CONSTRAINT_SET i:abstract_constraint
                     j:abstract_constraint_list ) k:abstract_constraint_list )
             { AST te2_AST = astFactory.create(te);
-                #or_constraint_set = #(#tf, #(#te, #i, #k), #(te2_AST, #j, #k)); }
+                AST k2_AST = astFactory.dupTree(k_AST);
+                #or_constraint_set = #(#tf, #(#te, #i, #k), #(te2_AST, #j, k2_AST)); }
 
         // l OR (m AND n) OR o = (l OR m OR o) AND (l OR n OR o)
         | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET
@@ -197,14 +198,17 @@ or_constraint_set:
             #( tg:OR_CONSTRAINT_SET l:abstract_constraint_list_notand #( th:AND_CONSTRAINT_SET
                     m:abstract_constraint n:abstract_constraint_list ) o:abstract_constraint_list )
             { AST tg2_AST = astFactory.create(tg);
-                #or_constraint_set = #(#th, #(#tg, #l, #m, #o), #(tg2_AST, #l, #n, #o)); }
+                AST l2_AST = astFactory.dupTree(l_AST);
+                AST o2_AST = astFactory.dupTree(o_AST);
+                #or_constraint_set = #(#th, #(#tg, #l, #m, #o), #(tg2_AST, l2_AST, #n, o2_AST)); }
 
         // p OR (q AND r) = (p OR q) AND (p OR r)
         | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
             #( ti:OR_CONSTRAINT_SET p:abstract_constraint_list_notand #( tj:AND_CONSTRAINT_SET
                     q:abstract_constraint r:abstract_constraint_list ) )
             { AST ti2_AST = astFactory.create(ti);
-                #or_constraint_set = #(#tj, #(#ti, #p, #q), #(ti2_AST, #p, #r)); }
+                AST p2_AST = astFactory.dupTree(p_AST);
+                #or_constraint_set = #(#tj, #(#ti, #p, #q), #(ti2_AST, p2_AST, #r)); }
         
         | ( #( OR_CONSTRAINT_SET abstract_constraint abstract_constraint ))=>
             #( OR_CONSTRAINT_SET ( abstract_constraint )+ )
