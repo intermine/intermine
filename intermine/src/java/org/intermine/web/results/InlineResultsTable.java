@@ -89,6 +89,7 @@ public class InlineResultsTable
             if (fd.isAttribute() && !fd.getName().equals("id")) {
                 keyAttributes.add(fd);
             }
+
         }
         return keyAttributes;
     }
@@ -105,7 +106,10 @@ public class InlineResultsTable
              i.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
             if (fd.isReference()) {
-                keyReferences.add(fd);
+                ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
+                if (keyAttributes(refCld).size() > 0) {
+                    keyReferences.add(fd);
+                }
             }
         }
         return keyReferences;
