@@ -465,11 +465,13 @@ public class EnsemblDataTranslator extends DataTranslator
             String accession = null;
             String dbname = null;
             if (xref != null) {
-                accession = xref.getAttribute("dbprimary_acc").getValue();
-                Item externalDb = ItemHelper.convert(srcItemReader
-                              .getItemById(xref.getReference("external_db").getRefId()));
-                if (externalDb != null) {
-                    dbname =  externalDb.getAttribute("db_name").getValue();
+                if (xref.hasAttribute("dbprimart_acc")) {
+                    accession = xref.getAttribute("dbprimary_acc").getValue();
+                    Item externalDb = ItemHelper.convert(srcItemReader
+                            .getItemById(xref.getReference("external_db").getRefId()));
+                    if (externalDb != null) {
+                        dbname =  externalDb.getAttribute("db_name").getValue();
+                    }
                 }
             }
             if (accession != null && !accession.equals("")
