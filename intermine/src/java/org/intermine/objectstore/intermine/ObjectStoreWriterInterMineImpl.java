@@ -848,6 +848,16 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
+     * @see ObjectStoreInterMineImpl#generateSql
+     *
+     * Delegates to the parent ObjectStore
+     */
+    protected String generateSql(Connection c, Query q, int start, int limit)
+        throws ObjectStoreException {
+        return os.generateSql(c, q, start, limit);
+    }
+
+    /**
      * @see ObjectStoreInterMineImpl#count
      *
      * This method is overridden in order to flush batches properly before the read.
