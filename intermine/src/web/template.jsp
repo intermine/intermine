@@ -129,7 +129,22 @@
                 /* setting options popup value to correct initial state. */
                 if (document.templateForm["attributeOptions(${index})"] != null)
                 {
-                  document.templateForm["attributeOptions(${index})"].value = document.templateForm["attributeValues(${index})"].value;
+                  var select = document.templateForm["attributeOptions(${index})"];
+                  var value = document.templateForm["attributeValues(${index})"].value;
+                  var set = false;
+                  for (i=0 ; i<select.options.length ; i++)
+                  {
+                    if (select.options[i].value == value)
+                    {
+                      select.selectedIndex = i;
+                      set = true;
+                      break;
+                    }
+                  }
+                  if (!set)
+                  {
+                    document.templateForm["attributeValues(${index})"].value = select.value;
+                  }
                   updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"], document.templateForm["attributeOptions(${index})"], document.templateForm["attributeValues(${index})"]);
                 }
                 //-->
