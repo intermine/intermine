@@ -18,6 +18,7 @@
         <heading>Documentation</heading>
         <item><ulink url="sysadmin/">Le coin du sysadmin</ulink></item>
         <item><ulink url="dba/">DBA</ulink></item>
+        <item><ulink url="/project/faq">FAQ</ulink></item>
     </section>
     <section>
         <heading>Presentations</heading>
@@ -26,34 +27,35 @@
     </section>
     <section>
         <heading>Design documents</heading>
-        <item><ulink url="/internal/design/dataflow.dia">Data flow</ulink></item>
-        <item><ulink url="/internal/design/initial_thoughts">Initial thoughts</ulink></item>
-        <item><ulink url="/internal/design/design_issues">Design issues</ulink></item>
-        <item><ulink url="/internal/design/usage_scenarios">Usage scenarios</ulink></item>
-        <item><ulink url="/internal/design/functional_requirements">Functional requirements</ulink></item>
-        <item><ulink url="/internal/design/architecture">Architecture</ulink></item>
-        <item><ulink url="/internal/design/link-ins">Link ins</ulink></item>
-        <item><ulink url="/internal/design/scope">Scope</ulink></item>
-        <item><ulink url="/internal/design/ontologies">Ontologies</ulink></item>
-        <item><ulink url="/internal/design/other_projects">Other projects</ulink></item>
+        <item><ulink url="design/dataflow.dia">Data flow</ulink></item>
+        <item><ulink url="design/initial_thoughts">Initial thoughts</ulink></item>
+        <item><ulink url="design/design_issues">Design issues</ulink></item>
+        <item><ulink url="design/usage_scenarios">Usage scenarios</ulink></item>
+        <item><ulink url="design/functional_requirements">Functional requirements</ulink></item>
+        <item><ulink url="design/architecture">Architecture</ulink></item>
+        <item><ulink url="design/link-ins">Link ins</ulink></item>
+        <item><ulink url="design/scope">Scope</ulink></item>
+        <item><ulink url="design/ontologies">Ontologies</ulink></item>
+        <item><ulink url="design/other_projects">Other projects</ulink></item>
     </section>
     <section>
         <heading>Reports</heading>
-        <item><ulink url="/internal/reports/ismb2002">ISMB 2002</ulink></item>
-        <item><ulink url="/internal/reports/ismb2003">ISMB 2003</ulink></item>
-        <item><ulink url="/internal/reports/css2003/css2003_mark.sxi">CSS 2003 (Mark)</ulink></item>
-        <item><ulink url="/internal/reports/css2003/css2003_matthew.sxi">CSS 2003 (Matthew)</ulink></item>
+        <item><ulink url="reports/ismb2002">ISMB 2002</ulink></item>
+        <item><ulink url="reports/ismb2003">ISMB 2003</ulink></item>
+        <item><ulink url="reports/ismb2004">ISMB 2004</ulink></item>
+        <item><ulink url="reports/css2003/css2003_mark.sxi">CSS 2003 (Mark)</ulink></item>
+        <item><ulink url="reports/css2003/css2003_matthew.sxi">CSS 2003 (Matthew)</ulink></item>
     </section>
     <section>
         <heading>Prototype</heading>
-        <item><ulink url="/internal/prototype/building">How to build</ulink></item>
-        <item><ulink url="/internal/prototype/overview.sxi">Overview</ulink></item>
-        <item><ulink url="/internal/prototype/data_model.sxi">Data model</ulink></item>
-        <item><ulink url="/internal/prototype/objectstore_interface.sxi">ObjectStore interface</ulink></item>
-        <item><ulink url="/internal/prototype/objectstore_impl.sxi">ObjectStore implementation</ulink></item>
-        <item><ulink url="/internal/prototype/sql_optimisation.sxi">SQL Optimisation</ulink></item>
-        <item><ulink url="/internal/prototype/xml_binding.sxi">Loading XML data</ulink></item>
-        <item><ulink url="/internal/prototype/flychip_data.sxi">Loading FlyChip data</ulink></item>
+        <item><ulink url="prototype/building">How to build</ulink></item>
+        <item><ulink url="prototype/overview.sxi">Overview</ulink></item>
+        <item><ulink url="prototype/data_model.sxi">Data model</ulink></item>
+        <item><ulink url="prototype/objectstore_interface.sxi">ObjectStore interface</ulink></item>
+        <item><ulink url="prototype/objectstore_impl.sxi">ObjectStore implementation</ulink></item>
+        <item><ulink url="prototype/sql_optimisation.sxi">SQL Optimisation</ulink></item>
+        <item><ulink url="prototype/xml_binding.sxi">Loading XML data</ulink></item>
+        <item><ulink url="prototype/flychip_data.sxi">Loading FlyChip data</ulink></item>
     </section>
 
 </index>
