@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Collection;
 
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.fql.FqlQueryParser;
@@ -489,7 +490,7 @@ public class ConstraintHelperTest extends TestCase
         assertEquals(Department.class, ((QueryClass) ConstraintHelper.getRightArgument(containsConstraint1)).getType());
 
         assertTrue(ConstraintHelper.getRightArgument(subqueryConstraint1) instanceof Query);
-        assertTrue(ConstraintHelper.getRightArgument(bagConstraint1) instanceof Set);
+        assertTrue(ConstraintHelper.getRightArgument(bagConstraint1) instanceof Collection);
 
         assertNull(ConstraintHelper.getRightArgument(cs1));
     }

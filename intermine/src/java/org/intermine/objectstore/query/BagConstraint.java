@@ -24,10 +24,11 @@ import java.util.Set;
 public class BagConstraint extends Constraint
 {
     protected QueryNode qn;
-    protected Set bag;
+    protected Collection bag;
 
     /**
-     * Construct a BagConstraint.
+     * Construct a BagConstraint.  Note that the bag isn't copied so it should not be changed after
+     * the Query has been executed.
      *
      * @param qn the QueryNode to compare to the bag
      * @param op the operation
@@ -48,7 +49,7 @@ public class BagConstraint extends Constraint
         }
         this.qn = qn;
         this.op = op;
-        this.bag = new HashSet(bag);
+        this.bag = bag;
     }
 
     /**
@@ -65,7 +66,7 @@ public class BagConstraint extends Constraint
      *
      * @return a Set of objects in the bag
      */
-    public Set getBag() {
+    public Collection getBag() {
         return bag;
     }
 

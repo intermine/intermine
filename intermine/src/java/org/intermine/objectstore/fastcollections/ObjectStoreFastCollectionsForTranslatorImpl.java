@@ -144,7 +144,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                 if (qf.getFromElement().equals(existingQ.getFrom()
                                                             .iterator().next())
                                                         && qf.getFieldName().equals("id")) {
-                                                    Set bag = bc.getBag();
+                                                    Collection bag = bc.getBag();
                                                     fromColls.put(fieldName, bag);
                                                     toIds.addAll(bag);
                                                 }
