@@ -241,6 +241,18 @@ version="1.0">
 <i><xsl:apply-templates/></i>
 </xsl:template>
 
+<xsl:template match="filename">
+<tt><xsl:apply-templates/></tt>
+</xsl:template>
+
+<xsl:template match="varname">
+<code><xsl:apply-templates/></code>
+</xsl:template>
+
+<xsl:template match="command">
+<code><xsl:apply-templates/></code>
+</xsl:template>
+
 <xsl:template match="synopsis">
 <code><xsl:apply-templates/></code>
 </xsl:template>
