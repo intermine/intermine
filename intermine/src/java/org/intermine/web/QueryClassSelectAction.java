@@ -61,11 +61,13 @@ public class QueryClassSelectAction extends Action
         QueryClassSelectForm queryClassSelectForm = (QueryClassSelectForm) form;
 
         String className = queryClassSelectForm.getClassName();
-        QueryClass qc = new QueryClass(Class.forName(className));
-        session.setAttribute("queryClass", qc);
+
+        if (className != null) {
+            QueryClass qc = new QueryClass(Class.forName(className));
+            session.setAttribute("queryClass", qc);
+        }
 
         return (mapping.findForward("buildquery"));
     }
-
 }
 
