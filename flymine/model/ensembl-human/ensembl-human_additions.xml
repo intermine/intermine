@@ -6,6 +6,7 @@
 </class>
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="name" type="java.lang.String"/>
+  <attribute name="accession" type="java.lang.String"/>
   <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Chromosome" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
@@ -50,6 +51,7 @@
 <class name="org.flymine.model.genomic.TRNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="primaryAccession" type="java.lang.String"/>
+  <attribute name="identifier" type="java.lang.String"/>
   <attribute name="translationStart" type="java.lang.Integer"/>
   <attribute name="translationEnd" type="java.lang.Integer"/>
   <reference name="endExon" referenced-type="org.flymine.model.genomic.Exon"/>
