@@ -47,10 +47,16 @@
     <copy file="${model.src}/${model.name}.xmi" tofile="${build.tmp}/${model.name}_.xmi"/>
   </target>
 
+
+  <!-- copy flymine xml model file to build model directory -->
+  <target name="copy-xml-model">
+    <copy todir="${build.model}/${model.name}" file="${model.src}/${model.name}_model.xml"/>
+  </target>
+
   <!-- Model generation targets -->
   <target name="generate-xmi-model"
           description="Generate FlyMine model from an XMI file">
-    <taskdef name="model-generation" classname="org.flymine.task.ModelGenerationTask">
+    <taskdef name="model-generation" classname="org.flymine.modelproduction.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
 
@@ -69,7 +75,7 @@
           description="Generate a FlyMine model file from an AceDB model file">
     <taskdef
       name="model-generation"
-      classname="org.flymine.task.ModelGenerationTask">
+      classname="org.flymine.modelproduction.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
 
@@ -85,7 +91,7 @@
 
   <target name="generate-java" depends="prepare"
           description="Generate Java files from a FlyMine model file">
-    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+    <taskdef name="model-output" classname="org.flymine.codegen.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
 
@@ -94,7 +100,7 @@
 
   <target name="generate-xml-mapping"
           description="Generate Castor (XML) mapping files from a FlyMine model file">
-    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+    <taskdef name="model-output" classname="org.flymine.codegen.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
 
@@ -109,7 +115,7 @@
 
   <target name="generate-torque"
           description="Generate Torque schema description from a FlyMine model file">
-    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+    <taskdef name="model-output" classname="org.flymine.codegen.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
 
@@ -147,7 +153,7 @@
   </target>
 
   <!-- Targets that could be called from another build script -->
-  <target name="build-model-from-xml" depends="compile-java, generate-xml-mapping, generate-torque"
+  <target name="build-model-from-xml" depends="copy-xml-model, compile-java, generate-xml-mapping, generate-torque"
           description="Build a usable model from a FlyMine model XML file">
   </target>
 
