@@ -264,6 +264,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(employee1);
             writer.delete(department1);
             writer.delete(department2);
+            writer.delete(department3);
             writer.delete(company1);
             writer.delete(address1);
         }
