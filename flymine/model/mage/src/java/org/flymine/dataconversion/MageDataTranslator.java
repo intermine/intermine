@@ -206,7 +206,7 @@ public class MageDataTranslator extends DataTranslator
     protected void translateMicroArraySlideDesign(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
         // move descriptions reference list
-        promoteField(srcItem, "descriptions", "annotations", tgtItem, "descriptions");
+        promoteCollection(srcItem, "descriptions", "annotations", tgtItem, "descriptions");
         // change substrateType reference to attribute
 
         Item surfaceType = ItemHelper.convert(srcItemReader
