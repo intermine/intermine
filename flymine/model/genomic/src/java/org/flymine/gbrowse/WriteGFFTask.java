@@ -116,7 +116,7 @@ public class WriteGFFTask extends Task
 
         // Map from Transcript to Location (on Chromosome)
         Map seenTranscripts = new HashMap();
-        // Map from exon/UTR to Location (on Chromosome)
+        // Map from exon to Location (on Chromosome)
         Map seenTranscriptParts = new HashMap();
 
         // the last Chromosome seen
@@ -153,13 +153,17 @@ public class WriteGFFTask extends Task
 
             }
 
-            if (feature instanceof Transcript && !(feature instanceof TRNA)) {
-                // process Transcripts but not tRNAs
-                seenTranscripts.put(feature, loc);
-                continue;
+            if (feature instanceof Transcript && !(feature instanceof NcRNA)) {
+                Transcript transcript = (Transcript) feature;
+
+                if (transcript.getGene() != null) {
+                    // process Transcripts but not tRNAs
+                    seenTranscripts.put(transcript, loc);
+                    continue;
+                }
             }
 
-            if (feature instanceof Exon || feature instanceof UTR) {
+            if (feature instanceof Exon) {
                 seenTranscriptParts.put(feature, loc);
             }
 
@@ -206,26 +210,6 @@ public class WriteGFFTask extends Task
                 Location exonLocation = (Location) seenTranscriptParts.get(exon);
 
                 writeFeature(gffWriter, chr, exon, exonLocation, null, transcript);
-            }
-
-            if (transcript instanceof MRNA) {
-                MRNA mRNA = (MRNA) transcript;
-
-                List utrs = mRNA.getUTRs();
-
-                ProxyCollection utrsResults = (ProxyCollection) utrs;
-
-                // utr collections are small enough that optimisation just slows things down
-                utrsResults.setNoOptimise();
-                utrsResults.setNoExplain();
-
-                Iterator utrIter = utrs.iterator();
-                while (utrIter.hasNext()) {
-                    UTR utr = (UTR) utrIter.next();
-                    Location utrLocation = (Location) seenTranscriptParts.get(utr);
-
-                    writeFeature(gffWriter, chr, utr, utrLocation, null, transcript);
-                }
             }
         }
     }
@@ -284,15 +268,7 @@ public class WriteGFFTask extends Task
                 if (bioEntity instanceof Exon) {
                     featureName = "CDS";
                 } else {
-                    if (bioEntity instanceof FivePrimeUTR) {
-                        featureName = "5'-UTR";
-                    } else {
-                        if (bioEntity instanceof ThreePrimeUTR) {
-                            featureName = "3'-UTR";
-                        } else {
-                            throw new RuntimeException("unknown BioEntity: " + bioEntity);
-                        }
-                    }
+                    throw new RuntimeException("unknown BioEntity: " + bioEntity);
                 }
             }
             lineBuffer.append(featureName).append("\t");
@@ -346,7 +322,7 @@ public class WriteGFFTask extends Task
             if (bioEntity.getIdentifier() == null) {
                 identifiers.add(featureName + "_" + index);
             } else {
-                if ((bioEntity instanceof Exon || bioEntity instanceof UTR) && parent != null) {
+                if ((bioEntity instanceof Exon) && parent != null) {
                     identifiers.add(parent.getIdentifier());
                 } else {
                     identifiers.add(bioEntity.getIdentifier());
@@ -356,7 +332,7 @@ public class WriteGFFTask extends Task
 
         // for use with the processed_transcript aggregator
         if ((bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)
-             || bioEntity instanceof Exon || bioEntity instanceof UTR) && parent != null) {
+             || bioEntity instanceof Exon) && parent != null) {
             attributes.put("mRNA", identifiers);
         } else {
             attributes.put(featureName, identifiers);
