@@ -129,6 +129,14 @@ version="1.0">
 </a>
 </xsl:template>
 
+<xsl:template match="inlinegraphic">
+<img>
+<xsl:attribute name="src"><xsl:value-of select="@fileref"/></xsl:attribute>
+<xsl:attribute name="border">0</xsl:attribute>
+<xsl:apply-templates/>
+</img>
+</xsl:template>
+
 <xsl:template match="ulink">
 <a>
 <xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
