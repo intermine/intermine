@@ -1,8 +1,7 @@
 <webconfig>
   <class className="org.intermine.model.testmodel.Company">
     <shortdisplayers>
-      <displayer src="/objectFields.jsp"/>
-      <displayer src="/model/companiesHouse.jsp"/>
+      <displayer src="/model/companyShort.jsp"/>
     </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/companiesHouse.jsp"/>
