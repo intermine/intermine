@@ -221,7 +221,8 @@ public class MainChange extends DispatchAction
             session.setAttribute("path", node.getType());
         }
         
-        return mapping.findForward("query");
+        return new ForwardParameters(mapping.findForward("query"))
+                                .addAnchor("constraint-editor").forward();
     }
 
     /**
@@ -271,7 +272,7 @@ public class MainChange extends DispatchAction
 
         query.getView().add(toPath(prefix, path));
 
-        return mapping.findForward("query");
+        return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
     }
 
     /**

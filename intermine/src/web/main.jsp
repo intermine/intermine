@@ -252,7 +252,7 @@
   
   <%-- Constraint editor --%>
   
-
+  <a name="constraint-editor"></a>
   <c:if test="${editingNode != null}">
     <tr>
       <td valign="top">
