@@ -2,15 +2,19 @@
 <classes>
   <class name="org.flymine.model.genomic.CDS" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
   </class>
-  <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  <class name="org.flymine.model.genomic.InsertionSite" is-interface="true">
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.MRNA" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.NcRNA" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Exon" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
@@ -38,6 +42,7 @@
   </class>
   <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
