@@ -54,9 +54,6 @@ package org.intermine.modelproduction.xmlschema;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Copyright 1999-2003 (C) Intalio, Inc. All Rights Reserved.
- *
- *
- * $Id$
  */
 
 import java.io.Reader;
@@ -102,7 +99,7 @@ public class XmlSchemaParser implements ModelParser
 {
     protected static final Logger LOG = Logger.getLogger(XmlSchemaParser.class);
 
-    protected String nameSpace = null;
+    protected String nameSpace;
     protected String pkgName;
     protected String modelName;
 
@@ -125,9 +122,10 @@ public class XmlSchemaParser implements ModelParser
      * @param pkgName name of package to generation Java code in
      * @param modelName the name of the model to produce
      */
-    public XmlSchemaParser(String modelName, String pkgName) {
+    public XmlSchemaParser(String modelName, String pkgName, String nameSpace) {
         this.pkgName = pkgName;
         this.modelName = modelName;
+        this.nameSpace = nameSpace;
     }
 
     /**
@@ -191,11 +189,6 @@ public class XmlSchemaParser implements ModelParser
             err += ve.getMessage();
             throw new IllegalArgumentException("Schema (" + schema.getSchemaLocation()
                                                + ") is not valid because: " + ve.getMessage());
-        }
-
-        nameSpace = schema.getTargetNamespace();
-        if (nameSpace == null) {
-            nameSpace = "";
         }
 
         // Process all top level element declarations
