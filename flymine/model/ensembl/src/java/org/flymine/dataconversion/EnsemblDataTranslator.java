@@ -181,7 +181,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     if (!tgtItem.hasAttribute("identifier")) {
                         tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
                     }
-                    // display_xref is symbol (?)
+                    // display_xref is gene name (?)
                     //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
                 } else if ("contig".equals(className)) {
@@ -499,20 +499,19 @@ public class EnsemblDataTranslator extends DataTranslator
             if (accession != null && !accession.equals("")
                 && dbname != null && !dbname.equals("")) {
                 if (dbname.equals("flybase_gene") || dbname.equals("flybase_symbol")) {
-                    // TODO: if synonym changed to have a type need to separate these
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonym.addAttribute(new Attribute("value", accession));
-                    if (dbname.equals("flybase_gene")) {
-                        synonym.addAttribute(new Attribute("type", "accession"));
-                    } else {
+                    if (dbname.equals("flybase_symbol")) {
                         synonym.addAttribute(new Attribute("type", "name"));
+                        // set FlyBase symbol to be gene name
+                        tgtItem.addAttribute(new Attribute("name", accession));
+                    } else { // flybase_gene
+                        synonym.addAttribute(new Attribute("type", "accession"));
+                        tgtItem.addAttribute(new Attribute("organismDbId", accession));
                     }
                     synonym.addReference(getFlyBaseRef());
                     synonyms.add(synonym);
-                }
-                if (dbname.equals("flybase_gene")) {
-                    tgtItem.addAttribute(new Attribute("organismDbId", accession));
                 }
             }
         }

@@ -61,6 +61,10 @@ null:exon__contig a owl:ObjectProperty ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:gene .
 
+:Gene__name a owl:DatatypeProperty;
+    rdfs:domain :Gene;
+    rdfs:range xsd:string.
+
 # e:gene__type is ensembl for all entries
 null:gene__type a owl:DatatypeProperty ;
     owl:equivalentProperty e:gene__type .
