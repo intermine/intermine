@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
@@ -60,6 +62,7 @@ public class MainController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
         
@@ -86,6 +89,24 @@ public class MainController extends TilesAction
                     }
                 }
                 request.setAttribute("subclasses", subclasses);
+                
+                // loop query arguments
+                ArrayList paths = new ArrayList();
+                Map displayPaths = new HashMap();
+                iter = query.getNodes ().values ().iterator ();
+                while (iter.hasNext ()) {
+                    PathNode anode = (PathNode) iter.next();
+                    if (anode != node && anode.getType ().equals (node.getType())) {
+                        paths.add(anode.getPath());
+                        displayPaths.put(anode.getPath(),
+                               MainForm.dotPathToNicePath(anode.getPath()));
+                    }
+                }
+                
+                Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
+                request.setAttribute ("loopQueryOps", attributeOps);
+                request.setAttribute ("loopQueryPaths", paths);
+                request.setAttribute ("loopQueryPathsDisplay", displayPaths);
             }
             if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
@@ -109,6 +130,11 @@ public class MainController extends TilesAction
             }
         }
 
+        // constraint display values
+        request.setAttribute("constraintDisplayValues", makeConstraintDisplayMap(query));
+        request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
+        request.setAttribute("viewPaths", listToMap(query.getView()));
+        
         // set up the navigation links (eg. Department > employees > department)
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
@@ -125,6 +151,73 @@ public class MainController extends TilesAction
         return null;
     }
 
+    /**
+     * Create constraint values for display. Returns a Map from Constraint to String
+     * for each Constraint in the path query.
+     *
+     * @param pathquery  the PathQuery to look at
+     * @return           Map from Constraint to displat value
+     */
+    protected static Map makeConstraintDisplayMap(PathQuery pathquery) {
+        Map map = new HashMap();
+        Iterator iter = pathquery.getNodes().values().iterator();
+        while (iter.hasNext()) {
+            PathNode node = (PathNode) iter.next();
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint con = (Constraint) citer.next();
+                ConstraintOp op = con.getOp();
+                
+                map.put(con, con.getDisplayValue(node));
+            }
+        }
+        return map;
+    }
+    
+    /**
+     *
+     */
+    protected static List findLockedPaths(PathQuery pathquery) {
+        ArrayList paths = new ArrayList();
+        Iterator iter = pathquery.getNodes().values().iterator();
+        while (iter.hasNext()) {
+            PathNode node = (PathNode) iter.next();
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint con = (Constraint) citer.next();
+                if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())) {
+                    // loop query constraint
+                    // get path and superpaths
+                    String path = (String) con.getValue();
+                    while (path != null) {
+                        paths.add(path);
+                        if (path.indexOf('.') != -1) {
+                            path = path.substring(0, path.lastIndexOf('.'));
+                        } else {
+                            path = null;
+                        }
+                    }
+                }
+            }
+        }
+        return paths;
+    }
+    
+    /**
+     * Returns a map where every item in <code>list</code> maps to Boolean TRUE.
+     * 
+     * @param list  the list of map keys
+     * @return      a map that maps every item in list to Boolean.TRUE
+     */
+    protected static Map listToMap(List list) {
+        Map map = new HashMap();
+        int n = list.size();
+        for (int i = 0; i < n; i++) {
+            map.put(list.get(i), Boolean.TRUE);
+        }
+        return map;
+    }
+    
     /**
      * Get the names of the type of this ClassDescriptor and all its descendents
      * @param cld the ClassDescriptor
