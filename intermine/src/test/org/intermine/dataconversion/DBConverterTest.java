@@ -17,13 +17,16 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.ResultSetMetaData;
 import java.util.Map;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
@@ -41,40 +44,34 @@ import org.flymine.util.TypeUtil;
 import org.flymine.xml.full.ItemHelper;
 
 public class DBConverterTest extends TestCase {
-    private Map map;
     private Model model;
     private DBConverter converter;
-    private Database db;
-    private MockSingleRowResultSet blank;
-    private Collection items;
+    private ArrayList blank = new ArrayList();
+    private Collection items = new ArrayList();
+    private Map map = new HashMap();
 
     public void setUp() throws Exception {
-        map = new HashMap();
         model = Model.getInstanceByName("testmodel");
-        db = DatabaseFactory.getDatabase("db.unittest");
-        items = new ArrayList();
-        converter = new MockDBConverter(model, db, new MockItemWriter(items));
-        blank = new MockSingleRowResultSet();
-        blank.next();
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        converter = new MockDBConverter(model, db, new MockDBReader(), new MockItemWriter());
     }
 
     public void testAttribute() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
 
-        MockSingleRowResultSet mrs = new MockSingleRowResultSet();
-        mrs.addExpectedNamedValues(
-                                   new String[] {"Department_id", "name", "company_id", "manager_id"},
-                                   new Object[] {new Integer(12), "DepartmentA1", null, null});
+        List rows = rowify(
+                          new String[] {"Department_id", "name", "company_id", "manager_id"},
+                          new Object[] {new Integer(12), "DepartmentA1", null, null});
+        List blank = new ArrayList();
 
-        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
-        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", blank);
+        map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("Department_12");
+        item.setIdentifier(converter.alias("Department") + "_12");
         Attribute attr = new Attribute();
         attr.setName("name");
         attr.setValue("DepartmentA1");
@@ -86,24 +83,22 @@ public class DBConverterTest extends TestCase {
 
     public void testReference() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
-
-        MockSingleRowResultSet mrs = new MockSingleRowResultSet();
-        mrs.addExpectedNamedValues(
-                                   new String[] {"Department_id", "name", "company_id", "manager_id"},
-                                   new Object[] {new Integer(12), null, new Integer(14), null});
-
-        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
-        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", blank);
+        
+        List rows = rowify(
+                           new String[] {"Department_id", "name", "company_id", "manager_id"},
+                           new Object[] {new Integer(12), null, new Integer(14), null});
+        
+        map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("Department_12");
+        item.setIdentifier(converter.alias("Department") + "_12");
         Reference ref = new Reference();
         ref.setName("company");
-        ref.setRefId("Company_14");
+        ref.setRefId(converter.alias("Company") + "_14");
         item.addReference(ref);
 
         converter.processClassDescriptor(cld);
@@ -113,29 +108,27 @@ public class DBConverterTest extends TestCase {
     public void test1NCollection() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
 
-        MockSingleRowResultSet msrs = new MockSingleRowResultSet();
-        msrs.addExpectedNamedValues(
-                                   new String[] {"Department_id", "name", "company_id", "manager_id"},
-                                   new Object[] {new Integer(12), null, null, null});
-
-        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", msrs);
-        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", blank);
+        List rows = rowify(
+                           new String[] {"Department_id", "name", "company_id", "manager_id"},
+                           new Object[] {new Integer(12), null, null, null});
+        
+        map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
 
-        MockMultiRowResultSet mmrs = new MockMultiRowResultSet();
-        mmrs.setupColumnNames(new String[] {"Employee_id"});
-        mmrs.setupRows(new Object[][] {{new Integer(1)}, {new Integer(2)}});
+        List rows2 = rowify(
+                            new String[] {"Employee_id"},
+                            new Object[][] {{new Integer(1)}, {new Integer(2)}});
 
-        map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", mmrs);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", rows2);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("Department_12");
+        item.setIdentifier(converter.alias("Department") + "_12");
         ReferenceList refs = new ReferenceList();
         refs.setName("employees");
-        refs.addRefId("Employee_1");
-        refs.addRefId("Employee_2");
+        refs.addRefId(converter.alias("Employee") + "_1");
+        refs.addRefId(converter.alias("Employee") + "_2");
         item.addCollection(refs);
 
         converter.processClassDescriptor(cld);
@@ -145,30 +138,34 @@ public class DBConverterTest extends TestCase {
     public void testMNCollection() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
 
-        MockSingleRowResultSet msrs = new MockSingleRowResultSet();
-        msrs.addExpectedNamedValues(
-                                   new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
-                                   new Object[] {new Integer(12), null, null, null});
+        List rows = rowify(
+                           new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
+                           new Object[] {new Integer(12), null, null, null});
 
-        map.put("SELECT * FROM Company ORDER BY Company_id LIMIT 1", msrs);
-        map.put("SELECT * FROM Company WHERE Company_id > 12 ORDER BY Company_id LIMIT 1", blank);
+        map.put("SELECT * FROM Company", rows);
 
         map.put("SELECT Department_id FROM Department WHERE company_id = 12", blank);
         //map.put("SELECT Contractor_id FROM oldComs_oldContracts WHERE Company_id = 12", blank);
 
-        MockMultiRowResultSet mmrs = new MockMultiRowResultSet();
-        mmrs.setupColumnNames(new String[] {"Contractor_id"});
-        mmrs.setupRows(new Object[][] {{new Integer(1)}, {new Integer(2)}});
-
-        map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 12", mmrs);
+        List rows2 = rowify(
+                            new String[] {"Contractor_id"},
+                            new Object[][] {{new Integer(1)}, {new Integer(2)}});
+        
+        map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 12", rows2);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Company");
-        item.setIdentifier("Company_12");
+        item.setIdentifier(converter.alias("Company") + "_12");
         ReferenceList refs = new ReferenceList();
         refs.setName("contractors");
-        refs.addRefId("Contractor_1");
-        refs.addRefId("Contractor_2");
+        refs.addRefId(converter.alias("Contractor") + "_1");
+        refs.addRefId(converter.alias("Contractor") + "_2");
+        item.addCollection(refs);
+        // this is a bit dodgy - problem is that DBConvertor doesn't handle named collections
+        refs = new ReferenceList();
+        refs.setName("oldContracts");
+        refs.addRefId(converter.alias("Contractor") + "_1");
+        refs.addRefId(converter.alias("Contractor") + "_2");
         item.addCollection(refs);
 
         converter.processClassDescriptor(cld);
@@ -178,22 +175,20 @@ public class DBConverterTest extends TestCase {
     public void testUnidirectional() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Contractor");
 
-        MockSingleRowResultSet msrs = new MockSingleRowResultSet();
-        msrs.addExpectedNamedValues(
-                                    new String[] {"Contractor_id", "personalAddress_id", "businessAddress_id"},
-                                    new Object[] {new Integer(12), new Integer(14), null});
+        List rows = rowify(
+                           new String[] {"Contractor_id", "personalAddress_id", "businessAddress_id"},
+                           new Object[] {new Integer(12), new Integer(14), null});
 
-        map.put("SELECT * FROM Contractor ORDER BY Contractor_id LIMIT 1", msrs);
-        map.put("SELECT * FROM Contractor WHERE Contractor_id > 12 ORDER BY Contractor_id LIMIT 1", blank);
+        map.put("SELECT * FROM Contractor", rows);
 
         map.put("SELECT Company_id FROM Contractor_Company WHERE Contractor_id = 12", blank);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Contractor");
-        item.setIdentifier("Contractor_12");
+        item.setIdentifier(converter.alias("Contractor") + "_12");
         Reference ref = new Reference();
         ref.setName("personalAddress");
-        ref.setRefId("Address_14");
+        ref.setRefId(converter.alias("Address") + "_14");
         item.addReference(ref);
 
         converter.processClassDescriptor(cld);
@@ -203,15 +198,13 @@ public class DBConverterTest extends TestCase {
     public void testMultipleInstances() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
 
-        MockMultiRowResultSet mrs = new MockMultiRowResultSet();
-        mrs.setupColumnNames(new String[] {"Department_id", "name", "company_id", "manager_id"});
-        mrs.setupRows(new Object[][] {
-            {new Integer(12), "DepartmentA1", null, null},
-            {new Integer(13), "DepartmentA2", null, null}});
+        List rows = rowify(
+                           new String[] {"Department_id", "name", "company_id", "manager_id"},
+                           new Object[][] {
+                               {new Integer(12), "DepartmentA1", null, null},
+                               {new Integer(13), "DepartmentA2", null, null}});
 
-        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
-        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", mrs);
-        map.put("SELECT * FROM Department WHERE Department_id > 13 ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 13", blank);
@@ -220,7 +213,7 @@ public class DBConverterTest extends TestCase {
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("Department_12");
+        item.setIdentifier(converter.alias("Department") + "_12");
         Attribute attr = new Attribute();
         attr.setName("name");
         attr.setValue("DepartmentA1");
@@ -228,7 +221,7 @@ public class DBConverterTest extends TestCase {
 
         Item item2 = new Item();
         item2.setClassName(model.getNameSpace() + "Department");
-        item2.setIdentifier("Department_13");
+        item2.setIdentifier(converter.alias("Department") + "_13");
         Attribute attr2 = new Attribute();
         attr2.setName("name");
         attr2.setValue("DepartmentA2");
@@ -241,52 +234,60 @@ public class DBConverterTest extends TestCase {
     public void testMultipleClasses() throws Exception {
         for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
             String clsName = TypeUtil.unqualifiedName((String) iter.next());
-            map.put("SELECT * FROM " +clsName + " ORDER BY " + clsName + "_id LIMIT 1", blank);
+            map.put("SELECT * FROM " +clsName, blank);
         }
 
-        MockSingleRowResultSet mrs = new MockSingleRowResultSet();
-        mrs.addExpectedNamedValues(
-                                   new String[] {"Department_id", "name", "company_id", "manager_id"},
-                                   new Object[] {new Integer(12), "DepartmentA1", null, null});
+        List rows = rowify(
+                           new String[] {"Department_id", "name", "company_id", "manager_id"},
+                           new Object[] {new Integer(12), "DepartmentA1", null, null});
 
-        map.put("SELECT * FROM Department ORDER BY Department_id LIMIT 1", mrs);
-        map.put("SELECT * FROM Department WHERE Department_id > 12 ORDER BY Department_id LIMIT 1", mrs);
+        map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
         Item item = new Item();
         item.setClassName(model.getNameSpace() + "Department");
-        item.setIdentifier("Department_12");
+        item.setIdentifier(converter.alias("Department") + "_12");
         Attribute attribute = new Attribute();
         attribute.setName("name");
         attribute.setValue("DepartmentA1");
         item.addAttribute(attribute);
 
-        MockSingleRowResultSet mrs2 = new MockSingleRowResultSet();
-        mrs2.addExpectedNamedValues(
-                                   new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
-                                   new Object[] {new Integer(13), null, null, null});
+        List rows2 = rowify(
+                            new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
+                            new Object[] {new Integer(13), null, null, null});
 
-        map.put("SELECT * FROM Company ORDER BY Company_id LIMIT 1", mrs2);
-        map.put("SELECT * FROM Company WHERE Company_id > 13 ORDER BY Company_id LIMIT 1", mrs2);
+        map.put("SELECT * FROM Company", rows2);
 
         map.put("SELECT Department_id FROM Department WHERE company_id = 13", blank);
         map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 13", blank);
 
         Item item2 = new Item();
         item2.setClassName(model.getNameSpace() + "Company");
-        item2.setIdentifier("Company_13");
+        item2.setIdentifier(converter.alias("Company") + "_13");
 
         converter.process();
         assertEquals(Arrays.asList(new Object[] {item, item2}), items);
     }
 
-    class MockItemWriter implements ItemWriter {
-        protected Collection items;
-        public MockItemWriter(Collection items) {
-            this.items = items;
+    protected List rowify(String[] names, Object[] values) {
+        Map map = new HashMap();
+        for (int i=0; i < names.length; i++) {
+            map.put(names[i], values[i]);
         }
+        return Collections.singletonList(map);
+    }
+
+    protected List rowify(String[] names, Object[][] values) {
+        List rows = new ArrayList();
+        for (int i = 0; i < values.length; i++) {
+            rows.add(rowify(names, values[i]).get(0));
+        }
+        return rows;
+    }
+
+    class MockItemWriter implements ItemWriter {
         public void store(org.flymine.model.fulldata.Item item) throws ObjectStoreException {
             items.add(ItemHelper.convert(item));
         }
@@ -295,25 +296,29 @@ public class DBConverterTest extends TestCase {
     }
 
     class MockDBConverter extends DBConverter {
-        public MockDBConverter(Model model, Database db, ItemWriter writer) {
-            super(model, db, writer);
+        public MockDBConverter(Model model, Database db, DBReader reader, ItemWriter writer) {
+            super(model, db, reader, writer);
         }
 
-        //this saves us having to create mock resultset metadata
+        //we provide ids, return true here to save us having to create mock resultset metadata to prove it
         protected boolean idsProvided(ClassDescriptor cld) throws SQLException {
             return true;
         }
 
-        protected ResultSet executeQuery(Connection c, String sql) throws SQLException {
-            ResultSet rs = (ResultSet) map.get(sql);
-            if (rs == null) {
-                throw new RuntimeException("SQL string not found in ResultSet map: " + sql);
-            }
-            return rs;
-        }
-
         protected String findIndirectionTable(String clsName, String otherClsName) throws SQLException {
             return clsName + "_" + otherClsName;
+        }
+    }
+
+    class MockDBReader implements DBReader {
+        public Iterator sqlIterator(String sql, String idField) {
+            try {
+                return execute(sql).iterator();
+            } catch (SQLException e) {}
+            return null;
+        }
+        public List execute(String sql) throws SQLException {
+            return (List) map.get(sql);
         }
     }
 }
