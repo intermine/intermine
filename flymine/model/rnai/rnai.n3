@@ -22,11 +22,47 @@
     rdfs:domain :Gene;
     rdfs:range :Phenotype.
 
+:Gene__synonyms a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Synonym.
+
+:Synonym a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction;
+        owl:maxCardinality "1";
+        owl:onProperty :Synonym__subject ];
+    rdfs:subClassOf
+      [ a owl:Restriction;
+        owl:maxCardinality "1";
+        owl:onProperty :Synonym__source ].
+
+:Synonym__subject a owl:ObjectProperty;
+    owl:inverseOf :Gene__synonyms.
+
+:Synonym__source a owl:ObjectProperty ;
+    rdfs:domain :Synonym;
+    rdfs:range :Database.
+
+:Synonym__synonym a owl:DatatypeProperty;
+    rdfs:domain :Synonym;
+    rdfs:range xsd:string.
+
 :Phenotype a owl:Class.
+    rdfs:subClassOf
+      [ a owl:Restriction;
+        owl:maxCardinality "1";
+        owl:onProperty :Phenotype__subject ].
 
 :Phenotype__code a owl:DatatypeProperty;
     rdfs:domain :Phenotype;
     rdfs:range xsd:string.
+
+:Phenotype__subject a owl:ObjectProperty;
+    owl:inverseOf :Gene__phenotypes.
+
+:Phenotype__evidence a owl:ObjectProperty;
+    rdfs:domain :Phenotype;
+    rdfs:range :Evidence.
 
 :RNAiExperiment a owl:Class;
     rdfs:subClassOf
@@ -37,6 +73,12 @@
 :RNAiExperiment__publication a owl:ObjectProperty;
     rdfs:domain :RNAiExperiment;
     rdfs:range :Publication.
+
+:Database a owl:Class.
+
+:Database__url a owl:DatatypeProperty;
+    rdfs:domain :Database;
+    rdfs:range xsd:anyURI.
 
 :Organism a owl:Class.
 

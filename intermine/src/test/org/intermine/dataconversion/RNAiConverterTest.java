@@ -22,16 +22,18 @@ import org.flymine.xml.full.FullParser;
 public class RNAiConverterTest extends TestCase
 {
     public void testProcess() throws Exception {
-        String input = "\t\t\tGene ID\tPhenotype\n"
-            + "\t\t\tAC7.1\tSck\n"
-            + "\t\t\tAC7.1\tSte\n"
-            + "\t\t\tAC7.2a\tWT\n"
-            + "\t\t\tAC7.2a\tWT\n";
-
+        String ENDL = "\n";
+        String input = ",,,Gene ID,Phenotype,,CGC-approved gene name,,,,,,,Other gene name 1" + ENDL
+            + ",,,AC7.1,Sck,,,,,,,," + ENDL
+            + ",,,AC7.1,Ste,,,,,,,," + ENDL
+            + ",,,AC7.2a,WT,,soc-2,,,,,,,sur-8," + ENDL
+            + ",,,AC7.2a,WT,,soc-2,,,,,,,sur-8," + ENDL;
+        input = input.replaceAll(",", "\t"); //just used commas for readibility
+        
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         new RNAiConverter(new BufferedReader(new StringReader(input)), itemWriter).process();
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/RNAiConverterTest.xml")));
-
+        System.out.println(itemWriter.getItems());
         assertEquals(expected, itemWriter.getItems());
     }
 }

@@ -1,11 +1,17 @@
 <?xml version="1.0"?>
 <items>
-  <item id="0_0" class="http://www.flymine.org/model/rnai#Organism">
-    <attribute name="name" value="Caenorhabdits elegans"/>
-    <attribute name="shortName" value="C. elegans"/>
-    <attribute name="taxonId" value="6239"/>
+  <item id="5_8" class="http://www.flymine.org/model/rnai#Phenotype">
+    <attribute name="code" value="WT"/>
+    <reference name="subject" ref_id="4_7"/>
+    <collection name="evidence">
+      <reference ref_id="3_3"/>
+    </collection>
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/rnai#Publication">
+  <item id="1_1" class="http://www.flymine.org/model/rnai#Database">
+    <attribute name="title" value="WormBase"/>
+    <attribute name="url" value="http://www.wormbase.org"/>
+  </item>
+  <item id="2_2" class="http://www.flymine.org/model/rnai#Publication">
     <attribute name="issue" value="6920"/>
     <attribute name="journal" value="Nature"/>
     <attribute name="pages" value="231-7"/>
@@ -14,31 +20,51 @@
     <attribute name="volume" value="16"/>
     <attribute name="year" value="2003"/>
   </item>
-  <item id="2_2" class="http://www.flymine.org/model/rnai#RNAiExperiment">
-    <attribute name="publication" value="1_1"/>
-  </item>
-  <item id="3_3" class="http://www.flymine.org/model/rnai#Gene">
-    <attribute name="identifier" value="AC7.1"/>
+  <item id="4_7" class="http://www.flymine.org/model/rnai#Gene">
+    <attribute name="commonName" value="soc-2"/>
+    <attribute name="sequenceName" value="AC7.2a"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="phenotypes">
-      <reference ref_id="4_4"/>
-      <reference ref_id="4_5"/>
+      <reference ref_id="5_8"/>
+    </collection>
+    <collection name="synonyms">
+      <reference ref_id="6_9"/>
     </collection>
   </item>
-  <item id="3_6" class="http://www.flymine.org/model/rnai#Gene">
-    <attribute name="identifier" value="AC7.2a"/>
-    <reference name="organism" ref_id="0_0"/>
-    <collection name="phenotypes">
-      <reference ref_id="4_7"/>
-    </collection>
-  </item>
-  <item id="4_4" class="http://www.flymine.org/model/rnai#Phenotype">
+  <item id="5_5" class="http://www.flymine.org/model/rnai#Phenotype">
     <attribute name="code" value="Sck"/>
+    <reference name="subject" ref_id="4_4"/>
+    <collection name="evidence">
+      <reference ref_id="3_3"/>
+    </collection>
   </item>
-  <item id="4_5" class="http://www.flymine.org/model/rnai#Phenotype">
+  <item id="0_0" class="http://www.flymine.org/model/rnai#Organism">
+    <attribute name="name" value="Caenorhabdits elegans"/>
+    <attribute name="shortName" value="C. elegans"/>
+    <attribute name="taxonId" value="6239"/>
+  </item>
+  <item id="6_9" class="http://www.flymine.org/model/rnai#Synonym">
+    <attribute name="synonym" value="sur-8"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="4_7"/>
+  </item>
+  <item id="4_4" class="http://www.flymine.org/model/rnai#Gene">
+    <attribute name="commonName" value=""/>
+    <attribute name="sequenceName" value="AC7.1"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="phenotypes">
+      <reference ref_id="5_5"/>
+      <reference ref_id="5_6"/>
+    </collection>
+  </item>
+  <item id="3_3" class="http://www.flymine.org/model/rnai#RNAiExperiment">
+    <attribute name="publication" value="2_2"/>
+  </item>
+  <item id="5_6" class="http://www.flymine.org/model/rnai#Phenotype">
     <attribute name="code" value="Ste"/>
-  </item>
-  <item id="4_7" class="http://www.flymine.org/model/rnai#Phenotype">
-    <attribute name="code" value="WT"/>
+    <reference name="subject" ref_id="4_4"/>
+    <collection name="evidence">
+      <reference ref_id="3_3"/>
+    </collection>
   </item>
 </items>
