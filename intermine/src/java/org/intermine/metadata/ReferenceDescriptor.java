@@ -62,6 +62,14 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
+     * Returns the class name of the object referenced by this field.
+     * @return the class name of the object referenced
+     */
+    public String getReferencedClassName() {
+        return referencedType;
+    }
+    
+    /**
      * Gets the field in the referenced object that refers back to this class.
      * Note that this will be null in a unidirectional relationship,
      * a ReferenceDescriptor in a 1:1 and a CollectionDescriptor in a 1:N.
