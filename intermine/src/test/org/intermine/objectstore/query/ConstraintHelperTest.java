@@ -30,7 +30,7 @@ import org.flymine.model.testmodel.CEO;
 public class ConstraintHelperTest extends TestCase
 {
     private Query q, subquery1, subquery2;
-    private QueryClass qc1, qc2, qc3;
+    private QueryClass qc1, qc2, qc3, subQc1;
     private SimpleConstraint simpleConstraint1, simpleConstraint2, simpleConstraint3, simpleConstraint4, simpleConstraint5, simpleConstraint6, simpleConstraint7;
     private ClassConstraint classConstraint1, classConstraint2;
     private ContainsConstraint containsConstraint1;
@@ -62,7 +62,7 @@ public class ConstraintHelperTest extends TestCase
         QueryFunction func1 = new QueryFunction(qf4, QueryFunction.SUM);
 
         subquery1 = new Query();
-        QueryClass subQc1 = new QueryClass(Department.class);
+        subQc1 = new QueryClass(Department.class);
         subquery1.addToSelect(subQc1);
         subquery1.addFrom(subQc1);
 
@@ -234,6 +234,50 @@ public class ConstraintHelperTest extends TestCase
     }
 
 
+    public void testIsAssociatedWith2() throws Exception {
+        Query subQ = new Query();
+        QueryClass subQC = new QueryClass(Company.class);
+        subQ.alias(subQC, "Company");
+        subQ.addFrom(subQC);
+        subQ.addToSelect(subQC);
+
+        Query q = new Query();
+        QueryClass qcA = new QueryClass(Company.class);
+        QueryClass qcB = new QueryClass(Department.class);
+        q.alias(qcA, "a");
+        q.addFrom(qcA);
+        q.addToSelect(qcA);
+        q.alias(qcB, "b");
+        q.addFrom(qcB);
+        q.alias(subQ, "c");
+        q.addFrom(subQ);
+
+        Constraint c1 = new SimpleConstraint(new QueryField(qcA, "vatNumber"), SimpleConstraint.EQUALS, new QueryValue(new Integer(5)));
+        Constraint c2 = new ContainsConstraint(new QueryCollectionReference(qcA, "departments"), ContainsConstraint.CONTAINS, qcB);
+        Constraint c3 = new SimpleConstraint(new QueryField(subQ, subQC, "name"), SimpleConstraint.EQUALS, new QueryField(qcA, "name"));
+        ConstraintSet c4 = new ConstraintSet(ConstraintSet.OR);
+        c4.addConstraint(new SimpleConstraint(new QueryField(qcA, "vatNumber"), SimpleConstraint.EQUALS, new QueryField(subQ, subQC, "vatNumber")));
+        c4.addConstraint(new SimpleConstraint(new QueryField(subQ, subQC, "vatNumber"), SimpleConstraint.EQUALS, new QueryValue(new Integer(3))));
+        Constraint c5 = new SimpleConstraint(new QueryField(qcB, "name"), SimpleConstraint.EQUALS, new QueryValue("hello"));
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(c1);
+        c.addConstraint(c2);
+        c.addConstraint(c3);
+        c.addConstraint(c4);
+        c.addConstraint(c5);
+        q.setConstraint(c);
+
+        assertTrue(ConstraintHelper.isAssociatedWith(c1, qcA));
+        assertTrue(ConstraintHelper.isAssociatedWith(c2, qcA));
+        assertFalse(ConstraintHelper.isAssociatedWith(c2, qcB));
+
+        assertFalse(ConstraintHelper.isAssociatedWith(c3, qcA));
+        assertFalse(ConstraintHelper.isAssociatedWith(c3, subQC));
+
+
+    }
+
+
     public void testIsAssociatedWithNothing() throws Exception {
         QueryValue qv1 = new QueryValue("test");
         SimpleConstraint sc1 = new SimpleConstraint(qv1, SimpleConstraint.IS_NULL);
@@ -286,6 +330,9 @@ public class ConstraintHelperTest extends TestCase
         assertFalse(ConstraintHelper.isCrossReference(sc4));
         SimpleConstraint sc5 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, func1);
         assertTrue(ConstraintHelper.isCrossReference(sc5));
+        SimpleConstraint sc6 = new SimpleConstraint(new QueryField(subquery1, subQc1, "name"), SimpleConstraint.EQUALS,
+                                                    new QueryField(qc1, "name"));
+        assertTrue(ConstraintHelper.isCrossReference(sc6));
 
     }
 

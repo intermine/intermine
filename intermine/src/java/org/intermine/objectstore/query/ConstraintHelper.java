@@ -52,31 +52,36 @@ public class ConstraintHelper
 
 
     /**
-     * Return a List of Constraint objects that relate to the given QueryClass.
+     * Return a List of Constraint objects that relate to the given FromElement.
      *
      * @param query a Query object to to list contraints for
-     * @param qc a QueryClass that returned constraints relate to
+     * @param fromElement a FromElement that returned constraints relate to
      * @return a List of Constraint objects
      */
-    public static List createList(Query query, QueryClass qc) {
-        return filter(createList(query), qc);
+    public static List createList(Query query, FromElement fromElement) {
+        return filter(createList(query), fromElement);
     }
 
 
     /**
      * Return a subset of the given List that contains only Constraints
-     * that relate to the given FromElement.
+     * that relate to the given FromElement or constraints associated
+     * with nothing if fromElement is null.
      *
      * @param list a list of Constraints to filter
-     * @param fromElement a QueryClass that returned constraints relate to
+     * @param fromElement a fromElement that returned constraints relate to
      * @return a List of Constraint objects
      */
-    protected static List filter(List list, FromElement fromElement) {
+    public static List filter(List list, FromElement fromElement) {
         List filtered = new ArrayList();
         Iterator iter = list.iterator();
         while (iter.hasNext()) {
             Constraint c = (Constraint) iter.next();
-            if (isAssociatedWith(c, fromElement)) {
+            if (fromElement != null) {
+                if (isAssociatedWith(c, fromElement)) {
+                    filtered.add(c);
+                }
+            } else if (isAssociatedWithNothing(c)) {
                 filtered.add(c);
             }
         }
@@ -244,16 +249,18 @@ public class ConstraintHelper
      */
     public static boolean isCrossReference(Constraint constraint) {
         if (constraint instanceof SimpleConstraint) {
+            // if QueryField exposed part of a subquery QueryField.getFromElement()
+            // returns a query, does not cause any problem.
             Set qcs = new HashSet();
             Iterator leftIter = getQueryFields(((SimpleConstraint) constraint).getArg1())
                 .iterator();
             while (leftIter.hasNext()) {
-                qcs.add((QueryClass) ((QueryField) leftIter.next()).getFromElement());
+                qcs.add(((QueryField) leftIter.next()).getFromElement());
             }
             Iterator rightIter = getQueryFields(((SimpleConstraint) constraint).getArg2())
                 .iterator();
             while (rightIter.hasNext()) {
-                qcs.add((QueryClass) ((QueryField) rightIter.next()).getFromElement());
+                qcs.add(((QueryField) rightIter.next()).getFromElement());
             }
             if (qcs.size() > 1) {
                 return true;
