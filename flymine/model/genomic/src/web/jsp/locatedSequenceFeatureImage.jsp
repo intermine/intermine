@@ -19,7 +19,7 @@
   </c:forEach>
 
   <c:if test="${!empty hasLocation && cld.name != 'org.flymine.model.genomic.Chromosome'}">
-    <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?name=${cld.unqualifiedName}:FlyMineInternalID_${object.id};width=800">
+    <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?name=${cld.unqualifiedName}:FlyMineInternalID_${object.id};width=750">
       <div>
         <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
       </div>
