@@ -16,6 +16,11 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ArrayList;
+import java.io.StringWriter;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -44,20 +49,44 @@ public class PathQueryBinding
      * @return the corresponding XML String
      */
     public String marshal(PathQuery query, String queryName, String modelName) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<query name='" + queryName + "' model='" + modelName
-                  + "' view='" + StringUtil.join(query.getView(), " ") + "'>");
-        for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
-            PathNode node = (PathNode) j.next();
-            sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");
-            for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
-                Constraint c = (Constraint) k.next();
-                sb.append("<constraint op='" + c.getOp() + "' value='" + c.getValue() + "'/>");
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            writer.writeStartElement("query");
+            writer.writeAttribute("name", queryName);
+            writer.writeAttribute("model", modelName);
+            writer.writeAttribute("view", StringUtil.join(query.getView(), " "));
+            for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
+                PathNode node = (PathNode) j.next();
+                writer.writeStartElement("node");
+                writer.writeAttribute("path", node.getPath());
+                writer.writeAttribute("type", node.getType());
+                for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
+                    Constraint c = (Constraint) k.next();
+                    writer.writeStartElement("constraint");
+                    writer.writeAttribute("op", "" + c.getOp());
+                    writer.writeAttribute("value", "" + c.getValue());
+                    if (c.getDescription() != null) {
+                        writer.writeAttribute("description", "" + c.getDescription());
+                    }
+                    if (c.getIdentifier() != null) {
+                        writer.writeAttribute("identifier", "" + c.getIdentifier());
+                    }
+                    if (c.isEditable()) {
+                        writer.writeAttribute("editable", "true");
+                    }
+                    writer.writeEndElement();
+                }
+                writer.writeEndElement();
             }
-            sb.append("</node>");
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
         }
-        sb.append("</query>");
-        return sb.toString();
+
+        return sw.toString();
     }
 
     /**
@@ -122,12 +151,20 @@ public class PathQueryBinding
                 ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
                 Object constraintValue;
                 if (node.isReference() || BagConstraint.VALID_OPS.contains(constraintOp)) {
-                    constraintValue =  attrs.getValue("value");
+                    constraintValue = attrs.getValue("value");
                 } else {
                     constraintValue = TypeUtil.stringToObject(MainHelper.getClass(node.getType()),
                                                               attrs.getValue("value"));
                 }
-                node.getConstraints().add(new Constraint(constraintOp, constraintValue));
+                String editable = attrs.getValue("editable");
+                boolean editableFlag = false;
+                if (editable != null && editable.equals("true")) {
+                    editableFlag = true;
+                }
+                String description = attrs.getValue("description");
+                String identifier = attrs.getValue("identifier");
+                node.getConstraints().add(new Constraint(constraintOp, constraintValue,
+                                                         editableFlag, description, identifier));
             }
         }
         
