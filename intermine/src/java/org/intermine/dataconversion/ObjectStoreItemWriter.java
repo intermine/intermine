@@ -18,6 +18,7 @@ import org.flymine.model.fulldata.Item;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 
+import org.apache.log4j.Logger;
 /**
  * Stores Items in an objectstore.
  *
@@ -29,7 +30,7 @@ public class ObjectStoreItemWriter implements ItemWriter
     private ObjectStoreWriter osw;
     private int transactionCounter = 0;
     private static final int TRANSACTION_BATCH_SIZE = 10000;
-
+    protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
     /**
      * Constructs the ItemWriter with an ObjectStoreWriter.
      *
@@ -45,6 +46,7 @@ public class ObjectStoreItemWriter implements ItemWriter
      * @see ItemWriter#store
      */
     public void store(Item item) throws ObjectStoreException {
+        //LOG.error("storing: " + item.getIdentifier() + ", " + item.getClassName());
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
             osw.store((FlyMineBusinessObject) i.next());
             transactionCounter++;
@@ -73,6 +75,7 @@ public class ObjectStoreItemWriter implements ItemWriter
         Iterator i = items.iterator();
         while (i.hasNext()) {
             store((Item) i.next());
+            i.remove(); // ?
         }
     }
 
