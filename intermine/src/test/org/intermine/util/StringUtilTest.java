@@ -53,7 +53,7 @@ public class StringUtilTest extends TestCase
         assertEquals("", StringUtil.capitalise(""));
         assertNull(StringUtil.capitalise(null));
     }
-    
+
     public void testToSameInitialCaseNull() throws Exception {
         try {
             StringUtil.toSameInitialCase(null, "dog");
@@ -78,5 +78,9 @@ public class StringUtilTest extends TestCase
             assertFalse(set.contains(n));
             set.add(n);
         }
+    }
+
+    public void testDuplicateQuotes() throws Exception{
+        assertEquals("it''s", StringUtil.duplicateQuotes("it's"));
     }
 }

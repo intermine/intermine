@@ -110,7 +110,7 @@ public class StringUtil
         }
         return str + "s";
     }
-    
+
     /**
      * Returns a string with the same initial letter case as the template string
      *
@@ -127,7 +127,7 @@ public class StringUtil
         }
         Character first = new Character(template.charAt(0));
         StringBuffer sb = new StringBuffer();
-        
+
         if (Character.isUpperCase(template.charAt(0))) {
             sb.append(Character.toUpperCase(n.charAt(0)));
         }
@@ -137,12 +137,12 @@ public class StringUtil
         if (n.length() > 1) {
             sb.append(n.substring(1, n.length()));
         }
-        
+
         return sb.toString();
     }
 
     private static long differentNumber = 0;
-    
+
     /**
      * Returns a String that is different every time
      *
@@ -154,7 +154,7 @@ public class StringUtil
 
     /**
      * Sets the number that is used to generate the next uniqueString.
-     * NOTE: DO NOT USE THIS METHOD, unless you are absolutely sure no other thread is going to 
+     * NOTE: DO NOT USE THIS METHOD, unless you are absolutely sure no other thread is going to
      * go anywhere near StringUtil behind your back. This method is for testing purposes only.
      *
      * @param number the number to set
@@ -162,4 +162,15 @@ public class StringUtil
     public static synchronized void setNextUniqueNumber(long number) {
         differentNumber = number;
     }
+
+    /**
+     * Duplicates single quotes in Strings for correct storage in postgres.
+     *
+     * @param s the string to format
+     * @return the string with duplicated single quotes
+     */
+    public static String duplicateQuotes(String s) {
+        return s.replaceAll("'", "''");
+    }
+
 }
