@@ -12,6 +12,10 @@ InterMine project it would be really appreciated if anyone that uses
 InterMine or parts of InterMine would let us know. Just drop a quick email
 to <email>info[at]intermine.org</email>.</para>
 
+<para>InterMine is open-source software, available for download and
+use under the terms of the <ulink url="http://www.gnu.org/licenses/lgpl.html">
+GNU LGPL licence</ulink></para>.
+
 <para>Depending on your needs, you can either download precompiled jar
 files of the InterMine distribution, or build these yourself from
 source.</para>
