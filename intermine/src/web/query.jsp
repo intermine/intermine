@@ -1,39 +1,30 @@
-<%@ page import="java.util.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
-<html:form action="/query" focus="querystring"
-         onsubmit="return validateQueryForm(this);">
-<table border="0" width="100%">
+<%-- <%@ include file="session.jsp" %> --%>
+
+<html:form action="/query">
+    <html:select property="cldName">
+        <html:options name="model" property="classNames" labelName="model" labelProperty="classNames"/>
+    </html:select>
+
+    <html:submit property="action">
+        <bean:message key="button.select"/>
+    </html:submit>
+
+    <br/>
 
 
-  <tr>
-    <td align="right">
-      <bean:message key="prompt.querystring"/>:
-    </td>
-    <td align="left">
-      <html:textarea property="querystring" rows="4" cols="80"/>
-    </td>
-  </tr>
-
-  <tr>
-    <td align="right">
-      <html:submit property="action">
-        <bean:message key="button.submit"/>
-      </html:submit>
-    </td>
-    <td align="left">
-      <html:submit property="action">
-        <bean:message key="button.view"/>
-      </html:submit>
-      <html:reset>
-        <bean:message key="button.reset"/>
-      </html:reset>
-    </td>
-  </tr>
-
-</table>
-
+    <logic:present scope="session" name="cld">
+       <table border="0">        
+        <c:forEach var="field" items="${cld.fieldDescriptors}">
+            <tr><td><c:out value="${field.name}"/></td>
+            <td><html:text property="fieldValue(field.name)"/></td></tr>
+        </c:forEach>
+        </table>
+    </logic:present>
 </html:form>
-
