@@ -24,6 +24,7 @@ public class Profile
     protected String username;
     protected Map savedQueries = new LinkedHashMap();
     protected Map savedBags = new LinkedHashMap();
+    protected Map savedTemplates = new LinkedHashMap();
 
     /**
      * Construct a Profile
@@ -31,12 +32,18 @@ public class Profile
      * @param username the username for this profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
+     * @param savedTemplates the saved templates for this profile
      */
-    public Profile(ProfileManager manager, String username, Map savedQueries, Map savedBags) {
+    public Profile(ProfileManager manager,
+                   String username,
+                   Map savedQueries,
+                   Map savedBags,
+                   Map savedTemplates) {
         this.manager = manager;
         this.username = username;
         this.savedQueries.putAll(savedQueries);
         this.savedBags.putAll(savedBags);
+        this.savedTemplates.putAll(savedTemplates);
     }
     
     /**
@@ -45,6 +52,37 @@ public class Profile
      */
     public String getUsername() {
         return username;
+    }
+    
+    /**
+     * Get the users saved templates
+     * @return saved templates
+     */
+    public Map getSavedTemplates() {
+        return Collections.unmodifiableMap(savedTemplates);
+    }
+
+    /**
+     * Save a template
+     * @param name the template name
+     * @param template the template
+     */
+    public void saveTemplate(String name, TemplateQuery template) {
+        savedTemplates.put(name, template);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
+    }
+    
+    /**
+     * Delete a template
+     * @param name the template name
+     */
+    public void deleteTemplate(String name) {
+        savedTemplates.remove(name);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
     }
 
     /**
