@@ -50,12 +50,14 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected Connection conn = null;
     protected boolean connInUse = false;
     protected ObjectStoreFlyMineImpl os;
-    protected static final int SEQUENCE_MULTIPLE = 100;
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected Statement batch = null;
+    protected int batchChars = 0;
     protected String createSituation;
 
+    protected static final int SEQUENCE_MULTIPLE = 100;
+    protected static final int MAX_BATCH_CHARS = 20000000;
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
      * Connection, grabbed from the provided ObjectStore.
@@ -244,10 +246,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
                 if (doDeletes) {
-                    s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
-                    logAddBatch();
-                    //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
-                    //        + tableName + " WHERE id = " + o.getId());
+                    String toAdd = "DELETE FROM " + tableName + " WHERE id = " + o.getId();
+                    addBatch(s, toAdd);
                 }
                 StringBuffer sql = new StringBuffer("INSERT INTO ")
                     .append(tableName)
@@ -288,10 +288,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                 StringBuffer indirectSql = new StringBuffer(leftHandSide);
                                 indirectSql.append(inCollection.getId().toString())
                                     .append(");");
-                                s.addBatch(indirectSql.toString());
-                                logAddBatch();
-                                //System//.out.println(getModel().getName() + ": Batched SQL:  "
-                                //        + indirectSql.toString());
+                                addBatch(s, indirectSql.toString());
                             }
                         }
                     } else {
@@ -306,9 +303,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 }
                 sql.append(");");
 
-                s.addBatch(sql.toString());
-                logAddBatch();
-                //System//.out.println(getModel().getName() + ": Batched SQL:  " + sql);
+                addBatch(s, sql.toString());
             }
 
             if (batch == null) {
@@ -396,10 +391,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
-                s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
-                logAddBatch();
-                //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
-                //        + tableName + " WHERE id = " + o.getId());
+                addBatch(s, "DELETE FROM " + tableName + " WHERE id = " + o.getId());
             }
 
             if (batch == null) {
@@ -525,6 +517,19 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
         flushBatch();
         return super.internalGetObjectById(id);
+    }
+
+    private void addBatch(Statement s, String toAdd) throws SQLException {
+        s.addBatch(toAdd);
+        //System//.out.println(getModel().getName() + ": Batched SQL:  " + toAdd);
+        logAddBatch();
+        batchChars += toAdd.length();
+        if (batchChars > MAX_BATCH_CHARS) {
+            s.executeBatch();
+            logFlushBatch();
+            s.clearBatch();
+            batchChars = 0;
+        }
     }
 
     private void flushBatch() throws ObjectStoreException {
