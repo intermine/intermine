@@ -86,7 +86,7 @@ public class CalculateLocationsTest extends TestCase {
         Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome(), getChromosomeBand(), getBandOnChr()}));
         Supercontig sc = (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
         sc.setId(new Integer(104));
-        Location loc = createLocation(getChromosome(), sc, 0, 1201, 1600);
+        Location loc = createLocation(getChromosome(), sc, 1, 1201, 1600);
         toStore.add(sc);
         toStore.add(loc);
 
@@ -99,12 +99,42 @@ public class CalculateLocationsTest extends TestCase {
         CalculateLocations cl = new CalculateLocations(osw);
         cl.createLocations();
 
-        Location expected = createLocation(getChromosomeBand(), sc, 0, 201, 600);
+        Location expected = createLocation(getChromosomeBand(), sc, 1, 201, 600);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
         Location result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, Supercontig.class).next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
+        assertEquals(expItem, resItem);
+    }
+
+    public void testReversedSupercontigToChromosome() throws Exception {
+        Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome(), getChromosomeBand(), getBandOnChr()}));
+        Supercontig sc = (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
+        sc.setId(new Integer(104));
+        Location loc = createLocation(getChromosome(), sc, -1, 1201, 1600);
+        toStore.add(sc);
+        toStore.add(loc);
+
+        //Source source = iw.getMainSource("genomic-test");
+        //Source skelSource = iw.getSkeletonSource("genomic-test");
+        Iterator i = toStore.iterator();
+        while (i.hasNext()) {
+            osw.store((InterMineObject) i.next());
+        }
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.createLocations();
+
+        Location expected = createLocation(getChromosomeBand(), sc, -1, 201, 600);
+        expected.setId(new Integer(0));
+        Item expItem = FullRenderer.toItem(expected, model);
+        Location result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, Supercontig.class).next()).get(2);
+        Item resItem = FullRenderer.toItem(result, model);
+        resItem.setIdentifier("0");
+
+        org.intermine.web.LogMe.log("i", "expected: " + expItem);
+        org.intermine.web.LogMe.log("i", "result:   " + resItem);
+
         assertEquals(expItem, resItem);
     }
 
@@ -114,8 +144,8 @@ public class CalculateLocationsTest extends TestCase {
         Contig c = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         sc.setId(new Integer(104));
         c.setId(new Integer(105));
-        Location scOnChr = createLocation(getChromosome(), sc, 0, 1201, 1600);
-        Location contigOnSc = createLocation(sc, c, 0, 101, 350);
+        Location scOnChr = createLocation(getChromosome(), sc, 1, 1201, 1600);
+        Location contigOnSc = createLocation(sc, c, 1, 101, 350);
         toStore.add(sc);
         toStore.add(c);
         toStore.add(scOnChr);
@@ -131,7 +161,7 @@ public class CalculateLocationsTest extends TestCase {
         cl.createLocations();
 
         // test contig location on chromosome
-        Location expected = createLocation(getChromosome(), c, 0, 1301, 1550);
+        Location expected = createLocation(getChromosome(), c, 1, 1301, 1550);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
         Location result = (Location) ((ResultsRow) cl.findLocations(Chromosome.class, Contig.class).next()).get(2);
@@ -140,7 +170,7 @@ public class CalculateLocationsTest extends TestCase {
         assertEquals(expItem, resItem);
 
         // test contig location on ChromosomeBand
-        expected = createLocation(getChromosomeBand(), c, 0, 301, 550);
+        expected = createLocation(getChromosomeBand(), c, 1, 301, 550);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
         result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, Contig.class).next()).get(2);
@@ -157,9 +187,9 @@ public class CalculateLocationsTest extends TestCase {
         c.setId(new Integer(105));
         Exon e = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         e.setId(new Integer(106));
-        Location scOnChr = createLocation(getChromosome(), sc, 0, 1201, 1600);
-        Location contigOnSc = createLocation(sc, c, 0, 101, 350);
-        Location exonOnContig = createLocation(c, e, 0, 51, 150);
+        Location scOnChr = createLocation(getChromosome(), sc, 1, 1201, 1600);
+        Location contigOnSc = createLocation(sc, c, 1, 101, 350);
+        Location exonOnContig = createLocation(c, e, 1, 51, 150);
         toStore.add(sc);
         toStore.add(c);
         toStore.add(e);
@@ -175,7 +205,7 @@ public class CalculateLocationsTest extends TestCase {
         cl.createLocations();
 
         // test Exon location on Chromosome
-        Location expected = createLocation(getChromosome(), e, 0, 1351, 1450);
+        Location expected = createLocation(getChromosome(), e, 1, 1351, 1450);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
         Location result = (Location) ((ResultsRow) cl.findLocations(Chromosome.class, Exon.class).next()).get(2);
@@ -184,7 +214,7 @@ public class CalculateLocationsTest extends TestCase {
         assertEquals(expItem, resItem);
 
         // test Exon location on Supercontig
-        expected = createLocation(sc, e, 0, 151, 250);
+        expected = createLocation(sc, e, 1, 151, 250);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
         result = (Location) ((ResultsRow) cl.findLocations(Supercontig.class, Exon.class).next()).get(2);
@@ -193,7 +223,7 @@ public class CalculateLocationsTest extends TestCase {
         assertEquals(expItem, resItem);
 
         // test Exon location on ChromosomeBand
-        expected = createLocation(getChromosomeBand(), e, 0, 351, 450);
+        expected = createLocation(getChromosomeBand(), e, 1, 351, 450);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
         result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, Exon.class).next()).get(2);
@@ -707,7 +737,7 @@ public class CalculateLocationsTest extends TestCase {
         loc.setEnd(new Integer(end));
         loc.setStartIsPartial(Boolean.FALSE);
         loc.setEndIsPartial(Boolean.FALSE);
-        loc.setStrand(new Integer(1));
+        loc.setStrand(new Integer(strand));
         return loc;
     }
 
