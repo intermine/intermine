@@ -98,7 +98,7 @@
           <item>The model browser allows you to select the classes that contain the objects you require. Depending on the starting class you will be able to navigate to other classes as defined by the references between the classes (see <ulink url= "manualCOF.xml">Classes, objects and fields</ulink> for an explanation of these concepts).  In other words, to combine classes containing the objects you require, you find a path through the classes that link together the information you require. Within the model browser classes that can be accessed from a parent class (ie are linked to the parent class through a reference) are shown as fields within that class.</item>
            <item>For each class and field within the model browser there is a 'show' and a 'constrain' (->) option.  These are used to either select a field to show in the results output or to constrain in the constraints list.  </item>
        <item>
-       See <ulink url= "manualModelBrowser.xml">The model browser</ulink> for more information about classes and fields.
+       See <ulink url= "manualModelbrowser.xml">The model browser</ulink> for more information about classes and fields.
       </item>
  
   </section>
