@@ -235,7 +235,7 @@
     rdfs:subClassOf :Analysis .
 
 :ComputationalAnalysis__algorithm a owl:DatatypeProperty;
-    rdfs:domain ComputationalAnalysis;
+    rdfs:domain :ComputationalAnalysis;
     rdfs:range xsd:string.
 
 
