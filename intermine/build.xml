@@ -95,6 +95,7 @@
     <include name="mockobjects*.jar" />
     <include name="nsuml*.jar" />
     <include name="xmlunit*.jar" />
+    <include name="stax*.jar"/>
   </patternset>
 
   <patternset id="lib.catalina">
@@ -138,6 +139,7 @@
     <include name="commons-digester*.jar"/>
     <include name="commons-collections*.jar"/>
     <include name="commons-beanutils*.jar"/>
+    <include name="lucene*.jar"/>
   </patternset>
 
   <!-- Libraries that the webapp uses -->
@@ -204,6 +206,7 @@
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/xmlschematest"/>
     <pathelement location="${build.model}/test"/>
+    
   </path>
 
   <path id="acedbtest.class.path">
@@ -400,6 +403,17 @@
       <property name="db.name" value="db.userprofile"/>
       <property name="objectstore.name" value="os.userprofile"/>
     </ant>
+    <antcall target="load-default-templates"/>
+  </target>
+
+  <!-- load default global template queries -->
+  <target name="load-default-templates" depends="compile-main">
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="insert-default-templates" classname="org.intermine.task.LoadDefaultTemplatesTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <insert-default-templates templatesXml="model/testmodel/resources/web/template-queries.xml"
+                              username="${webapp.superuser}"/>
   </target>
 
   <!-- insert the testmodel data into the database -->
