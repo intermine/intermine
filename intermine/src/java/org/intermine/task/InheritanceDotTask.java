@@ -172,6 +172,7 @@ public class InheritanceDotTask extends Task
                                 .startsWith(packageName + ".") ? " [style=filled,fillcolor=green]"
                                 : (clazz.getName().startsWith("org") || clazz.getName()
                                     .startsWith("junit.") || clazz.getName().startsWith("net.")
+                                    || clazz.getName().startsWith("servletunit.")
                                     ? " [style=filled,fillcolor=red]" : "")));
                 } else {
                     out.println("\"" + clazz.getName() + "\" [shape=box"
