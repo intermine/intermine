@@ -5,7 +5,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
-<fmt:message key="templateBuilder.intro"/><br/><br/>
+<fmt:message key="templateBuilder.intro"/>
+<p style="text-align:center"> 
+  <c:if test="${!empty EDITING_TEMPLATE}">
+    <i><fmt:message key="templateBuilder.editingTemplate">
+      <fmt:param value="${EDITING_TEMPLATE.name}"/>
+    </fmt:message></i>
+  </c:if>
+</p>
 <html:form action="/buildTemplate">
   <p style="text-align:center">
     <b><fmt:message key="templateBuilder.shortName"/></b>
@@ -68,7 +75,16 @@
     </c:forEach>
   </table><br/>
   <p style="text-align:center">
-    <html:submit><fmt:message key="templateBuilder.submit"/></html:submit>
+    <html:submit>
+      <c:choose>
+        <c:when test="${empty EDITING_TEMPLATE}">
+          <fmt:message key="templateBuilder.submit"/>
+        </c:when>
+        <c:otherwise>
+          <fmt:message key="templateBuilder.submitUpdate"/>
+        </c:otherwise>
+      </c:choose>
+    </html:submit>
     <html:submit property="preview">
       <c:choose>
         <c:when test="${!showPreview}">
