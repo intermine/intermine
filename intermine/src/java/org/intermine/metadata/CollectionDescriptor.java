@@ -1,7 +1,8 @@
 package org.flymine.metadata;
 
 /**
- * Describes a field that references a collection of other objects.  getReverseReference()
+ * Describes a field that references a collection of other objects.
+ * getReverseReferenceDescriptor()
  * allows one ot work out the multiplicity of the association's other end.
  *
  * @author Richard Smith
@@ -24,7 +25,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @param ordered true if the collection ordered
      * @throws IllegalArgumentException if arguments are null
      */
-    protected CollectionDescriptor(String name, boolean primaryKey, String referencedType,
+    public CollectionDescriptor(String name, boolean primaryKey, String referencedType,
                                    String reverseRefName, boolean ordered) {
         // should define type of collection properly somehow
         super(name, primaryKey, referencedType, reverseRefName);
@@ -52,8 +53,8 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @return a FieldDescriptor referring back to this class.
      * @throws IllegalStateException if the model is not yet set
      */
-    public ReferenceDescriptor getReverseReference() throws IllegalStateException {
-        return super.getReverseReference();
+    public ReferenceDescriptor getReverseReferenceDescriptor() throws IllegalStateException {
+        return super.getReverseReferenceDescriptor();
     }
 
 

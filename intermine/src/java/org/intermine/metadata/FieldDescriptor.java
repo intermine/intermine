@@ -22,7 +22,7 @@ public abstract class FieldDescriptor
      * @param primaryKey true if part of the class' primary key
      * @throws IllegalArgumentException if name argument is null
      */
-    protected FieldDescriptor(String name, boolean primaryKey)
+    public FieldDescriptor(String name, boolean primaryKey)
         throws IllegalArgumentException {
 
         if (name == null || name == "") {
@@ -31,23 +31,6 @@ public abstract class FieldDescriptor
         this.name = name;
         this.primaryKey = primaryKey;
     }
-
-
-    /**
-     * Set the parent ClassDescriptor - should be called when this is added to
-     * a ClassDescriptor.  ClassDescriptor in this class is final so a MetadataException
-     * is thrown if method called again.
-     * @param cld the parent ClassDescriptor
-     * @throws IllegalStateException if the parent ClassDescriptor is not set
-     */
-     public void setClassDescriptor(ClassDescriptor cld) throws IllegalStateException {
-         if (cldSet) {
-            throw new IllegalStateException("ClassDescriptor has already been set and "
-                                            + "may not be changed.");
-        }
-        this.cld = cld;
-        cldSet = true;
-     }
 
     /**
      * Get the ClassDescriptor for this field's class.
@@ -72,5 +55,21 @@ public abstract class FieldDescriptor
     public boolean isPrimaryKey() {
         return this.primaryKey;
     }
+
+    /**
+     * Set the parent ClassDescriptor - should be called when this is added to
+     * a ClassDescriptor.  ClassDescriptor in this class is final so a MetadataException
+     * is thrown if method called again.
+     * @param cld the parent ClassDescriptor
+     * @throws IllegalStateException if the parent ClassDescriptor is not set
+     */
+     protected void setClassDescriptor(ClassDescriptor cld) throws IllegalStateException {
+         if (cldSet) {
+            throw new IllegalStateException("ClassDescriptor has already been set and "
+                                            + "may not be changed.");
+        }
+        this.cld = cld;
+        cldSet = true;
+     }
 
 }

@@ -19,7 +19,7 @@ public class AttributeDescriptor extends FieldDescriptor
      * @param type name of primitive or a fully qualified class name
      * @throws IllegalArgumentException if arguments are null
      */
-    protected AttributeDescriptor(String name, boolean primaryKey, String type)
+    public AttributeDescriptor(String name, boolean primaryKey, String type)
         throws IllegalArgumentException {
 
         super(name, primaryKey);

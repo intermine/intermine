@@ -49,7 +49,7 @@ public class ClassDescriptor
      * @param cols a list of CollectionDescriptors
      * @throws IllegalArgumentException if fields are null
      */
-    protected ClassDescriptor(String name, String superclassName, String interfaces,
+    public ClassDescriptor(String name, String superclassName, String interfaces,
                               boolean isInterface, List atts, List refs, List cols)
         throws IllegalArgumentException {
 
@@ -167,32 +167,6 @@ public class ClassDescriptor
     }
 
     /**
-     * Gets all CollectionDescriptors for this class.
-     * @return list of CollectionDescriptors for this Class
-     */
-    public List getCollectionDescriptors() {
-        return this.colDescriptors;
-    }
-
-    /**
-     * Gets a CollectionDescriptor for a collection of the given name.  Returns null if
-     * not found.
-     * @param name the name of a CollectionDescriptor to find
-     * @return a CollectionDescriptor
-     */
-    public CollectionDescriptor getCollectionDescriptorByName(String name) {
-        if (name == null) {
-            return null;
-        }
-        if (colDescriptorsNameMap.containsKey(name)) {
-            return (CollectionDescriptor) colDescriptorsNameMap.get(name);
-        } else {
-            return null;
-        }
-    }
-
-
-    /**
      * Gets the descriptors for the external object references in this class.
      * @return list ReferenceDescriptors for this Class
      */
@@ -217,12 +191,40 @@ public class ClassDescriptor
         }
     }
 
+    /**
+     * Gets all CollectionDescriptors for this class.
+     * @return list of CollectionDescriptors for this Class
+     */
+    public List getCollectionDescriptors() {
+        return this.colDescriptors;
+    }
+
+    /**
+     * Gets a CollectionDescriptor for a collection of the given name.  Returns null if
+     * not found.
+     * @param name the name of a CollectionDescriptor to find
+     * @return a CollectionDescriptor
+     */
+    public CollectionDescriptor getCollectionDescriptorByName(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (colDescriptorsNameMap.containsKey(name)) {
+            return (CollectionDescriptor) colDescriptorsNameMap.get(name);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Get the name of the super class of this class (may be null)
      * @return the super class name
      */
     public ClassDescriptor getSuperclassDescriptor() {
+        if (!modelSet) {
+            throw new IllegalStateException("This ClassDescriptor has not yet been added "
+                                            + "to a model.");
+        }
         return this.superclassDescriptor;
     }
 
@@ -234,7 +236,7 @@ public class ClassDescriptor
     public List getInterfaceDescriptors() {
         if (!modelSet) {
             throw new IllegalStateException("This ClassDescriptor has not yet been added "
-                                            + "to a model");
+                                            + "to a model.");
         }
         return this.interfaceDescriptors;
     }
@@ -246,8 +248,6 @@ public class ClassDescriptor
     public Model getModel() {
         return this.model;
     }
-
-
 
     /**
      * True if this class is an interface.
@@ -274,6 +274,14 @@ public class ClassDescriptor
         return new ArrayList();
     }
 
+    /**
+     * Return the highest level business object that is a superclass of this class
+     * @return ClassDescriptor of ultimate superclass
+     * @throws IllegalStateException if model not set
+     */
+    public ClassDescriptor getUltimateSuperclassDescriptor() throws IllegalStateException {
+        return this;
+    }
 
     /**
      * Return a List of AttributeDescriptors for all attribtes of this class and

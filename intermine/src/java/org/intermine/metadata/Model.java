@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 
 /**
@@ -63,6 +64,14 @@ public class Model
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get all ClassDescriptors in this model.
+     * @return a list of all ClassDescriptors in the model
+     */
+    public List getClassDescriptors() {
+        return new ArrayList();
     }
 
     /**

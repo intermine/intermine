@@ -3,7 +3,7 @@ package org.flymine.metadata;
 
 /**
  * Describes a field that references a single other class (i.e. not a collection
- * of objects).  getReverseReference() allows one to work out the multiplicity
+ * of objects).  getReverseReferenceDescriptor() allows one to work out the multiplicity
  * of the association's other end.
  *
  * @author Richard Smith
@@ -28,7 +28,7 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @param reverseRefName name of the field in remote object that refers back to this one
      * @throws IllegalArgumentException if fields are null
      */
-    protected ReferenceDescriptor(String name, boolean primaryKey, String referencedType,
+    public ReferenceDescriptor(String name, boolean primaryKey, String referencedType,
                                   String reverseRefName)
         throws IllegalArgumentException {
         super(name, primaryKey);
@@ -62,7 +62,7 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @return a FieldDescriptor referring back to this class.
      * @throws IllegalStateException if model has not been set
      */
-    public ReferenceDescriptor getReverseReference() throws IllegalStateException {
+    public ReferenceDescriptor getReverseReferenceDescriptor() throws IllegalStateException {
         if (!modelSet) {
             throw new IllegalStateException("This ReferenceDescriptor (" + this.getName()
                                             + ") is not yet part of a metadata Model");
