@@ -11,10 +11,11 @@ package org.flymine.sql.query;
  */
 
 import junit.framework.*;
+import java.math.BigDecimal;
 
 public class ConstantTest extends TestCase
 {
-    private Constant c1, c2, c3, c4, c5, c6;
+    private Constant c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
     
     public ConstantTest(String arg1) {
         super(arg1);
@@ -27,6 +28,12 @@ public class ConstantTest extends TestCase
         c4 = new Constant("5");
         c5 = new Constant("66");
         c6 = new Constant("flibble");
+        c7 = new Constant("5::REAL");
+        c8 = new Constant("1089290109834.28728747598768541");
+        c9 = new Constant("1089290109834.28728747598768542");
+        c10 = new Constant("5.1");
+        c11 = new Constant("5.1::REAL");
+        c12 = new Constant(new BigDecimal((new Float(5.1)).doubleValue()).toString());
     }
         
     public void testGetSQLString() throws Exception {
@@ -54,6 +61,14 @@ public class ConstantTest extends TestCase
         assertTrue("Expected c1 not to equal c5", !c1.equals(c5));
         assertTrue("Expected c5 not to equal c1", !c5.equals(c1));
         assertTrue("Expected c1 not to equal null", !c1.equals(null));
+        assertEquals(c4, c7);
+        assertTrue("Expected c4 not to equal c8", !c4.equals(c8));
+        assertTrue("Expected c4 not to equal c9", !c4.equals(c9));
+        assertTrue("Expected c8 not to equal c9", !c8.equals(c9));
+        assertTrue("Expected c4 not to equal c10", !c4.equals(c10));
+        assertTrue("Expected c10 not to equal c11", !c10.equals(c11));
+        assertTrue("Expected c10 not to equal c12", !c10.equals(c12));
+        assertEquals(c11, c12);
     }
 
     public void testHashCode() throws Exception {
@@ -79,6 +94,12 @@ public class ConstantTest extends TestCase
         assertEquals(AbstractValue.LESS, c1.compare(c3));
         assertEquals(AbstractValue.GREATER, c3.compare(c1));
         assertEquals(AbstractValue.INCOMPARABLE, c1.compare(null));
+        assertEquals(AbstractValue.GREATER, c5.compare(c7));
+        assertEquals(AbstractValue.LESS, c7.compare(c8));
+        assertEquals(AbstractValue.LESS, c8.compare(c9));
+        assertEquals(AbstractValue.LESS, c7.compare(c10));
+        assertEquals(AbstractValue.GREATER, c10.compare(c11));
+        assertEquals(AbstractValue.GREATER, c10.compare(c12));
     }
 
 }

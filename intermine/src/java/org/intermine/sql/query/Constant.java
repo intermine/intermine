@@ -10,6 +10,8 @@ package org.flymine.sql.query;
  *
  */
 
+import java.math.BigDecimal;
+
 /**
  * A representation of a constant value in an SQL query.
  *
@@ -52,7 +54,7 @@ public class Constant extends AbstractValue
     public boolean equals(Object obj) {
         if (obj instanceof Constant) {
             Constant objConstant = (Constant) obj;
-            return value.equals(objConstant.value);
+            return compare(objConstant) == EQUAL;
         }
         return false;
     }
@@ -74,41 +76,67 @@ public class Constant extends AbstractValue
      * @see AbstractValue#compare
      */
     public int compare(AbstractValue obj) {
-        if (equals(obj)) {
-            return EQUAL;
-        }
         if (obj instanceof Constant) {
             Constant objC = (Constant) obj;
-            if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'')
-                    && (objC.value.charAt(0) == '\'')
-                    && (objC.value.charAt(objC.value.length() - 1) == '\'')) {
+            if (value.equals(objC.value)) {
+                return EQUAL;
+            }
+            boolean thisIsString = ((value.charAt(0) == '\'')
+                    && (value.charAt(value.length() - 1) == '\''));
+            boolean objIsString = ((objC.value.charAt(0) == '\'')
+                    && (objC.value.charAt(objC.value.length() - 1) == '\''));
+            if (thisIsString && objIsString) {
                 // Both this and obj are string constants.
                 return (value.compareTo(objC.value) < 0 ? LESS : GREATER);
             }
+            boolean thisIsNumber = false;
+            BigDecimal thisNumber = null;
+            boolean objIsNumber = false;
+            BigDecimal objNumber = null;
             try {
-                return (Double.parseDouble(value) < Double.parseDouble(objC.value) ? LESS
-                        : GREATER);
-            } catch (NumberFormatException e) {
-                // That's not a problem
-            }
-            if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'')) {
-                try {
-                    double a = Double.parseDouble(objC.value);
-                    return NOT_EQUAL;
-                } catch (NumberFormatException e) {
-                    // That's okay - obj is not a number
+                if (value.toUpperCase().endsWith("::REAL")) {
+                    thisNumber = new BigDecimal(Float.valueOf(value.substring(0, value.length()
+                                    - 6)).doubleValue());
+                } else {
+                    thisNumber = new BigDecimal(value);
                 }
+                thisIsNumber = true;
+            } catch (NumberFormatException e) {
+                // Okay
             }
-            if ((objC.value.charAt(0) == '\'')
-                    && (objC.value.charAt(objC.value.length() - 1) == '\'')) {
-                try {
-                    double a = Double.parseDouble(value);
-                    return NOT_EQUAL;
-                } catch (NumberFormatException e) {
-                    // That's okay - this is not a number
+            try {
+                if (objC.value.toUpperCase().endsWith("::REAL")) {
+                    objNumber = new BigDecimal(Float.valueOf(objC.value.substring(0,
+                                    objC.value.length() - 6)).doubleValue());
+                } else {
+                    objNumber = new BigDecimal(objC.value);
+                }
+                objIsNumber = true;
+            } catch (NumberFormatException e) {
+                // Okay
+            }
+
+            if ((thisIsNumber && objIsString) || (objIsNumber && thisIsString)) {
+                return NOT_EQUAL;
+            }
+            if (thisIsNumber && objIsNumber) {
+                int comparison = thisNumber.compareTo(objNumber);
+                if (comparison == 0) {
+                    return EQUAL;
+                } else if (comparison > 0) {
+                    return GREATER;
+                } else {
+                    return LESS;
                 }
             }
         }
         return INCOMPARABLE;
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return value;
     }
 }

@@ -75,7 +75,7 @@ abstract_table: table | subquery ;
 
 abstract_value: unsafe_function | safe_function | constant | field ;
 
-field_alias: #( FIELD_ALIAS IDENTIFIER ) ;
+field_alias: #( FIELD_ALIAS (ALIAS | IDENTIFIER) ) ;
 
 table: #( TABLE table_name ( table_alias )? ) ;
 
@@ -85,7 +85,7 @@ table_name: #( TABLE_NAME IDENTIFIER ) ;
 
 table_alias: #( TABLE_ALIAS IDENTIFIER ) ;
 
-constant: #( CONSTANT ( QUOTED_STRING | INTEGER | "null" ) ) ;
+constant: #( CONSTANT ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" | "null" ) ) ;
 
 field: #( FIELD (table_alias)? field_name );
 
@@ -355,7 +355,7 @@ safe_abstract_value:
 paren_value: OPEN_PAREN! abstract_value CLOSE_PAREN! ;
 
 field_alias:
-        IDENTIFIER
+        (ALIAS | IDENTIFIER)
         { #field_alias = #([FIELD_ALIAS, "FIELD_ALIAS"], #field_alias); }
     ;
 
@@ -381,7 +381,7 @@ subquery:
 
 constant:
 //TODO: properly
-        ( QUOTED_STRING | INTEGER | "null" )
+        ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" | "null" )
         { #constant = #([CONSTANT, "CONSTANT"], #constant); }
     ;
 
@@ -476,6 +476,10 @@ IDENTIFIER options { testLiterals=true; } :
         'a'..'z' ( 'a'..'z' | '0'..'9' | '_' | '$' | '#' )*
     ;
 
+ALIAS options { testLiterals=true; } :
+        '"' 'a'..'z' ( 'a'..'z' | '0'..'9' | '_' | '$' | '#' )* '"'
+    ;
+
 QUOTED_STRING:
         '\'' ( ~'\'' )* '\''
     ;
@@ -500,7 +504,8 @@ NOT_EQ:
     ;
 GT: '>' ( '=' { _ttype = GE; } )? ;
 
-INTEGER: ( '0'..'9' )+ ;
+FLOAT: (( '0'..'9' )+ '.' '0'..'9' )=> ( '0'..'9' )+ '.' ( '0'..'9' )+ ("::real")? 
+        | ( '0'..'9' )+ {_ttype = INTEGER; } ;
 
 WS: ( ' ' | '\t' | '\r' '\n' { newline(); } | '\n' { newline(); } | '\r' { newline(); } )
         {$setType(Token.SKIP);} // Ignore this token

@@ -101,6 +101,10 @@ public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
     public void executeTest(String type) throws Exception {
         FlyMineSqlSelectStatement s1 = new FlyMineSqlSelectStatement((Query) queries.get(type), dr);
         assertEquals(type + " has failed", results.get(type), s1.getStatement());
+
+        // Okay, this probably shouldn't be here.
+        org.flymine.sql.query.Query sql = new org.flymine.sql.query.Query(s1.getStatement());
+        //assertEquals(type + " has failed", results.get(type), sql.toString());
     }
 
     public void testSelectQueryValue() throws Exception {

@@ -88,7 +88,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
             String type = (String) i.next();
             // Does this appear in the queries map;
             if (!(queries.containsKey(type))) {
-                writer.println(type + " does not appear in the queries map");
+                writer.println("\n" + type + " does not appear in the queries map");
                 status = 1;
             }
         }
@@ -98,14 +98,14 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
             Object result = results.get(type);
             if (result == null) {
                 if (strictTestQueries) {
-                    writer.println(type + " does not appear in the results map");
+                    writer.println("\n" + type + " does not appear in the results map");
                     status = (status == 2 ? 2 : 1);
                 }
             } else if (result != NO_RESULT) {
                 try {
                     executeTest(type);
                 } catch (AssertionFailedError e) {
-                    writer.println(type + " has failed: " + e.getMessage());
+                    writer.println("\n" + type + " has failed: " + e.getMessage());
                     //e.printStackTrace(writer);
                     status = (status == 2 ? 2 : 1);
                 } catch (Throwable t) {
