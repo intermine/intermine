@@ -66,7 +66,13 @@
             <c:choose>
               <c:when test="${column.visible}">
                 <c:choose>
-                  <c:when test="${(status.count == 1) || (row[status2.index] != prevrow[status2.index])}">
+                  <%-- "!=" only works on objects of the same type.  Objects in a
+                       column will only have the same type if we are showing a
+                       collection.  Collections will have only one column so
+                       don't do the check if there is only one column --%>
+                  <c:when test="${RESULTS_TABLE.tableWidth == 1 ||
+                                  ((status.count == 1) || 
+                                   (row[status2.index] != prevrow[status2.index]))}">
                     <%-- the checkbox to select this object --%>
                     <td align="center" width="1">
                       <html:multibox property="selectedObjects">
