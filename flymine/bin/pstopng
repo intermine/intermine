@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if test -d $HOME/tmp ; then
+	TMP_DIR=$HOME/tmp
+else
+	echo "A ~/tmp directory would be preferable - using /tmp for the moment" 1>&2
+	TMP_DIR=/tmp
+fi
+
 FILENAME="stdin"
 RES=100
 ANTIALIAS=4
@@ -74,7 +81,7 @@ if test "True" = "$SZY_SET" && test "True" = "$SZX_SET" ; then
 fi
 
 if test "$FILENAME" == "stdin" ; then
-	FILENAME=~/tmp/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+	FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
 	DELETE_AFTER=True
 	TODELETE=$FILENAME
 	cat >$FILENAME
@@ -101,7 +108,7 @@ fi
 #echo "$BBOX $WIDTH $HEIGHT $USWIDTH $USHEIGHT $USRES" 1>&2
 
 if test "True" = "$ALPHA" ; then
-	TEMP_FILENAME=~/tmp/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+	TEMP_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
 	gs -q -sDEVICE=pgmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME | pnmscale --reduce $ANTIALIAS 2>/dev/null >$TEMP_FILENAME.blackonwhite
 	pnminvert <$TEMP_FILENAME.blackonwhite >$TEMP_FILENAME.alpha
 	XY_SIZE=`head -n 3 <$TEMP_FILENAME.alpha | grep -v "^#" | tr "\n	" "  " | sed -e "s/P[1-6] \+\([0-9]\+\) \+\([0-9]\+\).*$/-xsize \1 -ysize \2/"`
