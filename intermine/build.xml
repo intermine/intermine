@@ -704,7 +704,7 @@
 
   <!-- Webapp targets -->
 
-  <target name="prepare-webapp" depends="prepare,jar">
+  <target name="prepare-webapp" depends="prepare,jar-intermine">
     <mkdir dir="${build.webapp}/intermine"/>
     <mkdir dir="${build.webapp}/intermine/images"/>
     <mkdir dir="${build.webapp}/intermine/model"/>
@@ -811,7 +811,7 @@
   </target>
 
   <!-- Webservice targets -->
-  <target name="build-webservice" depends="prepare,prepare-dist,jar"
+  <target name="build-webservice" depends="prepare,prepare-dist,jar-intermine"
     description="Build the InterMine webservice">
     <mkdir dir="${build.webapp}/webservice"/>
     <mkdir dir="${build.webapp}/webservice/META-INF"/>
@@ -873,7 +873,7 @@
   </target>   
 
 
-  <target name="jar" depends="prepare-dist, compile-main"
+  <target name="jar-intermine" depends="prepare-dist, compile-main"
     description="Makes a JAR file of all the classes and configuration files">
     <condition property="version" value="${DTSTAMP}">
       <not>
@@ -900,7 +900,10 @@
       <fileset file="${build.resources}/intermine.properties"/>
       <fileset file="${build.resources}/log4j.properties"/>
     </jar>
+  </target>
 
+  <target name="jar" depends="jar-intermine"
+           description="Makes a JAR file of intermine and essential lib jars">
     <mkdir dir="${build.tmp}/jars"/>
 
     <unzip dest="${build.tmp}/jars">
@@ -910,7 +913,6 @@
         <patternset refid="lib.uml"/>
       </fileset>
     </unzip>
-
 
     <jar destfile="${dist}/intermine-all.jar" manifest="${build.tmp}/MANIFEST.MF">
       <zipfileset src="${dist}/intermine.jar"/>
@@ -929,7 +931,7 @@
     </ant>    
   </target>
 
-  <target name="build-tutorial" depends="jar"
+  <target name="build-tutorial" depends="jar-intermine"
           description="build the tutorial tree">
     <!-- root dir -->
     <copy todir="${tutorial}">
