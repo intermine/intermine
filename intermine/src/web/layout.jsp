@@ -11,6 +11,7 @@
 
   <head>
     <html:base/>
+    <link rel="stylesheet" type="text/css" href="http://www.intermine.org/style/intermine.css"/>
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
