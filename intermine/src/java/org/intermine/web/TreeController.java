@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -39,12 +40,12 @@ public class TreeController extends TilesAction
     /**
      * @see TilesAction#execute
      */
-    public ActionForward execute(ActionMapping mapping,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
         HttpSession session = request.getSession();
 
         Set openClasses = (Set) session.getAttribute("openClasses");
@@ -62,7 +63,7 @@ public class TreeController extends TilesAction
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
-        request.setAttribute("nodes", makeNodes(root, openClasses, 0));
+        context.putAttribute("nodes", makeNodes(root, openClasses, 0));
 
         return null;
     }

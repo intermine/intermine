@@ -1,9 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
+<tiles:importAttribute/>
+
+<!-- tree.jsp -->
 <c:forEach var="node" items="${nodes}">
   <c:forEach begin="0" end="${node.indentation}">&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
   <c:choose>
@@ -36,3 +37,4 @@ class="treeSelected"
   </font>
   </font>
 </c:forEach>
+<!-- /tree.jsp -->

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.apache.struts.tiles.ComponentContext;
+
 import servletunit.struts.MockStrutsTestCase;
 
 public class TreeControllerTest extends MockStrutsTestCase
@@ -24,14 +26,16 @@ public class TreeControllerTest extends MockStrutsTestCase
     }
 
     public void testExecute() throws Exception {
+        ComponentContext context = new ComponentContext();
+        ComponentContext.setContext(context, getRequest());
+        setRequestPathInfo("/initTree");
+
         String model = "org.flymine.model.testmodel.";
         Set openClasses = new HashSet();
-        openClasses.add("org.flymine.model.testmodel.Thing");
-        openClasses.add("org.flymine.model.testmodel.Employable");
+        openClasses.add(model + "Employable");
         openClasses.add(model + "Thing");
         getSession().setAttribute("openClasses", openClasses);
         getRequest().setAttribute("rootClass", model + "Thing");
-        setRequestPathInfo("/initTree");
 
         actionPerform();
         verifyNoActionErrors();
@@ -44,6 +48,6 @@ public class TreeControllerTest extends MockStrutsTestCase
         expected.add(new TreeNode(model + "Address", 1, false, true, false));
 
         assertEquals(openClasses, getSession().getAttribute("openClasses"));
-        assertEquals(expected, getRequest().getAttribute("nodes"));
+        assertEquals(expected, context.getAttribute("nodes"));
     }
 }
