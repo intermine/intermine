@@ -13,6 +13,9 @@ package org.intermine.web;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
+import java.util.Properties;
+import java.io.InputStream;
+
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -56,6 +59,14 @@ public class InitialiserPlugin implements PlugIn
             context.setAttribute(Constants.OBJECTSTORE, os);
             context.setAttribute(Constants.MODEL, model);
             context.setAttribute("webconfig", wc);
+
+            InputStream externalLinkPropertiesStream =
+                context.getResourceAsStream("/WEB-INF/web.properties");
+            
+            Properties externalLinkProperties = new Properties();
+            externalLinkProperties.load(externalLinkPropertiesStream);
+
+            context.setAttribute(Constants.WEB_PROPERTIES, externalLinkProperties);
         } catch (Exception e) {
             throw new ServletException("there was a problem while initialising", e);
         }
