@@ -20,6 +20,7 @@ import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
 
@@ -34,7 +35,7 @@ public class ObjectStoreDataLoader extends DataLoader
 
     /**
      * Construct an ObjectStoreDataLoader
-     * 
+     *
      * @param iw an IntegrationWriter to which to write
      */
     public ObjectStoreDataLoader(IntegrationWriter iw) {
@@ -84,12 +85,13 @@ public class ObjectStoreDataLoader extends DataLoader
                 if (times[(opCount / 1000) % 20] == -1) {
                     LOG.error("Dataloaded " + opCount + " objects - running at "
                             + (60000000 / (now - time)) + " objects per minute"
-                            + " -- now on " + obj.getClass().getName());
+                            + " -- now on " + DynamicUtil.decomposeClass(obj.getClass()));
                 } else {
                     LOG.error("Dataloaded " + opCount + " objects - running at "
                             + (60000000 / (now - time)) + " (avg "
                             + (1200000000 / (now - times[(opCount / 1000) % 20]))
-                            + ") objects per minute -- now on " + obj.getClass().getName());
+                            + ") objects per minute -- now on " + DynamicUtil
+                              .decomposeClass(obj.getClass()));
                 }
                 time = now;
                 times[(opCount / 1000) % 20] = now;
