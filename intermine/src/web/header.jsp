@@ -9,5 +9,5 @@
   <fmt:message key="flymine.subtitle"/>
 </font>
 <br/>
-<hr align="center" width="100%"/>
+<hr/>
 <!-- /header.jsp -->
