@@ -41,6 +41,7 @@ public class Model
              throw new MetaDataException("No 'model' properties were found"
                                          + " (check properties file)");
          }
+         props = PropertiesUtil.stripStart("model", props);
          String modelName = props.getProperty("name");
          if (modelName == null) {
              throw new MetaDataException("'model' does not have a name specified"
