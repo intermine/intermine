@@ -87,11 +87,11 @@ public class DBConverterTest extends TestCase {
 
     public void testReference() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
-        
+
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},
                            new Object[] {new Integer(12), null, new Integer(14), null});
-        
+
         map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
@@ -109,13 +109,34 @@ public class DBConverterTest extends TestCase {
         assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
+    public void testReferenceZeroId() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+
+        List rows = rowify(
+                           new String[] {"Department_id", "name", "company_id", "manager_id"},
+                           new Object[] {new Integer(12), null, new Integer(0), null});
+
+        map.put("SELECT * FROM Department", rows);
+
+        map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
+
+        Item item = new Item();
+        item.setClassName(model.getNameSpace() + "Department");
+        item.setIdentifier(converter.alias("Department") + "_12");
+
+        converter.processClassDescriptor(cld);
+        assertEquals(Collections.singleton(item), itemWriter.getItems());
+    }
+
+
     public void test1NCollection() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
 
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},
                            new Object[] {new Integer(12), null, null, null});
-        
+
         map.put("SELECT * FROM Department", rows);
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
@@ -154,7 +175,7 @@ public class DBConverterTest extends TestCase {
         List rows2 = rowify(
                             new String[] {"Contractor_id"},
                             new Object[][] {{new Integer(1)}, {new Integer(2)}});
-        
+
         map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 12", rows2);
 
         Item item = new Item();

@@ -94,17 +94,17 @@ public class DBConverter extends DataConverter
 
             String clsName = TypeUtil.unqualifiedName(cld.getName());
             Iterator iter;
-            
+
             //LOG.error("Processing class: " + clsName);
-            
+
             boolean idsProvided = idsProvided(cld);
             if (idsProvided) {
                 iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
             } else {
                 iter = reader.execute("SELECT * FROM " + clsName).iterator();
             }
-            
-            int identifier = 0;
+
+            int identifier = 1;
             while (iter.hasNext()) {
                 Map row = (Map) iter.next();
                 String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (identifier++);
@@ -168,7 +168,7 @@ public class DBConverter extends DataConverter
                 ref.setItem(item);
                 ref.setName(fieldName);
                 Object value = row.get(fieldName + "_id");
-                if (value != null) {
+                if (value != null && !TypeUtil.objectToString(value).equals("0")) {
                     String refClsName = TypeUtil.unqualifiedName(
                         ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getName());
                     ref.setRefId(alias(refClsName) + "_" + TypeUtil.objectToString(value));
