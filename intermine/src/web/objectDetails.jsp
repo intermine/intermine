@@ -261,7 +261,9 @@ Summary for selected
                       <span class="attributeField">${keyEntry.key.name}</span>
                     </td>
                   </c:forEach>
-                  <td width="10px" rowspan="2"/>
+                  <td width="10px" rowspan="2">
+                    &nbsp;<%--for IE--%>
+                  </td>
                 </tr>
                 <tr>
                   <c:forEach items="${collection.table.keyReferences}" var="keyEntry">
