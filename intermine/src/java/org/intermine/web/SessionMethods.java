@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.intermine.objectstore.ObjectStore;
@@ -32,6 +31,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.TableHelper;
+import org.intermine.web.results.DisplayObjectCache;
+import org.intermine.util.CacheMap;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -347,7 +348,7 @@ public class SessionMethods
         
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
-            displayObjects = new LRUMap(150);
+            displayObjects = new CacheMap();
             session.setAttribute("displayObjects", displayObjects);
         }
 
@@ -365,6 +366,7 @@ public class SessionMethods
         session.setAttribute(Constants.PROFILE,
                              new Profile(pm, null, new HashMap(), new HashMap(), new HashMap()));
         session.setAttribute(Constants.COLLAPSED, new HashMap());
+        session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectCache(session));
     }
 
     /**
