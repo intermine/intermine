@@ -3,6 +3,7 @@ package org.flymine.util;
 import junit.framework.*;
 
 import java.util.Set;
+import java.util.HashSet;
 
 public class ConsistentSetTest extends TestCase
 {
@@ -80,4 +81,42 @@ public class ConsistentSetTest extends TestCase
 
     }
 
+    public void testOutOfOrderEquals() throws Exception {
+        TestObject o1 = new TestObject("string1");
+        TestObject o2 = new TestObject("string2");
+        TestObject o3 = new TestObject("string3");
+        TestObject o4 = new TestObject("string4");
+
+        Set set1 = new ConsistentSet();
+        Set set2 = new ConsistentSet();
+
+        set1.add(o1);
+        set1.add(o2);
+        set2.add(o3);
+        set2.add(o4);
+
+        o3.a = "string2";
+        o4.a = "string1";
+
+        assertEquals(set1.hashCode(), set2.hashCode());
+        assertEquals(set1, set2);
+    }
+
+    public void testEqualsHashSet() throws Exception {
+        TestObject o1 = new TestObject("string1");
+        TestObject o2 = new TestObject("string2");
+
+        Set set1 = new ConsistentSet();
+        Set set2 = new HashSet();
+
+        set1.add(o1);
+        set1.add(o2);
+        set2.add(o2);
+        set2.add(o1);
+
+        assertEquals(set1.hashCode(), set2.hashCode());
+        assertEquals(set1, set2);
+        assertEquals(set2.hashCode(), set1.hashCode());
+        assertEquals(set2, set1);
+    }
 }
