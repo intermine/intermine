@@ -122,6 +122,11 @@
     <action path="/feedback"
             forward="feedback.page"/>
 
+    <!-- Actions that provide downloads -->
+
+    <action path="/getAttributeAsFile"
+            type="org.intermine.web.results.GetAttributeAsFileAction"/>
+
     <!-- Actions invoked using links -->
     <action path="/modifyQueryChange"
             type="org.intermine.web.ModifyQueryChangeAction"
