@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
+import org.flymine.objectstore.ObjectStoreException;
 
 public class ObjectStoreDummyImplTest extends TestCase
 {
@@ -23,6 +24,7 @@ public class ObjectStoreDummyImplTest extends TestCase
         row.add(field2);
 
         os.addRow(row);
+        os.setResultsSize(1);
         List rows = os.execute(new Query(), 0, 0);
 
         assertEquals(1, rows.size());
@@ -38,6 +40,7 @@ public class ObjectStoreDummyImplTest extends TestCase
         q.addToSelect(new QueryClass(String.class));
         q.addToSelect(new QueryClass(Department.class));
 
+        os.setResultsSize(1);
         List rows = os.execute(q, 0, 0);
 
         assertEquals(1, rows.size());
@@ -60,6 +63,7 @@ public class ObjectStoreDummyImplTest extends TestCase
         row.add(field2);
 
         os.addRow(row);
+        os.setResultsSize(2);
         List rows = os.execute(q, 0, 1);
 
         assertEquals(2, rows.size());
@@ -83,9 +87,36 @@ public class ObjectStoreDummyImplTest extends TestCase
 
     }
 
+    public void testReachEndOfResults() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        Query q = new Query();
+        os.setResultsSize(10);
+        Results res = os.execute(q);
+        res.setBatchSize(10);
+
+        // Get the first 10 rows in a batch
+        List rows = os.execute(q, 0, 9);
+        assertEquals(10, rows.size());
+
+        // Try and get the next 10
+        rows = os.execute(q, 10, 19);
+        assertEquals(0, rows.size());
+
+        // Stupidly try and get the next 10
+        try {
+            rows = os.execute(q, 20, 29);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+        }
+
+
+    }
+
+
     public void testexecuteCalls() throws Exception {
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         Query q = new Query();
+        os.setResultsSize(10);
         Results res = os.execute(q);
         os.execute(q, 1, 4);
         assertEquals(1, os.getExecuteCalls());
