@@ -234,6 +234,12 @@
 			This means that if the query has the restriction "x = y", and a precomputed table has the restriction "y = x", then that precomputed table is not used.
 			In the future, we should probably convert the entire WHERE clause to conjunctive normal form, then order the components by a specific ordering, to give us the best possible chance of being able to use a precomputed table.
 			This will involve writing a full WHERE clause parser and converter to conjunctive normal form.</listitem>
+		<listitem>It doesn't currently optimise subselects very well.
+			In practice, SQL databases clump the whole query into one lump which they plan as a whole, which allows them to take advantage of being able to choose the ordering of the results from the subselect.
+			Our optimiser should probably look at the subselect, and find all results from it that are used in any restrictions, then optimise the subselect ordered by each of those values.
+			It should then try optimising the whole query once for each of the optimised subselects.
+			This doesn't quite give us all the flexibility that a real SQL planner has, but it probably gives us most of the advantage in all but the most obscure of circumstances.
+			It isn't completely clear what happens when you have more than two levels of select statements.</listitem>
 	</itemizedlist>
 </para>
 </sect1>
