@@ -171,24 +171,26 @@
 
   <%-- Save bag controls --%>
   <br/>
-  <c:if test="${!empty savedBags}">
-    <html:select property="bagName">
+  <c:if test="${resultsTable.size > 0}">
+    <c:if test="${!empty savedBags}">
+      <html:select property="bagName">
 
-      <c:forEach items="${savedBags}" var="entry">
-        <html:option value="${entry.key}"/>
-      </c:forEach>
-    </html:select>
-  <html:submit property="action">
-    <bean:message key="bag.existing"/>
-  </html:submit>
-  <br/>
+        <c:forEach items="${savedBags}" var="entry">
+          <html:option value="${entry.key}"/>
+        </c:forEach>
+      </html:select>
+      <html:submit property="action">
+        <bean:message key="bag.existing"/>
+      </html:submit>
+      <br/>
+    </c:if>
+
+    <html:text property="newBagName"/>
+    <html:submit property="action">
+      <bean:message key="bag.new"/>
+    </html:submit>
+    <br/>
   </c:if>
-
-  <html:text property="newBagName"/>
-  <html:submit property="action">
-    <bean:message key="bag.new"/>
-  </html:submit>
-  <br/>
 </html:form>
 
 <tiles:get name="saveQuery"/>
