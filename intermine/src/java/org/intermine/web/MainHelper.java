@@ -215,20 +215,13 @@ public class MainHelper
                 continue;
             }
             
-            String fieldName = path.substring(path.lastIndexOf(".") + 1);
-            String prefix = path.substring(0, path.lastIndexOf("."));
-            QueryClass parentQc = (QueryClass) queryBits.get(prefix);
+            String fieldName = node.getFieldName();
+            QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
 
             FieldDescriptor fd = getFieldDescriptor(path, model);
             if (fd.isAttribute()) {
                 QueryField qf = new QueryField(parentQc, fieldName);
                 queryBits.put(path, qf);
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                    Constraint c = (Constraint) j.next();
-                    cs.addConstraint(new SimpleConstraint(qf,
-                                                          c.getOp(), 
-                                                          new QueryValue(c.getValue())));
-                }
             } else {
                 QueryReference qr = null;
                 if (fd.isReference()) {
@@ -240,14 +233,23 @@ public class MainHelper
                 cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
                 q.addFrom(qc);
                 queryBits.put(path, qc);
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                    Constraint c = (Constraint) j.next();
-                    cs.addConstraint(new BagConstraint(qc,
+            }
+
+            QueryNode qn = (QueryNode) queryBits.get(path);
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                Constraint c = (Constraint) j.next();
+                if (BagConstraint.VALID_OPS.contains(c.getOp())) {
+                    cs.addConstraint(new BagConstraint(qn,
                                                        c.getOp(), 
                                                        (Collection) savedBags.get(c.getValue())));
+                } else { //assume, for now, that it's a SimpleConstraint
+                    cs.addConstraint(new SimpleConstraint((QueryField) qn,
+                                                          c.getOp(), 
+                                                          new QueryValue(c.getValue())));
                 }
             }
         }
+
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
             q.addToSelect((QueryNode) queryBits.get(path));

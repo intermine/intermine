@@ -91,16 +91,16 @@ public class MainController extends TilesAction
                 && MainHelper.getFieldDescriptor(node.getPath(), model).isAttribute()) {
                 AttributeDescriptor attr = (AttributeDescriptor) MainHelper
                     .getFieldDescriptor(node.getPath(), model);
-                Map validOps = MainHelper.
+                Map attibuteOps = MainHelper.
                     mapOps(SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType())));
-                request.setAttribute("validOps", validOps);
+                request.setAttribute("attributeOps", attibuteOps);
             } else {
                 ClassDescriptor cld = MainHelper
                     .getClassDescriptor(MainHelper.getType(node.getPath(), model), model);
                 request.setAttribute("subclasses", getChildren(cld));
-                if (session.getAttribute(Constants.SAVED_BAGS) != null) {
-                    request.setAttribute("validOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-                }
+            }
+            if (session.getAttribute(Constants.SAVED_BAGS) != null) {
+                request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
             }
         }
 

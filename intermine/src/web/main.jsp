@@ -135,9 +135,9 @@
           <c:choose>
             <c:when test="${editingNode.attribute}">
               <html:select property="attributeOp">
-                <c:forEach items="${validOps}" var="validOp">
-                  <html:option value="${validOp.key}">
-                    <c:out value="${validOp.value}"/>
+                <c:forEach items="${attributeOps}" var="attributeOp">
+                  <html:option value="${attributeOp.key}">
+                    <c:out value="${attributeOp.value}"/>
                   </html:option>
                 </c:forEach>
               </html:select>
@@ -154,33 +154,33 @@
                   </c:forEach>
                 </html:select>
               </c:if>
-              <c:if test="${!empty SAVED_BAGS}">
-                <br/>
-                <fmt:message key="query.bagConstraint"/>
-                <html:select property="bagOp">
-                  <c:forEach items="${validOps}" var="validOp">
-                    <html:option value="${validOp.key}">
-                      <c:out value="${validOp.value}"/>
-                    </html:option>
-                  </c:forEach>
-                </html:select>
-                <html:select property="bagValue">
-                  <html:option value=""/>
-                  <c:forEach items="${SAVED_BAGS}" var="bag">
-                    <html:option value="${bag.key}">
-                      <c:out value="${bag.key}"/>
-                    </html:option>
-                  </c:forEach>
-                </html:select>
-              </c:if>
             </c:otherwise>
           </c:choose>
+          <c:if test="${!empty SAVED_BAGS}">
+            <br/>
+            <fmt:message key="query.bagConstraint"/>
+            <html:select property="bagOp">
+              <c:forEach items="${bagOps}" var="bagOp">
+                <html:option value="${bagOp.key}">
+                  <c:out value="${bagOp.value}"/>
+                </html:option>
+              </c:forEach>
+            </html:select>
+            <html:select property="bagValue">
+              <html:option value=""/>
+              <c:forEach items="${SAVED_BAGS}" var="bag">
+                <html:option value="${bag.key}">
+                  <c:out value="${bag.key}"/>
+                </html:option>
+              </c:forEach>
+            </html:select>
+          </c:if>
           <html:submit/>
         </html:form>
       </td>
     </tr>      
   </c:if>
   
-
+  
 </table>
 <!-- /main.jsp -->
