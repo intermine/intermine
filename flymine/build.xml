@@ -1410,7 +1410,7 @@
     </ant>
   </target>
 
- <target name="load-gff3" depends="copy-genomic-config">
+ <!--target name="load-gff3" depends="copy-genomic-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1421,7 +1421,7 @@
                ignoreDuplicates="false"/>
   </target>
 
-  <target name="build-gff3-production" depends="retrieve-gff3, load-gff3"/>
+  <target name="build-gff3-production" depends="retrieve-gff3, load-gff3"/-->
 
   
   <!-- LOAD STATIC DATA -->
@@ -2728,9 +2728,9 @@
                    orgAbbrev="HS"
                    infoSourceTitle="UCSC"
                    model="genomic"
-                   handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
+                   handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
       <!--fileset dir ="/shared/data/human/tfbs">        
-        <include name ="*.gff"/>
+        <include name ="tfbsConsSitesNew.gff"/>
       </fileset-->
       <fileset dir ="/shared/data/gff3">        
         <include name ="tfbs.gff"/>
@@ -2754,7 +2754,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-gff3 integrationWriter="integration.genomic-test"
+    <load-tfbs integrationWriter="integration.genomic-test"
                source="os.gff3-translated-std"
                sourceName="ucsc"
                ignoreDuplicates="false"/>
