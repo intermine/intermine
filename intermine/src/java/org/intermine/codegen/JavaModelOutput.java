@@ -315,6 +315,10 @@ public class JavaModelOutput extends ModelOutput
             if (baseClass.equals("")) {
                 sb.append(INDENT + "protected int id;\n");
             }
+            String key = getKey(cls);
+            if (key != null) {
+                sb.append(INDENT + "protected static String key = \"" + key + "\";\n");
+            }
             if (!baseClass.equals("") || cls.getSpecializations().size() > 0) {
                 sb.append(INDENT + "protected String ojbConcreteClass = \""
                           + generateQualified(cls) + "\";\n");
@@ -353,12 +357,13 @@ public class JavaModelOutput extends ModelOutput
 
     private String generateEquals(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
-
+        
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
             sb.append(INDENT + "public boolean equals(Object o) {\n")
                 .append(INDENT+INDENT+"if (!(o instanceof " + cls.getName() + ")) return false;\n")
                 .append(INDENT+INDENT+"if (id!=0 && id==(("+cls.getName()+")o).id) return true;\n")
+                //.append(INDENT+INDENT+"return false");
                 .append(INDENT+INDENT+"return ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
@@ -382,13 +387,14 @@ public class JavaModelOutput extends ModelOutput
         }
         return sb.toString();
     }
-
+        
     private String generateHashCode(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
 
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
             sb.append(INDENT + "public int hashCode() {\n")
+                //.append(INDENT + INDENT + "return id");
                 .append(INDENT+INDENT+"if (id!=0) return id;\n")
                 .append(INDENT+INDENT+"return ");
             Iterator iter = keyFields.iterator();
@@ -635,6 +641,20 @@ public class JavaModelOutput extends ModelOutput
         return "";
     }
 
+    private String getKey(MClassifier cls) {
+        Collection tvs = cls.getTaggedValues();
+        if (tvs != null && tvs.size() > 0) {
+            Iterator iter = tvs.iterator();
+            while (iter.hasNext()) {
+                MTaggedValue tv = (MTaggedValue) iter.next();
+                if (tv.getTag().equals("key")) {
+                    return tv.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
     private Collection getKeys(MClassifier cls) {
         Set keyFields = new LinkedHashSet();
         Collection tvs = cls.getTaggedValues();
