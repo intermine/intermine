@@ -157,6 +157,12 @@
     <ant dir="../../flymine-www" target="release-webservice" inheritRefs="true"/>
   </target>
 
+  <target name="create-indexes-production-attribute" depends="prepare">
+    <ant dir="../../flymine-www" target="create-indexes-production-attribute" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    </ant>
+  </target>
+
   <target name="setup-userprofile" depends="prepare">
     <ant dir="../../flymine-www" target="build-db-userprofile" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine-www/dist"/>
