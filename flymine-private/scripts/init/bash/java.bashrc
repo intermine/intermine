@@ -27,6 +27,7 @@ addjarstopath CLASSPATH /software/noarch/ojb/
 addjarstopath CLASSPATH /software/noarch/junit/
 addjarstopath CLASSPATH /software/noarch/castor/
 addjarstopath CLASSPATH /software/noarch/argouml/
+addjarstopath CLASSPATH /usr/share/java/
 
 append CLASSPATH .
 
