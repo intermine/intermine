@@ -27,10 +27,6 @@
     <form-bean      name="queryClassSelectForm"
                     type="org.flymine.web.QueryClassSelectForm"/>
 
-    <!-- QueryAliasSelect form bean -->
-    <form-bean      name="queryAliasSelectForm"
-                    type="org.flymine.web.QueryAliasSelectForm"/>
-
     <!-- ChangeResults form bean -->
     <form-bean      name="changeResultsForm"
                     type="org.flymine.web.results.ChangeResultsForm"/>
@@ -80,6 +76,12 @@
       <forward name="buildquery" path="query.page"/>
     </action>
 
+    <action path="/changealias"
+                   type="org.flymine.web.QueryAliasChangeAction"
+                   parameter="method">
+      <forward name="buildquery" path="query.page"/>
+    </action>
+
     <!-- Input an fql query -->
     <action    path="/fqlquery"
                type="org.flymine.web.FqlQueryAction"
@@ -101,13 +103,10 @@
       <forward name="buildquery"           path="query.page"/>
     </action>
 
-    <!-- Select alias of class already in query -->
-    <action    path="/queryAliasSelect"
-               type="org.flymine.web.QueryAliasSelectAction"
-               name="queryAliasSelectForm"
-              scope="request"
-              input="query"
-              parameter="action">
+    <!-- Change an existing alias -->
+    <action    path="/queryAliasChange"
+               type="org.flymine.web.QueryAliasChangeAction"
+               parameter="method">
       <forward name="buildquery"           path="query.page"/>
     </action>
 

@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionForm;
  *
  * @author Andrew Varley
  */
-public class QueryAliasSelectForm extends ActionForm
+public class QueryAliasChangeForm extends ActionForm
 {
 
     protected String alias;
