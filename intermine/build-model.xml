@@ -16,9 +16,17 @@
   <property name="build.model.dir" location="${build.model}/${model.name}"/>
   <property name="build.model.dir.tmp" location="${build.model.dir}/tmp"/>
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
+  <property name="model.lib" location="${model.src}/lib"/>
+
+  <path id="compile.class.path">
+    <path refid="class.path"/>
+    <fileset dir="${model.lib}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
 
   <path id="test.class.path">
-    <path refid="class.path"/>
+    <path refid="compile.class.path"/>
     <pathelement location="${build.model.dir.tmp}"/>
     <pathelement location="${build.model.dir.resources}"/>
   </path>
@@ -163,14 +171,14 @@
 
   <target name="compile-java" depends="prepare,compile-model-java">
     <javac destdir="${build.model.dir}" listfiles="yes">
-      <classpath refid="class.path"/>
+      <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/java"/>
     </javac>
   </target>
 
   <target name="compile-test" depends="compile-java">
     <javac destdir="${build.model.dir.tmp}/" listfiles="yes">
-      <classpath refid="class.path"/>
+      <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/test"/>
     </javac>
   </target>
@@ -212,6 +220,10 @@
           depends="copy-xml-model, compile-model-java, copy-keydefs, generate-torque"
           description="Build a usable model from a InterMine model XML file">
   </target>
+
+  <target name="generate-model-from-xml"
+          depends="copy-xml-model, copy-keydefs, generate-torque"
+          description="Generate a InterMine xml model from a xml file"/>
 
   <target name="build-model-from-zargo" depends="generate-model-from-zargo, compile-model-java"
           description="Build a usable model from a .zargo file">
