@@ -10,7 +10,6 @@
   <tr>
     <td rowspan="2" valign="top" width="50%">
       <fmt:message key="query.currentclass"/><br/>
-      <br/>
       <c:if test="${!empty navigation}">
         <c:forEach items="${navigation}" var="entry" varStatus="status">
           <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY[entry.value].type}">
@@ -72,8 +71,6 @@
     </td>
     <td valign="top">
       <fmt:message key="query.currentquery"/><br/>
-      <br/>
-      
       
       <c:forEach var="entry" items="${QUERY}" varStatus="status">
         <c:set var="node" value="${entry.value}"/>
@@ -183,5 +180,4 @@
   
 
 </table>
-<br/>
 <!-- /main.jsp -->

@@ -2,5 +2,6 @@
 
 <!-- query.jsp -->
 <tiles:get name="main"/>
+<br/>
 <tiles:get name="view"/>
 <!-- /query.jsp -->
