@@ -69,18 +69,19 @@ public class ObjectViewController extends TilesAction
         Object o = request.getAttribute("object");
 
         if (o == null) {
-            Integer id = new Integer((String) request.getParameter("id"));
-            String field = request.getParameter("field");
-            o = os.getObjectById(id);
+            String idString = (String) request.getParameter("id");
+            if (idString != null) {
+                Integer id = new Integer(idString);
+                String field = request.getParameter("field");
+                o = os.getObjectById(id);
 
-            if (field != null) {
-                o = TypeUtil.getFieldValue(o, field);
+                if (field != null) {
+                    o = TypeUtil.getFieldValue(o, field);
+                }
+                context.putAttribute("object", o);
             }
-            context.putAttribute("object", o);
         }
 
-        String viewType = (String) request.getAttribute("viewType");
-        
         if (o instanceof InterMineObject) {
             List leafClds = new ArrayList();
             for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
@@ -88,6 +89,8 @@ public class ObjectViewController extends TilesAction
             }
             context.putAttribute("leafClds", leafClds);
 
+            String viewType = (String) request.getAttribute("viewType");
+        
             if (viewType.equals("summary")) {
                 Map primaryKeyFieldsMap = new LinkedHashMap();
                 Class c = o.getClass();
