@@ -27,15 +27,6 @@
     <!-- Add new news at the top here -->
     
     <item>
-      <title>FlyMine 1.0 Released</title>
-      <link>http://www.flymine.org/</link>
-      <description>
-        Initial public release of FlyMine.
-      </description>
-      <pubDate>Mon, 01 Nov 2004 11:39:21 GMT</pubDate>
-    </item>
-
-    <item>
       <title>FlyMine 1.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -45,5 +36,14 @@
       <pubDate>Fri, 18 Feb 2005 20:16:58 GMT</pubDate>
     </item>
     
+    <item>
+      <title>FlyMine 1.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Initial public release of FlyMine.
+      </description>
+      <pubDate>Mon, 01 Nov 2004 11:39:21 GMT</pubDate>
+    </item>
+
   </channel>
 </rss>
