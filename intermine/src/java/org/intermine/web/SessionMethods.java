@@ -48,12 +48,13 @@ public class SessionMethods
      * query fails for some reason, this method returns false and ActionErrors are set on the
      * request.
      *
-     * @param session  the http session
-     * @param request  the current http request
-     * @return         true if query ran successfully, false if an error occured
-     * @throws Exception if getting results info from paged results fails
+     * @param session   the http session
+     * @param request   the current http request
+     * @param saveQuery if true, query will be saved automatically
+     * @return  true if query ran successfully, false if an error occured
+     * @throws  Exception if getting results info from paged results fails
      */
-    public static boolean runQuery(HttpSession session, HttpServletRequest request)
+    public static boolean runQuery(HttpSession session, HttpServletRequest request, boolean saveQuery)
         throws Exception {
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -85,9 +86,19 @@ public class SessionMethods
 
         session.setAttribute(Constants.QUERY_RESULTS, pr);
         session.setAttribute(Constants.RESULTS_TABLE, pr);
-        String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
-        query.setInfo(pr.getResultsInfo());
-        saveQuery(request, queryName, query);
+        
+        if (saveQuery) {
+            String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
+            query.setInfo(pr.getResultsInfo());
+            saveQuery(request, queryName, query);
+
+            ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
+            if (messages == null) {
+                messages = new ActionMessages();
+            }
+            messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
+            request.setAttribute(Globals.MESSAGE_KEY, messages);
+        }
         
         return true;
     }
