@@ -140,6 +140,7 @@
     <pathelement location="${build.model}/psi"/>
     <pathelement location="${build.model}/go"/>
     <pathelement location="${build.model}/taxonomy"/>
+    <pathelement location="${build.model}/uniprot"/>
     <pathelement location="${build.model}/protein_structure"/>
   </path>
 
@@ -638,9 +639,60 @@
     </java>
   </target>
 
+  <!-- UNIPROT MODEL GENERATION -->
+
+  <!-- convert UNIPROT XML-Schema to OWL -->
+  <target name="uniprot-to-owl" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-xmlschema" inheritRefs="true">
+      <property name="model.name" value="uniprot"/>
+      <property name="pkg" value="org.flymine.model.uniprot"/>
+      <property name="build.model.dir" value="${build.model}/uniprot"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>    
+
+     <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/uniprot/uniprot_model.xml" />
+      <arg value="${build.model}/uniprot/uniprot.n3" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+  <!-- merge uniprot model with current genomic model owl -->
+  <target name="merge-uniprot-model" depends="prepare-genomic-model, uniprot-to-owl">
+    <copy file="${model}/uniprot/uniprot_merge_spec.n3" todir="${build.model}/uniprot/"/>
+
+    <!-- combine the uniprot merge_spec with current genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/uniprot/uniprot_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+
+    <!-- merge uniprot model with target genomic model -->
+    <!--<java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/uniprot/uniprot.n3" />
+      <arg value="http://www.flymine.org/model/uniprot#" />
+      <arg value="N3" />
+      <arg value="y" />
+    </java>-->
+  </target>
+
+
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, merge-phenotype-model, merge-go-model, merge-mage-model, merge-so-model">
+       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+       merge-ensembl-model, merge-phenotype-model, merge-go-model, merge-so-model,
+       merge-uniprot-model, merge-mage-model">
     <antcall target="create-genomic-model"/>
   </target>
  
@@ -1472,6 +1524,83 @@
     <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static"/>
   </target>
 
+  <target name="retrieve-uniprot" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.uniprot-src-items-std"/>
+    </ant>
+
+    <taskdef name="convert-xml" classname="org.intermine.task.XmlConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <convert-xml schema="${model}/uniprot/uniprot.xsd"
+                  model="uniprot"
+                  osName="osw.uniprot-src-items">
+      <fileset dir="/shared/data/uniprot">
+        <include name="uniprot_sprot.xml"/>
+        <include name="uniprot_trembl.xml"/>
+      </fileset>
+    </convert-xml>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+    </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.common-src-items"/>
+  </target>
+
+
+ <target name="translate-uniprot" depends="prepare-build-model, compile-uniprot-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.uniprot-tgt-items-std"/>
+    </ant>
+    <java classname="org.flymine.dataconversion.UniprotDataTranslator" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.uniprot-src-items" />
+      <arg value="osw.uniprot-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.common-tgt-items"/>
+  </target>
+
+  <target name="load-uniprot">
+    <taskdef name="load-uniprot" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="true"/>
+  </target>
+
+  <target name="build-uniprot-production" depends="translate-uniprot, load-uniprot"/>
+
+<!--  <target name="build-uniprot-production" depends="retrieve-uniprot"/>-->
+
 
   <!-- BUILD PRODUCTION DATABASE -->
 
@@ -1517,6 +1646,7 @@
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
+                                           build-uniprot-production,
                                            analyse-db-production,
                                            grant-db-production"/>
 
@@ -1749,6 +1879,21 @@
     </ant>
   </target>
 
+  <target name="compile-uniprot-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="uniprot"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="uniprot-test" depends="prepare-test, prepare-build-model, build-db-fulldatatest">
+    <copy file="${model}/uniprot/uniprot.xsd" toDir="${build.model}/uniprot"/>
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="uniprot"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
   <target name="compile-genomic-java" depends="jar-genomic">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1765,7 +1910,7 @@
   </target>
 
   <target name="test-models-inc"
-          depends="mage-test, ensembl-test, rnai-test, psi-test, orthologue-test, go-test, taxonomy-test">
+          depends="mage-test, ensembl-test, rnai-test, psi-test, orthologue-test, go-test, taxonomy-test, uniprot-test">
     <antcall target="test-report"/>
   </target>
 

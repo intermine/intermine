@@ -52,7 +52,7 @@ import org.apache.log4j.Logger;
  */
 public class MageConverter extends FileConverter
 {
-    private int opCount;
+    private long opCount;
     private long time;
     private long start;
 

@@ -42,6 +42,7 @@ import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.FieldNameAndValue;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
+import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
@@ -415,7 +416,7 @@ public class EnsemblDataTranslator extends DataTranslator
         String value = srcItem.getIdentifier();
         Set constraints = new HashSet();
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                                              srcNs + "object_xref", false));
+                    srcNs + "object_xref", false));
         constraints.add(new FieldNameAndValue("ensembl", value, true));
         Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
         // set specific ids and add synonyms
@@ -501,19 +502,19 @@ public class EnsemblDataTranslator extends DataTranslator
             protein.addReference(getOrgRef());
             if (srcItem.hasAttribute("seq_start")) {
                 protein.addAttribute(new Attribute("translationStart",
-                                                   srcItem.getAttribute("seq_start").getValue()));
+                            srcItem.getAttribute("seq_start").getValue()));
             }
             if (srcItem.hasAttribute("seq_end")) {
                 protein.addAttribute(new Attribute("translationEnd",
-                                                   srcItem.getAttribute("seq_end").getValue()));
+                            srcItem.getAttribute("seq_end").getValue()));
             }
             if (srcItem.hasReference("start_exon")) {
                 protein.addReference(new Reference("startExon",
-                                                   srcItem.getReference("start_exon").getRefId()));
+                            srcItem.getReference("start_exon").getRefId()));
             }
             if (srcItem.hasReference("end_exon")) {
                 protein.addReference(new Reference("endExon",
-                                                   srcItem.getReference("end_exon").getRefId()));
+                            srcItem.getReference("end_exon").getRefId()));
             }
             proteins.put(primaryAcc, protein);
             proteinSynonyms.addAll(synonyms);
@@ -539,7 +540,7 @@ public class EnsemblDataTranslator extends DataTranslator
         // get transcript
         Set constraints = new HashSet();
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                                              srcNs + "transcript", false));
+                    srcNs + "transcript", false));
         constraints.add(new FieldNameAndValue("gene", srcItem.getIdentifier(), true));
         Item transcript = ItemHelper.convert((org.intermine.model.fulldata.Item) srcItemReader
                                         .getItemsByDescription(constraints).iterator().next());
@@ -549,7 +550,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         constraints = new HashSet();
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                                              srcNs + "object_xref", false));
+                    srcNs + "object_xref", false));
         constraints.add(new FieldNameAndValue("ensembl", translationId, true));
         Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
         while (objectXrefs.hasNext()) {
@@ -657,7 +658,7 @@ public class EnsemblDataTranslator extends DataTranslator
         String value = identifier;
         Set constraints = new HashSet();
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                                              srcNs + ensemblType + "_stable_id", false));
+                    srcNs + ensemblType + "_stable_id", false));
         constraints.add(new FieldNameAndValue(ensemblType, value, true));
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
@@ -791,42 +792,42 @@ public class EnsemblDataTranslator extends DataTranslator
         Map paths = new HashMap();
         ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus",
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
                Collections.singleton(desc));
 
         HashSet descSet = new HashSet();
         //desc = new ItemPrefetchDescriptor("transcript.display_xref");
         //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref",
-        //                         ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        //ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         //descSet.add(desc);
 
         desc = new ItemPrefetchDescriptor(
                 "(transcript.translation");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("translation",
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descSet.add(desc);
         ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl)");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic(
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
         desc2.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#object_xref", false));
         desc.addPath(desc2);
         ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc2.addPath(desc3);
         ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
         desc4.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc3.addPath(desc4);
 
         desc = new ItemPrefetchDescriptor("(transcript <- transcript_stable_id.transcript)");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER, "transcript"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "transcript"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#transcript_stable_id", false));
         descSet.add(desc);
@@ -837,68 +838,68 @@ public class EnsemblDataTranslator extends DataTranslator
         descSet = new HashSet();
         //desc = new ItemPrefetchDescriptor("gene.display_xref");
         //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref",
-        //                         ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        //ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         //descSet.add(desc);
         desc = new ItemPrefetchDescriptor("(gene <- gene_stable_id.gene)");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#gene_stable_id", false));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("(gene <- transcript.gene)");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#transcript", false));
         desc2 = new ItemPrefetchDescriptor(
                 "(gene <- transcript.gene).translation");
         descSet.add(desc);
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("translation",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         desc3 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl)");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic(
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
         desc3.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#object_xref", false));
         desc2.addPath(desc3);
         desc4 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
         desc4.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc3.addPath(desc4);
         ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
                 "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
         desc5.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc4.addPath(desc5);
         paths.put("http://www.flymine.org/model/ensembl#gene", descSet);
 
         desc = new ItemPrefetchDescriptor("contig.dna");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("dna",
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         paths.put("http://www.flymine.org/model/ensembl#contig", Collections.singleton(desc));
 
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl)");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#object_xref", false));
         desc2 = new ItemPrefetchDescriptor(
                 "(translation <- object_xref.ensembl).xref");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc3 = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl).xref.external_db");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc2.addPath(desc3);
         desc.addPath(desc2);
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("(translation <- translation_stable_id.translation)");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER, "translation"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "translation"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#translation_stable_id", false));
         descSet.add(desc);
@@ -906,7 +907,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         desc = new ItemPrefetchDescriptor("(exon <- exon_stable_id.exon)");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER, "exon"));
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "exon"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                     "http://www.flymine.org/model/ensembl#exon_stable_id", false));
         paths.put("http://www.flymine.org/model/ensembl#exon", Collections.singleton(desc));
