@@ -141,7 +141,7 @@ public class UpdatePublications
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             if ("ERROR".equals(qName)) {
-                throw new SAXException("esummary returned an error message - is the pmid valid?");
+                name = qName;
             } else if ("Id".equals(qName)) {
                 name = "Id";
             } else {
@@ -161,7 +161,9 @@ public class UpdatePublications
          * @see DefaultHandler#endElement
          */
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if ("Id".equals(name)) {
+            if ("ERROR".equals(name)) {
+                throw new SAXException("Error retrieving pubmed record: "+characters);
+            } else if ("Id".equals(name)) {
                 publication = new MyItem("Publication");
                 toStore.add(publication);
                 publication.setAttribute("pubMedId", characters.toString());
