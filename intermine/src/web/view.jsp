@@ -92,7 +92,8 @@
     <div class="heading">
       <fmt:message key="view.actions"/>
     </div>
-    <div class="body" style="width:100%"> <%-- IE table width bug --%>
+    <div class="body">
+      <div style="width: 100%"> <%-- IE table width bug workaround --%>
       <table width="100%">
         <tr>
           <td align="left">
@@ -105,6 +106,7 @@
           </c:if>
         </tr>
       </table>
+      </div>
     </div>
   </c:otherwise>
 </c:choose>
