@@ -58,6 +58,10 @@
     <heading>SQL query optimiser</heading>
     <item><ulink url="sql_optimisation/using-query-optimiser">Using the SQL query optimiser in other projects</ulink></item>
 	<item><ulink url="sql_optimisation/cache">Implementation of the Optimiser cache</ulink></item>
+    <item><ulink url="sql_optimisation/proposal">Proposal to improve the optimiser for EXPLAINs</ulink></item>
+    <item><ulink url="sql_optimisation/proposal2">Proposal to improve the optimiser queries with a non-zero OFFSET</ulink></item>
+    <item><ulink url="sql_optimisation/proposal3">Proposal to improve the optimiser by producing faster optimised queries earlier</ulink></item>
+    <item><ulink url="sql_optimisation/proposal4">Proposal to improve the optimiser so that it scales well for the number of procomputed tables</ulink></item>
   </section>
 
   <section>
