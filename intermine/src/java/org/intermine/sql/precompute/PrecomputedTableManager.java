@@ -147,7 +147,7 @@ public class PrecomputedTableManager
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
         String queryString = pt.getQuery().getSQLString();
-        if (! queryStrings.contains(queryString)) {
+        if (!queryStrings.contains(queryString)) {
             addTableToDatabase(pt, indexes);
             precomputedTables.add(pt);
             queryStrings.add(queryString);
