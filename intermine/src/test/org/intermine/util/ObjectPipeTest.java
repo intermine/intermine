@@ -122,12 +122,13 @@ public class ObjectPipeTest extends TestCase
 
         sender.start();
 
-        assertEquals(4, progress);
-        assertTrue(op.hasNext());
-        assertEquals(new Integer(1), op.next());
         for (int i = 0; (i < 40) && (progress < 4); i++) {
             Thread.sleep(50);
         }
+        assertEquals(4, progress);
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(1), op.next());
+        Thread.sleep(200);
         assertEquals(4, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(2), op.next());
