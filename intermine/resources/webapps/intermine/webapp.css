@@ -42,6 +42,11 @@ form {
   margin: 3px;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
+  color: black;
+}
+
+.heading a {
+  color: black;
 }
 
 .box .body {
