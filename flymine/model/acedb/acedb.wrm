@@ -271,8 +271,8 @@
                 Designating_laboratory UNIQUE ?Laboratory XREF Gene_classes
                 Allele ?Allele	XREF Gene_class
                 Loci ?Locus XREF Gene_Class
-                Main_name  ?Gene_Class XREF Other_name
-		Other_name ?Gene_Class XREF Main_name
+                //Main_name  ?Gene_Class XREF Other_name
+		//Other_name ?Gene_Class XREF Main_name
 		CGC_approved // added by krb 24/01/02
 		CGC_unresolved Text // added by krb 28/01/02
                 Remark ?Text #Evidence
