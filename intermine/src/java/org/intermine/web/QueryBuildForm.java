@@ -196,6 +196,9 @@ public class QueryBuildForm extends ActionForm
             return null;
         }
         
+        parsedFieldValues = new HashMap();
+        parsedFieldOps = new HashMap();
+
         DisplayQueryClass displayQueryClass = (DisplayQueryClass) queryClasses.get(editingAlias);
         ActionErrors errors = new ActionErrors();
         ServletContext servletContext = session.getServletContext();
@@ -238,6 +241,7 @@ public class QueryBuildForm extends ActionForm
             }
 
         }
+
         //this is necessary because the controller needs to know if there were any errors
         this.errors = errors;
         return errors;
@@ -309,6 +313,6 @@ public class QueryBuildForm extends ActionForm
     }
             
 
-    private Map parsedFieldValues = new HashMap();
-    private Map parsedFieldOps = new HashMap();
+    private Map parsedFieldValues;
+    private Map parsedFieldOps;
 }
