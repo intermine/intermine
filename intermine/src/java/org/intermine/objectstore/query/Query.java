@@ -3,7 +3,7 @@ package org.flymine.objectstore.query;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
@@ -18,10 +18,10 @@ public class Query implements FromElement
 {
     private boolean distinct = true;
     private Constraint constraint = null;
-    private Set queryClasses = new HashSet(); // @element-type FromElement
+    private Set queryClasses = new LinkedHashSet(); // @element-type FromElement
     private List select = new ArrayList(); // @element-type QueryNode
     private List orderBy = new ArrayList(); // @element-type QueryNode
-    private Set groupBy = new HashSet(); // @element-type QueryNode
+    private Set groupBy = new LinkedHashSet(); // @element-type QueryNode
     private Map aliases = new HashMap();
 
     private int alias = 1;
@@ -132,6 +132,15 @@ public class Query implements FromElement
     public Query deleteFromOrderBy(QueryNode node) {
         orderBy.remove(node);
         return this;
+    }
+
+    /**
+     * Gets the ORDER BY clause of this Query
+     *
+     * @return the List of ORDER BY nodes
+     */
+    public List getOrderBy() {
+        return Collections.unmodifiableList(orderBy);
     }
 
     /**

@@ -63,6 +63,18 @@ public class SimpleConstraint implements Constraint
      */
     public static final int IS_NOT_NULL = 10;
 
+    private static final String OPERATIONS[] = {"",
+        " = ",
+        " != ",
+        " < ",
+        " <= ",
+        " > ",
+        " >= ",
+        " LIKE ",
+        " NOT LIKE ",
+        " IS NULL",
+        " IS NOT NULL"};
+
     protected QueryEvaluable qe1;
     protected QueryEvaluable qe2;
     protected boolean negated;
@@ -104,7 +116,7 @@ public class SimpleConstraint implements Constraint
         this.qe2 = qe2;
         this.negated = false;
 
-        if ((type < 1) || (type > 8)) {
+        if ((type < 1) || (type > 10)) {
             throw (new IllegalArgumentException("Invalid value for type: " + type));
         }
         if ((type == IS_NULL) || (type == IS_NOT_NULL)) {
@@ -201,5 +213,65 @@ public class SimpleConstraint implements Constraint
      */
     public int getType() {
         return type;
+    }
+
+    /**
+     * Get type of constraint, taking negated into account.
+     *
+     * @return integer value of operation type
+     */
+    public int getRealType() {
+        if (negated) {
+            switch(type) {
+                case EQUALS:
+                    return NOT_EQUALS;
+                case NOT_EQUALS:
+                    return EQUALS;
+                case LESS_THAN:
+                    return GREATER_THAN_EQUALS;
+                case GREATER_THAN_EQUALS:
+                    return LESS_THAN;
+                case GREATER_THAN:
+                    return LESS_THAN_EQUALS;
+                case LESS_THAN_EQUALS:
+                    return GREATER_THAN;
+                case MATCHES:
+                    return DOES_NOT_MATCH;
+                case DOES_NOT_MATCH:
+                    return MATCHES;
+                case IS_NULL:
+                    return IS_NOT_NULL;
+                case IS_NOT_NULL:
+                    return IS_NULL;
+            }
+        }
+        return type;
+    }
+
+    /**
+     * Returns the left argument of the constraint.
+     *
+     * @return the left-hand argument
+     */
+    public QueryEvaluable getArg1() {
+        return qe1;
+    }
+
+    /**
+     * Returns the right argument of the constraint.
+     *
+     * @return the right-hand argument
+     */
+    public QueryEvaluable getArg2() {
+        return qe2;
+    }
+
+    /**
+     * Returns the String representation of the operation.
+     *
+     * @return String representation
+     */
+    public String getOpString() {
+        return OPERATIONS[getRealType()];
     }
 }

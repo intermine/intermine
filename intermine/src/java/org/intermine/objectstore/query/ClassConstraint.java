@@ -69,6 +69,7 @@ public class ClassConstraint implements Constraint
         }
         this.type = type;
         this.negated = negated;
+        this.obj = null;
     }
 
     /**
@@ -110,6 +111,7 @@ public class ClassConstraint implements Constraint
         }
         this.type = type;
         this.negated = negated;
+        this.qc2 = null;
     }
 
     /**
@@ -141,6 +143,33 @@ public class ClassConstraint implements Constraint
     }
 
     /**
+     * Returns the QueryClass argument 1
+     *
+     * @return QueryClass arg1
+     */
+    public QueryClass getArg1() {
+        return qc1;
+    }
+
+    /**
+     * Returns the QueryClass argument 2
+     *
+     * @return QueryClass arg2
+     */
+    public QueryClass getArg2QueryClass() {
+        return qc2;
+    }
+
+    /**
+     * Returns the Object argument 2
+     *
+     * @return Object arg2
+     */
+    public Object getArg2Object() {
+        return obj;
+    }
+
+    /**
      * Tests whether two ClassConstraints are equal.
      *
      * @param obj the object to compare with
@@ -167,4 +196,13 @@ public class ClassConstraint implements Constraint
             + (5 * ((qc2 != null) ? qc2.hashCode() : obj.hashCode()));
     }
 
+    /**
+     * Returns a boolean whether or not the constraint is effectively "NOT EQUAL", rather than
+     * "EQUAL".
+     *
+     * @return true if the the query is NOT EQUAL
+     */
+    public boolean isNotEqual() {
+        return (type == 1 ? negated : !negated);
+    }
 }

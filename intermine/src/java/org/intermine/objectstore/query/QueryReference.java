@@ -29,4 +29,13 @@ public abstract class QueryReference
     public Class getType() {
         return type;
     }
+
+    /**
+     * Gets the fieldname of this QueryReference
+     *
+     * @return the field name
+     */
+    public String getFieldName() {
+        return fieldName;
+    }
 }

@@ -131,4 +131,39 @@ public class SubqueryConstraint implements Constraint
         return type;
     }
 
+    /**
+     * Get the query.
+     *
+     * @return the subquery of the constraint
+     */
+    public Query getQuery() {
+        return subquery;
+    }
+
+    /**
+     * Get the QueryEvaluable the query is compared with
+     *
+     * @return QueryEvaluable
+     */
+    public QueryEvaluable getQueryEvaluable() {
+        return qe;
+    }
+
+    /**
+     * Get the QueryClass the query is compare with
+     *
+     * @return QueryClass
+     */
+    public QueryClass getQueryClass() {
+        return cls;
+    }
+
+    /**
+     * Returns a boolean whether or not the constraint is effectively "NOT IN", rather than "IN".
+     *
+     * @return true if the query is NOT IN
+     */
+    public boolean isNotIn() {
+        return (type == 1 ? negated : !negated);
+    }
 }

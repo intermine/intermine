@@ -1,6 +1,7 @@
 package org.flymine.objectstore.query;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Groups a series of Constraints together.  Specify whether in the query
@@ -24,7 +25,7 @@ public class ConstraintSet implements Constraint
     public static final boolean OR = true;
 
     protected boolean disjunctive;
-    protected HashSet constraints;
+    protected LinkedHashSet constraints;
     protected boolean negated;
 
 
@@ -34,9 +35,19 @@ public class ConstraintSet implements Constraint
      * @param disjunctive relationship between constraints (true = OR, false = AND)
      */
     public ConstraintSet(boolean disjunctive) {
+        this(disjunctive, false);
+    }
+
+    /**
+     * Construct empty ConstraintSet setting disjunctive (true = OR), and with boolean negated field
+     *
+     * @param disjunctive relationship between constraints (true = OR, false = AND)
+     * @param negated true to negate the sense of the whole ConstraintSet
+     */
+    public ConstraintSet(boolean disjunctive, boolean negated) {
         this.disjunctive = disjunctive;
-        this.constraints = new HashSet();
-        this.negated = false;
+        this.constraints = new LinkedHashSet();
+        this.negated = negated;
     }
 
     /**
@@ -94,5 +105,14 @@ public class ConstraintSet implements Constraint
      */
     public boolean isNegated() {
         return negated;
+    }
+
+    /**
+     * Returns the Set of constraints.
+     *
+     * @return Set of Constraint objects
+     */
+    public Set getConstraints() {
+        return constraints;
     }
 }
