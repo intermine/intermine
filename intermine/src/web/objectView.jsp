@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <tiles:importAttribute/>
 
@@ -33,12 +34,12 @@
       </span>
       <br/>
       <div style="margin-left: 8px">
-        <c:forEach var="cld" items="${leafClds}">
-          <c:set var="cld" value="${cld}" scope="request"/>
-          <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
-          <c:set var="object" value="${object}" scope="request"/>
-          <c:set var="primaryKeyFields" value="${primaryKeyFields}" scope="request"/>
-          <tiles:insert name="/objectFields.jsp"/>
+        <c:forEach items="${DISPLAY_OBJECT_CACHE[object].fieldExprs}" var="expr">
+          <im:eval evalExpression="object.${expr}" evalVariable="outVal"/>
+          <div>
+            <span class="attributeField">${expr}</span>
+            <span>${outVal}</span>
+          </div>
         </c:forEach>
       </div>
     </c:otherwise>
