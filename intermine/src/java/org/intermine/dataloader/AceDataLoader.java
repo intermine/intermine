@@ -43,13 +43,13 @@ public class AceDataLoader extends DataLoader
     public AceDataLoader(Model model, IntegrationWriter iw) {
         super(model, iw);
     }
-    
+
     /**
-     * Static method to unmarshall business objects from a given xml file and call
+     * Static method to unmarshall business objects from a given Ace server and call
      * store on each.
      *
      * @param source access to AceDb
-     * @throws FlyMineException if anything goes wrong with xml or storing
+     * @throws FlyMineException if anything goes wrong with ace or storing
      */
     public void processAce(AceURL source) throws FlyMineException {
         try {
@@ -88,8 +88,12 @@ public class AceDataLoader extends DataLoader
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if an object cannot be instantiated
      */
-    protected  Set processAceObjects(AceSet set)
+    protected Set processAceObjects(AceSet set)
         throws AceException, FlyMineException {
+        if (set == null) {
+            throw new NullPointerException("set must not be null");
+        }
+
         HashSet ret = new HashSet();
         Iterator aceObjIter = set.iterator();
         while (aceObjIter.hasNext()) {
@@ -112,6 +116,9 @@ public class AceDataLoader extends DataLoader
      */
     protected Object processAceObject(AceObject aceObject)
         throws AceException, FlyMineException {
+        if (aceObject == null) {
+            throw new NullPointerException("aceObject must not be null");
+        }
         Object currentObject = null;
         try {
             String clazzName = ((AceObject) aceObject).getClassName();
