@@ -87,7 +87,7 @@ if test "$FILENAME" == "stdin" ; then
 	cat >$FILENAME
 fi
 
-BBOX=`gs -q -sDEVICE=bbox -sOutputFile=- -r10x10 -g10000x10000 -dBATCH -dNOPAUSE $FILENAME 2>&1 | grep "%%BoundingBox:" | sed -e "s/^%%BoundingBox: //"`
+BBOX=`gs -q -sDEVICE=bbox -sOutputFile=- -r100x100 -g100000x100000 -dBATCH -dNOPAUSE $FILENAME 2>&1 | grep "%%BoundingBox:" | sed -e "s/^%%BoundingBox: //"`
 WIDTH=`echo $BBOX | sed -e "s/^[^ ]\+ [^ ]\+ \([^ ]\+\) [^ ]\+$/\1/g"`
 HEIGHT=`echo $BBOX | sed -e "s/^[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\)$/\1/g"`
 LEFT=`echo $BBOX | sed -e "s/^\([^ ]\+\) [^ ]\+ [^ ]\+ [^ ]\+$/\1/g"`
