@@ -232,7 +232,7 @@ public class DataLoaderHelperTest extends QueryTestCase
 
     public void testGetDescriptors() throws Exception {
         Map expected = new HashMap();
-        expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Company", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource4"}));
         expected.put("Employable", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
