@@ -35,14 +35,14 @@ import org.flymine.xml.full.ReferenceList;
 import org.apache.log4j.Logger;
 
 /**
- * Class to read a Chado database and produce a data representation
- * 
+ * Class to read a source database and produce a data representation
+ *
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class ChadoConvertor extends DataConvertor
+public class DBConvertor extends DataConvertor
 {
-    protected static final Logger LOG = Logger.getLogger(ChadoConvertor.class);
+    protected static final Logger LOG = Logger.getLogger(DBConvertor.class);
     protected static final String ENDL = System.getProperty("line.separator");
     protected Connection c = null;
     protected Writer writer;
@@ -56,7 +56,7 @@ public class ChadoConvertor extends DataConvertor
      * @param db the Database
      * @param processor the ItemProcessor used to handle the resultant Items
      */
-    protected ChadoConvertor(Model model, Database db, ItemProcessor processor) {
+    protected DBConvertor(Model model, Database db, ItemProcessor processor) {
         super(processor);
         this.model = model;
         this.db = db;
@@ -86,7 +86,7 @@ public class ChadoConvertor extends DataConvertor
         processor.postProcess();
     }
 
-    /** 
+    /**
      * Process the items in the database for a given ClassDescriptor
      *
      * @param cld the ClassDescriptor
@@ -97,6 +97,7 @@ public class ChadoConvertor extends DataConvertor
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         ResultSet r = executeQuery(c, "SELECT * FROM " + clsName
                                    + " ORDER BY " + clsName + "_id LIMIT 1");
+
         while (r.next()) {
             String clsId = r.getObject(clsName + "_id").toString();
             Item item = new Item();
@@ -158,7 +159,7 @@ public class ChadoConvertor extends DataConvertor
 
     /**
      * Try to find the indirection table for a many-to-many relationship
-     * 
+     *
      * @param clsName the name of one of the classes
      * @param otherClsName the name of the other class
      * @return the name of the indirection table
@@ -174,7 +175,7 @@ public class ChadoConvertor extends DataConvertor
 
     /**
      * Execute an SQL query on a specified Connection
-     * 
+     *
      * @param c the Connection
      * @param sql the statement to execute
      * @return a ResultSet

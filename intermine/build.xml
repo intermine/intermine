@@ -365,6 +365,15 @@
      </ant>
    </target>
 
+  <!-- Chado items -->
+    <target name="build-db-chado-items" depends="convert-chado">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.chado-items"/>
+    </ant>
+  </target>
+
   <!-- Testmodel -->
   <target name="build-testmodel" depends="compile-main" >
     <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
@@ -519,12 +528,13 @@
   </target>
 
   <!-- test out creating java objects from chado model -->
-  <target name="retrieve-chado" depends="convert-chado">
-    <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.ChadoRetrieverTask">
+  <target name="retrieve-chado" depends="convert-chado, build-db-chado-items">
+    <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.DBRetrieverTask">
       <classpath refid="test.class.path"/>
     </taskdef>
     
-    <retrieve-chado database="db.chado" model="chado" destFile="${build.tmp}/chadoFullData.xml"/>
+    <retrieve-chado database="db.chado" model="chado" destFile="${build.tmp}/chadoFullData.xml"
+                    osName="osw.chado-items"/>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->

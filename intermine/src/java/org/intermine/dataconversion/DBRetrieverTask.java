@@ -25,17 +25,18 @@ import org.apache.tools.ant.BuildException;
 import org.apache.log4j.Logger;
 
 /**
- * Initiates retrieval and conversion of Chado data
+ * Initiates retrieval and conversion of data from a source database
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class ChadoRetrieverTask extends Task
+public class DBRetrieverTask extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(ChadoRetrieverTask.class);
-    
+    protected static final Logger LOG = Logger.getLogger(DBRetrieverTask.class);
+
     protected String database;
     protected String model;
+    protected String osName;
     protected File destFile;
 
     /**
@@ -55,13 +56,21 @@ public class ChadoRetrieverTask extends Task
     }
 
     /**
+     * Set the objectstore name
+     * @param model the model name
+     */
+    public void setOsName(String osName) {
+        this.osName = osName;
+    }
+
+    /**
      * Set the destination file
      * @param destFile the destination file
      */
     public void setDestFile(File destFile) {
         this.destFile = destFile;
     }
-    
+
     /**
      * Run the task
      * @throws BuildException if a problem occurs
@@ -82,8 +91,9 @@ public class ChadoRetrieverTask extends Task
             Database db = DatabaseFactory.getDatabase(database);
             Model m = Model.getInstanceByName(model);
             writer = new BufferedWriter(new FileWriter (destFile));
-            new ChadoConvertor(m, db, new XmlItemProcessor(writer)).process();
-        } catch (Exception e) {            
+            new DBConvertor(m, db, new ObjectStoreItemProcessor(org.flymine.objectstore.ObjectStoreWriterFactory.getObjectStoreWriter(osName))).process();
+            //new ChadoConvertor(m, db, new XmlItemProcessor(writer)).process();
+        } catch (Exception e) {
             throw new BuildException(e);
         } finally {
             try {
@@ -95,4 +105,4 @@ public class ChadoRetrieverTask extends Task
             }
         }
     }
-}        
+}

@@ -39,10 +39,10 @@ import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
 import org.flymine.util.TypeUtil;
 
-public class ChadoConvertorTest extends TestCase {
+public class DBConvertorTest extends TestCase {
     private Map map;
     private Model model;
-    private ChadoConvertor convertor;
+    private DBConvertor convertor;
     private Database db;
     private MockSingleRowResultSet blank;
     private Collection items;
@@ -52,7 +52,7 @@ public class ChadoConvertorTest extends TestCase {
         model = Model.getInstanceByName("testmodel");
         db = DatabaseFactory.getDatabase("db.unittest");
         items = new ArrayList();
-        convertor = new MockChadoConvertor(model, db, new MockItemProcessor(items));
+        convertor = new MockDBConvertor(model, db, new MockItemProcessor(items));
         blank = new MockSingleRowResultSet();
         blank.next();
     }
@@ -322,7 +322,7 @@ public class ChadoConvertorTest extends TestCase {
         item2.setIdentifier("13");
 
         StringWriter sw = new StringWriter();
-        new MockChadoConvertor(model, db, new XmlItemProcessor(sw)).process();
+        new MockDBConvertor(model, db, new XmlItemProcessor(sw)).process();
         assertEquals(FullRenderer.render(Arrays.asList(new Object[] {item, item2})), sw.toString());
     }
 
@@ -336,8 +336,8 @@ public class ChadoConvertorTest extends TestCase {
         }
     }
 
-    class MockChadoConvertor extends ChadoConvertor {
-        public MockChadoConvertor(Model model, Database db, ItemProcessor processor) {
+    class MockDBConvertor extends DBConvertor {
+        public MockDBConvertor(Model model, Database db, ItemProcessor processor) {
             super(model, db, processor);
         }
 
