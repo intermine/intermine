@@ -43,7 +43,6 @@
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
-  <property name="build.resources.test" location="${build.resources}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
@@ -103,19 +102,14 @@
   </path>
 
   <path id="webapp.class.path">
-    <fileset dir="${lib}">
-      <patternset refid="lib.webapp"/>
-    </fileset>
-    <pathelement location="${build.model}/genomic"/>
+    <path refid="base.class.path"/>
     <fileset dir="${build.webapp.lib}">
       <include name="*.jar"/>
     </fileset>
   </path>
 
   <path id="webservice.class.path">
-    <fileset dir="${lib}">
-      <patternset refid="lib.build"/>
-    </fileset>
+    <path refid="base.class.path"/>
     <fileset dir="${build.webservice.lib}">
       <include name="*.jar"/>
     </fileset>
@@ -129,7 +123,7 @@
 
   <path id="models.class.path">
     <path refid="base.class.path"/>
-    <pathelement path="${build.resources.test}"/>
+    <pathelement location="${build.model}/userprofile"/>
     <pathelement location="${build.model}/acedb"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
@@ -189,17 +183,11 @@
   </target>
 
   <target name="prepare-test" depends="prepare">
-    <mkdir dir="${build.resources.test}" />
-
-    <copy todir="${build.resources}" flatten="true" includeEmptyDirs="false">
+    <copy todir="${build.resources}" flatten="true" includeEmptyDirs="false" overwrite="true">
       <fileset dir="${resources}/test/">
-        <include name="**/*"/>
         <exclude name="default.intermine.properties"/>
       </fileset>
     </copy>
-
-    <!-- overwrite default.intermine.properties with test properties -->
-    <copy todir="${build.resources}" file="${resources}/test/default.intermine.properties" overwrite="true"/>
   </target>
 
   <target name="prepare-dist">
@@ -1456,9 +1444,7 @@
     </ant>
   </target>
 
-
-
-    <target name="build-db-fulldatatest" depends="prepare-build-model, prepare-test">
+  <target name="build-db-fulldatatest" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1658,7 +1644,7 @@
     </unwar>
     <copy file="${intermine.war.path}" tofile="${dist.webapp}/flymine.war" verbose="true"/>
     <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
-      <property name="war" value="${dist.webapp}/flymine.war"/> 
+      <property name="war" value="${dist.webapp}/flymine.war"/>
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="webapp.class.path"/>
     </ant>
@@ -1717,6 +1703,9 @@
   </target>
 
   <target name="build-db-userprofile" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties" 
+          overwrite="true" verbose="true"/>
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="userprofile"/>
       <reference torefid="class.path" refid="models.class.path"/>
