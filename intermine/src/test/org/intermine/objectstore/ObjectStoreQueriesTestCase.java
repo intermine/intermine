@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.lang.reflect.*;
 import java.beans.*;
+import java.net.URL;
+import java.io.*;
+
+import org.exolab.castor.mapping.*;
+import org.exolab.castor.xml.*;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.ObjectStoreWriter;
@@ -866,17 +871,18 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     */
 
     private void setUpData() throws Exception {
-        Company p1 = p1(), p2 = p2();
-        Contractor c1 = c1(), c2 = c2();
-        p1.setContractors(Arrays.asList(new Object[] { c1, c2 }));
-        p2.setContractors(Arrays.asList(new Object[] { c1, c2 }));
-        p1.setOldContracts(Arrays.asList(new Object[] {c1, c1, c2, c2}));
-        p2.setOldContracts(Arrays.asList(new Object[] {c1, c1, c2, c2}));
-        c1.setCompanys(Arrays.asList(new Object[] {p1, p2}));
-        c2.setCompanys(Arrays.asList(new Object[] {p1, p2}));
-        c1.setOldComs(Arrays.asList(new Object[] {p1, p1, p2, p2}));
-        c2.setOldComs(Arrays.asList(new Object[] {p1, p1, p2, p2}));
-        map(flatten(Arrays.asList(new Object[] { p1, p2 })));
+
+        URL mapFile = getClass().getClassLoader().getResource("castor_xml_testmodel.xml");
+        Mapping map = new Mapping();
+        map.loadMapping(mapFile);
+
+        URL testdataUrl = ObjectStoreQueriesTestCase.class.getClassLoader()
+            .getResource("test/testmodel.xml");
+
+        Reader reader = new FileReader(testdataUrl.getFile());
+        Unmarshaller unmarshaller = new Unmarshaller(map);
+        List result = (List)unmarshaller.unmarshal(reader);
+        map(flatten(result));
     }
 
     private void map(Collection c) throws Exception {
@@ -922,109 +928,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                 flatten_(getter.invoke(o, new Object[] {}), c);
             }
         }
-    }
-
-    protected Contractor c1() {
-        Address a1 = new Address();
-        a1.setAddress("Contractor Personal Street, AVille");
-        Address a2 = new Address();
-        a2.setAddress("Contractor Business Street, AVille");
-        Contractor c = new Contractor();
-        c.setName("ContractorA");
-        c.setPersonalAddress(a1);
-        c.setBusinessAddress(a2);
-        return c;
-    }
-
-    protected Contractor c2() {
-        Address a1 = new Address();
-        a1.setAddress("Contractor Personal Street, BVille");
-        Address a2 = new Address();
-        a2.setAddress("Contractor Business Street, BVille");
-        Contractor c = new Contractor();
-        c.setName("ContractorB");
-        c.setPersonalAddress(a1);
-        c.setBusinessAddress(a2);
-        return c;
-    }
-
-    protected Company p1() {
-        Address a1 = new Address();
-        a1.setAddress("Company Street, AVille");
-        Address a2 = new Address();
-        a2.setAddress("Employee Street, AVille");
-        Company p = new Company();
-        p.setName("CompanyA");
-        p.setVatNumber(1234);
-        p.setAddress(a1);
-        Employee e1 = new Manager();
-        e1.setName("EmployeeA1");
-        e1.setFullTime(true);
-        e1.setAddress(a2);
-        e1.setAge(10);
-        Employee e2 = new Employee();
-        e2.setName("EmployeeA2");
-        e2.setFullTime(true);
-        e2.setAddress(a2);
-        e2.setAge(20);
-        Employee e3 = new Employee();
-        e3.setName("EmployeeA3");
-        e3.setFullTime(false);
-        e3.setAddress(a2);
-        e3.setAge(30);
-        Department d1 = new Department();
-        d1.setName("DepartmentA1");
-        d1.setManager((Manager) e1);
-        d1.setEmployees(Arrays.asList(new Object[] { e1, e2, e3 }));
-        e1.setDepartment(d1);
-        e2.setDepartment(d1);
-        e3.setDepartment(d1);
-        d1.setCompany(p);
-        p.setDepartments(Arrays.asList(new Object[] { d1 }));
-        return p;
-    }
-
-    protected Company p2() {
-        Address a1 = new Address();
-        a1.setAddress("Company Street, BVille");
-        Address a2 = new Address();
-        a2.setAddress("Employee Street, BVille");
-        Company p = new Company();
-        p.setName("CompanyB");
-        p.setVatNumber(5678);
-        p.setAddress(a1);
-        CEO e1 = new CEO();
-        e1.setName("EmployeeB1");
-        e1.setFullTime(true);
-        e1.setAddress(a2);
-        e1.setAge(40);
-        e1.setTitle("Mr.");
-        e1.setSalary(45000);
-        Employee e2 = new Employee();
-        e2.setName("EmployeeB2");
-        e2.setFullTime(true);
-        e2.setAddress(a2);
-        e2.setAge(50);
-        Employee e3 = new Manager();
-        e3.setName("EmployeeB3");
-        e3.setFullTime(true);
-        e3.setAddress(a2);
-        e3.setAge(60);
-        Department d1 = new Department();
-        d1.setName("DepartmentB1");
-        d1.setManager(e1);
-        d1.setEmployees(Arrays.asList(new Object[] { e1, e2 }));
-        e1.setDepartment(d1);
-        e2.setDepartment(d1);
-        d1.setCompany(p);
-         Department d2 = new Department();
-        d2.setName("DepartmentB2");
-        d2.setManager((Manager) e3);
-        d2.setEmployees(Arrays.asList(new Object[] { e3 }));
-        e3.setDepartment(d2);
-        d2.setCompany(p);
-        p.setDepartments(Arrays.asList(new Object[] { d1, d2 }));
-        return p;
     }
 
 }
