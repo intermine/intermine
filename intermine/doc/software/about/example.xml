@@ -14,15 +14,7 @@
     Assume that our organisation model is described using the following UML diagram, drawn using a graphical editor such as ArgoUML. InterMine is able to read such diagrams directly, and so this is often the best way to describe data for which no model has been predefined.
   </para>
 
-  <table>
-    <tbody>
-      <row>
-        <entry>
-          <inlinegraphic fileref="example_model" format="PNG" align="middle"/>
-        </entry>
-      </row>
-    </tbody>
-  </table>
+  <inlinegraphic fileref="example" format="PNG" align="center"/>
   
   <para>
  It is important to note that InterMine generates Java source code for the classes in the model, and transforms all data into instances of these classes prior to storage. The canonical form for data is Java objects, but InterMine does not favour any particular data file format. For the sake of simplicity consider the data to be in the following XML format, which should be fairly self-explanatory when read in conjunction with the diagram above.
