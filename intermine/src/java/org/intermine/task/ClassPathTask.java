@@ -2,7 +2,6 @@ package org.flymine.task;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
@@ -30,9 +29,9 @@ import org.apache.tools.ant.types.Reference;
 public class ClassPathTask extends Task
 {
 
-    protected Path classpath;
+    protected Path classpath = null;
 
-    private AntClassLoader loader;
+    private AntClassLoader loader = null;
 
     /**
      * Set the classpath for loading the driver.
@@ -69,6 +68,17 @@ public class ClassPathTask extends Task
         createClasspath().setRefid(r);
     }
 
+
+    /**
+     * Set the ClassLoader to be used by this Task. Used only in testing.
+     *
+     * @param loader the ClassLoader to use
+     */
+    protected void setClassLoader(AntClassLoader loader) {
+        this.loader = loader;
+    }
+
+
     /**
      * Process the classpath. This involves setting the thread context
      * class loader and then loading the actual class by name, so that
@@ -84,17 +94,12 @@ public class ClassPathTask extends Task
         try {
             Class clazz;
             if (classpath != null) {
-                log("Loading " + actualClass + " using AntClassLoader with classpath " + classpath,
-                        Project.MSG_INFO);
-
                 loader = new AntClassLoader(project, classpath);
-                log("loading", Project.MSG_INFO);
+            }
+            if (loader != null) {
                 clazz = loader.loadClass(actualClass);
-                log("setting", Project.MSG_INFO);
                 loader.setThreadContextLoader();
-                log("done", Project.MSG_INFO);
             } else {
-                log("Loading " + actualClass + " using system loader.", Project.MSG_INFO);
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 clazz = Class.forName(actualClass);
             }
