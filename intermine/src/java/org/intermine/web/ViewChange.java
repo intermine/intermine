@@ -26,6 +26,7 @@ import org.apache.struts.Globals;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.objectstore.ObjectStoreLimitReachedException;
 
 import org.intermine.web.results.ChangeResultsForm;
 
@@ -141,9 +142,14 @@ public class ViewChange extends DispatchAction
                 errors = new ActionErrors();
                 request.setAttribute(Globals.ERROR_KEY, errors);
             }
-            String key = (e instanceof ObjectStoreQueryDurationException)
-                ? "errors.query.estimatetimetoolong"
-                : "errors.query.objectstoreerror";
+            String key;
+            if (e instanceof ObjectStoreQueryDurationException) {
+                key = "errors.query.estimatetimetoolong";
+            } else if (e instanceof ObjectStoreLimitReachedException) {
+                key = "errors.query.limitreached";
+            } else {
+                key = "errors.query.objectstoreerror";
+            }
             errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
             return mapping.findForward("query");
         }
