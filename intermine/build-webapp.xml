@@ -64,8 +64,6 @@
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF/lib">
       <fileset dir="${lib}">
-        <patternset refid="lib.common"/>
-        <patternset refid="lib.antlr"/>
         <patternset refid="lib.webapp.intermine"/>
       </fileset>
       <fileset dir="${dist}" includes="intermine*.jar"/>
