@@ -63,6 +63,15 @@
       </c:if>
 
     </div>
+    
+    <c:if test="${IS_SUPERUSER}">
+      <div class="admin-msg">
+        <span class="smallnote">
+          <fmt:message key="intermine.superuser.msg"/>
+        </span>
+      </div>
+    </c:if>
+    
     <tiles:get name="footer"/>
   </body>
 </html:html>
