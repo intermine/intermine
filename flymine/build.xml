@@ -16,7 +16,7 @@
   <!-- used by build-model.xml -->
   <property name="packagename" value="org.flymine.model"/>
 
-  <property name="intermine.dist.path" location="../intermine-clean/dist"/>
+  <property name="intermine.dist.path" location="../intermine/dist"/>
   <property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/>
   <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
 
