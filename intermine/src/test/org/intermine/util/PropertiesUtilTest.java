@@ -53,4 +53,42 @@ public class PropertiesUtilTest extends TestCase
         assertEquals(0, p.size());
     }
 
+    public void testStripStartNullProps() throws Exception {
+        try {
+            PropertiesUtil.stripStart(null, new Properties());
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+
+    }
+
+    public void testStripStartNullProperties() throws Exception {
+        try {
+            PropertiesUtil.stripStart("blahblah", null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
+
+    public void testStripStartExists() throws Exception {
+
+        Properties p1 = PropertiesUtil.getPropertiesStartingWith("testprop", props);
+        Properties p2 = PropertiesUtil.stripStart("testprop", p1);
+
+        assertEquals(2, p2.size());
+        assertEquals("myname", p2.get("name"));
+        assertEquals("myaddress", p2.get("address"));
+
+    }
+
+    public void testStripStartNotExists() throws Exception {
+
+        Properties p = PropertiesUtil.stripStart("nothing", props);
+
+        assertEquals(0, p.size());
+    }
+
+
 }
