@@ -38,6 +38,8 @@ import org.apache.log4j.Logger;
 public class PrecomputedTable implements SQLStringable, Comparable
 {
     private static final Logger LOG = Logger.getLogger(PrecomputedTable.class);
+    /** The name of the field that is generated as the order by field */
+    public static final String ORDERBY_FIELD = "orderby_field";
     protected Query q;
     protected String name;
     protected Map valueMap;
@@ -138,7 +140,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
         }
 
         if (useOrderByField) {
-            orderByField = "orderby_field";
+            orderByField = ORDERBY_FIELD;
             List orderBy = q.getOrderBy();
             StringBuffer extraBuffer = new StringBuffer();
             for (int i = orderBy.size() - 1; i > 0; i--) {
@@ -150,7 +152,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
                 extraBuffer.append(") + ");
             }
             extraBuffer.append("(" + ((SQLStringable) orderBy.get(orderBy.size() - 1))
-                    .getSQLString() + "::numeric) AS orderby_field");
+                    .getSQLString() + "::numeric) AS " + ORDERBY_FIELD);
             generationSqlString = "CREATE TABLE " + name + " AS "
                 + q.getSQLStringForPrecomputedTable(extraBuffer.toString());
         } else {
