@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,22 +19,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryCloner;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.fql.FqlQueryParser;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.fql.FqlQueryParser;
 
-import org.flymine.model.testmodel.*;
+import org.intermine.model.testmodel.*;
 
 /**
  * TestCase for all ObjectStores
@@ -511,7 +511,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     }
 
     public void testGetObjectMultipleTimes() throws Exception {
-        Query q = FqlQueryParser.parse(new FqlQuery("select Secretary from Secretary where Secretary.name = 'Secretary1'", "org.flymine.model.testmodel"));
+        Query q = FqlQueryParser.parse(new FqlQuery("select Secretary from Secretary where Secretary.name = 'Secretary1'", "org.intermine.model.testmodel"));
         Secretary a = (Secretary) ((List) os.execute(q).get(0)).get(0);
 
         Secretary b = (Secretary) os.getObjectById(a.getId());

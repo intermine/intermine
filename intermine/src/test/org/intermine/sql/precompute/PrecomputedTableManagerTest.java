@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,11 +17,11 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.Database;
-import org.flymine.sql.query.*;
-import org.flymine.util.DatabaseUtil;
-import org.flymine.util.Util;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.Database;
+import org.intermine.sql.query.*;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.util.Util;
 
 public class PrecomputedTableManagerTest extends TestCase
 {

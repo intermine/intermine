@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.flymine.metadata.Model;
+import org.intermine.metadata.Model;
 
 public class CreateIndexesTaskTest extends TestCase
 {
@@ -35,7 +35,7 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index Department__company on Department(companyId)");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
-        task.processClassDescriptor(m.getClassDescriptorByName("org.flymine.model.testmodel.Department"));
+        task.processClassDescriptor(m.getClassDescriptorByName("org.intermine.model.testmodel.Department"));
         assertEquals(expected, task.sqlStatements);
     }
 
@@ -46,7 +46,7 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index HasSecretarysSecretarys__Secretarys on HasSecretarysSecretarys(Secretarys)");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
-        task.processClassDescriptor(m.getClassDescriptorByName("org.flymine.model.testmodel.HasSecretarys"));
+        task.processClassDescriptor(m.getClassDescriptorByName("org.intermine.model.testmodel.HasSecretarys"));
         assertEquals(expected, task.sqlStatements);
     }
 

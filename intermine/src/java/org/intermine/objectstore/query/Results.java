@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreLimitReachedException;
-import org.flymine.util.CacheMap;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreLimitReachedException;
+import org.intermine.util.CacheMap;
 
 /**
  * Results representation as a List of ResultRows

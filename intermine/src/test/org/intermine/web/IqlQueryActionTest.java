@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,7 +10,7 @@ package org.flymine.web;
  *
  */
 
-import org.flymine.objectstore.query.Query;
+import org.intermine.objectstore.query.Query;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -62,7 +62,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Query composer");
         actionPerform();
         verifyForward("buildquery");
-        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_",
+        assertEquals("SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_",
                      ((Query) getSession().getAttribute(Constants.QUERY)).toString());
         verifyNoActionErrors();
     }

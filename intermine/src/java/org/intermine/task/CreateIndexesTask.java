@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.dataloader.DataLoaderHelper;
-import org.flymine.dataloader.PrimaryKey;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.MetaDataException;
-import org.flymine.util.DatabaseUtil;
-import org.flymine.util.StringUtil;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.dataloader.DataLoaderHelper;
+import org.intermine.dataloader.PrimaryKey;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * Task to create indexes on a database holding objects conforming to a given model by

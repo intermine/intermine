@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,8 +13,8 @@ package org.flymine.dataconversion;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;

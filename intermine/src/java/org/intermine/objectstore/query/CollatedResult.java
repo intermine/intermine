@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,8 +12,8 @@ package org.flymine.objectstore.query;
 
 import java.util.Iterator;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * A CollatedResult wraps the result of a Query along with another

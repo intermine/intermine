@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,7 +20,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 
 public class Dag2OwlTest extends TestCase{
-    String namespace = "http://www.flymine.org/namespace#";
+    String namespace = "http://www.intermine.org/namespace#";
 
     public void testGenerateClassName() throws Exception {
         DagTerm a = new DagTerm("SO:42", "large gene");

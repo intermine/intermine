@@ -1,4 +1,4 @@
-package org.flymine.sql;
+package org.intermine.sql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine

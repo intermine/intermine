@@ -1,4 +1,4 @@
-package org.flymine.objectstore.translating;
+package org.intermine.objectstore.translating;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,11 +10,11 @@ package org.flymine.objectstore.translating;
  *
  */
 
-import org.flymine.metadata.MetaDataException;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Query;
-import org.flymine.model.FlyMineBusinessObject;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.model.FlyMineBusinessObject;
 
 /**
  * Interface specifying operations required for inline translation of queries and data objects

@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,13 +15,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.flymine.util.DatabaseUtil;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 
 /**
  * Map FlyMine metadata to a Torque database schema in FlyMine format

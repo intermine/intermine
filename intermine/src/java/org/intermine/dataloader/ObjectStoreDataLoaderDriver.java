@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,9 +10,9 @@ package org.flymine.dataloader;
  *
  */
 
-import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
+import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
 
 import org.apache.tools.ant.BuildException;
 

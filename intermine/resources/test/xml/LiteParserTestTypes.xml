@@ -1,4 +1,4 @@
-<object class="org.flymine.model.testmodel.Types" implements="">
+<object class="org.intermine.model.testmodel.Types" implements="">
   <field name="id" value="1234"/>
   <field name="name" value="Types1"/>
   <field name="floatType" value="1.2"/>

@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -30,7 +30,7 @@ public class TreeControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initTree");
 
-        String model = "org.flymine.model.testmodel.";
+        String model = "org.intermine.model.testmodel.";
         Set openClasses = new HashSet();
         openClasses.add(model + "Employable");
         openClasses.add(model + "Thing");

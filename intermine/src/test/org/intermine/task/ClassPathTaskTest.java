@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -39,7 +39,7 @@ public class ClassPathTaskTest extends TestCase
         ClassLoader parentClassLoader = this.getClass().getClassLoader();
         AntClassLoader childClassLoader = new AntClassLoader(parentClassLoader, false);
         task.setClassLoader(childClassLoader);
-        Object instance = task.loadClass("org.flymine.task.DummyDriver");
+        Object instance = task.loadClass("org.intermine.task.DummyDriver");
 
         assertEquals(childClassLoader, Thread.currentThread().getContextClassLoader());
         // Can't get the following line to work - guess it is some bizarre ClassLoader problem
@@ -50,7 +50,7 @@ public class ClassPathTaskTest extends TestCase
     public void testLoadValidClassNoClasspath() {
         // Try loading a class we do not use. It is easiest to use a class on the System classpath
         task.setClassLoader(null);
-        Object instance = task.loadClass("org.flymine.task.DummyDriver2");
+        Object instance = task.loadClass("org.intermine.task.DummyDriver2");
 
         assertEquals(this.getClass().getClassLoader(), instance.getClass().getClassLoader());
         assertEquals(this.getClass().getClassLoader(), Thread.currentThread().getContextClassLoader());

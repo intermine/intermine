@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.flymine.metadata.*;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.*;
+import org.intermine.util.TypeUtil;
 
 import com.hp.hpl.jena.ontology.OntModel;
 

@@ -1,4 +1,4 @@
-package org.flymine.xml.full;
+package org.intermine.xml.full;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,11 +19,11 @@ import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.xml.XmlHelper;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.xml.XmlHelper;
 
 import org.apache.log4j.Logger;
 
@@ -248,7 +248,7 @@ public class FullRenderer
         for (int i = 0; i < interfaces.length; i++) {
             ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
             if (cld != null && cld.isInterface()
-                    && !cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+                    && !cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
                 sb.append(model.getNameSpace().toString()
                           + TypeUtil.unqualifiedName(interfaces[i].getName()))
                     .append(" ");

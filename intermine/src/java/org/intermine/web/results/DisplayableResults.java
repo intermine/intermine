@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.QueryHelper;
 
 /**
  * Displayable section of a Results object, containing various

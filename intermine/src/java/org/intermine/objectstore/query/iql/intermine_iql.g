@@ -1,7 +1,7 @@
 // Flymine OQL-like grammar
 
 header {
-package org.flymine.objectstore.query.fql;
+package org.intermine.objectstore.query.fql;
 }
 
 class FqlParser extends Parser;

@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -33,11 +33,11 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * General purpose ontology methods.

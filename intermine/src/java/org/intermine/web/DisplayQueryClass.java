@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.flymine.util.TypeUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * Bean to represent a QueryClass during Query construction in the webapp

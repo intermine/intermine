@@ -1,4 +1,4 @@
-package org.flymine.xml.lite;
+package org.intermine.xml.lite;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,10 +17,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.flymine.util.TypeUtil;
-import org.flymine.xml.XmlHelper;
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
+import org.intermine.util.TypeUtil;
+import org.intermine.xml.XmlHelper;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
 
 import org.apache.log4j.Logger;
 

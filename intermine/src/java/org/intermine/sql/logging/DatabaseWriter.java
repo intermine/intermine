@@ -1,4 +1,4 @@
-package org.flymine.sql.logging;
+package org.intermine.sql.logging;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import org.flymine.util.StringUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * Writes tab-separated Strings to a database table

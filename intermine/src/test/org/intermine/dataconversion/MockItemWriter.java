@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,9 +16,9 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.model.fulldata.Item;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.model.fulldata.Item;
+import org.intermine.xml.full.ItemHelper;
 
 /**
  * Mimic behaviour of an ItemWriter but actually store Items in a set rather than

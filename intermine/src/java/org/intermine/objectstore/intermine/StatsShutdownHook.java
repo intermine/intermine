@@ -1,4 +1,4 @@
-package org.flymine.objectstore.flymine;
+package org.intermine.objectstore.flymine;
 
 /*
  * Copyright (C) 2002-2003 FlyMine

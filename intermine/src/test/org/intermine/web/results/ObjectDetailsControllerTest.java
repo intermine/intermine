@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,13 +14,13 @@ import java.util.Set;
 
 import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
-import org.flymine.model.testmodel.Department;
+import org.intermine.model.testmodel.Department;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -36,7 +36,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectDetails");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore();
-        Results r = os.execute(new FqlQuery("select Department from Department", "org.flymine.model.testmodel").toQuery());
+        Results r = os.execute(new FqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
         System.out.println(d);
 
@@ -45,7 +45,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         actionPerform();
 
         assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.flymine.model.testmodel.Department")));
+        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Department")));
     }
 
     public void testField() throws Exception {
@@ -54,7 +54,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectDetails");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore();
-        Results r = os.execute(new FqlQuery("select Department from Department", "org.flymine.model.testmodel").toQuery());
+        Results r = os.execute(new FqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
         System.out.println(d);
 
@@ -64,6 +64,6 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         actionPerform();
 
         assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.flymine.model.testmodel.Company")));
+        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company")));
     }
 }

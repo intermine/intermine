@@ -1,4 +1,4 @@
-package org.flymine.metadata;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,7 +10,7 @@ package org.flymine.metadata;
  *
  */
 
-import org.flymine.util.Util;
+import org.intermine.util.Util;
 
 /**
  * Describes a field that references a collection of other objects.

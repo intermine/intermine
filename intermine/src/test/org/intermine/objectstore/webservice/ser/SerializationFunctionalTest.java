@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -33,15 +33,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.flymine.util.TypeUtil;
+import org.intermine.util.TypeUtil;
 
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.model.testmodel.Address;
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Department;
-import org.flymine.util.DynamicUtil;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.util.DynamicUtil;
 
 import junit.framework.TestCase;
 

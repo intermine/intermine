@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.fql;
+package org.intermine.objectstore.query.fql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,8 +16,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.flymine.util.Util;
-import org.flymine.objectstore.query.*;
+import org.intermine.util.Util;
+import org.intermine.objectstore.query.*;
 
 /**
  * OQL representation of an object-based Query

@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.xml.full.ItemHelper;
 
 public class MockItemReader implements ItemReader
 {

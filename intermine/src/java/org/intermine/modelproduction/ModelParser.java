@@ -1,4 +1,4 @@
-package org.flymine.modelproduction;
+package org.intermine.modelproduction;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,7 +12,7 @@ package org.flymine.modelproduction;
 
 import java.io.Reader;
 
-import org.flymine.metadata.Model;
+import org.intermine.metadata.Model;
 
 /**
  * Common interface for parsing source models into FlyMine model format.

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.flymine;
+package org.intermine.objectstore.flymine;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
-import org.flymine.util.CacheMap;
-import org.flymine.util.DatabaseUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.xml.lite.LiteParser;
-import org.flymine.xml.lite.LiteRenderer;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.util.CacheMap;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.xml.lite.LiteParser;
+import org.intermine.xml.lite.LiteRenderer;
 
 import org.apache.log4j.Logger;
 

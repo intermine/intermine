@@ -12,19 +12,19 @@
 
     <!-- QueryBuild form bean -->
     <form-bean name="queryBuildForm"
-               type="org.flymine.web.QueryBuildForm"/>
+               type="org.intermine.web.QueryBuildForm"/>
 
     <!-- FQL Query form bean -->
     <form-bean name="fqlQueryForm"
-               type="org.flymine.web.FqlQueryForm"/>
+               type="org.intermine.web.FqlQueryForm"/>
 
     <!-- QueryClassSelect form bean -->
     <form-bean name="queryClassSelectForm"
-               type="org.flymine.web.QueryClassSelectForm"/>
+               type="org.intermine.web.QueryClassSelectForm"/>
 
     <!-- ChangeResults form bean -->
     <form-bean name="changeResultsForm"
-               type="org.flymine.web.results.ChangeResultsForm"/>
+               type="org.intermine.web.results.ChangeResultsForm"/>
 
     <!-- run query has no properties, uses an DynaActionForm -->
     <form-bean name="runQueryForm"
@@ -36,11 +36,11 @@
 
     <!-- load query -->
     <form-bean name="loadQueryForm"
-               type="org.flymine.web.LoadQueryForm"/>
+               type="org.intermine.web.LoadQueryForm"/>
 
     <!-- save query -->
     <form-bean name="saveQueryForm"
-               type="org.flymine.web.SaveQueryForm"/>
+               type="org.intermine.web.SaveQueryForm"/>
 
   </form-beans>
 
@@ -50,7 +50,7 @@
     <exception type="java.lang.Exception"
                key="exception.message"
                path="error.page"
-               handler="org.flymine.web.FlyMineExceptionHandler"/>
+               handler="org.intermine.web.FlyMineExceptionHandler"/>
   </global-exceptions>
 
   <!-- ========== Global Forward Definitions ============================== -->
@@ -72,7 +72,7 @@
 
     <action path="/query"
             input="buildquery"
-            type="org.flymine.web.QueryBuildAction"
+            type="org.intermine.web.QueryBuildAction"
             name="queryBuildForm"
             parameter="action">
       <forward name="runquery" path="/runQuery.do"/>
@@ -82,7 +82,7 @@
 
     <!-- Input an fql query -->
     <action path="/fqlquery"
-            type="org.flymine.web.FqlQueryAction"
+            type="org.intermine.web.FqlQueryAction"
             name="fqlQueryForm"
             input="buildfqlquery"
             parameter="action">
@@ -93,7 +93,7 @@
 
     <!-- Select a QueryClass -->
     <action path="/queryClassSelect"
-            type="org.flymine.web.QueryClassSelectAction"
+            type="org.intermine.web.QueryClassSelectAction"
             name="queryClassSelectForm"
             scope="request"
             input="query"
@@ -104,7 +104,7 @@
 
     <!-- Action to run a query for a Query object on the session -->
     <action path="/runQuery"
-            type="org.flymine.web.RunQueryAction"
+            type="org.intermine.web.RunQueryAction"
             name="runQueryForm">
       <forward name="buildquery" path="query.page"/>
       <forward name="results" path="results.page"/>
@@ -112,27 +112,27 @@
 
     <!-- Action to reset the current query -->
     <action path="/restartQuery"
-            type="org.flymine.web.RestartQueryAction"
+            type="org.intermine.web.RestartQueryAction"
             name="restartQueryForm">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to load a Query from the saved queries -->
     <action path="/loadQuery"
-            type="org.flymine.web.LoadQueryAction">
+            type="org.intermine.web.LoadQueryAction">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to save the current query -->
     <action path="/saveQuery"
-            type="org.flymine.web.SaveQueryAction"
+            type="org.intermine.web.SaveQueryAction"
             name="saveQueryForm">
       <forward name="results" path="results.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
     <action path="/changeResults"
-            type="org.flymine.web.results.ChangeResultsAction"
+            type="org.intermine.web.results.ChangeResultsAction"
             parameter="method">
       <forward name="runquery" path="/runQuery.do"/>
       <forward name="results" path="results.page"/>
@@ -141,7 +141,7 @@
 
     <!-- Action to chnge the displayed results in some way -->
     <action path="/changeResultsSize"
-            type="org.flymine.web.results.ChangeResultsSizeAction"
+            type="org.intermine.web.results.ChangeResultsSizeAction"
             name="changeResultsForm"
             parameter="action">
       <forward name="results" path="results.page"/>
@@ -149,7 +149,7 @@
 
     <!-- Action to change the displayed results in some way -->
     <action path="/changeTree"
-            type="org.flymine.web.TreeAction"
+            type="org.intermine.web.TreeAction"
             parameter="method">
       <forward name="renderTree" path="tree.page"/>
       <forward name="buildquery" path="query.page"/>
@@ -165,33 +165,33 @@
 
     <action path="/initQueryBuild"
             validate="false"
-            type="org.flymine.web.QueryBuildController"
+            type="org.intermine.web.QueryBuildController"
             name="queryBuildForm"/>
 
     <action path="/initFqlQuery"
-            type="org.flymine.web.FqlQueryController"
+            type="org.intermine.web.FqlQueryController"
             name="fqlQueryForm"/>
 
     <action path="/initQueryView"
-            type="org.flymine.web.QueryViewController"/>
+            type="org.intermine.web.QueryViewController"/>
 
     <action path="/initResultsView"
-            type="org.flymine.web.results.ResultsViewController"/>
+            type="org.intermine.web.results.ResultsViewController"/>
 
     <action path="/initResultsCell"
-            type="org.flymine.web.results.ResultsCellController"/>
+            type="org.intermine.web.results.ResultsCellController"/>
 
     <action path="/initObjectDetails"
-            type="org.flymine.web.results.ObjectDetailsController"/>
+            type="org.intermine.web.results.ObjectDetailsController"/>
 
     <action path="/initTree"
-            type="org.flymine.web.TreeController"/>
+            type="org.intermine.web.TreeController"/>
 
     <action path="/initSaveQuery"
-            type="org.flymine.web.SaveQueryController"/>
+            type="org.intermine.web.SaveQueryController"/>
 
     <action path="/initQueryClassSelect"
-            type="org.flymine.web.QueryClassSelectController"/>
+            type="org.intermine.web.QueryClassSelectController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
@@ -217,7 +217,7 @@
 
   <plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
 
-  <plug-in className="org.flymine.web.InitialiserPlugin"/>
+  <plug-in className="org.intermine.web.InitialiserPlugin"/>
 
   <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
     <set-property property="pathnames"

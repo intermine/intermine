@@ -1,4 +1,4 @@
-package org.flymine.objectstore.dummy;
+package org.intermine.objectstore.dummy;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,10 +14,10 @@ import junit.framework.*;
 
 import java.util.List;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.*;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.testing.OneTimeTestCase;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.testing.OneTimeTestCase;
 
 public class ObjectStoreDummyImplTest extends OneTimeTestCase
 {

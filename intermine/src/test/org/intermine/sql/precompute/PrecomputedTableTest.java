@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -11,7 +11,7 @@ package org.flymine.sql.precompute;
  */
 
 import junit.framework.*;
-import org.flymine.sql.query.*;
+import org.intermine.sql.query.*;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;

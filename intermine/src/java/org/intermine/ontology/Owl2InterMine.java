@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -26,11 +26,11 @@ import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 /**
  * Converts an OWL description of a business model to a Java business model
- * (described by org.flymine.metadata classes).
+ * (described by org.intermine.metadata classes).
  *
  * @author Richard Smith
  */

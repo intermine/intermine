@@ -1,4 +1,4 @@
-package org.flymine.sql.query;
+package org.intermine.sql.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,7 +12,7 @@ package org.flymine.sql.query;
 
 import java.util.*;
 
-import org.flymine.util.ConsistentSet;
+import org.intermine.util.ConsistentSet;
 
 /**
  * A representation of a set of constraints ORed together.

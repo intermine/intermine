@@ -1,4 +1,4 @@
-package org.flymine.objectstore.safe;
+package org.intermine.objectstore.safe;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,13 +12,13 @@ package org.flymine.objectstore.safe;
 
 import java.util.List;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStorePassthruImpl;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryCloner;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStorePassthruImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
 
 /**
  * Provides a safe implementation of an objectstore - that is, an implementation that works

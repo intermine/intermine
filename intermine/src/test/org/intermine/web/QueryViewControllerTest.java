@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,22 +19,22 @@ import java.util.Set;
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Department;
-import org.flymine.objectstore.query.Constraint;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryCollectionReference;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.FromElement;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.fql.FqlQueryParser;
-import org.flymine.objectstore.query.presentation.PrintableConstraint;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.fql.FqlQueryParser;
+import org.intermine.objectstore.query.presentation.PrintableConstraint;
 
 public class QueryViewControllerTest extends MockStrutsTestCase
 {
@@ -83,7 +83,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initQueryView");
-        Query q = FqlQueryParser.parse(new FqlQuery("select a from Company as a", "org.flymine.model.testmodel"));
+        Query q = FqlQueryParser.parse(new FqlQuery("select a from Company as a", "org.intermine.model.testmodel"));
         getRequest().getSession().setAttribute(Constants.QUERY, q);
         actionPerform();
         FromElement from1 = (FromElement) q.getFrom().iterator().next();
@@ -130,7 +130,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         c.addConstraint(c4);
         c.addConstraint(c5);
         q.setConstraint(c);
-        //Query q = FqlQueryParser.parse(new FqlQuery("select a from Company a, Department b, (select Company from Company) as c where a.vatNumber = 5 and a.departments CONTAINS b and c.Company.name = a.name and (a.vatNumber = c.Company.vatNumber OR c.Company.vatNumber = 3) and b.name = 'hello'", "org.flymine.model.testmodel"));
+        //Query q = FqlQueryParser.parse(new FqlQuery("select a from Company a, Department b, (select Company from Company) as c where a.vatNumber = 5 and a.departments CONTAINS b and c.Company.name = a.name and (a.vatNumber = c.Company.vatNumber OR c.Company.vatNumber = 3) and b.name = 'hello'", "org.intermine.model.testmodel"));
         getRequest().getSession().setAttribute(Constants.QUERY, q);
         actionPerform();
         Map expected1 = new HashMap();
@@ -148,7 +148,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         Map expected3 = new HashMap();
         expected3.put(qcA, "Company");
         expected3.put(qcB, "Department");
-        expected3.put(subQ, "SELECT DISTINCT Company FROM org.flymine.model.testmodel.Company AS Company");
+        expected3.put(subQ, "SELECT DISTINCT Company FROM org.intermine.model.testmodel.Company AS Company");
         Map expected4 = new HashMap();
         expected4.put(qcA, "a");
         expected4.put(qcB, "b");

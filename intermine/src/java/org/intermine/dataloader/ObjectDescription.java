@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.flymine.model.datatracking.Source;
+import org.intermine.model.datatracking.Source;
 
 /**
  * Object class used by DataTracker for data tracking.

@@ -1,4 +1,4 @@
-package org.flymine.modelproduction.xml;
+package org.intermine.modelproduction.xml;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,9 +17,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.metadata.*;
-import org.flymine.util.SAXParser;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.metadata.*;
+import org.intermine.util.SAXParser;
 
 /**
  * Parse FlyMine metadata XML to produce a FlyMine Model

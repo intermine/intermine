@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,13 +13,13 @@ package org.flymine.dataconversion;
 import java.sql.Connection;
 import java.sql.Statement;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.flymine.ObjectStoreFlyMineImpl;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.flymine.ObjectStoreFlyMineImpl;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;

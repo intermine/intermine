@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,12 +25,12 @@ import org.biomage.Description.DatabaseEntry;
 import org.biomage.BioSequence.SeqFeature;
 import org.biomage.tools.xmlutils.*;
 
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.FullParser;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.ItemHelper;
 
 public class MageConverterTest extends TestCase
 {

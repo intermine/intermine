@@ -1,4 +1,4 @@
-package org.flymine.sql.logging;
+package org.intermine.sql.logging;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,7 +10,7 @@ package org.flymine.sql.logging;
  *
  */
 
-import org.flymine.sql.query.Query;
+import org.intermine.sql.query.Query;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.Date;

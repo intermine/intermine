@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,14 +13,14 @@ package org.flymine.dataloader;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.DynamicUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
 
@@ -73,7 +73,7 @@ public class ObjectStoreDataLoader extends DataLoader
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
             FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
-            //if (obj.getClass().getName().equals("org.flymine.model.chado.feature")) {
+            //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {
             //    String objText = obj.toString();
             //    int objTextLen = objText.length();
             //    System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60

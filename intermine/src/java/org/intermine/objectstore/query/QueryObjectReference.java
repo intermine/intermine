@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,8 +13,8 @@ package org.flymine.objectstore.query;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.util.TypeUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.util.TypeUtil;
 
 /**
  * Represents a field of a QueryClass that is a business object

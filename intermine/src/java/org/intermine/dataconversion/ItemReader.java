@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.model.fulldata.Item;
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.model.fulldata.Item;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Provides an interface between a DataTranslator and the source Item ObjectStore which it wishes to

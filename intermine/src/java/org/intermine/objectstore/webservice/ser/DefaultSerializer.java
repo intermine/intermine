@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,7 +21,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.wsdl.fromJava.Types;
 
-import org.flymine.util.TypeUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 

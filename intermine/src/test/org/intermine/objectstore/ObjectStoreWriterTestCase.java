@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,9 +13,9 @@ package org.flymine.objectstore;
 import java.util.Collections;
 import junit.framework.TestCase;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.*;
-import org.flymine.util.DynamicUtil;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.*;
+import org.intermine.util.DynamicUtil;
 
 public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 {

@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,36 +23,36 @@ import java.util.TreeMap;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.MetaDataException;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryCast;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryExpression;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryFunction;
-import org.flymine.objectstore.query.QueryNode;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.Constraint;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.translating.Translator;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil.FieldInfo;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Reference;
+import org.intermine.model.fulldata.ReferenceList;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.translating.Translator;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil.FieldInfo;
 
 import org.apache.log4j.Logger;
 

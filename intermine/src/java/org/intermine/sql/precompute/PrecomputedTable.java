@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,9 +13,9 @@ package org.flymine.sql.precompute;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.flymine.sql.query.Query;
-import org.flymine.sql.query.SelectValue;
-import org.flymine.sql.query.SQLStringable;
+import org.intermine.sql.query.Query;
+import org.intermine.sql.query.SelectValue;
+import org.intermine.sql.query.SQLStringable;
 
 /**
  * Represents a Precomputed table in a database. A precomputed table is a materialised SQL query.

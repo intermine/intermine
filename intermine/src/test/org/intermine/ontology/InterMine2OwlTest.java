@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -24,12 +24,12 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 public class FlyMine2OwlTest extends TestCase
 {
     FlyMine2Owl convertor;
-    String ns = "http://www.flymine.org/model/testmodel#";
+    String ns = "http://www.intermine.org/model/testmodel#";
 
     public void setUp() {
         convertor = new FlyMine2Owl();

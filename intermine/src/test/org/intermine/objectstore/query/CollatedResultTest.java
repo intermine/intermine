@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,12 +13,12 @@ package org.flymine.objectstore.query;
 import java.util.Collections;
 import junit.framework.Test;
 
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
-import org.flymine.model.testmodel.*;
+import org.intermine.model.testmodel.*;
 
 public class CollatedResultTest extends QueryTestCase
 {

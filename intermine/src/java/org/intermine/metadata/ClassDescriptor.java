@@ -1,4 +1,4 @@
-package org.flymine.metadata;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,8 +16,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -77,8 +77,8 @@ public class ClassDescriptor
 
         if (supers != null) {
             superNames.addAll(StringUtil.tokenize(supers));
-        } else if (!"org.flymine.model.FlyMineBusinessObject".equals(name)) {
-            superNames.add("org.flymine.model.FlyMineBusinessObject");
+        } else if (!"org.intermine.model.FlyMineBusinessObject".equals(name)) {
+            superNames.add("org.intermine.model.FlyMineBusinessObject");
         }
 
         this.isInterface = isInterface;

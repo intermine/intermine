@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,10 +17,10 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import org.flymine.metadata.Model;
-import org.flymine.FlyMineException;
-import org.flymine.xml.full.FullParser;
-import org.flymine.xml.full.FullRenderer;
+import org.intermine.metadata.Model;
+import org.intermine.FlyMineException;
+import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
 
 /**
  * Represents an XML mapping - performs XML (un)marshalling of objects/Full Data XML

@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,9 +12,9 @@ package org.flymine.dataloader;
 
 import java.util.Comparator;
 
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
 
 /**
  * Comparator, that compares two FlymineBusinessObjects, with reference to a particular

@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,8 +23,8 @@ import org.apache.log4j.Logger;
 
 import net.sf.cglib.*;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.proxy.ProxyReference;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.proxy.ProxyReference;
 
 /**
  * Class which represents a generic bean

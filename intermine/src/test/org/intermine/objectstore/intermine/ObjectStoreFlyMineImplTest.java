@@ -1,4 +1,4 @@
-package org.flymine.objectstore.flymine;
+package org.intermine.objectstore.flymine;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,13 +12,13 @@ package org.flymine.objectstore.flymine;
 
 import junit.framework.Test;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryCloner;
-import org.flymine.objectstore.query.SingletonResults;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.SingletonResults;
 
 public class ObjectStoreFlyMineImplTest extends ObjectStoreAbstractImplTestCase
 {

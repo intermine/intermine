@@ -1,12 +1,12 @@
-<model name="datatracking" namespace="http://www.flymine.org/model/datatracking#">
-  <class name="org.flymine.model.datatracking.Source" is-interface="false">
+<model name="datatracking" namespace="http://www.intermine.org/model/datatracking#">
+  <class name="org.intermine.model.datatracking.Source" is-interface="false">
     <attribute name="name" type="java.lang.String" primary-key="false"/>
     <attribute name="skeleton" type="boolean"/>
   </class>
-  <class name="org.flymine.model.datatracking.Field" is-interface="false">
+  <class name="org.intermine.model.datatracking.Field" is-interface="false">
     <attribute name="objectId" type="java.lang.Integer" primary-key="false"/>
     <attribute name="name" type="java.lang.String" primary-key="false"/>
-    <reference name="source" referenced-type="org.flymine.model.datatracking.Source" primary-key="false"/>
+    <reference name="source" referenced-type="org.intermine.model.datatracking.Source" primary-key="false"/>
   </class>
 </model>
   

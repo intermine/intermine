@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.testmodel.*;
+import org.intermine.model.testmodel.*;
 
 public class DynamicBeanTest extends TestCase
 {

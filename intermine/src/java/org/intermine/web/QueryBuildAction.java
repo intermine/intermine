@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,8 +25,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.query.Query;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.Query;
 
 /**
  * @author Richard Smith

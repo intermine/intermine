@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -28,9 +28,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.web.Constants;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.Constants;
 
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the

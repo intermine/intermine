@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,12 +17,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.namespace.QName;
 
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.xml.lite.LiteParser;
-import org.flymine.xml.lite.LiteRenderer;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.xml.lite.LiteParser;
+import org.intermine.xml.lite.LiteRenderer;
 
 import org.apache.axis.encoding.TypeMapping;
 
@@ -45,17 +45,17 @@ public class SerializationUtil
      * @param tm the type mapping to register to
      */
     public static void registerDefaultMappings(TypeMapping tm) {
-        tm.register(org.flymine.metadata.Model.class,
-                    getQName(org.flymine.metadata.Model.class),
+        tm.register(org.intermine.metadata.Model.class,
+                    getQName(org.intermine.metadata.Model.class),
                     new ModelSerializerFactory(),
                     new ModelDeserializerFactory());
         tm.register(java.util.ArrayList.class,
                     getQName(java.util.ArrayList.class),
                     new ListSerializerFactory(),
                     new ListDeserializerFactory());
-        registerMapping(tm, org.flymine.objectstore.webservice.ser.FlyMineBusinessString.class);
-        registerMapping(tm, org.flymine.objectstore.query.fql.FqlQuery.class);
-        registerMapping(tm, org.flymine.objectstore.query.ResultsInfo.class);
+        registerMapping(tm, org.intermine.objectstore.webservice.ser.FlyMineBusinessString.class);
+        registerMapping(tm, org.intermine.objectstore.query.fql.FqlQuery.class);
+        registerMapping(tm, org.intermine.objectstore.query.ResultsInfo.class);
     }
 
     /**

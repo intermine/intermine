@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,11 +16,11 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.sql.*;
-import org.flymine.util.DatabaseUtil;
-import org.flymine.sql.Database;
-import org.flymine.sql.query.Query;
-import org.flymine.sql.query.AbstractValue;
-import org.flymine.sql.query.SelectValue;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.Database;
+import org.intermine.sql.query.Query;
+import org.intermine.sql.query.AbstractValue;
+import org.intermine.sql.query.SelectValue;
 
 /**
  * Manages all the Precomputed tables in a given database.

@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,10 +21,10 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 
-import org.flymine.metadata.*;
-import org.flymine.util.TypeUtil;
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.metadata.*;
+import org.intermine.util.TypeUtil;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.modelproduction.xml.FlyMineModelParser;
 
 /**
  * Convert a FlyMine metadata model to a Jena OntModel.
@@ -48,7 +48,7 @@ public class FlyMine2Owl
         Iterator i = model.getClassDescriptors().iterator();
         while (i.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) i.next();
-            if (cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+            if (cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
                 continue;
             }
 

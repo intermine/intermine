@@ -1,4 +1,4 @@
-package org.flymine.xml.full;
+package org.intermine.xml.full;
 
 /*
  * Copyright (C) 2002-2003 FlyMine

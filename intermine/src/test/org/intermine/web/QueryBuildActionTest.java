@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -30,8 +30,8 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ConstraintOp;
 
 public class QueryBuildActionTest extends MockStrutsTestCase
 {
@@ -47,7 +47,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         String anAlias = "ClassAlias_0";
         Map queryClasses = new HashMap();
         DisplayQueryClass displayQueryClass = new DisplayQueryClass();
-        displayQueryClass.setType("org.flymine.model.testmodel.Department");
+        displayQueryClass.setType("org.intermine.model.testmodel.Department");
         queryClasses.put(anAlias, displayQueryClass);
 
         session.setAttribute(Constants.EDITING_ALIAS, anAlias);
@@ -72,7 +72,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         Map queryClasses = new HashMap();
 
         DisplayQueryClass displayQueryClass = new DisplayQueryClass();
-        displayQueryClass.setType("org.flymine.model.testmodel.Department");
+        displayQueryClass.setType("org.intermine.model.testmodel.Department");
 
         String newAlias =
             QueryBuildHelper.aliasClass(queryClasses.keySet(), displayQueryClass.getType());
@@ -97,7 +97,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertNotNull(afterDisplayQueryClass);
 
         DisplayQueryClass expected = new DisplayQueryClass();
-        expected.setType("org.flymine.model.testmodel.Department");
+        expected.setType("org.intermine.model.testmodel.Department");
         expected.getConstraintNames().add("name_0");
         expected.setFieldName("name_0", "name");
         assertEquals(expected, afterDisplayQueryClass);
@@ -114,7 +114,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         Map queryClasses = new HashMap();
 
         DisplayQueryClass displayQueryClass = new DisplayQueryClass();
-        displayQueryClass.setType("org.flymine.model.testmodel.Types");
+        displayQueryClass.setType("org.intermine.model.testmodel.Types");
 
         List constraintNames = new ArrayList();
 
@@ -184,7 +184,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         verifyForward("buildquery");
 
         DisplayQueryClass expected = new DisplayQueryClass();
-        expected.setType("org.flymine.model.testmodel.Types");
+        expected.setType("org.intermine.model.testmodel.Types");
         expected.setConstraintNames(constraintNames);
         expected.setFieldNames(nameMap);
 
@@ -233,7 +233,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         Map queryClasses = new HashMap();
 
         DisplayQueryClass displayQueryClass = new DisplayQueryClass();
-        displayQueryClass.setType("org.flymine.model.testmodel.Types");
+        displayQueryClass.setType("org.intermine.model.testmodel.Types");
 
         List constraintNames = new ArrayList();
 
@@ -357,7 +357,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         addRequestParameter("buttons(removeConstraintname_0)", "");
         
         DisplayQueryClass d = new DisplayQueryClass();
-        d.setType("org.flymine.model.testmodel.Department");
+        d.setType("org.intermine.model.testmodel.Department");
         d.getConstraintNames().add("name_0");
         d.getFieldNames().put("name_0", "name");
         d.getFieldOps().put("name_0", ConstraintOp.MATCHES);
@@ -385,7 +385,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertNotNull(after);
 
         DisplayQueryClass expected = new DisplayQueryClass();
-        expected.setType("org.flymine.model.testmodel.Department");
+        expected.setType("org.intermine.model.testmodel.Department");
         expected.getConstraintNames().add("name_1");
         expected.getFieldNames().put("name_1", "name");
         expected.getFieldOps().put("name_1", ConstraintOp.DOES_NOT_MATCH);
@@ -402,7 +402,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         Map queryClasses = new HashMap();
         DisplayQueryClass displayQueryClass = new DisplayQueryClass();
 
-        displayQueryClass.setType("org.flymine.model.testmodel.Department");
+        displayQueryClass.setType("org.intermine.model.testmodel.Department");
         queryClasses.put(anAlias, displayQueryClass);
 
         session.setAttribute(Constants.EDITING_ALIAS, anAlias);

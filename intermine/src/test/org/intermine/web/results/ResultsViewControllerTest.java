@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,11 +12,11 @@ package org.flymine.web.results;
 
 import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
-import org.flymine.web.Constants;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.web.Constants;
 
 import servletunit.struts.MockStrutsTestCase;
 

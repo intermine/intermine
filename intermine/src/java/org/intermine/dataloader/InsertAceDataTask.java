@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-import org.flymine.task.ClassPathTask;
+import org.intermine.task.ClassPathTask;
 
 /**
  * Uses an ObjectStoreWriter to insert data from an Ace dataase server
@@ -98,7 +98,7 @@ public class InsertAceDataTask extends ClassPathTask
 
         try {
 
-            Object driver = loadClass("org.flymine.dataloader.AceDataLoaderDriver");
+            Object driver = loadClass("org.intermine.dataloader.AceDataLoaderDriver");
 
             // Have to execute the loadData method by reflection as
             // cannot cast to something that this class (which may use

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.fastcollections;
+package org.intermine.objectstore.fastcollections;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,25 +21,25 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStorePassthruImpl;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryNode;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.IntPresentSet;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStorePassthruImpl;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.IntPresentSet;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 

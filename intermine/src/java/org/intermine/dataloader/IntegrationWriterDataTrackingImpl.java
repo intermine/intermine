@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,15 +19,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.util.DynamicUtil;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
 

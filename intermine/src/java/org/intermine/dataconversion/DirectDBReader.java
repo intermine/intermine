@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.flymine.sql.Database;
+import org.intermine.sql.Database;
 
 /**
  * A reasonably dumb implementation of the DBReader interface.

@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,7 +19,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
 
-import org.flymine.objectstore.query.Query;
+import org.intermine.objectstore.query.Query;
 
 /**
  * Perform the initialisation for the FqlQueryAction.

@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,12 +10,12 @@ package org.flymine.dataloader;
  *
  */
 
-import org.flymine.model.datatracking.Source;
-import org.flymine.model.datatracking.Field;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.model.datatracking.Source;
+import org.intermine.model.datatracking.Field;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-import org.flymine.model.testmodel.Department;
+import org.intermine.model.testmodel.Department;
 
 import junit.framework.TestCase;
 

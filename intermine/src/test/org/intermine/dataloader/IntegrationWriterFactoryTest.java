@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,7 +12,7 @@ package org.flymine.dataloader;
 
 import junit.framework.TestCase;
 
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreException;
 
 public class IntegrationWriterFactoryTest extends TestCase
 {

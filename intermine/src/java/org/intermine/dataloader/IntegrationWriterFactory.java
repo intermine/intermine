@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,8 +13,8 @@ package org.flymine.dataloader;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.util.PropertiesUtil;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Produce IntegrationWriters

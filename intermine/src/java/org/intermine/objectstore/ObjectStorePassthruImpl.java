@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,11 +13,11 @@ package org.flymine.objectstore;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
 
 /**
  * A generic ObjectStore that passes through every request to an underlying ObjectStore. Extend

@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,10 +23,10 @@ public class TreeActionTest extends MockStrutsTestCase
 
     public void testExpand() throws Exception {
         Set openClasses = new HashSet();
-        openClasses.add("org.flymine.model.testmodel.Thing");
+        openClasses.add("org.intermine.model.testmodel.Thing");
         getSession().setAttribute("openClasses", openClasses);
 
-        addRequestParameter("node", "org.flymine.model.testmodel.Department");
+        addRequestParameter("node", "org.intermine.model.testmodel.Department");
 
         setRequestPathInfo("/changeTree");
         addRequestParameter("method", "expand");
@@ -36,18 +36,18 @@ public class TreeActionTest extends MockStrutsTestCase
         verifyForward("renderTree");
         
         Set expected = new HashSet();
-        expected.add("org.flymine.model.testmodel.Thing");
-        expected.add("org.flymine.model.testmodel.Department");
+        expected.add("org.intermine.model.testmodel.Thing");
+        expected.add("org.intermine.model.testmodel.Department");
         assertEquals(expected, getSession().getAttribute("openClasses"));
     }
 
     public void testCollapse() throws Exception {
         Set openClasses = new HashSet();
-        openClasses.add("org.flymine.model.testmodel.Thing");
-        openClasses.add("org.flymine.model.testmodel.Department");
+        openClasses.add("org.intermine.model.testmodel.Thing");
+        openClasses.add("org.intermine.model.testmodel.Department");
         getSession().setAttribute("openClasses", openClasses);
 
-        addRequestParameter("node", "org.flymine.model.testmodel.Department");
+        addRequestParameter("node", "org.intermine.model.testmodel.Department");
 
         setRequestPathInfo("/changeTree");
         addRequestParameter("method", "collapse");
@@ -57,12 +57,12 @@ public class TreeActionTest extends MockStrutsTestCase
         verifyForward("renderTree");
         
         Set expected = new HashSet();
-        expected.add("org.flymine.model.testmodel.Thing");
+        expected.add("org.intermine.model.testmodel.Thing");
         assertEquals(expected, getSession().getAttribute("openClasses"));
     }
 
 //     public void testSelect() throws Exception {
-//         addRequestParameter("node", "org.flymine.model.testmodel.Department");
+//         addRequestParameter("node", "org.intermine.model.testmodel.Department");
 
 //         setRequestPathInfo("/changeTree");
 //         addRequestParameter("method", "select");

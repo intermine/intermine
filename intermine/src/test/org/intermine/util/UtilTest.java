@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,16 +19,16 @@ public class UtilTest extends TestCase
     }
 
     public void testEquals() {
-        assertTrue(org.flymine.util.Util.equals(null, null));
-        assertTrue(org.flymine.util.Util.equals(new Integer(10), new Integer(10)));
-        assertTrue(org.flymine.util.Util.equals(new Integer(20), new Integer(10)) == false);
-        assertTrue(org.flymine.util.Util.equals(null, new Integer(10)) == false);
-        assertTrue(org.flymine.util.Util.equals(new Integer(10), null) == false);
+        assertTrue(org.intermine.util.Util.equals(null, null));
+        assertTrue(org.intermine.util.Util.equals(new Integer(10), new Integer(10)));
+        assertTrue(org.intermine.util.Util.equals(new Integer(20), new Integer(10)) == false);
+        assertTrue(org.intermine.util.Util.equals(null, new Integer(10)) == false);
+        assertTrue(org.intermine.util.Util.equals(new Integer(10), null) == false);
     }
 
     public void testHashCode() {
-        assertTrue(org.flymine.util.Util.hashCode(null) == 0);
-        assertTrue(org.flymine.util.Util.hashCode(new Integer(10)) != 0);
+        assertTrue(org.intermine.util.Util.hashCode(null) == 0);
+        assertTrue(org.intermine.util.Util.hashCode(new Integer(10)) != 0);
     }
 
 }

@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -26,27 +26,27 @@ import java.util.Set;
 import java.io.FileWriter;
 import java.io.File;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.objectstore.query.ClassConstraint;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.SubqueryConstraint;
-import org.flymine.objectstore.query.QueryCollectionReference;
-import org.flymine.objectstore.query.QueryObjectReference;
-import org.flymine.objectstore.query.QueryReference;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.Database;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.XmlBinding;
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.Database;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.XmlBinding;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.Model;
 
 import org.apache.log4j.Logger;
 

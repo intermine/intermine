@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.flymine.model.datatracking.Source;
-import org.flymine.sql.Database;
+import org.intermine.model.datatracking.Source;
+import org.intermine.sql.Database;
 
 import org.apache.log4j.Logger;
 

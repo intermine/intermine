@@ -1,4 +1,4 @@
-package org.flymine.objectstore.flymine;
+package org.intermine.objectstore.flymine;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,8 +12,8 @@ package org.flymine.objectstore.flymine;
 
 import junit.framework.Test;
 
-import org.flymine.objectstore.ObjectStoreWriterTestCase;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreWriterTestCase;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 public class ObjectStoreWriterFlyMineImplTest extends ObjectStoreWriterTestCase
 {

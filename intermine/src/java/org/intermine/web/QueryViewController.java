@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletException;
 
-import org.flymine.objectstore.query.FromElement;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.ConstraintHelper;
-import org.flymine.objectstore.query.Constraint;
-import org.flymine.objectstore.query.presentation.PrintableConstraint;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ConstraintHelper;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.presentation.PrintableConstraint;
 
 /**
  * Splits up the query in the request into little bits for queryView.jsp to display.
@@ -57,7 +57,7 @@ public class QueryViewController extends TilesAction
             Iterator fromIter = query.getFrom().iterator();
             while (fromIter.hasNext()) {
                 FromElement fromElement = (FromElement) fromIter.next();
-                if (fromElement instanceof org.flymine.objectstore.query.QueryClass) {
+                if (fromElement instanceof org.intermine.objectstore.query.QueryClass) {
                     String fromElementString = fromElement.toString();
                     perFromTitle.put(fromElement,
                            fromElementString.substring(fromElementString.lastIndexOf(".") + 1));

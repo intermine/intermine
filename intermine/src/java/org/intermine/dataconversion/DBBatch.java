@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,7 +13,7 @@ package org.flymine.dataconversion;
 import java.util.Map;
 import java.util.List;
 
-import org.flymine.util.DatabaseUtil;
+import org.intermine.util.DatabaseUtil;
 
 /**
  * An object designed to represent a batch of a read from an SQL database.

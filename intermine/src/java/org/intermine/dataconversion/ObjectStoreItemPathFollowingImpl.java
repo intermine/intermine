@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,26 +21,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStorePassthruImpl;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryCollectionReference;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.CacheHoldingArrayList;
-import org.flymine.util.CacheMap;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Reference;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStorePassthruImpl;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.CacheHoldingArrayList;
+import org.intermine.util.CacheMap;
 
 import org.apache.log4j.Logger;
 

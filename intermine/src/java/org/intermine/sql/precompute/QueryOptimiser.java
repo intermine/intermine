@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -11,23 +11,23 @@ package org.flymine.sql.precompute;
  */
 
 import org.apache.log4j.Logger;
-import org.flymine.sql.Database;
-import org.flymine.sql.query.Query;
-import org.flymine.sql.query.AbstractTable;
-import org.flymine.sql.query.AbstractConstraint;
-import org.flymine.sql.query.AbstractValue;
-import org.flymine.sql.query.Constant;
-import org.flymine.sql.query.Constraint;
-import org.flymine.sql.query.ConstraintSet;
-import org.flymine.sql.query.Field;
-import org.flymine.sql.query.Function;
-import org.flymine.sql.query.NotConstraint;
-import org.flymine.sql.query.SelectValue;
-import org.flymine.sql.query.SubQueryConstraint;
-import org.flymine.sql.query.Table;
-import org.flymine.util.ConsistentSet;
-import org.flymine.util.MappingUtil;
-import org.flymine.util.StringUtil;
+import org.intermine.sql.Database;
+import org.intermine.sql.query.Query;
+import org.intermine.sql.query.AbstractTable;
+import org.intermine.sql.query.AbstractConstraint;
+import org.intermine.sql.query.AbstractValue;
+import org.intermine.sql.query.Constant;
+import org.intermine.sql.query.Constraint;
+import org.intermine.sql.query.ConstraintSet;
+import org.intermine.sql.query.Field;
+import org.intermine.sql.query.Function;
+import org.intermine.sql.query.NotConstraint;
+import org.intermine.sql.query.SelectValue;
+import org.intermine.sql.query.SubQueryConstraint;
+import org.intermine.sql.query.Table;
+import org.intermine.util.ConsistentSet;
+import org.intermine.util.MappingUtil;
+import org.intermine.util.StringUtil;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;

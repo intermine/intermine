@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,7 +10,7 @@ package org.flymine.dataconversion;
  *
  */
 
-import org.flymine.model.fulldata.Item;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Provides an object that describes a constraint that is part of a path for the

@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -33,7 +33,7 @@ public class RestartQueryActionTest extends MockStrutsTestCase
         Map queryClasses = new HashMap();
         DisplayQueryClass displayQueryClass = new DisplayQueryClass();
 
-        displayQueryClass.setType("org.flymine.model.testmodel.Department");
+        displayQueryClass.setType("org.intermine.model.testmodel.Department");
 
         queryClasses.put(anAlias, displayQueryClass);
 

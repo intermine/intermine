@@ -1,4 +1,4 @@
-package org.flymine.tutorial;
+package org.intermine.tutorial;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.util.DynamicUtil;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.util.DynamicUtil;
 
-import org.flymine.model.tutorial.Company;
-import org.flymine.model.tutorial.Address;
-import org.flymine.model.tutorial.Department;
+import org.intermine.model.tutorial.Company;
+import org.intermine.model.tutorial.Address;
+import org.intermine.model.tutorial.Department;
 
 /**
  * Simple demonstration of loading data, where data may already exist

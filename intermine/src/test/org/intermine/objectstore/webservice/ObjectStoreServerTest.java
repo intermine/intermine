@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice;
+package org.intermine.objectstore.webservice;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,9 +12,9 @@ package org.flymine.objectstore.webservice;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.fql.FqlQuery;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.fql.FqlQuery;
 
 public class ObjectStoreServerTest extends TestCase
 {
@@ -30,7 +30,7 @@ public class ObjectStoreServerTest extends TestCase
     }
 
     public void testRegisterQueryObject() throws Exception {
-        FqlQuery q = new FqlQuery("select a1_ from Company as a1_", "org.flymine.model.testmodel");
+        FqlQuery q = new FqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel");
 
         assertEquals(1, server.registerQuery(q));
         assertEquals(2, server.registerQuery(q));
@@ -47,10 +47,10 @@ public class ObjectStoreServerTest extends TestCase
     }
 
     public void testValidLookup() throws Exception {
-        FqlQuery query = new FqlQuery("SELECT a1_ FROM Company AS a1_", "org.flymine.model.testmodel");
+        FqlQuery query = new FqlQuery("SELECT a1_ FROM Company AS a1_", "org.intermine.model.testmodel");
         int queryId = server.registerQuery(query);
         Query ret = server.lookupResults(queryId).getQuery();
-        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ret.toString());
+        assertEquals("SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_", ret.toString());
     }
 
     public void testInvalidLookup() throws Exception {

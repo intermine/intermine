@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,11 +16,11 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 
 /**
  * Collection of commonly used Database utilities

@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,11 +15,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.ReferenceList;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.util.ObjectPipe;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.ReferenceList;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.ObjectPipe;
 
 import org.apache.log4j.Logger;
 

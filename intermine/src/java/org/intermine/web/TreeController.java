@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -27,8 +27,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
 
 /**
  * Perform initialisation steps for displaying a tree
@@ -51,13 +51,13 @@ public class TreeController extends TilesAction
         Set openClasses = (Set) session.getAttribute("openClasses");
         if (openClasses == null) {
             openClasses = new HashSet();
-            openClasses.add("org.flymine.model.FlyMineBusinessObject");
+            openClasses.add("org.intermine.model.FlyMineBusinessObject");
             session.setAttribute("openClasses", openClasses);
         }
 
         String rootClass = (String) request.getAttribute("rootClass");
         if (rootClass == null) {
-            rootClass = "org.flymine.model.FlyMineBusinessObject";
+            rootClass = "org.intermine.model.FlyMineBusinessObject";
         }
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);

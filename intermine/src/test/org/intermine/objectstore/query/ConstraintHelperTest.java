@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Collection;
 
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.fql.FqlQueryParser;
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.CEO;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.fql.FqlQueryParser;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.CEO;
 
 
 public class ConstraintHelperTest extends TestCase
@@ -116,7 +116,7 @@ public class ConstraintHelperTest extends TestCase
 
 
     public void testCreateListNoConstraints() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select a from Company as a", "org.intermine.model.testmodel");
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
         List got = ConstraintHelper.createList(q);
@@ -125,7 +125,7 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testCreateListSingleConstraint() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5", "org.intermine.model.testmodel");
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(q.getConstraint());
@@ -135,7 +135,7 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testCreateListAnd() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 and a.name = 'hello'", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 and a.name = 'hello'", "org.intermine.model.testmodel");
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
         Iterator conIter = ((ConstraintSet) q.getConstraint()).getConstraints().iterator();
@@ -148,7 +148,7 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testCreateListOr() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 or a.name = 'hello'", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 or a.name = 'hello'", "org.intermine.model.testmodel");
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(q.getConstraint());

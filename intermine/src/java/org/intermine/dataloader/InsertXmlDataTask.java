@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 
-import org.flymine.task.ClassPathTask;
+import org.intermine.task.ClassPathTask;
 
 /**
  * Uses an IntegrationWriterWriter to insert XML data from a file
@@ -59,7 +59,7 @@ public class InsertXmlDataTask extends ClassPathTask
         }
 
         try {
-            Object driver = loadClass("org.flymine.dataloader.XmlDataLoaderDriver");
+            Object driver = loadClass("org.intermine.dataloader.XmlDataLoaderDriver");
 
             // Have to execute the loadData method by reflection as
             // cannot cast to something that this class (which may use

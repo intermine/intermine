@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.flymine.sql.Database;
+import org.intermine.sql.Database;
 
 /**
  * A class that provides an implementation of a cache for String-based SQL query optimisation.

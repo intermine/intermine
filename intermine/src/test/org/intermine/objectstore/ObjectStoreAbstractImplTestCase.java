@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,11 +15,11 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 
-import org.flymine.model.testmodel.*;
+import org.intermine.model.testmodel.*;
 
 public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
 {

@@ -1,4 +1,4 @@
-package org.flymine.sql.query;
+package org.intermine.sql.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -28,7 +28,7 @@ import java.io.*;
 import antlr.collections.AST;
 //import antlr.debug.misc.ASTFrame;
 
-import org.flymine.util.ConsistentSet;
+import org.intermine.util.ConsistentSet;
 
 
 /**

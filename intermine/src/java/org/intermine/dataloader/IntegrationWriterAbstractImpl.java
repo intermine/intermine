@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,23 +17,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.MetaDataException;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.IntToIntMap;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.IntToIntMap;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -368,21 +368,21 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStoreWriter#getObjectStore
+     * @see org.intermine.objectstore.ObjectStoreWriter#getObjectStore
      */
     public ObjectStore getObjectStore() {
         return osw.getObjectStore();
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#execute
+     * @see org.intermine.objectstore.ObjectStore#execute
      */
     public Results execute(Query q) throws ObjectStoreException {
         return osw.execute(q);
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * @see org.intermine.objectstore.ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -390,63 +390,63 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#prefetchObjectById
+     * @see org.intermine.objectstore.ObjectStore#prefetchObjectById
      */
     public void prefetchObjectById(Integer id) {
         osw.prefetchObjectById(id);
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#invalidateObjectById
+     * @see org.intermine.objectstore.ObjectStore#invalidateObjectById
      */
     public void invalidateObjectById(Integer id) {
         osw.invalidateObjectById(id);
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#cacheObjectById
+     * @see org.intermine.objectstore.ObjectStore#cacheObjectById
      */
     public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
         return osw.cacheObjectById(id, obj);
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#flushObjectById
+     * @see org.intermine.objectstore.ObjectStore#flushObjectById
      */
     public void flushObjectById() {
         osw.flushObjectById();
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#pilferObjectById
+     * @see org.intermine.objectstore.ObjectStore#pilferObjectById
      */
     public FlyMineBusinessObject pilferObjectById(Integer id) {
         return osw.pilferObjectById(id);
     }
     
     /**
-     * @see org.flymine.objectstore.ObjectStore#estimate
+     * @see org.intermine.objectstore.ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return osw.estimate(q);
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#count
+     * @see org.intermine.objectstore.ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return osw.count(q, sequence);
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#getModel
+     * @see org.intermine.objectstore.ObjectStore#getModel
      */
     public Model getModel() {
         return osw.getModel();
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#getObjectByExample
+     * @see org.intermine.objectstore.ObjectStore#getObjectByExample
      */
     public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
             throws ObjectStoreException {
@@ -454,7 +454,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStoreWriter#close
+     * @see org.intermine.objectstore.ObjectStoreWriter#close
      */
     public void close() {
         osw.close();

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.translating;
+package org.intermine.objectstore.translating;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,16 +20,16 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.MetaDataException;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreAbstractImpl;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.ResultsRow;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 
 import org.apache.log4j.Logger;
 

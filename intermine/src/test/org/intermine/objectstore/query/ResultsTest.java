@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreLimitReachedException;
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.model.testmodel.Department;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreLimitReachedException;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.model.testmodel.Department;
 
 public class ResultsTest extends TestCase
 {

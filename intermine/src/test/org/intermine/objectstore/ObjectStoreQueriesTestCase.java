@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,10 +22,10 @@ import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 
-import org.flymine.SummaryAssertionFailedError;
-import org.flymine.SummaryException;
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.*;
+import org.intermine.SummaryAssertionFailedError;
+import org.intermine.SummaryException;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.*;
 
 /**
  * TestCase for testing FlyMine Queries

@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -31,7 +31,7 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
 //         q.addFrom(qc2);
 //         q.addFrom(qc3);
         
-//         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
+//         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");
 //         Map aliases = q.getAliases();
 //         Map result = new QueryBuildController().getAliases(cld, q);
 //         assertEquals(Arrays.asList(new Object[] {aliases.get(qc1), aliases.get(qc2)}), result.get("company"));
@@ -103,7 +103,7 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
 //         assertEquals(expected1, getSession().getAttribute("constraints"));
 //         assertEquals(expected2, getRequest().getAttribute("aliases"));
 //         assertEquals(expected3, getRequest().getAttribute("ops"));
-//         assertEquals(model.getClassDescriptorByName("org.flymine.model.testmodel.Department"), getRequest().getAttribute("cld"));
+//         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), getRequest().getAttribute("cld"));
 //     }
 
 //    public void testPopulateQueryBuildForm() throws Exception {
@@ -123,7 +123,7 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
 
 //         List constraints = Arrays.asList(new Object[] {sc1, sc2, cc1});
 //         ClassDescriptor cld = Model.getInstanceByName("testmodel")
-//             .getClassDescriptorByName("org.flymine.model.testmodel.Company");
+//             .getClassDescriptorByName("org.intermine.model.testmodel.Company");
 //         HashMap aliasMap = new HashMap();
 //         aliasMap.put(qc2, "qc2");
 

@@ -1,4 +1,4 @@
-package org.flymine.sql.query;
+package org.intermine.sql.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import junit.framework.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.flymine.sql.DatabaseFactory;
+import org.intermine.sql.DatabaseFactory;
 
 public class PostgresExplainResultTest extends TestCase
 {

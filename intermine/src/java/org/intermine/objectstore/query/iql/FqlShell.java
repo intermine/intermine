@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.fql;
+package org.intermine.objectstore.query.fql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,13 +14,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.io.PrintStream;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.QueryHelper;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.util.TypeUtil;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.util.TypeUtil;
 import org.gnu.readline.Readline;
 import org.gnu.readline.ReadlineLibrary;
 import org.gnu.readline.ReadlineCompleter;
@@ -44,9 +44,9 @@ public class FqlShell
     public static void main(String args[]) throws Exception {
         PrintStream out = System.out;
         if (args.length > 2) {
-            out.println("Usage: java org.flymine.objectstore.query.Query "
+            out.println("Usage: java org.intermine.objectstore.query.Query "
                         + "<objectstore alias> - to enter shell-mode");
-            out.println("       java org.flymine.objectstore.query.Query "
+            out.println("       java org.intermine.objectstore.query.Query "
                         + "<objectstore alias> \"<FQL Query>\" - to run");
             out.println("                      a one-off query");
         } else {

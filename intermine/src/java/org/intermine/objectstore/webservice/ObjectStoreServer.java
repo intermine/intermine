@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice;
+package org.intermine.objectstore.webservice;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,17 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.flymine.FlyMineException;
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
-import org.flymine.objectstore.webservice.ser.SerializationUtil;
-import org.flymine.util.Util;
+import org.intermine.FlyMineException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.webservice.ser.FlyMineBusinessString;
+import org.intermine.objectstore.webservice.ser.SerializationUtil;
+import org.intermine.util.Util;
 
 import org.apache.log4j.Logger;
 

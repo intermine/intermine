@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -30,12 +30,12 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.Globals;
 
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.AttributeDescriptor;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
 
 /**
  * Form bean to represent the inputs to a text-based query

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,12 +23,12 @@ import java.util.Date;
 import java.util.Set;
 import java.text.SimpleDateFormat;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.model.testmodel.Employee;
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Company;
-import org.flymine.objectstore.query.fql.FqlQuery;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Company;
+import org.intermine.objectstore.query.fql.FqlQuery;
 
 import org.apache.log4j.Logger;
 
@@ -73,7 +73,7 @@ public class QueryHelperTest extends TestCase
     public void testAddSubqueryConstraint() throws Exception {
         Query q = new Query();
         Query subQuery = new FqlQuery("SELECT a1 from Employee as a1",
-                                      "org.flymine.model.testmodel").toQuery();
+                                      "org.intermine.model.testmodel").toQuery();
 
         QueryClass qc = new QueryClass(Employee.class);
 

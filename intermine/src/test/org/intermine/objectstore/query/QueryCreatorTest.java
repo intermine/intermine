@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,10 +15,10 @@ import junit.framework.*;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.testmodel.*;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.testmodel.*;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.metadata.Model;
 
 public class QueryCreatorTest extends QueryTestCase
 {

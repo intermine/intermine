@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -26,18 +26,18 @@ import java.util.ArrayList;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.flymine.FlyMineException;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.FlyMineException;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.apache.log4j.Logger;
 
@@ -423,7 +423,7 @@ public class EnsemblDataTranslator extends DataTranslator
         //Iterator i = objectXrefs.iterator();
         while (objectXrefs.hasNext()) {
             Item objectXref = ItemHelper.convert(
-                                  (org.flymine.model.fulldata.Item) objectXrefs.next());
+                                  (org.intermine.model.fulldata.Item) objectXrefs.next());
             Item xref = ItemHelper.convert(srcItemReader
                         .getItemById(objectXref.getReference("xref").getRefId()));
 
@@ -505,7 +505,7 @@ public class EnsemblDataTranslator extends DataTranslator
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
         if (stableIds.hasNext()) {
-            return ItemHelper.convert((org.flymine.model.fulldata.Item) stableIds.next());
+            return ItemHelper.convert((org.intermine.model.fulldata.Item) stableIds.next());
         } else {
             return null;
         }

@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,10 +19,10 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-import org.flymine.sql.DatabaseTestCase;
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.query.*;
+import org.intermine.sql.DatabaseTestCase;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.query.*;
 
 public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 {

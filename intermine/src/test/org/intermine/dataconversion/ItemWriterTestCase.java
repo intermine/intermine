@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,14 +20,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.fulldata.Item;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.xml.full.FullParser;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.fulldata.Item;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.ItemHelper;
 
 public class ItemWriterTestCase extends TestCase {
     protected List items = new ArrayList();
@@ -43,7 +43,7 @@ public class ItemWriterTestCase extends TestCase {
         List xmlItems = FullParser.parse(is);
         Iterator iter = xmlItems.iterator();
         while (iter.hasNext()) {
-            items.add((Item) ItemHelper.convert((org.flymine.xml.full.Item) iter.next()));
+            items.add((Item) ItemHelper.convert((org.intermine.xml.full.Item) iter.next()));
         }
         iter = items.iterator();
         while (iter.hasNext()) {

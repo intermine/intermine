@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -110,7 +110,7 @@ public class DynamicUtil
     /**
      * Return the Class for a set of Class objects. NOTE: Creating an instance of this class is not
      * trivial: after calling Class.newInstance(), cast the Object to net.sf.cglib.Factory, and call
-     * interceptor(new org.flymine.util.DynamicBean()) on it.
+     * interceptor(new org.intermine.util.DynamicBean()) on it.
      *
      * @param classes the classes and interfaces to extend/implement
      * @return the Class

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,10 +12,10 @@ package org.flymine.objectstore.query;
 
 import junit.framework.Test;
 
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Department;
-import org.flymine.objectstore.SetupDataTestCase;
-import org.flymine.testing.OneTimeTestCase;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.SetupDataTestCase;
+import org.intermine.testing.OneTimeTestCase;
 
 /**
  * Test class for the QueryCloner.
@@ -61,7 +61,7 @@ public class QueryClonerTest extends SetupDataTestCase
         cloned.addFrom(c2);
         cloned.addToSelect(c2);
 
-        assertEquals("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_", cloned.toString());
+        assertEquals("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_", cloned.toString());
     }
 }
     

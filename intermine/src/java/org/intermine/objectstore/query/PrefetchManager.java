@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * A manager for the prefetch mechanism for the Results object.

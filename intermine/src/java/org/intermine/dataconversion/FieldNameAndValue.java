@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,9 +12,9 @@ package org.flymine.dataconversion;
 
 import java.util.Iterator;
 
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Reference;
 
 /**
  * Provides an object that describes a field name with a corresponding value.

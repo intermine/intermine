@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,8 +16,8 @@ import org.xml.sax.SAXException;
 
 import java.io.StringReader;
 
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.modelproduction.xml.FlyMineModelParser;
 
 /**
  * Deserialize a Model from XML to an Object

@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -32,13 +32,13 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 
 public class OntologyUtilTest extends TestCase
 {
 
-    private final String ns = "http://www.flymine.org/target#";
+    private final String ns = "http://www.intermine.org/target#";
     private final String ENDL = "\n";
 
     public void testGeneratePropertyName() throws Exception {
@@ -221,14 +221,14 @@ public class OntologyUtilTest extends TestCase
 
 
     public void testCorrectNamespace() throws Exception {
-        assertEquals("http://www.flymine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.flymine.org/test#junk"));
-        assertEquals("http://www.flymine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.flymine.org/test#junk#morejunk"));
-        assertEquals("http://www.flymine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.flymine.org/test/"));
-        assertEquals("http://www.flymine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.flymine.org/test"));
+        assertEquals("http://www.intermine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.intermine.org/test#junk"));
+        assertEquals("http://www.intermine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.intermine.org/test#junk#morejunk"));
+        assertEquals("http://www.intermine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.intermine.org/test/"));
+        assertEquals("http://www.intermine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.intermine.org/test"));
     }
 
 
@@ -418,9 +418,9 @@ public class OntologyUtilTest extends TestCase
     }
 
     public void testBuildEquivalenceMap() throws Exception {
-        String tgtNs = "http://www.flymine.org/target#";
-        String src1Ns = "http://www.flymine.org/source1#";
-        String src2Ns = "http://www.flymine.org/source2#";
+        String tgtNs = "http://www.intermine.org/target#";
+        String src1Ns = "http://www.intermine.org/source1#";
+        String src2Ns = "http://www.intermine.org/source2#";
 
         String owl = "@prefix : <" + tgtNs + "> ." + ENDL
             + "@prefix src1: <" + src1Ns + "> ." + ENDL
@@ -463,9 +463,9 @@ public class OntologyUtilTest extends TestCase
 
 
     public void testBuildEquivalenceMapSrcNs() throws Exception {
-        String tgtNs = "http://www.flymine.org/target#";
-        String src1Ns = "http://www.flymine.org/source1#";
-        String src2Ns = "http://www.flymine.org/source2#";
+        String tgtNs = "http://www.intermine.org/target#";
+        String src1Ns = "http://www.intermine.org/source1#";
+        String src2Ns = "http://www.intermine.org/source2#";
 
         String owl = "@prefix : <" + tgtNs + "> ." + ENDL
             + "@prefix src1: <" + src1Ns + "> ." + ENDL
@@ -527,7 +527,7 @@ public class OntologyUtilTest extends TestCase
     }
 
     public void testReorganisePropertiesEquivalentProperty() throws Exception {
-        String srcNs = "http://www.flymine.org/source#";
+        String srcNs = "http://www.intermine.org/source#";
 
         String owl = "@prefix : <" + ns + "> ." + ENDL
             + ENDL
@@ -673,7 +673,7 @@ public class OntologyUtilTest extends TestCase
 
 
     public void testTranferEquivalenceStatements() throws Exception {
-        String srcNs = "http://www.flymine.org/source#";
+        String srcNs = "http://www.intermine.org/source#";
 
         String owl = "@prefix : <" + ns + "> ." + ENDL
             + ENDL
@@ -779,13 +779,13 @@ public class OntologyUtilTest extends TestCase
 
     public void testGenerateClassNamesSingle() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        assertEquals("org.flymine.model.testmodel.Company", OntologyUtil.generateClassNames(model.getNameSpace() + "Company", model));
+        assertEquals("org.intermine.model.testmodel.Company", OntologyUtil.generateClassNames(model.getNameSpace() + "Company", model));
     }
 
     public void testGenerateClassNamesMultiple() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         String classNames = " " + model.getNameSpace() + "Company " + model.getNameSpace() + "Department ";
-        String expected = "org.flymine.model.testmodel.Company org.flymine.model.testmodel.Department";
+        String expected = "org.intermine.model.testmodel.Company org.intermine.model.testmodel.Department";
         assertEquals(expected, OntologyUtil.generateClassNames(classNames, model));
     }
 

@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.HashSet;
-import org.flymine.sql.query.*;
-import org.flymine.util.StringUtil;
-import org.flymine.util.ConsistentSet;
+import org.intermine.sql.query.*;
+import org.intermine.util.StringUtil;
+import org.intermine.util.ConsistentSet;
 
 public class QueryOptimiserTest extends TestCase
 {

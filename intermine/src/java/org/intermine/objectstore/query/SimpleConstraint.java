@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
-import org.flymine.util.Util;
+import org.intermine.util.Util;
 
 /**
  * Represents a constraint between two QueryEvaluable types.  These are query elements

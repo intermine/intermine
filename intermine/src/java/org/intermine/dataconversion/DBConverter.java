@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,18 +20,18 @@ import java.util.Stack;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.sql.Database;
-import org.flymine.util.TypeUtil;
-import org.flymine.util.DatabaseUtil;
-import org.flymine.util.StringUtil;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.sql.Database;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Reference;
+import org.intermine.model.fulldata.ReferenceList;
 
 import org.apache.log4j.Logger;
 
@@ -95,7 +95,7 @@ public class DBConverter extends DataConverter
                 for (Iterator cldIter = model.getClassDescriptors().iterator();
                      cldIter.hasNext();) {
                     ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                    if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+                    if (!cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
                         if (idsProvided(cld) && !idIsUnique(cld)) {
                             buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
                         }
@@ -109,7 +109,7 @@ public class DBConverter extends DataConverter
 
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+                if (!cld.getName().equals("org.intermine.model.FlyMineBusinessObject")) {
                     processClassDescriptor(cld);
                 }
             }
@@ -319,7 +319,7 @@ public class DBConverter extends DataConverter
                 if (value != null && !TypeUtil.objectToString(value).equals("0")) {
                     String refClsName = ((ReferenceDescriptor) fd).getReferencedClassDescriptor()
                         .getName();
-                    if ("org.flymine.model.FlyMineBusinessObject".equals(refClsName)) {
+                    if ("org.intermine.model.FlyMineBusinessObject".equals(refClsName)) {
                         refClsName = ((String) row.get(fieldName + "_object_type")).toLowerCase();
                     } else {
                         refClsName = TypeUtil.unqualifiedName(refClsName);

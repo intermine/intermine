@@ -1,4 +1,4 @@
-package org.flymine.sql;
+package org.intermine.sql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.flymine.util.StringUtil;
+import org.intermine.util.StringUtil;
 
 
 /**

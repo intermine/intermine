@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,7 +13,7 @@ package org.flymine.objectstore.query;
 import java.util.List;
 import java.util.Arrays;
 
-import org.flymine.util.Util;
+import org.intermine.util.Util;
 
 /**
  * Constrain a QueryClass or QueryEvaluable to be within the select list

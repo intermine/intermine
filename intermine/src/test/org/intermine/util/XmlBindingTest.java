@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.metadata.Model;
+import org.intermine.model.testmodel.*;
+import org.intermine.metadata.Model;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.flymine;
+package org.intermine.objectstore.flymine;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -26,19 +26,19 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreAbstractImpl;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryNode;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.precompute.QueryOptimiser;
-import org.flymine.sql.query.ExplainResult;
-import org.flymine.xml.lite.LiteParser;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.precompute.QueryOptimiser;
+import org.intermine.sql.query.ExplainResult;
+import org.intermine.xml.lite.LiteParser;
 
 import org.apache.log4j.Logger;
 

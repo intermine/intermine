@@ -1,4 +1,4 @@
-package org.flymine.xml.full;
+package org.intermine.xml.full;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,7 +12,7 @@ package org.flymine.xml.full;
 
 import java.util.Iterator;
 
-import org.flymine.util.StringUtil;
+import org.intermine.util.StringUtil;
 
 /**
 * Class providing Item utility methods
@@ -25,8 +25,8 @@ public class ItemHelper
     * @param item the XML item
     * @return an equivalent data model item
     */
-    public static org.flymine.model.fulldata.Item convert(Item item) {
-        org.flymine.model.fulldata.Item newItem = new org.flymine.model.fulldata.Item();
+    public static org.intermine.model.fulldata.Item convert(Item item) {
+        org.intermine.model.fulldata.Item newItem = new org.intermine.model.fulldata.Item();
         
         newItem.setIdentifier(item.getIdentifier());
         newItem.setClassName(item.getClassName());
@@ -34,8 +34,8 @@ public class ItemHelper
         
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
             Attribute attr = (Attribute) i.next();
-            org.flymine.model.fulldata.Attribute newAttr 
-                = new org.flymine.model.fulldata.Attribute();
+            org.intermine.model.fulldata.Attribute newAttr 
+                = new org.intermine.model.fulldata.Attribute();
             newAttr.setName(attr.getName());
             newAttr.setValue(attr.getValue());
             newItem.getAttributes().add(newAttr);
@@ -44,8 +44,8 @@ public class ItemHelper
         
         for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
-            org.flymine.model.fulldata.Reference newRef
-                = new org.flymine.model.fulldata.Reference();
+            org.intermine.model.fulldata.Reference newRef
+                = new org.intermine.model.fulldata.Reference();
             newRef.setName(ref.getName());
             newRef.setRefId(ref.getRefId());
             newItem.getReferences().add(newRef);
@@ -54,8 +54,8 @@ public class ItemHelper
 
         for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
             ReferenceList refs = (ReferenceList) i.next();
-            org.flymine.model.fulldata.ReferenceList newRefs
-                = new org.flymine.model.fulldata.ReferenceList();
+            org.intermine.model.fulldata.ReferenceList newRefs
+                = new org.intermine.model.fulldata.ReferenceList();
             newRefs.setName(refs.getName());
             newRefs.setRefIds(StringUtil.join(refs.getRefIds(), " "));
             newItem.getCollections().add(newRefs);
@@ -70,15 +70,15 @@ public class ItemHelper
     * @param item the data model Item
     * @return an equivalent XML Item
     */
-    public static Item convert(org.flymine.model.fulldata.Item item) {
+    public static Item convert(org.intermine.model.fulldata.Item item) {
         Item newItem = new Item();
         newItem.setIdentifier(item.getIdentifier());
         newItem.setClassName(item.getClassName());
         newItem.setImplementations(item.getImplementations());
         
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-            org.flymine.model.fulldata.Attribute attr =
-                (org.flymine.model.fulldata.Attribute) i.next();
+            org.intermine.model.fulldata.Attribute attr =
+                (org.intermine.model.fulldata.Attribute) i.next();
             Attribute newAttr = new Attribute();
             newAttr.setName(attr.getName());
             newAttr.setValue(attr.getValue());
@@ -86,8 +86,8 @@ public class ItemHelper
         }
 
         for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-            org.flymine.model.fulldata.Reference ref =
-                (org.flymine.model.fulldata.Reference) i.next();
+            org.intermine.model.fulldata.Reference ref =
+                (org.intermine.model.fulldata.Reference) i.next();
             Reference newRef = new Reference();
             newRef.setName(ref.getName());
             newRef.setRefId(ref.getRefId());
@@ -95,8 +95,8 @@ public class ItemHelper
         }
 
         for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-            org.flymine.model.fulldata.ReferenceList refs
-                = (org.flymine.model.fulldata.ReferenceList) i.next();
+            org.intermine.model.fulldata.ReferenceList refs
+                = (org.intermine.model.fulldata.ReferenceList) i.next();
             ReferenceList newRefs = new ReferenceList();
             newRefs.setName(refs.getName());
             newRefs.setRefIds(StringUtil.tokenize(refs.getRefIds()));

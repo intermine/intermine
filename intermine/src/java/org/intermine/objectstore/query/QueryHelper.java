@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 /**
  * Static methods to assist with query generation from front end.

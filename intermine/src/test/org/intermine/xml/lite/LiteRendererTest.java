@@ -1,4 +1,4 @@
-package org.flymine.xml.lite;
+package org.intermine.xml.lite;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,10 +15,10 @@ import junit.framework.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.flymine.util.TypeUtil;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.testmodel.*;
-import org.flymine.metadata.Model;
+import org.intermine.util.TypeUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.testmodel.*;
+import org.intermine.metadata.Model;
 
 public class LiteRendererTest extends TestCase
 {
@@ -37,8 +37,8 @@ public class LiteRendererTest extends TestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "org.flymine.model.testmodel.Employee" + LiteRenderer.DELIM
-            + "org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress"
+        String expected = "org.intermine.model.testmodel.Employee" + LiteRenderer.DELIM
+            + "org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress"
             + LiteRenderer.DELIM + "aage" + LiteRenderer.DELIM + "0"
             + LiteRenderer.DELIM + "afullTime" + LiteRenderer.DELIM + "false"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
@@ -57,7 +57,7 @@ public class LiteRendererTest extends TestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<object class=\"org.flymine.model.testmodel.Employee\" implements=\"org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress\">"
+        String expected = "<object class=\"org.intermine.model.testmodel.Employee\" implements=\"org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress\">"
             + "<field name=\"age\" value=\"0\"/>"
             + "<field name=\"fullTime\" value=\"false\"/>"
             + "<field name=\"name\" value=\"Employee1\"/>"
@@ -78,8 +78,8 @@ public class LiteRendererTest extends TestCase
         e.setDepartment(d);
 
         Item exp = new Item();
-        exp.setClassName("org.flymine.model.testmodel.Employee");
-        exp.setImplementations("org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress");
+        exp.setClassName("org.intermine.model.testmodel.Employee");
+        exp.setImplementations("org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress");
         Field f1 = new Field();
         f1.setName("age");
         f1.setValue("0");
@@ -126,7 +126,7 @@ public class LiteRendererTest extends TestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<object class=\"org.flymine.model.testmodel.Types\" implements=\"org.flymine.model.FlyMineBusinessObject\">"
+        String expected = "<object class=\"org.intermine.model.testmodel.Types\" implements=\"org.intermine.model.FlyMineBusinessObject\">"
             + "<field name=\"booleanObjType\" value=\"true\"/>"
             + "<field name=\"doubleType\" value=\"1.3\"/>"
             + "<field name=\"floatType\" value=\"1.2\"/>"

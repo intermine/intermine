@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,10 +23,10 @@ import java.io.*;
 public class MergeOwlTest extends TestCase
 {
     public static final String ENDL = System.getProperty("line.separator");
-    private final String tgtNamespace = "http://www.flymine.org/target#";
-    private final String src1Namespace = "http://www.flymine.org/source1#";
-    private final String src2Namespace = "http://www.flymine.org/source2#";
-    private final String nullNamespace = "http://www.flymine.org/null#";
+    private final String tgtNamespace = "http://www.intermine.org/target#";
+    private final String src1Namespace = "http://www.intermine.org/source1#";
+    private final String src2Namespace = "http://www.intermine.org/source2#";
+    private final String nullNamespace = "http://www.intermine.org/null#";
 
     public MergeOwlTest(String arg) {
         super(arg);

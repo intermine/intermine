@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,14 +16,14 @@ import java.util.Set;
 import java.util.Map;
 import java.util.Iterator;
 
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
 
 /**
  * Class that helps build queries or parts of queries for common situations.

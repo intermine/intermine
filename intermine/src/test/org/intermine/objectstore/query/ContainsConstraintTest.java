@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,11 +12,11 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.testmodel.Address;
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Manager;
-import org.flymine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.Employee;
 
 public class ContainsConstraintTest extends TestCase {
 

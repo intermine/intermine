@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2003 FlyMine

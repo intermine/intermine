@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -24,16 +24,16 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.util.XmlBinding;
-import org.flymine.model.testmodel.*;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlBinding;
+import org.intermine.model.testmodel.*;
 
 public class XmlDataLoaderTest extends TestCase
 {

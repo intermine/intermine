@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,30 +19,30 @@ import java.util.HashSet;
 import java.util.Collection;
 import java.util.Arrays;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.QueryTestCase;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.DynamicBean;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Reference;
+import org.intermine.model.fulldata.ReferenceList;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.QueryTestCase;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicBean;
 
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Broke;
-import org.flymine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.Company;
 
 
 public class ItemToObjectTranslatorTest extends QueryTestCase
@@ -138,8 +138,8 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
 
     public void testTranslateFromDbObject() throws Exception {
         Item dbItem = new Item();
-        dbItem.setClassName("http://www.flymine.org/model/testmodel#Department");
-        dbItem.setImplementations("http://www.flymine.org/model/testmodel#Broke");
+        dbItem.setClassName("http://www.intermine.org/model/testmodel#Department");
+        dbItem.setImplementations("http://www.intermine.org/model/testmodel#Broke");
         dbItem.setIdentifier("fish_1");
         Attribute dbAttr1 = new  Attribute();
         dbAttr1.setName("name");

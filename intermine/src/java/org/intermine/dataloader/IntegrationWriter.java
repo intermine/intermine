@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,10 +10,10 @@ package org.flymine.dataloader;
  *
  */
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Define methods needed to deal with integration when writing to an ObjectStore.  To retain

@@ -1,4 +1,4 @@
-package org.flymine.tutorial;
+package org.intermine.tutorial;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,13 +13,13 @@ package org.flymine.tutorial;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
-import org.flymine.model.tutorial.Company;
+import org.intermine.model.tutorial.Company;
 
 /**
  * Simple demonstration of query and results handling
@@ -52,9 +52,9 @@ public class SimpleQuery
         // file
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.tutorial");
 
-        // Set up an FQL query. "org.flymine.model.tutorial" is used
+        // Set up an FQL query. "org.intermine.model.tutorial" is used
         // to qualify unqualified classes in the query
-        FqlQuery q = new FqlQuery("select c from Company as c", "org.flymine.model.tutorial");
+        FqlQuery q = new FqlQuery("select c from Company as c", "org.intermine.model.tutorial");
 
         // Execute the query (note we have to convert to a Query object first)
         Results results = os.execute(q.toQuery());

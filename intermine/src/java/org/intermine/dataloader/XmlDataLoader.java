@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.io.InputStream;
 
-import org.flymine.FlyMineException;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.util.XmlBinding;
+import org.intermine.FlyMineException;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.XmlBinding;
 
 /**
  * Provides a method for unmarshalling XML given source  into java

@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,9 +15,9 @@ import java.util.LinkedList;
 
 import junit.framework.TestCase;
 
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.Results;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.Results;
 
 public class DisplayableResultsTest extends TestCase
 {
@@ -31,7 +31,7 @@ public class DisplayableResultsTest extends TestCase
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        fq = new FqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.flymine.model.testmodel");
+        fq = new FqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.intermine.model.testmodel");
     }
 
     private DisplayableResults getEmptyResults() throws Exception {
@@ -472,7 +472,7 @@ public class DisplayableResultsTest extends TestCase
         dr1.getColumn("d2").setVisible(false);
 
         // Now update from another that contains some columns we don't have
-        FqlQuery fq1 = new FqlQuery("select c1, d1 from Company as c1, Department as d1", "org.flymine.model.testmodel");
+        FqlQuery fq1 = new FqlQuery("select c1, d1 from Company as c1, Department as d1", "org.intermine.model.testmodel");
         DisplayableResults dr2 = new DisplayableResults(os.execute(fq1.toQuery()));
 
         dr2.setStart(5);
@@ -504,7 +504,7 @@ public class DisplayableResultsTest extends TestCase
         dr1.getColumn("d2").setVisible(false);
 
         // Now update from another that contains some columns we don't have
-        FqlQuery fq2 = new FqlQuery("select c1, c2, c3, d1, d2, d3 from Company as c1, Company as c2, Company as c3, Department as d1, Department as d2, Department as d3", "org.flymine.model.testmodel");
+        FqlQuery fq2 = new FqlQuery("select c1, c2, c3, d1, d2, d3 from Company as c1, Company as c2, Company as c3, Department as d1, Department as d2, Department as d3", "org.intermine.model.testmodel");
         DisplayableResults dr2 = new DisplayableResults(os.execute(fq2.toQuery()));
 
         dr2.setStart(5);

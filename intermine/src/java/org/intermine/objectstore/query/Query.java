@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.fql.FqlQuery;
 
 /**
  * This class provides an implementation-independent abstract representation of a query

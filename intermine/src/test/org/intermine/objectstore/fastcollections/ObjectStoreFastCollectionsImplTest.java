@@ -1,4 +1,4 @@
-package org.flymine.objectstore.fastcollections;
+package org.intermine.objectstore.fastcollections;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,21 +17,21 @@ import java.util.Set;
 
 import junit.framework.*;
 
-import org.flymine.objectstore.ObjectStoreAbstractImpl;
-import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.flymine.ObjectStoreFlyMineImpl;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.flymine.ObjectStoreFlyMineImpl;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.SimpleConstraint;
 
-import org.flymine.model.testmodel.*;
+import org.intermine.model.testmodel.*;
 
 public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTestCase
 {

@@ -134,7 +134,7 @@
   </patternset>
 
   <!-- Libraries that the FlyMine query webapp uses -->
-  <patternset id="lib.webapp.flymine">
+  <patternset id="lib.webapp.intermine">
     <include name="aspect*.jar" />
     <include name="commons*.jar" />
     <include name="jakarta-oro*.jar" />
@@ -161,7 +161,7 @@
     <fileset dir="${lib}">
       <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
-      <patternset refid="lib.webapp.flymine"/>
+      <patternset refid="lib.webapp.intermine"/>
       <patternset refid="lib.webapp.webservice"/>
       <patternset refid="lib.jasper"/>
       <patternset refid="lib.acedb"/>
@@ -222,7 +222,7 @@
       <patternset refid="lib.webapptest"/>
     </fileset>
     <fileset dir="${dist.webapp}">
-      <include name="flymine.war"/>
+      <include name="intermine.war"/>
     </fileset>
   </path>
 
@@ -266,7 +266,7 @@
     <mkdir dir="${tutorial}/model/tutorial"/>
     <mkdir dir="${tutorial}/model/tutorial/resources"/>
     <mkdir dir="${tutorial}/resources"/>
-    <mkdir dir="${tutorial}/src/java/org/flymine/tutorial"/>
+    <mkdir dir="${tutorial}/src/java/org/intermine/tutorial"/>
 
     <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
     <copy todir="${build.resources}">
@@ -318,12 +318,12 @@
         <exclude name="**/tutorial/*"/>
       </fileset>
     </copy>
-    <antlr target="${src.java}/org/flymine/sql/query/flymine_sql.g"
-        outputdirectory="${build.src.java}/org/flymine/sql/query">
+    <antlr target="${src.java}/org/intermine/sql/query/intermine_sql.g"
+        outputdirectory="${build.src.java}/org/intermine/sql/query">
       <classpath refid="project.class.path"/>
     </antlr>
-    <antlr target="${src.java}/org/flymine/objectstore/query/fql/flymine_fql.g"
-        outputdirectory="${build.src.java}/org/flymine/objectstore/query/fql">
+    <antlr target="${src.java}/org/intermine/objectstore/query/fql/intermine_fql.g"
+        outputdirectory="${build.src.java}/org/intermine/objectstore/query/fql">
       <classpath refid="project.class.path"/>
     </antlr>
     <depend srcdir="${build.src.java}" destdir="${build.java}" closure="yes" dump="yes"/>
@@ -331,8 +331,8 @@
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
       <!-- this will include all dependent files of these tasks -->
-      <include name="org/flymine/codegen/ModelOutputTask.java"/>
-      <include name="org/flymine/modelproduction/ModelGenerationTask.java"/>
+      <include name="org/intermine/codegen/ModelOutputTask.java"/>
+      <include name="org/intermine/modelproduction/ModelGenerationTask.java"/>
     </javac>
   </target>
 
@@ -457,7 +457,7 @@
   <target name="insert-data-testmodel" depends="build-db-testmodel">
     <taskdef
       name="insert-xml-data"
-      classname="org.flymine.dataloader.InsertXmlDataTask">
+      classname="org.intermine.dataloader.InsertXmlDataTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -514,7 +514,7 @@
   </target>
 
  <target name="translate-chado" depends="build-db-chado-target-items">
-    <java classname="org.flymine.dataconversion.ChadoDataTranslator" fork="true"
+    <java classname="org.intermine.dataconversion.ChadoDataTranslator" fork="true"
       maxmemory="800m" >
       <!-- <jvmarg value="-Xrunjmp" /> -->
       <classpath refid="models.class.path" />
@@ -543,7 +543,7 @@
 
 
  <target name="translate-ensembl-anopheles" depends="build-db-ensembl-anoph-tgt-items">
-    <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
+    <java classname="org.intermine.dataconversion.EnsemblDataTranslator" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="os.ensembl-anoph-src-items" />
@@ -574,7 +574,7 @@
   </target>
 
  <target name="translate-ensembl-drosophila" depends="build-db-ensembl-dros-tgt-items">
-    <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
+    <java classname="org.intermine.dataconversion.EnsemblDataTranslator" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="os.ensembl-dros-src-items" />
@@ -1133,11 +1133,11 @@
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
-          <exclude name="org/flymine/web/**" />
-          <exclude name="org/flymine/objectstore/webservice/**" />
-          <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
-          <exclude name="org/flymine/dataconversion/*TranslatorTest.class" />
-          <exclude name="org/flymine/dataconversion/ItemToObject*" />
+          <exclude name="org/intermine/web/**" />
+          <exclude name="org/intermine/objectstore/webservice/**" />
+          <exclude name="org/intermine/dataloader/XmlDataLoaderTest.class" />
+          <exclude name="org/intermine/dataconversion/*TranslatorTest.class" />
+          <exclude name="org/intermine/dataconversion/ItemToObject*" />
         </fileset>
       </batchtest>
     </junit>
@@ -1180,7 +1180,7 @@
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
         <fileset dir="${build.test}">
-          <include name="org/flymine/web/**/*Test.class" />
+          <include name="org/intermine/web/**/*Test.class" />
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
@@ -1198,7 +1198,7 @@
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
         <fileset dir="${build.test}">
-          <include name="org/flymine/objectstore/webservice/**/*Test.class" />
+          <include name="org/intermine/objectstore/webservice/**/*Test.class" />
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
@@ -1270,11 +1270,11 @@
 
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
-    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="FlyMine API" additionalparam="-breakiterator">
+    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="Intermine API" additionalparam="-breakiterator">
       <classpath refid="project.class.path"/>
       <fileset dir="${src.java}" defaultexcludes="yes" />
-      <doctitle><![CDATA[<h1>FlyMine</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} FlyMine. All Rights Reserved.</i>]]></bottom>
+      <doctitle><![CDATA[<h1>Intermine</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} Intermine. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
 
@@ -1383,62 +1383,62 @@
   <!-- Webapp targets -->
 
   <target name="prepare-webapp" depends="prepare,prepare-dist,jar">
-    <mkdir dir="${build.webapp}/flymine"/>
-    <mkdir dir="${build.webapp}/flymine/images"/>
-    <mkdir dir="${build.webapp}/flymine/model"/>
-    <mkdir dir="${build.webapp}/flymine/META-INF"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF/classes"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF/lib"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF/src"/>
+    <mkdir dir="${build.webapp}/intermine"/>
+    <mkdir dir="${build.webapp}/intermine/images"/>
+    <mkdir dir="${build.webapp}/intermine/model"/>
+    <mkdir dir="${build.webapp}/intermine/META-INF"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF/classes"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF/lib"/>
+    <mkdir dir="${build.webapp}/intermine/WEB-INF/src"/>
 
-    <copy todir="${build.webapp}/flymine">
+    <copy todir="${build.webapp}/intermine">
       <fileset dir="${src.webapp}"/>
       <fileset dir="${src.www}" includes="flymine.css"/>
     </copy>
-    <copy todir="${build.webapp}/flymine/images">
-      <fileset dir="${resources}/webapps/flymine/images"/>
+    <copy todir="${build.webapp}/intermine/images">
+      <fileset dir="${resources}/webapps/intermine/images"/>
       <fileset dir="${src.www}/images"/>
     </copy>
-    <copy todir="${build.webapp}/flymine/WEB-INF">
-      <fileset dir="${resources}/webapps/flymine" excludes="images/**, *.properties"/>
+    <copy todir="${build.webapp}/intermine/WEB-INF">
+      <fileset dir="${resources}/webapps/intermine" excludes="images/**, *.properties"/>
     </copy>
-    <copy todir="${build.webapp}/flymine/WEB-INF/classes">
-      <fileset dir="${resources}/webapps/flymine" includes="*.properties"/>
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
+      <fileset dir="${resources}/webapps/intermine" includes="*.properties"/>
     </copy>
-    <copy todir="${build.webapp}/flymine/WEB-INF/lib">
+    <copy todir="${build.webapp}/intermine/WEB-INF/lib">
       <fileset dir="${lib}">
         <patternset refid="lib.common"/>
         <patternset refid="lib.antlr"/>
-        <patternset refid="lib.webapp.flymine"/>
+        <patternset refid="lib.webapp.intermine"/>
       </fileset>
-      <fileset dir="${dist}" includes="flymine*.jar"/>
+      <fileset dir="${dist}" includes="intermine*.jar"/>
     </copy>
 
-    <copy todir="${build.webapp}/flymine/META-INF" file="${resources}/webapps/flymine/context.xml"/>
-    <replace file="${build.webapp}/flymine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
+    <copy todir="${build.webapp}/intermine/META-INF" file="${resources}/webapps/intermine/context.xml"/>
+    <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
   </target>
 
   <target name="build-webapp" depends="prepare-webapp"
     description="Build the FlyMine web application">
 
-    <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
+    <copy todir="${build.tmp}" file="${resources}/webapps/intermine/web.xml"/>
 
 
     <!-- this precompilation step is optional -->
     <antcall target="precompile-jsp"/>
 
-    <delete file="${build.webapp}/flymine/WEB-INF/web.xml"/>
-    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
-      <fileset dir="${build.webapp}/flymine"/>
+    <delete file="${build.webapp}/intermine/WEB-INF/web.xml"/>
+    <war destfile="${dist.webapp}/intermine.war" webxml="${build.tmp}/web.xml">
+      <fileset dir="${build.webapp}/intermine"/>
     </war>
 
   </target>
   
   <target name="precompile-jsp">
-    <jspc srcdir="${build.webapp}/flymine"
-      destdir="${build.webapp}/flymine/WEB-INF/src"
-      package="org.flymine.jsp"
+    <jspc srcdir="${build.webapp}/intermine"
+      destdir="${build.webapp}/intermine/WEB-INF/src"
+      package="org.intermine.jsp"
       verbose="9"
       webinc="${build.tmp}/generated-web.xml">
       <include name="**/*.jsp"/>
@@ -1448,7 +1448,7 @@
     </jspc>
 
     <delete>
-      <fileset dir="${build.webapp}/flymine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
+      <fileset dir="${build.webapp}/intermine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
     </delete>
 
     <loadfile property="generated.xml" srcFile="${build.tmp}/generated-web.xml"/>
@@ -1459,15 +1459,15 @@
     </replace>
 
     <javac
-      srcdir="${build.webapp}/flymine/WEB-INF/src"
-      destdir="${build.webapp}/flymine/WEB-INF/classes"
+      srcdir="${build.webapp}/intermine/WEB-INF/src"
+      destdir="${build.webapp}/intermine/WEB-INF/classes"
       listfiles="yes"
       depend="yes">
       <classpath refid="base.class.path"/>
     </javac>
 
     <!-- don't need the .java files -->
-    <delete dir="${build.webapp}/flymine/WEB-INF/src"/>
+    <delete dir="${build.webapp}/intermine/WEB-INF/src"/>
   </target>
 
   <target name="build-testable-webapp" depends="prepare-webapp, jar-testmodel"
@@ -1480,11 +1480,11 @@
 
     <antcall target="build-webapp"/>
 
-    <war destfile="${dist.webapp}/flymine.war" update="true">
+    <war destfile="${dist.webapp}/intermine.war" update="true">
       <lib dir="${lib}">
         <patternset refid="lib.webapptest"/>
       </lib>
-      <fileset dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
+      <fileset dir="${resources}/webapps/intermine" includes="FlyMineWebApp*.properties"/>
     </war>
   </target>
 
@@ -1520,7 +1520,7 @@
         <patternset refid="lib.webapp.webservice"/>
       </fileset>
       <fileset dir="${dist}" includes="webservice*.jar"/>
-      <fileset dir="${dist}" includes="flymine*.jar"/>
+      <fileset dir="${dist}" includes="intermine*.jar"/>
     </copy>
     
     <copy todir="${build.webapp}/webservice/META-INF" file="${resources}/webapps/webservice/context.xml"/>
@@ -1538,7 +1538,7 @@
       <lib dir="${lib}">
         <patternset refid="lib.webapptest" />
       </lib>
-      <lib dir="${dist}" includes="flymine-testmodel.jar" />
+      <lib dir="${dist}" includes="intermine-testmodel.jar" />
     </war>
   </target>
 
@@ -1581,7 +1581,7 @@
       <attribute name="Implementation-Vendor" value="FlyMine"/>
     </manifest>
 
-    <jar destfile="${dist}/flymine.jar" manifest="${build.tmp}/MANIFEST.MF">
+    <jar destfile="${dist}/intermine.jar" manifest="${build.tmp}/MANIFEST.MF">
       <fileset dir="${build.java}"/>
       <fileset dir="${build.model}/fulldata"/>
       <fileset dir="${build.model}/datatracking"/>
@@ -1617,15 +1617,15 @@
         <patternset refid="lib.antlr"/>
         <patternset refid="lib.uml"/>
       </fileset>
-      <fileset dir="${dist}" includes="flymine.jar"/>
+      <fileset dir="${dist}" includes="intermine.jar"/>
     </copy>
     <!-- model dir -->
     <copy todir="${tutorial}/model" file="${resources}/tutorial/tutorial_model.xml"/>
     <!-- resources dir -->
     <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_data.xml"/>
     <!-- src dir -->
-    <copy todir="${tutorial}/src/java/org/flymine/tutorial">
-      <fileset dir="${src.java}/org/flymine/tutorial"/>
+    <copy todir="${tutorial}/src/java/org/intermine/tutorial">
+      <fileset dir="${src.java}/org/intermine/tutorial"/>
     </copy>
   </target>
 
@@ -1672,7 +1672,7 @@
       username="${webapp.manager}" 
       password="${webapp.password}"
       path="${webapp.path}" 
-      war="file://${dist.webapp}/flymine.war"/> 
+      war="file://${dist.webapp}/intermine.war"/> 
   </target>
 
   <target name="remove-webapp"
@@ -1704,7 +1704,7 @@
       war="file://${dist.webapp}/webservice.war"/> 
     
     <taskdef name="generate-wsdd"
-      classname="org.flymine.objectstore.webservice.ser.GenerateWSDDTask">
+      classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask">
       <classpath refid="project.class.path" />
     </taskdef>
 
@@ -1737,19 +1737,19 @@
   <target name="dot-main" depends="compile-main">
     <taskdef
       name="dot"
-      classname="org.flymine.task.InheritanceDotTask">
+      classname="org.intermine.task.InheritanceDotTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    <dot directory="${src.java}" packageName="org.flymine" file="main.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
+    <dot directory="${src.java}" packageName="org.intermine" file="main.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
   </target>
 
   <target name="dot-test" depends="compile-test">
     <taskdef
       name="dot"
-      classname="org.flymine.task.InheritanceDotTask">
+      classname="org.intermine.task.InheritanceDotTask">
       <classpath refid="test.class.path"/>
     </taskdef>
-    <dot directory="${src.test}" packageName="org.flymine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
+    <dot directory="${src.test}" packageName="org.intermine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
   </target>
 
   <!-- Cleaning-up targets -->
@@ -1762,7 +1762,7 @@
       <fileset dir=".">
         <include name="junit*.properties"/>
         <include name="velocity.log*"/>
-        <include name="flymine.log*"/>
+        <include name="intermine.log*"/>
       </fileset>
     </delete>
   </target>
@@ -1777,7 +1777,7 @@
     <delete>
     <fileset dir=".">
       <include name="velocity.log*"/>
-      <include name="flymine.log*"/>
+      <include name="intermine.log*"/>
     </fileset>
     </delete>
     <antcall target="prepare" />

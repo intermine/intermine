@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,17 +19,17 @@ import com.hp.hpl.jena.rdf.model.*;
 import java.util.*;
 import java.io.*;
 
-import org.flymine.metadata.Model;
-import org.flymine.dataconversion.DataTranslator;
-import org.flymine.dataconversion.ItemWriter;
-import org.flymine.dataconversion.MockItemWriter;
-import org.flymine.dataconversion.MockItemReader;
-import org.flymine.modelproduction.xml.FlyMineModelParser;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.metadata.Model;
+import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemReader;
+import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -43,10 +43,10 @@ import org.custommonkey.xmlunit.XMLUnit;
 public class DefinitiveOwlTest extends XMLTestCase
 {
     private String ENDL = System.getProperty("line.separator");
-    private final String tgtNs = "http://www.flymine.org/model/test#";
-    private final String src1Ns = "http://www.flymine.org/model/source1#";
-    private final String src2Ns = "http://www.flymine.org/model/source2#";
-    private final String nullNs = "http://www.flymine.org/model/null#";
+    private final String tgtNs = "http://www.intermine.org/model/test#";
+    private final String src1Ns = "http://www.intermine.org/model/source1#";
+    private final String src2Ns = "http://www.intermine.org/model/source2#";
+    private final String nullNs = "http://www.intermine.org/model/null#";
     protected Map itemMap;
 
     public void setUp() throws Exception {
@@ -99,7 +99,7 @@ public class DefinitiveOwlTest extends XMLTestCase
 
     public void testGenerateFlyMineModel() throws Exception {
         Model expected  = new FlyMineModelParser().process(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("DefinitiveOwlTest_model.xml")));
-        Model model = new Owl2FlyMine("test", "org.flymine.model.test").process(runMergeOwl(), tgtNs);
+        Model model = new Owl2FlyMine("test", "org.intermine.model.test").process(runMergeOwl(), tgtNs);
         assertEquals(expected, model);
     }
 
@@ -157,7 +157,7 @@ public class DefinitiveOwlTest extends XMLTestCase
     }
 
     private Model generateFlyMineModel() throws Exception {
-        Owl2FlyMine o2f = new Owl2FlyMine("test", "org.flymine.model.test");
+        Owl2FlyMine o2f = new Owl2FlyMine("test", "org.intermine.model.test");
         Model model = o2f.process(runMergeOwl(), tgtNs);
         return model;
     }

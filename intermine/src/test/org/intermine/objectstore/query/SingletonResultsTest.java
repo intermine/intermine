@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,9 +14,9 @@ import junit.framework.TestCase;
 
 import java.util.List;
 
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Employee;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 
 public class SingletonResultsTest extends TestCase
 {

@@ -1,4 +1,4 @@
-package org.flymine.xml;
+package org.intermine.xml;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,9 +17,9 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.flymine.util.DynamicUtil;
-import org.flymine.metadata.Model;
-import org.flymine.model.testmodel.*;
+import org.intermine.util.DynamicUtil;
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.*;
 
 public class XmlHelperTest extends TestCase
 {
@@ -31,12 +31,12 @@ public class XmlHelperTest extends TestCase
 
     public void testGetClassName() throws Exception {
         Employee e1 = new Employee();
-        assertEquals("org.flymine.model.testmodel.Employee", XmlHelper.getClassName(e1, model));
+        assertEquals("org.intermine.model.testmodel.Employee", XmlHelper.getClassName(e1, model));
         Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         assertEquals("", XmlHelper.getClassName(c1, model));
         Set set = new HashSet(Arrays.asList(new Object[] {Employee.class, Broke.class}));
         Object be1 = DynamicUtil.createObject(set);
-        assertEquals("org.flymine.model.testmodel.Employee", XmlHelper.getClassName(be1, model));
+        assertEquals("org.intermine.model.testmodel.Employee", XmlHelper.getClassName(be1, model));
         assertEquals("", XmlHelper.getClassName(new Object(), model));
     }
 

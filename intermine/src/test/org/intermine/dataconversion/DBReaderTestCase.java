@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,8 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
 
 public class DBReaderTestCase extends TestCase {
     protected Database db;

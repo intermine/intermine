@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,13 +19,13 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
 
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.query.*;
-import org.flymine.testing.OneTimeTestCase;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.*;
+import org.intermine.testing.OneTimeTestCase;
 
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 
 import junit.framework.Test;
 
@@ -62,10 +62,10 @@ public class QueryBuildHelperTest extends QueryTestCase
     public void testAddClass() throws Exception {
         Map queryClasses = new HashMap();
 
-        QueryBuildHelper.addClass(queryClasses, "org.flymine.model.testmodel.Employee");
+        QueryBuildHelper.addClass(queryClasses, "org.intermine.model.testmodel.Employee");
         assertEquals(1, queryClasses.size());
 
-        QueryBuildHelper.addClass(queryClasses, "org.flymine.model.testmodel.Employee");
+        QueryBuildHelper.addClass(queryClasses, "org.intermine.model.testmodel.Employee");
         assertEquals(2, queryClasses.size());
 
         Set expected = new HashSet();
@@ -134,7 +134,7 @@ public class QueryBuildHelperTest extends QueryTestCase
     }
 
     public void testGetAllFieldNames() throws Exception {
-        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");
         
         List expected = Arrays.asList(new Object[] {
             "rejectedEmployee", "employees", "manager", "name", "company"
@@ -144,7 +144,7 @@ public class QueryBuildHelperTest extends QueryTestCase
     }
 
     public void testGetValidOpsNoBagsPresent() throws Exception {
-        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");
         Map result = QueryBuildHelper.getValidOps(cld, false);
         
         assertEquals(QueryBuildHelper.mapOps(SimpleConstraint.validOps(String.class)), result.get("name"));
@@ -155,7 +155,7 @@ public class QueryBuildHelperTest extends QueryTestCase
     }
 
     public void testGetValidOpsBagsPresent() throws Exception {
-        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");      
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");      
         Map result = QueryBuildHelper.getValidOps(cld, true);
         
         List nameValidOps = new ArrayList(SimpleConstraint.validOps(String.class));
@@ -226,11 +226,11 @@ public class QueryBuildHelperTest extends QueryTestCase
     
     public void testGetValidAliases() throws Exception {
         DisplayQueryClass d1 = new DisplayQueryClass();
-        d1.setType("org.flymine.model.testmodel.Company");
+        d1.setType("org.intermine.model.testmodel.Company");
         DisplayQueryClass d2 = new DisplayQueryClass();
-        d2.setType("org.flymine.model.testmodel.Company");
+        d2.setType("org.intermine.model.testmodel.Company");
         DisplayQueryClass d3 = new DisplayQueryClass();
-        d3.setType("org.flymine.model.testmodel.Employee");
+        d3.setType("org.intermine.model.testmodel.Employee");
 
         Map queryClasses = new HashMap();
         queryClasses.put("Company_0", d1);
@@ -243,7 +243,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         expected.put("employees", Arrays.asList(new Object[] {"Employee_0"}));
         expected.put("rejectedEmployee", Arrays.asList(new Object[] {"Employee_0"}));
         
-        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         assertEquals(expected, QueryBuildHelper.getValidAliases(cld, queryClasses));
     }

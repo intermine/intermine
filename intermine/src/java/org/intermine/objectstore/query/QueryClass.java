@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,12 +13,12 @@ package org.flymine.objectstore.query;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.flymine.util.DynamicUtil;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Represents the database extent of a Java class
  * NOTE - No equals() method is defined for this class and none should be.
- * org.flymine.objectstore.query.Query.equals relies on QueryClass using
+ * org.intermine.objectstore.query.Query.equals relies on QueryClass using
  * Object.equals() to prevent ambiguity.
  *
  * @author Mark Woodbridge

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -41,8 +41,8 @@ public class GenerateWSDDTaskTest extends TestCase
         String expected = "<typeMapping qname=\"xsd:list\""
             + " xmlns:xsd=\"http://soapinterop.org/xsd\""
             + " type=\"java:java.util.ArrayList\""
-            + " serializer=\"org.flymine.objectstore.webservice.ser.ListSerializerFactory\""
-            + " deserializer=\"org.flymine.objectstore.webservice.ser.ListDeserializerFactory\""
+            + " serializer=\"org.intermine.objectstore.webservice.ser.ListSerializerFactory\""
+            + " deserializer=\"org.intermine.objectstore.webservice.ser.ListDeserializerFactory\""
             + " encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>";
         assertEquals(task.generateTypeMapping(ArrayList.class, tm) + " " + expected, task.generateTypeMapping(ArrayList.class, tm), expected);
     }

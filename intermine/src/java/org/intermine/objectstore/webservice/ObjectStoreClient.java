@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice;
+package org.intermine.objectstore.webservice;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,16 +25,16 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import javax.xml.namespace.QName;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreAbstractImpl;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
-import org.flymine.objectstore.webservice.ser.SerializationUtil;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.webservice.ser.FlyMineBusinessString;
+import org.intermine.objectstore.webservice.ser.SerializationUtil;
 
 /**
  * ObjectStore implementation that accesses a remote ObjectStore via JAX-RPC.

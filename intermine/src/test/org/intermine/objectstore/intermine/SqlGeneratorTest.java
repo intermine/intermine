@@ -1,4 +1,4 @@
-package org.flymine.objectstore.flymine;
+package org.intermine.objectstore.flymine;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,23 +20,23 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.SetupDataTestCase;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryExpression;
-import org.flymine.objectstore.query.QueryFunction;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.SetupDataTestCase;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.util.TypeUtil;
 
-import org.flymine.model.testmodel.*;
+import org.intermine.model.testmodel.*;
 
 public class SqlGeneratorTest extends SetupDataTestCase
 {
@@ -165,7 +165,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         // TODO: extend sql so that it can represent these
         if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type))) {
             // And check that the SQL generated is high enough quality to be parsed by the optimiser.
-            org.flymine.sql.query.Query sql = new org.flymine.sql.query.Query(generated);
+            org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
         }
     }
 
@@ -244,7 +244,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         q.addFrom(c1);
         q.addToSelect(c1);
         try {
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new Model("nothing", "http://www.flymine.org/model/testmodel",
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new Model("nothing", "http://www.intermine.org/model/testmodel",
                                                                      new HashSet()), db);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {

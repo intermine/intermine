@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,14 +16,14 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryCreator;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.util.CacheMap;
-import org.flymine.util.PropertiesUtil;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCreator;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.CacheMap;
+import org.intermine.util.PropertiesUtil;
 
 import org.apache.log4j.Logger;
 

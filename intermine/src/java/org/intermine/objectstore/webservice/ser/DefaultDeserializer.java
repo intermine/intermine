@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,7 +23,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
-import org.flymine.util.TypeUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 

@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -27,34 +27,34 @@ import java.util.Iterator;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
-import org.flymine.xml.full.FullRenderer;
-import org.flymine.xml.full.FullParser;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.FullParser;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.translating.ObjectStoreTranslatingImpl;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
-import org.flymine.dataloader.IntegrationWriter;
-import org.flymine.dataloader.DataLoader;
-import org.flymine.dataloader.ObjectStoreDataLoader;
-import org.flymine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.dataloader.IntegrationWriterSingleSourceImpl;
+import org.intermine.dataloader.IntegrationWriter;
+import org.intermine.dataloader.DataLoader;
+import org.intermine.dataloader.ObjectStoreDataLoader;
+import org.intermine.metadata.Model;
 
 public class EnsemblDataTranslatorTest extends TestCase {
-    private String srcNs = "http://www.flymine.org/model/ensembl#";
-    private String tgtNs = "http://www.flymine.org/model/genomic#";
+    private String srcNs = "http://www.intermine.org/model/ensembl#";
+    private String tgtNs = "http://www.intermine.org/model/genomic#";
     protected Map itemMap;
     ObjectStoreWriter osw;
 

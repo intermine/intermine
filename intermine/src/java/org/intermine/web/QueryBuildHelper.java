@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,27 +20,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
 
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.objectstore.query.QueryReference;
-import org.flymine.objectstore.query.QueryObjectReference;
-import org.flymine.objectstore.query.QueryCollectionReference;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.BagConstraint;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.ConstraintHelper;
-import org.flymine.objectstore.query.Constraint;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.FromElement;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryHelper;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ConstraintHelper;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.util.TypeUtil;
 
 /**
  * Helper methods for Query building (QueryBuildController and QueryBuildAction)

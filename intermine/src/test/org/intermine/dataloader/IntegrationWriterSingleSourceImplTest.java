@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.StoreDataTestCase;
-import org.flymine.model.testmodel.*;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.model.testmodel.*;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
 {

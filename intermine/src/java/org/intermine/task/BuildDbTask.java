@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
 
 /**
  * Generates and inserts SQL given database name, schema fileset and destination directory

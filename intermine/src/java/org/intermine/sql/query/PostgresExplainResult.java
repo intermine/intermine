@@ -1,4 +1,4 @@
-package org.flymine.sql.query;
+package org.intermine.sql.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -37,7 +37,7 @@ public class PostgresExplainResult extends ExplainResult
      * Constructs an instance of PostgresExplainResult for a given Query and
      * database Connection.
      *
-     * @param query the org.flymine.sql.query.Query to be explained
+     * @param query the org.intermine.sql.query.Query to be explained
      * @param database a java.sql.Connection by which to access the database
      * @throws SQLException if a database error occurs
      * @throws NullPointerException if either query or database are null

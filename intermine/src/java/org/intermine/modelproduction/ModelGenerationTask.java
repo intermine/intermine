@@ -1,4 +1,4 @@
-package org.flymine.modelproduction;
+package org.intermine.modelproduction;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,9 +17,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-import org.flymine.modelproduction.uml.XmiParser;
-import org.flymine.modelproduction.acedb.AceModelParser;
-import org.flymine.metadata.Model;
+import org.intermine.modelproduction.uml.XmiParser;
+import org.intermine.modelproduction.acedb.AceModelParser;
+import org.intermine.metadata.Model;
 
 /**
  * Ant task that calls a parser to build a FlyMine model from an external source

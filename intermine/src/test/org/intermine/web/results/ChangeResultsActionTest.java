@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,16 +14,16 @@ import java.util.Collections;
 
 import servletunit.struts.MockStrutsTestCase;
 
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Department;
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryNode;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.util.DynamicUtil;
-import org.flymine.web.Constants;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.Constants;
 
 public class ChangeResultsActionTest extends MockStrutsTestCase
 {
@@ -45,7 +45,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         row.add(c);
         row.add(d);
         os.addRow(row);
-        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d order by c", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d order by c", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(10);

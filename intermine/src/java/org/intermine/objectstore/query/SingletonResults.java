@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,8 +13,8 @@ package org.flymine.objectstore.query;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * This class is equivalent to a Result object with ResultRows consisting only of single items

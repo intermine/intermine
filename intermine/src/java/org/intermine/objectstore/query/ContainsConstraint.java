@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,9 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.Util;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.Util;
 
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.

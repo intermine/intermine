@@ -1,4 +1,4 @@
-package org.flymine.xml.full;
+package org.intermine.xml.full;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.metadata.Model;
+import org.intermine.model.testmodel.*;
+import org.intermine.metadata.Model;
 
 public class FullParserTest extends TestCase
 {
@@ -33,7 +33,7 @@ public class FullParserTest extends TestCase
 
     public void setUp() throws Exception {
         Item item1 = new Item();
-        item1.setImplementations("http://www.flymine.org/model/testmodel#Company");
+        item1.setImplementations("http://www.intermine.org/model/testmodel#Company");
         item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
@@ -54,8 +54,8 @@ public class FullParserTest extends TestCase
         item1.addCollection(col1);
 
         Item item2 = new Item();
-        item2.setClassName("http://www.flymine.org/model/testmodel#Address");
-        item2.setImplementations("http://www.flymine.org/model/testmodel#Thing");
+        item2.setClassName("http://www.intermine.org/model/testmodel#Address");
+        item2.setImplementations("http://www.intermine.org/model/testmodel#Thing");
         item2.setIdentifier("2");
         Attribute field2 = new Attribute();
         field2.setName("address");
@@ -63,8 +63,8 @@ public class FullParserTest extends TestCase
         item2.addAttribute(field2);
 
         Item item3 = new Item();
-        item3.setClassName("http://www.flymine.org/model/testmodel#Department");
-        item3.setImplementations("http://www.flymine.org/model/testmodel#RandomInterface");
+        item3.setClassName("http://www.intermine.org/model/testmodel#Department");
+        item3.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
         item3.setIdentifier("3");
         Attribute field3 = new Attribute();
         field3.setName("name");
@@ -72,8 +72,8 @@ public class FullParserTest extends TestCase
         item3.addAttribute(field3);
 
         Item item4 = new Item();
-        item4.setClassName("http://www.flymine.org/model/testmodel#Department");
-        item4.setImplementations("http://www.flymine.org/model/testmodel#RandomInterface");
+        item4.setClassName("http://www.intermine.org/model/testmodel#Department");
+        item4.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
         item4.setIdentifier("4");
         Attribute field4 = new Attribute();
         field4.setName("name");

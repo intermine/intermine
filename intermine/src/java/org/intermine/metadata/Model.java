@@ -1,4 +1,4 @@
-package org.flymine.metadata;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,11 +25,11 @@ import java.util.LinkedHashMap;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.modelproduction.xml.FlyMineModelParser;
-import org.flymine.util.TypeUtil;
-import org.flymine.ontology.OntologyUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.util.TypeUtil;
+import org.intermine.ontology.OntologyUtil;
 
 /**
  * Represents a named business model, makes available metadata for each class
@@ -110,7 +110,7 @@ public class Model
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
 
         ClassDescriptor flymineBusinessObject = new ClassDescriptor(
-                "org.flymine.model.FlyMineBusinessObject", null, true,
+                "org.intermine.model.FlyMineBusinessObject", null, true,
                 Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
         orderedClds.add(flymineBusinessObject);
@@ -247,7 +247,7 @@ public class Model
         sb.append("<model name=\"" + name + "\" namespace=\"" + nameSpace + "\">");
         for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
-            if (!"org.flymine.model.FlyMineBusinessObject".equals(cld.getName())) {
+            if (!"org.intermine.model.FlyMineBusinessObject".equals(cld.getName())) {
                 sb.append(cld.toString());
             }
         }

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -11,8 +11,8 @@ package org.flymine.objectstore.query;
  */
 
 import junit.framework.*;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.model.testmodel.*;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.model.testmodel.*;
 
 public class QueryTestCaseTest extends QueryTestCase
 {

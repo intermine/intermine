@@ -1,7 +1,7 @@
 // Flymine SQL grammar
 
 header {
-package org.flymine.sql.query;
+package org.intermine.sql.query;
 }
 
 class SqlTreeParser extends TreeParser;

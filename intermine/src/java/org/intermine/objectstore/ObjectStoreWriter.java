@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,7 +10,7 @@ package org.flymine.objectstore;
  *
  */
 
-import org.flymine.model.FlyMineBusinessObject;
+import org.intermine.model.FlyMineBusinessObject;
 
 /**
  * Store, update, and delete objects

@@ -1,4 +1,4 @@
-package org.flymine.modelproduction.uml;
+package org.intermine.modelproduction.uml;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -50,9 +50,9 @@ import org.xml.sax.InputSource;
 
 import org.apache.log4j.Logger;
 
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.util.StringUtil;
-import org.flymine.metadata.*;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.util.StringUtil;
+import org.intermine.metadata.*;
 
 /**
  * Translates a model representation in XMI to FlyMine metadata (Java)
@@ -322,7 +322,7 @@ public class XmiParser implements ModelParser
             return "java.lang.String";
         }
         if (type.equals("any")) {
-            return "org.flymine.model.FlyMineBusinessObject";
+            return "org.intermine.model.FlyMineBusinessObject";
         }
         return type;
     }

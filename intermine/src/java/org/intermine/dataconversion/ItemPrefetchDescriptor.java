@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.flymine.model.fulldata.Item;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Represents a description of which Items are likely to be needed for the translation of a given

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,12 +12,12 @@ package org.flymine.objectstore.query;
 
 import java.util.Collections;
 import junit.framework.TestCase;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Contractor;
-import org.flymine.model.testmodel.Manager;
-import org.flymine.model.testmodel.Employee;
-import org.flymine.util.DynamicUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.util.DynamicUtil;
 
 public class ClassConstraintTest extends TestCase {
 

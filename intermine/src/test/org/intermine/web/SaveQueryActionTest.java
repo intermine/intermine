@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,10 +17,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Employee;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Employee;
 
 public class SaveQueryActionTest extends MockStrutsTestCase
 {

@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,26 +15,26 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryObjectReference;
-import org.flymine.objectstore.query.QueryTestCase;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.SubqueryConstraint;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.IntToIntMap;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryTestCase;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.IntToIntMap;
 
 import junit.framework.Test;
 
@@ -56,7 +56,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testGetPrimaryKeysCld() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Map expected = new HashMap();
         expected.put("key1", new PrimaryKey("name, address"));
         expected.put("key2", new PrimaryKey("vatNumber"));        
@@ -64,13 +64,13 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testGetPrimaryKeysCldInherited() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Manager");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Manager");
         Map expected = new HashMap();
         assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld));
     }
 
     public void testGetPrimaryKeysCldSource() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Source source = new Source();
         source.setName("testsource");
         assertEquals(Collections.singleton(new PrimaryKey("name, address")), DataLoaderHelper.getPrimaryKeys(cld, source));
@@ -191,7 +191,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceA.setName("storedata");
         Source sourceB = new Source();
         sourceB.setName("testsource");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("age");
         assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) > 0);
         assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) < 0);
@@ -203,7 +203,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceA.setName("storedata");
         Source sourceB = new Source();
         sourceB.setName("testsource");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("fullTime");
         assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) > 0);
         assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) < 0);
@@ -214,7 +214,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceA.setName("SourceA");
         Source sourceB = new Source();
         sourceB.setName("SourceB");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         FieldDescriptor fd = cld.getFieldDescriptorByName("name");
         try {
             DataLoaderHelper.comparePriority(fd, sourceA, sourceB);

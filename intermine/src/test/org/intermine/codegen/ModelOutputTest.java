@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.HashSet;
 
 
-import org.flymine.metadata.Model;
+import org.intermine.metadata.Model;
 
 public class ModelOutputTest extends TestCase
 {
@@ -29,7 +29,7 @@ public class ModelOutputTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        Model model = new Model("model", "http://www.flymine.org/model/testmodel", new HashSet());
+        Model model = new Model("model", "http://www.intermine.org/model/testmodel", new HashSet());
         file =  File.createTempFile("dummy", "tmp");
         mo = new TestModelOutput(model, file);
     }

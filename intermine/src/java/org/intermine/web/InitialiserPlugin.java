@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,9 +19,9 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 
-import org.flymine.metadata.Model;
-import org.flymine.web.config.WebConfig;
-import org.flymine.objectstore.ObjectStoreFactory;
+import org.intermine.metadata.Model;
+import org.intermine.web.config.WebConfig;
+import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
  * Initialiser for the FlyMine web application

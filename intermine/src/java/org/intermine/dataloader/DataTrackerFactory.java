@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,9 +12,9 @@ package org.flymine.dataloader;
 
 import java.util.Properties;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.util.PropertiesUtil;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Produce DataTrackers

@@ -1,4 +1,4 @@
-package org.flymine.metadata;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,7 +20,7 @@ import java.util.Set;
 public class ReferenceDescriptorTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
-    private String uri = "http://www.flymine.org/model/testmodel";
+    private String uri = "http://www.intermine.org/model/testmodel";
 
     public ReferenceDescriptorTest(String arg) {
         super(arg);

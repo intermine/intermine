@@ -3,7 +3,7 @@
 <deployment xmlns="http://xml.apache.org/axis/wsdd/"
   xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
   <service name="ObjectStore" provider="java:RPC">
-    <parameter name="className" value="org.flymine.objectstore.webservice.ObjectStoreServer"/>
+    <parameter name="className" value="org.intermine.objectstore.webservice.ObjectStoreServer"/>
     <parameter name="scope" value="Session"/>
     <parameter name="allowedMethods" value="*"/>
     

@@ -1,4 +1,4 @@
-package org.flymine.sql.logging;
+package org.intermine.sql.logging;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import junit.framework.*;
 import java.io.Writer;
 import java.io.StringWriter;
 import java.util.StringTokenizer;
-import org.flymine.sql.query.*;
+import org.intermine.sql.query.*;
 
 public class QueryLoggerTest extends TestCase
 {

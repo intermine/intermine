@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.fql;
+package org.intermine.objectstore.query.fql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,8 +22,8 @@ import java.util.Set;
 
 import antlr.collections.AST;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.query.*;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.query.*;
 
 /**
  * Parser for the FlyMine dialect of OQL (FQL)

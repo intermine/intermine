@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,9 +13,9 @@ package org.flymine.objectstore;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.flymine.util.PropertiesUtil;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.MetaDataException;
+import org.intermine.util.PropertiesUtil;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.MetaDataException;
 
 /**
  * Produce ObjectStores

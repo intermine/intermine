@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,8 +25,8 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.util.MessageResources;
 
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.Query;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.Query;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -67,7 +67,7 @@ public class FqlQueryAction extends LookupDispatchAction
 
         try {
             Query q = new FqlQuery(queryform.getQuerystring(),
-                                   "org.flymine.model.testmodel").toQuery();
+                                   "org.intermine.model.testmodel").toQuery();
             session.setAttribute(Constants.QUERY, q);
 
             return mapping.findForward("runquery");
@@ -114,7 +114,7 @@ public class FqlQueryAction extends LookupDispatchAction
             if (queryString == null || queryString.length() == 0) {
                 session.setAttribute(Constants.QUERY, null);
             } else {
-                Query q = new FqlQuery(queryString, "org.flymine.model.testmodel").toQuery();
+                Query q = new FqlQuery(queryString, "org.intermine.model.testmodel").toQuery();
                 session.setAttribute(Constants.QUERY, q);
             }
 

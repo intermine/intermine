@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,22 +19,22 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.ontology.SubclassRestriction;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.ontology.SubclassRestriction;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
 
 public class DataTranslatorTest extends TestCase
 {
-    private String srcNs = "http://www.flymine.org/source#";
-    private String nullNs = "http://www.flymine.org/null#";
-    private String tgtNs = "http://www.flymine.org/target#";
+    private String srcNs = "http://www.intermine.org/source#";
+    private String nullNs = "http://www.intermine.org/null#";
+    private String tgtNs = "http://www.intermine.org/target#";
     private DataTranslator translator;
     private ObjectStoreWriter writer;
     protected Map itemMap;

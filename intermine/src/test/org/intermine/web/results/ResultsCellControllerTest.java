@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,10 +15,10 @@ import java.util.Set;
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.metadata.Model;
+import org.intermine.metadata.Model;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.testmodel.*;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.testmodel.*;
 
 public class ResultsCellControllerTest extends MockStrutsTestCase
 {

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice;
+package org.intermine.objectstore.webservice;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,12 +12,12 @@ package org.flymine.objectstore.webservice;
 
 import junit.framework.*;
 
-import org.flymine.objectstore.ObjectStoreAbstractImpl;
-import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.safe.ObjectStoreSafeImpl;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.safe.ObjectStoreSafeImpl;
 
 public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
 {
@@ -36,8 +36,8 @@ public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
     }
 
     public void testQueryId() throws Exception {
-        Query q1 = new FqlQuery("select a1_ from Company as a1_", "org.flymine.model.testmodel").toQuery();
-        Query q2 = new FqlQuery("select a1_ from Company as a1_", "org.flymine.model.testmodel").toQuery();
+        Query q1 = new FqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();
+        Query q2 = new FqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();
 
         assertEquals(((ObjectStoreClient) osai).getQueryId(q1), ((ObjectStoreClient) osai).getQueryId(q1));
         assertEquals(((ObjectStoreClient) osai).getQueryId(q2), ((ObjectStoreClient) osai).getQueryId(q2));

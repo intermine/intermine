@@ -1,4 +1,4 @@
-package org.flymine.xml;
+package org.intermine.xml;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,8 +10,8 @@ package org.flymine.xml;
  *
  */
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
 
 /**
  * Static methods to assist parsing and rendering of XML.

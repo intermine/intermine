@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.presentation;
+package org.intermine.objectstore.query.presentation;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,8 +10,8 @@ package org.flymine.objectstore.query.presentation;
  *
  */
 
-import org.flymine.objectstore.query.*;
-import org.flymine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.fql.FqlQuery;
 
 import java.util.ArrayList;
 

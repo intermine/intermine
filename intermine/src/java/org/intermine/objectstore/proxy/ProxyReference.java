@@ -1,4 +1,4 @@
-package org.flymine.objectstore.proxy;
+package org.intermine.objectstore.proxy;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,9 +10,9 @@ package org.flymine.objectstore.proxy;
  *
  */
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Class which holds a reference to an object in the database

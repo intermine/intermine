@@ -1,4 +1,4 @@
-package org.flymine.objectstore.webservice.ser;
+package org.intermine.objectstore.webservice.ser;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -84,7 +84,7 @@ public class GenerateWSDDTask extends Task
             Class[] classes = tm.getAllClasses();
             for (int i = 0; i < classes.length; i++) {
                 Class cls = classes[i];
-                if (cls.getName().startsWith("org.flymine")
+                if (cls.getName().startsWith("org.intermine")
                    || cls.getName().equals("java.util.ArrayList")) {
                     sb.append(generateTypeMapping(cls, tm) + ENDL);
                 }

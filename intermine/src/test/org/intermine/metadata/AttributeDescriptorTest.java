@@ -1,4 +1,4 @@
-package org.flymine.metadata;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2003 FlyMine

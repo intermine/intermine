@@ -1,4 +1,4 @@
-package org.flymine.web.results;
+package org.intermine.web.results;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,14 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.util.DynamicUtil;
-import org.flymine.web.Constants;
+import org.intermine.model.testmodel.*;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.Constants;
 
 public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 {
@@ -47,7 +47,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         super.setUp();
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(5);

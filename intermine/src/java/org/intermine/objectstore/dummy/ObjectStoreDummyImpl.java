@@ -1,4 +1,4 @@
-package org.flymine.objectstore.dummy;
+package org.intermine.objectstore.dummy;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.flymine.objectstore.*;
-import org.flymine.objectstore.query.*;
-import org.flymine.metadata.Model;
-import org.flymine.util.DynamicUtil;
+import org.intermine.objectstore.*;
+import org.intermine.objectstore.query.*;
+import org.intermine.metadata.Model;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Generate dummy Results from a query. Used for testing purposes.

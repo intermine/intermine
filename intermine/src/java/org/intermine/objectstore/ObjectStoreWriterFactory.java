@@ -1,4 +1,4 @@
-package org.flymine.objectstore;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.flymine.util.PropertiesUtil;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Produce ObjectStoreWriters

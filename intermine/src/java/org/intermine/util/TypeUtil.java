@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Date;
 
-import org.flymine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.proxy.ProxyReference;
 
 /**
  * Provides utility methods for working with Java types and reflection

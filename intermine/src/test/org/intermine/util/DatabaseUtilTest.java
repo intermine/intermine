@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,18 +17,18 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 
 public class DatabaseUtilTest extends TestCase
 {
     private Connection con;
-    private String uri = "http://www.flymine.org/model/testmodel";
+    private String uri = "http://www.intermine.org/model/testmodel";
 
     public DatabaseUtilTest(String arg1) {
         super(arg1);

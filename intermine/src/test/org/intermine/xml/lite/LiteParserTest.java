@@ -1,4 +1,4 @@
-package org.flymine.xml.lite;
+package org.intermine.xml.lite;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -18,11 +18,11 @@ import java.util.Date;
 import java.util.Map;
 import java.math.BigDecimal;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.util.DynamicBean;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.util.DynamicBean;
 
 public class LiteParserTest extends TestCase
 {
@@ -36,7 +36,7 @@ public class LiteParserTest extends TestCase
         os = ObjectStoreFactory.getObjectStore("os.unittest");
     }
      public void testParse1() throws Exception {
-        String s = "org.flymine.model.testmodel.Employee" + LiteRenderer.DELIM + "org.flymine.model.testmodel.Employable"
+        String s = "org.intermine.model.testmodel.Employee" + LiteRenderer.DELIM + "org.intermine.model.testmodel.Employable"
             + LiteRenderer.DELIM + "aid" + LiteRenderer.DELIM + "1234"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
             + LiteRenderer.DELIM + "rdepartment" + LiteRenderer.DELIM + "5678";
@@ -54,7 +54,7 @@ public class LiteParserTest extends TestCase
     }
 
     public void testParseXmlSimple() throws Exception {
-        InputStream is = new ByteArrayInputStream(new String("<object class=\"org.flymine.model.testmodel.Employee\" implements=\"org.flymine.model.testmodel.Employable\">"
+        InputStream is = new ByteArrayInputStream(new String("<object class=\"org.intermine.model.testmodel.Employee\" implements=\"org.intermine.model.testmodel.Employable\">"
                 + "<field name=\"id\" value=\"1234\"/>"
                 + "  <field name=\"name\" value=\"Employee1\"/>"
                 + "  <reference name=\"department\" value=\"5678\"/>"
@@ -75,7 +75,7 @@ public class LiteParserTest extends TestCase
 
     public void testParseDynamic() throws Exception {
 
-        String s = LiteRenderer.DELIM + "org.flymine.model.testmodel.Company net.sf.cglib.Factory"
+        String s = LiteRenderer.DELIM + "org.intermine.model.testmodel.Company net.sf.cglib.Factory"
             + LiteRenderer.DELIM + "raddress" + LiteRenderer.DELIM + "74328"
             + LiteRenderer.DELIM + "avatNumber" + LiteRenderer.DELIM + "100"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "CompanyC"
@@ -94,7 +94,7 @@ public class LiteParserTest extends TestCase
 
     public void testParseXmlDynamic() throws Exception {
         InputStream is = new ByteArrayInputStream(
-                ("<object class=\"\" implements=\"org.flymine.model.testmodel.Company net.sf.cglib.Factory\">"
+                ("<object class=\"\" implements=\"org.intermine.model.testmodel.Company net.sf.cglib.Factory\">"
                 + "  <reference name=\"address\" value=\"74328\"/>"
                 + "  <field name=\"vatNumber\" value=\"100\"/>"
                 + "  <field name=\"name\" value=\"CompanyC\"/>"
@@ -112,7 +112,7 @@ public class LiteParserTest extends TestCase
     }
 
     public void testParseTypesXml() throws Exception{
-        InputStream is = new ByteArrayInputStream(("<object class=\"org.flymine.model.testmodel.Types\" implements=\"\">"
+        InputStream is = new ByteArrayInputStream(("<object class=\"org.intermine.model.testmodel.Types\" implements=\"\">"
                 + "  <field name=\"id\" value=\"1234\"/>"
                 + "  <field name=\"name\" value=\"Types1\"/>"
                 + "  <field name=\"floatType\" value=\"1.2\"/>"
@@ -144,7 +144,7 @@ public class LiteParserTest extends TestCase
 
 
     public void testParseTypes() throws Exception{
-        String s = "org.flymine.model.testmodel.Types"
+        String s = "org.intermine.model.testmodel.Types"
             + LiteRenderer.DELIM
             + LiteRenderer.DELIM + "aid" + LiteRenderer.DELIM + "1234"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Types1"
@@ -203,8 +203,8 @@ public class LiteParserTest extends TestCase
 
     public void testParseEmptyLastString() throws Exception {
         Employee obj1 = (Employee) LiteParser.parse(
-                "org.flymine.model.testmodel.Employee" + LiteRenderer.DELIM
-                + "org.flymine.model.testmodel.Employable" + LiteRenderer.DELIM
+                "org.intermine.model.testmodel.Employee" + LiteRenderer.DELIM
+                + "org.intermine.model.testmodel.Employable" + LiteRenderer.DELIM
                 + "aid" + LiteRenderer.DELIM + "1234" + LiteRenderer.DELIM
                 + "aname" + LiteRenderer.DELIM, os);
 

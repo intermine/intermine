@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -29,17 +29,17 @@ import org.acedb.FloatValue;
 import org.acedb.Reference;
 import org.acedb.staticobj.StaticAceObject;
 
-import org.flymine.FlyMineException;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.modelproduction.acedb.AceModelParser;
-import org.flymine.objectstore.ObjectStoreException;
+import org.intermine.FlyMineException;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.modelproduction.acedb.AceModelParser;
+import org.intermine.objectstore.ObjectStoreException;
 
 import org.apache.log4j.Logger;
 
@@ -110,7 +110,7 @@ public class AceDataLoader extends DataLoader
 
             Iterator clsIter = model.getClassDescriptors().iterator();
             //String skippedClass;
-            //while (clsIter.hasNext() && (!"org.flymine.model.acedb.Peptide".equals(skippedClass
+            //while (clsIter.hasNext() && (!"org.intermine.model.acedb.Peptide".equals(skippedClass
             //        = (String) clsIter.next()))) {
             //    LOG.error("Skipping class " + skippedClass);
             //}

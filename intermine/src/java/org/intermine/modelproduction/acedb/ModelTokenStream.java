@@ -1,4 +1,4 @@
-package org.flymine.modelproduction.acedb;
+package org.intermine.modelproduction.acedb;
 
 /*
  * Copyright (C) 2002-2003 FlyMine

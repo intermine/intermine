@@ -1,4 +1,4 @@
-package org.flymine.sql.precompute;
+package org.intermine.sql.precompute;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -10,8 +10,8 @@ package org.flymine.sql.precompute;
  *
  */
 
-import org.flymine.sql.query.Query;
-import org.flymine.sql.query.ExplainResult;
+import org.intermine.sql.query.Query;
+import org.intermine.sql.query.ExplainResult;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;

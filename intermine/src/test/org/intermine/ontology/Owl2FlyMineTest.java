@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,19 +22,19 @@ import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.OntProperty;
 
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 
 public class Owl2FlyMineTest extends TestCase
 {
-    private final String ns = "http://www.flymine.org/target#";
+    private final String ns = "http://www.intermine.org/target#";
     private Owl2FlyMine generator;
     private final String ENDL = "\n";
     private OntModel ont;
 
     public Owl2FlyMineTest(String arg) {
         super(arg);
-        generator = new Owl2FlyMine("testmodel", "org.flymine.model.testmodel");
+        generator = new Owl2FlyMine("testmodel", "org.intermine.model.testmodel");
         ont = ModelFactory.createOntologyModel();
     }
 
@@ -44,7 +44,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + "null:Test a owl:Class ." + ENDL;
@@ -52,8 +52,8 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        assertFalse(model.hasClassDescriptor("org.flymine.model.testmodel.Test"));
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        assertFalse(model.hasClassDescriptor("org.intermine.model.testmodel.Test"));
     }
 
     public void testProcessSubclassOf() throws Exception {
@@ -62,7 +62,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Parent1 a owl:Class ." + ENDL
             + ":Parent2 a owl:Class ." + ENDL
@@ -77,12 +77,12 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Child"));
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Child");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Child"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Child");
         Set supers = cld.getSuperDescriptors();
         assertTrue(supers.size() == 2);
-        assertTrue(supers.contains(model.getClassDescriptorByName("org.flymine.model.testmodel.Parent1"))
-                   && supers.contains(model.getClassDescriptorByName("org.flymine.model.testmodel.Parent3")));
+        assertTrue(supers.contains(model.getClassDescriptorByName("org.intermine.model.testmodel.Parent1"))
+                   && supers.contains(model.getClassDescriptorByName("org.intermine.model.testmodel.Parent3")));
     }
 
     public void testProcessDataTypeProperty() throws Exception {
@@ -104,8 +104,8 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         AttributeDescriptor atd1 = cld.getAttributeDescriptorByName("name");
         assertTrue(atd1.isAttribute());
         assertEquals("java.lang.String", atd1.getType());
@@ -121,7 +121,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + ":Department a owl:Class ." + ENDL
@@ -132,12 +132,12 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Department"));
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Department"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         assertNotNull(cld.getCollectionDescriptorByName("departments"));
         CollectionDescriptor cod = cld.getCollectionDescriptorByName("departments");
-        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.Department"));
+        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.intermine.model.testmodel.Department"));
     }
 
     public void testProcessReferenceProperty() throws Exception {
@@ -146,7 +146,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "         rdfs:subClassOf" + ENDL
@@ -162,13 +162,13 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.CEO"));
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.CEO"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         assertNotNull(cld.getReferenceDescriptorByName("ceo"));
         ReferenceDescriptor rfd = cld.getReferenceDescriptorByName("ceo");
         assertTrue(rfd.isReference());
-        assertTrue(rfd.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.CEO"));
+        assertTrue(rfd.getReferencedClassDescriptor().getName().equals("org.intermine.model.testmodel.CEO"));
     }
 
 
@@ -191,13 +191,13 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.CEO"));
-        ClassDescriptor cld1 = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.CEO"));
+        ClassDescriptor cld1 = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         CollectionDescriptor cod1 = cld1.getCollectionDescriptorByName("ceoX");
         assertNotNull(cod1);
 
-        ClassDescriptor cld2 = model.getClassDescriptorByName("org.flymine.model.testmodel.CEO");
+        ClassDescriptor cld2 = model.getClassDescriptorByName("org.intermine.model.testmodel.CEO");
         CollectionDescriptor cod2 = cld2.getCollectionDescriptorByName("companyX");
         assertNotNull(cod2);
 
@@ -283,7 +283,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + ":Department a owl:Class ." + ENDL
@@ -297,12 +297,12 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Department"));
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Department"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         assertNull(cld.getCollectionDescriptorByName("departments"));
         CollectionDescriptor cod = cld.getCollectionDescriptorByName("secretarys");
-        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.Department"));
+        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.intermine.model.testmodel.Department"));
     }
 
     public void testProcessPropertyMultipleDomainInvalid() throws Exception {
@@ -312,7 +312,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + ":Department a owl:Class ." + ENDL
@@ -339,7 +339,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + ":Department a owl:Class ." + ENDL
@@ -353,12 +353,12 @@ public class Owl2FlyMineTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
 
         Model model = generator.process(ont, ns);
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
-        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Department"));
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.intermine.model.testmodel.Department"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         assertNotNull(cld.getCollectionDescriptorByName("departments"));
         CollectionDescriptor cod = cld.getCollectionDescriptorByName("departments");
-        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.Department"));
+        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.intermine.model.testmodel.Department"));
 
         assertNull(cld.getCollectionDescriptorByName("secretarys"));
     }
@@ -370,7 +370,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + "@prefix null: <http://www.intermine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + ":Department a owl:Class ." + ENDL

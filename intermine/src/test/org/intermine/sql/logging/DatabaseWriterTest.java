@@ -1,4 +1,4 @@
-package org.flymine.sql.logging;
+package org.intermine.sql.logging;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import junit.framework.*;
 import java.sql.*;
 import javax.sql.*;
 import java.io.IOException;
-import org.flymine.sql.DatabaseFactory;
+import org.intermine.sql.DatabaseFactory;
 
 public class DatabaseWriterTest extends TestCase
 {

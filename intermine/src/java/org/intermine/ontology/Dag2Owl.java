@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -18,7 +18,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.ObjectProperty;
-import org.flymine.util.StringUtil;
+import org.intermine.util.StringUtil;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;

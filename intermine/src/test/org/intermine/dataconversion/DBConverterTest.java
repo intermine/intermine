@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,17 +23,17 @@ import java.util.*;
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.Database;
-import org.flymine.util.TypeUtil;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.Database;
+import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.ItemHelper;
 
 public class DBConverterTest extends TestCase {
     private Model model;
@@ -52,7 +52,7 @@ public class DBConverterTest extends TestCase {
     }
 
     public void testAttribute() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         List rows = rowify(
                           new String[] {"Department_id", "name", "company_id", "manager_id"},
@@ -77,7 +77,7 @@ public class DBConverterTest extends TestCase {
     }
 
     public void testReference() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},
@@ -101,7 +101,7 @@ public class DBConverterTest extends TestCase {
     }
 
     public void testReferenceZeroId() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},
@@ -122,7 +122,7 @@ public class DBConverterTest extends TestCase {
 
 
     public void test1NCollection() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},
@@ -152,7 +152,7 @@ public class DBConverterTest extends TestCase {
     }
 
     public void testMNCollection() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
 
         List rows = rowify(
                            new String[] {"Company_id", "name", "vatNumber", "CEO_id"},
@@ -189,7 +189,7 @@ public class DBConverterTest extends TestCase {
     }
 
     public void testUnidirectional() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Contractor");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Contractor");
 
         List rows = rowify(
                            new String[] {"Contractor_id", "personalAddress_id", "businessAddress_id"},
@@ -212,7 +212,7 @@ public class DBConverterTest extends TestCase {
     }
 
     public void testMultipleInstances() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},
@@ -318,7 +318,7 @@ public class DBConverterTest extends TestCase {
 
 
     public void testProcessNonUniqueIds() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
         List rows = rowify(
                            new String[] {"Department_id", "name", "company_id", "manager_id"},

@@ -1,4 +1,4 @@
-package org.flymine.modelproduction.acedb;
+package org.intermine.modelproduction.acedb;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,12 +20,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ReferenceDescriptor;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 
 import org.apache.log4j.Logger;
 
@@ -54,7 +54,7 @@ public class AceModelParser implements ModelParser
      */
     public AceModelParser(String modelName) {
         this.modelName = modelName;
-        pkgName = "org.flymine.model." + modelName + ".";
+        pkgName = "org.intermine.model." + modelName + ".";
     }
 
     /**
@@ -74,7 +74,7 @@ public class AceModelParser implements ModelParser
             ModelNode c = (ModelNode) classIter.next();
             classDescriptors.add(nodeClassToDescriptor(c));
         }
-        return new Model(modelName, "http://www.flymine.org/model/" + modelName,
+        return new Model(modelName, "http://www.intermine.org/model/" + modelName,
                          classDescriptors);
     }
 
@@ -105,7 +105,7 @@ public class AceModelParser implements ModelParser
         atts = new LinkedHashSet();
         refs = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
-        //refs.add(new ReferenceDescriptor("Quoted_in", false, "org.flymine.model.acedb.Paper",
+        //refs.add(new ReferenceDescriptor("Quoted_in", false, "org.intermine.model.acedb.Paper",
         //            null));
         l.add(new ClassDescriptor(pkgName + "Keyword", null, false, atts, refs, cols));
         atts = new LinkedHashSet();

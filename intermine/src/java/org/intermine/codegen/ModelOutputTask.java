@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,7 +15,7 @@ import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 
-import org.flymine.metadata.Model;
+import org.intermine.metadata.Model;
 
 /**
  * Creates and runs a ModelOutput process to generate java or config files.

@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,9 +21,9 @@ import java.util.HashSet;
 import org.acedb.*;
 import org.acedb.staticobj.*;
 
-import org.flymine.util.StringUtil;
-import org.flymine.modelproduction.xml.FlyMineModelParser;
-import org.flymine.model.acedbtest.*;
+import org.intermine.util.StringUtil;
+import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.model.acedbtest.*;
 
 public class AceDataLoaderTest extends TestCase
 {

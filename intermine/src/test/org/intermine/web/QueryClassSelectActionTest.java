@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,7 +25,7 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
         setRequestPathInfo("/queryClassSelect");
         getSession().setAttribute(Constants.QUERY_CLASSES, new HashMap());
         QueryClassSelectForm form = new QueryClassSelectForm();
-        form.setClassName("org.flymine.model.testmodel.Company");
+        form.setClassName("org.intermine.model.testmodel.Company");
         setActionForm(form);
         addRequestParameter("action", "Add");
         actionPerform();

@@ -1,4 +1,4 @@
-package org.flymine.sql.query;
+package org.intermine.sql.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -51,7 +51,7 @@ public class ExplainResult
      * Constructs an instance of ExplainResult for a given Query and
      * database Connection.
      *
-     * @param query    the org.flymine.sql.query.Query to be explained
+     * @param query    the org.intermine.sql.query.Query to be explained
      * @param database a java.sql.Connection by which to access the
      *        database. The particular subclass of ExplainResult returned
      *        depends on the type of this Connection

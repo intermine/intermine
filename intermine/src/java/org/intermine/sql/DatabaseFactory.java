@@ -1,4 +1,4 @@
-package org.flymine.sql;
+package org.intermine.sql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 import java.sql.SQLException;
-import org.flymine.util.PropertiesUtil;
+import org.intermine.util.PropertiesUtil;
 
 
 /**

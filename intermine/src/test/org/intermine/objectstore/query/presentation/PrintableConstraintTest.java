@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.presentation;
+package org.intermine.objectstore.query.presentation;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,19 +12,19 @@ package org.flymine.objectstore.query.presentation;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.ClassConstraint;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryCollectionReference;
-import org.flymine.objectstore.query.QueryExpression;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.SubqueryConstraint;
-import org.flymine.objectstore.query.Query;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.Query;
 
 public class PrintableConstraintTest extends TestCase
 {
@@ -115,7 +115,7 @@ public class PrintableConstraintTest extends TestCase
         assertEquals("department2", pc3.getRight());
         assertEquals("\"Department [null] null\"", pc4.getRight());
         assertEquals("department1", pc5.getRight());
-        assertEquals("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Department AS a1_", pc6.getRight());
+        assertEquals("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_", pc6.getRight());
         assertEquals("SUBSTR(department1.name, 1, 1)", pc7.getRight());
     }
 

@@ -1,4 +1,4 @@
-package org.flymine.metadata;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -20,7 +20,7 @@ import java.util.HashSet;
 public class ClassDescriptorTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
-    private String uri = "http://www.flymine.org/model/testmodel";
+    private String uri = "http://www.intermine.org/model/testmodel";
 
     public ClassDescriptorTest(String arg) {
         super(arg);

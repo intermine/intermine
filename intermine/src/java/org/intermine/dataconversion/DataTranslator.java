@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -30,21 +30,21 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import org.flymine.FlyMineException;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.ontology.SubclassRestriction;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.util.StringUtil;
+import org.intermine.FlyMineException;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.ontology.SubclassRestriction;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.xml.full.ItemHelper;
 
 import org.apache.log4j.Logger;
 
@@ -101,7 +101,7 @@ public class DataTranslator
             times[i] = -1;
         }
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
-            Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
+            Item srcItem = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
             Collection translated = translateItem(srcItem);
             if (translated != null) {
                 for (Iterator j = translated.iterator(); j.hasNext();) {
@@ -382,7 +382,7 @@ public class DataTranslator
         if (tokenizer.hasMoreTokens()) {
             String fieldName = tokenizer.nextToken();
             if (tokenizer.hasMoreTokens()  && item.hasReference(fieldName)) {
-                org.flymine.xml.full.Reference ref = item.getReference(fieldName);
+                org.intermine.xml.full.Reference ref = item.getReference(fieldName);
                 return buildRestriction(tokenizer,
                          ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
             } else if (item.hasAttribute(fieldName)) {

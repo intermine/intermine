@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
 
-import org.flymine.task.ClassPathTask;
+import org.intermine.task.ClassPathTask;
 
 /**
  * Uses an IntegrationWriter to load data from another ObjectStore
@@ -68,7 +68,7 @@ public class ObjectStoreDataLoaderTask extends ClassPathTask
         }
 
         try {
-            Object driver = loadClass("org.flymine.dataloader.ObjectStoreDataLoaderDriver");
+            Object driver = loadClass("org.intermine.dataloader.ObjectStoreDataLoaderDriver");
 
             // Have to execute the loadData method by reflection as
             // cannot cast to something that this class (which may use

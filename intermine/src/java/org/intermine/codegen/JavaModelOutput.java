@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,9 +15,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.*;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.*;
 
 /**
  * Maps FlyMine metadata to Java source files
@@ -41,7 +41,7 @@ public class JavaModelOutput extends ModelOutput
         while (iter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             String cldName = cld.getName();
-            if (!"org.flymine.model.FlyMineBusinessObject".equals(cldName)) {
+            if (!"org.intermine.model.FlyMineBusinessObject".equals(cldName)) {
                 String pkg = TypeUtil.packageName(cldName);
                 String cls = TypeUtil.unqualifiedName(cld.getName());
                 File dir = new File(file, pkg.replaceAll("[.]", File.separator));
@@ -263,20 +263,20 @@ public class JavaModelOutput extends ModelOutput
                     && (!(field instanceof CollectionDescriptor))) {
                 // This is an object reference.
                 sb.append("if (")
-                    .append(name)
-                    .append(" instanceof org.flymine.objectstore.proxy.ProxyReference) { return ((")
-                    .append(type)
-                    .append(") ((org.flymine.objectstore.proxy.ProxyReference) ")
-                    .append(name)
-                    .append(").getObject()); }; return (")
-                    .append(type)
-                    .append(") ")
-                    .append(name)
-                    .append("; }" + ENDL);
+                  .append(name)
+                  .append(" instanceof org.intermine.objectstore.proxy.ProxyReference) { return ((")
+                  .append(type)
+                  .append(") ((org.intermine.objectstore.proxy.ProxyReference) ")
+                  .append(name)
+                  .append(").getObject()); }; return (")
+                  .append(type)
+                  .append(") ")
+                  .append(name)
+                  .append("; }" + ENDL);
             } else {
                 sb.append("return ")
-                    .append(name)
-                    .append("; }" + ENDL);
+                  .append(name)
+                  .append("; }" + ENDL);
             }
         }
 
@@ -321,7 +321,7 @@ public class JavaModelOutput extends ModelOutput
                 sb.append(INDENT)
                     .append("public void proxy")
                     .append(StringUtil.capitalise(name))
-                    .append("(org.flymine.objectstore.proxy.ProxyReference ")
+                    .append("(org.intermine.objectstore.proxy.ProxyReference ")
                     .append(name)
                     .append(")");
                 if (fieldPresent) {

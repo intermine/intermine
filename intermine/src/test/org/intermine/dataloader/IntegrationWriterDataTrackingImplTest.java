@@ -1,4 +1,4 @@
-package org.flymine.dataloader;
+package org.intermine.dataloader;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.datatracking.Source;
-import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.SetupDataTestCase;
-import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.datatracking.Source;
+import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.SetupDataTestCase;
+import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.testing.OneTimeTestCase;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 

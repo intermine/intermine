@@ -1,4 +1,4 @@
-package org.flymine.modelproduction.acedb;
+package org.intermine.modelproduction.acedb;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,24 +16,24 @@ import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.LinkedHashSet;
 
-import org.flymine.modelproduction.ModelParser;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.Model;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 
 import junit.framework.TestCase;
 
 public class AceModelParserFunctionalTest extends TestCase
 {
     private static final String MODEL = "acedbtest";
-    private static final String PKG = "org.flymine.model." + MODEL + ".";
+    private static final String PKG = "org.intermine.model." + MODEL + ".";
 
     private ModelParser parser;
     private Reader reader;
     private Model model;
-    private String uri = "http://www.flymine.org/model/testmodel";
+    private String uri = "http://www.intermine.org/model/testmodel";
 
     public AceModelParserFunctionalTest(String arg) {
         super(arg);

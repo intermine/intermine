@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 /**
  * Parent for classes that map FlyMine metadata to other formats

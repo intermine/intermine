@@ -1,4 +1,4 @@
-package org.flymine.ontology;
+package org.intermine.ontology;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -19,7 +19,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 
 public class MergeSpec2OwlTest extends TestCase{
-    String namespace = "http://www.flymine.org/namespace#";
+    String namespace = "http://www.intermine.org/namespace#";
     public void testProcess() throws Exception {
         String n3 = "@prefix : <" + namespace + ">.\n"
             + "@prefix owl: <http://www.w3.org/2002/07/owl#>.\n"

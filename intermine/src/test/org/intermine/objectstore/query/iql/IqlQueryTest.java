@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.fql;
+package org.intermine.objectstore.query.fql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,12 +15,12 @@ import java.util.Iterator;
 
 import junit.framework.Test;
 
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.testing.OneTimeTestCase;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.testing.OneTimeTestCase;
 
-import org.flymine.model.testmodel.Company;
+import org.intermine.model.testmodel.Company;
 
 public class FqlQueryTest extends FqlQueryTestCase
 {
@@ -35,12 +35,12 @@ public class FqlQueryTest extends FqlQueryTestCase
     public static void oneTimeSetUp() throws Exception {
         FqlQueryTestCase.oneTimeSetUp();
 
-        results.put("WhereSimpleNegEquals", new FqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber != 1234", null));
-        results.put("WhereNegSubQueryClass", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_ NOT IN (SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA')", null));
-        results.put("WhereNegClassClass", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE a1_ != a2_", null));
-        results.put("ContainsNeg11", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Manager AS a2_ WHERE (a1_.manager DOES NOT CONTAIN a2_ AND a1_.name = 'DepartmentA1')", null));
-        results.put("EmptyNandConstraintSet", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE false", null));
-        results.put("EmptyNorConstraintSet", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE true", null));
+        results.put("WhereSimpleNegEquals", new FqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber != 1234", null));
+        results.put("WhereNegSubQueryClass", new FqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_ NOT IN (SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA')", null));
+        results.put("WhereNegClassClass", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE a1_ != a2_", null));
+        results.put("ContainsNeg11", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Manager AS a2_ WHERE (a1_.manager DOES NOT CONTAIN a2_ AND a1_.name = 'DepartmentA1')", null));
+        results.put("EmptyNandConstraintSet", new FqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE false", null));
+        results.put("EmptyNorConstraintSet", new FqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE true", null));
     }
 
     public void executeTest(String type) throws Exception {
@@ -66,7 +66,7 @@ public class FqlQueryTest extends FqlQueryTestCase
 
     public void testConstructNullQuery() throws Exception {
         try {
-            FqlQuery fq = new FqlQuery(null, "org.flymine.model.testmodel");
+            FqlQuery fq = new FqlQuery(null, "org.intermine.model.testmodel");
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -74,7 +74,7 @@ public class FqlQueryTest extends FqlQueryTestCase
 
     public void testConstructEmptyQuery() throws Exception {
         try {
-            FqlQuery fq = new FqlQuery("", "org.flymine.model.testmodel");
+            FqlQuery fq = new FqlQuery("", "org.intermine.model.testmodel");
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }

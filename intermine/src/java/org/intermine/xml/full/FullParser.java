@@ -1,4 +1,4 @@
-package org.flymine.xml.full;
+package org.intermine.xml.full;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -25,10 +25,10 @@ import org.apache.commons.logging.LogFactory;
 
 import org.xml.sax.SAXException;
 
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.metadata.Model;
 
 /**
  * Unmarshal XML Full format data into java business objects.

@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -12,7 +12,7 @@ package org.flymine.codegen;
 
 import java.io.File;
 
-import org.flymine.metadata.*;
+import org.intermine.metadata.*;
 
 
 /**

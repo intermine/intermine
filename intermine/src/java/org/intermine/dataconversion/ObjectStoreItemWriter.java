@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -13,10 +13,10 @@ package org.flymine.dataconversion;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.model.fulldata.Item;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreWriter;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.model.fulldata.Item;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 
 /**
  * Stores Items in an objectstore.

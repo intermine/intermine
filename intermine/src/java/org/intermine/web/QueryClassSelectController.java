@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -26,8 +26,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.metadata.Model;
-import org.flymine.util.TypeUtil;
+import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for

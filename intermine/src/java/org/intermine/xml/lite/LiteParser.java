@@ -1,4 +1,4 @@
-package org.flymine.xml.lite;
+package org.intermine.xml.lite;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -22,24 +22,24 @@ import org.apache.commons.digester.*;
 
 import org.xml.sax.SAXException;
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryCollectionReference;
-import org.flymine.objectstore.query.QueryObjectReference;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.util.DynamicBean;
-import org.flymine.util.StringUtil;
-import org.flymine.util.TypeUtil;
+import org.intermine.model.FlyMineBusinessObject;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicBean;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.apache.log4j.Logger;
 /**
  * Read XML Lite format into an Object

@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -18,8 +18,8 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.testmodel.*;
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.*;
 
 public class DynamicUtilTest extends TestCase
 {
@@ -135,27 +135,27 @@ public class DynamicUtilTest extends TestCase
     }
     
     public void testInstantiateObjectNullClassName() throws Exception {
-        Object obj = DynamicUtil.instantiateObject(null, "org.flymine.model.testmodel.Broke");
+        Object obj = DynamicUtil.instantiateObject(null, "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Broke);
     }
     
     public void testInstantiateObjectEmptyClassName() throws Exception {
-        Object obj = DynamicUtil.instantiateObject("", "org.flymine.model.testmodel.Broke");
+        Object obj = DynamicUtil.instantiateObject("", "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Broke);
     }
     
     public void testInstantiateObjectNullImplementations() throws Exception {
-        Object obj = DynamicUtil.instantiateObject("org.flymine.model.testmodel.Manager", null);
+        Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", null);
         assertTrue(obj instanceof Manager);
     }
     
     public void testInstantiateObjectEmptyImplementations() throws Exception {
-        Object obj = DynamicUtil.instantiateObject("org.flymine.model.testmodel.Manager", "");
+        Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "");
         assertTrue(obj instanceof Manager);
     }
     
     public void testInstantiateObject() throws Exception {
-        Object obj = DynamicUtil.instantiateObject("org.flymine.model.testmodel.Manager", "org.flymine.model.testmodel.Broke");
+        Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Manager);
         assertTrue(obj instanceof Broke);
     }

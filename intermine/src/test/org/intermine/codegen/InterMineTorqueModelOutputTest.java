@@ -1,4 +1,4 @@
-package org.flymine.codegen;
+package org.intermine.codegen;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -21,11 +21,11 @@ import java.util.Collections;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 
 public class FlyMineTorqueModelOutputTest extends TestCase
 {
@@ -34,7 +34,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     private Model model;
     private File file;
     private FlyMineTorqueModelOutput mo;
-    private String uri = "http://www.flymine.org/model/testmodel";
+    private String uri = "http://www.intermine.org/model/testmodel";
 
     public FlyMineTorqueModelOutputTest(String name) {
         super(name);
