@@ -34,6 +34,7 @@ public class ConstraintHelperTest extends TestCase
     private ClassConstraint classConstraint1, classConstraint2;
     private ContainsConstraint containsConstraint1;
     private SubqueryConstraint subqueryConstraint1, subqueryConstraint2;
+    private BagConstraint bagConstraint1;
     private ConstraintSet cs1;
 
     public ConstraintHelperTest(String arg) {
@@ -98,6 +99,15 @@ public class ConstraintHelperTest extends TestCase
         subqueryConstraint1 = new SubqueryConstraint(qc2, ConstraintOp.IN, subquery1);
         cs1.addConstraint(subqueryConstraint1);
         subqueryConstraint2 = new SubqueryConstraint(qf1, ConstraintOp.IN, subquery2);
+        cs1.addConstraint(subqueryConstraint2);
+
+        List bagOfNames = new ArrayList();
+        bagOfNames.add("Fred");
+        bagOfNames.add("Maureen");
+        bagOfNames.add("Eric");
+        bagConstraint1 = new BagConstraint(qf1, ConstraintOp.IN, bagOfNames);
+        cs1.addConstraint(bagConstraint1);
+
         cs1.addConstraint(subqueryConstraint2);
 
         q.setConstraint(cs1);
@@ -452,6 +462,10 @@ public class ConstraintHelperTest extends TestCase
         assertEquals(qc1, ((QueryReference) ConstraintHelper.getLeftArgument(containsConstraint1)).getQueryClass());
         assertEquals("departments", ((QueryReference) ConstraintHelper.getLeftArgument(containsConstraint1)).getFieldName());
 
+        assertTrue(ConstraintHelper.getLeftArgument(bagConstraint1) instanceof QueryNode);
+        assertEquals(qc1, ((QueryField) ConstraintHelper.getLeftArgument(bagConstraint1)).getFromElement());
+        assertEquals("name", ((QueryField) ConstraintHelper.getLeftArgument(bagConstraint1)).getFieldName());
+
         assertTrue(ConstraintHelper.getLeftArgument(subqueryConstraint1) instanceof QueryClass);
         assertEquals(Department.class, ((QueryClass) ConstraintHelper.getLeftArgument(subqueryConstraint1)).getType());
         assertTrue(ConstraintHelper.getLeftArgument(subqueryConstraint2) instanceof QueryField);
@@ -475,6 +489,7 @@ public class ConstraintHelperTest extends TestCase
         assertEquals(Department.class, ((QueryClass) ConstraintHelper.getRightArgument(containsConstraint1)).getType());
 
         assertTrue(ConstraintHelper.getRightArgument(subqueryConstraint1) instanceof Query);
+        assertTrue(ConstraintHelper.getRightArgument(bagConstraint1) instanceof Set);
 
         assertNull(ConstraintHelper.getRightArgument(cs1));
     }
