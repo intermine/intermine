@@ -444,6 +444,7 @@
     <javac destdir="${build.test}" listfiles="yes">
       <classpath refid="test.class.path"/>
       <src path="${build.src.test}" />
+      <exclude name="org/intermine/web/**"/>
     </javac>
   </target>
 
