@@ -23,10 +23,10 @@
 
      <section>
        <heading>Fields</heading>
-        <item>The following is an explanation of the classes and fields displayed by the model browser.  The Gene class is used as an example, but the information is easily transferable to other classes.  The screenshot below shows the model browser displaying the Gene class.</item>
-        <item>The folowing fields are of the type 'String': name, residues, gcgApprovedName and wormBaseSequenceName.  These fields hold just one piece of information of the type String.  A String is basically a piece of text that can include letters and numbers.</item>
+        <item>The following is an explanation of the classes and fields displayed by the model browser.  The Gene class is used as an example, but the information is easily transferable to other classes.  The screen-shot below shows the model browser displaying the Gene class.</item>
+        <item>The following fields are of the type 'String': name, residues and wormBaseSequenceName.  These fields hold just one piece of information of the type String.  A String is basically a piece of text that can include letters and numbers.</item>
         <item>The field called Organism is a reference (ie a link) to the organism class.  Fields which are references to other classes have a field name (in this case organism) followed by the name of the class it is referencing (in this case Organism).</item>
-        <item>The field called Transcript is also a reference to a class - the Transcript class.  This field, however, also has the type 'collection'.  This is becuase a particular gene object in the Gene class will reference (link to) one or more transcript objects in the Transcipts class.  The transcript collection is a list of references to these transcript objects.</item>
+        <item>The field called Transcript is also a reference to a class - the Transcript class.  This field, however, also has the type 'collection'.  This is because a particular gene object in the Gene class will reference (link to) one or more transcript objects in the Transcripts class.  The transcript collection is a list of references to these transcript objects.</item>
         <item>The other fields in the gene class are all of the type class collection as described above.  For an explanation of the meaning of the actual classes see <ulink url= "manualFlyMineclasses.xml">FlyMine classes</ulink> </item>
       </section>
 

@@ -15,7 +15,7 @@
         <para>
           <orderedlist>
              <listitem>Selecting the Gene class</listitem>
-             <listitem>Constraining the Organism name field from Gene class to Drosohpila melanogaster.</listitem>
+             <listitem>Constraining the Organism name field from Gene class to Drosophila melanogaster.</listitem>
              <listitem>Selecting the gene name field and organism name field to show in the output</listitem>
           </orderedlist>
         </para>
@@ -37,7 +37,7 @@
 	      <inlinegraphic fileref="geneOrganism1" format="PNG"/>
 	  </entry>
 
-           <listitem>You need to constrain the organsim name to Drosophila melanogaster.  Select the constrain arrow next to the name field of the Organism class.  In the constraints box add the constraint: = Drosophila melanogaster.  Alternatively you can change the '=' to 'LIKE' and write %melanogaster in the box.  % is just like a * wild card.  Press 'Add to query' to add this constraint to the constraints list.</listitem>  
+           <listitem>You need to constrain the organism name to Drosophila melanogaster.  Select the constrain arrow next to the name field of the Organism class.  In the constraints box add the constraint: = Drosophila melanogaster.  Alternatively you can change the '=' to 'LIKE' and write %melanogaster in the box.  % is just like a * wild card.  Press 'Add to query' to add this constraint to the constraints list.</listitem>  
 
 
 	  <entry>

@@ -14,10 +14,10 @@
              <listitem><ulink url="manualCOF.xml">Classes, Objects and Fields - the basics</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">Selecting data from classes</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">Combining data from different classes</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Constraning to subclasses</ulink></listitem>
+             <listitem><ulink url="manualSelectingData.xml">Constraining to subclasses</ulink></listitem>
 
 
-             <listitem><ulink url="manualSelectingData.xml">The FlyMIne query builder</ulink></listitem> 
+             <listitem><ulink url="manualSelectingData.xml">The FlyMine query builder</ulink></listitem> 
              <listitem><ulink url="manualSelectingData.xml">Starting a FlyMine query</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">The class selection page</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">The query builder page</ulink></listitem>
@@ -29,7 +29,7 @@
 
 
              <listitem><ulink url="manualSelectingData.xml">Building Simple queries</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Selecting all the objects from a particular classs</ulink></listitem>
+             <listitem><ulink url="manualSelectingData.xml">Selecting all the objects from a particular class</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">Constraining objects from one class</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">Selecting and constraining objects from 2 classes</ulink></listitem>
              <listitem><ulink url="manualSelectingData.xml">Constraining a class to a subclass</ulink></listitem>
