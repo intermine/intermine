@@ -12,6 +12,9 @@ package org.flymine.ontology;
 
 import java.io.Reader;
 import java.io.IOException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -178,6 +181,31 @@ public class MergeOwl
             statements.add(tgtModel.createStatement(target,
                 tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "sameAs"), original));
         }
+    }
+
+
+    /**
+     * Merge a source OWL file with a target that already contains merge specification.
+     * @param args MergeOwl tgt_model.n3 tgt_namespace src_model src_namespace src_format
+     * @throws Exception if anything goes wrong
+     */
+    public static void main(String[] args) throws Exception {
+        if (args.length != 5) {
+            throw new Exception("Usage: MergeOwl tgt_model.n3 tgt_namespace src_model "
+                                + "src_namespace src_format");
+        }
+
+        String tgtModelName = args[0];
+        String tgtNamespace = args[1];
+        String srcModelName = args[2];
+        String srcNamespace = args[3];
+        String srcFormat = args[4];
+
+        File tgtModel = new File(tgtModelName);
+        MergeOwl merger = new MergeOwl(new FileReader(tgtModel), tgtNamespace);
+        merger.addToTargetOwl(new FileReader(new File(srcModelName)), srcNamespace, srcFormat);
+        OntModel ont = merger.getTargetModel();
+        ont.write(new FileWriter(tgtModel), "N3");
     }
 }
 
