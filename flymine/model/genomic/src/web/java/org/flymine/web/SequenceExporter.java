@@ -70,7 +70,7 @@ public class SequenceExporter implements TableExporter
         response.setHeader("Content-Disposition ",
                            "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
 
-        OutputStream outputStream = response.getOutputStream();
+        OutputStream outputStream = null;
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
@@ -78,7 +78,7 @@ public class SequenceExporter implements TableExporter
 
         Column featureColumn = null;
 
-        // find and remember the first valid column
+        // find and remember the first valid Sequence-containing column
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
@@ -156,6 +156,13 @@ public class SequenceExporter implements TableExporter
                                                              header.toString());
                     }
 
+                    if (outputStream == null) {
+                        // try to avoid opening the OutputStream until we know that the query is
+                        // going to work - this avoids some problems that occur when
+                        // getOutputStream() is called twice (once by this method and again to
+                        // write the error)
+                        outputStream = response.getOutputStream();
+                    }
                     SeqIOTools.writeFasta(outputStream, sequence);
                 }
             }
