@@ -81,6 +81,11 @@ fi
 #echo "-n -e $EPS_FILENAME $FILENAME" 1>&2
 dia -n -e $EPS_FILENAME $FILENAME >/dev/null 2>&1
 
+if ! test -f "$EPS_FILENAME" ; then
+    echo "Dia failed to produce output - do you have access to X?" 1>&2
+    exit
+fi
+
 COMMAND_LINE=$EPS_FILENAME
 
 if test "True" = "$RES_SET" ; then
