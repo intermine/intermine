@@ -29,7 +29,7 @@ public class DataLoaderTest extends TestCase
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         Model model = Model.getInstanceByName("testmodel");
         IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("dataloader.unittest", "source1", os);
-        loader = new DataLoader(model, iw);
+        loader = new DataLoader(iw);
     }
 
     public void tearDown() throws Exception {

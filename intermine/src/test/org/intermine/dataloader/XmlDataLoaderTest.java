@@ -39,7 +39,7 @@ public class XmlDataLoaderTest extends TestCase
     public void setUp() throws Exception {
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
-        iw = new IntegrationWriterSingleSourceImpl("test", os, writer);
+        iw = new IntegrationWriterSingleSourceImpl("test", writer);
 
         URL mapFile = getClass().getClassLoader().getResource("castor_xml_testmodel.xml");
         map = new Mapping();
@@ -76,7 +76,7 @@ public class XmlDataLoaderTest extends TestCase
         Reader reader = new FileReader(file);
         InputSource source = new InputSource(reader);
 
-        XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
+        XmlDataLoader dl = new XmlDataLoader(iw);
         dl.processXml(source);
 
         // check address was stored
@@ -110,7 +110,7 @@ public class XmlDataLoaderTest extends TestCase
         Reader reader = new FileReader(file);
         InputSource source = new InputSource(reader);
 
-        XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
+        XmlDataLoader dl = new XmlDataLoader(iw);
         dl.processXml(source);
 
         // check address was stored
@@ -128,7 +128,7 @@ public class XmlDataLoaderTest extends TestCase
     }
 
     public void testStoreFromFile() throws Exception {
-        XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
+        XmlDataLoader dl = new XmlDataLoader(iw);
         InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel.xml");
         dl.processXml(new InputSource(testData));
 

@@ -14,7 +14,6 @@ import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.dataloader.XmlDataLoader;
 import org.flymine.dataloader.IntegrationWriter;
 import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
-import org.flymine.metadata.Model;
 
 /**
  * Class that actually loads XML data
@@ -34,18 +33,11 @@ public class XmlDataLoaderDriver
         throws BuildException {
 
         try {
-
             ObjectStore os = ObjectStoreFactory.getObjectStore(store);
-            // Need to get rid of OJB-specific stuff here
             ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(os);
-
-            IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, os, writer);
-
-            // Should model come from ObjectStore??
-            XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
-
+            IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, writer);
+            XmlDataLoader dl = new XmlDataLoader(iw);
             dl.processXml(new InputSource(new FileReader(file)));
-
         } catch (Exception e) {
             throw new BuildException(e);
         }

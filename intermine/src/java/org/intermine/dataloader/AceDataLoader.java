@@ -22,7 +22,6 @@ import org.acedb.staticobj.StaticAceObject;
 import java.lang.reflect.Field;
 
 import org.flymine.FlyMineException;
-import org.flymine.metadata.Model;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -40,8 +39,8 @@ public class AceDataLoader extends DataLoader
     /**
      * @see AbstractDataLoader#Constructor
      */
-    public AceDataLoader(Model model, IntegrationWriter iw) {
-        super(model, iw);
+    public AceDataLoader(IntegrationWriter iw) {
+        super(iw);
     }
 
     /**
@@ -58,7 +57,7 @@ public class AceDataLoader extends DataLoader
             // Go through each class in the model and get a dump of the objects of
             // that class
 
-            Collection clazzNames = model.getClassNames();
+            Collection clazzNames = iw.getObjectStore().getModel().getClassNames();
             Iterator clazzIter = clazzNames.iterator();
             while (clazzIter.hasNext()) {
                 String clazzName = (String) clazzIter.next();
@@ -123,8 +122,8 @@ public class AceDataLoader extends DataLoader
         Object currentObject = null;
         try {
             String clazzName = ((AceObject) aceObject).getClassName();
-            if (model != null) {
-                clazzName = model.getName() + "." + clazzName;
+            if (iw != null) {
+                clazzName = iw.getObjectStore().getModel().getName() + "." + clazzName;
             }
             currentObject = Class.forName(clazzName).newInstance();
             setField(currentObject, "identifier", AceUtils.decode(aceObject.getName()));

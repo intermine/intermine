@@ -5,7 +5,6 @@ import org.exolab.castor.xml.*;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.metadata.Model;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,8 +26,8 @@ public class XmlDataLoader extends DataLoader
     /**
      * @see AbstractDataLoader#Constructor
      */
-    public XmlDataLoader(Model model, IntegrationWriter iw) {
-        super(model, iw);
+    public XmlDataLoader(IntegrationWriter iw) {
+        super(iw);
     }
 
     /**
@@ -40,7 +39,8 @@ public class XmlDataLoader extends DataLoader
      */
     public void processXml(InputSource source) throws FlyMineException {
         try {
-            String mapFile = "castor_xml_" + model.getName() + ".xml";
+            String modelName = iw.getObjectStore().getModel().getName();
+            String mapFile = "castor_xml_" + modelName + ".xml";
             URL mapUrl = XmlDataLoader.class.getClassLoader().getResource(mapFile);
             Mapping mapping = new Mapping();
             mapping.loadMapping(mapUrl);

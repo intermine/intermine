@@ -12,7 +12,6 @@ import org.flymine.dataloader.AceDataLoader;
 import org.flymine.dataloader.IntegrationWriter;
 import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
 
-
 /**
  * Class that actually loads Ace data
  *
@@ -20,7 +19,6 @@ import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
  */
 public class AceDataLoaderDriver
 {
-
     /**
      * Load ace data from an AceDB server
      *
@@ -39,12 +37,12 @@ public class AceDataLoaderDriver
             // Need to get rid of OJB-specific stuff here
             ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(os);
 
-            IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, os, writer);
+            IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, writer);
 
             AceURL aceURL = new AceURL("acedb://" + user + ':' + password + '@'
                                        + host + ':' + port);
 
-            AceDataLoader dl = new AceDataLoader(os.getModel(), iw);
+            AceDataLoader dl = new AceDataLoader(iw);
             dl.processAce(aceURL);
         } catch (Exception e) {
             throw new BuildException(e);

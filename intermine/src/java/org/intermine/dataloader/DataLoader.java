@@ -12,7 +12,6 @@ import java.util.Set;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.ConsistentSet;
 import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
@@ -31,7 +30,6 @@ import org.apache.log4j.Logger;
 public class DataLoader
 {
     protected static final Logger LOG = Logger.getLogger(DataLoader.class);
-    protected Model model;
     protected IntegrationWriter iw;
     
     /**
@@ -44,10 +42,8 @@ public class DataLoader
      * Construct a DataLoader
      * 
      * @param iw an IntegrationWriter to write to
-     * @param model the metadata used in storing objects
      */
-    public DataLoader(Model model, IntegrationWriter iw) {
-        this.model = model;
+    public DataLoader(IntegrationWriter iw) {
         this.iw = iw;
     }
 
@@ -98,7 +94,8 @@ public class DataLoader
                          + valueInObjectToStore);
                 
                 String className = field.getDeclaringClass().getName();
-                ClassDescriptor cld = model.getClassDescriptorByName(className);
+                ClassDescriptor cld = iw.getObjectStore().getModel()
+                    .getClassDescriptorByName(className);
                 FieldDescriptor fd = cld.getFieldDescriptorByName(field.getName());
                 if (fd instanceof CollectionDescriptor) {
                     Collection objs = (Collection) valueInObjectToStore;
