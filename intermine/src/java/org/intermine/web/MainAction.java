@@ -62,6 +62,13 @@ public class MainAction extends Action
             node.getConstraints().add(new Constraint(constraintOp, constraintValue));
         }
 
+        if (request.getParameter ("loop") != null) {
+            ConstraintOp constraintOp = ConstraintOp.
+                getOpForIndex(Integer.valueOf(mf.getLoopQueryOp()));
+            Object constraintValue = mf.getLoopQueryValue();
+            node.getConstraints().add(new Constraint(constraintOp, constraintValue));
+        }
+        
         if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
