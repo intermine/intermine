@@ -10,7 +10,7 @@
 <!-- table.jsp -->
 
 <html:xhtml/>
-<!-- table.jsp -->
+
 <script type="text/javascript">
   <!--//<![CDATA[
     function selectColumnCheckboxes(column) {
@@ -27,6 +27,13 @@
     function unselectColumnCheckbox(column) {
       document.getElementById('selectedObjects_' + column).checked = false;
     }
+    function changePageSize() {
+      var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
+      var pagesize = document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value;
+      var page = ${RESULTS_TABLE.startRow}/pagesize;
+      url += 'page=' + (page).toFixed() + '&size=' + pagesize;
+      document.location.href=url;
+    }
     //]]>-->
 </script>
 
@@ -42,7 +49,7 @@
       <div class="body">
         <%-- Page size controls --%>
         <fmt:message key="results.changepagesize"/>
-        <html:select property="pageSize" onchange="document.location.href='${requestScope['javax.servlet.include.context_path']}/changeResultsSize.do?changePageSize=1&amp;pageSize='+document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value">
+        <html:select property="pageSize" onchange="changePageSize()">
           <html:option value="10">10</html:option>
           <html:option value="25">25</html:option>
           <html:option value="50">50</html:option>
@@ -55,7 +62,7 @@
         </noscript>
       </div>
     </html:form>
-  
+    
     <html:form action="/saveBag">
     <div class="body">
 
@@ -205,15 +212,15 @@
         
         <%-- Paging controls --%>
         <c:if test="${!RESULTS_TABLE.firstPage}">
-          <html:link action="/changeResults?method=first">
+          <html:link action="/results?page=0&size=${RESULTS_TABLE.pageSize}">
             <fmt:message key="results.first"/>
           </html:link>
-          <html:link action="/changeResults?method=previous">
+          <html:link action="/results?page=${RESULTS_TABLE.page-1}&size=${RESULTS_TABLE.pageSize}">
             <fmt:message key="results.previous"/>
           </html:link>
         </c:if>
         <c:if test="${!RESULTS_TABLE.lastPage}">
-          <html:link action="/changeResults?method=next">
+          <html:link action="/results?page=${RESULTS_TABLE.page+1}&size=${RESULTS_TABLE.pageSize}">
             <fmt:message key="results.next"/>
           </html:link>
           <c:if test="${RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
