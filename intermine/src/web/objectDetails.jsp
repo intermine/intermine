@@ -23,7 +23,7 @@ Summary for selected
 </im:heading>
 
 <im:body id="summary">
-<table cellpadding="5" rules="all">
+<table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
   <c:forEach items="${object.keyAttributes}" var="attributeName">
     <tr>
       <td>
@@ -107,7 +107,7 @@ Summary for selected
 <td valign="top" width="66%">
 <im:heading id="other"><nobr>Other Information</nobr></im:heading>
 <im:body id="other">
-<table>
+<table border="0">
   <c:if test="${!empty object.refsAndCollections}">
     <c:forEach items="${object.refsAndCollections}" var="entry">
       <c:set var="collection" value="${entry.value}"/>
@@ -149,58 +149,62 @@ Summary for selected
       <c:if test="${verbose}">
         <tr>
           <td colspan="2">
-            <table rules="all" width="100%" class="refSummary">
-              <thead style="text-align: center">
-                <tr>
-                  <td width="10px">
-                    <fmt:message key="objectDetails.class"/>
-                  </td>
-                  <c:forEach items="${collection.table.columnNames}" var="fd">
-                    <td><span class="attributeField">${fd}</span></td>
-                  </c:forEach>
-                  <td width="10px">
-                    &nbsp;<%--for IE--%>
-                  </td>
-                </tr>
-              </thead>
-              <tbody>
-                <c:forEach items="${collection.table.rows}" var="row" varStatus="status">
-                  <%-- request scope for im:eval --%>
-                  <c:set var="thisRowObject" value="${collection.table.rowObjects[status.index]}"
-                         scope="request"/>
-                  <tr>
-                    <td width="10px">
-                      <c:forEach items="${collection.table.types[status.index]}" var="cld">
-                        <span class="type">${cld.unqualifiedName}</span>
-                      </c:forEach>
-                    </td>
-                    <c:forEach items="${row}" var="expr">
-                      <td>
-                         <c:choose>
-
-                          <c:when test="${!empty expr}">
-
-                            <im:eval evalExpression="thisRowObject.${expr}" evalVariable="outVal"/>
-                            <span class="value">${outVal}</span>
-                        
-                            <c:if test="${empty outVal}">
-                              &nbsp;<%--for IE--%>
-                            </c:if>
-                          </c:when>
-                          <c:otherwise>
-                            &nbsp;<%--for IE--%>
-                          </c:otherwise>                            
-                        </c:choose>
+            <table border="0" cellspacing="0" cellpadding="0" width="100%">
+              <tr><td width="15"><td><td>
+                <table border="0" cellspacing="0" class="refSummary" align="right">
+                  <thead style="text-align: center">
+                    <tr>
+                      <td width="10px">
+                        <fmt:message key="objectDetails.class"/>
                       </td>
+                      <c:forEach items="${collection.table.columnNames}" var="fd">
+                        <td><span class="attributeField">${fd}</span></td>
+                      </c:forEach>
+                      <td width="10px">
+                        &nbsp;<%--for IE--%>
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <c:forEach items="${collection.table.rows}" var="row" varStatus="status">
+                      <%-- request scope for im:eval --%>
+                      <c:set var="thisRowObject" value="${collection.table.rowObjects[status.index]}"
+                             scope="request"/>
+                      <tr>
+                        <td width="10px">
+                          <c:forEach items="${collection.table.types[status.index]}" var="cld">
+                            <span class="type">${cld.unqualifiedName}</span>
+                          </c:forEach>
+                        </td>
+                        <c:forEach items="${row}" var="expr">
+                          <td>
+                             <c:choose>
+
+                              <c:when test="${!empty expr}">
+
+                                <im:eval evalExpression="thisRowObject.${expr}" evalVariable="outVal"/>
+                                <span class="value">${outVal}</span>
+
+                                <c:if test="${empty outVal}">
+                                  &nbsp;<%--for IE--%>
+                                </c:if>
+                              </c:when>
+                              <c:otherwise>
+                                &nbsp;<%--for IE--%>
+                              </c:otherwise>                            
+                            </c:choose>
+                          </td>
+                        </c:forEach>
+                        <td width="10px">
+                          [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}">
+                            <fmt:message key="results.details"/>
+                          </html:link>]
+                        </td>
+                      </tr>
                     </c:forEach>
-                    <td width="10px">
-                      [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}">
-                        <fmt:message key="results.details"/>
-                      </html:link>]
-                    </td>
-                  </tr>
-                </c:forEach>
-              </tbody>
+                  </tbody>
+                </table>
+              </td></tr>
             </table>
             <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
               <div class="refSummary">
