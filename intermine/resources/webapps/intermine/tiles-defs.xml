@@ -95,6 +95,7 @@
   </definition>
   <definition name="classDescription.page" extends="layout.template">
     <put name="body" value="classDescription.tile"/>
+    <put name="pageName" value="classDescription"/>
   </definition>
   <!--tiles-->
   <definition name="classDescription.tile" path="/classDescription.jsp" controllerUrl="/initClassDescription.do"/>
