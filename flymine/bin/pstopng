@@ -88,36 +88,56 @@ if test "$FILENAME" == "stdin" ; then
 fi
 
 BBOX=`gs -q -sDEVICE=bbox -sOutputFile=- -r10x10 -g10000x10000 -dBATCH -dNOPAUSE $FILENAME 2>&1 | grep "%%BoundingBox:" | sed -e "s/^%%BoundingBox: //"`
-WIDTH=`echo $BBOX | sed -e "s/^\([^ ]\+\) [^ ]\+ \([^ ]\+\) [^ ]\+$/\2-\1/g" | bc`
-HEIGHT=`echo $BBOX | sed -e "s/^[^ ]\+ \([^ ]\+\) [^ ]\+ \([^ ]\+\)$/\2-\1/g" | bc`
+WIDTH=`echo $BBOX | sed -e "s/^[^ ]\+ [^ ]\+ \([^ ]\+\) [^ ]\+$/\1/g"`
+HEIGHT=`echo $BBOX | sed -e "s/^[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\)$/\1/g"`
+LEFT=`echo $BBOX | sed -e "s/^\([^ ]\+\) [^ ]\+ [^ ]\+ [^ ]\+$/\1/g"`
+BOTTOM=`echo $BBOX | sed -e "s/^[^ ]\+ \([^ ]\+\) [^ ]\+ [^ ]\+$/\1/g"`
 
 if test "True" = "$SZX_SET" ; then
 	USWIDTH=`echo "$SZX * $ANTIALIAS" | bc`
-	USHEIGHT=`echo "($SZX * $ANTIALIAS * $HEIGHT) / $WIDTH" | bc`
-	USRES=`echo "($SZX * $ANTIALIAS * 72) / $WIDTH" | bc`
+	USHEIGHT=`echo "(($SZX * $HEIGHT) / $WIDTH) * $ANTIALIAS" | bc`
+	USRES=`echo "(($SZX * 72) / $WIDTH) * $ANTIALIAS" | bc`
+	USLEFT=`echo "(($SZX * $LEFT) / $WIDTH) * $ANTIALIAS" | bc`
+	USBOTTOM=`echo "$USHEIGHT - ((($SZX * $BOTTOM) / $WIDTH) * $ANTIALIAS) - 1" | bc`
 elif test "True" = "$SZY_SET" ; then
-	USWIDTH=`echo "($SZY * $ANTIALIAS * $WIDTH) / $HEIGHT" | bc`
+	USWIDTH=`echo "(($SZY * $WIDTH) / $HEIGHT) * $ANTIALIAS" | bc`
 	USHEIGHT=`echo "$SZY * $ANTIALIAS" | bc`
-	USRES=`echo "($SZY * $ANTIALIAS * 72) / $HEIGHT" | bc`
+	USRES=`echo "(($SZY * 72) / $HEIGHT) * $ANTIALIAS" | bc`
+	USLEFT=`echo "(($SZY * $LEFT) / $HEIGHT) * $ANTIALIAS" | bc`
+	USBOTTOM=`echo "$USHEIGHT - ((($SZY * $BOTTOM) / $HEIGHT) * $ANTIALIAS) - 1" | bc`
 else
-	USWIDTH=`echo "($WIDTH * $RES * $ANTIALIAS) / 72" | bc`
-	USHEIGHT=`echo "($HEIGHT * $RES * $ANTIALIAS) / 72" | bc`
+	USWIDTH=`echo "(($WIDTH * $RES) / 72) * $ANTIALIAS" | bc`
+	USHEIGHT=`echo "(($HEIGHT * $RES) / 72) * $ANTIALIAS" | bc`
 	USRES=`echo "$RES * $ANTIALIAS" | bc`
+	USLEFT=`echo "(($LEFT * $RES) / 72) * $ANTIALIAS" | bc`
+	USBOTTOM=`echo "$USHEIGHT - ((($BOTTOM * $RES) / 72) * $ANTIALIAS) - 1" | bc`
 fi
+
+USBOTTOMPLUSONE=`echo "$USBOTTOM + 1" | bc`
 
 #echo "$BBOX $WIDTH $HEIGHT $USWIDTH $USHEIGHT $USRES" 1>&2
 
+TEMP_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+
 if test "True" = "$ALPHA" ; then
-	TEMP_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
-	gs -q -sDEVICE=pgmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME | pnmscale --reduce $ANTIALIAS 2>/dev/null >$TEMP_FILENAME.blackonwhite
-	pnminvert <$TEMP_FILENAME.blackonwhite >$TEMP_FILENAME.alpha
-	XY_SIZE=`head -n 3 <$TEMP_FILENAME.alpha | grep -v "^#" | tr "\n	" "  " | sed -e "s/P[1-6] \+\([0-9]\+\) \+\([0-9]\+\).*$/-xsize \1 -ysize \2/"`
-#	echo "P1 1 1 1" | pnmscale $XY_SIZE 2>/dev/null >$TEMP_FILENAME.black
-	pnmgamma 0.00001 <$TEMP_FILENAME.blackonwhite >$TEMP_FILENAME.black
-	pnmtopng -alpha $TEMP_FILENAME.alpha $TEMP_FILENAME.black 2>/dev/null
-	rm $TEMP_FILENAME.alpha $TEMP_FILENAME.black $TEMP_FILENAME.blackonwhite
+	gs -q -sDEVICE=ppmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME >$TEMP_FILENAME.large
+	if test "$USLEFT" != "0" || test "$USBOTTOMPLUSONE" != "$USHEIGHT" ; then
+		echo "Cutting picture" 1>&2
+		pnmcut -left $USLEFT -bottom $USBOTTOM <$TEMP_FILENAME.large >$TEMP_FILENAME.cut
+		mv $TEMP_FILENAME.cut $TEMP_FILENAME.large
+	fi
+	pnmscalealpha $TEMP_FILENAME.large $TEMP_FILENAME.colour $TEMP_FILENAME.alpha $ANTIALIAS
+	pnmtopng -alpha $TEMP_FILENAME.alpha $TEMP_FILENAME.colour 2>/dev/null
+	rm $TEMP_FILENAME.alpha $TEMP_FILENAME.large $TEMP_FILENAME.colour
 else
-	gs -q -sDEVICE=pgmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME | pnmscale --reduce $ANTIALIAS 2>/dev/null | pnmtopng
+	gs -q -sDEVICE=ppmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME >$TEMP_FILENAME.large
+	if test "$USLEFT" != "0" || test "$USBOTTOMPLUSONE" != "$USHEIGHT" ; then
+		echo "Cutting picture" 1>&2
+		pnmcut -left $USLEFT -bottom $USBOTTOM <$TEMP_FILENAME.large >$TEMP_FILENAME.cut
+		mv $TEMP_FILENAME.cut $TEMP_FILENAME.large
+	fi
+	pnmscale --reduce $ANTIALIAS <$TEMP_FILENAME.large 2>/dev/null | pnmtopng
+	rm $TEMP_FILENAME.large
 fi
 
 if test "$DELETE_AFTER" = "True" ; then
