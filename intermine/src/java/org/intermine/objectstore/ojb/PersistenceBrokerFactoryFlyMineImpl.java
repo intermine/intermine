@@ -13,6 +13,8 @@ import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import org.flymine.sql.Database;
 
+import org.apache.log4j.Logger;
+
 /**
  * Extension of PersistenceBrokerFactoryDefaultImpl to return the right PersistenceBroker
  *
@@ -20,6 +22,9 @@ import org.flymine.sql.Database;
  */
 public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactoryDefaultImpl
 {
+    protected static final Logger LOG = Logger
+        .getLogger(PersistenceBrokerFactoryFlyMineImpl.class);
+
     private Map pbKeys = new HashMap();
 
     /**
@@ -65,6 +70,10 @@ public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactor
                                                + "PersistenceBrokerFlyMineImpl in OJB.properties");
         }
         ((PersistenceBrokerFlyMine) pb).setDatabase(db);
+
+        LOG.info("PersistenceBrokerFactoryFlyMineImpl: " + activePersistenceBroker()
+                 + " active brokers");
+
         return (PersistenceBrokerFlyMine) pb;
     }
 }
