@@ -76,4 +76,26 @@ public class Column
         this.index = index;
     }
 
+    /**
+     * @see Object#equals
+     *
+     * @param other the object to compare with
+     * @return true if the objects are equal
+     */
+    public boolean equals(Object other) {
+        if (other instanceof Column) {
+            return alias.equals(((Column) other).getAlias());
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     *
+     * @return a hashCode for this column
+     */
+    public int hashCode() {
+        return alias.hashCode();
+    }
+
 }
