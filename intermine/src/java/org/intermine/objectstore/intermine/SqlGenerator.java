@@ -795,6 +795,10 @@ public class SqlGenerator
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
             DatabaseSchema schema, int kind, State state) {
         String alias = (String) q.getAliases().get(qc);
+        if (alias == null) {
+            throw new NullPointerException("A QueryClass is referenced by elements of a query,"
+                    + " but the QueryClass is not in the FROM list of that query");
+        }
         if (kind == QUERY_SUBQUERY_CONSTRAINT) {
             buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
                 .append(".id");
