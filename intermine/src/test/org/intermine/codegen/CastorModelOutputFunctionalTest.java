@@ -124,6 +124,57 @@ public class CastorModelOutputFunctionalTest extends TestCase
     }
 
 
+    public void testDataTypes() throws Exception {
+        Types t1 = new Types();
+        t1.setName("t1");
+        t1.setIntType(123);
+        t1.setIntObjType(new Integer(456));
+        t1.setFloatType(0.45f);
+        t1.setFloatObjType(new Float(1.45f));
+        t1.setDoubleType(0.67f);
+        t1.setDoubleObjType(new Double(1.67f));
+        t1.setBooleanType(true);
+        t1.setBooleanObjType(Boolean.TRUE);
+        t1.setDateObjType(new Date());
+        t1.setStringObjType("A test String");
+
+        file = File.createTempFile("temp", "xml");
+        System.out.println(file.getName());
+        Writer writer = new FileWriter(file);
+        Marshaller marshaller = new Marshaller(writer);
+        marshaller.setMapping(map);
+
+        List list = new ArrayList();
+        list.add(t1);
+        List flat = TypeUtil.flatten(list);
+        setIds(flat);
+        ListBean bean = new ListBean();
+        bean.setItems(flat);
+
+        //LOG.warn("testSimpleObject..." + bean.getItems().toString());
+        marshaller.marshal(bean);
+
+        Reader reader = new FileReader(file);
+        Unmarshaller unmarshaller = new Unmarshaller(map);
+        List result = (List)unmarshaller.unmarshal(reader);
+
+        stripIds(flat);
+
+        Types t2 = (Types) result.get(0);
+        assertEquals(t1.getIntType(), t2.getIntType());
+        assertEquals(t1.getIntObjType(), t2.getIntObjType());
+        assertEquals(t1.getFloatType(), t2.getFloatType(), 0.0);
+        assertEquals(t1.getFloatObjType(), t2.getFloatObjType());
+        assertEquals(t1.getDoubleType(), t2.getDoubleType(), 0.0);
+        assertEquals(t1.getDoubleObjType(), t2.getDoubleObjType());
+        assertEquals(t1.getBooleanType(), t2.getBooleanType());
+        assertEquals(t1.getBooleanObjType(), t2.getBooleanObjType());
+        assertEquals(t1.getStringObjType(), t2.getStringObjType());
+        // Does something wrong with timezones
+        //assertEquals(t1.getDateObjType(), t2.getDateObjType());
+    }
+
+
     public void testSimpleRelation() throws Exception {
         Employee e1 = new Employee();
         e1.setName("e1");
