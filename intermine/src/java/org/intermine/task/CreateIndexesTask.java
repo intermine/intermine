@@ -102,8 +102,8 @@ public class CreateIndexesTask extends Task
      * @throws SQLException if an error occurs
      * @throws MetaDataException if a field os not found in model
      */
-    protected void processClassDescriptor(ClassDescriptor cld) throws SQLException,
-    MetaDataException {
+    protected void processClassDescriptor(ClassDescriptor cld)
+        throws SQLException, MetaDataException {
         // Set of fieldnames that already are the first element of an index.
         Set doneFieldNames = new HashSet();
 
@@ -117,12 +117,11 @@ public class CreateIndexesTask extends Task
             for (Iterator k = key.getFieldNames().iterator(); k.hasNext();) {
                 String fieldName = (String) k.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                if (fd != null) {
-                    fieldNames.add(DatabaseUtil.getColumnName(fd));
-                } else {
+                if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
                                                 + cld.getName() + ".");
                 }
+                fieldNames.add(DatabaseUtil.getColumnName(fd));
             }
             String tableName = DatabaseUtil.getTableName(cld);
             dropIndex(tableName + "__" + keyName);
@@ -133,8 +132,7 @@ public class CreateIndexesTask extends Task
 
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
-        //for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
-        for (Iterator j = cld.getReferenceDescriptors().iterator(); j.hasNext();) {
+        for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
             ReferenceDescriptor ref = (ReferenceDescriptor) j.next();
             if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
                     && (ref.getReverseReferenceDescriptor() != null)) {
@@ -147,6 +145,7 @@ public class CreateIndexesTask extends Task
                 }
             }
         }
+
         //finally add an index to all M-to-N indirection table columns
         //for (Iterator j = cld.getAllCollectionDescriptors().iterator(); j.hasNext();) {
         for (Iterator j = cld.getCollectionDescriptors().iterator(); j.hasNext();) {
