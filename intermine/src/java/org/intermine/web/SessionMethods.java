@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
-import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.Globals;
 
@@ -114,8 +113,6 @@ public class SessionMethods
                     String key = (e instanceof ObjectStoreQueryDurationException)
                         ? "errors.query.estimatetimetoolong"
                         : "errors.query.objectstoreerror";
-                    action.recordError(new ActionMessage(key), request);
-                    
                     recordError(resources.getMessage(key), session);
 
                     // put stack trace in the log
@@ -170,7 +167,6 @@ public class SessionMethods
             String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
             query.setInfo(pr.getResultsInfo());
             saveQuery(request, queryName, query);
-            action.recordMessage(new ActionMessage("saveQuery.message", queryName), request);
             recordMessage(resources.getMessage("saveQuery.message", queryName), session);
         }
         
