@@ -241,7 +241,7 @@ public class MageDataTranslator extends DataTranslator
             //FeatureInformationSources->FeatureInformation->Feature->FeatureLocation
             //can't do prefetch from FeatureReporterMap to featureInformationSources
             Item featureInfo = ItemHelper.convert(srcItemReader
-                        .getItemById((String) featureInfos.getRefIds().get(0)));
+                                                  .getItemById(getFirstId(featureInfos)));
 
             if (featureInfo.hasReference("feature")) {
                 Item feature = ItemHelper.convert(srcItemReader
@@ -298,7 +298,7 @@ public class MageDataTranslator extends DataTranslator
             }
             //ItemPrefetchDescriptor desc1
             Item featureGroup = ItemHelper.convert(srcItemReader
-                  .getItemById((String) featureGroups.getRefIds().get(0)));
+                                                   .getItemById(getFirstId(featureGroups)));
             Iterator featureIter = featureGroup.getCollection("features").getRefIds().iterator();
             while (featureIter.hasNext()) {
                 featureToDesign.put((String) featureIter.next(), srcItem.getIdentifier());
@@ -402,7 +402,7 @@ public class MageDataTranslator extends DataTranslator
             //identifier = reporter: name for CDNAClone, Vector
             //identifier = reporter: controlType;name;descriptions for genomic_dna
 
-            identifier = (String) immobilizedChar.getRefIds().get(0);
+            identifier = getFirstId(immobilizedChar);
             String identifierAttribute = null;
             Item bioSequence = ItemHelper.convert(srcItemReader.getItemById(identifier));
             if (bioSequence.hasReference("type")) {
@@ -590,7 +590,7 @@ public class MageDataTranslator extends DataTranslator
                                       + " srcItem = " + srcItem.getIdentifier());
                         } else {
                             tgtItem.addReference(new Reference("publication",
-                                      (String) publication.getRefIds().get(0)));
+                                                               getFirstId(publication)));
                             pubFlag = true;
                         }
                     }
@@ -809,7 +809,8 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @param srcItem = databaseEntry item refed in BioSequence
      * @param sourceId = database id
-     * @param subjectId = bioEntity identifier will probably be changed when reprocessing bioEntitySet
+     * @param subjectId = bioEntity identifier will probably be changed when
+     * reprocessing bioEntitySet
      * @return synonym item
      */
     protected Item createSynonym(Item srcItem, String sourceId, String subjectId) {
@@ -853,7 +854,7 @@ public class MageDataTranslator extends DataTranslator
         }
         //can't prefetch labels from LabeledExtract
         Item label = ItemHelper.convert(srcItemReader
-                        .getItemById((String) labels.getRefIds().get(0)));
+                                        .getItemById(getFirstId(labels)));
         tgtItem.addAttribute(new Attribute("label", label.getAttribute("name").getValue()));
 
         //can't prefetch treatments from LabeledExtract
@@ -1339,15 +1340,6 @@ public class MageDataTranslator extends DataTranslator
             newItem.addCollection((ReferenceList) i.next());
         }
         return newItem;
-    }
-
-    /**
-     * @param col is ReferenceList
-     * check if it is single element collection in ReferenceList
-     * @return true if yes
-     */
-    private boolean isSingleElementCollection(ReferenceList col) {
-        return (col.getRefIds().size() == 1);
     }
 
     /**
