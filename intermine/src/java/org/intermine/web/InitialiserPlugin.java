@@ -390,14 +390,15 @@ public class InitialiserPlugin implements PlugIn
             Model model = os.getModel();
             WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
+            Map wcTypeMap = (Map) wc.getTypes();
             Map displayersMap = new HashMap();
 
             for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
                  modelIter.hasNext();) {
                 String className = (String) modelIter.next();
+
                 Set cds = model.getClassDescriptorsForClass(Class.forName(className));
                 List cdList = new ArrayList(cds);
-                Map wcTypeMap = (Map) wc.getTypes();
 
                 Collections.reverse(cdList);
             
