@@ -331,8 +331,13 @@ public class BatchWriterSimpleImpl implements BatchWriter
             }
             boolean doAnalyse = stat.addActivity(amount);
             if (doAnalyse) {
+                long start = System.currentTimeMillis();
                 doAnalyse(name, conn);
-                stat.setTableSize(getTableSize(name, conn));
+                int tableSize = getTableSize(name, conn);
+                stat.setTableSize(tableSize);
+                long end = System.currentTimeMillis();
+                LOG.info("Analysing table " + name + " took " + (end - start) + "ms ("
+                        + tableSize + " rows)");
             }
         }
     }
@@ -346,7 +351,6 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if there is a problem
      */
     protected int getTableSize(String name, Connection conn) throws SQLException {
-        long start = System.currentTimeMillis();
         Statement s = conn.createStatement();
         ResultSet r = s.executeQuery("SELECT COUNT(*) FROM " + name);
         if (r.next()) {
@@ -354,9 +358,6 @@ public class BatchWriterSimpleImpl implements BatchWriter
             if (r.next()) {
                 throw new SQLException("Too many results");
             }
-            long end = System.currentTimeMillis();
-            LOG.info("Finding size of table " + name + " (" + retval + ") took " + (end - start)
-                    + "ms");
             return retval;
         } else {
             throw new SQLException("No results");
@@ -371,14 +372,11 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if something goes wrong
      */
     protected void doAnalyse(String name, Connection conn) throws SQLException {
-        long start = System.currentTimeMillis();
         Statement s = conn.createStatement();
         s.execute("ANALYSE VERBOSE " + name);
-        long end = System.currentTimeMillis();
-        LOG.info("Analysing table " + name + " took " + (end - start) + "ms");
         SQLWarning e = s.getWarnings();
         while (e != null) {
-            LOG.info("ANALYSE WARNING: " + e.toString());
+            LOG.debug("ANALYSE WARNING: " + e.toString());
             e = e.getNextWarning();
         }
     }
