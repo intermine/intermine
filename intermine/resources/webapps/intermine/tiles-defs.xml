@@ -50,5 +50,8 @@
 <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
 </definition>
 
+<definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do">
+</definition>
+
 </tiles-definitions>
 
