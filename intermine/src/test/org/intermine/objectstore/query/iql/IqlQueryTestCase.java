@@ -95,6 +95,15 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         fq = new FqlQuery("SELECT DISTINCT Company FROM org.flymine.model.testmodel.Company AS Company WHERE Company.name IN ?", null);
         fq.setParameters(Collections.singletonList(bag1));
         results.put("BagConstraint", fq);
+        Set bag2 = new HashSet();
+        bag2.add("hello");
+        bag2.add("goodbye");
+        bag2.add("CompanyA");
+        bag2.add(new Integer(5));
+        bag2.add(data.get("CompanyA"));
+        fq = new FqlQuery("SELECT DISTINCT Company FROM org.flymine.model.testmodel.Company AS Company WHERE Company IN ?", null);
+        fq.setParameters(Collections.singletonList(bag2));
+        results.put("BagConstraint2", fq);
     }
 
 }

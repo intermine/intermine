@@ -760,8 +760,18 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         Class type = c.getQueryNode().getType();
         boolean value = (c.getQueryNode() instanceof QueryEvaluable);
         String evaluable = null;
+        FieldDescriptor fields[] = null;
+        String alias = null;
         if (value) {
             evaluable = queryEvaluableToString((QueryEvaluable) c.getQueryNode());
+        } else {
+            ClassDescriptor cld = dr.getDescriptorFor(type);
+            if (cld == null) {
+                throw new IllegalArgumentException("Couldn't find class descriptor for "
+                        + type.getName());
+            }
+            fields = cld.getPkFields();
+            alias = ((String) query.getAliases().get(c.getQueryNode())) + ".";
         }
         Set bag = c.getBag();
         SortedSet filteredBag = new TreeSet();
@@ -771,8 +781,22 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             if (type.isInstance(bagItem)) {
                 if (value) {
                     filteredBag.add(evaluable + " = " + objectToString(bagItem));
+                } else {
+                    String objConstraint = "";
+                    for (int i = 0; i < fields.length; i++) {
+                        FieldDescriptor field = fields[i];
+                        objConstraint += (i == 0 ? (fields.length == 1 ? "" : "(") : " AND ");
+                        try {
+                            objConstraint += alias + field.getColumnName() + " = "
+                                + objectToString(TypeUtil.getFieldValue(bagItem,
+                                            field.getPersistentField().getName()));
+                        } catch (Exception e) {
+                            LOG.error(e);
+                        }
+                    }
+                    objConstraint += (fields.length == 1 ? "" : ")");
+                    filteredBag.add(objConstraint);
                 }
-                //TODO
             }
         }
         boolean needComma = false;

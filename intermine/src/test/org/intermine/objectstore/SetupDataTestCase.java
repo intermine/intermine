@@ -13,6 +13,7 @@ package org.flymine.objectstore;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
 import org.xml.sax.InputSource;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.objectstore.query.ConstraintSet;
@@ -49,6 +51,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         // These queries are here because they require objects with IDs
         queries.put("WhereClassObject", whereClassObject());
         queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
+        queries.put("BagConstraint2", bagConstraint2());
     }
 
     public static void oneTimeTearDown() throws Exception {
@@ -180,4 +183,24 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         return q1;
     }
 
+    /*
+      select Company
+      from Company
+      where Company in ("hello", "goodbye")
+    */
+    public static Query bagConstraint2() throws Exception {
+        QueryClass c1 = new QueryClass(Company.class);
+        Query q1 = new Query();
+        q1.alias(c1, "Company");
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        HashSet set = new HashSet();
+        set.add("hello");
+        set.add("goodbye");
+        set.add("CompanyA");
+        set.add(data.get("CompanyA"));
+        set.add(new Integer(5));
+        q1.setConstraint(new BagConstraint(c1, set));
+        return q1;
+    }
 }
