@@ -384,11 +384,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expectedItem = createItem(tgtNs+"CDNAClone", "0_11", "");
         expectedItem.addAttribute(new Attribute("identifier","LD04815"));
         expectedItem.addCollection(new ReferenceList("synonyms", new ArrayList(Arrays.asList(new Object[]{"2_15", "2_16", "2_17"}))));
-        // expectedItem.addCollection(new ReferenceList("microArrayExperimentalResults", new ArrayList(Arrays.asList(new Object[]{"58_821", "58_828", "58_823"}))));
 
         Item expectedItem1 = createItem(tgtNs+"Gene", "2_14", "");
         expectedItem1.addAttribute(new Attribute("organismDbId", "FBgn0010173"));
-        expectedItem1.addCollection(new ReferenceList("microArrayExperimentalResults", new ArrayList(Arrays.asList(new Object[]{"58_821", "58_828", "58_823"}))));
+
 
         Item expectedItem2 = createItem(tgtNs+"Synonym", "2_15", "");
         expectedItem2.addAttribute(new Attribute("type", "accession"));
@@ -417,14 +416,26 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expectedItem10 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_821", "");
         expectedItem10.addAttribute(new Attribute("normalised", "false"));
         expectedItem10.addReference(new Reference("analysis","-1_1"));
+        expectedItem10.addReference(new Reference("material","0_11"));
+        expectedItem10.addReference(new Reference("reporter","12_50"));
+        expectedItem10.addCollection(new ReferenceList("genes",
+                                new ArrayList(Arrays.asList(new Object[]{"2_14"}))));
 
         Item expectedItem11 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_823", "");
         expectedItem11.addAttribute(new Attribute("normalised", "false"));
         expectedItem11.addReference(new Reference("analysis","-1_1"));
+        expectedItem11.addReference(new Reference("material","0_11"));
+        expectedItem11.addReference(new Reference("reporter","12_50"));
+        expectedItem11.addCollection(new ReferenceList("genes",
+                                new ArrayList(Arrays.asList(new Object[]{"2_14"}))));
 
         Item expectedItem12 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_828", "");
         expectedItem12.addAttribute(new Attribute("normalised", "false"));
         expectedItem12.addReference(new Reference("analysis","-1_1"));
+        expectedItem12.addReference(new Reference("material","0_11"));
+        expectedItem12.addReference(new Reference("reporter","12_50"));
+        expectedItem12.addCollection(new ReferenceList("genes",
+                                new ArrayList(Arrays.asList(new Object[]{"2_14"}))));
 
         Item expectedItem13 = createItem(tgtNs+"Reporter", "12_50", "");
         expectedItem13.addReference(new Reference("material", "0_11"));
