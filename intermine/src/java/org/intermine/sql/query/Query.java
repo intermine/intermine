@@ -9,6 +9,7 @@ package org.flymine.sql.query;
 //              Done.
 //       Handling conditions that go (A AND B OR C). I believe this is ((A AND B) OR C). Currently
 //              the parser rejects this.
+//       Handle "WHERE x in "'value1', 'value2') - translate to an OR_CONSTRAINT_SET
 
 import java.util.*;
 import java.io.*;
@@ -689,6 +690,7 @@ public class Query implements SQLStringable
      * @throws Exception anytime
      */
     public static void main(String args[]) throws Exception {
+        java.util.Date startTime = new java.util.Date();
         PrintStream out = System.out;
 
         InputStream is = new ByteArrayInputStream(args[0].getBytes());
@@ -697,18 +699,23 @@ public class Query implements SQLStringable
         parser.start_rule();
         AST ast = parser.getAST();
         
-        out.println("\n==> Dump of AST <==");
         antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
-        visitor.visit(ast);
 
-//        ASTFrame frame = new ASTFrame("AST JTree Example", ast);
-//        frame.setVisible(true);
-        SqlTreeParser treeparser = new SqlTreeParser();
-        treeparser.start_rule(ast);
-        ast = treeparser.getAST();
+        AST oldAst;
+        do {
+            out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
+                        - startTime.getTime()) + " milliseconds.");
+            out.println("\n==> Dump of AST <==");
+            visitor.visit(ast);
 
-        out.println("\n==> Dump of AST <==");
-        visitor.visit(ast);
+//            ASTFrame frame = new ASTFrame("AST JTree Example", ast);
+//            frame.setVisible(true);
+
+            oldAst = ast;
+            SqlTreeParser treeparser = new SqlTreeParser();
+            treeparser.start_rule(ast);
+            ast = treeparser.getAST();
+        } while (!oldAst.equalsList(ast));
 
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
             throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
@@ -717,5 +724,7 @@ public class Query implements SQLStringable
         q.processAST(ast.getFirstChild());
 
         out.println("\n" + q.getSQLString());
+        out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
+                    - startTime.getTime()) + " milliseconds.");
     }
 }

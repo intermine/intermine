@@ -56,7 +56,30 @@ select_list: #( SELECT_LIST ( select_value )+ ) ;
 
 from_list: #( FROM_LIST ( abstract_table )+ ) ;
 
-where_clause: #( WHERE_CLAUSE ( abstract_constraint)+ ) ;
+where_clause:
+        "hello"
+        
+//        | ! ( #( WHERE_CLAUSE AND_CONSTRAINT_SET abstract_constraint ))=>
+//            #( ta:WHERE_CLAUSE #( AND_CONSTRAINT_SET a:abstract_constraint_list )
+//                b:abstract_constraint_list )
+//            { #where_clause = #(#ta, #a, #b); }
+
+//        | ! ( #( WHERE_CLAUSE AND_CONSTRAINT_SET ))=>
+//            #( tb:WHERE_CLAUSE #( AND_CONSTRAINT_SET c:abstract_constraint_list ))
+//            { #where_clause = #(#tb, #c); }
+
+//        | ! ( #( WHERE_CLAUSE abstract_constraint_list_notand AND_CONSTRAINT_SET
+//                    abstract_constraint ))=>
+//            #( WHERE_CLAUSE d:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
+//                    e:abstract_constraint_list ) f:abstract_constraint_list )
+//            { #where_clause = #(#WHERE_CLAUSE, #d, #e, #f); }
+
+//        | ! ( #( WHERE_CLAUSE abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
+//            #( td:WHERE_CLAUSE g:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
+//                    h:abstract_constraint_list ))
+//            { #where_clause = #(#td, #g, #h); }
+
+        | #( WHERE_CLAUSE ( abstract_constraint)+ ) ;
 
 group_clause: #( GROUP_CLAUSE ( abstract_value )+ ) ;
 
@@ -101,17 +124,130 @@ field_name: #( FIELD_NAME IDENTIFIER );
 abstract_constraint: constraint | not_constraint | and_constraint_set | or_constraint_set
         | subquery_constraint ;
 
-constraint: #( CONSTRAINT abstract_value comparison_op abstract_value ) ;
+constraint:
+        ! ( #( CONSTRAINT abstract_value NOT_EQ ))=> 
+            #( CONSTRAINT aleft:abstract_value NOT_EQ aright:abstract_value )
+            { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
+                #(#[CONSTRAINT], #aleft, #[EQ, "="], #aright) ); }
+        | ! ( #( CONSTRAINT abstract_value GE ))=> 
+            #( CONSTRAINT bleft:abstract_value GE bright:abstract_value )
+            { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
+                #(#[CONSTRAINT], #bleft, #[LT, "<"], #bright) ); }
+        | ! ( #( CONSTRAINT abstract_value LE ))=> 
+            #( CONSTRAINT cleft:abstract_value LE cright:abstract_value )
+            { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
+                #(#[CONSTRAINT], #cright, #[LT, "<"], #cleft) ); }
+        | ! ( #( CONSTRAINT abstract_value GT ))=> 
+            #( CONSTRAINT dleft:abstract_value GT dright:abstract_value )
+            { #constraint = #(#[CONSTRAINT], #dright, #[LT, "<"], #dleft); }
+        | #( CONSTRAINT abstract_value comparison_op abstract_value )
+    ;
 
-not_constraint: #( NOT_CONSTRAINT constraint ) ;
+not_constraint:
+        ! ( #( NOT_CONSTRAINT NOT_CONSTRAINT ))=> 
+            #( NOT_CONSTRAINT #( NOT_CONSTRAINT a:abstract_constraint ) )
+            { #not_constraint = #a; }
+        | ! ( #( NOT_CONSTRAINT #( OR_CONSTRAINT_SET abstract_constraint abstract_constraint )))=>
+            #( NOT_CONSTRAINT #(OR_CONSTRAINT_SET b:abstract_constraint
+                    c:abstract_constraint_list ) )
+            { #not_constraint = #(#[AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"],
+                    #(#[NOT_CONSTRAINT], #b), #(#[NOT_CONSTRAINT], #(#[OR_CONSTRAINT_SET], #c))); }
+        | ! ( #( NOT_CONSTRAINT OR_CONSTRAINT_SET ))=>
+            #( NOT_CONSTRAINT #(OR_CONSTRAINT_SET d:abstract_constraint ) )
+            { #not_constraint = #(#[AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"],
+                    #(#[NOT_CONSTRAINT], #d) ); }
+        | ! ( #( NOT_CONSTRAINT #( AND_CONSTRAINT_SET abstract_constraint abstract_constraint )))=>
+            #( NOT_CONSTRAINT #(AND_CONSTRAINT_SET e:abstract_constraint
+                    f:abstract_constraint_list ) )
+            { #not_constraint = #(#[OR_CONSTRAINT_SET, "OR_CONSTRAINT_SET"],
+                    #(#[NOT_CONSTRAINT], #e), #(#[NOT_CONSTRAINT], #(#[AND_CONSTRAINT_SET], #f))); }
+        | ! ( #( NOT_CONSTRAINT AND_CONSTRAINT_SET ))=>
+            #( NOT_CONSTRAINT #(AND_CONSTRAINT_SET g:abstract_constraint ) )
+            { #not_constraint = #(#[OR_CONSTRAINT_SET, "OR_CONSTRAINT_SET"],
+                    #(#[NOT_CONSTRAINT], #g) ); }
+        | #( NOT_CONSTRAINT abstract_constraint ) ;
 
-or_constraint_set: #( OR_CONSTRAINT_SET ( abstract_constraint )+ ) ;
+or_constraint_set:
+        ! ( #( OR_CONSTRAINT_SET OR_CONSTRAINT_SET abstract_constraint ))=>
+            #( ta:OR_CONSTRAINT_SET #( OR_CONSTRAINT_SET a:abstract_constraint_list )
+                b:abstract_constraint_list )
+            { #or_constraint_set = #(#ta, #a, #b); }
 
-and_constraint_set: #( AND_CONSTRAINT_SET (abstract_constraint )+ ) ;
+        | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notor OR_CONSTRAINT_SET
+                    abstract_constraint ))=>
+            #( tc:OR_CONSTRAINT_SET d:abstract_constraint_list_notor #( OR_CONSTRAINT_SET
+                    e:abstract_constraint_list ) f:abstract_constraint_list )
+            { #or_constraint_set = #(#tc, #d, #e, #f); }
+
+        | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notor OR_CONSTRAINT_SET ))=>
+            #( td:OR_CONSTRAINT_SET g:abstract_constraint_list_notor #( OR_CONSTRAINT_SET
+                    h:abstract_constraint_list ))
+            { #or_constraint_set = #(#td, #g, #h); }
+
+        // (i AND j) OR k = (i OR k) AND (j OR k)
+        | ! ( #( OR_CONSTRAINT_SET AND_CONSTRAINT_SET abstract_constraint ))=>
+            #( te:OR_CONSTRAINT_SET #( tf:AND_CONSTRAINT_SET i:abstract_constraint
+                    j:abstract_constraint_list ) k:abstract_constraint_list )
+            { AST te2_AST = astFactory.create(te);
+                #or_constraint_set = #(#tf, #(#te, #i, #k), #(te2_AST, #j, #k)); }
+
+        // l OR (m AND n) OR o = (l OR m OR o) AND (l OR n OR o)
+        | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET
+                    abstract_constraint_list ))=>
+            #( tg:OR_CONSTRAINT_SET l:abstract_constraint_list_notand #( th:AND_CONSTRAINT_SET
+                    m:abstract_constraint n:abstract_constraint_list ) o:abstract_constraint_list )
+            { AST tg2_AST = astFactory.create(tg);
+                #or_constraint_set = #(#th, #(#tg, #l, #m, #o), #(tg2_AST, #l, #n, #o)); }
+
+        // p OR (q AND r) = (p OR q) AND (p OR r)
+        | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
+            #( ti:OR_CONSTRAINT_SET p:abstract_constraint_list_notand #( tj:AND_CONSTRAINT_SET
+                    q:abstract_constraint r:abstract_constraint_list ) )
+            { AST ti2_AST = astFactory.create(ti);
+                #or_constraint_set = #(#tj, #(#ti, #p, #q), #(ti2_AST, #p, #r)); }
+        
+        | ( #( OR_CONSTRAINT_SET abstract_constraint abstract_constraint ))=>
+            #( OR_CONSTRAINT_SET ( abstract_constraint )+ )
+
+        | ! #( OR_CONSTRAINT_SET z:abstract_constraint )
+            { #or_constraint_set = #z; } ;
+
+and_constraint_set: 
+        ! ( #( AND_CONSTRAINT_SET AND_CONSTRAINT_SET abstract_constraint ))=>
+            #( ta:AND_CONSTRAINT_SET #( AND_CONSTRAINT_SET a:abstract_constraint_list )
+                b:abstract_constraint_list )
+            { #and_constraint_set = #(#ta, #a, #b); }
+
+        | ! ( #( AND_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET
+                    abstract_constraint ))=>
+            #( tc:AND_CONSTRAINT_SET d:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
+                    e:abstract_constraint_list ) f:abstract_constraint_list )
+            { #and_constraint_set = #(#tc, #d, #e, #f); }
+
+        | ! ( #( AND_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
+            #( td:AND_CONSTRAINT_SET g:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
+                    h:abstract_constraint_list ))
+            { #and_constraint_set = #(#td, #g, #h); }
+
+        | ( #( AND_CONSTRAINT_SET abstract_constraint abstract_constraint ))=>
+            #( AND_CONSTRAINT_SET (abstract_constraint )+ )
+            
+        | ! #( AND_CONSTRAINT_SET z:abstract_constraint )
+            { #and_constraint_set = #z; } ;
 
 subquery_constraint: #( SUBQUERY_CONSTRAINT abstract_value sql_statement ) ;
 
 comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
+
+abstract_constraint_list: ( abstract_constraint )+ ;
+
+abstract_constraint_list_notand: ( constraint | not_constraint | or_constraint_set
+            | subquery_constraint )+ ;
+
+abstract_constraint_list_notor: ( constraint | not_constraint | and_constraint_set
+            | subquery_constraint )+ ;
+
+
 
 
 
@@ -123,7 +259,7 @@ options {
     buildAST = true;
 }
 
-start_rule: sql_statement (SEMI!)? EOF;
+start_rule: sql_statement (SEMI!)?;
 
 sql_statement: select_command
         { #sql_statement = #([SQL_STATEMENT, "SQL_STATEMENT"], #sql_statement); }
