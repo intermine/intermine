@@ -224,7 +224,6 @@ public class GFF3Converter
             Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
                 Item item = (Item) iter.next();
-                org.intermine.web.LogMe.log("gc", "saving item: " + item);
                 writer.store(ItemHelper.convert(item));
             }
         } catch (ObjectStoreException e) {
