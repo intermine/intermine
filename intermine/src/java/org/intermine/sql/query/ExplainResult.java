@@ -37,6 +37,19 @@ public class ExplainResult
         return new PostgresExplainResult(query, database);
     }
 
+
+    /**
+     * Constructs an instance of ExplainResult given a PreparedStatement
+     * object.  Assumes that sql string already has EXPLAIN at beginning
+     *
+     * @param stmt the PreparedStatement to be explained
+     * @return an instance of ExplainResult
+     * @throws SQLException if the query cannot be explained by that database
+     */
+    public static ExplainResult getInstance(PreparedStatement stmt) throws SQLException {
+        return new PostgresExplainResult(stmt);
+    }
+
     /**
      * Returns the number of rows estimated by the database for this query.
      *
