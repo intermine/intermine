@@ -19,18 +19,18 @@ import java.util.GregorianCalendar;
 import java.text.DateFormat;
 import java.text.ParseException;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.Globals;
 
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.BagConstraint;
-
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionMapping;
 import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.FieldDescriptor;
@@ -195,8 +195,8 @@ public class QueryBuildForm extends ActionForm
         
         DisplayQueryClass displayQueryClass = (DisplayQueryClass) queryClasses.get(editingAlias);
         ActionErrors errors = new ActionErrors();
-        Model model = ((DisplayModel) session.getServletContext()
-                       .getAttribute(Constants.MODEL)).getModel();
+        ServletContext servletContext = session.getServletContext();
+        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
 
         ClassDescriptor cd = model.getClassDescriptorByName(displayQueryClass.getType());
         Class selectClass = cd.getType();
