@@ -794,8 +794,14 @@
         <exclude name="web.xml"/>
         <exclude name="deploy-ObjectStore.wsdd"/>
         <exclude name="undeploy-ObjectStore.wsdd"/>
+        <exclude name="default.intermine.properties"/>
       </fileset>
     </copy>
+
+    <copy todir="${build.webapp}/webservice/WEB-INF/classes">
+      <fileset dir="${resources}/webapps/webservice" includes="default.intermine.properties"/>
+    </copy>
+
     <copy todir="${build.webapp}/webservice/WEB-INF/lib">
       <fileset dir="${lib}">
         <patternset refid="lib.common"/>
