@@ -1,9 +1,11 @@
 package org.flymine.objectstore.proxy;
 
 import java.util.List;
+import java.util.Set;
 import java.util.AbstractList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
-//import org.flymine.util.DummyCollection;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 
@@ -13,9 +15,8 @@ import org.flymine.objectstore.query.QueryClass;
  * @author Richard Smith
  */
 
-public class LazyCollection extends AbstractList
+public class LazyCollection extends AbstractList implements Set
 {
-
     private Query query;
 
     /**
@@ -53,7 +54,24 @@ public class LazyCollection extends AbstractList
         return query;
     }
 
-    // equals() method?
+    /**
+     * iterator method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @return nothing
+     */
+    public Iterator iterator() {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
+
+    /**
+     * get method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @param i index of object to get
+     * @return nothing
+     */
+    public Object get(int i) {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
 
     /**
      * size method not valid for a LazyCollection, throws an UnsupportedOperationException
@@ -65,12 +83,62 @@ public class LazyCollection extends AbstractList
     }
 
     /**
-     * get method not valid for a LazyCollection, throws an UnsupportedOperationException
+     * ListIterator method not valid for a LazyCollection, throws an UnsupportedOperationException
      *
-     * @param i index of object to return
      * @return nothing
      */
-    public Object get(int i) {
+    public ListIterator listIterator() {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
+
+    /**
+     * ListIterator method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @param index teh index
+     * @return nothing
+     */
+    public ListIterator listIterator(int index) {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
+
+    /**
+     * subList method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @param fromIndex from here
+     * @param toIndex toHere
+     * @return nothing
+     */
+    public List subList(int fromIndex, int toIndex) {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
+
+   /**
+     * removeRange method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @param fromIndex from here
+     * @param toIndex toHere
+     */
+    public void removeRange(int fromIndex, int toIndex) {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
+
+    /**
+     * indexOf method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @param obj an object
+     * @return nothing
+     */
+    public int indexOf(Object obj) {
+        throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
+    }
+
+    /**
+     * lastIndexOf method not valid for a LazyCollection, throws an UnsupportedOperationException
+     *
+     * @param obj an object
+     * @return nothing
+     */
+    public int lastIndexOf(Object obj) {
         throw (new UnsupportedOperationException("Method not supported by LazyCollection"));
     }
 
