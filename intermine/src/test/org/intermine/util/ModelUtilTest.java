@@ -22,6 +22,10 @@ public class ModelUtilTest extends TestCase
         assertEquals(ModelUtil.REFERENCE, ModelUtil.getFieldType(Company.class, "address"));
     }
 
+    public void testGetFieldTypeInvalidField() {
+        assertEquals(-1, ModelUtil.getFieldType(Company.class, "noSuchField"));
+    }
+
 
     public void testHasValidKeyValidObject() throws Exception {
         Address address = new Address();
