@@ -314,7 +314,8 @@ public class OJBModelOutput extends ModelOutput
             return "FLOAT";
         }
         if (type.equals("java.util.Date")) {
-            return "DATE";
+            return "DATE\" conversion=\""
+                + "org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion";
         }
         return type;
     }
