@@ -23,7 +23,7 @@ public class TemplateQuery
 {
     protected static final String PATTERN = "\\[(.*?)\\]";
 
-    protected String description, indexedDescription;
+    protected String identifier, description, indexedDescription, category;
     protected PathQuery query;
     protected List nodes = new ArrayList();
 
@@ -32,10 +32,12 @@ public class TemplateQuery
      * @param description the description, containing references to paths in the query
      * @param query the query itself
      */
-    public TemplateQuery(String description, PathQuery query) {
+    public TemplateQuery(String identifier, String description, String category, PathQuery query) {
         this.description = description;
         this.query = query;
-
+        this.category = category;
+        this.identifier = identifier;
+        
         if (description != null) {
             int i = 1;
             StringBuffer sb = new StringBuffer();
@@ -72,6 +74,14 @@ public class TemplateQuery
     public List getNodes() {
         return nodes;
     }
+    
+    /**
+     * Get the query identifier/short name.
+     * @return the query identifier string
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
 
     /**
      * Get the indexed description (eg. "For a given company [1]")
@@ -87,5 +97,13 @@ public class TemplateQuery
      */
     public String getCleanDescription() {
         return description.replaceAll(" " + PATTERN, "");
+    }
+    
+    /**
+     * Get the category that this template belongs to.
+     * @return category for template
+     */
+    public String getCategory() {
+        return category;
     }
 }
