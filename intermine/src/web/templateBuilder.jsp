@@ -37,9 +37,14 @@
       <th width="1%" align="center">
         <fmt:message key="templateBuilder.constraint"/>
       </td>
-      <th width="98%" align="center">
+      <th width="97%" align="center">
         <fmt:message key="templateBuilder.label"/>
       </th>
+      <c:if test="${IS_SUPERUSER}">
+        <th width="1%" align="center">
+          <fmt:message key="templateBuilder.identifier"/>
+        </th>
+      </c:if>
     </tr>
     <c:set var="index" value="${0}"/>
     <c:forEach var="entry" items="${TEMPLATE_PATHQUERY.nodes}" varStatus="status">
@@ -69,6 +74,11 @@
             <td align="center" nowrap>
               <html:text property="constraintLabel(${index})" size="35"/>
             </td>
+            <c:if test="${IS_SUPERUSER}">
+              <td align="center" nowrap>
+                <html:text property="constraintIdentifier(${index})" size="10"/>
+              </td>
+            </c:if>
           </tr>
         </c:forEach>
       </c:if>
