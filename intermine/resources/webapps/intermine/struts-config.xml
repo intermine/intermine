@@ -60,7 +60,10 @@
     
     <form-bean name="importTemplatesForm"
                type="org.intermine.web.TemplatesImportForm"/>
-                    
+    
+    <form-bean name="templateSearchForm"
+               type="org.intermine.web.TemplateSearchForm"/>
+               
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -375,6 +378,13 @@
             input="templateBuilder">
       <forward name="templateBuilder" path="templateBuilder.page"/>
       <forward name="finish" path="/begin.do" redirect="true"/> <!-- need to redirect -->
+    </action>
+
+    <action path="/templateSearch"
+            type="org.intermine.web.TemplateSearchAction"
+            name="templateSearchForm"
+            input="templateSearch">
+      <forward name="templateSearch" path="templateSearch.page"/>
     </action>
 
     <action path="/queryClassSelect"

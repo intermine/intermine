@@ -11,6 +11,10 @@ form {
   border-bottom: 1px solid #c0c0c0;
   border-right: 1px solid #c0c0c0;
 }
+#templateSearch input {
+  padding: 2px;
+  border: 1px solid #909090;
+}
 #feedbackForm {
   white-space: nowrap;
 }
@@ -114,11 +118,6 @@ table.templateBuilder th {
 
 table.query {
   border: none;
-}
-
-.body > .templateDesc {
-  font-family: serif;
-  font-size: 14px;
 }
 
 /*
@@ -299,6 +298,10 @@ a.brokenTmplLink {
   margin-top: 5px;
 }
 
+hr.tmplSeperator {
+  border: 1px solid #ccc;
+}
+
 .box .buildmenu .body {
   border: 1px solid #888;
   height: 10;
@@ -318,3 +321,5 @@ a.brokenTmplLink {
   white-space: nowrap;
 }
 
+img.searchHeatImg {
+}
