@@ -293,9 +293,13 @@ public class Query implements FromElement
             throw new IllegalArgumentException("Cannot re-alias the same element");
         }
 
+        while (reverseAliases.containsKey("a" + aliasNo + "_")) {
+            aliasNo++;
+        }
+
         if (!aliases.containsKey(obj)) {
             if (alias == null) {
-                alias = "a" + (aliasNo++) + "_";
+                alias = "a" + aliasNo + "_";
             }
             aliases.put(obj, alias);
             reverseAliases.put(alias, obj);

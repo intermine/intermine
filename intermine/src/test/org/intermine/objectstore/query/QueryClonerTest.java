@@ -12,6 +12,8 @@ package org.flymine.objectstore.query;
 
 import junit.framework.Test;
 
+import org.flymine.model.testmodel.Company;
+import org.flymine.model.testmodel.Department;
 import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.testing.OneTimeTestCase;
 
@@ -35,6 +37,21 @@ public class QueryClonerTest extends SetupDataTestCase
         Query cloned = QueryCloner.cloneQuery(orig);
 
         assertEquals(type + " has failed", orig, cloned);
+    }
+
+    public void testAlias() throws Exception {
+        Query orig = new Query();
+        QueryClass c = new QueryClass(Company.class);
+        orig.addFrom(c);
+        orig.addToSelect(c);
+
+        Query cloned = QueryCloner.cloneQuery(orig);
+
+        QueryClass c2 = new QueryClass(Department.class);
+        cloned.addFrom(c2);
+        cloned.addToSelect(c2);
+
+        assertEquals("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_", cloned.toString());
     }
 }
     
