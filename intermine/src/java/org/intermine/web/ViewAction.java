@@ -54,10 +54,6 @@ public class ViewAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         ChangeResultsForm resultsForm =
             (ChangeResultsForm) session.getAttribute("changeResultsForm");
@@ -65,29 +61,10 @@ public class ViewAction extends Action
             resultsForm.reset(mapping, request);
         }
 
-        PagedResults pr;
-        try {
-            Query q = MainHelper.makeQuery(query, profile.getSavedBags());
-            pr = TableHelper.makeTable(os, q, query.getView());
-        } catch (ObjectStoreException e) {
-            ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
-            if (errors == null) {
-                errors = new ActionErrors();
-                request.setAttribute(Globals.ERROR_KEY, errors);
-            }
-            String key = (e instanceof ObjectStoreQueryDurationException)
-                ? "errors.query.estimatetimetoolong"
-                : "errors.query.objectstoreerror";
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
+        if (SessionMethods.runQuery (session, request)) {
+            return mapping.findForward ("results");
+        } else {
             return mapping.findForward("query");
         }
-
-        session.setAttribute(Constants.QUERY_RESULTS, pr);
-        session.setAttribute(Constants.RESULTS_TABLE, pr);
-        String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
-        query.setInfo(pr.getResultsInfo());
-        SaveQueryAction.saveQuery(request, queryName, query);
-        
-        return mapping.findForward("results");
     }
 }
