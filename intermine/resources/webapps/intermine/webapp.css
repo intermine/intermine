@@ -98,20 +98,49 @@ div.viewpath {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 11px;
 }
-th {
+table.results th {
   background: #caf;
 }
-tr.even {
+table.results tr.even {
   background: #edf;
 }
+
 .type {
-  color: gray;
+  font-style: italic;
 }
+.collectionField {
+}
+.referenceField {
+}
+.attributeField {
+  color: green;
+}
+.value {
+/*  padding: 2px;*/
+  font-family: monospace;
+/*  background: white;
+  border: 1px solid #ccc;*/
+}
+
 .constraint {
   color: purple;
 }
-.metadata {
-  color: green;
+
+/* classes for the object details page */
+table.refSummary {
+  margin-left: 50px; 
+  padding: 5px; 
+  border: 1px solid #000;
+  background: #feffff;
+}
+table.refSummary th tr td {
+  background: #eff;
+}
+table.refSummary td {
+  padding: 3px;
+}
+span.collectionDescription {
+  color: gray;
 }
 
 /* classes relating to the begin page */
@@ -173,7 +202,7 @@ table.box th.title {
 }
 
 /* override flymine2.css */
-#content
+#pagecontent
 {
   margin-top: 14px;
   margin-right: 10px;
