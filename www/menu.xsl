@@ -13,6 +13,9 @@ xmlns="http://www.w3.org/1999/xhtml">
     <ul>
     <xsl:for-each select="$menu/item">
         <li>
+        <xsl:if test="@class">
+            <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+        </xsl:if>
         <!-- id="current" is used for by the css -->
         <xsl:if test="$menupath = @url or substring($menupath,1,string-length(@match)) = @match">
             <xsl:attribute name="id">current</xsl:attribute>
