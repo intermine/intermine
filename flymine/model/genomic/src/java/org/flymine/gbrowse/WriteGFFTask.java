@@ -235,7 +235,13 @@ public class WriteGFFTask extends Task
         if (location == null && bioEntity == chr) {
             identifiers.add(chromosomeFileNamePrefix(chr));
         } else {
-            identifiers.add(bioEntity.getIdentifier());
+            if (bioEntity.getIdentifier() == null) {
+                identifiers.add(unqualifiedName + "_" + index);
+                org.intermine.web.LogMe.log("i", "identifier was null using: " +
+                                            unqualifiedName + "_" + index);
+            } else {
+                identifiers.add(bioEntity.getIdentifier());
+            }
         }
         attributes.put(unqualifiedName, identifiers);
 
