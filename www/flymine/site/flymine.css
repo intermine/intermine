@@ -38,3 +38,7 @@ a:hover {color: #220077;
     font-size: normal;
     font-weight: normal;
 }
+.queryViewFromItemTitle {
+    font-size: normal;
+    font-weight: bold;
+}

@@ -649,9 +649,8 @@
   <target name="build-webapp" depends="prepare,prepare-dist,jar"
           description="Build the FlyMine web application">
     <war destfile="${dist.webapp}/flymine.war" webxml="${resources}/webapps/flymine/web.xml">
-      <fileset dir="${src.webapp}">
-        <include name="**/*.jsp" />
-      </fileset>
+      <fileset dir="${src.webapp}"/>
+      <fileset dir="${src.www}" includes="flymine.css"/>
       <webinf dir="${resources}/webapps/flymine">
         <exclude name="web.xml" />
         <exclude name="FlyMineWebApp*.properties"/>
@@ -675,9 +674,8 @@
     <!-- Add test classes and libraries to war file -->
     <war destfile="${dist.webapp}/flymine.war"
          webxml="${resources}/webapps/flymine/web.xml">
-      <fileset dir="${src.webapp}">
-        <include name="**/*.jsp" />
-      </fileset>
+      <fileset dir="${src.webapp}"/>
+      <fileset dir="${src.www}" includes="flymine.css"/>
       <webinf dir="${resources}/webapps/flymine">
         <exclude name="web.xml" />
         <exclude name="FlyMineWebApp*.properties"/>
