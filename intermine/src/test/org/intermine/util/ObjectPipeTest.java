@@ -1,0 +1,89 @@
+package org.flymine.util;
+
+/*
+ * Copyright (C) 2002-2003 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import junit.framework.TestCase;
+
+public class ObjectPipeTest extends TestCase
+{
+    private int progress;
+    private ObjectPipe op;
+
+    public ObjectPipeTest(String arg) {
+        super(arg);
+    }
+
+    public void test() throws Exception {
+        op = new ObjectPipe();
+
+        op.put(new Integer(1));
+        op.put(new Integer(2));
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(1), op.next());
+        op.finish();
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(2), op.next());
+        assertFalse(op.hasNext());
+        try {
+            op.next();
+            fail("Expected: NoSuchElementException");
+        } catch (NoSuchElementException e) {
+        }
+    }
+
+    public void testMultiThreaded() throws Exception {
+        op = new ObjectPipe(2);
+        progress = 0;
+
+        Thread receiver = new Thread() {
+            public void run() {
+                while (op.hasNext()) {
+                    int i = ((Integer) op.next()).intValue();
+                    if (i == progress + 1) {
+                        progress = i;
+                    } else {
+                        progress = -3000;
+                    }
+                }
+                if (progress != -3000) {
+                    progress = -4000;
+                }
+            }
+        };
+
+        receiver.start();
+
+        assertEquals(0, progress);
+        op.put(new Integer(1));
+        Thread.sleep(100);
+        assertEquals(1, progress);
+        op.put(new Integer(2));
+        Thread.sleep(100);
+        assertEquals(2, progress);
+
+        List l = new ArrayList();
+        l.add(new Integer(3));
+        l.add(new Integer(4));
+        l.add(new Integer(5));
+        l.add(new Integer(6));
+        op.putAll(l);
+        Thread.sleep(100);
+        assertEquals(6, progress);
+
+        op.finish();
+        Thread.sleep(100);
+        assertEquals(-4000, progress);
+    }
+}

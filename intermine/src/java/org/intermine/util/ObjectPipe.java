@@ -58,7 +58,7 @@ public class ObjectPipe implements Iterator
         if (finished) {
             throw new IllegalArgumentException("Can't put onto a finished ObjectPipe");
         }
-        while (list.size() <= maxBuffer) {
+        while (list.size() >= maxBuffer) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -84,7 +84,7 @@ public class ObjectPipe implements Iterator
         if (finished) {
             throw new IllegalArgumentException("Can't putAll onto a finished ObjectPipe");
         }
-        while (list.size() <= maxBuffer) {
+        while (list.size() >= maxBuffer) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -101,7 +101,7 @@ public class ObjectPipe implements Iterator
      * NoSuchElementException once the buffer is emptied, instead of blocking for input.
      * This method will wait until no other Threads are executing in put() or putAll().
      */
-    public synchronized void finished() {
+    public synchronized void finish() {
         if (finished) {
             throw new IllegalArgumentException("Can't finish a finished ObjectPipe");
         }
@@ -125,7 +125,7 @@ public class ObjectPipe implements Iterator
             } catch (InterruptedException e) {
             }
         }
-        return !finished;
+        return !list.isEmpty();
     }
 
     /**
@@ -138,7 +138,7 @@ public class ObjectPipe implements Iterator
             } catch (InterruptedException e) {
             }
         }
-        return list.getFirst();
+        return list.removeFirst();
     }
 
     /**
