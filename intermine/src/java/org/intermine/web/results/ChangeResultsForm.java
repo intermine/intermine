@@ -10,7 +10,13 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.List;
+import java.util.ArrayList;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean to represent the inputs to a text-based query
@@ -21,6 +27,7 @@ public class ChangeResultsForm extends ActionForm
 {
 
     protected String pageSize = "10";
+    protected String[] selectedObjects = {};
 
     /**
      * Set the page size
@@ -38,6 +45,19 @@ public class ChangeResultsForm extends ActionForm
      */
     public String getPageSize() {
         return pageSize;
+    }
+
+
+    public void setSelectedObjects(String[] selectedObjects) {
+        this.selectedObjects = selectedObjects;
+    }
+
+    public String[] getSelectedObjects() {
+        return selectedObjects;
+    }
+
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        selectedObjects = new String[] {};
     }
 
 }
