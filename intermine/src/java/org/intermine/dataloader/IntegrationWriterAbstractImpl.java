@@ -13,8 +13,11 @@ package org.intermine.dataloader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.CollectionDescriptor;
@@ -57,6 +60,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected static final int SOURCE = 2;
     protected IntToIntMap idMap = new IntToIntMap();
     protected int idMapOps = 0;
+    protected Map uncommittedWrites = null;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -100,10 +104,29 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                 throw new ObjectStoreException(e);
             }
             //System//.out.println(" --------------------------- " + q);
-            SingletonResults retval = new SingletonResults(q, this, getSequence());
-            retval.setNoOptimise();
-            retval.setNoExplain();
-            return retval;
+            SingletonResults result = new SingletonResults(q,
+                    (obj.getId() == null ? this : osw.getObjectStore()),
+                    (obj.getId() == null ? getSequence() : osw.getObjectStore().getSequence()));
+            //SingletonResults retval = new SingletonResults(q, this, getSequence());
+            result.setNoOptimise();
+            result.setNoExplain();
+            if (uncommittedWrites == null) {
+                return result;
+            } else {
+                Set retval = new HashSet();
+                Iterator iter = result.iterator();
+                while (iter.hasNext()) {
+                    InterMineObject o = (InterMineObject) iter.next();
+                    InterMineObject uncommittedO = (InterMineObject) uncommittedWrites.get(
+                            o.getId());
+                    if (uncommittedO != null) {
+                        retval.add(uncommittedO);
+                    } else {
+                        retval.add(o);
+                    }
+                }
+                return retval;
+            }
         } else {
             return Collections.singleton(new ProxyReference(osw, destId));
         }
@@ -314,6 +337,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void store(InterMineObject o) throws ObjectStoreException {
         osw.store(o);
+        if (uncommittedWrites != null) {
+            uncommittedWrites.put(o.getId(), o);
+        }
     }
 
     /**
@@ -324,6 +350,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void delete(InterMineObject o) throws ObjectStoreException {
         osw.delete(o);
+        if (uncommittedWrites != null) {
+            uncommittedWrites.remove(o.getId());
+        }
     }
 
     /**
@@ -345,6 +374,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void beginTransaction() throws ObjectStoreException {
         osw.beginTransaction();
+        uncommittedWrites = new HashMap();
     }
 
     /**
@@ -355,6 +385,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void commitTransaction() throws ObjectStoreException {
         osw.commitTransaction();
+        uncommittedWrites = null;
     }
 
     /**
@@ -365,6 +396,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void abortTransaction() throws ObjectStoreException {
         osw.abortTransaction();
+        uncommittedWrites = null;
     }
 
     /**
@@ -458,6 +490,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void close() {
         osw.close();
+        uncommittedWrites = null;
     }
 
     /**

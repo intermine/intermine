@@ -46,9 +46,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     protected static ObjectStore os;
     protected static IntegrationWriterDataTrackingImpl iw;
     protected static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImplTest.class);
+    protected boolean doIds;
 
     public IntegrationWriterDataTrackingImplTest(String arg) {
         super(arg);
+        doIds = true;
     }
 
     public static Test suite() {
@@ -160,6 +162,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         c.setName("CompanyC");
         c.setVatNumber(100);
 
+        if (doIds) {
+            c.setId(new Integer(1));
+            a.setId(new Integer(2));
+        }
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
 
@@ -198,6 +204,12 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         ceo.setCompany(c);
         ceo.setAddress(a2);
 
+        if (doIds) {
+            c.setId(new Integer(1));
+            a.setId(new Integer(2));
+            a2.setId(new Integer(3));
+            ceo.setId(new Integer(4));
+        }
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
 
@@ -244,8 +256,17 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             ceoA.setAge(101);
             ceoA.setCompany(companyA);
 
+            if (doIds) {
+                companyA.setId(new Integer(1));
+                ceoA.setId(new Integer(2));
+                companyAAddress.setId(new Integer(3));
+                ceoAAddress.setId(new Integer(4));
+            }
+
             iw.store(companyA, source, skelSource);
             iw.store(ceoA, source, skelSource);
+            iw.store(companyAAddress, source, skelSource);
+            iw.store(ceoAAddress, source, skelSource);
         }
 
         Company exampleCompanyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -292,8 +313,16 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             ceo.setCompany(c);
             ceo.setAddress(a2);
 
+            if (doIds) {
+                c.setId(new Integer(1));
+                a.setId(new Integer(2));
+                a2.setId(new Integer(3));
+                ceo.setId(new Integer(4));
+            }
 
             iw.idMap.clear();
+            iw.commitTransaction();
+            iw.beginTransaction();
             iw.store(c, source2, skelSource2); // method we are testing
             //          CompanyA ------- CEOA            CompanyA --.   - CEOA
             // Change                             to                 \
@@ -322,6 +351,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         c.setAddress(a);
         c.setName("CompanyB");
         c.setVatNumber(100);
+
+        if (doIds) {
+            c.setId(new Integer(1));
+            a.setId(new Integer(2));
+        }
 
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
@@ -362,6 +396,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
+        if (doIds) {
+            e.setId(new Integer(1));
+            d.setId(new Integer(2));
+            c.setId(new Integer(3));
+            a.setId(new Integer(4));
+            a2.setId(new Integer(5));
+        }
+
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
 
@@ -395,6 +437,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         e.setSeniority(new Integer(876123));
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
+
+        if (doIds) {
+            e.setId(new Integer(1));
+            a2.setId(new Integer(2));
+        }
 
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
@@ -435,6 +482,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
+        if (doIds) {
+            e.setId(new Integer(1));
+            d.setId(new Integer(2));
+            c.setId(new Integer(3));
+            a.setId(new Integer(4));
+            a2.setId(new Integer(5));
+        }
+
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
 
@@ -471,6 +526,12 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
+        if (doIds) {
+            con.setId(new Integer(1));
+            companyAAddress.setId(new Integer(2));
+            companyA.setId(new Integer(3));
+        }
+
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
 
@@ -495,7 +556,15 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         con.addCompanys(companyB);
         companyB.addContractors(con);
 
+        if (doIds) {
+            con.setId(new Integer(1));
+            companyBAddress.setId(new Integer(4));
+            companyB.setId(new Integer(5));
+        }
+
         iw.idMap.clear();
+        iw.commitTransaction();
+        iw.beginTransaction();
         iw.store(con, source2, skelSource2);
 
         rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
@@ -552,6 +621,13 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         conD.setSeniority(new Integer(276423341));
         conD.addCompanys(ca);
         
+        if (doIds) {
+            ca.setId(new Integer(1));
+            conA.setId(new Integer(2));
+            conC.setId(new Integer(3));
+            conD.setId(new Integer(4));
+        }
+
         iw.store(ca);
         iw.store(conA);
         iw.store(conC);
@@ -592,6 +668,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
+        if (doIds) {
+            con.setId(new Integer(5));
+            companyAAddress.setId(new Integer(6));
+            companyA.setId(new Integer(7));
+        }
         Source source2 = iw.getMainSource("testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2");
 
@@ -643,6 +724,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Employee e = (Employee) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Employee.class, Broke.class})));
         e.setName("EmployeeA1");
         ((Broke) e).setDebt(8762);
+
+        if (doIds) {
+            e.setId(new Integer(1));
+        }
 
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
