@@ -120,7 +120,9 @@ public class ExportAction extends Action
             List columns = pt.getColumns();
             List rowList = pt.getAllRows();
 
-            for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
+            for (int rowIndex = 0;
+                 rowIndex < rowList.size() && rowIndex <= pt.getMaxRetrievableIndex();
+                 rowIndex++) {
                 List row;
                 try {
                     row = (List) rowList.get(rowIndex);
@@ -207,7 +209,7 @@ public class ExportAction extends Action
 
 
         TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
-                                   getOrder(pt), getVisible(pt));
+                                   getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1);
 
         return null;
     }
@@ -236,7 +238,8 @@ public class ExportAction extends Action
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getAllRows(),
-                                            getOrder(pt), getVisible(pt));
+                                            getOrder(pt), getVisible(pt),
+                                            pt.getMaxRetrievableIndex() + 1);
 
         return null;
     }
