@@ -1,4 +1,4 @@
-package org.flymine.objectstore.ojb;
+package org.flymine.objectstore.proxy;
 
 import java.util.List;
 import java.util.AbstractList;
