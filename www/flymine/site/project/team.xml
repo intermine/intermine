@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+<sect1>
+<title>The FlyMine team</title>
+
+<para>
+The FlyMine team are located in the Genetics Department at Cambridge University.
+</para>
+
+<table>
+    <tbody>
+        <row>
+            <entry>Gos Micklem</entry>
+	    <entry>Project Leader</entry>
+	    <entry><email>gos[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Andrew Varley</entry>
+	    <entry>Senior Software Developer</entry>
+	    <entry><email>andy[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Richard Smith</entry>
+	    <entry>Software Developer</entry>
+	    <entry><email>richard[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Matthew Wakeling</entry>
+	    <entry>Software Developer</entry>
+	    <entry><email>matthew[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Mark Woodbridge</entry>
+	    <entry>Software Developer</entry>
+	    <entry><email>mark[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Francois Guillier</entry>
+	    <entry>System Administrator</entry>
+	    <entry><email>francois[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Rajasekhar Paidi</entry>
+	    <entry>Production DBA</entry>
+	    <entry><email>raj[at]flymine.org</email></entry>
+	</row>
+	<row>
+	    <entry>Rachel Lyne</entry>
+	    <entry>Analysis/User support</entry>
+	    <entry><email>rachel[at]flymine.org</email></entry>
+	    <entry></entry>
+	</row>
+	<row>
+	    <entry>Debashis Rana</entry>
+	    <entry>Postdoctoral Research Associate (data curation)</entry>
+	    <entry><email>rana[at]flymine.org</email></entry>
+	    <entry></entry>
+	</row>
+    </tbody>
+</table>
+
+</sect1>
+</article>
