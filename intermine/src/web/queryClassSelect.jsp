@@ -1,8 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
-<!-- queryClassSelect -->
+<!-- queryClassSelect.jsp -->
 <html:form action="/queryClassSelect">
   <fmt:message key="query.addclass"/>
   <br/>
@@ -21,4 +21,4 @@
     <fmt:message key="button.browse"/>
   </html:submit>
 </html:form>
-<!-- /queryClassSelect -->
+<!-- /queryClassSelect.jsp -->
