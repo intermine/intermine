@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.LinkedHashSet;
+import java.util.Collection;
 
 /**
  * A LinkedHashSet with a getSize() method.
@@ -25,6 +26,14 @@ public class InterMineBag extends LinkedHashSet
      */
     public InterMineBag() {
         super();
+    }
+
+    /** 
+     * Constructs a new InterMineBag with the same contents as the argument.
+     * @param c the new bag contents
+     */
+    public InterMineBag(Collection c) {
+        super(c);
     }
 
     /**
