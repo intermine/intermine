@@ -84,7 +84,8 @@ public class ObjectStoreWriterFactory
                                            + " - check properties file, " + e.getMessage());
         } catch (InvocationTargetException e) {
             throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
-                                           + clsName + ", " + e.getCause().toString());
+                                           + clsName + ", " + e.getCause().toString(),
+                                           e.getCause());
 
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
