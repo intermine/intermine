@@ -16,12 +16,16 @@ a:hover {
   background-color: #ccaaff;
 }
 .links .menu-item {
-  padding: 1em
+  padding-right: 1em;
+  padding-left: 1em;
 }
 .footer {
   width: 100%;
 }
 .menu-heading {
+  font-weight: bold;
+}
+.paneTitle {
   font-weight: bold;
 }
 .title {
@@ -52,7 +56,10 @@ table.query th, table.query td, table.results th, table.results td {
 table.results td td {
   border:none;
 }
-
+div.view {
+  border: solid 1px;
+  padding: 4px;
+}
 th {
   background: #caf;
 }
