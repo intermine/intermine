@@ -68,7 +68,8 @@ public class QueryHelper
         }
 
         // Find out what class we are dealing with
-        Class clazz = orig.iterator().next().getClass();
+        Class clazz = TypeUtil.getElementType(orig);
+        Collection keys = ModelUtil.getKey(clazz);
         QueryClass qc = new QueryClass(clazz);
 
         Query q = new Query();
@@ -95,7 +96,6 @@ public class QueryHelper
             }
 
             // Get the primary keys for this object
-            Collection keys = ModelUtil.getKey(obj);
             Iterator keysIter = keys.iterator();
 
             while (keysIter.hasNext()) {
