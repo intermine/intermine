@@ -198,6 +198,8 @@
 
     <action path="/initTree" type="org.flymine.web.TreeController"/>
 
+    <action path="/initSaveQuery" type="org.flymine.web.SaveQueryController"/>
+
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
 
