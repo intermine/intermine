@@ -16,7 +16,7 @@ function enterPath(path)
 
 function exitPath(path)
 {
-  setBorderStyle(path, "#eee");
+  setBorderStyle(path, "#f5f0ff");
 }
 
 function setBorderStyle(path, style)
@@ -41,7 +41,14 @@ function setBorderStyle(path, style)
 <table class="query" width="100%" cellspacing="0">
   <tr>
     <td rowspan="2" valign="top" width="50%" class="modelbrowse">
-      <fmt:message key="query.currentclass"/><br/>
+      <div class="heading">
+        <fmt:message key="query.currentclass"/>
+      </div>
+      <div class="body">
+      <div> 
+        <fmt:message key="query.currentclass.detail"/>
+      </div>
+      <br/>
 
       <c:if test="${!empty navigation}">
         <c:forEach items="${navigation}" var="entry" varStatus="status">
@@ -97,21 +104,33 @@ function setBorderStyle(path, style)
                     onMouseOut="exitPath('${fn:replace(fullpath,".","")}')">
             </c:if>
             <c:if test="${node.indentation > 0}">
-              <span class="attributeField">
-                <c:out value="${node.fieldName}"/>
-              </span>
+              <c:choose>
+                <c:when test="${node.collection}">
+                  <span class="collectionField">
+                    <c:out value="${node.fieldName}"/>
+                  </span>
+                </c:when>
+                <c:when test="${node.reference}">
+                  <span class="referenceField">
+                    <c:out value="${node.fieldName}"/>
+                  </span>
+                </c:when>
+                <c:otherwise>
+                  <span class="attributeField">
+                    <c:out value="${node.fieldName}"/>
+                  </span>
+                </c:otherwise>
+              </c:choose>                  
             </c:if>            
-            <c:if test="${node.indentation == 0}">
-              <span class="type">
-                <c:out value="${node.type}"/>
-              </span>
-            </c:if>
-            <c:if test="${!empty classDescriptions[node.type]}">
-              <sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup>
+            <span class="collectionDescription">
+            <c:if test="${node.type != 'String' && node.type != 'Integer'}">
+              <span class="type"><c:out value="${node.type}"/></span><c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup>
+              </c:if>
             </c:if>
             <c:if test="${node.collection}">
               <fmt:message key="query.collection"/>
             </c:if>
+            </span>
             <c:choose>
               <c:when test="${node.indentation > 0}">
                 <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
@@ -145,12 +164,20 @@ function setBorderStyle(path, style)
           </nobr>
         </div>
       </c:forEach>
+      </div>
     </td>
     
     <%-- Query paths --%>
     
     <td valign="top">
-      <fmt:message key="query.currentquery"/><br/>
+      <div class="heading">
+        <fmt:message key="query.currentquery"/>
+      </div>
+      <div class="body">
+      <div> 
+        <fmt:message key="query.currentquery.detail"/>
+      </div>
+      <br/>
       <c:choose>
         <c:when test="${empty QUERY.nodes}">
           <fmt:message key="query.empty"/>
@@ -259,6 +286,7 @@ function setBorderStyle(path, style)
           </c:forEach>
         </c:otherwise>
       </c:choose>
+      </div>
     </td>
   </tr>
 
@@ -269,18 +297,20 @@ function setBorderStyle(path, style)
   <c:if test="${editingNode != null}">
     <tr>
       <td valign="top">
-        <fmt:message key="query.constrain"/>
-        <span class="type">
+        <div class="heading"><fmt:message key="query.constrain"/></div>
+        <div class="body">
           <c:choose>
             <c:when test="${empty editingNode.fieldName}">
+        <span class="type">
               <c:out value="${editingNode.path}"/>
+        </span>
             </c:when>
             <c:otherwise>
+        <span class="attributeField">
               <c:out value="${editingNode.fieldName}"/>
+        </span>
             </c:otherwise>
           </c:choose>
-        </span>
-        <span class="type">
           <c:choose>
             <c:when test="${editingNode.collection}">
               <fmt:message key="query.collection">
@@ -291,8 +321,6 @@ function setBorderStyle(path, style)
             <%-- <c:out value="${editingNode.type}"/> --%>
             </c:otherwise>
           </c:choose>
-        </span>
-        <br/><br/>
         
         
         <script type="text/javascript">
@@ -453,9 +481,10 @@ function setBorderStyle(path, style)
         initConstraintForm(document.mainForm);
         //-->
         </script>
-        
+        </div>
       </td>
     </tr>
+    
   </c:if>
 
 
