@@ -48,7 +48,13 @@
     
     <form-bean name="feedbackForm"
                type="org.intermine.web.FeedbackForm"/>
-
+               
+    <!--<form-bean name="createTemplateForm"
+               type="org.intermine.web.CreateTemplateForm"/>
+-->
+    <form-bean name="buildTemplateForm"
+               type="org.intermine.web.BuildTemplateForm"/>
+                    
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -142,6 +148,13 @@
             parameter="method">
       <forward name="query" path="query.page"/>
     </action>
+    
+    <action path="/userTemplateAction"
+            type="org.intermine.web.UserTemplateAction"
+            parameter="method">
+      <forward name="begin" path="/begin.do" redirect="true"/> <!-- need to redirect -->
+      <forward name="template" path="template.page"/>
+    </action>
 
     <action path="/mainChange"
             type="org.intermine.web.MainChange"
@@ -204,12 +217,14 @@
             parameter="action"
             input="template">
       <forward name="template" path="template.page"/>
+      <forward name="failure" path="template.page"/>
       <forward name="query" path="query.page"/>
+      <forward name="results" path="results.page"/>
     </action>
     
     <!-- Actions invoked from begin.jsp browse form -->
     <action path="/browseAction"
-            type="org.intermine.web.BrowseAction"
+            type="org.intermine.web.TemplateAction"
             name="templateForm"
             input="begin">
       <forward name="begin" path="begin.page"/>
@@ -254,6 +269,20 @@
             name="saveQueryForm"
             input="query">
       <forward name="query" path="query.page"/>
+    </action>
+
+    <action path="/createTemplate"
+            type="org.intermine.web.CreateTemplateAction">
+      <forward name="templateBuilder" path="templateBuilder.page"/>
+      <forward name="query" path="query.page"/>
+    </action>
+
+    <action path="/buildTemplate"
+            type="org.intermine.web.BuildTemplateAction"
+            name="buildTemplateForm"
+            input="templateBuilder">
+      <forward name="templateBuilder" path="templateBuilder.page"/>
+      <forward name="finish" path="query.page"/>
     </action>
 
     <action path="/queryClassSelect"
@@ -346,6 +375,9 @@
             
     <action path="/initTemplates"
             type="org.intermine.web.TemplatesController"/>
+        
+    <action path="/initTemplateBuilder"
+            type="org.intermine.web.BuildTemplateController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
