@@ -23,6 +23,11 @@ public interface Constants
     public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
 
     /**
+     * ServletContext attribute used to store the example queries
+     */
+    public static final String EXAMPLE_QUERIES = "EXAMPLE_QUERIES";
+
+    /**
      * ServletContext attribute used to store the ObjectStore
      */
     public static final String OBJECTSTORE = "OBJECTSTORE";
