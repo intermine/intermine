@@ -276,7 +276,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
 
             // TODO: extend sql so that it can represent these
-            if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty") || type.startsWith("BagConstraint") || type.startsWith("LargeBag"))) {
+            if (!(type.startsWith("Empty") || type.startsWith("BagConstraint") || type.startsWith("LargeBag"))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser. 
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);

@@ -700,6 +700,7 @@ public class Query implements SQLStringable
                     alias = ast.getFirstChild().getText();
                     break;
                 case SqlTokenTypes.FIELD:
+                case SqlTokenTypes.TYPECAST:
                 case SqlTokenTypes.CONSTANT:
                 case SqlTokenTypes.UNSAFE_FUNCTION:
                 case SqlTokenTypes.SAFE_FUNCTION:
@@ -749,6 +750,8 @@ public class Query implements SQLStringable
         switch (ast.getType()) {
             case SqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild());
+            case SqlTokenTypes.TYPECAST:
+                return processNewTypecast(ast.getFirstChild());
             case SqlTokenTypes.CONSTANT:
                 return new Constant(ast.getFirstChild().getText());
             case SqlTokenTypes.UNSAFE_FUNCTION:
@@ -794,6 +797,85 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Processes an AST node that describes a typecast.
+     *
+     * @param ast an AST node to process
+     * @return a Function object corresponding to the input
+     */
+    public Function processNewTypecast(AST ast) {
+        AbstractValue obj = null;
+        Function retval = null;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.FIELD:
+                case SqlTokenTypes.TYPECAST:
+                case SqlTokenTypes.CONSTANT:
+                case SqlTokenTypes.UNSAFE_FUNCTION:
+                case SqlTokenTypes.SAFE_FUNCTION:
+                    if (obj != null) {
+                        throw new IllegalArgumentException("Already have value in typecast "
+                                + ast.getText() + " [" + ast.getType() + "]");
+                    }
+                    obj = processNewAbstractValue(ast);
+                    break;
+                case SqlTokenTypes.LITERAL_boolean:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("boolean"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_real:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("real"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_double:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("double precision"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_smallint:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("smallint"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_integer:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("integer"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_bigint:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("bigint"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_numeric:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("numeric"));
+                    obj = retval;
+                    break;
+                case SqlTokenTypes.LITERAL_text:
+                    retval = new Function(Function.TYPECAST);
+                    retval.add(obj);
+                    retval.add(new Constant("text"));
+                    obj = retval;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                            + ast.getType() + "]");
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        return retval;
+    }
+
+    /**
      * Processes an AST node that describes an unsafe function.
      *
      * @param ast an AST node to process
@@ -806,6 +888,7 @@ public class Query implements SQLStringable
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.FIELD:
+                case SqlTokenTypes.TYPECAST:
                 case SqlTokenTypes.CONSTANT:
                 case SqlTokenTypes.UNSAFE_FUNCTION:
                 case SqlTokenTypes.SAFE_FUNCTION:
@@ -878,6 +961,7 @@ public class Query implements SQLStringable
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.FIELD:
+                case SqlTokenTypes.TYPECAST:
                 case SqlTokenTypes.CONSTANT:
                 case SqlTokenTypes.UNSAFE_FUNCTION:
                 case SqlTokenTypes.SAFE_FUNCTION:
@@ -910,6 +994,24 @@ public class Query implements SQLStringable
                 case SqlTokenTypes.LITERAL_avg:
                     if (!gotType) {
                         retval = new Function(Function.AVG);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_strpos:
+                    if (!gotType) {
+                        retval = new Function(Function.STRPOS);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_substr:
+                    if (!gotType) {
+                        retval = new Function(Function.SUBSTR);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_coalesce:
+                    if (!gotType) {
+                        retval = new Function(Function.COALESCE);
                         gotType = true;
                     }
                     break;
