@@ -10,7 +10,7 @@ package org.flymine.objectstore;
  *
  */
 
-import java.util.List;
+import java.util.Set;
 import java.util.Properties;
 
 import org.flymine.metadata.Model;
@@ -214,21 +214,21 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * @see ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
             throws ObjectStoreException {
-        /* TODO:
-        Query q = new Query();
-        QueryClass qc = new QueryClass(o.getClass());
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        try {
-            Iterator fieldNameIter = fieldNames.iterator();
-            while (fieldNameIter.hasNext()) {
-                String fieldName = (String) fieldNameIter.next();
-                QueryField field = new QueryField(qc, fieldName);
-                QueryValue value = new QueryValue(TypeUtil.getFieldValue(o, fieldName));
-                SimpleConstraint con = new SimpleConstraint(field, ConstraintOp.EQUALS, value);
-        */
+        Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
+        Results results = execute(query);
+        results.setNoOptimise();
+
+        if (results.size() > 1) {
+            throw new IllegalArgumentException("More than one object in the database has "
+                                               + "this primary key (" + results.size() + "): "
+                                               + query.toString());
+        }
+        if (results.size() == 1) {
+            FlyMineBusinessObject j = (FlyMineBusinessObject) ((ResultsRow) results.get(0)).get(0);
+            return j;
+        }
         return null;
     }
 }

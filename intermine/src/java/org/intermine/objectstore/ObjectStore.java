@@ -11,6 +11,7 @@ package org.flymine.objectstore;
  */
 
 import java.util.List;
+import java.util.Set;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
@@ -146,10 +147,10 @@ public interface ObjectStore
      * this method throws an exception.
      *
      * @param o an example object
-     * @param fieldNames a List of fieldnames
+     * @param fieldNames a Set of fieldnames
      * @return a FlyMineBusinessObject from the objectstore, or null if none fits
      * @throws ObjectStoreException if there are too many matches, or some other error occurs
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
         throws ObjectStoreException;
 }

@@ -91,12 +91,12 @@ public class XmlDataLoaderTest extends TestCase
         dl.processXml(is);
 
         // check address was stored
-        Address a2 = (Address) writer.getObjectByExample(a1, Collections.singletonList("address"));
+        Address a2 = (Address) writer.getObjectByExample(a1, Collections.singleton("address"));
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
 
         // check company was stored
-        Company c2 = (Company) writer.getObjectByExample(c1, Collections.singletonList("name"));
+        Company c2 = (Company) writer.getObjectByExample(c1, Collections.singleton("name"));
         assertNotNull("Expected company to be retieved from DB", c2);
         assertTrue("company id should be set", (c2.getId().intValue() != 0));
 
@@ -125,12 +125,12 @@ public class XmlDataLoaderTest extends TestCase
         dl.processXml(is);
 
         // check address was stored
-        Address a2 = (Address) writer.getObjectByExample(a1, Collections.singletonList("address"));
+        Address a2 = (Address) writer.getObjectByExample(a1, Collections.singleton("address"));
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
 
         // check company was stored
-        Manager m2 = (Manager) writer.getObjectByExample(m1, Collections.singletonList("name"));
+        Manager m2 = (Manager) writer.getObjectByExample(m1, Collections.singleton("name"));
         assertNotNull("Expected company to be retieved from DB", m2);
         assertTrue("manager id should be set", (m2.getId().intValue() != 0));
 
@@ -149,7 +149,7 @@ public class XmlDataLoaderTest extends TestCase
         Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("CompanyB");
         c1.setAddress(a1);
-        Company c2 = (Company) writer.getObjectByExample(c1, Collections.singletonList("name"));
+        Company c2 = (Company) writer.getObjectByExample(c1, Collections.singleton("name"));
 
         // Could only know the vatNumber if it got it from the database
         assertNotNull(c2);

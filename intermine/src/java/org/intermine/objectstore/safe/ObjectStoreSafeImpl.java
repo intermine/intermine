@@ -11,6 +11,7 @@ package org.flymine.objectstore.safe;
  */
 
 import java.util.List;
+import java.util.Set;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
@@ -121,7 +122,7 @@ public class ObjectStoreSafeImpl implements ObjectStore
     /**
      * @see ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
             throws ObjectStoreException {
         return os.getObjectByExample(o, fieldNames);
     }

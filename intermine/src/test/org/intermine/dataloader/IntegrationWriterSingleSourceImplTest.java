@@ -72,7 +72,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         Address a = new Address();
         a.setAddress("Company Street, AVille");
 
-        Address a2 = (Address) iw.getObjectByExample(a, Collections.singletonList("address"));
+        Address a2 = (Address) iw.getObjectByExample(a, Collections.singleton("address"));
         assertNotNull("address from db should not be null", a2);
         c.setAddress(a2);
         c.setName("CompanyC");
@@ -81,7 +81,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 
         iw.store(c);  // method we are testing
 
-        Company example = (Company) iw.getObjectByExample(c, Collections.singletonList("name"));
+        Company example = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
         assertNotNull("example from db should not be null", example);
 
         assertEquals(c.getAddress(), example.getAddress());
@@ -93,7 +93,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testObjectNotStoredByIntegrationWriter() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) iw.getObjectByExample(address, Collections.singletonList("address"));
+        Address a2 = (Address) iw.getObjectByExample(address, Collections.singleton("address"));
 
         assertNotNull("address from db should not be null", a2);
 
@@ -125,7 +125,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testStoredObjectAsSkeleton() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) iw.getObjectByExample(address, Collections.singletonList("address"));
+        Address a2 = (Address) iw.getObjectByExample(address, Collections.singleton("address"));
 
         Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setAddress(a2);
@@ -136,7 +136,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         iw.store(company, true); // store as skeleton
 
         // check object stored correctly
-        Company example = (Company) iw.getObjectByExample(company, Collections.singletonList("name"));
+        Company example = (Company) iw.getObjectByExample(company, Collections.singleton("name"));
         assertNotNull("Expected to retrieve object by example", example);
 
         // this object has not been stored as a skeleton, we should be able to write over everything
@@ -160,7 +160,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testStoredObjectAsNonSkeleton() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) iw.getObjectByExample(address, Collections.singletonList("address"));
+        Address a2 = (Address) iw.getObjectByExample(address, Collections.singleton("address"));
 
         Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setAddress(a2);

@@ -11,6 +11,7 @@ package org.flymine.dataloader;
  */
 
 import java.util.List;
+import java.util.Set;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
@@ -209,7 +210,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.flymine.objectstore.ObjectStore#getObjectByExample
      */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
             throws ObjectStoreException {
         return osw.getObjectByExample(o, fieldNames);
     }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.digester.*;
 
@@ -149,10 +149,11 @@ public class LiteParser
             }
 
             // Set the data for every given Collection
-            Set fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
-            Iterator collIter = fields.iterator();
+            Map fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
+            Iterator collIter = fields.entrySet().iterator();
             while (collIter.hasNext()) {
-                Object maybeColl = collIter.next();
+                Map.Entry collEntry = (Map.Entry) collIter.next();
+                Object maybeColl = collEntry.getValue();
                 if (maybeColl instanceof CollectionDescriptor) {
                     CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
                     // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that

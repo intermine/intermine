@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.flymine.objectstore.query.ConstraintOp;
@@ -348,7 +349,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
     public void testGetObjectByExampleNull() throws Exception {
         try {
-            os.getObjectByExample(null, Collections.singletonList("name"));
+            os.getObjectByExample(null, Collections.singleton("name"));
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -357,14 +358,14 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     public void testGetObjectByExampleNonExistent() throws Exception {
         Address a = new Address();
         a.setAddress("10 Downing Street");
-        assertNull(os.getObjectByExample(a, Collections.singletonList("address")));
+        assertNull(os.getObjectByExample(a, Collections.singleton("address")));
     }
 
     public void testGetObjectByExampleAttribute() throws Exception {
         Address a1 = ((Employee) data.get("EmployeeA1")).getAddress();
         Address a = new Address();
         a.setAddress(a1.getAddress());
-        assertEquals(a1, os.getObjectByExample(a, Collections.singletonList("address")));
+        assertEquals(a1, os.getObjectByExample(a, Collections.singleton("address")));
     }
 
     public void testGetObjectByExampleFields() throws Exception {
@@ -373,7 +374,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         e.setName(e1.getName());
         e.setAge(e1.getAge());
         e.setAddress(e1.getAddress());
-        assertEquals(e1, os.getObjectByExample(e, Arrays.asList(new String[] {"name", "age", "address"})));
+        assertEquals(e1, os.getObjectByExample(e, new HashSet(Arrays.asList(new String[] {"name", "age", "address"}))));
     }
 
     public void testDataTypes() throws Exception {

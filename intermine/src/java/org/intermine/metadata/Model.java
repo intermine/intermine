@@ -45,7 +45,7 @@ public class Model
     private final Map cldMap = new LinkedHashMap();
     private final Map subMap = new LinkedHashMap();
     private final Map classToClassDescriptorSet = new HashMap();
-    private final Map classToFieldDescriptorSet = new HashMap();
+    private final Map classToFieldDescriptorMap = new HashMap();
 
     /**
      * Return a Model for specified model name (loading Model if necessary)
@@ -300,21 +300,21 @@ public class Model
     }
 
     /**
-     * Takes a Class, and generates a Set of all FieldDescriptors that are the class fields
+     * Takes a Class, and generates a Map of all FieldDescriptors that are the class fields
      * or any of its parents. The Class may be a dynamic class - ie not in the model, although
      * all its parents are in the model.
      *
      * @param c a Class
-     * @return a Set of FieldDescriptor objects
+     * @return a Map of FieldDescriptor objects
      */
-    public Set getFieldDescriptorsForClass(Class c) {
+    public Map getFieldDescriptorsForClass(Class c) {
         if (!FlyMineBusinessObject.class.isAssignableFrom(c)) {
-            return Collections.EMPTY_SET;
+            return Collections.EMPTY_MAP;
         }
-        synchronized (classToFieldDescriptorSet) {
-            Set retval = (Set) classToFieldDescriptorSet.get(c);
+        synchronized (classToFieldDescriptorMap) {
+            Map retval = (Map) classToFieldDescriptorMap.get(c);
             if (retval == null) {
-                retval = new HashSet();
+                retval = new HashMap();
                 Set clds = getClassDescriptorsForClass(c);
                 Iterator cldIter = clds.iterator();
                 while (cldIter.hasNext()) {
@@ -322,10 +322,10 @@ public class Model
                     Iterator fieldIter = cld.getFieldDescriptors().iterator();
                     while (fieldIter.hasNext()) {
                         FieldDescriptor fd = (FieldDescriptor) fieldIter.next();
-                        retval.add(fd);
+                        retval.put(fd.getName(), fd);
                     }
                 }
-                classToFieldDescriptorSet.put(c, retval);
+                classToFieldDescriptorMap.put(c, retval);
             }
             return retval;
         }

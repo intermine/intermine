@@ -25,6 +25,7 @@ import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -270,5 +271,57 @@ public class QueryCreator
 
     }
 
+    /**
+     * Generates a query that searches for all objects in the database that have the fieldnames
+     * set to the values in the object.
+     *
+     * @param model a Model
+     * @param obj the Object to take values from
+     * @param fieldNames the field names to search by
+     * @return a Query
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public static Query createQueryForExampleObject(Model model, FlyMineBusinessObject obj,
+            Set fieldNames) throws ObjectStoreException {
+        Query q = new Query();
+        Class cls = obj.getClass();
+        Map fields = model.getFieldDescriptorsForClass(cls);
+        QueryClass qc = new QueryClass(cls);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        try {
+            Iterator fieldIter = fieldNames.iterator();
+            while (fieldIter.hasNext()) {
+                String fieldName = (String) fieldIter.next();
+                FieldDescriptor fd = (FieldDescriptor) fields.get(fieldName);
+                if (fd instanceof AttributeDescriptor) {
+                    QueryField qf = new QueryField(qc, fieldName);
+                    cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                new QueryValue(TypeUtil.getFieldValue(obj, fieldName))));
+                } else if (fd instanceof CollectionDescriptor) {
+                    throw new IllegalArgumentException("Cannot include a collection in the example"
+                            + " fields");
+                } else if (fd instanceof ReferenceDescriptor) {
+                    ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+                    QueryClass subQc = new QueryClass(ref.getReferencedClassDescriptor().getType());
+                    q.addFrom(subQc);
+                    QueryObjectReference qor = new QueryObjectReference(qc, fieldName);
+                    cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, subQc));
+                    cs.addConstraint(new ClassConstraint(subQc, ConstraintOp.EQUALS, 
+                                (FlyMineBusinessObject) TypeUtil.getFieldValue(obj, fieldName)));
+                } else {
+                    throw new IllegalArgumentException("Illegal field name for example: "
+                            + fieldName);
+                }
+            }
+            q.setConstraint(cs);
+        } catch (Exception e) {
+            throw new ObjectStoreException(e);
+        }
+
+        return q;
+    }
 
 }
