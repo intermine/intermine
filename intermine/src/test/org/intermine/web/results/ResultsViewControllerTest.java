@@ -10,6 +10,9 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
@@ -24,7 +27,7 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
         super(arg1);
     }
 
-    public void test1() throws Exception {
+    public void testNoExisting() throws Exception {
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initResultsView");
@@ -35,6 +38,19 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
         getSession().setAttribute("results", new Results(q, os));
         actionPerform();
         assertNotNull(getRequest().getSession().getAttribute(ResultsViewController.DISPLAYABLERESULTS_NAME));
+        assertNotNull(getRequest().getSession().getAttribute(ResultsViewController.SAVEDBAGS_NAME));
+    }
+
+    public void testExisting() throws Exception {
+        ComponentContext context = new ComponentContext();
+        ComponentContext.setContext(context, getRequest());
+        setRequestPathInfo("/initResultsView");
+
+        Map savedBags = new HashMap();
+
+        getSession().setAttribute(ResultsViewController.SAVEDBAGS_NAME, savedBags);
+        actionPerform();
+        assertTrue(savedBags == getRequest().getSession().getAttribute(ResultsViewController.SAVEDBAGS_NAME));
     }
 
 }
