@@ -318,6 +318,17 @@ public class AceModelParserTest extends TestCase
         }
     }
 
+    public void testFormatAceName() throws Exception {
+        assertEquals("AceClass", AceModelParser.formatAceName("Class"));
+        assertEquals("AceId", AceModelParser.formatAceName("Id"));
+        assertEquals("x1name", AceModelParser.formatAceName("1name"));
+    }
+
+    public void testUnformatAceName() throws Exception {
+        assertEquals("Class", AceModelParser.unformatAceName("AceClass"));
+        assertEquals("Id", AceModelParser.unformatAceName("AceId"));
+        assertEquals("1name", AceModelParser.unformatAceName("x1name"));
+    }
 
 
 }
