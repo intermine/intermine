@@ -60,10 +60,10 @@
         <div id="pagecontent">
           <table id="static-table" width="100%">
             <tr>
-              <td cellpadding="0" valign="top" id="sidebar" width="15%">
+              <td cellpadding="0" valign="top" id="sidebar" width="5%">
                 <xsl:call-template name="sidebar"/>
               </td>
-              <td cellpadding="0" valign="top" id="static-content" width="85%">
+              <td cellpadding="0" valign="top" id="static-content" width="95%">
                 <xsl:apply-templates/>
               </td>
             </tr>
