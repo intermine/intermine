@@ -46,6 +46,9 @@ public class SessionMethods
 {
     protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
     
+    /**
+     * Base class for query thread runnable.
+     */
     private abstract static class RunQueryThread implements Runnable
     {
         protected Results r;
@@ -72,7 +75,8 @@ public class SessionMethods
      * query fails for some reason, this method returns false and ActionErrors are set on the
      * request. If the parameter <code>saveQuery</code> is true then the query is
      * automatically saved in the user's query history and a message is added to the
-     * request.
+     * request. The <code>monitor</code> parameter is an optional callback interface that will be
+     * notified repeatedly (every 100 milliseconds) while the query executes. 
      *
      * @param action    the current action
      * @param session   the http session
@@ -128,13 +132,13 @@ public class SessionMethods
         
         // Wait for Results object to become available
         while (thread.isAlive() && runnable.getResults() == null) {
-            Thread.currentThread().sleep(25);
+            Thread.sleep(25);
         }
         
         Results r = runnable.getResults();
         
         while (thread.isAlive()) {
-            Thread.currentThread().sleep(100);
+            Thread.sleep(100);
             if (monitor != null) {
                 monitor.queryProgress(r);
             }
