@@ -210,7 +210,7 @@ public class UniprotDataTranslator extends DataTranslator
             protein.addCollection(evidence);
 
 
-            // 2. create Synonyms from additional names
+            // 2. first name should be protein name, all should be Synonyms
             // <entry><protein><name>*
             Item srcProtein = ItemHelper.convert(srcItemReader.getItemById(srcItem
                                                   .getReference("protein").getRefId()));
@@ -355,13 +355,19 @@ public class UniprotDataTranslator extends DataTranslator
                         createGene = true;
                         dbId = getDbId("FlyBase");
                     }
-                } else if (taxonId == 6239) { // C. Elegans
+                } else if (taxonId == 6239) { // C. elegans
                     geneOrganismDbId = getDbReferenceValue(srcItem, "WormBase", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
                         dbId = getDbId("WormBase");
                     }
-                } // no genes created for A. gambiae
+                } else if (taxonId == 180454) { // A. gambiae str. PEST
+                    // no organismDbId and no specific dbxref to enembl - assume that geneIdentifier
+                    // is always ensembl gene stable id and set organismDbId to be identifier
+                    createGene = true;
+                    geneOrganismDbId = geneIdentifier;
+                    dbId = getDbId("ensembl");
+                }
 
                 // output gene identifier details
                 if (outputIdentifiers) {
@@ -396,10 +402,13 @@ public class UniprotDataTranslator extends DataTranslator
 
                         if (geneIdentifier != null) {
                             gene.addAttribute(new Attribute("identifier", geneIdentifier));
-                            Item synonym = createSynonym(gene.getIdentifier(), "identifier",
-                                                         geneIdentifier, dbId);
-                            geneSynonyms.addRefId(synonym.getIdentifier());
-                            retval.add(synonym);
+                            // don't create duplicate synonym
+                            if (!geneIdentifier.equals(geneOrganismDbId)) {
+                                Item synonym = createSynonym(gene.getIdentifier(), "identifier",
+                                                             geneIdentifier, dbId);
+                                geneSynonyms.addRefId(synonym.getIdentifier());
+                                retval.add(synonym);
+                            }
                         }
                         if (primaryGeneName != null) {
                             gene.addAttribute(new Attribute("name", primaryGeneName));
@@ -417,11 +426,15 @@ public class UniprotDataTranslator extends DataTranslator
                             Item srcGeneName = (Item) srcGeneNameIter.next();
                             String type = getAttributeValue(srcGeneName, "type");
                             String name = getAttributeValue(srcGeneName, "name");
-                            Item synonym = createSynonym(gene.getIdentifier(),
-                                                         type.equals("primary") ? "name" : type,
-                                                         name, getDbId("Uniprot"));
-                            geneSynonyms.addRefId(synonym.getIdentifier());
-                            retval.add(synonym);
+                            // synonym already created for ORF as identifer
+                            if (!type.equals("ORF")) {
+                                Item synonym = createSynonym(gene.getIdentifier(),
+                                    (type.equals("primary") || type.equals("synonym"))
+                                                             ? "name" : type,
+                                                             name, getDbId("Uniprot"));
+                                geneSynonyms.addRefId(synonym.getIdentifier());
+                                retval.add(synonym);
+                            }
                         }
                         gene.addCollection(geneSynonyms);
                         geneItemId = gene.getIdentifier();

@@ -111,4 +111,35 @@ QEALDIAKDKMQPTHPIRLGLALNFSVFYYEILNTPEHACQLAKQAFDDA
 IAELDTLNEDSYKDSTLIMQLLRDNLTLWTSDVGAEDQEQEGNQEAGN
 </sequence>
   </entry>
+<entry dataset="TrEMBL" created="2005-02-01" modified="2005-02-01">
+  <accession>Q5TME6</accession>
+  <name>Q5TME6_ANOGA</name>
+  <protein evidence="EI1">
+    <name>ENSANGP00000011199</name>
+  </protein>
+  <gene>
+    <name type="ORF" evidence="EI1">ENSANGG00000008710</name>
+  </gene>
+  <organism key="1">
+    <name type="scientific">Anopheles gambiae str. PEST</name>
+    <dbReference type="NCBI Taxonomy" id="180454" evidence="EI1" key="2"/>
+  </organism>
+  <reference evidence="EI1" key="3">
+    <citation type="submission" date="2003-04" db="EMBL/GenBank/DDBJ databases">
+      <authorList>
+        <person name="Anopheles Genome Sequencing Consortium"/>
+      </authorList>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE.</scope>
+    <source>
+      <strain evidence="EI1">
+        <name>PEST</name>
+      </strain>
+    </source>
+  </reference>
+  <sequence length="838" mass="96122" checksum="7088375B365BE04A" modified="2005-02-01">
+MEEAGPSSEIPAGLDEAKEVHRPIDKNQCIRKHFLNKLQRIEEALSGTSL
+GDTTFLKGCANRLTSLASEYEKWHQTVLETADMENFEDGEEEYARFEKRH
+</sequence>
+</entry>
 </uniprot>
