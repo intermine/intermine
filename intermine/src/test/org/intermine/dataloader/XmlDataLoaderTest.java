@@ -12,13 +12,22 @@ package org.flymine.dataloader;
 
 import junit.framework.TestCase;
 
-import java.util.*;
-import java.io.*;
-import java.lang.reflect.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.File;
+import java.io.Writer;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 
-import org.exolab.castor.mapping.*;
-import org.exolab.castor.xml.*;
+import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.Unmarshaller;
 
 import org.xml.sax.InputSource;
 
@@ -30,7 +39,6 @@ import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ListBean;
 import org.flymine.model.testmodel.*;
-import org.flymine.metadata.Model;
 
 public class XmlDataLoaderTest extends TestCase
 {

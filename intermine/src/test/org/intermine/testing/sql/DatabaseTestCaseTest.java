@@ -10,14 +10,13 @@ package org.flymine.testing.sql;
  *
  */
 
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+
+import java.sql.Types;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
 import com.mockobjects.sql.MockResultSetMetaData;
-
-import java.sql.ResultSet;
-import java.sql.Types;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;

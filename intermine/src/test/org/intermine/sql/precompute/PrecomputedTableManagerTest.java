@@ -10,12 +10,13 @@ package org.flymine.sql.precompute;
  *
  */
 
-import junit.framework.*;
+import junit.framework.TestCase;
+
 import java.sql.Connection;
 import java.sql.Statement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+
 import org.flymine.util.DatabaseUtil;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;

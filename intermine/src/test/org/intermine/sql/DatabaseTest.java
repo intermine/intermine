@@ -10,10 +10,8 @@ package org.flymine.sql;
  *
  */
 
-import junit.framework.*;
-import java.sql.Connection;
-import javax.sql.DataSource;
-import java.io.IOException;
+import junit.framework.TestCase;
+
 import java.util.Properties;
 
 public class DatabaseTest extends TestCase

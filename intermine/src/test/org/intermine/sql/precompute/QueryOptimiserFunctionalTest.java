@@ -10,6 +10,7 @@ package org.flymine.sql.precompute;
  *
  */
 
+import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Map;
@@ -18,15 +19,10 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-
 import org.flymine.testing.sql.DatabaseTestCase;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.*;
-import org.flymine.util.DatabaseUtil;
 
 public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 {

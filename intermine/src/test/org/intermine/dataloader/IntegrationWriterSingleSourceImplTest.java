@@ -10,24 +10,17 @@ package org.flymine.dataloader;
  *
  */
 
-import junit.framework.*;
+import junit.framework.Test;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.flymine.testing.OneTimeTestCase;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.SetupDataTestCase;
-import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
-import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
-import org.flymine.sql.DatabaseFactory;
 import org.flymine.model.testmodel.*;
 import org.flymine.util.TypeUtil;
 
