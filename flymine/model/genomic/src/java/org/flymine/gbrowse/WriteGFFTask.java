@@ -27,9 +27,6 @@ import java.io.IOException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.utils.ChangeVetoException;
 import org.biojava.bio.program.gff.SimpleGFFRecord;
 import org.biojava.bio.symbol.IllegalSymbolException;
 
@@ -42,10 +39,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.objectstore.proxy.ProxyCollection;
 
 import org.flymine.postprocess.PostProcessUtil;
-
-import org.flymine.biojava.FlyMineSequence;
-import org.flymine.biojava.FlyMineSequenceFactory;
-
 import org.flymine.model.genomic.*;
 
 /**
@@ -161,17 +154,17 @@ public class WriteGFFTask extends Task
 
             if (feature instanceof Transcript && !(feature instanceof TRNA)) {
                 // process Transcripts but not tRNAs
-                seenTranscripts.put(feature, loc);               
+                seenTranscripts.put(feature, loc);
             }
-        
+
             if (feature instanceof Exon) {
                 seenExons.put(feature, loc);
             }
 
             writeFeature(gffWriter, currentChr, feature, loc,
-                         (Integer) objectCounts.get(feature.getClass()), null); 
-            
-            
+                         (Integer) objectCounts.get(feature.getClass()), null);
+
+
             incrementCount(objectCounts, feature);
         }
 
@@ -203,13 +196,13 @@ public class WriteGFFTask extends Task
             Iterator exonIter = exons.iterator();
             while (exonIter.hasNext()) {
                 Exon exon = (Exon) exonIter.next();
-                Location exonLocation = (Location) seenExons.get(exon); 
-                
+                Location exonLocation = (Location) seenExons.get(exon);
+
                 writeFeature(gffWriter, chr, exon, exonLocation, null, transcript);
             }
         }
     }
-    
+
     private void incrementCount(Map objectCounts, Object object) {
         if (objectCounts.containsKey(object.getClass())) {
             int oldCount = ((Integer) objectCounts.get(object.getClass())).intValue();
@@ -262,7 +255,7 @@ public class WriteGFFTask extends Task
                 featureName = nameBuffer.toString();
             }
         }
- 
+
         if ((bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)
              || bioEntity instanceof Exon) && parent != null) {
             lineBuffer.append(featureName).append("\t");
@@ -350,7 +343,7 @@ public class WriteGFFTask extends Task
             indexList.add(index.toString());
             attributes.put("Index", indexList);
         }
-        
+
         lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
 
         gffWriter.println(lineBuffer.toString());
@@ -362,12 +355,12 @@ public class WriteGFFTask extends Task
             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
 
         PrintStream printStream = new PrintStream(fileStream);
-        
+
         Sequence chromosomeSequence = chr.getSequence();
 
 // Too slow!
 //         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-  
+
 //         if (sequence != null) {
 //             try {
 //                 sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
@@ -386,15 +379,15 @@ public class WriteGFFTask extends Task
 
         int length = residues.length();
 
-	for (int pos = 0; pos < length; pos += 60) {
-	    int end = Math.min(pos + 60, length);
-	    printStream.println(residues.substring(pos, end));
-	}
+        for (int pos = 0; pos < length; pos += 60) {
+            int end = Math.min(pos + 60, length);
+            printStream.println(residues.substring(pos, end));
+        }
 
         printStream.close();
         fileStream.close();
     }
-    
+
 
     private File chromosomeFastaFile(File destinationDirectory, Chromosome chr) {
         return new File(destinationDirectory, chromosomeFileNamePrefix(chr) + ".fa");
