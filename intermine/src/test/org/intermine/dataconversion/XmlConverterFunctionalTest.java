@@ -33,9 +33,10 @@ public class XmlConverterFunctionalTest extends TestCase {
         MockItemWriter mockIw = new MockItemWriter(new HashMap());
         Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
 
-        XmlConverter converter = new XmlConverter(model, srcReader, xsdReader, mockIw);
+        XmlConverter converter = new XmlConverter(model, xsdReader, mockIw);
         System.out.println(converter.xmlInfo.toString());
-        converter.process();
+        converter.process(srcReader);
+        mockIw.close();
 
         Set tgtItems = getTgtItems();
         assertEquals(tgtItems, mockIw.getItems());
