@@ -17,8 +17,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.apache.poi.hssf.usermodel.*;
-
 import org.intermine.web.results.PagedTable;
 
 /**
