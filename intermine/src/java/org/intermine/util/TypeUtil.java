@@ -155,7 +155,7 @@ public class TypeUtil
             } catch (Exception e3) {
             }
             IllegalArgumentException e2 = new IllegalArgumentException("Couldn't set field \""
-                    + o.getClass().getName() + "." + fieldName + "\""
+                    + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""
                     + (type == null ? "" : " (a " + type + ")")
                     + " to \"" + fieldValue + "\" (a " + fieldValue.getClass().getName() + ")");
             e2.initCause(e);
