@@ -2,7 +2,9 @@ package org.flymine.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,12 +17,16 @@ import java.beans.IntrospectionException;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
 public class TypeUtil
 {
     private TypeUtil() {
     }
 
+    private static Map classToFieldToGetter = new HashMap();
+    private static Map classToFieldToSetter = new HashMap();
+    
     /**
      * Returns the value of a public or protected Field of an Object given the field name
      *
@@ -104,6 +110,57 @@ public class TypeUtil
             }
         }
         return (Method[]) getters.toArray(new Method[] {});
+    }
+
+    /**
+     * Gets a map from field to getter for a class. Fields that do not have a getter do not appear
+     * in this map.
+     *
+     * @param c the Class
+     * @return a mapping from field to the getter used to read that field
+     * @throws IntrospectionException if an error occurs
+     */
+    public static Map getFieldToGetter(Class c) throws IntrospectionException {
+        synchronized (classToFieldToGetter) {
+            Map retval = (Map) classToFieldToGetter.get(c);
+            if (retval == null) {
+                PropertyDescriptor[] pd = Introspector.getBeanInfo(c).getPropertyDescriptors();
+                retval = new HashMap();
+                Map fieldToSetter = new HashMap();
+                for (int i = 0; i < pd.length; i++) {
+                    try {
+                        Method getter = pd[i].getReadMethod();
+                        if ((!getter.getName().equals("getClass"))
+                                && (!getter.getName().equals("getId"))) {
+                            Field field = c.getDeclaredField(pd[i].getName());
+                            retval.put(field, getter);
+                            Method setter = pd[i].getWriteMethod();
+                            fieldToSetter.put(field, setter);
+                        }
+                    } catch (NoSuchFieldException e) {
+                    }
+                }
+                classToFieldToGetter.put(c, retval);
+                classToFieldToSetter.put(c, fieldToSetter);
+            }
+            return retval;
+        }
+    }
+                
+    /**
+     * Gets a map from field to setter for a class.
+     *
+     * @param c the Class
+     * @return a mappin from field to the setter used to write to that field
+     * @throws IntrospectionException if an error occurs
+     */
+    public static Map getFieldToSetter(Class c) throws IntrospectionException {
+        synchronized (classToFieldToGetter) {
+            if (!classToFieldToSetter.containsKey(c)) {
+                getFieldToGetter(c);
+            }
+            return (Map) classToFieldToSetter.get(c);
+        }
     }
 
     /**
