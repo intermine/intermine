@@ -287,4 +287,27 @@ public class MainHelper
         }
         return opString;
     }
+    
+    /**
+     * Create constraint values for display. Returns a Map from Constraint to String
+     * for each Constraint in the path query.
+     *
+     * @param pathquery  the PathQuery to look at
+     * @return           Map from Constraint to displat value
+     */
+    public static Map makeConstraintDisplayMap(PathQuery pathquery) {
+        Map map = new HashMap();
+        Iterator iter = pathquery.getNodes().values().iterator();
+        while (iter.hasNext()) {
+            PathNode node = (PathNode) iter.next();
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint con = (Constraint) citer.next();
+                ConstraintOp op = con.getOp();
+                
+                map.put(con, con.getDisplayValue(node));
+            }
+        }
+        return map;
+    }
 }
