@@ -40,6 +40,12 @@ public class NotConstraint extends AbstractConstraint
                     break;
             }
             return conC.left.getSQLString() + op + conC.right.getSQLString();
+        } else if (con instanceof SubQueryConstraint) {
+            SubQueryConstraint conC = (SubQueryConstraint) con;
+            if (conC.right.getSelect().size() != 1) {
+                throw (new IllegalStateException("Right must have one result column only"));
+            }
+            return conC.left.getSQLString() + " NOT IN (" + conC.right.getSQLString() + ")";
         }
         return "NOT (" + con.getSQLString() + ")";
     }

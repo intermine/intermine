@@ -54,6 +54,9 @@ public class SubQueryConstraint extends AbstractConstraint
         if (obj instanceof SubQueryConstraint) {
             SubQueryConstraint objC = (SubQueryConstraint) obj;
             return (left.equals(objC.left) && right.equals(objC.right) ? EQUAL : INDEPENDENT);
+        } else if (obj instanceof NotConstraint) {
+            NotConstraint objNC = (NotConstraint) obj;
+            return alterComparisonNotObj(compare(objNC.con));
         }
         return INDEPENDENT;
         // TODO: Implement this a bit better maybe? Two unequal queries may actually have the same

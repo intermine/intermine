@@ -76,6 +76,9 @@ public class ConstraintSet extends AbstractConstraint
         if (obj instanceof ConstraintSet) {
             return alterComparisonAnd(internalCompare(obj),
                     alterComparisonSwitch(((ConstraintSet) obj).internalCompare(this)));
+        } else if (obj instanceof NotConstraint) {
+            NotConstraint objNC = (NotConstraint) obj;
+            return alterComparisonNotObj(compare(objNC.con));
         }
         return internalCompare(obj);
     }

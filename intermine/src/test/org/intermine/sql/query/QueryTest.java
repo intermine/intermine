@@ -1003,4 +1003,21 @@ public class QueryTest extends TestCase
         assertTrue("Expected q1 and q7 to be not equal.", !q1.equals(q7));
         assertTrue("Expected q1.hashCode to not equal q7.hashCode.", q1.hashCode() != q7.hashCode());
     }
+
+    public void testNotSubqueryConstraint() throws Exception {
+        Query q1 = new Query("select table.field from table where table.field not in (select table2.field2 from table2)");
+        Query q2 = new Query();
+        Query q3 = new Query();
+        Table t1 = new Table("table");
+        Table t2 = new Table("table2");
+        Field f1 = new Field("field", t1);
+        Field f2 = new Field("field2", t2);
+        q2.addSelect(new SelectValue(f1, null));
+        q2.addFrom(t1);
+        q3.addSelect(new SelectValue(f2, null));
+        q3.addFrom(t2);
+        q2.addWhere(new NotConstraint(new SubQueryConstraint(f1, q3)));
+        assertEquals("SELECT table.field FROM table WHERE table.field NOT IN (SELECT table2.field2 FROM table2)", q1.getSQLString());
+        assertEquals(q2, q1);
+    }
 }

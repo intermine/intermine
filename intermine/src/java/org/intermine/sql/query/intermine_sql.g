@@ -470,9 +470,11 @@ and_constraint_set:
         { #and_constraint_set = #([AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"], #and_constraint_set); }
     ;
 
-subquery_constraint: abstract_value "in"! OPEN_PAREN! sql CLOSE_PAREN!
+subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! sql CLOSE_PAREN!
         { #subquery_constraint = #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"],
                 #subquery_constraint); }
+        | abstract_value "not"! "in"! OPEN_PAREN! sql CLOSE_PAREN!
+        { #subquery_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"], #subquery_constraint)); }
     ;
 
 comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
