@@ -472,7 +472,8 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+  <target name="test-main" 
+          depends="summarise-testmodel-objectstore, compile-test, build-db-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
@@ -521,7 +522,7 @@
   </target>
 
   <target name="test-webapp"
-          depends="build-db-userprofile, build-testable-webapp, compile-webapp-tests"
+          depends="summarise-testmodel-objectstore, build-db-userprofile, build-testable-webapp, compile-webapp-tests"
           description="perform JUnit tests on web application" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
@@ -563,7 +564,8 @@
     </delete>
   </target>
   
-  <target name="inctest" depends="prepare,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
+  <target name="inctest" 
+          depends="prepare,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate InterMine coding standards" if="checkstyle.failure"/>
@@ -981,17 +983,32 @@
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
 
-  <target name="summarise-testmodel-objectstore" depends="compile-main">
+  <property name="os.summary.properties.file" 
+            value="${model}/testmodel/resources/objectstoresummary.config.properties" />
+  <property name="summarise.output.properties" 
+            value="${build.model}/testmodel/objectstoresummary.properties"/>
+
+  <target name="check-testmodel-objectstore-summary">
+    <uptodate property="testmodel-objectstore-is-summarised"
+              srcfile="${os.summary.properties.file}"
+              targetfile="${summarise.output.properties}"/>
+  </target>
+  
+  <target name="summarise-testmodel-objectstore-slow"
+          depends="compile-main, compile-testmodel, insert-data-unittest">
     <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
       <classpath refid="test.class.path"/>
     </taskdef>
-    <property name="os.summary.properties.file" 
-              value="${model}/testmodel/resources/objectstoresummary.config.properties" />
-    <property name="summarise.output.properties" 
-              value="${build.model}/testmodel/objectstoresummary.properties"/>
     <summarise-objectstore alias="os.unittest" 
                            outputFile="${summarise.output.properties}"
                            inputFile="${os.summary.properties.file}"/>
+  </target>
+          
+  <target name="summarise-testmodel-objectstore" 
+          depends="check-testmodel-objectstore-summary"
+          unless="testmodel-objectstore-is-summarised">
+    <!-- do the slow bit only if testmodel-objectstore-is-summarised is not set -->
+    <antcall target="summarise-testmodel-objectstore-slow"/>
   </target>
 
   <!-- Model diagrams -->
