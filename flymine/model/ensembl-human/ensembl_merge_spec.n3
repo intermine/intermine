@@ -307,10 +307,8 @@ null:external_db a owl:Class ;
 null:external_synonym a owl:Class ;
     owl:equivalentClass e:external_synonym .
 
-
 null:object_xref a owl:Class ;
     owl:equivalentClass e:object_xref .
-
 
 null:xref a owl:Class ;
     owl:equivalentClass e:xref .
@@ -326,6 +324,12 @@ null:identity_xref a owl:Class ;
 
 null:marker_map_location a owl:Class ;
     owl:equivalentClass e:marker_map_location .
+
+null:marker_map_location__marker a owl:ObjectProperty ;
+    owl:equivalentProperty e:marker_map_location__marker .
+
+null:marker_map_location__marker_synonym a owl:ObjectProperty ;
+    owl:equivalentProperty e:marker_map_location__marker_synonym .
 
 :Marker a owl:Class ;
     rdfs:subClassOf :Region;    
@@ -345,8 +349,14 @@ null:marker__priority a owl:DatatypeProperty ;
 null:marker__type a owl:DatatypeProperty ;
     owl:equivalentProperty e:marker__type .
 
+null:marker__display_marker_synonym a owl:ObjectProperty ;
+    owl:equivalentProperty e:marker__display_marker_synonym .
+
 null:marker_feature a owl:Class ;
     owl:equivalentClass e:marker_feature .
+
+null:marker_feature__marker a owl:ObjectProperty ;
+    owl:equivalentProperty e:marker_feature__marker .
 
 null:stable_id_event a owl:Class ;
     owl:equivalentClass e:stable_id_event .
