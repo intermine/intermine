@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -299,8 +301,8 @@ public class ItemToObjectTranslator extends Translator
      * @param integers a set of Integers
      * @return the corresponding set of Strings
      */
-    protected Set toStrings(Set integers) {
-        Set strings = new HashSet();
+    protected Collection toStrings(Collection integers) {
+        Collection strings = new ArrayList();
         for (Iterator i = integers.iterator(); i.hasNext();) {
             strings.add(idToIdentifier((Integer) i.next()));
         }
@@ -312,8 +314,8 @@ public class ItemToObjectTranslator extends Translator
      * @param strings a set of Strings
      * @return the corresponding set of Integers
      */
-    protected Set toIntegers(Set strings) {
-        Set integers = new HashSet();
+    protected Collection toIntegers(Collection strings) {
+        Collection integers = new ArrayList();
         for (Iterator i = strings.iterator(); i.hasNext();) {
             integers.add(identifierToId((String) i.next()));
         }
