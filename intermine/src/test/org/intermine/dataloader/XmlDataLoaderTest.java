@@ -70,7 +70,7 @@ public class XmlDataLoaderTest extends TestCase
 
         List list = new ArrayList();
         list.add(c1);
-        file = new File("./build/tmp", "temp.xml");
+        file = File.createTempFile("temp", "xml");
         marshalList(list, file);
 
         Reader reader = new FileReader(file);
@@ -104,7 +104,8 @@ public class XmlDataLoaderTest extends TestCase
 
         List list = new ArrayList();
         list.add(m1);
-        file = new File("./build/tmp", "temp.xml");
+
+        file = File.createTempFile("temp", "xml");
         marshalList(list, file);
 
         Reader reader = new FileReader(file);
