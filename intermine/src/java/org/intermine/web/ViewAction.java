@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,9 +23,13 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.Globals;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.objectstore.query.Query;
 import org.intermine.web.results.ChangeResultsForm;
+import org.intermine.web.results.PagedResults;
+import org.intermine.web.results.TableHelper;
 
 /**
  * Action to handle buttons on view tile
@@ -49,16 +54,21 @@ public class ViewAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         ChangeResultsForm resultsForm =
             (ChangeResultsForm) session.getAttribute("changeResultsForm");
-
         if (resultsForm != null) {
             resultsForm.reset(mapping, request);
         }
 
+        PagedResults pr;
         try {
-            session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
+            Query q = MainHelper.makeQuery(query, profile.getSavedBags());
+            pr = TableHelper.makeTable(os, q, query.getView());
         } catch (ObjectStoreException e) {
             ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
             if (errors == null) {
@@ -71,6 +81,10 @@ public class ViewAction extends Action
             errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
             return mapping.findForward("query");
         }
+
+        session.setAttribute(Constants.RESULTS_TABLE, pr);
+        String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
+        SaveQueryAction.saveQuery(request, queryName, query, pr.getResultsInfo());
         
         return mapping.findForward("results");
     }

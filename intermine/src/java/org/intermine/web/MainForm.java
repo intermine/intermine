@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 import java.text.DateFormat;
 import java.text.ParseException;
 
@@ -175,12 +174,12 @@ public class MainForm extends ActionForm
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
         ActionErrors errors = new ActionErrors();
 
         if (request.getParameter("attribute") != null) {
-            RightNode node = (RightNode) qNodes.get(path);
+            RightNode node = (RightNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
             if (Date.class.equals(fieldClass)) {
                 DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,
@@ -206,8 +205,7 @@ public class MainForm extends ActionForm
         }
 
         if (errors.size() > 0) {
-            request.setAttribute("editingNode",
-                                 ((Map) session.getAttribute(Constants.QUERY)).get(path));
+            request.setAttribute("editingNode", query.getNodes().get(path));
         }
         
         return errors;

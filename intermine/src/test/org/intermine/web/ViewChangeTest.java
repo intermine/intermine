@@ -15,6 +15,8 @@ import java.util.HashSet;
 
 import servletunit.struts.MockStrutsTestCase;
 
+import org.intermine.metadata.Model;
+
 /**
  * Tests for ViewChange.
  *
@@ -28,10 +30,10 @@ public class ViewChangeTest extends MockStrutsTestCase
     }
 
     public void testRemove() throws Exception {
-        ArrayList view = new ArrayList();
-        view.add("Employee.age");
-        view.add("Employee.name");
-        getSession().setAttribute(Constants.VIEW, view);
+        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
+        query.getView().add("Employee.age");
+        query.getView().add("Employee.name");
+        getSession().setAttribute(Constants.QUERY, query);
 
         addRequestParameter("path", "Employee.age");
         addRequestParameter("method", "removeFromView");
@@ -44,6 +46,6 @@ public class ViewChangeTest extends MockStrutsTestCase
         
         ArrayList expected = new ArrayList();
         expected.add("Employee.name");
-        assertEquals(expected, getSession().getAttribute(Constants.VIEW));
+        assertEquals(expected, ((PathQuery) getSession().getAttribute(Constants.QUERY)).getView());
     }
 }

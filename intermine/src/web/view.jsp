@@ -7,7 +7,7 @@
 
 <!-- view.jsp -->
 <c:choose>
-  <c:when test="${empty VIEW}">
+  <c:when test="${empty QUERY.view}">
     <fmt:message key="view.empty.description"/>
   </c:when>
   <c:otherwise>
@@ -19,7 +19,7 @@
       <div>
         <table class="results" cellspacing="0">
           <tr>
-            <c:forEach var="path" items="${VIEW}" varStatus="status">
+            <c:forEach var="path" items="${QUERY.view}" varStatus="status">
               <th>
                 <div>
                   <nobr>

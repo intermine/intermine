@@ -12,7 +12,6 @@ package org.intermine.web;
 
 import java.util.LinkedHashMap;
 import java.io.Reader;
-import java.util.TreeMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,7 +29,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
 
 /**
- * Parse InterMine metadata XML to produce a InterMine Model
+ * Parse PathQueries in XML format
  *
  * @author Mark Woodbridge
  */
@@ -41,7 +40,7 @@ public class SavedQueryParser
     /**
      * Parse saved queries from a Reader
      * @param reader the saved queries
-     * @return a Map from query name to QueryInfo for that query
+     * @return a Map from query name to PathQuery
      */
     public Map process(Reader reader) {
         try {
@@ -57,11 +56,9 @@ public class SavedQueryParser
      */
     class QueryHandler extends DefaultHandler
     {
-        Map qNodes;
         String queryName;
-        RightNode qNode;
-        Model model;
-        List view;
+        PathQuery query;
+        RightNode node;
 
         /**
          * @see DefaultHandler#startElement
@@ -69,27 +66,28 @@ public class SavedQueryParser
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             if (qName.equals("query")) {
-                qNodes = new TreeMap();
                 queryName = attrs.getValue("name");
+                Model model;
                 try {
                     model = Model.getInstanceByName(attrs.getValue("model"));
                 } catch (Exception e) {
                     throw new SAXException(e);
                 }
-                view = StringUtil.tokenize(attrs.getValue("view"));
+                query = new PathQuery(model);
+                query.setView(StringUtil.tokenize(attrs.getValue("view")));
             }
             if (qName.equals("node")) {
-                qNode = MainHelper.addNode(qNodes, attrs.getValue("path"), model);
+                node = query.addNode(attrs.getValue("path"));
                 if (attrs.getValue("type") != null) {
-                    qNode.setType(attrs.getValue("type"));
+                    node.setType(attrs.getValue("type"));
                 }
             }
             if (qName.equals("constraint")) {
                 int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
                 ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
                 Object constraintValue = TypeUtil
-                    .stringToObject(MainHelper.getClass(qNode.getType()), attrs.getValue("value"));
-                qNode.getConstraints().add(new Constraint(constraintOp, constraintValue));
+                    .stringToObject(MainHelper.getClass(node.getType()), attrs.getValue("value"));
+                node.getConstraints().add(new Constraint(constraintOp, constraintValue));
             }
         }
 
@@ -98,7 +96,7 @@ public class SavedQueryParser
          */
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("query")) {
-                savedQueries.put(queryName, new QueryInfo(qNodes, view, null));
+                savedQueries.put(queryName, query);
             }
         }
         

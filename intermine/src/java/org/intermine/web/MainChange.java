@@ -13,19 +13,13 @@ package org.intermine.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
-import java.util.Map;
-import java.util.List;
 import java.util.Iterator;
 
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 
 /**
  * Action to handle links on main tile
@@ -48,11 +42,11 @@ public class MainChange extends DispatchAction
                                     HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
         if (path.indexOf(".") != -1) {
-            for (Iterator i = qNodes.keySet().iterator(); i.hasNext();) {
+            for (Iterator i = query.getNodes().keySet().iterator(); i.hasNext();) {
                 if (((String) i.next()).startsWith(path)) {
                     i.remove();
                 }
@@ -77,10 +71,10 @@ public class MainChange extends DispatchAction
                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
-        request.setAttribute("editingNode", qNodes.get(path));
+        request.setAttribute("editingNode", query.getNodes().get(path));
 
         return mapping.findForward("query");
     }
@@ -100,11 +94,11 @@ public class MainChange extends DispatchAction
                                           HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
-        ((RightNode) qNodes.get(path)).getConstraints().remove(index);
+        ((RightNode) query.getNodes().get(path)).getConstraints().remove(index);
 
         return mapping.findForward("query");
     }
@@ -124,18 +118,15 @@ public class MainChange extends DispatchAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
         if (prefix != null) {
             path = prefix + "." + path.substring(path.indexOf(".") + 1);
         }
-        MainHelper.addNode(qNodes, path, model);
-        Node node = (Node) qNodes.get(path);
+        query.addNode(path);
+        Node node = (Node) query.getNodes().get(path);
         //automatically start editing node
         request.setAttribute("editingNode", node);
         //and change metadata view if relevant
@@ -189,7 +180,7 @@ public class MainChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute(Constants.VIEW);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
@@ -198,7 +189,7 @@ public class MainChange extends DispatchAction
                              ? ""
                              : "." + path.substring(path.indexOf(".") + 1));
         }
-        view.add(path);
+        query.getView().add(path);
 
         return mapping.findForward("query");
     }

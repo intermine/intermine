@@ -25,7 +25,7 @@ import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
 
 /**
- * Parse InterMine metadata XML to produce a InterMine Model
+ * Parse InterMineBags in XML format
  *
  * @author Mark Woodbridge
  */
@@ -44,8 +44,8 @@ public class SavedBagParser
 
     /**
      * Parse saved queries from a Reader
-     * @param reader the saved queries
-     * @return a Map from query name to QueryInfo for that query
+     * @param reader the saved bags
+     * @return a Map from bag name to InterMineBag
      */
     public Map process(Reader reader) {
         try {

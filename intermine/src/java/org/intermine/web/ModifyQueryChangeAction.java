@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.util.Map;
-import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -54,13 +53,10 @@ public class ModifyQueryChangeAction extends DispatchAction
         String queryName = request.getParameter("name");
 
         Map savedQueries = profile.getSavedQueries();
-        if (savedQueries != null && savedQueries.containsKey(queryName)) {
-            QueryInfo queryInfo = (QueryInfo) savedQueries.get(queryName);
-            session.setAttribute(Constants.QUERY,
-                                 SaveQueryHelper.clone(queryInfo.getQuery(), os.getModel()));
-            session.setAttribute(Constants.VIEW, new ArrayList(queryInfo.getView()));
+        if (savedQueries.containsKey(queryName)) {
+            PathQuery query = (PathQuery) savedQueries.get(queryName);
+            session.setAttribute(Constants.QUERY, query.clone());
         }
-
         session.removeAttribute("path");
         session.removeAttribute("prefix");
 

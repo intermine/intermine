@@ -17,7 +17,6 @@ import java.util.Map;
  *
  * @author Kim Rutherford
  */
-
 public class BagHelper
 {
     private static final String BAG_NAME_PREFIX = "bag_";

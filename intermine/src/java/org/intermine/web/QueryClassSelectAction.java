@@ -13,8 +13,10 @@ package org.intermine.web;
 import java.util.Map;
 import java.util.HashMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -22,6 +24,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 
 /**
  * Implementation of <strong>Action</strong> that processes
@@ -53,7 +58,9 @@ public class QueryClassSelectAction extends LookupDispatchAction
                                      HttpServletRequest request,
                                      HttpServletResponse response)
         throws Exception {
-
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String className = ((QueryClassSelectForm) form).getClassName();
 
         if (className == null) {
@@ -63,7 +70,9 @@ public class QueryClassSelectAction extends LookupDispatchAction
             saveErrors(request, actionErrors);
             return mapping.findForward("classChooser");
         } else {
-            request.setAttribute("class", className);
+            PathQuery query = new PathQuery(os.getModel());
+            session.setAttribute(Constants.QUERY, query);
+            query.addNode(TypeUtil.unqualifiedName(className));
             return mapping.findForward("query");
         }
     }

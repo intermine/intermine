@@ -98,7 +98,6 @@
   </definition>
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
   <definition name="view.tile" path="/view.jsp">
-    <put name="queryStatistics" value="/queryStatistics.jsp"/>
     <put name="saveQuery" value="/saveQuery.jsp"/>
   </definition> 
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>

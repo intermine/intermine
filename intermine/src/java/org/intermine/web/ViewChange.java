@@ -42,10 +42,10 @@ public class ViewChange extends DispatchAction
                                         HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute(Constants.VIEW);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
-        view.remove(path);
+        query.getView().remove(path);
 
         return mapping.findForward("query");
     }
@@ -65,9 +65,10 @@ public class ViewChange extends DispatchAction
                                   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute(Constants.VIEW);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         int index = Integer.parseInt(request.getParameter("index"));
 
+        List view = query.getView();
         Object o = view.get(index - 1);
         view.set(index - 1, view.get(index));
         view.set(index, o);
@@ -90,9 +91,10 @@ public class ViewChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute(Constants.VIEW);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         int index = Integer.parseInt(request.getParameter("index"));
 
+        List view = query.getView();
         Object o = view.get(index + 1);
         view.set(index + 1, view.get(index));
         view.set(index, o);

@@ -164,10 +164,10 @@ public class ProfileManager
                 for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     String queryName = (String) entry.getKey();
-                    QueryInfo queryInfo = (QueryInfo) entry.getValue();
+                    PathQuery query = (PathQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(toString(queryInfo.getQuery(),
-                                                 queryInfo.getView(),
+                    savedQuery.setQuery(toString(query.getNodes(),
+                                                 query.getView(),
                                                  os.getModel(),
                                                  queryName));
                     savedQuery.setUserProfile(userProfile);

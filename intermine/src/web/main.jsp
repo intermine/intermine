@@ -16,7 +16,7 @@
           <fmt:message key="query.changePath" var="changePathTitle">
             <fmt:param value="${entry.key}"/>
           </fmt:message>
-          <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY[entry.value].type}"
+          <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY.nodes[entry.value].type}"
                      title="${changePathTitle}">
             <c:out value="${entry.key}"/>
           </html:link>
@@ -92,7 +92,7 @@
     <td valign="top">
       <fmt:message key="query.currentquery"/><br/>
 
-      <c:forEach var="entry" items="${QUERY}" varStatus="status">
+      <c:forEach var="entry" items="${QUERY.nodes}" varStatus="status">
         <div>
           <nobr>
             <div>

@@ -110,46 +110,22 @@ public class MainHelper
     }
 
     /**
-     * Add a node to the query using a path, adding parent nodes if necessary
-     * @param qNodes the current Node map (from path to Node)
-     * @param path the path for the new Node
-     * @param model the model
-     * @return the RightNode that was added to the qNodes Map
-     */
-    public static RightNode addNode(Map qNodes, String path, Model model) {
-        RightNode qNode;
-        if (path.lastIndexOf(".") == -1) {
-            qNode = new RightNode(path);
-        } else {
-            String prefix = path.substring(0, path.lastIndexOf("."));
-            if (qNodes.containsKey(prefix)) {
-                RightNode parent = (RightNode) qNodes.get(prefix);
-                String fieldName = path.substring(path.lastIndexOf(".") + 1);
-                qNode = new RightNode(parent, fieldName, model);
-            } else {
-                addNode(qNodes, prefix, model);
-                return addNode(qNodes, path, model);
-            }
-        }
-        qNodes.put(path, qNode);
-        return qNode;
-    }
-
-    /**
-     * Make an InterMine query from a query represented as a Node map (from path to Node)
-     * @param qNodes the Node map
-     * @param view a list of paths (that may not appear in the query) to use as the results view
-     * @param model the relevant metadata
+     * Make an InterMine query from a path query
+     * @param query the PathQuery
      * @param savedBags the current saved bags map
      * @return an InterMine Query
      */
-    public static Query makeQuery(Map qNodes, List view, Model model, Map savedBags) {
+    public static Query makeQuery(PathQuery query, Map savedBags) {
+        PathQuery query2 = (PathQuery) query.clone();
+        Map qNodes = query.getNodes();
+        List view = query.getView();
+        Model model = query.getModel();
+
         //first merge the query and the view
-        Map qNodes2 = new TreeMap(qNodes);
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
             if (path.indexOf(".") != -1 && !qNodes.containsKey(path)) {
-                addNode(qNodes2, path, model);
+                query2.addNode(path);
             }
         }
 
@@ -161,7 +137,7 @@ public class MainHelper
         Map queryBits = new HashMap();
 
         //build the FROM and WHERE clauses
-        for (Iterator i = qNodes2.values().iterator(); i.hasNext();) {
+        for (Iterator i = query2.getNodes().values().iterator(); i.hasNext();) {
             RightNode node = (RightNode) i.next();
             String path = node.getPath();
             

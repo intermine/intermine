@@ -10,14 +10,10 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletContext;
-
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -29,10 +25,9 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.Globals;
 
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ResultsInfo;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -64,13 +59,15 @@ public class SaveQueryAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
-        List view = (List) session.getAttribute(Constants.VIEW);
+        ServletContext servletContext = session.getServletContext();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String queryName = ((SaveQueryForm) form).getQueryName();
 
         try {
-            ResultsInfo resultsInfo = ViewHelper.makeEstimate(request);
-            saveQuery(request, queryName, qNodes, view, resultsInfo);
+            ResultsInfo info = os.estimate(MainHelper.makeQuery(query, profile.getSavedBags()));
+            saveQuery(request, queryName, query, info);
         } catch (ObjectStoreException e) {
             ActionErrors actionErrors = new ActionErrors();
             actionErrors.add(ActionErrors.GLOBAL_ERROR,
@@ -85,25 +82,18 @@ public class SaveQueryAction extends Action
      * Save a query in the Map on the session, and clone it to allow further editing
      * @param request The HTTP request we are processing
      * @param queryName the name to save the query under
-     * @param qNodes the actual query
-     * @param view the paths in the SELECT list
+     * @param query the PathQuery
      * @param resultsInfo the resultsInfo for the query
      */
     public static void saveQuery(HttpServletRequest request,
                                  String queryName,
-                                 Map qNodes,
-                                 List view,
+                                 PathQuery query,
                                  ResultsInfo resultsInfo) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        profile.saveQuery(queryName, new QueryInfo(qNodes, view, resultsInfo));
-        
-        session.setAttribute(Constants.QUERY, SaveQueryHelper.clone(qNodes, model));
-        session.setAttribute(Constants.VIEW, new ArrayList(view));
+        profile.saveQuery(queryName, query);
+        session.setAttribute(Constants.QUERY, query.clone());
 
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
         if (messages == null) {

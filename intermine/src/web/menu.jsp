@@ -4,7 +4,7 @@
 
 <!-- menu.jsp -->
 <div class="links">
-  <c:if test="${QUERY != null}">
+  <c:if test="${!empty QUERY}">
     <span class="menu-item">
       <html:link action="/query.do">
         <fmt:message key="menu.currentquery"/>

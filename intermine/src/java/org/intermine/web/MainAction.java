@@ -10,8 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
-
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,11 +42,11 @@ public class MainAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        MainForm mf = (MainForm) form;
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        MainForm mf = (MainForm) form;
 
-        RightNode node = (RightNode) qNodes.get(mf.getPath());
+        RightNode node = (RightNode) query.getNodes().get(mf.getPath());
 
         if (request.getParameter("attribute") != null) {
             ConstraintOp constraintOp = ConstraintOp.

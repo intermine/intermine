@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.util.Map;
-import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -22,8 +21,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>Action</strong> that sets the current Query for
@@ -51,21 +48,12 @@ public class LoadQueryAction extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String queryName = request.getParameter("name");
 
-        if (exampleQueries != null && exampleQueries.containsKey(queryName)) {
-            QueryInfo queryInfo = (QueryInfo) exampleQueries.get(queryName);
-
-            session.setAttribute(Constants.QUERY,
-                                 SaveQueryHelper.clone(queryInfo.getQuery(), os.getModel()));
-            session.setAttribute(Constants.VIEW, new ArrayList(queryInfo.getView()));
-            session.removeAttribute("path");
-            session.removeAttribute("prefix");
-
-            return mapping.findForward("query");
-        } else {
-            return mapping.findForward("error");
-        }
+        PathQuery query = (PathQuery) exampleQueries.get(queryName);
+        session.setAttribute(Constants.QUERY, query.clone());
+        session.removeAttribute("path");
+        session.removeAttribute("prefix");
+        return mapping.findForward("query");
     }
 }

@@ -59,11 +59,6 @@ public interface Constants
     public static final String QUERY = "QUERY";
 
     /**
-     * Session attribute used to store the current view
-     */
-    public static final String VIEW = "VIEW";
-
-    /**
      * Session attribute used to store the current results table
      */
     public static final String RESULTS_TABLE = "RESULTS_TABLE";

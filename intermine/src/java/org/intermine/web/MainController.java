@@ -10,10 +10,7 @@ package org.intermine.web;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
@@ -57,36 +54,22 @@ public class MainController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Model model = (Model) os.getModel();
 
-        //set up the path-based query
-        List view = (List) session.getAttribute(Constants.VIEW);
-        if (view == null) {
-            session.setAttribute(Constants.VIEW, new ArrayList());
-        }
-        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
-        if (qNodes == null) {
-            String className = (String) request.getAttribute("class");
-            if (className == null) {
-                return mapping.findForward("begin");
-            } else {
-                qNodes = new TreeMap();
-                MainHelper.addNode(qNodes, TypeUtil.unqualifiedName(className), model);
-                session.setAttribute(Constants.QUERY, qNodes);
-            }
-        } else if (qNodes.size() == 0) {
-            String path = (String) view.iterator().next();
+        if (query.getNodes().size() == 0) {
+            String path = (String) query.getView().iterator().next();
             if (path.indexOf(".") != -1) {
                 path = path.substring(0, path.indexOf("."));
             }
-            MainHelper.addNode(qNodes, path, os.getModel());
+            query.addNode(path);
         }
 
         //set up the metadata
         String path = (String) session.getAttribute("path");
         if (path == null) {
-            path = (String) qNodes.keySet().iterator().next();
+            path = (String) query.getNodes().keySet().iterator().next();
             session.setAttribute("path", path);
         }
         context.putAttribute("nodes", MainHelper.makeNodes(path, model));

@@ -50,7 +50,6 @@ public class BeginController extends Action
 
         if (session != null) {
             session.removeAttribute(Constants.QUERY);
-            session.removeAttribute(Constants.VIEW);
             session.removeAttribute("path");
             session.removeAttribute("prefix");
         }

@@ -60,7 +60,7 @@ public class Profile
      * @param name the query name
      * @param query the query
      */
-    public void saveQuery(String name, QueryInfo query) {
+    public void saveQuery(String name, PathQuery query) {
         savedQueries.put(name, query);
         manager.saveProfile(this);
     }
