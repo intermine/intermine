@@ -12,10 +12,12 @@ package org.flymine.dataconversion;
 
 import junit.framework.*;
 
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.InputStream;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.biomage.BioSequence.BioSequence;
 import org.biomage.Description.OntologyEntry;
@@ -28,60 +30,62 @@ import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Reference;
 import org.flymine.xml.full.ReferenceList;
 import org.flymine.xml.full.FullParser;
-import org.flymine.xml.full.FullRenderer;
+import org.flymine.xml.full.ItemHelper;
 
-public class MageConvertorTest extends TestCase
+public class MageConverterTest extends TestCase
 {
-    MageConvertor convertor;
+    MageConverter converter;
     String ns = "http://www.biomage.org#";
 
     public void setUp() {
-        convertor = new MageConvertor();
+        converter = new MageConverter(null, null);
     }
 
     public void testConvertMageML() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/mage_ml_example.xml");
-        List items = new ArrayList(convertor.convertMageML(is, ns));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/mage_ml_example.xml")));
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        new MageConverter(reader, itemWriter).process();
 
-        List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/MAGEConvertor_test.xml"));
-        assertEquals(expected, items);
+        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/MAGEConverterTest.xml")));
+        assertEquals(expected, itemWriter.getItems());
     }
 
     public void testCreateItemAttribute() throws Exception {
-        convertor.seenMap = new LinkedHashMap();
+        converter.seenMap = new LinkedHashMap();
 
         BioSequence bio = new BioSequence();
         bio.setSequence("GATTACA");
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
-        expected.setIdentifier("1");
+        expected.setIdentifier("0_0");
         Attribute attr = new Attribute();
         attr.setName("sequence");
         attr.setValue("GATTACA");
         expected.addAttribute(attr);
 
-        assertEquals(expected, convertor.createItem(bio, ns));
+        assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
     }
 
     public void testCreateItemReferenceInnerClass() throws Exception {
-        convertor.seenMap = new LinkedHashMap();
+        converter.seenMap = new LinkedHashMap();
 
         SeqFeature s1 = new SeqFeature();
         s1.setNameByValueBasis(2);
 
         Item expected = new Item();
         expected.setClassName(ns + "SeqFeature");
-        expected.setIdentifier("1");
+        expected.setIdentifier("0_0");
         Attribute attr = new Attribute();
         attr.setName("basis");
         attr.setValue("both");
         expected.addAttribute(attr);
-        assertEquals(expected, convertor.createItem(s1, ns));
+
+        assertEquals(expected, ItemHelper.convert(converter.createItem(s1)));
     }
 
     public void testCreateItemReference() throws Exception {
-        convertor.seenMap = new LinkedHashMap();
+        converter.seenMap = new LinkedHashMap();
 
         BioSequence bio = new BioSequence();
         OntologyEntry o1 = new OntologyEntry();
@@ -90,24 +94,24 @@ public class MageConvertorTest extends TestCase
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
-        expected.setIdentifier("1");
+        expected.setIdentifier("0_0");
         Item item2 = new Item();
         item2.setClassName(ns + "OntologyEntry");
-        item2.setIdentifier("2");
+        item2.setIdentifier("1_1");
         Attribute attr = new Attribute();
         attr.setName("value");
         attr.setValue("Term");
         item2.addAttribute(attr);
         Reference ref = new Reference();
         ref.setName("polymerType");
-        ref.setRefId("2");
+        ref.setRefId("1_1");
         expected.addReference(ref);
 
-        assertEquals(expected, convertor.createItem(bio, ns));
+        assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
     }
 
     public void testCreateItemCollection() throws Exception {
-        convertor.seenMap = new LinkedHashMap();
+        converter.seenMap = new LinkedHashMap();
 
         BioSequence bio = new BioSequence();
         DatabaseEntry d1 = new DatabaseEntry();
@@ -119,10 +123,10 @@ public class MageConvertorTest extends TestCase
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
-        expected.setIdentifier("1");
+        expected.setIdentifier("0_0");
         Item item2 = new Item();
         item2.setClassName(ns + "DatabaseEntry");
-        item2.setIdentifier("2");
+        item2.setIdentifier("1_1");
         Attribute attr1 = new Attribute();
         attr1.setName("uri");
         attr1.setValue("www.test1.org");
@@ -130,7 +134,7 @@ public class MageConvertorTest extends TestCase
 
         Item item3 = new Item();
         item3.setClassName(ns + "DatabaseEntry");
-        item3.setIdentifier("3");
+        item3.setIdentifier("1_2");
         Attribute attr2 = new Attribute();
         attr2.setName("uri");
         attr2.setValue("www.test1.org");
@@ -138,10 +142,10 @@ public class MageConvertorTest extends TestCase
 
         ReferenceList r1 = new ReferenceList();
         r1.setName("sequenceDatabases");
-        r1.addRefId("2");
-        r1.addRefId("3");
+        r1.addRefId("1_1");
+        r1.addRefId("1_2");
         expected.addCollection(r1);
 
-        assertEquals(expected, convertor.createItem(bio, ns));
+        assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
     }
 }
