@@ -54,7 +54,9 @@ public class ObjectStoreItemReader implements ItemReader
         QueryClass qc = new QueryClass(Item.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        return (new SingletonResults(q, os, os.getSequence())).iterator();
+        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+        sr.setBatchSize(1000);
+        return sr.iterator();
     }
 
     /**
