@@ -418,9 +418,8 @@
   </target>
 
   <!-- create selected precomputed tables -->
-  <target name="precompute-testmodel-queries" 
-          depends="compile-main, drop-precomputed-tables-testmodel">
-    <ant antfile="build-model.xml" target="precompute-queries" inheritRefs="true">
+  <target name="precompute-testmodel-queries" depends="compile-main">
+    <ant antfile="build-model.xml" target="precompute-model" inheritRefs="true">
       <property name="objectstore.name" value="os.unittest"/>
       <property name="db.name" value="db.unittest"/>
       <property name="model.name" value="testmodel"/>
@@ -432,7 +431,18 @@
   <!-- create selected precomputed tables and test the speed of queries -->
   <target name="precompute-testmodel-queries-test"
           depends="compile-main, drop-precomputed-tables-testmodel">
-    <ant antfile="build-model.xml" target="precompute-queries-test" inheritRefs="true">
+    <ant antfile="build-model.xml" target="precompute-model-test" inheritRefs="true">
+      <property name="objectstore.name" value="os.unittest"/>
+      <property name="db.name" value="db.unittest"/>
+      <property name="model.name" value="testmodel"/>
+      <property name="precompute.minRows" value="0"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <!-- make pre-computed tables for testmodel template queries -->
+  <target name="precompute-testmodel-templates" depends="compile-main">
+    <ant antfile="build-model.xml" target="precompute-templates" inheritRefs="true">
       <property name="objectstore.name" value="os.unittest"/>
       <property name="db.name" value="db.unittest"/>
       <property name="model.name" value="testmodel"/>
@@ -1146,5 +1156,4 @@
     </nbjpdaconnect>
     <nbbrowse url="${www.location}"/>
   </target>
-
 </project>
