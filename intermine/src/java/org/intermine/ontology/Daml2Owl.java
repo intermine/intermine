@@ -10,8 +10,6 @@ package org.flymine.ontology;
  *
  */
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
@@ -54,7 +52,7 @@ public class Daml2Owl
     protected static OntModel process(BufferedReader in) throws IOException {
         StringBuffer sb = new StringBuffer();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            line = line.replaceAll("xmlns:daml=\"" + DAML_NS_PATTERN+"\"",
+            line = line.replaceAll("xmlns:daml=\"" + DAML_NS_PATTERN + "\"",
                                    "xmlns:owl=\"" + OWL_NS + "\"");
             line = line.replaceAll("daml:differentIndividualFrom", "owl:differentFrom");
             line = line.replaceAll("daml:equivalentTo", "owl:sameAs");
