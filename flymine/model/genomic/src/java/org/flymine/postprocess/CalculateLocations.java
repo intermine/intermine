@@ -164,7 +164,7 @@ public class CalculateLocations
                 }
             }
         }
-        osw.commitTransaction();
+        osw.abortTransaction();
         LOG.info("Stored " + i + " Locations between Supercontig and ChromosomeBand.");
 
         // 3. hold offsets of Contigs on Supercontigs
@@ -234,7 +234,7 @@ public class CalculateLocations
                 }
             }
         }
-        osw.commitTransaction();
+        osw.abortTransaction();
         LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
         LOG.info("Stored " + j + " Locations between Contig and ChromosomeBand.");
 
@@ -341,7 +341,7 @@ public class CalculateLocations
             LOG.info("feature: to Chromosome " + i + " to Supercontig " + j
                       + " ChromsomeBand " + k);
         }
-        osw.commitTransaction();
+        osw.abortTransaction();
         LOG.info("Stored " + i + " Locations between features and Chromosome.");
         LOG.info("Stored " + j + " Locations between features and Supercontig.");
         LOG.info("Stored " + k + " Locations between features and ChromosomeBand.");
@@ -517,9 +517,15 @@ public class CalculateLocations
                                                 Chromosome chr, BioEntity child) {
         Location childOnChr =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        childOnChr.setStart(new Integer((parentOnChr.getStart() + childOnParent.getStart()) - 1));
-        childOnChr.setEnd(new Integer((parentOnChr.getStart() + childOnParent.getEnd()) - 1));
-        childOnChr.setStrand(new Integer(1));
+        if (parentOnChr.getStrand() == -1) {
+            childOnChr.setStart(new Integer((parentOnChr.getEnd() - childOnParent.getEnd()) + 1));
+            childOnChr.setEnd(new Integer((parentOnChr.getEnd() - childOnParent.getStart()) + 1));
+        } else {
+            childOnChr.setStart(new Integer((parentOnChr.getStart()
+                                             + childOnParent.getStart()) - 1));
+            childOnChr.setEnd(new Integer((parentOnChr.getStart() + childOnParent.getEnd()) - 1));
+        }
+        childOnChr.setStrand(new Integer(childOnParent.getStrand()));
         childOnChr.setStartIsPartial(Boolean.FALSE);
         childOnChr.setEndIsPartial(Boolean.FALSE);
         childOnChr.setObject(chr);

@@ -260,6 +260,90 @@ public class CalculateLocationsTest extends TestCase {
     }
 
 
+    public void testCreateChromosomeLocation() throws Exception {
+        Chromosome chr = getChromosome();
+        int chrId = chr.getId().intValue();
+        BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
+        int parentId = 101;
+        parent.setId(new Integer(parentId));
+        BioEntity child = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
+        int childId = 102;
+        child.setId(new Integer(childId));
+
+        //  ------------------>   parent
+        //      |        |
+        //      ---------->       child
+        CalculateLocations cl = new CalculateLocations(osw);
+        CalculateLocations.SimpleLoc parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, 1);
+        CalculateLocations.SimpleLoc childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, 1);
+        Location res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+
+        Location exp1 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exp1.setStart(new Integer(251));
+        exp1.setEnd(new Integer(350));
+        exp1.setStartIsPartial(Boolean.FALSE);
+        exp1.setEndIsPartial(Boolean.FALSE);
+        exp1.setStrand(new Integer(1));
+        exp1.setObject(chr);
+        exp1.setSubject(child);
+        assertEquals(toItem(exp1), toItem(res));
+
+        //  <------------------   parent
+        //      |        |
+        //      ---------->       child
+        cl = new CalculateLocations(osw);
+        parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, -1);
+        childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, 1);
+        res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+
+        Location exp2 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exp2.setStart(new Integer(151));
+        exp2.setEnd(new Integer(250));
+        exp2.setStartIsPartial(Boolean.FALSE);
+        exp2.setEndIsPartial(Boolean.FALSE);
+        exp2.setStrand(new Integer(1));
+        exp2.setObject(chr);
+        exp2.setSubject(child);
+        assertEquals(toItem(exp2), toItem(res));
+
+        //  ------------------>  parent
+        //      |        |
+        //     <----------       child
+        cl = new CalculateLocations(osw);
+        parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, 1);
+        childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, -1);
+        res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+
+        Location exp3 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exp3.setStart(new Integer(251));
+        exp3.setEnd(new Integer(350));
+        exp3.setStartIsPartial(Boolean.FALSE);
+        exp3.setEndIsPartial(Boolean.FALSE);
+        exp3.setStrand(new Integer(-1));
+        exp3.setObject(chr);
+        exp3.setSubject(child);
+        assertEquals(toItem(exp3), toItem(res));
+
+        //  <-----------------   parent
+        //      |        |
+        //     <----------       child
+        cl = new CalculateLocations(osw);
+        parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, -1);
+        childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, -1);
+        res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+
+        Location exp4 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exp4.setStart(new Integer(151));
+        exp4.setEnd(new Integer(250));
+        exp4.setStartIsPartial(Boolean.FALSE);
+        exp4.setEndIsPartial(Boolean.FALSE);
+        exp4.setStrand(new Integer(-1));
+        exp4.setObject(chr);
+        exp4.setSubject(child);
+        assertEquals(toItem(exp4), toItem(res));
+    }
+
+
     public void testCreateLocationNormal() throws Exception {
         Chromosome chr = getChromosome();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
