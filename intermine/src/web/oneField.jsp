@@ -22,8 +22,10 @@
           <c:if test="${fieldDescriptor.name != 'id'}">
             <div>
               <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
-              <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
-              <c:out value="${object[fieldDescriptor.name]}" default="${nullFieldText}"/>
+              <span class="attributeField"><c:out value="${fieldDescriptor.name}"/></span>:
+              <span class="value">
+                <c:out value="${object[fieldDescriptor.name]}" default="${nullFieldText}"/>
+              </span>
             </div>
           </c:if>
         </c:when>
@@ -31,7 +33,7 @@
         <c:when test="${fieldDescriptor.reference}">
           <c:if test="${object[fieldDescriptor.name] != null}">
             <div>
-              <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
+              <span class="referenceField"><c:out value="${fieldDescriptor.name}"/></span>:
               <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
                 <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}"/>
               </html:link>
