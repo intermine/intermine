@@ -129,8 +129,12 @@ public class ChangeResultsSizeAction extends InterMineAction
 
                 if (allRows instanceof Results) {
                     Results results = (Results) allRows;
-
-                    results.setBatchSize(maxBagSize);
+                    
+                    if (maxBagSize > results.getObjectStore().getMaxLimit()) {
+                        results.setBatchSize(results.getObjectStore().getMaxLimit());
+                    } else {
+                        results.setBatchSize(maxBagSize);
+                    }
 
                     if (results.size() > maxBagSize) {
                         ActionMessage actionMessage =
