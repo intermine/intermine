@@ -87,8 +87,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * Returns a Set of objects from the database that are equivalent to the given object, according
-     * to the primary keys defined by the given Source.
+     * Returns a Set of objects from the idMap or database that are equivalent to the given
+     * object, according to the primary keys defined by the given Source.
      *
      * @param obj the Object to look for
      * @param source the data Source
@@ -100,36 +100,47 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
         }
-        //String oText = obj.toString();
-        //int oTextLength = oText.length();
-        //System//.out.println(" --------------- getEquivalentObjects() called on "
-        //        + oText.substring(0, oTextLength > 60 ? 60 : oTextLength));
         Integer destId = null;
         if (obj.getId() != null) {
             destId = idMap.get(obj.getId());
         }
         if (destId == null) {
+            // query database by primary key for equivalent objects
             if (obj instanceof ProxyReference) {
                 throw new IllegalArgumentException("Given a ProxyReference, but id not in ID Map");
             }
-            Query q = null;
-            try {
-                q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap);
-            } catch (MetaDataException e) {
-                throw new ObjectStoreException(e);
-            }
-            //System//.out.println(" --------------------------- " + q);
-            //SingletonResults result = new SingletonResults(q,
-            //        (obj.getId() == null ? this : osw.getObjectStore()),
-            //        (obj.getId() == null ? getSequence() : osw.getObjectStore().getSequence()));
-            SingletonResults result = new SingletonResults(q, this, getSequence());
-            result.setNoOptimise();
-            result.setNoExplain();
-            return result;
+            return queryEquivalentObjects(obj, source);
         } else {
+            // was in idMap, no need to query database
             return Collections.singleton(new ProxyReference(osw, destId, InterMineObject.class));
         }
     }
+
+
+    /**
+     * Queries the database for equivalent objects for the given object, according
+     * to the primary keys defined by the given Source.
+     *
+     * @param obj the Object to look for
+     * @param source the data Source
+     * @return a Set of InterMineObjects
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected Set queryEquivalentObjects(InterMineObject obj, Source source)
+        throws ObjectStoreException {
+        Query q = null;
+        try {
+            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap);
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
+        }
+        SingletonResults result = new SingletonResults(q, this, getSequence());
+        result.setNoOptimise();
+        result.setNoExplain();
+        return result;
+    }
+
+
 
     /**
      * @see IntegrationWriter#store

@@ -29,7 +29,7 @@ import org.intermine.sql.Database;
 import org.apache.log4j.Logger;
 
 /**
- * Iterface providing access to data tracking.
+ * Interface providing access to data tracking.
  *
  * This class is almost a generic map. However, it particularly maps from an Integer and a String
  * to a String and a boolean, where entries are grouped by the Integer.
@@ -45,7 +45,7 @@ public class DataTracker
      * 2. Recently-used and dirty - must be written back to the database eventually.
      * 3. Recently-used and clean - need not be written, but should be kept in memory.
      * 4. Not recently-used, and clean. These can be thrown away whenever the GC fancies it.
-     * 
+     *
      * This class will store types 1, 2 and 3 in a LinkedHashMap, ordered by access, and type 4 in a
      * WeakHashMap or CacheMap, or may not even store them at all.
      *
@@ -62,7 +62,7 @@ public class DataTracker
     private int serial = 0;
     private Connection conn;
     private Connection storeConn;
-    private Exception broken = null;
+    protected Exception broken = null;
     private CacheStorer cacheStorer;
     private int version = 0;
 
@@ -140,7 +140,7 @@ public class DataTracker
 
     /**
      * Gets the object descriptor for a given object id
-     * 
+     *
      * @param id the ID
      * @param forWrite true if the returned value is going to be modified
      * @return an ObjectDescriptor
@@ -350,7 +350,7 @@ public class DataTracker
     private synchronized void clearWriteBack() {
         writeBack.clear();
     }
-    
+
     /**
      * Writes the contents of the given Map to the backing database. Attempts to make use of all the
      * SQL tricks to speed this operation up.
@@ -514,7 +514,7 @@ public class DataTracker
         private synchronized boolean dontQuitNow() {
             return needAction || dontQuit;
         }
-        
+
         public void run() {
             while (dontQuitNow()) {
                 synchronized (this) {

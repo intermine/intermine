@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.lang.reflect.Constructor;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -54,7 +55,27 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @throws ObjectStoreException sometimes
      */
     public static IntegrationWriterDataTrackingImpl getInstance(String osAlias, Properties props)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
+        return getInstance(osAlias, props, IntegrationWriterDataTrackingImpl.class,
+                           DataTracker.class);
+    }
+
+
+    /**
+     * Creates a new IntegrationWriter instance of the specified class and and with a specificed
+     * DataTracker class plus properties.
+     *
+     * @param osAlias the alias of this objectstore
+     * @param props the Properties
+     * @param iwClass Class of IntegrationWriter to create - IntegrationWriterDatatrackingImpl
+     *                or a subclass.
+     * @param trackerClass Class of DataTracker to use with IntegrationWriter
+     * @return an instance of this class
+     * @throws ObjectStoreException sometimes
+     */
+    protected static IntegrationWriterDataTrackingImpl getInstance(String osAlias, Properties props,
+                                                                  Class iwClass, Class trackerClass)
+        throws ObjectStoreException {
         String writerAlias = props.getProperty("osw");
         if (writerAlias == null) {
             throw new ObjectStoreException(props.getProperty("alias") + " does not have an osw"
@@ -77,9 +98,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             int maxSize = Integer.parseInt(trackerMaxSizeString);
             int commitSize = Integer.parseInt(trackerCommitSizeString);
             Database db = ((ObjectStoreWriterInterMineImpl) writer).getDatabase();
-            DataTracker newDataTracker = new DataTracker(db, maxSize, commitSize);
+            Constructor con = trackerClass.getConstructor(new Class[]
+                {Database.class, Integer.TYPE, Integer.TYPE});
+            DataTracker newDataTracker = (DataTracker) con.newInstance(new Object[]
+                {db, new Integer(maxSize), new Integer(commitSize)});
 
-            return new IntegrationWriterDataTrackingImpl(writer, newDataTracker);
+            con = iwClass.getConstructor(new Class[] {ObjectStoreWriter.class, DataTracker.class});
+            return (IntegrationWriterDataTrackingImpl) con.newInstance(new Object[]
+                {writer, newDataTracker});
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException("Problem instantiating"
                     + " IntegrationWriterDataTrackingImpl " + props.getProperty("alias"));
