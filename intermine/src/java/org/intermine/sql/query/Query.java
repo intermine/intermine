@@ -56,8 +56,8 @@ public class Query implements SQLStringable
     }
 
     /**
-     * Construct a new Query. 
-     * 
+     * Construct a new Query.
+     *
      * @param aliasToTable a map of tables in a surrounding query, which are in the scope of this
      * query.
      */
@@ -79,7 +79,7 @@ public class Query implements SQLStringable
 
         try {
             InputStream is = new ByteArrayInputStream(sql.getBytes());
-            
+
             SqlLexer lexer = new SqlLexer(is);
             SqlParser parser = new SqlParser(lexer);
             parser.start_rule();
@@ -121,13 +121,13 @@ public class Query implements SQLStringable
 
     /**
      * Sets the distinct status of this query.
-     * 
+     *
      * @param distinct the new distinct status
      */
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
     }
-    
+
     /**
      * Gets the current explain status of this query.
      *
@@ -239,7 +239,7 @@ public class Query implements SQLStringable
     public void addHaving(AbstractConstraint obj) {
         having.add(obj);
     }
-    
+
     /**
      * Gets the list of fields forming the ORDER BY clause of this query.
      *
@@ -287,7 +287,7 @@ public class Query implements SQLStringable
         this.limit = limit;
         this.offset = offset;
     }
-    
+
     /**
      * Convert this Query into a SQL String query.
      *
@@ -339,7 +339,7 @@ public class Query implements SQLStringable
             Query q = (Query) obj;
             return select.equals(q.select) && from.equals(q.from) && where.equals(q.where)
                 && groupBy.equals(q.groupBy) && having.equals(q.having) && orderBy.equals(q.orderBy)
-                && (limit == q.limit) && (offset == q.limit) && (explain == q.explain)
+                && (limit == q.limit) && (offset == q.offset) && (explain == q.explain)
                 && (distinct == q.distinct);
         }
         return false;
@@ -456,7 +456,7 @@ public class Query implements SQLStringable
         } while (ast != null);
         addFrom(new Table(tableName, tableAlias));
     }
-    
+
     /**
      * Processes an AST node that describes a subquery in the FROM list.
      *
@@ -483,7 +483,7 @@ public class Query implements SQLStringable
         q.processAST(subquery);
         addFrom(new SubQuery(q, alias));
     }
-    
+
     /**
      * Processes an AST node that describes a SELECT list.
      *
@@ -845,7 +845,7 @@ public class Query implements SQLStringable
                             + ast.getType() + "]"));
         }
     }
-    
+
     /**
      * Processes an AST node that describes a Limit clause.
      *
@@ -874,7 +874,7 @@ public class Query implements SQLStringable
         SqlParser parser = new SqlParser(lexer);
         parser.start_rule();
         AST ast = parser.getAST();
-        
+
         antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
 
         int iters = 0;
