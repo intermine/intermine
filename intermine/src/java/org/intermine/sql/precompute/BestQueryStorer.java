@@ -1,7 +1,7 @@
 package org.flymine.sql.precompute;
 
 import org.flymine.sql.query.Query;
-import java.util.Collection;
+import java.util.Set;
 import java.sql.SQLException;
 import org.flymine.util.ConsistentSet;
 
@@ -12,7 +12,7 @@ import org.flymine.util.ConsistentSet;
  */
 public class BestQueryStorer extends BestQuery
 {
-    protected Collection queries = new ConsistentSet();
+    protected Set queries = new ConsistentSet();
 
     /**
      * Constructs a BestQueryStorer
@@ -41,7 +41,7 @@ public class BestQueryStorer extends BestQuery
      *
      * @return the set of queries
      */
-    public Collection getQueries() {
+    public Set getQueries() {
         return queries;
     }
 
