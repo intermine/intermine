@@ -150,6 +150,13 @@ public class BuildDbTask extends Task
             c.close();
         } catch (SQLException e) {
         }
+        try {
+            Connection c = database.getConnection();
+            c.setAutoCommit(true);
+            c.createStatement().execute("drop table tracker");
+            c.close();
+        } catch (SQLException e) {
+        }
 
         tempFile.delete();
     }
