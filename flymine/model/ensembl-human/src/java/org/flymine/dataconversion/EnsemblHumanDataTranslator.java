@@ -10,8 +10,6 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.io.FileReader;
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -33,10 +30,6 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
@@ -44,8 +37,6 @@ import org.intermine.dataconversion.FieldNameAndValue;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
-import org.intermine.dataconversion.ObjectStoreItemReader;
-import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
@@ -106,7 +97,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @see DataTranslator#DataTranslator
      */
     public EnsemblHumanDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
-                                 String orgAbbrev) {
+                                      String orgAbbrev) {
         super(srcItemReader, model, ns);
         this.orgAbbrev = orgAbbrev;
     }
@@ -546,7 +537,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         }
         return simpleFeature;
     }
-
 
     /**
      * @param Item srcItem = e:translation
@@ -1035,23 +1025,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return orgRef;
     }
 
-
-
     /**
-     * Main method
-     * @param args command line arguments
-     * @throws Exception if something goes wrong
+     * @see DataTranslatorTask#execute
      */
-    public static void main (String[] args) throws Exception {
-        String srcOsName = args[0];
-        String tgtOswName = args[1];
-        String modelName = args[2];
-        String format = args[3];
-        String namespace = args[4];
-        String orgAbbrev = args[5];
-
-        String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
-        String classname = ObjectStoreItemPathFollowingImpl.CLASSNAME;
+    public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
 
         //karyotype
@@ -1242,17 +1219,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         paths.put("http://www.flymine.org/model/ensembl-human#seq_region",
                   Collections.singleton(desc));
 
-        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
-        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
-
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new EnsemblHumanDataTranslator(srcItemReader, model, namespace,
-                                                           orgAbbrev);
-        model = null;
-        dt.translate(tgtItemWriter);
-        tgtItemWriter.close();
+        return paths;
     }
 }

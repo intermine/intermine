@@ -58,18 +58,21 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
             System.out.println(expectedNotActual);
             System.out.println(actualNotExpected);
         }
+        
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
-
     public void testSetGeneSynonyms() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl#";
+
+        // transcript - gene, transcript - translation
         Item gene = createItem(srcNs + "gene", "1_1", "");
         Item transcript = createItem(srcNs + "transcript", "1_2", "");
         Item translation = createItem(srcNs + "translation", "1_3", "");
         transcript.addReference(new Reference("gene", "1_1"));
         transcript.addReference(new Reference("translation", "1_3"));
-
+        
+        // objectXref - translation, objectXref - xref(dbprimary_acc) - external_db(flybase_gene)
         Item objectXref = createItem(srcNs + "object_xref", "1_4", "");
         Item xref = createItem(srcNs + "xref", "1_5", "");
         Item externalDb = createItem(srcNs + "external_db", "1_6", "");
@@ -83,10 +86,10 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
                                                                       getOwlModel(), tgtNs, "WB");
 
-        Item exp1 = createItem(tgtNs + "Synonym", "-1_1", "");
+        Item exp1 = createItem(tgtNs + "Synonym", "-1_6", "");
         exp1.addAttribute(new Attribute("value", "FBgn1001"));
         exp1.addAttribute(new Attribute("type", "identifier"));
-        exp1.addReference(new Reference("source", "-1_2"));
+        exp1.addReference(new Reference("source", "-1_7"));
         exp1.addReference(new Reference("subject", "1_1"));
 
         Set expected = new HashSet(Collections.singleton(exp1));
@@ -135,7 +138,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Item exp1 = createItem(tgtNs + "Gene", "1_1", "");
         exp1.addAttribute(new Attribute("organismDbId", "FBgn1001"));
-        ReferenceList rl1 = new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_1")));
+        ReferenceList rl1 = new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_6")));
         exp1.addCollection(rl1);
         Item tgtItem1 = createItem(tgtNs + "Gene", "1_1", "");
         translator.setGeneSynonyms(gene, tgtItem1, srcNs);
@@ -143,7 +146,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Item exp2 = createItem(tgtNs + "Gene", "2_1", "");
         exp2.addAttribute(new Attribute("organismDbId", "FBgn1001_flymine_1"));
-        ReferenceList rl2 = new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_3")));
+        ReferenceList rl2 = new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_8")));
         exp2.addCollection(rl2);
         Item tgtItem2 = createItem(tgtNs + "Gene", "2_1", "");
         translator.setGeneSynonyms(gene2, tgtItem2, srcNs);
