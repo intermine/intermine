@@ -15,14 +15,12 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletContext;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
@@ -49,26 +47,24 @@ public class MainAction extends Action
         MainForm mf = (MainForm) form;
         HttpSession session = request.getSession();
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
         RightNode node = (RightNode) qNodes.get(mf.getPath());
 
-        if (mf.getAttributeValue() != null) {
+        if (request.getParameter("attribute") != null) {
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getAttributeOp()));
             Object constraintValue = mf.getParsedAttributeValue();
             node.getConstraints().add(new Constraint(constraintOp, constraintValue));
         }
 
-        if (mf.getBagValue() != null && !mf.getBagValue().equals("")) {
+        if (request.getParameter("bag") != null) {
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getBagOp()));
             Object constraintValue = mf.getBagValue();
             node.getConstraints().add(new Constraint(constraintOp, constraintValue));
         }
 
-        if (mf.getSubclassValue() != null && !mf.getSubclassValue().equals("")) {
+        if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
         }

@@ -39,6 +39,7 @@ public class MainForm extends ActionForm
     protected String bagOp, bagValue;
     protected String attributeOp, attributeValue;
     protected String subclassValue;
+
     protected String path;
 
     protected Object parsedAttributeValue;
@@ -169,7 +170,6 @@ public class MainForm extends ActionForm
         this.parsedAttributeValue = parsedAttributeValue;
     }
 
-
     /**
      * @see ActionForm#validate
      */
@@ -181,7 +181,7 @@ public class MainForm extends ActionForm
 
         ActionErrors errors = new ActionErrors();
 
-        if (attributeValue != null) {
+        if (request.getParameter("attribute") != null) {
             AttributeDescriptor attr = (AttributeDescriptor)
                 MainHelper.getFieldDescriptor(path, model);
             Class fieldClass = TypeUtil.instantiate(attr.getType());

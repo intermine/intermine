@@ -142,6 +142,7 @@
                 </c:forEach>
               </html:select>
               <html:text property="attributeValue"/>
+              <html:submit property="attribute"/>
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0}">
@@ -153,6 +154,7 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
+              <html:submit property="subclass"/>
               </c:if>
             </c:otherwise>
           </c:choose>
@@ -167,15 +169,14 @@
               </c:forEach>
             </html:select>
             <html:select property="bagValue">
-              <html:option value=""/>
               <c:forEach items="${SAVED_BAGS}" var="bag">
                 <html:option value="${bag.key}">
                   <c:out value="${bag.key}"/>
                 </html:option>
               </c:forEach>
             </html:select>
+            <html:submit property="bag"/>
           </c:if>
-          <html:submit/>
         </html:form>
       </td>
     </tr>      
