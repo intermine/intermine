@@ -5,15 +5,16 @@ form {
   margin: 0px
 }
 .links {
-  font-size: small;
   background-color: #fff;
   border-bottom: solid black 1px;
   padding-top: 3px;
   padding-bottom: 3px;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 .links .menu-item {
   padding-right: 5px;
   padding-left: 5px;
+  font-size: 11px;
 }
 .description {
 }
@@ -52,15 +53,24 @@ form {
 .box .body {
   padding: 4px;
   margin: 3px;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 12px;
 }
 
 .box .buildmenu .body {
-  padding: 4px;
-  margin: 3px;
+  /*padding: 4px;
+  margin: 3px;*/
   border: 1px solid #999;
   height: 10;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 12px;
+}
+
+.body > .collapsed {
+  font-size: 11px;
+  font-style: italic;
+  text-align: center;
+  color: #888;
 }
 
 table.templateForm td {
@@ -180,7 +190,7 @@ table.results tr.even {
   padding: 5px; 
 }
 table.refSummary {
-  border: 1px solid #000;
+  border: 1px solid #888;
 }
 table.refSummary thead tr td {
   background: #eee;
