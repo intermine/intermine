@@ -100,31 +100,21 @@ public class AceDataLoader extends DataLoader
             // that class
 
             Iterator clsIter = model.getClassNames().iterator();
-            while (clsIter.hasNext()) {
-                String clsName = (String) clsIter.next();
-                if (true) {
-                    String aceClazzName = AceModelParser
-                        .unformatAceName(TypeUtil.unqualifiedName(clsName));
-                    AceURL objURL = source.relativeURL(aceClazzName);
-                    AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
-                    if (fetchedAceObjects != null) {
-                        LOG.info("Processing " + fetchedAceObjects.size() + " "
-                                  + aceClazzName + " objects...");
-                        Iterator aceObjIter = fetchedAceObjects.iterator();
-                        while (aceObjIter.hasNext()) {
-                            try {
-                                AceObject aceObj = (AceObject) aceObjIter.next();
-                                store(processAceObject(aceObj));
-                            } catch (Exception e) {
-                                LOG.error("Object not retrievable: " + e.getMessage());
-                            }
-                        }
-                    } else {
-                        LOG.info("No " + aceClazzName + " objects found");
+            WorkSource workSource = new WorkSource(clsIter, source);
+            for (int i = 0; i < 30 ; i++) {
+                (new ServiceThread(workSource, this)).start();
+            }
+            WorkItem todo = workSource.next();
+            while (todo != null) {
+                try {
+                    AceObject aceObj = (AceObject) todo.getFetched().retrieve(todo.getName());
+                    synchronized(this) {
+                        store(processAceObject(aceObj));
                     }
-                } else {
-                    LOG.info("Not bothering with class " + clsName);
+                } catch (Exception e) {
+                    LOG.error("Object not retrievable: " + e.getMessage());
                 }
+                todo = workSource.next();
             }
         } catch (Exception e) {
             throw new FlyMineException(e);
@@ -305,7 +295,7 @@ public class AceDataLoader extends DataLoader
             } else {
                 // else the field cannot be found -- do nothing
                 if (!"Quoted_in".equals(fieldName)) {
-                    LOG.error("Field \"" + fieldName + "\" not found in object of type \""
+                    LOG.warn("Field \"" + fieldName + "\" not found in object of type \""
                               + target.getClass().getName() + "\" - would have set to \"" 
                               + fieldValue + "\"");
                 }
@@ -414,4 +404,88 @@ public class AceDataLoader extends DataLoader
         }
     }
     */
+
+    private static class WorkSource
+    {
+        private Iterator classIter;
+        private AceSet fetchedAceObjects;
+        private Iterator nameIter;
+        private AceURL source;
+
+        public WorkSource(Iterator classIter, AceURL source) {
+            this.classIter = classIter;
+            this.fetchedAceObjects = null;
+            this.nameIter = null;
+            this.source = source;
+        }
+
+        public synchronized WorkItem next() throws AceException {
+            while (((nameIter == null) || (!nameIter.hasNext())) && classIter.hasNext()) {
+                String className = (String) classIter.next();
+                String aceClazzName = AceModelParser
+                    .unformatAceName(TypeUtil.unqualifiedName(className));
+                AceURL objURL = source.relativeURL(aceClazzName);
+                fetchedAceObjects = (AceSet) Ace.fetch(objURL);
+                if (fetchedAceObjects != null) {
+                    LOG.error("Processing " + fetchedAceObjects.size() + " "
+                              + aceClazzName + " objects...");
+                    nameIter = fetchedAceObjects.nameIterator();
+                }
+            }
+            if ((nameIter == null) || (!nameIter.hasNext())) {
+                return null;
+            }
+            return new WorkItem((String) nameIter.next(), fetchedAceObjects);
+        }
+    }
+
+    private static class WorkItem
+    {
+        private String name;
+        private AceSet fetchedAceObjects;
+
+        public WorkItem(String name, AceSet fetchedAceObjects) {
+            this.name = name;
+            this.fetchedAceObjects = fetchedAceObjects;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public AceSet getFetched() {
+            return fetchedAceObjects;
+        }
+    }
+
+    private static class ServiceThread extends Thread
+    {
+        private WorkSource workSource;
+        private AceDataLoader loader;
+
+        public ServiceThread(WorkSource workSource, AceDataLoader loader) {
+            super();
+            this.workSource = workSource;
+            this.loader = loader;
+        }
+        
+        public void run() {
+            try {
+                WorkItem todo = workSource.next();
+                while (todo != null) {
+                    try {
+                        AceObject aceObj = (AceObject) todo.getFetched().retrieve(todo.getName());
+                        synchronized(loader) {
+                            loader.store(loader.processAceObject(aceObj));
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Object not retrievable: " + e.getMessage());
+                    }
+                    todo = workSource.next();
+                }
+            } catch (Exception e) {
+                LOG.error("Ace data loader sub-thread died because of " + e);
+            }
+        }
+    }
 }
