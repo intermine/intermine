@@ -69,6 +69,11 @@ then
 
     command="scp -r dist/api/* $apiserver:$apidir/"
     eval $command
+
+    command="ssh $apiserver \"find $apidir -type f | xargs chmod a+r\""
+    eval $command
+    command="ssh $apiserver \"find $apidir -type d | xargs chmod a+rx\""
+    eval $command
 fi
 
 
