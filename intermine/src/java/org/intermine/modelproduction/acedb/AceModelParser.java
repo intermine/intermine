@@ -51,8 +51,8 @@ public class AceModelParser implements ModelParser
     /**
      * Constructor that takes the modelName - required because not available from wrm file
      * but necessary to name ClassDescriptors correctly
-     * 
-     * @param modelName the name of the model to produce 
+     *
+     * @param modelName the name of the model to produce
      */
     public AceModelParser(String modelName) {
         this.modelName = modelName;
@@ -404,7 +404,7 @@ public class AceModelParser implements ModelParser
 
         // cannot have digits as first character of field/Class names in java
         if (Character.isDigit(name.charAt(0))) {
-            return "x" + name;
+            return "X" + name;
         }
         if (name.equals("Class") || name.equals("Id")) {
             return "Ace" + name;
