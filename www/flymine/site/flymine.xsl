@@ -102,6 +102,10 @@ version="1.0">
 <h4><xsl:apply-templates/></h4>
 </xsl:template>
 
+<xsl:template match="sect3/title">
+<h5><xsl:apply-templates/></h5>
+</xsl:template>
+
 <xsl:template match="firstterm">
 <i><xsl:apply-templates/></i>
 </xsl:template>
