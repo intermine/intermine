@@ -63,6 +63,7 @@ public class LazyInitializer implements MethodInterceptor
 
     /**
      * Intercept all method calls, materialise real object (if necessary), and forward call
+     * Note that final methods (eg. getClass) cannot be intercepted
      *
      * @param obj the proxy
      * @param method the method called
