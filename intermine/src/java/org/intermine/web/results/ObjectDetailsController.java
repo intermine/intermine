@@ -44,7 +44,10 @@ public class ObjectDetailsController extends Action
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String idString = (String) request.getParameter("id");
-        if (idString != null && !"".equals(idString)) {
+        if (idString != null && !"".equals(idString)
+            && (session.getAttribute("object") == null
+            || ((DisplayObject) session.getAttribute("object")).getId()
+                                                != Integer.parseInt(idString))) {
             InterMineObject object = os.getObjectById(new Integer(idString));
             String field = request.getParameter("field");
             if (field != null) {
