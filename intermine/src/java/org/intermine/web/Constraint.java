@@ -57,9 +57,9 @@ public class Constraint
      */
     public String getDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
-            return MainForm.wildcardSqlToUser((String) getValue());
+            return MainForm.wildcardSqlToUser(getValue().toString());
         } else {
-            return (String) getValue();
+            return getValue().toString();
         }
     }
 
