@@ -10,8 +10,17 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import java.util.Map;
+
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean to represent the inputs needed to create a bag from user input.
@@ -75,5 +84,31 @@ public class BuildBagForm extends ActionForm
      */
     public String getBagName() {
         return bagName;
+    }
+
+    /**
+     * @see ActionForm#validate
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        
+        Map savedBags = profile.getSavedBags();
+
+        ActionErrors errors = null;
+
+        if (request.getParameter("action") != null) {
+            if (bagName.equals("")) {
+                errors = new ActionErrors();
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.savebag.blank"));
+            } else if (savedBags != null && savedBags.containsKey(bagName)) {
+                errors = new ActionErrors();
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.savebag.existing", bagName));
+            }
+        }
+
+        return errors;
     }
 }
