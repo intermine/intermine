@@ -20,6 +20,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsRow;
 
 public class ChangeResultsActionTest extends MockStrutsTestCase
 {
@@ -196,6 +197,24 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         assertEquals(q, getSession().getAttribute("query"));
         verifyForward("runquery");
+        verifyNoActionErrors();
+    }
+
+    public void testDetails() throws Exception {
+        setRequestPathInfo("/changeResults");
+        addRequestParameter("method", "details");
+        addRequestParameter("columnIndex", "1");
+        addRequestParameter("rowIndex", "0");
+
+        getSession().setAttribute("results", results);
+        getSession().setAttribute("resultsTable", dr);
+
+        Object obj = ((ResultsRow) results.get(0)).get(1);
+
+        actionPerform();
+
+        assertEquals(obj, getRequest().getAttribute("object"));
+        verifyForward("details");
         verifyNoActionErrors();
     }
 
