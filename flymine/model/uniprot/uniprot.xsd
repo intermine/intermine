@@ -254,7 +254,7 @@
     <xs:complexType name="nameListType">
         <xs:choice maxOccurs="unbounded">
             <xs:element name="person" type="personType"/>
-            <xs:element name="consortium" type="consortiumType"/>
+            <xs:element name="consortium" type="consortiumType"/><!-- Actually, consortium has a maxOccurs of 1-->
         </xs:choice>
     </xs:complexType>
     <!--  Definitions for SPTr's additional citation information begins  -->
@@ -295,7 +295,7 @@
                     </xs:simpleContent>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="transposon">
+            <xs:element name="transposon"><!--Actually, this has a maxOccurs of 1-->
                 <xs:complexType>
                     <xs:simpleContent>
                         <xs:extension base="xs:string">
@@ -322,7 +322,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="citation" type="citationType"/>
-            <xs:element name="scope" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="scope" type="xs:string" maxOccurs="unbounded"/><!--Actually, this has a maxOccurs of 1-->
             <xs:element name="source" type="sourceDataType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="evidence" type="xs:string" use="optional"/>
@@ -369,7 +369,7 @@
             </xs:choice>
             <xs:element name="note" type="xs:string" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:documentation>Contains a note regarding this comment. Used by the comment types mass spectrometry and online information.</xs:documentation>
+                    <xs:documentation>Contains a note regarding this comment. Used by the comment types mass spectrometry and online information. Actually, this element has a real maxOccurs of 1</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -653,7 +653,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="name" type="organismNameType" maxOccurs="unbounded"/>
-                        <xs:element name="dbReference" type="dbReferenceType" maxOccurs="unbounded"/>
+                        <xs:element name="dbReference" type="dbReferenceType"/>
                         <xs:element name="lineage" minOccurs="0">
                             <xs:complexType>
                                 <xs:sequence>
