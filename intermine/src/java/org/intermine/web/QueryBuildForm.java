@@ -254,12 +254,12 @@ public class QueryBuildForm extends ActionForm
      *        fieldValue
      * @param op the ConstraintOp on this field
      * @param fieldName the name of the field from the form
-     * @param fieldName the value from the form
+     * @param fieldValue the value from the form
      * @param locale the current session Locale
      * @param savedBags the saved bag Map from the session
      * @return an ActionError describing a parse problem, or null if there are no problems
      */
-    private ActionError validateAttribute(AttributeDescriptor attributeDescriptor,
+    protected ActionError validateAttribute(AttributeDescriptor attributeDescriptor,
                                           ConstraintOp op, String fieldName, Object fieldValue,
                                           Locale locale, Map savedBags) {
         Class fieldClass = TypeUtil.instantiate(attributeDescriptor.getType());
@@ -302,7 +302,17 @@ public class QueryBuildForm extends ActionForm
         return null;
     }
 
-    private ActionError validateReference(ReferenceDescriptor ref, ConstraintOp op,
+    /**
+     * Check that a reference is valid and update parsedFieldOps and parsedFieldValues.
+     *
+     * @param ref the descriptor used to get type information for parsing the fieldValue
+     * @param op the ConstraintOp on this field
+     * @param fieldName the name of the field from the form
+     * @param fieldValue the value from the form
+     * @param aliases the current DisplayQueryClass aliases
+     * @return an ActionError describing a parse problem, or null if there are no problems
+     */
+    protected ActionError validateReference(ReferenceDescriptor ref, ConstraintOp op,
                                           String fieldName, Object fieldValue, Collection aliases) {
         //TODO check that the reference is of the right type too
         if (!aliases.contains((String) fieldValue)) {
@@ -311,7 +321,6 @@ public class QueryBuildForm extends ActionForm
         parsedFieldValues.put(fieldName, fieldValue);
         return null;
     }
-            
 
     private Map parsedFieldValues;
     private Map parsedFieldOps;
