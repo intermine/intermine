@@ -6,7 +6,7 @@
 <tiles:importAttribute/>
 
 <!-- table.jsp -->
-<script>
+<script type="text/javascript">
   <!--//<![CDATA[
     function selectColumnCheckboxes(column) {
       var columnCheckBox = 'selectedObjects_' + column;
