@@ -156,7 +156,11 @@ public class QueryBuildAction extends LookupDispatchAction
         Map savedBags = (Map) session.getAttribute("savedBags");
         Model model = ((DisplayModel) session.getAttribute("model")).getModel();
 
-        session.setAttribute("query", createQuery(queryClasses.values(), model, savedBags));
+        if (queryClasses.size() == 0) {
+            throw new Exception("There are no classes present in the query");
+        }
+
+        session.setAttribute("query", createQuery(queryClasses, model, savedBags));
 
         return mapping.findForward("runquery");
     }
@@ -169,20 +173,23 @@ public class QueryBuildAction extends LookupDispatchAction
      * @return the Query
      * @throws Exception if an error occurs in constructing the Query
      */
-    protected Query createQuery(Collection queryClasses, Model model, Map savedBags)
+    protected Query createQuery(Map queryClasses, Model model, Map savedBags)
         throws Exception {
         Query q = new Query();
         Map mapping = new HashMap();
-        for (Iterator i = queryClasses.iterator(); i.hasNext();) {
-            DisplayQueryClass d = (DisplayQueryClass) i.next();
+        for (Iterator i = queryClasses.keySet().iterator(); i.hasNext();) {
+            String alias = (String) i.next();
+            DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(alias);
             QueryClass qc = new QueryClass(Class.forName(d.getType()));
+            q.alias(qc, alias);
             q.addFrom(qc);
             q.addToSelect(qc);
             mapping.put(d, qc);
         }
         
-        for (Iterator i = queryClasses.iterator(); i.hasNext();) {
-            DisplayQueryClass d = (DisplayQueryClass) i.next();
+        for (Iterator i = queryClasses.keySet().iterator(); i.hasNext();) {
+            String alias = (String) i.next();
+            DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(alias);
             QueryClass qc = (QueryClass) mapping.get(d);
             ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             for (Iterator j = d.getConstraintNames().iterator(); j.hasNext();) {
