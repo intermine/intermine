@@ -71,6 +71,8 @@ public class ResultsCellController extends TilesAction
                 leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
             }
             context.putAttribute("leafClds", leafClds);
+        } else {
+            context.putAttribute("leafClds", null);
         }
 
         return null;
