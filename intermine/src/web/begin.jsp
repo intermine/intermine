@@ -77,7 +77,7 @@
     </tr>
     <tr>
       <td colspan="2" align="center">
-        <html:form action="/templateActionBrowse">
+        <html:form action="/browseAction">
           <fmt:message key="begin.input.browse"/>
           <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
           <!-- tell action to skip query builder -->
