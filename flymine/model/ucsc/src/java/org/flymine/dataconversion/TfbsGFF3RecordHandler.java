@@ -56,7 +56,8 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) {
-         Item feature = getFeature();
+        Item feature = getFeature();
+
         if (record.getAttributes().get("zscore") != null) {
             String analysisId = analysis.getIdentifier();
             String zscore = (String) ((List) record.getAttributes().get("zscore")).get(0);
@@ -82,6 +83,7 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
             addItem(synonym);
 
         }
+
         if (record.getAttributes().get("factors_id") != null) {
             List factorIds = (List) record.getAttributes().get("factors_id");
             List factors = new ArrayList();
