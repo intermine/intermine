@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.Globals;
 
 import org.intermine.metadata.Model;
@@ -72,10 +73,10 @@ public class SaveQueryAction extends Action
             ResultsInfo resultsInfo = ViewHelper.makeEstimate(request);
             saveQuery(request, queryName, qNodes, view, resultsInfo);
         } catch (ObjectStoreException e) {
-            ActionMessages actionMessages = new ActionMessages();
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+            ActionErrors actionErrors = new ActionErrors();
+            actionErrors.add(ActionErrors.GLOBAL_ERROR,
                                new ActionError("errors.query.objectstoreerror"));
-            saveMessages(request, actionMessages);
+            saveErrors(request, actionErrors);
         }
 
         return mapping.findForward("query");
