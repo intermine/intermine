@@ -10,10 +10,14 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
@@ -21,16 +25,21 @@ import org.flymine.model.fulldata.Item;
 import org.flymine.model.fulldata.Attribute;
 import org.flymine.model.fulldata.Reference;
 import org.flymine.model.fulldata.ReferenceList;
+import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.proxy.ProxyReference;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryNode;
+import org.flymine.objectstore.query.QueryCast;
 import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryExpression;
 import org.flymine.objectstore.query.QueryField;
+import org.flymine.objectstore.query.QueryFunction;
+import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.Constraint;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.BagConstraint;
+import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.objectstore.translating.Translator;
@@ -47,13 +56,77 @@ import org.flymine.util.StringUtil;
 public class ItemToObjectTranslator extends Translator
 {
     protected Model model;
+    protected SortedMap idToNamespace = new TreeMap();
+    protected Map namespaceToId = new HashMap();
     
     /**
      * Constructor
      * @param model the Model used in business object creation
+     * @param os an ObjectStore containing the Item data that we will be translating. Note that
+     * the contents of the objectstore must remain constant for IDs to not clash - newly written
+     * objects will not be accessible by their ID. This translator assumes that the Item identifier
+     * field contains some string, an underscore, then some number with no leading zeros.
+     * @throws ObjectStoreException if the initialisation query fails
      */
-    public ItemToObjectTranslator(Model model) {
+    public ItemToObjectTranslator(Model model, ObjectStore os) throws ObjectStoreException {
         this.model = model;
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Item.class);
+        q.addFrom(qc);
+        QueryField qf = new QueryField(qc, "identifier");
+        QueryExpression qe1 = new QueryExpression(qf, QueryExpression.INDEX_OF,
+                new QueryValue("_"));
+        QueryExpression qe2 = new QueryExpression(qe1, QueryExpression.SUBTRACT,
+                new QueryValue(new Integer(1)));
+        QueryExpression qe3 = new QueryExpression(qf, new QueryValue(new Integer(1)), qe2);
+        QueryExpression qe4 = new QueryExpression(qe1, QueryExpression.ADD,
+                new QueryValue(new Integer(1)));
+        QueryExpression qe5 = new QueryExpression(qf, QueryExpression.SUBSTRING, qe4);
+        QueryCast qca = new QueryCast(qe5, Integer.class);
+        QueryFunction qfu = new QueryFunction(qca, QueryFunction.MAX);
+        q.addToSelect(qe3);
+        q.addToSelect(qfu);
+        q.addToGroupBy(qe3);
+        q.setDistinct(false);
+        if (os != null) {
+            List res = os.execute(q);
+            int offset = 0;
+            Iterator iter = res.iterator();
+            while (iter.hasNext()) {
+                ResultsRow row = (ResultsRow) iter.next();
+                String namespace = (String) row.get(0);
+                idToNamespace.put(new Integer(offset), namespace);
+                namespaceToId.put(namespace, new Integer(offset));
+                int highest = ((Integer) row.get(1)).intValue();
+                offset += highest;
+            }
+        }
+    }
+
+    private String idToIdentifier(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        String namespace = (String) idToNamespace.get(id);
+        if (namespace != null) {
+            return namespace + "_0";
+        } else {
+            Integer baseInteger = (Integer) idToNamespace.headMap(id).lastKey();
+            namespace = (String) idToNamespace.get(baseInteger);
+            int base = baseInteger.intValue();
+            return namespace + "_" + (id.intValue() - base);
+        }
+    }
+
+    private Integer identifierToId(String identifier) {
+        if (identifier == null) {
+            return null;
+        }
+        String namespace = identifier.substring(0, identifier.indexOf("_"));
+        int base = ((Integer) namespaceToId.get(namespace)).intValue();
+        Integer retval = new Integer(base + Integer.parseInt(identifier.substring(identifier
+                        .indexOf("_") + 1)));
+        return retval;
     }
     
     /**
@@ -96,21 +169,22 @@ public class ItemToObjectTranslator extends Translator
             } else if (constraint instanceof SimpleConstraint
                        && constraint.getOp() == ConstraintOp.EQUALS
                        && ((SimpleConstraint) constraint).getArg1() instanceof QueryField
+                       && ((SimpleConstraint) constraint).getArg2() instanceof QueryValue
                        && ((QueryField) ((SimpleConstraint) constraint).getArg1())
                            .getFromElement() == qn
                        && ((QueryField) ((SimpleConstraint) constraint).getArg1())
                        .getFieldName().equals("id")) {
                 SimpleConstraint sc =
                     new SimpleConstraint(new QueryField(qc, "identifier"),
-                         ConstraintOp.EQUALS, 
-                          new QueryValue(((QueryValue) ((SimpleConstraint) constraint)
-                                                         .getArg2()).getValue().toString()));
+                            ConstraintOp.EQUALS, 
+                            new QueryValue(idToIdentifier((Integer) (((QueryValue)
+                                        ((SimpleConstraint) constraint).getArg2())).getValue())));
                 q.setConstraint(sc);
             } else {
                 throw new ObjectStoreException("Query cannot be translated: " + query);
             }
         }
-        
+        q.setDistinct(query.isDistinct());
         return q;
     }
     
@@ -135,7 +209,7 @@ public class ItemToObjectTranslator extends Translator
                 OntologyUtil.generateClassNames(item.getClassName(), model),
                 OntologyUtil.generateClassNames(item.getImplementations(), model));
 
-        obj.setId(Integer.valueOf(item.getIdentifier()));
+        obj.setId(identifierToId(item.getIdentifier()));
         
         try {
             for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
@@ -149,7 +223,7 @@ public class ItemToObjectTranslator extends Translator
             
             for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
                 Reference ref = (Reference) i.next();
-                Integer identifier = new Integer(ref.getRefId());
+                Integer identifier = identifierToId(ref.getRefId());
                 TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier));
             }
             
@@ -174,28 +248,28 @@ public class ItemToObjectTranslator extends Translator
     }
 
     /**
-     * Convert a set of Integers to a set of String using toString()
+     * Convert a set of Integers to a set of String using idToIdentifier()
      * @param integers a set of Integers
      * @return the corresponding set of Strings
      */
     protected Set toStrings(Set integers) {
         Set strings = new HashSet();
         for (Iterator i = integers.iterator(); i.hasNext();) {
-            strings.add(i.next().toString());
+            strings.add(idToIdentifier((Integer) i.next()));
         }
         return strings;
     }
 
     /**
-     * Convert a set of Strings to a set of Integers using valueOf()
+     * Convert a set of Strings to a set of Integers using identifierToId()
      * @param strings a set of Strings
      * @return the corresponding set of Integers
      */
     protected Set toIntegers(Set strings) {
         Set integers = new HashSet();
         for (Iterator i = strings.iterator(); i.hasNext();) {
-            integers.add(Integer.valueOf(i.next().toString()));
+            integers.add(identifierToId((String) i.next()));
         }
         return integers;
-        }
+    }
 }

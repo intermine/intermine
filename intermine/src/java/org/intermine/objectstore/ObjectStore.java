@@ -44,6 +44,7 @@ public interface ObjectStore
      * @param start the start row
      * @param limit the maximum number of rows to return
      * @param optimise true if it is expected that optimising the query will improve performance
+     * @param explain true if the ObjectStore should enforce maximum query running time constraints
      * @param sequence a number representing the state of the database corresponding to when the
      * action that resulted in this execute was started. This number must match the ObjectStore's
      * internal sequence number or a DataChangedException is thrown. The sequence number is
@@ -51,8 +52,8 @@ public interface ObjectStore
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-        throws ObjectStoreException;
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException;
 
     /**
      * Get an object from the ObjectStore by giving an example. The returned object

@@ -73,8 +73,9 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
  
     public void testTranslation() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        Translator translator = new ItemToObjectTranslator(model);
-        ObjectStore os = new ObjectStoreTranslatingImpl(model, ObjectStoreFactory.getObjectStore("os.unittest"), translator);
+        ObjectStore sub = ObjectStoreFactory.getObjectStore("os.unittest");
+        Translator translator = new ItemToObjectTranslator(model, sub);
+        ObjectStore os = new ObjectStoreTranslatingImpl(model, sub, translator);
 
         Query q = new Query();
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);

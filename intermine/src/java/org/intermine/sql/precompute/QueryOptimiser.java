@@ -52,7 +52,7 @@ import java.sql.SQLException;
 public class QueryOptimiser
 {
     protected static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
-    private static final int REPORT_INTERVAL = 100;
+    private static final int REPORT_INTERVAL = 10000;
 
     private static final String ALIAS_PREFIX = "P";
     private static int callCount = 0;

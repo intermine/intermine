@@ -39,6 +39,10 @@ public class QueryExpression implements QueryEvaluable
      * Substring of specified length from index in string
      */
     public static final int SUBSTRING = 4;
+    /**
+     * Position of specified string in other specified string
+     */
+    public static final int INDEX_OF = 5;
     
     private QueryEvaluable arg1;
     private int op;
@@ -57,30 +61,64 @@ public class QueryExpression implements QueryEvaluable
      */    
     public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) 
             throws IllegalArgumentException {
-        if (!(op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE)) {
-            throw new IllegalArgumentException("Invalid operation for specified arguments");
-        }
-        if (Number.class.isAssignableFrom(arg1.getType()) 
-                && Number.class.isAssignableFrom(arg2.getType())
-                && arg1.getType().equals(arg2.getType())) {
-            this.type = arg1.getType();
-        } else if (arg1.getType().equals(UnknownTypeValue.class)
-                && (!(arg2.getType().equals(UnknownTypeValue.class)))) {
-            arg1.youAreType(arg2.getType());
-            this.type = arg1.getType();
-        } else if (arg2.getType().equals(UnknownTypeValue.class)
-                && (!(arg1.getType().equals(UnknownTypeValue.class)))) {
-            arg2.youAreType(arg1.getType());
-            this.type = arg2.getType();
-        } else if ((arg1.getType().equals(UnknownTypeValue.class))
-                && (arg2.getType().equals(UnknownTypeValue.class))) {
-            if (arg1.getApproximateType() != arg2.getApproximateType()) {
-                throw new ClassCastException("Incompatible expression with unknown type values");
+        if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE) {
+            if (Number.class.isAssignableFrom(arg1.getType()) 
+                    && Number.class.isAssignableFrom(arg2.getType())
+                    && arg1.getType().equals(arg2.getType())) {
+                this.type = arg1.getType();
+            } else if (arg1.getType().equals(UnknownTypeValue.class)
+                    && (!(arg2.getType().equals(UnknownTypeValue.class)))) {
+                arg1.youAreType(arg2.getType());
+                this.type = arg1.getType();
+            } else if (arg2.getType().equals(UnknownTypeValue.class)
+                    && (!(arg1.getType().equals(UnknownTypeValue.class)))) {
+                arg2.youAreType(arg1.getType());
+                this.type = arg2.getType();
+            } else if ((arg1.getType().equals(UnknownTypeValue.class))
+                    && (arg2.getType().equals(UnknownTypeValue.class))) {
+                if (arg1.getApproximateType() != arg2.getApproximateType()) {
+                    throw new ClassCastException("Incompatible expression with unknown type"
+                            + " values");
+                }
+                this.type = UnknownTypeValue.class;
+            } else {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                        + arg2.getType() + ") for specified operation");
             }
-            this.type = UnknownTypeValue.class;
+        } else if (op == INDEX_OF) {
+            if (arg1.getType().equals(UnknownTypeValue.class)) {
+                arg1.youAreType(String.class);
+            }
+            if (arg2.getType().equals(UnknownTypeValue.class)) {
+                arg2.youAreType(String.class);
+            }
+            if (String.class.isAssignableFrom(arg1.getType())
+                    && String.class.isAssignableFrom(arg2.getType())) {
+                this.type = Integer.class;
+            } else {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                        + arg2.getType() + ") for indexof operation");
+            }
+        } else if (op == SUBSTRING) {
+            if (arg1.getType().equals(UnknownTypeValue.class)) {
+                arg1.youAreType(String.class);
+            } else if (!arg1.getType().equals(String.class)) {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                        + arg2.getType() + ") for substring operation");
+            }
+            if (arg2.getType().equals(UnknownTypeValue.class)) {
+                arg2.youAreType(Integer.class);
+            } else if (!Number.class.isAssignableFrom(arg2.getType())) {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                        + arg2.getType() + ") for substring operation");
+            }
+            if ((arg2 instanceof QueryValue) && (((Integer) ((QueryValue) arg2).getValue())
+                        .intValue() <= 0)) {
+                throw (new IllegalArgumentException("Invalid pos argument less than or equal to"
+                            + " zero for substring"));
+            }
         } else {
-            throw new IllegalArgumentException("Invalid arguments (" + arg1.getType() + ", "
-                    + arg2.getType() + ") for specified operation");
+            throw new IllegalArgumentException("Invalid operation for specified arguments");
         }
         this.arg1 = arg1;
         this.op = op;
@@ -102,22 +140,25 @@ public class QueryExpression implements QueryEvaluable
         if (arg.getType().equals(UnknownTypeValue.class)) {
             arg.youAreType(String.class);
         } else if (!arg.getType().equals(String.class)) {
-            throw new IllegalArgumentException("Invalid argument type for specified operation");
+            throw new ClassCastException("Invalid arguments (" + arg.getType() + ", "
+                    + pos.getType() + ", " + len.getType() + ") for substring operation");
         }
         if (pos.getType().equals(UnknownTypeValue.class)) {
             pos.youAreType(Integer.class);
         } else if (!Number.class.isAssignableFrom(pos.getType())) {
-            throw new IllegalArgumentException("Invalid argument type pos for substring");
+            throw new ClassCastException("Invalid arguments (" + arg.getType() + ", "
+                    + pos.getType() + ", " + len.getType() + ") for substring operation");
         }
         if (len.getType().equals(UnknownTypeValue.class)) {
             len.youAreType(Integer.class);
         } else if (!Number.class.isAssignableFrom(len.getType())) {
-            throw new IllegalArgumentException("Invalid argument type len for substring");
+            throw new ClassCastException("Invalid arguments (" + arg.getType() + ", "
+                    + pos.getType() + ", " + len.getType() + ") for substring operation");
         }
         if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) pos).getValue()).intValue()
-                    < 0)) {
-            throw (new IllegalArgumentException("Invalid pos argument less than zero for "
-                        + "substring"));
+                    <= 0)) {
+            throw (new IllegalArgumentException("Invalid pos argument less than or equal to zero"
+                        + " for substring"));
         }
         if ((len instanceof QueryValue) && (((Integer) ((QueryValue) len).getValue()).intValue()
                     < 0)) {

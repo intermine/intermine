@@ -209,7 +209,7 @@ public class FlyMineTorqueModelOutput extends ModelOutput
      * @param type the string to convert
      * @return torque compatible name
      */
-    protected static String generateJdbcType(String type) {
+    public static String generateJdbcType(String type) {
         if (type.equals("short") || type.equals("java.lang.Short")) {
             return "SMALLINT";
         } else if (type.equals("int") || type.equals("java.lang.Integer")) {

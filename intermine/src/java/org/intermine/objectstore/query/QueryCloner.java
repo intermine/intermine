@@ -105,7 +105,7 @@ public class QueryCloner
             }
         } else if (orig instanceof QueryExpression) {
             QueryExpression origE = (QueryExpression) orig;
-            if (origE.getOperation() == QueryExpression.SUBSTRING) {
+            if ((origE.getOperation() == QueryExpression.SUBSTRING) && (origE.getArg3() != null)) {
                 return new QueryExpression((QueryEvaluable)
                         cloneThing(origE.getArg1(), fromElementMap),
                         (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap),
@@ -116,6 +116,9 @@ public class QueryCloner
                         origE.getOperation(),
                         (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap));
             }
+        } else if (orig instanceof QueryCast) {
+            return new QueryCast((QueryEvaluable) cloneThing(((QueryCast) orig).getValue(),
+                        fromElementMap), ((QueryCast) orig).getType());
         } else if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
             if ((origC.getOp() == ConstraintOp.IS_NULL)

@@ -189,7 +189,11 @@ public class StringUtil
      * @return the string with duplicated single quotes
      */
     public static String duplicateQuotes(String s) {
-        return s.replaceAll("'", "''");
+        if (s.indexOf('\'') == -1) {
+            return s;
+        } else {
+            return s.replaceAll("'", "''");
+        }
     }
 
 }

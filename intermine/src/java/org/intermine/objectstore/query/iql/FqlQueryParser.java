@@ -12,7 +12,9 @@ package org.flymine.objectstore.query.fql;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -313,6 +315,7 @@ public class FqlQueryParser
                 case FqlTokenTypes.CONSTANT:
                 case FqlTokenTypes.UNSAFE_FUNCTION:
                 case FqlTokenTypes.SAFE_FUNCTION:
+                case FqlTokenTypes.TYPECAST:
                     node = processNewQueryNode(ast, q);
                     break;
                 default:
@@ -357,6 +360,8 @@ public class FqlQueryParser
                 return processNewUnsafeFunction(ast.getFirstChild(), q);
             case FqlTokenTypes.SAFE_FUNCTION:
                 return processNewSafeFunction(ast.getFirstChild(), q);
+            case FqlTokenTypes.TYPECAST:
+                return processNewTypeCast(ast.getFirstChild(), q);
             default:
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
@@ -473,6 +478,7 @@ public class FqlQueryParser
                 case FqlTokenTypes.CONSTANT:
                 case FqlTokenTypes.UNSAFE_FUNCTION:
                 case FqlTokenTypes.SAFE_FUNCTION:
+                case FqlTokenTypes.TYPECAST:
                     try {
                         if (firstObj == null) {
                             firstObj = (QueryEvaluable) processNewQueryNode(ast, q);
@@ -526,12 +532,13 @@ public class FqlQueryParser
                 case FqlTokenTypes.CONSTANT:
                 case FqlTokenTypes.UNSAFE_FUNCTION:
                 case FqlTokenTypes.SAFE_FUNCTION:
+                case FqlTokenTypes.TYPECAST:
                     try {
                         if (type == QueryFunction.COUNT) {
                             throw new IllegalArgumentException("Count() does not take an argument");
                         } else if (firstObj == null) {
                             firstObj = (QueryEvaluable) processNewQueryNode(ast, q);
-                        } else if (type != -2) {
+                        } else if (type > -2) {
                             throw new IllegalArgumentException("Too many arguments for aggregate "
                                     + "function");
                         } else if (secondObj == null) {
@@ -564,6 +571,9 @@ public class FqlQueryParser
                 case FqlTokenTypes.LITERAL_substr:
                     type = -2;
                     break;
+                case FqlTokenTypes.LITERAL_indexof:
+                    type = -3;
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
@@ -571,11 +581,21 @@ public class FqlQueryParser
             ast = ast.getNextSibling();
         } while (ast != null);
         if (type == -2) {
-            if (thirdObj == null) {
+            if (secondObj == null) {
                 throw new IllegalArgumentException("Not enough arguments for substring function");
+            } else if (thirdObj == null) {
+                return new QueryExpression(firstObj, QueryExpression.SUBSTRING, secondObj);
             } else {
                 return new QueryExpression(firstObj, secondObj, thirdObj);
             }
+        } else if (type == -3) {
+            if (thirdObj != null) {
+                throw new IllegalArgumentException("Too many arguments for indexof function");
+            }
+            if (secondObj == null) {
+                throw new IllegalArgumentException("Too few arguments for indexof function");
+            }
+            return new QueryExpression(firstObj, QueryExpression.INDEX_OF, secondObj);
         } else if (type == QueryFunction.COUNT) {
             return new QueryFunction();
         } else {
@@ -592,6 +612,64 @@ public class FqlQueryParser
                 }
             }
         }
+    }
+
+    /**
+     * Processes an AST node that describes a typecast.
+     *
+     * @param ast an AST node to process
+     * @param q the Query to build
+     * @return a QueryEvaluable object corresponding to the input
+     */
+    private static QueryCast processNewTypeCast(AST ast, Query q) {
+        QueryEvaluable value = null;
+        String type = null;
+        do {
+            switch (ast.getType()) {
+                case FqlTokenTypes.FIELD:
+                case FqlTokenTypes.CONSTANT:
+                case FqlTokenTypes.UNSAFE_FUNCTION:
+                case FqlTokenTypes.SAFE_FUNCTION:
+                case FqlTokenTypes.TYPECAST:
+                    try {
+                        value = (QueryEvaluable) processNewQueryNode(ast, q);
+                    } catch (ClassCastException e) {
+                        throw new IllegalArgumentException("TypeCasts cannot contains classes as"
+                                + " arguments");
+                    }
+                    break;
+                case FqlTokenTypes.IDENTIFIER:
+                    type = ast.getText();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown AST node " + ast.getText() + " ["
+                            + ast.getType() + "]");
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        Class typeClass = null;
+        if ("String".equals(type)) {
+            typeClass = String.class;
+        } else if ("Boolean".equals(type)) {
+            typeClass = Boolean.class;
+        } else if ("Short".equals(type)) {
+            typeClass = Short.class;
+        } else if ("Integer".equals(type)) {
+            typeClass = Integer.class;
+        } else if ("Long".equals(type)) {
+            typeClass = Long.class;
+        } else if ("Float".equals(type)) {
+            typeClass = Float.class;
+        } else if ("Double".equals(type)) {
+            typeClass = Double.class;
+        } else if ("BigDecimal".equals(type)) {
+            typeClass = BigDecimal.class;
+        } else if ("Date".equals(type)) {
+            typeClass = Date.class;
+        } else {
+            throw new IllegalArgumentException("Invalid type cast to " + type);
+        }
+        return new QueryCast(value, typeClass);
     }
 
     /**

@@ -145,5 +145,9 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         results.put("ContainsConstraintNotNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NOT NULL", null));
         results.put("SimpleConstraintNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Manager AS a1_ WHERE a1_.title IS NULL", null));
         results.put("SimpleConstraintNotNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Manager AS a1_ WHERE a1_.title IS NOT NULL", null));
+        results.put("TypeCast", new FqlQuery("SELECT DISTINCT (a1_.age)::String AS a2_ FROM org.flymine.model.testmodel.Employee AS a1_", null));
+        results.put("IndexOf", new FqlQuery("SELECT INDEXOF(a1_.name, 'oy') AS a2_ FROM org.flymine.model.testmodel.Employee AS a1_", null));
+        results.put("Substring", new FqlQuery("SELECT SUBSTR(a1_.name, 2, 2) AS a2_ FROM org.flymine.model.testmodel.Employee AS a1_", null));
+        results.put("Substring2", new FqlQuery("SELECT SUBSTR(a1_.name, 2) AS a2_ FROM org.flymine.model.testmodel.Employee AS a1_", null));
     }
 }

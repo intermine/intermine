@@ -387,11 +387,11 @@
   </target>
 
   <!-- Chado main -->
-  <target name="build-db-chado-main" depends="convert-chado">
+  <target name="build-db-chado-test" depends="convert-chado">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.chado-main"/>
+      <property name="db.name" value="db.chado-test"/>
     </ant>
   </target>
 
@@ -566,13 +566,13 @@
     <retrieve-chado database="db.chado" model="chado" osName="osw.chado-items"/>
   </target>
 
-  <!-- Load data from chado-items into chado-main -->
-  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-main">
+  <!-- Load data from chado-items into chado-test -->
+  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, build-db-datatrackingtest">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
 
-    <load-chado integrationWriter="integration.chado-main" source="os.chado-translated" sourceName="chado"/>
+    <load-chado integrationWriter="integration.chado-test" source="os.chado-translated" sourceName="chado"/>
   </target>
 
   <!-- convert ensembl zargo to FlyMine model -->
@@ -670,6 +670,7 @@
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
           <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
+          <exclude name="org/flymine/dataconversion/ItemToObject*" />
         </fileset>
       </batchtest>
     </junit>

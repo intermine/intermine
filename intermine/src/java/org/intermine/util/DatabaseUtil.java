@@ -182,7 +182,7 @@ public class DatabaseUtil
         } else if (o instanceof Number) {
             return o.toString();
         } else if (o instanceof String) {
-            return "'" + o + "'";
+            return "'" + StringUtil.duplicateQuotes((String) o) + "'";
         } else if (o instanceof Boolean) {
             return ((Boolean) o).booleanValue() ? "'true'" : "'false'";
         } else {

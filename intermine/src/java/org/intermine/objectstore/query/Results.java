@@ -39,6 +39,7 @@ public class Results extends AbstractList
     protected ObjectStore os;
     protected int sequence;
     protected boolean optimise = true;
+    protected boolean explain = true;
 
     protected int minSize = 0;
     // TODO: update this to use ObjectStore.getMaxRows().
@@ -102,12 +103,28 @@ public class Results extends AbstractList
     }
 
     /**
+     * Sets this Results object to bypass the explain check in ObjectStore.execute().
+     */
+    public void setNoExplain() {
+        explain = false;
+    }
+
+    /**
      * Get the Query that produced this Results object
      *
      * @return the Query that produced this Results object
      */
     public Query getQuery() {
         return query;
+    }
+
+    /**
+     * Returns the ObjectStore that this Results object will use
+     *
+     * @return an ObjectStore
+     */
+    public ObjectStore getObjectStore() {
+        return os;
     }
 
     /**
@@ -231,7 +248,7 @@ public class Results extends AbstractList
 
         List rows = null;
         try {
-            rows = os.execute(query, start, limit, optimise, sequence);
+            rows = os.execute(query, start, limit, optimise, explain, sequence);
 
             synchronized (this) {
                 // Now deal with a partial batch, so we can update the maximum size

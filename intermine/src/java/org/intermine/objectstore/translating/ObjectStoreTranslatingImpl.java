@@ -81,23 +81,25 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         Translator t;
         try {
             Class c = Class.forName(translatorClass);
-            Constructor con = c.getConstructor(new Class[] {Model.class});
-            t = (Translator) con.newInstance(new Object[] {model});
+            Constructor con = c.getConstructor(new Class[] {Model.class, ObjectStore.class});
+            t = (Translator) con.newInstance(new Object[] {model, sub});
         } catch (Exception e) {
-            throw new IllegalArgumentException("Cannot find specified Translator class for"
-                    + " Translating ObjectStore (check properties file)");
+            IllegalArgumentException e2 = new IllegalArgumentException("Cannot find specified"
+                    + " Translator class for Translating ObjectStore (check properties file)");
+            e2.initCause(e);
+            throw e2;
         }
         return new ObjectStoreTranslatingImpl(model, sub, t);
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean)
+     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-    throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException {
         Query q2 = translator.translateQuery(q);
         List results = new ArrayList();
-        Iterator resIter = os.execute(q2, start, limit, optimise, sequence).iterator();
+        Iterator resIter = os.execute(q2, start, limit, optimise, explain, sequence).iterator();
         while (resIter.hasNext()) {
             ResultsRow row = new ResultsRow();
             Iterator rowIter = ((ResultsRow) resIter.next()).iterator();

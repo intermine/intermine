@@ -186,6 +186,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ContainsConstraintNotNull", containsConstraintNotNull());
         queries.put("SimpleConstraintNull", simpleConstraintNull());
         queries.put("SimpleConstraintNotNull", simpleConstraintNotNull());
+        queries.put("TypeCast", typeCast());
+        queries.put("IndexOf", indexOf());
+        queries.put("Substring", substring());
+        queries.put("Substring2", substring2());
     }
 
     /*
@@ -1180,5 +1184,60 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         SimpleConstraint c = new SimpleConstraint(new QueryField(qc, "title"), ConstraintOp.IS_NOT_NULL);
         q1.setConstraint(c);
         return q1;
+    }
+
+    /*
+     * SELECT a1_.age::String from Employee AS a1_;
+     */
+    public static Query typeCast() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "age");
+        QueryCast c = new QueryCast(f, String.class);
+        q.addToSelect(c);
+        return q;
+    }
+
+    /*
+     * SELECT indexof(a1_.name, 'oy') from Employee AS a1_;
+     */
+    public static Query indexOf() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryExpression e = new QueryExpression(f, QueryExpression.INDEX_OF, new QueryValue("oy"));
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT substr(a1_.name, 2, 2) AS a2_ FROM Employee AS a1_;
+     */
+    public static Query substring() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryExpression e = new QueryExpression(f, new QueryValue(new Integer(2)), new QueryValue(new Integer(2)));
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT substr(a1_.name, 2) AS a2_ FROM Employee AS a1_;
+     */
+    public static Query substring2() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryExpression e = new QueryExpression(f, QueryExpression.SUBSTRING, new QueryValue(new Integer(2)));
+        q.addToSelect(e);
+        return q;
     }
 }

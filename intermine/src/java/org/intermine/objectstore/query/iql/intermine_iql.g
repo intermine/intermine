@@ -39,6 +39,7 @@ tokens {
     CONTAINS_CONSTRAINT;
     NOTLIKE;
     BAG_CONSTRAINT;
+    TYPECAST;
 }
 
 
@@ -83,6 +84,7 @@ order_clause:
 
 select_value:
         ( (unsafe_function)=> unsafe_function "as"! field_alias
+            | (typecast)=> typecast "as"! field_alias
             | thing ( "as"! field_alias )?
             | constant "as"! field_alias
             | safe_function "as"! field_alias
@@ -96,11 +98,15 @@ abstract_table:
     ;
 
 abstract_value:
-        (unsafe_function)=> unsafe_function | constant | thing | safe_function | paren_value
+        (unsafe_function)=> unsafe_function | (typecast)=> typecast | constant | thing | safe_function | paren_value
     ;
 
 safe_abstract_value:
-        constant | thing | safe_function | paren_value
+        (typecast)=> typecast | constant | thing | safe_function | paren_value
+    ;
+
+typecast: (constant | thing | safe_function | paren_value) COLONTYPE! IDENTIFIER
+        { #typecast = #([TYPECAST, "TYPECAST"], #typecast); }
     ;
 
 paren_value: OPEN_PAREN! abstract_value CLOSE_PAREN! ;
@@ -153,7 +159,8 @@ safe_function:
             | "min" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "sum" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "avg" OPEN_PAREN! abstract_value CLOSE_PAREN!
-            | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value (COMMA! abstract_value)? CLOSE_PAREN!
+            | "indexof" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;
@@ -278,6 +285,7 @@ DIVIDE: '/';
 PERCENT: '%';
 VERTBAR: '|';
 QUESTION_MARK: '?';
+COLONTYPE: "::";
 
 EQ: '=';
 NOT_EQ:

@@ -10,6 +10,7 @@ package org.flymine.dataloader;
  *
  */
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.flymine.model.FlyMineBusinessObject;
@@ -20,6 +21,8 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.SingletonResults;
 
+import org.apache.log4j.Logger;
+
 /**
  * Loads information from an ObjectStore into the Flymine database.
  *
@@ -27,6 +30,8 @@ import org.flymine.objectstore.query.SingletonResults;
  */
 public class ObjectStoreDataLoader extends DataLoader
 {
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreDataLoader.class);
+
     /**
      * Construct an ObjectStoreDataLoader
      * 
@@ -51,9 +56,25 @@ public class ObjectStoreDataLoader extends DataLoader
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
+        q.setDistinct(false);
+        int opCount = 0;
+        long time = (new Date()).getTime();
+        iw.beginTransaction();
         Iterator iter = new SingletonResults(q, os, os.getSequence()).iterator();
         while (iter.hasNext()) {
-            iw.store((FlyMineBusinessObject) iter.next(), source, skelSource);
+            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            iw.store(obj, source, skelSource);
+            opCount++;
+            if (opCount % 1000 == 0) {
+                long now = (new Date()).getTime();
+                LOG.error("Dataloaded " + opCount + " objects - running at "
+                        + (60000000 / (now - time)) + " objects per minute");
+                LOG.error("Now on " + obj.getClass().getName());
+                time = now;
+                iw.commitTransaction();
+                iw.beginTransaction();
+            }
         }
+        iw.commitTransaction();
     }
 }

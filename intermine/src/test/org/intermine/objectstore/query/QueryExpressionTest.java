@@ -30,8 +30,8 @@ public class QueryExpressionTest extends TestCase
         QueryValue arg2 = new QueryValue("string");
         try {
             expression = new QueryExpression(arg1, QueryExpression.ADD, arg2);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            fail("An ClassCastException should have been thrown");
+        } catch (ClassCastException e) {
         }
     }
     
@@ -40,26 +40,26 @@ public class QueryExpressionTest extends TestCase
         QueryValue arg2 = new QueryValue(new Integer(4));
         try {
             expression = new QueryExpression(arg1, QueryExpression.SUBSTRING, arg2);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            fail("A ClassCastException should have been thrown");
+        } catch (ClassCastException e) {
         }
     }
     
     public void testNumberSubstring() {
         try {
             QueryField field = new QueryField(new QueryClass(Company.class), "vatNumber");
-            QueryValue v1 = new QueryValue(new Integer(0));
+            QueryValue v1 = new QueryValue(new Integer(1));
             QueryValue v2 = new QueryValue(new Integer(4));
             new QueryExpression(field, v1, v2);
-            fail("A IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            fail("A ClassCastException should have been thrown");
+        } catch (ClassCastException e) {
         }
     }
 
     public void testSubstringIndex() {
         try {
             QueryField field = new QueryField(new QueryClass(Company.class), "name");
-            QueryValue v1 = new QueryValue(new Integer(-1));
+            QueryValue v1 = new QueryValue(new Integer(0));
             QueryValue v2 = new QueryValue(new Integer(4));
             new QueryExpression(field, v1, v2);
             fail("An IllegalArgumentException should have been thrown");

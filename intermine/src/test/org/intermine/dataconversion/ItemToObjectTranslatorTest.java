@@ -25,6 +25,7 @@ import org.flymine.model.fulldata.Item;
 import org.flymine.model.fulldata.Attribute;
 import org.flymine.model.fulldata.Reference;
 import org.flymine.model.fulldata.ReferenceList;
+import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.proxy.ProxyReference;
@@ -62,8 +63,10 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        translator = new ItemToObjectTranslator(Model.getInstanceByName("testmodel"));
+        translator = new ItemToObjectTranslator(Model.getInstanceByName("testmodel"), null);
         translator.setObjectStore(ObjectStoreFactory.getObjectStore("os.unittest"));
+        translator.idToNamespace.put(new Integer(0), "fish");
+        translator.namespaceToId.put("fish", new Integer(0));
     }
 
     public void testTranslateQueryNoConstraint() throws Exception {
@@ -86,7 +89,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         expected.addFrom(qc);
         expected.addToSelect(qc);
         QueryField qf = new QueryField(qc, "identifier");
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("42"));
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("fish_42"));
         expected.setConstraint(sc);
         
         Query original = new Query();
@@ -106,7 +109,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         expected.addFrom(qc);
         expected.addToSelect(qc);
         QueryField qf = new QueryField(qc, "identifier");
-        BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, Arrays.asList(new Object[] {"12", "15", "19"}));
+        BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, Arrays.asList(new Object[] {"fish_12", "fish_15", "fish_19"}));
         expected.setConstraint(bc);
         
         Query original = new Query();
@@ -137,7 +140,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         Item dbItem = new Item();
         dbItem.setClassName("http://www.flymine.org/model/testmodel#Department");
         dbItem.setImplementations("http://www.flymine.org/model/testmodel#Broke");
-        dbItem.setIdentifier("1");
+        dbItem.setIdentifier("fish_1");
         Attribute dbAttr1 = new  Attribute();
         dbAttr1.setName("name");
         dbAttr1.setValue("Department1");

@@ -144,18 +144,20 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl implements Object
     }
 
     /**
-     * @see ObjectStore#execute
+     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-        throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException {
         checkStartLimit(start, limit);
 
-        ResultsInfo estimate = estimate(q);
-        if (estimate.getComplete() > maxTime) {
-            throw new ObjectStoreException("Estimated time to run query ("
-                                           + estimate.getComplete()
-                                           + ") greater than permitted maximum ("
-                                           + maxTime + ")");
+        if (explain) {
+            ResultsInfo estimate = estimate(q);
+            if (estimate.getComplete() > maxTime) {
+                throw new ObjectStoreException("Estimated time to run query ("
+                                               + estimate.getComplete()
+                                               + ") greater than permitted maximum ("
+                                               + maxTime + ")");
+            }
         }
         List results = (List) remoteMethod("execute", new Object [] {getQueryId(q),
                                                                      new Integer(start),

@@ -31,6 +31,8 @@ import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.TypeUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * Abstract implementation of ObjectStoreIntegrationWriter.  To retain
  * O/R mapping independence concrete subclasses should delegate writing to
@@ -42,6 +44,8 @@ import org.flymine.util.TypeUtil;
 
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
+    protected static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
+
     protected ObjectStoreWriter osw;
     protected static final int SKELETON = 0;
     protected static final int FROM_DB = 1;
@@ -76,7 +80,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
         }
-        return new SingletonResults(q, this, getSequence());
+        SingletonResults retval = new SingletonResults(q, this, getSequence());
+        retval.setNoOptimise();
+        retval.setNoExplain();
+        return retval;
     }
 
     /**
@@ -321,11 +328,11 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.flymine.objectstore.ObjectStore#execute
+     * @see org.flymine.objectstore.ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-            throws ObjectStoreException {
-        return osw.execute(q, start, limit, optimise, sequence);
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException {
+        return osw.execute(q, start, limit, optimise, explain, sequence);
     }
 
     /**

@@ -509,6 +509,7 @@ MINUS: '-';
 DIVIDE: '/';
 PERCENT: '%';
 VERTBAR: '|';
+COLONTYPE: "::";
 
 EQ: '=';
 NOT_EQ:

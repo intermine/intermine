@@ -94,6 +94,7 @@ public class SerializationUtil
         FlyMineBusinessObject obj = null;
         try {
             obj = LiteParser.parseXml(new ByteArrayInputStream(string.getString().getBytes()), os);
+            os.cacheObjectById(obj.getId(), obj);
         } catch (Exception e) {
             LOG.error("Error in parsing FlyMineBusinessString returned from ObjectStoreServer");
         }

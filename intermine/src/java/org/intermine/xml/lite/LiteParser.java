@@ -201,6 +201,7 @@ public class LiteParser
                     cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
                                 ConstraintOp.EQUALS, new QueryValue(obj.getId())));
                     q.setConstraint(cs);
+                    q.setDistinct(false);
                     Collection lazyColl = new SingletonResults(q, os, os.getSequence());
                     TypeUtil.setFieldValue(obj, coll.getName(), lazyColl);
                 }

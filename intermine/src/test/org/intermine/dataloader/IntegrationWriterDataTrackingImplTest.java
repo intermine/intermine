@@ -87,7 +87,6 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public static void storeData() throws Exception {
-        System.out.println("Storing data");
         if (iw == null) {
             throw new NullPointerException("iw must be set before trying to store data");
         }
@@ -117,6 +116,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             iw.abortTransaction();
             throw new Exception(e);
         }
+
 
         con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
         s = con.createStatement();

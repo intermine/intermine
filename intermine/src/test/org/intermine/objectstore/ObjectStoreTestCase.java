@@ -258,6 +258,38 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
         r = new Object[][] { { data.get("EmployeeB1") } };
         results.put("SimpleConstraintNotNull", toList(r));
+
+        r = new Object[][] { { "10" },
+            { "20" },
+            { "30" },
+            { "40" },
+            { "50" },
+            { "60" } };
+       results.put("TypeCast", toList(r));
+
+       r = new Object[][] { { new Integer(5) },
+           { new Integer(5) },
+           { new Integer(5) },
+           { new Integer(5) },
+           { new Integer(5) },
+           { new Integer(5) } };
+       results.put("IndexOf", toList(r));
+
+       r = new Object[][] { { "mp" },
+           { "mp" },
+           { "mp" },
+           { "mp" },
+           { "mp" },
+           { "mp" } };
+       results.put("Substring", toList(r));
+
+       r = new Object[][] { { "mployeeA1" },
+           { "mployeeA2" },
+           { "mployeeA3" },
+           { "mployeeB1" },
+           { "mployeeB2" },
+           { "mployeeB3" } };
+       results.put("Substring2", toList(r));
     }
 
     /**

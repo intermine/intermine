@@ -222,8 +222,8 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             assertEquals("Functions cannot contain classes as arguments", e.getMessage());
         }
         try {
-            Query q = FqlQueryParser.parse(new FqlQuery("select substr('fdsafds', 3) as a from Company", "org.flymine.model.testmodel"));
-            fail("Expected: IllegalArgumentException, because substr takes three arguments");
+            Query q = FqlQueryParser.parse(new FqlQuery("select substr('fdsafds') as a from Company", "org.flymine.model.testmodel"));
+            fail("Expected: IllegalArgumentException, because substr takes two or three arguments");
         } catch (IllegalArgumentException e) {
             assertEquals("expecting COMMA, found ')'", e.getCause().getMessage());
         }

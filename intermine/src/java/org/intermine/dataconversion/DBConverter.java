@@ -96,7 +96,7 @@ public class DBConverter extends DataConverter
             String clsName = TypeUtil.unqualifiedName(cld.getName());
             Iterator iter;
             
-            LOG.error("Processing class: " + clsName);
+            //LOG.error("Processing class: " + clsName);
             
             boolean idsProvided = idsProvided(cld);
             if (idsProvided) {

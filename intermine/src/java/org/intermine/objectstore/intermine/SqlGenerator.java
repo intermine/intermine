@@ -22,6 +22,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.flymine.codegen.FlyMineTorqueModelOutput;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.FieldDescriptor;
@@ -30,6 +31,7 @@ import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryCast;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.QueryEvaluable;
@@ -50,11 +52,16 @@ import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.UnknownTypeValue;
+import org.flymine.sql.Database;
 import org.flymine.util.AlwaysMap;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
+import org.apache.torque.engine.database.model.Domain;
+import org.apache.torque.engine.database.model.SchemaType;
+import org.apache.torque.engine.platform.Platform;
+import org.apache.torque.engine.platform.PlatformFactory;
 
 /**
  * Code to generate an sql statement from a Query object.
@@ -91,12 +98,13 @@ public class SqlGenerator
      * @param start the number of the first row for the query to return, numbered from zero
      * @param limit the maximum number of rows for the query to return
      * @param model the Model to look up metadata in
+     * @param db the Database that the ObjectStore uses
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    public static String generate(Query q, int start, int limit, Model model) 
+    public static String generate(Query q, int start, int limit, Model model, Database db)
             throws ObjectStoreException {
-        return generate(q, start, limit, model, QUERY_NORMAL);
+        return generate(q, start, limit, model, db, QUERY_NORMAL);
     }
 
     /**
@@ -107,13 +115,15 @@ public class SqlGenerator
      * @param start the number of the first row for the query to return, numbered from zero
      * @param limit the maximum number of rows for the query to return
      * @param model the Model to look up metadata in
+     * @param db the Database that the ObjectStore uses
      * @param kind Query type
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String generate(Query q, int start, int limit, Model model,
+    protected static String generate(Query q, int start, int limit, Model model, Database db,
             int kind) throws ObjectStoreException {
         State state = new State();
+        state.setDb(db);
         buildFromComponent(state, q, model);
         buildWhereClause(state, q, model);
         String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, model) : "");
@@ -189,7 +199,7 @@ public class SqlGenerator
                 }
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, 0, Integer.MAX_VALUE,
-                                model, QUERY_SUBQUERY_FROM) + ") AS "
+                                model, state.getDb(), QUERY_SUBQUERY_FROM) + ") AS "
                         + ((String) q.getAliases().get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap(q.getAliases().get(fromElement)));
             }
@@ -316,7 +326,7 @@ public class SqlGenerator
                     state);
         }
         state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, 0, Integer.MAX_VALUE,
-                        model, QUERY_SUBQUERY_CONSTRAINT) + ")");
+                        model, state.getDb(), QUERY_SUBQUERY_CONSTRAINT) + ")");
     }
 
     /**
@@ -567,12 +577,23 @@ public class SqlGenerator
                 QueryEvaluable arg2 = nodeE.getArg2();
                 QueryEvaluable arg3 = nodeE.getArg3();
 
-                buffer.append("Substr(");
+                buffer.append("SUBSTR(");
                 queryEvaluableToString(buffer, arg1, q, state);
                 buffer.append(", ");
                 queryEvaluableToString(buffer, arg2, q, state);
+                if (arg3 != null) {
+                    buffer.append(", ");
+                    queryEvaluableToString(buffer, arg3, q, state);
+                }
+                buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.INDEX_OF) {
+                QueryEvaluable arg1 = nodeE.getArg1();
+                QueryEvaluable arg2 = nodeE.getArg2();
+
+                buffer.append("STRPOS(");
+                queryEvaluableToString(buffer, arg1, q, state);
                 buffer.append(", ");
-                queryEvaluableToString(buffer, arg3, q, state);
+                queryEvaluableToString(buffer, arg2, q, state);
                 buffer.append(")");
             } else {
                 QueryEvaluable arg1 = nodeE.getArg1();
@@ -635,6 +656,17 @@ public class SqlGenerator
             QueryValue nodeV = (QueryValue) node;
             Object value = nodeV.getValue();
             objectToString(buffer, value);
+        } else if (node instanceof QueryCast) {
+            buffer.append("(");
+            queryEvaluableToString(buffer, ((QueryCast) node).getValue(), q, state);
+            buffer.append(")::");
+            String torqueTypeName = FlyMineTorqueModelOutput.generateJdbcType(node.getType()
+                    .getName());
+            SchemaType torqueType = SchemaType.getEnum(torqueTypeName);
+            Platform torquePlatform = PlatformFactory.getPlatformFor(state.getDb().getPlatform()
+                    .toLowerCase());
+            Domain torqueDomain = torquePlatform.getDomainForSchemaType(torqueType);
+            buffer.append(torqueDomain.getSqlType());
         } else {
             throw (new IllegalArgumentException("Invalid QueryEvaluable: " + node));
         }
@@ -759,6 +791,7 @@ public class SqlGenerator
         private Set orderBy = new LinkedHashSet();
         private int number = 0;
         private Map fromToFieldToAlias = new HashMap();
+        private Database db;
 
         public State() {
         }
@@ -814,6 +847,14 @@ public class SqlGenerator
 
         public void setFieldToAlias(FromElement from, Map map) {
             fromToFieldToAlias.put(from, map);
+        }
+
+        public void setDb(Database db) {
+            this.db = db;
+        }
+
+        public Database getDb() {
+            return db;
         }
     }
 }

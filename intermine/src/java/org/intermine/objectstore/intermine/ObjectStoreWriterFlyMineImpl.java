@@ -30,6 +30,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.Results;
 import org.flymine.util.CacheMap;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.TypeUtil;
@@ -70,6 +71,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     public ObjectStoreWriterFlyMineImpl(ObjectStore os) throws ObjectStoreException {
         super(null, os.getModel());
         this.os = (ObjectStoreFlyMineImpl) os;
+        db = this.os.db;
         everOptimise = false;
         try {
             conn = this.os.getConnection();
@@ -222,11 +224,13 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                     }
                 } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
                     Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
-                    Iterator collIter = coll.iterator();
-                    while (collIter.hasNext()) {
-                        FlyMineBusinessObject obj = (FlyMineBusinessObject) collIter.next();
-                        if (obj.getId() == null) {
-                            obj.setId(getSerial());
+                    if (!(coll instanceof Results)) {
+                        Iterator collIter = coll.iterator();
+                        while (collIter.hasNext()) {
+                            FlyMineBusinessObject obj = (FlyMineBusinessObject) collIter.next();
+                            if (obj.getId() == null) {
+                                obj.setId(getSerial());
+                            }
                         }
                     }
                 }
@@ -266,34 +270,37 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                         sql.append(fieldName);
                     }
                 }
-                sql.append(") VALUES ('")
-                    .append(xml)
-                    .append("'");
+                sql.append(") VALUES (");
+                SqlGenerator.objectToString(sql, xml);
+                sql.append("");
                 fieldIter = cld.getAllFieldDescriptors().iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                     if (field instanceof CollectionDescriptor) {
-                        CollectionDescriptor collection = (CollectionDescriptor) field;
-                        // Collection - if it's many to many, then write indirection table stuff.
-                        if (field.relationType() == FieldDescriptor.M_N_RELATION) {
-                            String indirectTableName =
-                                DatabaseUtil.getIndirectionTableName(collection);
-                            String inwardColumnName =
-                                DatabaseUtil.getInwardIndirectionColumnName(collection);
-                            String outwardColumnName =
-                                DatabaseUtil.getOutwardIndirectionColumnName(collection);
-                            String leftHandSide = "INSERT INTO " + indirectTableName
-                                + " (" + inwardColumnName + ", " + outwardColumnName + ") VALUES ("
-                                + o.getId().toString() + ", ";
-                            Iterator collIter = ((Collection)
-                                    TypeUtil.getFieldValue(o, field.getName())).iterator();
-                            while (collIter.hasNext()) {
-                                FlyMineBusinessObject inCollection = (FlyMineBusinessObject)
-                                    collIter.next();
-                                StringBuffer indirectSql = new StringBuffer(leftHandSide);
-                                indirectSql.append(inCollection.getId().toString())
-                                    .append(");");
-                                addBatch(s, indirectSql.toString());
+                        Collection coll = (Collection) TypeUtil.getFieldValue(o, field.getName());
+                        if (!((coll instanceof Results)
+                                    && (((Results) coll).getObjectStore().equals(this)))) {
+                            CollectionDescriptor collection = (CollectionDescriptor) field;
+                            // Collection - if it's many to many, then write indirection table.
+                            if (field.relationType() == FieldDescriptor.M_N_RELATION) {
+                                String indirectTableName =
+                                    DatabaseUtil.getIndirectionTableName(collection);
+                                String inwardColumnName =
+                                    DatabaseUtil.getInwardIndirectionColumnName(collection);
+                                String outwardColumnName =
+                                    DatabaseUtil.getOutwardIndirectionColumnName(collection);
+                                String leftHandSide = "INSERT INTO " + indirectTableName
+                                    + " (" + inwardColumnName + ", " + outwardColumnName
+                                    + ") VALUES (" + o.getId().toString() + ", ";
+                                Iterator collIter = coll.iterator();
+                                while (collIter.hasNext()) {
+                                    FlyMineBusinessObject inCollection = (FlyMineBusinessObject)
+                                        collIter.next();
+                                    StringBuffer indirectSql = new StringBuffer(leftHandSide);
+                                    indirectSql.append(inCollection.getId().toString())
+                                        .append(");");
+                                    addBatch(s, indirectSql.toString());
+                                }
                             }
                         }
                     } else {
@@ -496,14 +503,14 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
 
     /**
-     * @see ObjectStoreFlyMineImpl#execute(Query, int, int, boolean)
+     * @see ObjectStoreFlyMineImpl#execute(Query, int, int, boolean, boolean, int)
      *
      * This method is overridden in order to flush batches properly before the read.
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-        throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException {
         flushBatch();
-        return super.execute(q, start, limit, optimise, sequence);
+        return super.execute(q, start, limit, optimise, explain, sequence);
     }
     
     /**

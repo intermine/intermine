@@ -33,6 +33,7 @@ public class LiteRenderer
 {
     protected static final Logger LOG = Logger.getLogger(LiteRenderer.class);
     protected static final String DELIM = "$_^";
+
     /**
      * Don't allow construction
      */

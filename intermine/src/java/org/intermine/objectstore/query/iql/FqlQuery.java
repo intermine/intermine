@@ -166,7 +166,10 @@ public class FqlQuery
             if (qe.getOperation() == QueryExpression.SUBSTRING) {
                 return "SUBSTR(" + nodeToString(q, qe.getArg1()) + ", "
                     + nodeToString(q, qe.getArg2())
-                    + ", " + nodeToString(q, qe.getArg3()) + ")";
+                    + (qe.getArg3() == null ? "" : ", " + nodeToString(q, qe.getArg3())) + ")";
+            } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
+                return "INDEXOF(" + nodeToString(q, qe.getArg1()) + ", "
+                    + nodeToString(q, qe.getArg2()) + ")";
             } else {
                 String retval = nodeToString(q, qe.getArg1());
                 switch (qe.getOperation()) {
@@ -215,8 +218,13 @@ public class FqlQuery
                 retval += nodeToString(q, qf.getParam()) + ")";
                 return retval;
             }
+        } else if (qn instanceof QueryCast) {
+            QueryCast qc = (QueryCast) qn;
+            String type = qn.getType().getName();
+            return "(" + nodeToString(q, qc.getValue()) + ")::"
+                + type.substring(type.lastIndexOf('.') + 1);
         } else {
-            return qn.toString();
+            throw new IllegalArgumentException("Invalid QueryNode: " + qn.toString());
         }
     }
 

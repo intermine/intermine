@@ -245,14 +245,15 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * Checks a number against the sequence number, and throws an exception if they do not match.
      *
      * @param sequence an integer
+     * @param q the Query that is to be run
      * @param message some description of the operation that is about to happen
      * @throws DataChangedException if the sequence numbers do not match
      */
-    public void checkSequence(int sequence, String message) throws DataChangedException {
+    public void checkSequence(int sequence, Query q, String message) throws DataChangedException {
         if (sequence != getSequence()) {
             Exception e = new DataChangedException("Sequence numbers do not match - was given "
                     + sequence + " but needed " + getSequence() + " for operation \""
-                    + message + "\"");
+                    + message + q + "\"");
             e.fillInStackTrace();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

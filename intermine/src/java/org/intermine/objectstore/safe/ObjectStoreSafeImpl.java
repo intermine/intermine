@@ -49,11 +49,11 @@ public class ObjectStoreSafeImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean)
+     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-            throws ObjectStoreException {
-        return os.execute(QueryCloner.cloneQuery(q), start, limit, optimise, sequence);
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException {
+        return os.execute(QueryCloner.cloneQuery(q), start, limit, optimise, explain, sequence);
     }
 
     /**

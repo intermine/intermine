@@ -64,6 +64,16 @@ public class QueryFunction implements QueryEvaluable
     }
 
     /**
+     * @param qc the QueryCast to aggregate over
+     * @param op the operation code
+     * @throws IllegalArgumentException if there is a mismatch between the argument type
+     * and the specified operation
+     */
+    public QueryFunction(QueryCast qc, int op) throws IllegalArgumentException {
+        constructNonCount(qc, op);
+    }
+
+    /**
      * Creates a COUNT aggregate function.
      */
     public QueryFunction() {

@@ -88,7 +88,7 @@ public class BuildDbTask extends Task
         sql.setControlTemplate("sql/base/Control.vm");
         sql.setOutputDirectory(destDir);
         sql.setUseClasspath(true);
-        sql.setBasePathToDbProps("sql/base/");
+        //sql.setBasePathToDbProps("sql/base/");
         sql.setSqlDbMap(destDir + "/sqldb.map");
         sql.setOutputFile("report.sql.generation");
         sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"

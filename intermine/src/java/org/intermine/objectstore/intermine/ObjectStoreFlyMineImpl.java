@@ -137,33 +137,33 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, int)
+     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
-    public List execute(Query q, int start, int limit, boolean optimise, int sequence)
-        throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            int sequence) throws ObjectStoreException {
         checkStartLimit(start, limit);
-        checkSequence(sequence, q.toString() + " START " + start + " LIMIT " + limit);
+        checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
-        String sql = SqlGenerator.generate(q, start, limit, model);
+        String sql = SqlGenerator.generate(q, start, limit, model, db);
         Connection c = null;
         try {
             if (optimise && everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
             c = getConnection();
-            ExplainResult explain = ExplainResult.getInstance(sql, c);
+            if (explain) {
+                //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
+                ExplainResult explainResult = ExplainResult.getInstance(sql, c);
 
-            //System//.out.println(getModel().getName() + ": Executed SQL: EXPLAIN " + sql);
-
-            if (explain.getTime() > maxTime) {
-                throw (new ObjectStoreException("Estimated time to run query(" + explain.getTime()
-                                                + ") greater than permitted maximum ("
-                                                + maxTime + "): FQL query: " + q + ", SQL query: "
-                                                + sql));
+                if (explainResult.getTime() > maxTime) {
+                    throw (new ObjectStoreException("Estimated time to run query("
+                                + explainResult.getTime() + ") greater than permitted maximum ("
+                                + maxTime + "): FQL query: " + q + ", SQL query: " + sql));
+                }
             }
 
+            //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
-            //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             return objResults;
         } catch (SQLException e) {
@@ -181,15 +181,15 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
         Connection c = null;
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
             c = getConnection();
+            //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
             ExplainResult explain = ExplainResult.getInstance(sql, c);
-            //System//.out.println(getModel().getName() + ": Executed SQL: EXPLAIN " + sql);
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
                     (int) explain.getEstimatedRows());
         } catch (SQLException e) {
@@ -203,9 +203,9 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @see ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
-        checkSequence(sequence, "COUNT(" + q.toString() + ")");
+        checkSequence(sequence, q, "COUNT ");
 
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
         Connection c = null;
         try {
             if (everOptimise) {
@@ -214,7 +214,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             c = getConnection();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
-            //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
+            //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
             sqlResults.next();
             return sqlResults.getInt(1);
         } catch (SQLException e) {
@@ -250,8 +250,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
         Connection c = null;
         try {
             c = getConnection();
+            //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
-            //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
             if (sqlResults.next()) {
                 currentColumn = sqlResults.getString("a1_");
                 FlyMineBusinessObject retval = LiteParser.parse(currentColumn, this);
