@@ -7,11 +7,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
-import java.util.Properties;
 
 import org.xml.sax.InputSource;
 
-import org.flymine.util.PropertiesUtil;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 /**
@@ -30,38 +28,28 @@ public class Model
     private final Map implementorsMap = new HashMap();
 
     /**
-     * Return a Model for properties-specified model name (loading Model if necessary)
-     * @return the relevant metadata
-     * @throws MetaDataException if there is problem parsing the model xml
-     */
-    protected static Model getInstance() throws MetaDataException {
-        if (model != null) {
-            return model;
-        }
-        Properties props = PropertiesUtil.getPropertiesStartingWith("os.unittest.ojb");
-        props = PropertiesUtil.stripStart("os.unittest", props);
-        return getInstanceByName(props.getProperty("model"));
-    }
-
-    /**
      * Return a Model for specified model name (loading Model if necessary)
      * @param name the name of the model
      * @return the relevant metadata
      * @throws MetaDataException if there is problem parsing the model xml
      */
     public static Model getInstanceByName(String name) throws MetaDataException {
-         String filename = name + "_model.xml";
-         InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
-         try {
-             FlyMineModelParser parser = new FlyMineModelParser();
-             parser.parse(new InputSource(is));
-             model = new Model(parser.getModelName(), parser.getClasses());
-         } catch (Exception e) {
-             throw new MetaDataException("Error parsing metadata: " + e);
-         }
-         return model;
+        String filename = name + "_model.xml";
+        InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
+        if (is == null) {
+            throw new IllegalArgumentException("Model '" + name + "' cannot be found ("
+                                               + filename + ")");
+        }
+        try {
+            FlyMineModelParser parser = new FlyMineModelParser();
+            parser.parse(new InputSource(is));
+            model = new Model(parser.getModelName(), parser.getClasses());
+        } catch (Exception e) {
+            throw new MetaDataException("Error parsing metadata: " + e);
+        }
+        return model;
     }
-
+    
     /**
      * Construct a Model with a name and list of ClassDescriptors.  The model will be
      * set to this in each of the ClassDescriptors. NB This method should only be called
@@ -72,9 +60,16 @@ public class Model
      * @throws MetaDataException if inconsistencies found in model
      */
     public Model(String name, List clds) throws MetaDataException {
-        if (name == null || name == "") {
-            throw new IllegalArgumentException("A name must be supplied for the Model");
+        if (name == null) {
+            throw new NullPointerException("Model name cannot be null");
         }
+        if (name.equals("")) {
+            throw new IllegalArgumentException("Model name cannot be empty");
+        }
+        if (clds == null) {
+            throw new NullPointerException("Model ClassDescriptors list cannot be null");
+        }
+
         this.name = name;  // check for valid package name??
         Iterator cldIter = clds.iterator();
 
