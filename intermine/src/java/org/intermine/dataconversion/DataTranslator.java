@@ -38,7 +38,6 @@ import org.intermine.xml.full.ReferenceList;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.ontology.SubclassRestriction;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -190,7 +189,7 @@ public class DataTranslator
                 if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
                     Attribute newAtt = new Attribute();
                     newAtt.setName(attTgtURI.split("__")[1]);
-                    newAtt.setValue(StringUtil.duplicateQuotes(att.getValue()));
+                    newAtt.setValue(att.getValue());
                     tgtItem.addAttribute(newAtt);
                 }
             }

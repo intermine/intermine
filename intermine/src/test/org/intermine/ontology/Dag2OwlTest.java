@@ -35,13 +35,6 @@ public class Dag2OwlTest extends TestCase{
         assertEquals(namespace + "LargeGene__transcripts", owler.generatePropertyName(a, b));
     }
 
-    public void testFilter() throws Exception {
-        assertEquals("", Dag2Owl.filter(""));
-        assertEquals("OneTwo", Dag2Owl.filter("one two"));
-        assertEquals("OneTwo", Dag2Owl.filter("one_two"));
-        assertEquals("OneTwo", Dag2Owl.filter("one (two)"));
-    }
-
     public void testProcessSimple() {
         OntModel model = ModelFactory.createOntologyModel();
         OntClass cls = model.createClass(namespace + "A");

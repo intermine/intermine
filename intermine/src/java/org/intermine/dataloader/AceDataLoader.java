@@ -263,8 +263,7 @@ public class AceDataLoader extends DataLoader
             try {
                 nodeName = getName(aceNode);
                 nodeValue = instantiate(textType);
-                TypeUtil.setFieldValue(nodeValue, "identifier", StringUtil
-                                       .duplicateQuotes(((StringValue) aceNode).toString()));
+                TypeUtil.setFieldValue(nodeValue, "identifier", ((StringValue) aceNode).toString());
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
                 throw new InterMineException(e);
@@ -330,9 +329,6 @@ public class AceDataLoader extends DataLoader
     protected void setField(Object target, String fieldName, Object fieldValue)
         throws InterMineException {
         try {
-            if ((fieldValue instanceof String)) {  // single quotes need to duplicated for DB
-                fieldValue = StringUtil.duplicateQuotes((String) fieldValue);
-            }
             Method field = TypeUtil.getGetter(target.getClass(), fieldName);
             if (field != null) {
                 if (Collection.class.isAssignableFrom(field.getReturnType())

@@ -92,6 +92,10 @@ public class OntologyUtil
         if (propName.indexOf("__") > 0) {
             propName = propName.substring(propName.indexOf("__") + 2);
         }
+        if (domain == null) {
+            throw new NullPointerException("domain is null: prop = \"" + prop.getLocalName()
+                    + "\"");
+        }
         return domain.getLocalName() + "__" + propName;
     }
 

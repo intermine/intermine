@@ -10,29 +10,35 @@ package org.intermine.ontology;
  *
  */
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.StringTokenizer;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import org.intermine.util.StringUtil;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * Processes list of root DagTerms to produce the equivalent OWL OntModel
  *
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
 public class Dag2Owl
 {
     protected String namespace;
     protected OntModel ontModel;
+    protected Map nameToTerm = new HashMap();
 
     /**
      * Constructor
@@ -67,9 +73,13 @@ public class Dag2Owl
      * @return the corresponding OntClass
      */
     public OntClass process(DagTerm term) {
-        OntClass cls = ontModel.getOntClass(generateClassName(term));
+        System.out.print("Processing term " + term.getName() + ": ");
+        OntClass cls = (OntClass) nameToTerm.get(term.getName());
+        //OntClass cls = ontModel.getOntClass(generateClassName(term));
         if (cls == null) {
+            long start = System.currentTimeMillis();
             cls = ontModel.createClass(generateClassName(term));
+            System .out.println("createClass: " + (System.currentTimeMillis() - start) + " ms");
             cls.setLabel(term.getName(), null);
             // set synonyms
             if (term.getSynonyms().size() > 0) {
@@ -90,7 +100,10 @@ public class Dag2Owl
             for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
                 cls.addSubClass(process((DagTerm) i.next()));
             }
+        } else {
+            System .out.println("already present");
         }
+        nameToTerm.put(term.getName(), cls);
         return cls;
     }
 
@@ -100,7 +113,7 @@ public class Dag2Owl
      * @return the generated class name
      */
     public String generateClassName(DagTerm term) {
-        return namespace + filter(term.getName());
+        return namespace + TypeUtil.javaiseClassName(term.getName());
     }
 
     /**
@@ -110,26 +123,12 @@ public class Dag2Owl
      * @return the generated property name
      */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
-        String propName = filter(range.getName()) + "s";  // pluralise
+        String propName = TypeUtil.javaiseClassName(range.getName()) + "s";  // pluralise
         if (Character.isLowerCase(propName.charAt(1))) {
             propName = StringUtil.decapitalise(propName);
         }
-        return OntologyUtil.generatePropertyName(namespace, filter(domain.getName()), propName);
-    }
-
-    /**
-     * Filter a URI fragment to remove illegal characters
-     * @param s the relevant string
-     * @return the filtered string
-     */
-    protected static String filter(String s) {
-        String filtered = s;
-         StringBuffer sb = new StringBuffer();
-         for (StringTokenizer st = new StringTokenizer(filtered, " _-"); st.hasMoreTokens();) {
-             sb.append(StringUtil.capitalise(st.nextToken().replaceAll("\\W", "")));
-         }
-         filtered = sb.toString();
-         return filtered;
+        return OntologyUtil.generatePropertyName(namespace,
+                TypeUtil.javaiseClassName(domain.getName()), propName);
     }
 
     /**
@@ -152,6 +151,8 @@ public class Dag2Owl
             File dagFile = new File(dagFilename);
             File owlFile = new File(owlFilename);
 
+            System.out .println("Starting Dag2Owl conversion from " + dagFilename + " to "
+                    + owlFilename);
             DagParser parser = new DagParser();
             Set rootTerms = parser.process(new FileReader(dagFile));
 

@@ -162,6 +162,13 @@ public class TypeUtilTest extends TestCase
         assertEquals(new Date(7777777), TypeUtil.stringToObject(Date.class, "7777777"));
     }
 
+    public void testFilter() throws Exception {
+        assertEquals("", TypeUtil.javaiseClassName(""));
+        assertEquals("OneTwo", TypeUtil.javaiseClassName("one two"));
+        assertEquals("OneTwo", TypeUtil.javaiseClassName("one_two"));
+        assertEquals("OneTwo", TypeUtil.javaiseClassName("one (two)"));
+    }
+
     //===========================
 
     private class NoGetSet {

@@ -12,10 +12,16 @@ package org.intermine.sql;
 
 import junit.framework.TestCase;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 public class DatabaseTest extends TestCase
 {
+    private static final Logger LOG = Logger.getLogger(DatabaseTest.class);
     private Properties props;
 
     public void setUp() throws Exception {
@@ -88,4 +94,71 @@ public class DatabaseTest extends TestCase
         Database db = new Database(props);
         assertEquals("secret", db.getPassword());
     }
+/*
+    public void manyTables(int tableCount) throws Exception {
+        LOG.error("Starting test with tableCount = " + tableCount);
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection c = db.getConnection();
+        c.setAutoCommit(true);
+        Statement s = c.createStatement();
+        Exception e2 = null;
+        try {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < tableCount; i++) {
+                String tableName = "table" + i + "test";
+                s.addBatch("CREATE TABLE " + tableName + " (col int)");
+                s.addBatch("INSERT INTO " + tableName + " (col) VALUES (" + i + ")");
+            }
+            s.executeBatch();
+            long end = System.currentTimeMillis();
+            System.out.println("Took " + (end - start) + " ms to create " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+            LOG.error("Took " + (end - start) + " ms to create " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+            start = System.currentTimeMillis();
+            for (int i = 0; i < tableCount; i++) {
+                String tableName = "table" + i + "test";
+                ResultSet r = s.executeQuery("SELECT col FROM " + tableName);
+                assertTrue(r.next());
+                assertEquals(i, r.getInt(1));
+                assertFalse(r.next());
+            }
+            end = System.currentTimeMillis();
+            System.out.println("Took " + (end - start) + " ms to read " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+            LOG.error("Took " + (end - start) + " ms to read " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+        } catch (Exception e) {
+            e2 = e;
+            throw e;
+        } finally {
+            try {
+                long start = System.currentTimeMillis();
+                for (int i = 0; i < tableCount; i++) {
+                    String tableName = "table" + i + "test";
+                    s.addBatch("DROP TABLE " + tableName);
+                }
+                s.executeBatch();
+                long end = System.currentTimeMillis();
+                System.out.println("Took " + (end - start) + " ms to drop " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+                LOG.error("Took " + (end - start) + " ms to drop " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+                c.close();
+            } catch (Exception e) {
+                if (e2 == null) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    public void testManyTables() throws Exception {
+        manyTables(100);
+        manyTables(200);
+        manyTables(400);
+        manyTables(800);
+        manyTables(1600);
+        manyTables(3200);
+        manyTables(6400);
+        manyTables(12800);
+        manyTables(25600);
+        manyTables(51200);
+        manyTables(102400);
+    }
+    */
 }

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 import org.intermine.objectstore.proxy.ProxyReference;
 
@@ -457,6 +458,21 @@ public class TypeUtil
         } else {
             return value.toString();
         }
+    }
+
+    /**
+     * Filter a URI fragment to remove illegal characters
+     * @param s the relevant string
+     * @return the filtered string
+     */
+    public static String javaiseClassName(String s) {
+        String filtered = s;
+         StringBuffer sb = new StringBuffer();
+         for (StringTokenizer st = new StringTokenizer(filtered, " _-"); st.hasMoreTokens();) {
+             sb.append(StringUtil.capitalise(st.nextToken().replaceAll("\\W", "")));
+         }
+         filtered = sb.toString();
+         return filtered;
     }
 
     /**

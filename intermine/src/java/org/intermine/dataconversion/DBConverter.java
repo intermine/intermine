@@ -27,7 +27,6 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.sql.Database;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.DatabaseUtil;
-import org.intermine.util.StringUtil;
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
@@ -315,7 +314,7 @@ public class DBConverter extends DataConverter
                 attr.setName(fieldName);
                 Object value = row.get(fieldName);
                 if (value != null) {
-                    attr.setValue(StringUtil.duplicateQuotes(TypeUtil.objectToString(value)));
+                    attr.setValue(TypeUtil.objectToString(value));
                     item.addAttributes(attr);
                 }
             } else if (fd.isReference()) {
