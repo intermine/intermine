@@ -92,8 +92,8 @@ HEIGHT=`echo $BBOX | sed -e "s/^[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\)$/\1/g"`
 LEFT=`echo $BBOX | sed -e "s/^\([^ ]\+\) [^ ]\+ [^ ]\+ [^ ]\+$/\1/g"`
 BOTTOM=`echo $BBOX | sed -e "s/^[^ ]\+ \([^ ]\+\) [^ ]\+ [^ ]\+$/\1/g"`
 
-USWIDTH=`echo "(($WIDTH * $RES) / 72) * $ANTIALIAS" | bc`
-USHEIGHT=`echo "(($HEIGHT * $RES) / 72) * $ANTIALIAS" | bc`
+USWIDTH=`echo "((($WIDTH * $RES) + $RES) / 72) * $ANTIALIAS" | bc`
+USHEIGHT=`echo "((($HEIGHT * $RES) + $RES) / 72) * $ANTIALIAS" | bc`
 USRES=`echo "$RES * $ANTIALIAS" | bc`
 USLEFT=`echo "(($LEFT * $RES) / 72) * $ANTIALIAS" | bc`
 USBOTTOM=`echo "$USHEIGHT - ((($BOTTOM * $RES) / 72) * $ANTIALIAS) - 1" | bc`
