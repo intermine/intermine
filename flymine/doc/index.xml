@@ -2,5 +2,6 @@
   <section>
     <heading>Database Documentation</heading>
     <item><ulink url="usage_scenarios/">Usage scenarios</ulink></item>
+    <item><ulink url="ontology_merging/">Object Model from Ontology Merging</ulink></item>
   </section>
 </menu>

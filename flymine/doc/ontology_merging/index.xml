@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2003-09-10</date>
+<title>Building FlyMine Object Model by Merging Ontologies</title>
+<authorgroup>
+<author>
+<firstname>Richard</firstname>
+<surname>Smith</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+
+<para>A suggested system for building a FlyMine object model by merging ontologies.</para>
+
+<inlinegraphic fileref="ontology_merging" align="center"/>
+
+</sect1>
+</article>
