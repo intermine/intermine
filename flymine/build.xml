@@ -34,6 +34,7 @@
   <property name="build.resources" location="${build}/resources"/>
   <property name="build.resources.testxml" location="${build}/resources/test"/>
   <property name="build.test" location="${build}/test"/>
+  <property name="build.model" location="${build}/model" />
   <property name="build.schema" location="${build}/schema" />
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
@@ -79,6 +80,7 @@
   <path id="test.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${build.test}"/>
+    <pathelement location="${build.model}/testmodel"/>
   </path>
 
   <path id="webapptest.class.path">
@@ -101,6 +103,7 @@
     <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.resources.testxml}"/>
     <mkdir dir="${build.test}"/>
+    <mkdir dir="${build.model}" />
     <mkdir dir="${build.schema}" />
     <mkdir dir="${build.src.java}"/>
     <mkdir dir="${build.src.test}"/>
@@ -159,7 +162,7 @@
   <target name="unpack-testmodel.check" depends="prepare">
     <uptodate property="unpack-testmodel.uptodate">
       <srcfiles dir="${src.java}/org/flymine/model/testmodel" includes="**/*.zargo"/>
-      <mapper type="glob" from="*.zargo" to="${build.src.test}/*_.xmi" />
+      <mapper type="glob" from="*.zargo" to="${build}/*_.xmi" />
     </uptodate>
   </target>
   
@@ -167,18 +170,19 @@
   <target name="unpack-testmodel" depends="unpack-testmodel.check"
           description="unpacks the testmodel from .zargo file"
           unless="unpack-testmodel.uptodate">
-    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.src.test}">
+    <mkdir dir="${build.model}/testmodel" />
+    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build}">
       <!-- <patternset>
         <include name="**/*.xmi"/>
       </patternset> -->
     </unzip>
-    <touch file="${build.src.test}/TestModel_.xmi" />
+    <touch file="${build}/TestModel_.xmi" />
   </target>
 
   <!-- is our java source older than the model? -->
   <target name="testmodel-java.check" depends="unpack-testmodel">
-    <uptodate property="testmodel-java.outofdate" targetfile="${build.src.test}/TestModel_.xmi">
-      <srcfiles dir="${build.src.test}" includes="org/flymine/model/testmodel/**/*.java"/>
+    <uptodate property="testmodel-java.outofdate" targetfile="${build}/TestModel_.xmi">
+      <srcfiles dir="${build.model}/testmodel" includes="**/*.java"/>
     </uptodate>
   </target>
   
@@ -189,23 +193,23 @@
     <java classname="org.flymine.codegen.JavaModelOutput" fork="true">
       <classpath refid="base.class.path" />
       <arg value="TestModel" />
-      <arg value="${build.src.test}" />
-      <arg value="${build.src.test}" />
+      <arg value="${build}" />
+      <arg value="${build.model}/testmodel" />
     </java>
   </target>
 
   <!-- compile java source for model -->
   <target name="compile-testmodel" depends="generate-java-testmodel">
-    <javac destdir="${build.test}" listfiles="yes">
-      <classpath refid="project.class.path"/>
-      <src path="${build.src.test}/org/flymine/model" />
+    <javac destdir="${build.model}/testmodel" listfiles="yes">
+      <classpath refid="test.class.path"/>
+      <src path="${build.model}/testmodel" />
     </javac>
   </target>
 
   <!-- is our repository descriptor older than the model? -->
   <target name="testmodel-repository.check" depends="unpack-testmodel">
-    <uptodate property="testmodel-repository.outofdate" targetfile="${build.src.test}/TestModel_.xmi">
-      <srcfiles dir="${build.resources}" includes="**/*.xml"/>
+    <uptodate property="testmodel-repository.outofdate" targetfile="${build}/TestModel_.xmi">
+      <srcfiles dir="${build.model}/testmodel" includes="**/*.xml"/>
     </uptodate>
   </target>
 
@@ -215,9 +219,17 @@
     <java classname="org.flymine.codegen.OJBModelOutput" fork="true">
       <classpath refid="base.class.path" />
       <arg value="TestModel" />
-      <arg value="${build.src.test}" />
-      <arg value="${build.resources}" />
+      <arg value="${build}" />
+      <arg value="${build.model}/testmodel" />
     </java>
+
+    <!-- Copy the default repository files across -->
+    <copy todir="${build.model}/testmodel" flatten="true">
+      <fileset dir="${resources}">
+        <include name="**/repository*"/>
+      </fileset>
+    </copy>
+    
   </target>
 
   <!-- generate mapping file for castor xml binding -->
@@ -226,9 +238,15 @@
     <java classname="org.flymine.codegen.CastorModelOutput" fork="true">
       <classpath refid="base.class.path" />
       <arg value="TestModel" />
-      <arg value="${build.src.test}" />
-      <arg value="${build.resources}" />
+      <arg value="${build}" />
+      <arg value="${build.model}/testmodel" />
     </java>
+
+    <copy todir="${build.model}/testmodel" flatten="true">
+      <fileset dir="${resources}">
+        <include name="**/castor*.xml"/>
+      </fileset>
+    </copy>
   </target>
 
 
@@ -237,15 +255,15 @@
           if="testmodel-repository.outofdate">
     <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
       <classpath refid="base.class.path" />
-      <arg value="${build.resources}/repository_testmodel.xml" />
-      <arg value="${build.schema}/testmodel-schema.xml" />
+      <arg value="${build.model}/testmodel/repository_testmodel.xml" />
+      <arg value="${build.model}/testmodel/testmodel-schema.xml" />
     </java>
-    <copy todir="${build.schema}">
+    <copy todir="${build.model}/testmodel">
       <fileset dir="${src.schema}">
         <include name="**/*-schema.xml"/>
       </fileset>
     </copy>
-    
+
     <taskdef
           name="build-db"
           classname="org.flymine.task.BuildDbTask">
@@ -254,8 +272,8 @@
     
     <build-db
           database="db.unittest"
-          destdir="${build.schema}">
-      <fileset dir="${build.schema}">
+          destdir="${build.model}/testmodel">
+      <fileset dir="${build.model}/testmodel">
         <include name="*-schema.xml" />
         </fileset>
     </build-db>
@@ -272,7 +290,7 @@
       </fileset>
     </copy>
     <javac destdir="${build.test}" listfiles="yes">
-      <classpath refid="project.class.path"/>
+      <classpath refid="test.class.path"/>
       <src path="${build.src.test}" />
     </javac>
   </target>
@@ -614,8 +632,9 @@
   <target name="jar-testmodel" depends="prepare-dist, compile-testmodel, generate-repository-testmodel, generate-castor-xml-mapping"
           description="create a jar of the testmodel">
     <jar destfile="${dist}/flymine-testmodel.jar">
-      <fileset dir="${build.test}" />
-      <fileset dir="${build.resources.testxml}" />
+      <fileset dir="${build.model}/testmodel" >
+        <exclude name="**/*.java"/>
+      </fileset>
     </jar>
   </target>
 
