@@ -358,7 +358,7 @@
                           <%-- might want to show up arrow --%>
                           <c:if test="${!empty attributeOptions}">
                             <im:vspacer height="5"/><br/>
-                            <img src="images/move-up-arrow.gif" alt="^^^" border="0"/><br/>
+                            <img src="images/up-arrow.gif" alt="^^^" border="0"/><br/>
                             <im:vspacer height="5"/><br/>
                           </c:if>
                         </span>
