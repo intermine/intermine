@@ -297,19 +297,6 @@ public class SessionMethods
     }
     
     /**
-     * Get the 
-     *
-    public static ObjectDetailsTrail getObjectDetailsTrail(HttpSession session) {
-        ObjectDetailsTrail trail
-                = (ObjectDetailsTrail) session.getAttribute(Constants.OBJECT_DETAILS_TRAIL);
-        if (trail == null) {
-            trail = new ObjectDetailsTrail();
-            session.setAttribute(Constants.OBJECT_DETAILS_TRAIL, trail);
-        }
-        return trail;
-    }*/
-    
-    /**
      * Get the COLLAPSED map from the session. If the attribute is not present then a new
      * map will be created.
      *
