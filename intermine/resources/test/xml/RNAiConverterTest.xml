@@ -17,54 +17,147 @@
     <attribute name="title" value="Systematic functional analysis of the Caenorhabditis elegans genome using RNAi"/>
     <attribute name="volume" value="16"/>
     <attribute name="year" value="2003"/>
+    <collection name="authors">
+      <reference ref_id="3_3"/>
+      <reference ref_id="3_4"/>
+      <reference ref_id="3_5"/>
+      <reference ref_id="3_6"/>
+      <reference ref_id="3_7"/>
+      <reference ref_id="3_8"/>
+      <reference ref_id="3_9"/>
+      <reference ref_id="3_10"/>
+      <reference ref_id="3_11"/>
+      <reference ref_id="3_12"/>
+      <reference ref_id="3_13"/>
+      <reference ref_id="3_14"/>
+      <reference ref_id="3_15"/>
+    </collection>
   </item>
-  <item id="3_3" class="http://www.flymine.org/model/rnai#RNAiExperiment">
-    <attribute name="publication" value="2_2"/>
+  <item id="3_3" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Kamath RS"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/rnai#Gene">
+  <item id="3_4" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Fraser AG"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_5" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Dong Y"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_6" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Poulin G"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_7" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Durbin R"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_8" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Gotta M"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_9" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Kanapin A"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_10" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Le Bot N"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_11" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Moreno S"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_12" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Sohrmann M"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_13" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Welchman DP"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_14" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Zipperlen P"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="3_15" class="http://www.flymine.org/model/rnai#Author">
+    <attribute name="name" value="Ahringer J"/>
+    <collection name="publications">
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="4_16" class="http://www.flymine.org/model/rnai#RNAiExperiment">
+    <reference name="publication" ref_id="2_2"/>
+  </item>
+  <item id="5_17" class="http://www.flymine.org/model/rnai#Gene">
     <attribute name="commonName" value=""/>
     <attribute name="sequenceName" value="AC7.1"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="phenotypes">
-      <reference ref_id="5_5"/>
-      <reference ref_id="5_6"/>
+      <reference ref_id="6_18"/>
+      <reference ref_id="6_19"/>
     </collection>
   </item>
-  <item id="4_7" class="http://www.flymine.org/model/rnai#Gene">
+  <item id="6_18" class="http://www.flymine.org/model/rnai#Phenotype">
+    <attribute name="code" value="Sck"/>
+    <reference name="subject" ref_id="5_17"/>
+    <collection name="evidence">
+      <reference ref_id="4_16"/>
+    </collection>
+  </item>
+  <item id="6_19" class="http://www.flymine.org/model/rnai#Phenotype">
+    <attribute name="code" value="Ste"/>
+    <reference name="subject" ref_id="5_17"/>
+    <collection name="evidence">
+      <reference ref_id="4_16"/>
+    </collection>
+  </item>
+  <item id="5_20" class="http://www.flymine.org/model/rnai#Gene">
     <attribute name="commonName" value="soc-2"/>
     <attribute name="sequenceName" value="AC7.2a"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="phenotypes">
-      <reference ref_id="5_8"/>
+      <reference ref_id="6_21"/>
     </collection>
     <collection name="synonyms">
-      <reference ref_id="6_9"/>
+      <reference ref_id="7_22"/>
     </collection>
   </item>
-  <item id="5_5" class="http://www.flymine.org/model/rnai#Phenotype">
-    <attribute name="code" value="Sck"/>
-    <reference name="subject" ref_id="4_4"/>
-    <collection name="evidence">
-      <reference ref_id="3_3"/>
-    </collection>
-  </item>
-  <item id="5_6" class="http://www.flymine.org/model/rnai#Phenotype">
-    <attribute name="code" value="Ste"/>
-    <reference name="subject" ref_id="4_4"/>
-    <collection name="evidence">
-      <reference ref_id="3_3"/>
-    </collection>
-  </item>
-  <item id="5_8" class="http://www.flymine.org/model/rnai#Phenotype">
+  <item id="6_21" class="http://www.flymine.org/model/rnai#Phenotype">
     <attribute name="code" value="WT"/>
-    <reference name="subject" ref_id="4_7"/>
+    <reference name="subject" ref_id="5_20"/>
     <collection name="evidence">
-      <reference ref_id="3_3"/>
+      <reference ref_id="4_16"/>
     </collection>
   </item>
-  <item id="6_9" class="http://www.flymine.org/model/rnai#Synonym">
+  <item id="7_22" class="http://www.flymine.org/model/rnai#Synonym">
     <attribute name="synonym" value="sur-8"/>
     <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="4_7"/>
+    <reference name="subject" ref_id="5_20"/>
   </item>
 </items>
