@@ -2,7 +2,9 @@ package org.flymine.codegen;
 
 import java.io.File;
 import java.util.Collection;
+//import java.util.LinkedHashSet;
 import java.util.Iterator;
+//import java.util.Set;
 
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;

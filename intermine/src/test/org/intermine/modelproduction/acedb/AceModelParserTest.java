@@ -3,7 +3,7 @@ package org.flymine.modelproduction.acedb;
 import junit.framework.*;
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.List;
+import java.util.Set;
 
 public class AceModelParserTest extends TestCase
 {
@@ -17,9 +17,9 @@ public class AceModelParserTest extends TestCase
             + "        wurble\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         assertEquals(0, node.getIndent());
         assertEquals("Flibble", node.getName());
         assertEquals(ModelNode.ANN_CLASS, node.getAnnotation());
@@ -50,9 +50,9 @@ public class AceModelParserTest extends TestCase
             + "        wurble";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         assertEquals(0, node.getIndent());
         assertEquals("Flibble", node.getName());
         assertEquals(ModelNode.ANN_CLASS, node.getAnnotation());
@@ -84,7 +84,7 @@ public class AceModelParserTest extends TestCase
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
         try {
-            List parsed = parser.parse(in);
+            Set parsed = parser.parse(in);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("Unmatched indentation", e.getMessage());
@@ -96,7 +96,7 @@ public class AceModelParserTest extends TestCase
         BufferedReader in = new BufferedReader(new StringReader(testText));
         try {
             AceModelParser parser = new AceModelParser();
-            List parsed = parser.parse(in);
+            Set parsed = parser.parse(in);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("Keyword \"REPEAT\" before \"Text\" not recognised.", e.getMessage());
@@ -109,9 +109,9 @@ public class AceModelParserTest extends TestCase
             + "                       subtag2\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         assertEquals(0, node.getIndent());
         assertEquals("?Class", node.getName());
         assertEquals(ModelNode.ANN_CLASS, node.getAnnotation());
@@ -148,9 +148,9 @@ public class AceModelParserTest extends TestCase
             = "?Class supertag UNIQUE Text XREF something REPEAT\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         assertEquals(0, node.getIndent());
         assertEquals("?Class", node.getName());
         assertEquals(ModelNode.ANN_CLASS, node.getAnnotation());
@@ -212,9 +212,9 @@ public class AceModelParserTest extends TestCase
             + "           SomethingWrong\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         try {
             parser.nodeClassToDescriptor(node);
             fail("Expected: IllegalArgumentException");
@@ -227,9 +227,9 @@ public class AceModelParserTest extends TestCase
         String testText = "?Class Tag UNIQUE\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         try {
             parser.nodeClassToDescriptor(node);
             fail("Expected: IllegalArgumentException");
@@ -258,9 +258,9 @@ public class AceModelParserTest extends TestCase
             + "                  Text\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         try {
             parser.nodeClassToDescriptor(node);
             fail("Expected: IllegalArgumentException");
@@ -273,9 +273,9 @@ public class AceModelParserTest extends TestCase
         String testText = "?Class Tag Text UNIQUE\n";
         BufferedReader in = new BufferedReader(new StringReader(testText));
         AceModelParser parser = new AceModelParser();
-        List parsed = parser.parse(in);
+        Set parsed = parser.parse(in);
         assertEquals(1, parsed.size());
-        ModelNode node = (ModelNode) parsed.get(0);
+        ModelNode node = (ModelNode) parsed.iterator().next();
         try {
             parser.nodeClassToDescriptor(node);
             fail("Expected: IllegalArgumentException");

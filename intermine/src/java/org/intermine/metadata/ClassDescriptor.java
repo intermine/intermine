@@ -1,10 +1,10 @@
 package org.flymine.metadata;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.flymine.util.StringUtil;
 
@@ -26,24 +26,24 @@ public class ClassDescriptor
     private final String superclassName;
     private final String interfaces;
     private ClassDescriptor superclassDescriptor;
-    private List interfaceNames = new ArrayList();
-    private final List interfaceDescriptors = new ArrayList();
+    private final Set interfaceNames;
+    private final Set interfaceDescriptors = new LinkedHashSet();
 
     private ClassDescriptor ultimateSuperclassDesc;
     private boolean ultimateSuperSet = false;
 
     private final boolean isInterface;
-    private final List attDescriptors;
-    private final List refDescriptors;
-    private final List colDescriptors;
+    private final Set attDescriptors;
+    private final Set refDescriptors;
+    private final Set colDescriptors;
     private final Map fieldDescriptors = new HashMap();
 
-    private final List pkFields = new ArrayList();
+    private final Set pkFields = new LinkedHashSet();
     private Model model;  // set when ClassDesriptor added to DescriptorRespository
     private boolean modelSet = false;
-    private List subclassDescriptors;
+    private Set subclassDescriptors;
     private boolean subSet = false;
-    private List implementorDescriptors;
+    private Set implementorDescriptors;
     private boolean implSet = false;
 
     /**
@@ -52,13 +52,13 @@ public class ClassDescriptor
      * @param superclassName the fully qualified super class name if one exists
      * @param interfaces a space string of fully qualified interface names
      * @param isInterface true if describing an interface
-     * @param atts a list of AttributeDescriptors
-     * @param refs a list of ReferenceDescriptors
-     * @param cols a list of CollectionDescriptors
+     * @param atts a Collection of AttributeDescriptors
+     * @param refs a Collection of ReferenceDescriptors
+     * @param cols a Collection of CollectionDescriptors
      * @throws IllegalArgumentException if fields are null
      */
     public ClassDescriptor(String name, String superclassName, String interfaces,
-                              boolean isInterface, List atts, List refs, List cols)
+            boolean isInterface, Set atts, Set refs, Set cols)
         throws IllegalArgumentException {
 
         // must provide class name
@@ -72,7 +72,9 @@ public class ClassDescriptor
 
         // split interface string into a Set
         if (interfaces != null && interfaces != "") {
-            interfaceNames = StringUtil.tokenize(interfaces);
+            interfaceNames = new LinkedHashSet(StringUtil.tokenize(interfaces));
+        } else {
+            interfaceNames = new LinkedHashSet();
         }
 
         this.isInterface = isInterface;
@@ -80,7 +82,7 @@ public class ClassDescriptor
         this.refDescriptors = refs;
         this.colDescriptors = cols;
 
-        // build maps of names to FieldDescriptors and populate pkFields list
+        // build maps of names to FieldDescriptors and populate pkFields set
 
         Iterator attIter = attDescriptors.iterator();
         while (attIter.hasNext()) {
@@ -140,18 +142,18 @@ public class ClassDescriptor
 
 
     /**
-     * Get a list of primary key FieldDescriptors for this Class and all its superclasses.
+     * Get a set of primary key FieldDescriptors for this Class and all its superclasses.
      * Could be a combination of attributes and references (and collections).
-     * @return list of primary key fields
+     * @return set of primary key fields
      * @throws IllegalStateException if model has not been set
      */
-    public List getPkFieldDescriptors() {
+    public Set getPkFieldDescriptors() {
         if (!modelSet) {
-            throw new IllegalStateException("This ClassDescriptor has not yet been added "
-                                            + "to a model.");
+            throw new IllegalStateException("This ClassDescriptor for " + name + " has not yet been"
+                    + " added to a model.");
         }
-        List allPkFields = new ArrayList(this.pkFields);
-        List supers = getAllSuperclassDescriptors();
+        Set allPkFields = new LinkedHashSet(this.pkFields);
+        Set supers = getAllSuperclassDescriptors();
         Iterator superIter = supers.iterator();
         while (superIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) superIter.next();
@@ -172,9 +174,9 @@ public class ClassDescriptor
     /**
      * Gets all AttributeDescriptors for this class - i.e. fields that are not references or
      * collections.
-     * @return list of attributes for this Class
+     * @return set of attributes for this Class
      */
-    public List getAttributeDescriptors() {
+    public Set getAttributeDescriptors() {
         return this.attDescriptors;
     }
 
@@ -198,9 +200,9 @@ public class ClassDescriptor
 
     /**
      * Gets the descriptors for the external object references in this class.
-     * @return list ReferenceDescriptors for this Class
+     * @return set ReferenceDescriptors for this Class
      */
-    public List getReferenceDescriptors() {
+    public Set getReferenceDescriptors() {
         return this.refDescriptors;
     }
 
@@ -224,9 +226,9 @@ public class ClassDescriptor
 
     /**
      * Gets all CollectionDescriptors for this class.
-     * @return list of CollectionDescriptors for this Class
+     * @return set of CollectionDescriptors for this Class
      */
-    public List getCollectionDescriptors() {
+    public Set getCollectionDescriptors() {
         return this.colDescriptors;
     }
 
@@ -262,11 +264,11 @@ public class ClassDescriptor
     }
 
     /**
-     * Get a list of ClassDescriptors for each of the interfaces that this class implements.
-     * @return a List of descriptors for the interfaces this class implements
+     * Get a set of ClassDescriptors for each of the interfaces that this class implements.
+     * @return a Set of descriptors for the interfaces this class implements
      * @throws IllegalStateException if the model is not set
      */
-    public List getInterfaceDescriptors() {
+    public Set getInterfaceDescriptors() {
         if (!modelSet) {
             throw new IllegalStateException("This ClassDescriptor has not yet been added "
                                             + "to a model.");
@@ -291,11 +293,11 @@ public class ClassDescriptor
     }
 
     /**
-     * Return a List of ClassDescriptors for all classes that extend this class
-     * @return list of subclass ClassDescriptors
-     * @throws IllegalStateException if the list of subclasses has not been set
+     * Return a Set of ClassDescriptors for all classes that extend this class
+     * @return set of subclass ClassDescriptors
+     * @throws IllegalStateException if the set of subclasses has not been set
      */
-    public List getSubclassDescriptors() throws IllegalStateException {
+    public Set getSubclassDescriptors() throws IllegalStateException {
         if (!subSet) {
             throw new IllegalStateException("This ClassDescriptor has not yet had subclass"
                                             + "Descriptors set.");
@@ -304,11 +306,11 @@ public class ClassDescriptor
     }
 
    /**
-     * Return a List of ClassDescriptors for all classes that implement this interface
-     * @return list of class that implement this class
+     * Return a Set of ClassDescriptors for all classes that implement this interface
+     * @return set of class that implement this class
      * @throws IllegalStateException if implementor descriptors have not been set
      */
-    public List getImplementorDescriptors() throws IllegalStateException {
+    public Set getImplementorDescriptors() throws IllegalStateException {
         if (!implSet) {
             throw new IllegalStateException("This ClassDescriptor has not yet had implementor "
                                             + "Descriptors set.");
@@ -338,18 +340,18 @@ public class ClassDescriptor
     }
 
     /**
-     * Return a List of AttributeDescriptors for all attribtes of this class and
+     * Return a Set of AttributeDescriptors for all attribtes of this class and
      * all super classes.
-     * @return list of AttributeDescriptors
+     * @return set of AttributeDescriptors
      * @throws IllegalStateException if model has not been set
      */
-    public List getAllAttributeDescriptors() {
+    public Set getAllAttributeDescriptors() {
         if (!modelSet) {
             throw new IllegalStateException("This ClassDescriptor has not yet been added "
                                             + "to a model.");
         }
-        List atts = new ArrayList(this.attDescriptors);
-        List supers = getAllSuperclassDescriptors();
+        Set atts = new LinkedHashSet(this.attDescriptors);
+        Set supers = getAllSuperclassDescriptors();
         Iterator superIter = supers.iterator();
         while (superIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) superIter.next();
@@ -380,12 +382,12 @@ public class ClassDescriptor
     }
 
     /**
-     * Set list of ClassDescriptors that are direct subclasses of this class.
+     * Set set of ClassDescriptors that are direct subclasses of this class.
      * Called once during Model creation.
-     * @param sub list of direct subclass descriptors
+     * @param sub set of direct subclass descriptors
      * @throws IllegalStateException if subclasses already set
      */
-    protected void setSubclassDescriptors(List sub) {
+    protected void setSubclassDescriptors(Set sub) {
         if (subSet) {
             throw new IllegalStateException("subclasses have already been set for this "
                                             + "ClassDescriptor (" + this.name + ").");
@@ -396,12 +398,12 @@ public class ClassDescriptor
 
 
     /**
-     * Set list of ClassDescriptors for classes that are direct implemetations
+     * Set set of ClassDescriptors for classes that are direct implemetations
      * of this class, i.e. not subclasses of implentations.
-     * @param impl list of direct implementations
+     * @param impl set of direct implementations
      * @throws IllegalStateException if implementors already set
      */
-    protected void setImplementorDescriptors(List impl) {
+    protected void setImplementorDescriptors(Set impl) {
         if (implSet) {
             throw new IllegalStateException("implementors have already been set for this "
                                             + "ClassDescriptor (" + this.name + ").");
@@ -470,9 +472,9 @@ public class ClassDescriptor
 
     }
 
-    // build a list of the superclass chain for this class
-    private List getAllSuperclassDescriptors() {
-        List supers = new ArrayList();
+    // build a set of the superclass chain for this class
+    private Set getAllSuperclassDescriptors() {
+        Set supers = new LinkedHashSet();
         ClassDescriptor cld = this;
         while (cld.getSuperclassDescriptor() != null) {
             cld = cld.getSuperclassDescriptor();
@@ -490,7 +492,7 @@ public class ClassDescriptor
             .append(superclassName != null ?  " extends=\"" + superclassName + "\"" : "")
             .append(interfaces != null ? " implements=\"" + interfaces + "\"" : "")
             .append(" is-interface=\"" + isInterface + "\">");
-        List l = new ArrayList();
+        Set l = new LinkedHashSet();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
         l.addAll(getCollectionDescriptors());

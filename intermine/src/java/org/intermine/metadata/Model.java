@@ -1,12 +1,12 @@
 package org.flymine.metadata;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Collection;
+import java.util.Set;
 
 import org.xml.sax.InputSource;
 
@@ -51,15 +51,15 @@ public class Model
     }
     
     /**
-     * Construct a Model with a name and list of ClassDescriptors.  The model will be
+     * Construct a Model with a name and set of ClassDescriptors.  The model will be
      * set to this in each of the ClassDescriptors. NB This method should only be called
      * by members of the modelproduction package, eventually it may be replaced with
      * a static addModel method linked to getInstanceByName
      * @param name name of model
-     * @param clds a List of ClassDescriptors in the model
+     * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, List clds) throws MetaDataException {
+    public Model(String name, Set clds) throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
@@ -78,9 +78,9 @@ public class Model
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cldMap.put(cld.getClassName(), cld);
 
-            // create maps of ClassDescriptor to empty lists for subclasses and implementors
-            subclassMap.put(cld, new ArrayList());
-            implementorsMap.put(cld, new ArrayList());
+            // create maps of ClassDescriptor to empty sets for subclasses and implementors
+            subclassMap.put(cld, new HashSet());
+            implementorsMap.put(cld, new HashSet());
         }
 
         // 2. Now set model in each ClassDescriptor, this sets up superclass, interface,
@@ -90,37 +90,37 @@ public class Model
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cld.setModel(this);
 
-            // add this to list of subclasses if a superclass exists
+            // add this to set of subclasses if a superclass exists
             ClassDescriptor superCld = cld.getSuperclassDescriptor();
             if (superCld != null) {
-                List sub = (List) subclassMap.get(superCld);
+                Set sub = (Set) subclassMap.get(superCld);
                 sub.add(cld);
             }
 
-            // add this class to implementors lists for any interfaces
-            List interfaces = cld.getInterfaceDescriptors();
+            // add this class to implementors sets for any interfaces
+            Set interfaces = cld.getInterfaceDescriptors();
             if (interfaces.size() > 0) {
                 Iterator iter = interfaces.iterator();
                 while (iter.hasNext()) {
                     ClassDescriptor iCld = (ClassDescriptor) iter.next();
-                    List implementors = (List) implementorsMap.get(iCld);
+                    Set implementors = (Set) implementorsMap.get(iCld);
                     implementors.add(cld);
                 }
             }
 
         }
 
-        // 3. Finally, set completed lists of subclasses and implementors in
+        // 3. Finally, set completed sets of subclasses and implementors in
         //    each ClassDescriptor.
         cldIter = clds.iterator();
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
 
-            List sub = (List) subclassMap.get(cld);
+            Set sub = (Set) subclassMap.get(cld);
             cld.setSubclassDescriptors(sub);
 
             if (cld.isInterface()) {
-                List implementors = (List) implementorsMap.get(cld);
+                Set implementors = (Set) implementorsMap.get(cld);
                 if (implementors.size() > 0) {
                     cld.setImplementorDescriptors(implementors);
                 }
@@ -143,10 +143,10 @@ public class Model
 
     /**
      * Get all ClassDescriptors in this model.
-     * @return a list of all ClassDescriptors in the model
+     * @return a set of all ClassDescriptors in the model
      */
-    public List getClassDescriptors() {
-        return new ArrayList(cldMap.values());
+    public Set getClassDescriptors() {
+        return new HashSet(cldMap.values());
     }
 
     /**

@@ -32,8 +32,6 @@ import ru.novosoft.uml.foundation.data_types.MMultiplicity;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.LinkedHashSet;
@@ -57,7 +55,8 @@ public class XmiParser extends AbstractModelParser
     protected static final Logger LOG = Logger.getLogger(XmiParser.class);
 
     private Collection keys;
-    private List attributes, references, collections, classes = new ArrayList();
+    private Set attributes, references, collections;
+    private Set classes = new LinkedHashSet();
 
     /**
      * @see ModelParser#process
@@ -98,14 +97,14 @@ public class XmiParser extends AbstractModelParser
 
         keys = getKeys(cls);
 
-        attributes = new ArrayList();
+        attributes = new LinkedHashSet();
         Iterator strIter = getAttributes(cls).iterator();
         while (strIter.hasNext()) {
             generateAttribute((MAttribute) strIter.next());
         }
-
-        references = new ArrayList();
-        collections = new ArrayList();
+        
+        references = new LinkedHashSet();
+        collections = new LinkedHashSet();
         Iterator endIter = cls.getAssociationEnds().iterator();
         while (endIter.hasNext()) {
             generateAssociationEnd(((MAssociationEnd) endIter.next()).getOppositeEnd());
@@ -179,7 +178,7 @@ public class XmiParser extends AbstractModelParser
         if (generalizations == null || generalizations.size() == 0) {
             return null;
         }
-        Collection classes = new ArrayList();
+        Collection classes = new LinkedHashSet();
         Iterator enum = generalizations.iterator();
         while (enum.hasNext()) {
             MGeneralization g = (MGeneralization) enum.next();
@@ -188,10 +187,10 @@ public class XmiParser extends AbstractModelParser
                 classes.add(ge);
             }
         }
-        return generateClassList(classes);
+        return generateClassSet(classes);
     }
 
-    private String generateClassList(Collection classifiers) {
+    private String generateClassSet(Collection classifiers) {
         if (classifiers == null) {
             return "";
         }
@@ -212,7 +211,7 @@ public class XmiParser extends AbstractModelParser
     }
 
     private Collection getSpecifications(MClassifier cls) {
-        Collection result = new ArrayList();
+        Collection result = new LinkedHashSet();
         Iterator depIterator = cls.getClientDependencies().iterator();
 
         while (depIterator.hasNext()) {
@@ -229,7 +228,7 @@ public class XmiParser extends AbstractModelParser
     }
 
     private Collection getAttributes(MClassifier classifier) {
-        Collection result = new ArrayList();
+        Collection result = new LinkedHashSet();
         Iterator features = classifier.getFeatures().iterator();
         while (features.hasNext()) {
             MFeature feature = (MFeature) features.next();

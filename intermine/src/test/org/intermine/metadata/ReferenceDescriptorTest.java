@@ -2,9 +2,10 @@ package org.flymine.metadata;
 
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class ReferenceDescriptorTest extends TestCase {
@@ -51,7 +52,7 @@ public class ReferenceDescriptorTest extends TestCase {
     public void testSetClassDescriptor() throws Exception {
 
         ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
-                                                  new ArrayList(), new ArrayList(), new ArrayList());
+                                                  new HashSet(), new HashSet(), new HashSet());
 
         ReferenceDescriptor rfd = new ReferenceDescriptor("name", true, "String", "String");
         try {
@@ -70,10 +71,10 @@ public class ReferenceDescriptorTest extends TestCase {
 
     public void testReferencedClassNotSet() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
-        List references = Arrays.asList(new Object[] {rfd1});
+        Set references = Collections.singleton(rfd1);
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), references, new ArrayList());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), references, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
         try {
             ClassDescriptor refCld = rfd1.getReferencedClassDescriptor();
             fail("Expected IllegalStateException, model has not yet been set");
@@ -84,11 +85,11 @@ public class ReferenceDescriptorTest extends TestCase {
 
     public void testGetReferencedClass() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
-        List references = Arrays.asList(new Object[] {rfd1});
+        Set references = Collections.singleton(rfd1);
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), references, new ArrayList());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
-        Model model = new Model("model", Arrays.asList(new Object[] {cld1, cld2}));
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), references, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         try {
             ClassDescriptor refCld = rfd1.getReferencedClassDescriptor();
             assertTrue("ClassDescriptor was null", refCld != null);
@@ -102,11 +103,11 @@ public class ReferenceDescriptorTest extends TestCase {
         // rfd1 in Class1 points to Class2, rfd2 in Class2 points to Class1
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", "rfd2");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", false, "Class1", "rfd1");
-        List refs1 = Arrays.asList(new Object[] {rfd1});
-        List refs2 = Arrays.asList(new Object[] {rfd2});
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), refs1, new ArrayList());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), refs2, new ArrayList());
-        Model model = new Model("model", Arrays.asList(new Object[] {cld1, cld2}));
+        Set refs1 = Collections.singleton(rfd1);
+        Set refs2 = Collections.singleton(rfd2);
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), refs1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), refs2, new HashSet());
+        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         try {
             ReferenceDescriptor rfdReverse = rfd1.getReverseReferenceDescriptor();
             assertEquals(rfd2, rfdReverse);
@@ -121,13 +122,13 @@ public class ReferenceDescriptorTest extends TestCase {
         // rfd1 points to Class2 but has reverse reference (rfdDummy) that is not a field of Class1
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", "rfdDummy");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", false, "Class1", "rfd1");
-        List refs1 = Arrays.asList(new Object[] {rfd1});
-        List refs2 = Arrays.asList(new Object[] {rfd2});
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), refs1, new ArrayList());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), refs2, new ArrayList());
+        Set refs1 = Collections.singleton(rfd1);
+        Set refs2 = Collections.singleton(rfd2);
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), refs1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), refs2, new HashSet());
 
         try {
-            Model model = new Model("model", Arrays.asList(new Object[] {cld1, cld2}));
+            Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
             fail("Expected a MetaDataException to be thrown");
         } catch (MetaDataException e) {
         }

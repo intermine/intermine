@@ -2,7 +2,7 @@ package org.flymine.metadata;
 
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class AttributeDescriptorTest extends TestCase {
 
@@ -48,7 +48,7 @@ public class AttributeDescriptorTest extends TestCase {
     public void testSetClassDescriptor() throws Exception {
 
         ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
-                                                  new ArrayList(), new ArrayList(), new ArrayList());
+                                                  new HashSet(), new HashSet(), new HashSet());
 
         AttributeDescriptor atd = new AttributeDescriptor("name", true, "String");
         try {

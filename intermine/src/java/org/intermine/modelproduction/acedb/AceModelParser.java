@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import org.flymine.modelproduction.AbstractModelParser;
@@ -65,8 +65,8 @@ public class AceModelParser extends AbstractModelParser
      * @throws MetaDataException if the model is inconsistent
      */
     public Model readerToModel(BufferedReader in) throws IOException, MetaDataException {
-        List classes = parse(in);
-        List classDescriptors = new ArrayList();
+        Set classes = parse(in);
+        Set classDescriptors = new LinkedHashSet();
         addBuiltinClasses(classDescriptors);
         Iterator classIter = classes.iterator();
         while (classIter.hasNext()) {
@@ -77,41 +77,41 @@ public class AceModelParser extends AbstractModelParser
     }
 
     /**
-     * Adds a predefined list of builtin classes.
+     * Adds a predefined set of builtin classes.
      *
-     * @param l a List of ClassDescriptors to add to
+     * @param l a Set of ClassDescriptors to add to
      */
-    public void addBuiltinClasses(List l) {
-        List atts = new ArrayList();
-        List refs = Collections.EMPTY_LIST;
-        List cols = Collections.EMPTY_LIST;
+    public void addBuiltinClasses(Set l) {
+        Set atts = new LinkedHashSet();
+        Set refs = Collections.EMPTY_SET;
+        Set cols = Collections.EMPTY_SET;
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "Colour", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("sequence", false, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "DNA", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.util.Date"));
         l.add(new ClassDescriptor(PACKAGE + "DateType", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "float"));
         l.add(new ClassDescriptor(PACKAGE + "Float", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "int"));
         l.add(new ClassDescriptor(PACKAGE + "Int", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "Keyword", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("text", false, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "LongText", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("peptide", false, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "Peptide", null, null, false, atts, refs, cols));
-        atts = new ArrayList();
+        atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         l.add(new ClassDescriptor(PACKAGE + "Text", null, null, false, atts, refs, cols));
     }
@@ -120,14 +120,14 @@ public class AceModelParser extends AbstractModelParser
      * Parses the given file.
      *
      * @param in the BufferedReader containing the file to parse
-     * @return a List of ModelNodes, each representing a class
+     * @return a Set of ModelNodes, each representing a class
      * @throws IOException when the file has a problem
      */
-    public List parse(BufferedReader in) throws IOException {
+    public Set parse(BufferedReader in) throws IOException {
         PrintStream out = System.out;
         PrintStream err = System.err;
         Stack indents = new Stack();
-        List results = new ArrayList();
+        Set results = new LinkedHashSet();
         ModelTokenStream mts = new ModelTokenStream(in);
         ModelNode mn = mts.nextToken();
         while (mn != null) {
@@ -207,7 +207,7 @@ public class AceModelParser extends AbstractModelParser
             }
             mn = mts.nextToken();
         }
-        //out.println("Final list of classes: " + results);
+        //out.println("Final set of classes: " + results);
         return results;
     }
 
@@ -242,11 +242,11 @@ public class AceModelParser extends AbstractModelParser
      */
     public ClassDescriptor nodeClassToDescriptor(ModelNode node) {
         if (node.getAnnotation() == ModelNode.ANN_CLASS) {
-            List atts = new ArrayList();
-            List refs = new ArrayList();
-            List cols = new ArrayList();
+            Set atts = new LinkedHashSet();
+            Set refs = new LinkedHashSet();
+            Set cols = new LinkedHashSet();
             atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-            nodeToLists(node.getChild(), "value", true, atts, refs, cols);
+            nodeToSets(node.getChild(), "value", true, atts, refs, cols);
             return new ClassDescriptor(PACKAGE + node.getName().substring(1),
                     null, null, false, atts, refs, cols);
         } else {
@@ -256,25 +256,25 @@ public class AceModelParser extends AbstractModelParser
 
     /**
      * Converts a ModelNode that is not a class into a FieldDescriptor and puts it into the supplied
-     * Lists.
+     * Sets.
      *
      * @param node a ModelNode to convert
      * @param parent the name of the parent, for the case where this node is actually a Reference
      * @param collection true if the parent node is not a UNIQUE keyword
-     * @param atts a List of AttributeDescriptors to add to
-     * @param refs a List of ReferenceDescriptors to add to
-     * @param cols a List of CollectionDescriptors to add to
+     * @param atts a Set of AttributeDescriptors to add to
+     * @param refs a Set of ReferenceDescriptors to add to
+     * @param cols a Set of CollectionDescriptors to add to
      */
-    public void nodeToLists(ModelNode node, String parent, boolean collection, List atts,
-            List refs, List cols) {
+    public void nodeToSets(ModelNode node, String parent, boolean collection, Set atts,
+            Set refs, Set cols) {
         if (node.getAnnotation() == ModelNode.ANN_TAG) {
             if (node.getChild() != null) {
-                nodeToLists(node.getChild(), node.getName(), true, atts, refs, cols);
+                nodeToSets(node.getChild(), node.getName(), true, atts, refs, cols);
             } else {
                 atts.add(new AttributeDescriptor(node.getName(), false, "boolean"));
             }
             if (node.getSibling() != null) {
-                nodeToLists(node.getSibling(), parent, collection, atts, refs, cols);
+                nodeToSets(node.getSibling(), parent, collection, atts, refs, cols);
             }
         } else if ((node.getAnnotation() == ModelNode.ANN_KEYWORD)
                 && "UNIQUE".equals(node.getName())) {
@@ -282,12 +282,12 @@ public class AceModelParser extends AbstractModelParser
                 throw new IllegalArgumentException("Unsuitable node next to TAG-UNIQUE");
             }
             if (node.getChild() != null) {
-                nodeToLists(node.getChild(), parent, false, atts, refs, cols);
+                nodeToSets(node.getChild(), parent, false, atts, refs, cols);
             } else {
                 throw new IllegalArgumentException("UNIQUE cannot be a leaf node");
             }
         } else if (node.getAnnotation() == ModelNode.ANN_REFERENCE) {
-            nodeRefToLists(node, parent, collection, 1, atts, refs, cols);
+            nodeRefToSets(node, parent, collection, 1, atts, refs, cols);
         } else {
             throw new IllegalArgumentException("Unknown node");
         }
@@ -295,18 +295,18 @@ public class AceModelParser extends AbstractModelParser
 
     /**
      * Converts a ModelNode that is a reference into a FieldDescriptor and puts it into the supplied
-     * Lists.
+     * Sets.
      *
      * @param node a ModelNode to convert
      * @param parent the name of the parent tag
      * @param collection true if this reference is a collection
      * @param number the field number for this parent tag name
-     * @param atts a list of AttributeDescriptors to add to
-     * @param refs a List of ReferenceDescriptors to add to
-     * @param cols a List of CollectionDescriptors to add to
+     * @param atts a Set of AttributeDescriptors to add to
+     * @param refs a Set of ReferenceDescriptors to add to
+     * @param cols a Set of CollectionDescriptors to add to
      */
-    public void nodeRefToLists(ModelNode node, String parent, boolean collection,
-            int number, List atts, List refs, List cols) {
+    public void nodeRefToSets(ModelNode node, String parent, boolean collection,
+            int number, Set atts, Set refs, Set cols) {
         if (node.getSibling() != null) {
             throw new IllegalArgumentException("Another node next to a reference");
         }
@@ -344,14 +344,14 @@ public class AceModelParser extends AbstractModelParser
         }
         if (nextNode != null) {
             if (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE) {
-                nodeRefToLists(nextNode, parent, true, number + 1, atts, refs, cols);
+                nodeRefToSets(nextNode, parent, true, number + 1, atts, refs, cols);
             } else if ((nextNode.getAnnotation() == ModelNode.ANN_KEYWORD)
                     && "UNIQUE".equals(nextNode.getName())) {
                 nextNode = nextNode.getChild();
                 if (nextNode == null) {
                     throw new IllegalArgumentException("UNIQUE cannot be a leaf node");
                 } else if (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE) {
-                    nodeRefToLists(nextNode, parent, collection, number + 1, atts, refs, cols);
+                    nodeRefToSets(nextNode, parent, collection, number + 1, atts, refs, cols);
                 } else {
                     throw new IllegalArgumentException("Invalid node type after a reference and"
                             + " UNIQUE");

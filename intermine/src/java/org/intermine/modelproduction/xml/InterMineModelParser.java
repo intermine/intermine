@@ -1,7 +1,7 @@
 package org.flymine.modelproduction.xml;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,10 +48,10 @@ public class FlyMineModelParser
     }
 
     /**
-     * Return list of class descriptors
-     * @return list of class descriptors
+     * Return set of class descriptors
+     * @return Set of class descriptors
      */
-    public List getClasses() {
+    public Set getClasses() {
         return handler.classes;
     }
 
@@ -61,7 +61,7 @@ public class FlyMineModelParser
     class ModelHandler extends DefaultHandler
     {
         String modelName;
-        List classes = new ArrayList();
+        Set classes = new LinkedHashSet();
         SkeletonClass cls;
 
         /**
@@ -119,9 +119,9 @@ public class FlyMineModelParser
     {
         String name, extend, implement;
         boolean isInterface;
-        List attributes = new ArrayList();
-        List references = new ArrayList();
-        List collections = new ArrayList();
+        Set attributes = new LinkedHashSet();
+        Set references = new LinkedHashSet();
+        Set collections = new LinkedHashSet();
         /**
          * Constructor
          * @param name the fully qualified name of the described class
