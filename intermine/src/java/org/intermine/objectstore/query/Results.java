@@ -5,9 +5,14 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
+import java.util.Iterator;
+import java.lang.reflect.Field;
 
+import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ojb.LazyCollection;
 
 /**
  * Results representation as a List of ResultRows
@@ -57,7 +62,7 @@ public class Results extends AbstractList
      * @return the relevant ResultRows as a List
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public List range(int start, int end) throws ObjectStoreException {
+    public List range(int start, int end) throws ObjectStoreException, FlyMineException {
         List rows;
 
         if (start > end) {
@@ -88,13 +93,15 @@ public class Results extends AbstractList
      * @param end the end row
      * @return a List of ResultsRows made up of the ResultsRows in the individual batches
      */
-    protected List localRange(int start, int end) {
+    protected List localRange(int start, int end) throws FlyMineException {
         List ret = new ArrayList();
         int startBatch = getBatchNoForRow(start);
         int endBatch = getBatchNoForRow(end);
 
         for (int i = startBatch; i <= endBatch; i++) {
-            ret.addAll(getRowsFromBatch(i, start, end));
+            List rows = getRowsFromBatch(i, start, end);
+            //promoteLazyCollections(rows);
+            ret.addAll(rows);
         }
         return ret;
     }
@@ -143,6 +150,8 @@ public class Results extends AbstractList
             resultList = range(index, index);
         } catch (ObjectStoreException e) {
             throw new ArrayIndexOutOfBoundsException("ObjectStore error has occured");
+        } catch (FlyMineException e) {
+            throw new RuntimeException("FlyMineException occurred. " + e.getMessage());
         }
         return resultList.get(0);
     }
@@ -159,6 +168,8 @@ public class Results extends AbstractList
             ret = range(start, end - 1);
         } catch (ObjectStoreException e) {
             throw new ArrayIndexOutOfBoundsException("ObjectStore error has occured");
+        } catch (FlyMineException e) {
+            throw new RuntimeException("FlyMineException occurred. " + e.getMessage());
         }
         return ret;
     }
@@ -213,4 +224,44 @@ public class Results extends AbstractList
         return (int) (row / batchSize);
     }
 
+
+    /**
+     * Iterate through a list of ResultsRows converting any objects' LazyCollection fields
+     * to Results objects.  The LazyCollection wraps a Query, these need to be converted to
+     * Results so that they have an ObjectStore reference and are able to run themselves.
+     *
+     * @param rows a list of rows (Lists) to search through
+     * @throws FlyMineException if errors occur accessing object fields
+     */
+    protected void promoteProxies(List rows) throws FlyMineException {
+
+        try {
+            // iterate through each object in each row
+            Iterator listIter = rows.iterator();
+            while (listIter.hasNext()) {
+                List rr = (List) listIter.next();
+                Iterator rowIter = rr.iterator();
+                while (rowIter.hasNext()) {
+                    Object obj = (Object) rowIter.next();
+                    // reflect on fields of obj, if any are LazyCollections build Results
+                    Class objClass = obj.getClass();
+                    Field fields[] = objClass.getDeclaredFields();
+                    for (int i = 0; i < fields.length; i++) {
+                        fields[i].setAccessible(true);
+                        if (Collection.class.isAssignableFrom(fields[i].getType())) {
+                            Collection col = (Collection) fields[i].get(obj);
+                            if (col instanceof LazyCollection) {
+                                Results res = new Results(((LazyCollection)fields[i].get(obj)).getQuery(), os);
+                                fields[i].set(obj, res);
+                            }
+                        }
+                        // do the same for reference proxies...
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw (new FlyMineException("Error encountered converting LazyCollections to Results. "
+                                        + e.getMessage()));
+        }
+    }
 }
