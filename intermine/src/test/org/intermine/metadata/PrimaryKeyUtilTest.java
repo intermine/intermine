@@ -12,23 +12,18 @@ package org.intermine.metadata;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.ArrayList;
-
-import servletunit.struts.MockStrutsTestCase;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.testmodel.*;
+import org.intermine.metadata.FieldDescriptor;
 
 /**
- * Tests for PrimaryKeyUtil.
+ * Tests for PrimaryKeyUtil
  *
  * @author Kim Rutherford
  */
-
 public class PrimaryKeyUtilTest extends TestCase
 {
     public PrimaryKeyUtilTest(String arg) {
@@ -38,9 +33,11 @@ public class PrimaryKeyUtilTest extends TestCase
     public void testGetPrimaryKeyFields() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         Class c = Class.forName("org.intermine.model.testmodel.Employee");
-        List fields = PrimaryKeyUtil.getPrimaryKeyFields(model, c);
-        ArrayList testFieldNames = new ArrayList();
-        testFieldNames.add("name");
+        Set fields = PrimaryKeyUtil.getPrimaryKeyFields(model, c);
+        Set testFieldNames = new HashSet();
+        ClassDescriptor cld = model.getClassDescriptorByName(c.getName());
+        FieldDescriptor fd = cld.getFieldDescriptorByName("name");
+        testFieldNames.add(fd);
         assertEquals(testFieldNames, fields);
     }
 }

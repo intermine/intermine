@@ -15,32 +15,26 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.Iterator;
-
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
-import org.apache.struts.tiles.ComponentContext;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 
 /**
- * Implementation of <strong>TilesAction</strong>. Assembles data for
- * viewing an object.
+ * Implementation of <strong>Action</strong> that assembles data for viewing an object
  * @author Mark Woodbridge
  */
-public class ObjectDetailsController extends TilesAction
+public class ObjectDetailsController extends Action
 {
     /**
-     * @see TilesAction#execute
+     * @see Action#execute
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -48,23 +42,17 @@ public class ObjectDetailsController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        String id = request.getParameter("id");
-        String fieldName = request.getParameter("field");
 
-        Object o = os.getObjectById(new Integer(id));
-        if (fieldName != null) {
-            o = TypeUtil.getFieldValue(o, fieldName);
+        String idString = (String) request.getParameter("id");
+        if (idString != null && !"".equals(idString)) {
+            InterMineObject object = os.getObjectById(new Integer(idString));
+            String field = request.getParameter("field");
+            if (field != null) {
+                object = (InterMineObject) TypeUtil.getFieldValue(object, field);
+            }
+            session.setAttribute("object", new DisplayObject(object, os.getModel()));
         }
-
-        String leafCldNames = "";
-        for (Iterator i = ObjectViewController.getLeafClds(o.getClass(), model).iterator();
-             i.hasNext();
-             leafCldNames += " ") {
-            leafCldNames += ((ClassDescriptor) i.next()).getUnqualifiedName();
-        }
-        session.setAttribute(Constants.RESULTS_TABLE, new PagedObject(leafCldNames, o));
-
+        
         return null;
     }
 }

@@ -110,7 +110,7 @@
     <put name="historyQueryView" value="historyQueryView.jsp"/>
   </definition>
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
-  <definition name="objectDetailsPage.tile" path="/table.jsp" controllerUrl="/initObjectDetails.do"/>
+  <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="collectionDetailsPage.tile" path="/table.jsp" controllerUrl="/initCollectionDetails.do"/>
   <definition name="bagDetailsPage.tile" path="/table.jsp" controllerUrl="/initBagDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>

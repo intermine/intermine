@@ -10,9 +10,8 @@ package org.intermine.metadata;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.intermine.dataloader.PrimaryKey;
@@ -33,29 +32,19 @@ public abstract class PrimaryKeyUtil
      * @param c the Class to fetch primary key fields from
      * @return a List of all fields that appear in any primary key
      */
-    public static List getPrimaryKeyFields(Model model, Class c) {        
-        ArrayList primaryKeyFields = new ArrayList();
-
-        for (Iterator classIter = model.getClassDescriptorsForClass(c).iterator();
-             classIter.hasNext();) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) classIter.next();
-
-            Map primaryKeys = DataLoaderHelper.getPrimaryKeys(classDescriptor);
-
-            for (Iterator keyIter = primaryKeys.keySet().iterator(); keyIter.hasNext();) {
-                String keyKey = (String) keyIter.next();
-                PrimaryKey primaryKey;
-                primaryKey = (PrimaryKey) primaryKeys.get(keyKey);
-                for (Iterator nameIter = primaryKey.getFieldNames().iterator();
-                     nameIter.hasNext(); ) {
-                    String fieldName = (String) nameIter.next();
-                    if (!primaryKeyFields.contains(fieldName)) {
-                        primaryKeyFields.add(fieldName);
-                    }
+    public static Set getPrimaryKeyFields(Model model, Class c) {        
+        Set pkFields = new HashSet();
+        for (Iterator i = model.getClassDescriptorsForClass(c).iterator(); i.hasNext();) {
+            ClassDescriptor cld = (ClassDescriptor) i.next();
+            for (Iterator j = DataLoaderHelper.getPrimaryKeys(cld).values().iterator();
+                 j.hasNext();) {
+                PrimaryKey pk = (PrimaryKey) j.next();
+                for (Iterator k = pk.getFieldNames().iterator(); k.hasNext();) {
+                    String fieldName = (String) k.next();
+                    pkFields.add(cld.getFieldDescriptorByName(fieldName));
                 }
             }
         }
-
-        return primaryKeyFields;
+        return pkFields;
     }
 }

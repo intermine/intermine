@@ -160,6 +160,13 @@
       <forward name="query" path="query.page"/>
     </action>
 
+    <action path="/modifyDetails"
+            type="org.intermine.web.results.ModifyDetails"
+            parameter="method">
+      <forward name="objectDetails" path="objectDetails.page"/>
+      <forward name="results" path="results.page"/>
+    </action>
+
     <!-- Actions invoked using buttons - no other form input -->
     <action path="/viewAction"
             type="org.intermine.web.ViewAction"
