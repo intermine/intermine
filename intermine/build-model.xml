@@ -116,6 +116,10 @@
   <target name="generate-owl-model"
           description="Generate InterMine model from an OWL file">
 
+    <copy file="${model}/${model.name}/${model.name}.n3"
+          todir="${build.model.dir}"
+          overwrite="false"/>
+
     <java classname="org.intermine.ontology.Owl2InterMine" fork="true">
       <classpath refid="class.path" />
       <arg value="${build.model.dir}/${model.name}.n3" />
