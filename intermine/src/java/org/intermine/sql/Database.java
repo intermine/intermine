@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Date;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import javax.sql.DataSource;
 
@@ -70,6 +72,12 @@ public class Database implements Shutdownable
         } catch (Exception e) {
             LOG.info("Creating new invalid Database with ClassLoader "
                     + getClass().getClassLoader());
+            e.fillInStackTrace();
+            StringWriter message = new StringWriter();
+            PrintWriter pw = new PrintWriter(message);
+            e.printStackTrace(pw);
+            pw.close();
+            LOG.info(message.toString());
         }
         ShutdownHook.registerObject(new WeakReference(this));
     }
@@ -319,7 +327,7 @@ public class Database implements Shutdownable
     }
 
     private static final Map POSTGRESQL_TYPE_STRING_MAP = new HashMap();
-    
+
     static {
         POSTGRESQL_TYPE_STRING_MAP.put(Boolean.class, "boolean");
         POSTGRESQL_TYPE_STRING_MAP.put(Float.class, "real");
