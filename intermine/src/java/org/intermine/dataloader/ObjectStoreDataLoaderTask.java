@@ -13,8 +13,9 @@ package org.intermine.dataloader;
 import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
-import org.intermine.task.ClassPathTask;
+import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
  * Uses an IntegrationWriter to load data from another ObjectStore
@@ -22,7 +23,7 @@ import org.intermine.task.ClassPathTask;
  * @author Andrew Varley
  * @author Matthew Wakeling
  */
-public class ObjectStoreDataLoaderTask extends ClassPathTask
+public class ObjectStoreDataLoaderTask extends Task
 {
     protected String integrationWriter;
     protected String source;
@@ -69,30 +70,20 @@ public class ObjectStoreDataLoaderTask extends ClassPathTask
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (this.integrationWriter == null) {
+        if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
         }
-        if (this.source == null) {
+        if (source == null) {
             throw new BuildException("source attribute is not set");
         }
 
         try {
-            Object driver = loadClass("org.intermine.dataloader.ObjectStoreDataLoaderDriver");
-
-            // Have to execute the loadData method by reflection as
-            // cannot cast to something that this class (which may use
-            // a different ClassLoader) can see
-
-            Method method = driver.getClass().getMethod("loadData", new Class[] {String.class,
-                                                                                 String.class,
-                                                                                 String.class,
-                                                                                 Boolean.TYPE});
-            method.invoke(driver, new Object [] {integrationWriter,
-                                                 source,
-                                                 sourceName,
-                                                 Boolean.valueOf(ignoreDuplicates)});
+            IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
+            iw.setIgnoreDuplicates(ignoreDuplicates);
+            new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
+                                                  iw.getMainSource(sourceName),
+                                                  iw.getSkeletonSource(sourceName));
         } catch (Exception e) {
-            e.printStackTrace();
             throw new BuildException(e);
         }
     }

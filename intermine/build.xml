@@ -405,15 +405,12 @@
 
   <!-- insert the testmodel data into the database -->
   <target name="insert-data-unittest" depends="build-db-unittest">
-    <taskdef
-      name="insert-xml-data"
-      classname="org.intermine.dataloader.XmlDataLoaderTask">
+    <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
-
-    <insert-xml-data integrationWriter="integration.unittestsingle" xmlFile="${build.resources.test}/testmodel_data.xml" sourceName="testsource">
-      <classpath refid="test.class.path"/>
-    </insert-xml-data>
+    <insert-xml-data integrationWriter="integration.unittestsingle"
+                     xmlFile="${build.resources.test}/testmodel_data.xml"
+                     sourceName="testsource"/>
   </target>
 
   <!-- index the unittest database -->
@@ -501,7 +498,6 @@
           </depend>
           <exclude name="org/intermine/web/**" />
           <exclude name="org/intermine/objectstore/webservice/**" />
-          <exclude name="org/intermine/task/ClassPathTaskTest.class" />
           <exclude name="org/intermine/dataconversion/ItemToObject*" />
           <exclude name="org/intermine/util/CacheMapTest.class" />
         </fileset>
