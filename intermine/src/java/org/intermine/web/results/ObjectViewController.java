@@ -13,7 +13,6 @@ package org.intermine.web.results;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -70,41 +69,43 @@ public class ObjectViewController extends TilesAction
         Object o = request.getAttribute("object");
 
         if (o == null) {
-            String idString = (String) request.getParameter("id");
-            if (idString != null) {
-                Integer id = new Integer(idString);
+            String objectId = (String) request.getParameter("id");
+            if (objectId != null) {
+                o = os.getObjectById(new Integer(objectId));
                 String field = request.getParameter("field");
-                o = os.getObjectById(id);
-
-                if (o != null && field != null) {
+                if (field != null) {
                     o = TypeUtil.getFieldValue(o, field);
                 }
-                context.putAttribute("object", o);
             }
+        }
+        
+        if (o == null) {
+            //this wouldn't be necessary if objectdetails was tidier
+            session.removeAttribute("object");
+        } else {
+            context.putAttribute("object", o);
         }
 
         Set leafClds = null;
-        Map primaryKeyFields = null;
 
         if (o instanceof InterMineObject) {
             leafClds = getLeafClds(o.getClass(), model);
 
             if ("summary".equals((String) request.getAttribute("viewType"))) {
-                primaryKeyFields = new LinkedHashMap();
+                Map primaryKeyFields = new LinkedHashMap();
                 Class c = o.getClass();
                 for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, c).iterator();
                      i.hasNext();) {
                     FieldDescriptor fd = (FieldDescriptor) i.next();
                     primaryKeyFields.put(fd.getName(), fd.getName());
+                    context.putAttribute("primaryKeyFields", primaryKeyFields);
                 }
             }
         } else {
             leafClds = new HashSet();
-            primaryKeyFields = new HashMap();
         }
 
         context.putAttribute("leafClds", leafClds);
-        context.putAttribute("primaryKeyFields", primaryKeyFields);
 
         return null;
     }
