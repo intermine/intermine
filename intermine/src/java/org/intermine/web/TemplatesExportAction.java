@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.objectstore.ObjectStore;
+
 /**
  * Exports templates to XML.
  *
@@ -57,7 +58,7 @@ public class TemplatesExportAction extends Action
         }
         
         PrintStream out = new PrintStream(response.getOutputStream());
-        out.print(TemplateHelper.templateMapToXML(templates));
+        out.print(TemplateHelper.templateMapToXml(templates));
         out.flush();
         return null;
     }
