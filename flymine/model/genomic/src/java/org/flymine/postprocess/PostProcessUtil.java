@@ -70,7 +70,6 @@ public class PostProcessUtil
     public static Iterator findRelations(ObjectStore os, Class objectCls, Class subjectCls,
                                          Class relationCls) throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
-        org.intermine.web.LogMe.log("i", "findRelations() 1");
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
@@ -119,7 +118,6 @@ public class PostProcessUtil
                                          Class connectingClass, String connectingClassFieldName,
                                          Class destinationClass)
         throws ObjectStoreException, IllegalAccessException {
-        org.intermine.web.LogMe.log("i", "findRelations() 2");
 
         Query q = new Query();
         q.setDistinct(true);
@@ -156,11 +154,8 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        org.intermine.web.LogMe.log("i", "q: " + q);
-
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(10000);
-        org.intermine.web.LogMe.log("i", "size: " + res.size());
 
         return res.iterator();
     }
