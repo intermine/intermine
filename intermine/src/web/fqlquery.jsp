@@ -11,7 +11,7 @@
 
   <tr>
     <td align="center">
-      <bean:message key="prompt.querystring"/>:
+      <bean:message key="fqlquery.prompt"/>:
     </td>
   </tr>
   <tr>
@@ -23,7 +23,7 @@
   <tr>
     <td align="center">
       <html:submit property="action">
-        <bean:message key="button.submit"/>
+        <bean:message key="button.run"/>
       </html:submit>
       <html:submit property="action">
         <bean:message key="button.view"/>
