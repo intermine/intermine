@@ -155,7 +155,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
-        checkStartLimit(start, limit);
+        checkStartLimit(start, limit, q);
 
         if (explain) {
             ResultsInfo estimate = estimate(q);
