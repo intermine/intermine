@@ -13,8 +13,6 @@ package org.intermine.web.results;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +23,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessages;
 
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineBag;
@@ -63,6 +63,9 @@ public class ChangeResultsSizeAction extends Action
             return saveBag(mapping, form, request, response);
         } else if ("addToExistingBag".equals(button)) {
             return saveBag(mapping, form, request, response);
+        } else {
+            // the form was submitted without pressing a submit button, eg. using submit() from
+            // Javascript
         }
 
         return null;
@@ -106,7 +109,6 @@ public class ChangeResultsSizeAction extends Action
                                  HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         ChangeResultsForm crf = (ChangeResultsForm) form;
 
@@ -134,12 +136,12 @@ public class ChangeResultsSizeAction extends Action
             }
         }
 
-        if (savedBags == null) {
-            savedBags = new LinkedHashMap();
-            session.setAttribute(Constants.SAVED_BAGS, savedBags);
-        }
-
-        BagHelper.saveBag(bag, crf.getBagName(), savedBags);
+        BagHelper.saveBag(bag, crf.getBagName(), BagHelper.getSavedBags(session));
+    
+        ActionMessages actionMessages = new ActionMessages();
+        actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionError("bag.saved", crf.getBagName()));
+        saveMessages(request, actionMessages);
 
         return mapping.findForward("results");
     }
