@@ -1,4 +1,4 @@
-<model name="testmodel">
+<model name="testmodel" namespace="http://www.flymine.org/model/testmodel">
     <class name="org.flymine.model.testmodel.Broke" is-interface="true">
         <attribute name="debt" type="int" primary-key="false"/>
     </class>

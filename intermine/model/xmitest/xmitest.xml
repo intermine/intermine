@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<model name="xmitest">
+<model name="xmitest" namespace="http://www.flymine.org/model/xmitest">
   <class name="org.flymine.model.testmodel.Contractor" extends="org.flymine.model.testmodel.Employable org.flymine.model.testmodel.ImportantPerson" is-interface="false">
     <attribute name="name" type="java.lang.String" primary-key="true"/>
     <reference name="personalAddress" referenced-type="org.flymine.model.testmodel.Address" primary-key="true"/>
