@@ -2,15 +2,13 @@ package org.flymine.postprocess;
 
 import junit.framework.TestCase;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-
-import org.intermine.metadata.Model;
 import java.sql.*;
 import java.util.Iterator;
 import java.util.Collections;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -20,7 +18,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.DynamicUtil;
 import org.intermine.model.InterMineObject;
-
 
 import org.flymine.model.genomic.*;
 import org.apache.log4j.Logger;
@@ -46,8 +43,7 @@ public class StoreSequencesTest extends TestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(),
-                                                    osw.getObjectStore().getSequence());
+        SingletonResults res = new SingletonResults(q, os, os.getSequence());
         Iterator resIter = res.iterator();
         //osw.beginTransaction();
         while (resIter.hasNext()) {
