@@ -79,6 +79,58 @@
 
   <!-- Unit tests -->
 
+  <target name="test-main" depends="compile-main"
+          description="perform JUnit tests on main source code" >
+
+    <!-- Specify that the tests depend on the java files in the main directories -->
+    <dependset>
+      <srcfileset dir="${src.java}" includes="**/*.java" />
+      <targetfileset dir="${junit.results}" includes="TEST-.*" />
+    </dependset>
+
+    <!-- Check if the tests have been run after the Java file last updated -->
+    <uptodate property="test-main.uptodate">
+      <srcfiles dir="${src.java}" includes="*/tests/**/*Test.java"/>
+      <mapper type="package" from="*Test.java" to="${results.junit}/TEST-*Test.xml" />
+    </uptodate>
+
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" dir="${build.java}">
+      <classpath refid="project.class.path"/>
+      <formatter type="xml" />
+      <batchtest fork="yes" todir="${results.junit}" unless="test-main.uptodate">
+	<fileset dir="${build.java}">
+	  <include name="**/tests/*Test.class" />
+	</fileset>
+      </batchtest>
+    </junit>
+
+    <antcall target="test-report"/>
+  </target>
+
+
+  <target name="junit-clean" depends="prepare">
+    <!-- Force all the unit tests to be redone -->
+    <delete>
+      <fileset dir="${results.junit}" includes="TEST-*Test.xml"/>
+    </delete>
+  </target>
+
+  <target name="fulltest" depends="prepare,junit-clean,test-main"
+          description="do a full test and fail if there are any errors">
+    <fail message="Some unit tests have failed" if="junit.failure"/>
+  </target>
+
+  <target name="test-report" depends="prepare"
+          description="generate a test report for all the unit tests" >
+    <junitreport todir="${results.junit}">
+      <fileset dir="${results.junit}">
+	<include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${results.junit}"/>
+    </junitreport>
+  </target>
+
+
   <!-- Functional tests -->
 
   <!-- System tests -->
