@@ -48,6 +48,8 @@ import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.StringUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * Translator that translates fulldata Items to business objects
  * @author Andrew Varley
@@ -55,6 +57,8 @@ import org.flymine.util.StringUtil;
  */
 public class ItemToObjectTranslator extends Translator
 {
+    protected static final Logger LOG = Logger.getLogger(ItemToObjectTranslator.class);
+
     protected Model model;
     protected SortedMap idToNamespace = new TreeMap();
     protected Map namespaceToId = new HashMap();
@@ -97,6 +101,7 @@ public class ItemToObjectTranslator extends Translator
                 String namespace = (String) row.get(0);
                 idToNamespace.put(new Integer(offset), namespace);
                 namespaceToId.put(namespace, new Integer(offset));
+                LOG.error("Assigning namespace " + namespace + " to " + offset);
                 int highest = ((Integer) row.get(1)).intValue();
                 offset += highest;
             }

@@ -32,6 +32,8 @@ import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.CacheMap;
 
+import org.apache.log4j.Logger;
+
 /**
  * Class providing API for datatracking
  *
@@ -41,6 +43,8 @@ import org.flymine.util.CacheMap;
  */
 public class DataTracking
 {
+    protected static final Logger LOG = Logger.getLogger(DataTracking.class);
+
     private static WeakHashMap dataTrackerToCache = new WeakHashMap();
     private static WeakHashMap dataTrackerToPrecache = new WeakHashMap();
 
@@ -81,8 +85,9 @@ public class DataTracking
             }
             Map cachedObject = (Map) cache.get(obj.getId().toString());
             if (cachedObject == null) {
-                //System//.out.println("Getting datatracking data for id=" + obj.getId()
-                //        + " - not cached, field=" + field + ", cache = " + cache.keySet());
+                //LOG.error("Getting datatracking data for id=" + obj.getId()
+                //        + " - not cached, field=" + field + ", cache size = " + cache.size()
+                //        + ", cache = " + cache.keySet());
                 cachedObject = new HashMap();
                 Query q = new Query();
                 QueryClass qc1 = new QueryClass(Field.class);
@@ -95,6 +100,9 @@ public class DataTracking
 
                 SingletonResults res = new SingletonResults(q, osw, osw.getSequence());
                 Iterator resIter = res.iterator();
+                if (!resIter.hasNext()) {
+                    throw new IllegalArgumentException("No data available for object " + obj);
+                }
                 while (resIter.hasNext()) {
                     Field fieldObj = (Field) resIter.next();
                     String fieldName = fieldObj.getName();
