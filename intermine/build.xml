@@ -125,7 +125,7 @@
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="test.class.path"/>
       <formatter type="xml" />
-      <batchtest fork="yes" todir="${results.junit}" unless="test-main.uptodate">
+      <batchtest fork="no" todir="${results.junit}" unless="test-main.uptodate">
         <fileset dir="${build.test}">
          <include name="**/*.class" />
         </fileset>
