@@ -178,6 +178,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         if ("SnRNA".equals(clsName) || "NcRNA".equals(clsName) || "SnoRNA".equals(clsName)
             || "TRNA".equals(clsName)) {
             Item gene = getItemFactory().makeItem(null, tgtNs + "Gene", "");
+            gene.setReference("organism", getOrganism().getIdentifier());
 
             Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
             while (fbIter.hasNext()) {
@@ -222,6 +223,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
             // create and reference additional Translation object, add to polypeptides collection
             Item translation = getItemFactory().makeItem(null, tgtNs + "Translation", "");
+            translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
 
             addItem(translation);
@@ -232,17 +234,15 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBpp").iterator();
             while (fbIter.hasNext()) {
                 String organismDbId = (String) fbIter.next();
-                if (!feature.hasAttribute("organismDbId")) {
-                    feature.setAttribute("organismDbId", organismDbId);
+                if (!translation.hasAttribute("organismDbId")) {
+                    translation.setAttribute("organismDbId", organismDbId);
                 }
-                addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
+                addItem(createSynonym(translation, "identifier", organismDbId, "FlyBase"));
             }
             // TODO add GenBank protein identifier as synonym
 
         }
 
-        // TODO get synonyms - store if different
-        // TODO get synonyms_2nd - store if different
         // make sure we have a set with all existing Synonyms and those that will
         // be created by GFF3Converter
         Set synonyms = new HashSet();

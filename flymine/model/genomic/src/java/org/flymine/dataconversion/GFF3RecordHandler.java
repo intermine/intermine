@@ -44,6 +44,7 @@ public class GFF3RecordHandler
     private Model tgtModel;
     private ItemFactory itemFactory;
     private Map identifierMap;
+    private Item organism;
 
     /**
      * Construct with the model to create items in (for type checking).
@@ -96,6 +97,22 @@ public class GFF3RecordHandler
      */
     protected Item getSequence() {
         return sequence;
+    }
+
+    /**
+     * Set organism item, this is global across record handler and final
+     * @param organism the organism item
+     */
+    public void setOrganism(final Item organism) {
+        this.organism = organism;
+    }
+
+    /**
+     * Return the organism Item set by setOrganism()
+     * @return the organism Item
+     */
+    protected Item getOrganism() {
+        return organism;
     }
 
     /**
