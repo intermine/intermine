@@ -47,40 +47,44 @@ public class QueryViewController extends TilesAction
      * @see TilesAction#perform
      */
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws IOException,
-            ServletException {
+                                 HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
         Query query = (Query) request.getSession().getAttribute("query");
-        List pclist = ConstraintHelper.createList(query);
         Map perFromConstraints = new HashMap();
         Set noFromConstraints = new HashSet();
         Map perFromTitle = new HashMap();
         Map perFromAlias = new HashMap();
         if (query != null) {
+            List clist = ConstraintHelper.createList(query);
             Iterator fromIter = query.getFrom().iterator();
             while (fromIter.hasNext()) {
                 FromElement fromElement = (FromElement) fromIter.next();
                 if (fromElement instanceof org.flymine.objectstore.query.QueryClass) {
                     String fromElementString = fromElement.toString();
                     perFromTitle.put(fromElement,
-                            fromElementString.substring(fromElementString.lastIndexOf(".") + 1));
+                           fromElementString.substring(fromElementString.lastIndexOf(".") + 1));
                 } else {
                     perFromTitle.put(fromElement, fromElement.toString());
                 }
                 perFromAlias.put(fromElement, query.getAliases().get(fromElement));
+
                 Set fromSet = new HashSet();
                 perFromConstraints.put(fromElement, fromSet);
-                Iterator conIter = pclist.iterator();
+
+                Iterator conIter = ConstraintHelper.filter(clist, fromElement).iterator();
                 while (conIter.hasNext()) {
                     Constraint c = (Constraint) conIter.next();
-                    if (!(c instanceof ConstraintSet)) {
-                        AssociatedConstraint ac = new AssociatedConstraint(query, c);
-                        if (ac.isAssociatedWith(fromElement)) {
-                            fromSet.add(ac);
-                        }
+                    PrintableConstraint pc;
+                    if (c instanceof ConstraintSet) {
+                        pc = new PrintableConstraint(query, (ConstraintSet) c);
+                    } else {
+                        pc = new AssociatedConstraint(query, c);
                     }
+                    fromSet.add(pc);
                 }
             }
-            Iterator conIter = pclist.iterator();
+
+            Iterator conIter = ConstraintHelper.filter(clist, null).iterator();
             while (conIter.hasNext()) {
                 Constraint c = (Constraint) conIter.next();
                 PrintableConstraint pc;
@@ -89,10 +93,7 @@ public class QueryViewController extends TilesAction
                 } else {
                     pc = new AssociatedConstraint(query, c);
                 }
-
-                if (pc.isAssociatedWithNothing()) {
-                    noFromConstraints.add(pc);
-                }
+                noFromConstraints.add(pc);
             }
         }
 

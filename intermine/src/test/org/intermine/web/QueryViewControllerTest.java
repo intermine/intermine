@@ -143,8 +143,12 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         setA.add(new AssociatedConstraint(q, c2));
         expected1.put(qcA, setA);
         expected1.put(qcB, Collections.singleton(new AssociatedConstraint(q, c5)));
-        expected1.put(subQ, Collections.singleton(new AssociatedConstraint(q, c3)));
-        Set expected2 = Collections.singleton(new PrintableConstraint(q, c4));
+        expected1.put(subQ, new HashSet());
+        // c3 is a cross-reference constraint so not associated with a QueryClass
+        //expected1.put(subQ, Collections.singleton(new AssociatedConstraint(q, c3)));
+        Set expected2 = new HashSet();
+        expected2.add(new AssociatedConstraint(q, c3));
+        expected2.add(new PrintableConstraint(q, c4));
         Map expected3 = new HashMap();
         expected3.put(qcA, "Company");
         expected3.put(qcB, "Department");
