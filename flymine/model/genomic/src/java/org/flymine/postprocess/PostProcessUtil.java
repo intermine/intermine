@@ -160,20 +160,27 @@ public class PostProcessUtil
     public static Iterator findRelations(ObjectStore os,
                                          Class sourceClass, String sourceClassFieldName,
                                          Class connectingClass, String connectingClassFieldName,
-                                         Class destinationClass)
+                                         Class destinationClass, boolean orderBySource)
         throws ObjectStoreException, IllegalAccessException {
 
         Query q = new Query();
+
+
         q.setDistinct(true);
         QueryClass qcSource = new QueryClass(sourceClass);
         q.addFrom(qcSource);
         q.addToSelect(qcSource);
-        q.addToOrderBy(qcSource);
+        if (orderBySource) {
+            q.addToOrderBy(qcSource);
+        }
         QueryClass qcConnecting = new QueryClass(connectingClass);
         q.addFrom(qcConnecting);
         QueryClass qcDest = new QueryClass(destinationClass);
         q.addFrom(qcDest);
         q.addToSelect(qcDest);
+        if (!orderBySource) {
+            q.addToOrderBy(qcDest);
+        }
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         QueryCollectionReference ref1 =
             new QueryCollectionReference(qcSource, sourceClassFieldName);
