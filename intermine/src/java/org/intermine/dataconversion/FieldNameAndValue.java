@@ -21,7 +21,7 @@ import org.flymine.model.fulldata.Reference;
  *
  * @author Matthew Wakeling
  */
-public class FieldNameAndValue
+public class FieldNameAndValue implements ItemPrefetchConstraint
 {
     private String fieldName;
     private String value;
@@ -100,6 +100,16 @@ public class FieldNameAndValue
      * @return this
      */
     public FieldNameAndValue getConstraint(Item item) {
+        return this;
+    }
+
+    /**
+     * Returns this object.
+     *
+     * @param item ignored
+     * @return this
+     */
+    public FieldNameAndValue getConstraintFromTarget(Item item) {
         return this;
     }
 

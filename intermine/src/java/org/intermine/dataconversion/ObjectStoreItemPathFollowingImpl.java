@@ -171,7 +171,8 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             retval = new SingletonResults(q, os, os.getSequence());
             descriptiveCache.put(description, retval);
             if (misses % 1000 == 0) {
-                LOG.error("getItemsByDescription: ops = " + ops + ", misses = " + misses);
+                LOG.error("getItemsByDescription: ops = " + ops + ", misses = " + misses
+                        + " cache size: " + descriptiveCache.size());
             }
         }
         return retval;
@@ -253,7 +254,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             
 
             if (dac.constraints.size() > 1) {
-                Query q = buildQuery(dac.constraints);
+                Query q = buildQuery(dac);
                 //LOG.error(dac.descriptor + " -> " + q.toString());
 
                 Map constraintToList = new HashMap();
@@ -263,7 +264,8 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 }
 
                 long afterQuery = (new Date()).getTime();
-                List results = new SingletonResults(q, os, os.getSequence());
+                SingletonResults results = new SingletonResults(q, os, os.getSequence());
+                results.setBatchSize(10000);
                 long afterExecute = 0;
                 Iterator resIter = results.iterator();
                 while (resIter.hasNext()) {
@@ -271,21 +273,9 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                         afterExecute = (new Date()).getTime();
                     }
                     Item item = (Item) resIter.next();
-                    conIter = constraintToList.entrySet().iterator();
-                    while (conIter.hasNext()) {
-                        Map.Entry conEntry = (Map.Entry) conIter.next();
-                        Set constraint = (Set) conEntry.getKey();
-                        List conResults = (List) conEntry.getValue();
-                        boolean matches = true;
-                        Iterator fIter = constraint.iterator();
-                        while (fIter.hasNext() && matches) {
-                            FieldNameAndValue f = (FieldNameAndValue) fIter.next();
-                            matches = f.matches(item);
-                        }
-                        if (matches) {
-                            conResults.add(item);
-                        }
-                    }
+                    Set constraint = dac.descriptor.getConstraintFromTarget(item);
+                    List conResults = (List) constraintToList.get(constraint);
+                    conResults.add(item);
                 }
 
                 conIter = constraintToList.entrySet().iterator();
@@ -320,14 +310,14 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 long now = (new Date()).getTime();
                 LOG.error("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
                         + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
-                        + (now - afterExecute) + " ms to process results");
+                        + (now - afterExecute) + " ms to process results for " + dac.descriptor);
             }
         }
     }
 
-    private Query buildQuery(Set dacConstraints) {
+    private Query buildQuery(DescriptorAndConstraints dac) {
         // We can use the first constraint to set up the query
-        Set constraint = (Set) dacConstraints.iterator().next();
+        Set constraint = (Set) dac.constraints.iterator().next();
         Query q = new Query();
         QueryClass itemClass = new QueryClass(Item.class);
         q.addFrom(itemClass);
@@ -335,8 +325,10 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         q.setDistinct(false);
         ConstraintSet mainCs = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(mainCs);
-        Set references = new HashSet();
-        Set attributes = new HashSet();
+        Map references = new HashMap();
+        Map attributes = new HashMap();
+        QueryField identifier = new QueryField(itemClass, "identifier");
+        QueryField className = new QueryField(itemClass, "className");
         Iterator descrIter = constraint.iterator();
         while (descrIter.hasNext()) {
             FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
@@ -348,12 +340,27 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
                         reference);
                 mainCs.addConstraint(cc);
-                references.add(reference);
+                QueryField qf = new QueryField(reference, "name");
+                mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                            new QueryValue(f.getFieldName())));
+                if (dac.descriptor.isStatic(f)) {
+                    qf = new QueryField(reference, "refId");
+                    mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                new QueryValue(f.getValue())));
+                } else {
+                    references.put(f.getFieldName(), reference);
+                }
             } else {
                 if (f.getFieldName().equals("identifier")) {
-                    // Nothing to do
+                    if (dac.descriptor.isStatic(f)) {
+                        mainCs.addConstraint(new SimpleConstraint(identifier,
+                                    ConstraintOp.EQUALS, new QueryValue(f.getValue())));
+                    }
                 } else if (f.getFieldName().equals("className")) {
-                    // Nothing to do
+                    if (dac.descriptor.isStatic(f)) {
+                        mainCs.addConstraint(new SimpleConstraint(className,
+                                    ConstraintOp.EQUALS, new QueryValue(f.getValue())));
+                    }
                 } else {
                     QueryClass attribute = new QueryClass(Attribute.class);
                     q.addFrom(attribute);
@@ -362,7 +369,16 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                     ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
                             attribute);
                     mainCs.addConstraint(cc);
-                    attributes.add(attribute);
+                    QueryField qf = new QueryField(attribute, "name");
+                    mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                new QueryValue(f.getFieldName())));
+                    if (dac.descriptor.isStatic(f)) {
+                        qf = new QueryField(attribute, "value");
+                        mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                    new QueryValue(f.getValue())));
+                    } else {
+                        attributes.put(f.getFieldName(), attribute);
+                    }
                 }
             }
         }
@@ -371,41 +387,33 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         
         // Now we have the framework of the query. Each constraint must use the correct
         // number of attributes and references.
-        QueryField identifier = new QueryField(itemClass, "identifier");
-        QueryField className = new QueryField(itemClass, "className");
 
-        Iterator conIter = dacConstraints.iterator();
+        Iterator conIter = dac.constraints.iterator();
         while (conIter.hasNext()) {
             constraint = (Set) conIter.next();
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            Iterator attributeIter = attributes.iterator();
-            Iterator referenceIter = references.iterator();
             descrIter = constraint.iterator();
             while (descrIter.hasNext()) {
                 FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
-                if (f.isReference()) {
-                    QueryClass reference = (QueryClass) referenceIter.next();
-                    QueryField qf = new QueryField(reference, "name");
-                    cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                new QueryValue(f.getFieldName())));
-                    qf = new QueryField(reference, "refIds");
-                    cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                new QueryValue(f.getValue())));
-                } else {
-                    if (f.getFieldName().equals("identifier")) {
-                        cs.addConstraint(new SimpleConstraint(identifier,
-                                    ConstraintOp.EQUALS, new QueryValue(f.getValue())));
-                    } else if (f.getFieldName().equals("className")) {
-                        cs.addConstraint(new SimpleConstraint(className,
-                                    ConstraintOp.EQUALS, new QueryValue(f.getValue())));
-                    } else {
-                        QueryClass attribute = (QueryClass) attributeIter.next();
-                        QueryField qf = new QueryField(attribute, "name");
-                        cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                    new QueryValue(f.getFieldName())));
-                        qf = new QueryField(attribute, "value");
+                if (!dac.descriptor.isStatic(f)) {
+                    if (f.isReference()) {
+                        QueryClass reference = (QueryClass) references.get(f.getFieldName());
+                        QueryField qf = new QueryField(reference, "refId");
                         cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
                                     new QueryValue(f.getValue())));
+                    } else {
+                        if (f.getFieldName().equals("identifier")) {
+                            cs.addConstraint(new SimpleConstraint(identifier,
+                                        ConstraintOp.EQUALS, new QueryValue(f.getValue())));
+                        } else if (f.getFieldName().equals("className")) {
+                            cs.addConstraint(new SimpleConstraint(className,
+                                        ConstraintOp.EQUALS, new QueryValue(f.getValue())));
+                        } else {
+                            QueryClass attribute = (QueryClass) attributes.get(f.getFieldName());
+                            QueryField qf = new QueryField(attribute, "value");
+                            cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                        new QueryValue(f.getValue())));
+                        }
                     }
                 }
             }

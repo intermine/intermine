@@ -74,6 +74,41 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
     }
 
     /**
+     * Returns a FieldNameAndValue object that describes this constraint with respect to a
+     * particular target Item.
+     *
+     * @param item the Item
+     * @return a FieldNameAndValue object
+     */
+    public FieldNameAndValue getConstraintFromTarget(Item item) {
+        if (farFieldName.equals("identifier")) {
+            return new FieldNameAndValue(farFieldName, item.getIdentifier(), false);
+        } else if (farFieldName.equals("className")) {
+            return new FieldNameAndValue(farFieldName, item.getClassName(), false);
+        } else if (nearFieldName.equals("identifier")) {
+            Iterator iter = item.getReferences().iterator();
+            while (iter.hasNext()) {
+                Reference ref = (Reference) iter.next();
+                if (farFieldName.equals(ref.getName())) {
+                    return new FieldNameAndValue(farFieldName, ref.getRefId(), true);
+                }
+            }
+            throw new IllegalArgumentException("Reference " + farFieldName + " not present in "
+                    + item);
+        } else {
+            Iterator iter = item.getAttributes().iterator();
+            while (iter.hasNext()) {
+                Attribute att = (Attribute) iter.next();
+                if (farFieldName.equals(att.getName())) {
+                    return new FieldNameAndValue(farFieldName, att.getValue(), false);
+                }
+            }
+            throw new IllegalArgumentException("Attribute " + farFieldName + " not present in "
+                    + item);
+        }
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {

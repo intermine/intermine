@@ -28,4 +28,13 @@ public interface ItemPrefetchConstraint
      * @return a FieldNameAndValue object
      */
     public FieldNameAndValue getConstraint(Item item);
+
+    /**
+     * Returns a FieldNameAndValue object that describes this constraint with respect to a
+     * particular target Item.
+     *
+     * @param item the Item
+     * @return a FieldNameAndValue object
+     */
+    public FieldNameAndValue getConstraintFromTarget(Item item);
 }
