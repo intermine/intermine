@@ -752,7 +752,7 @@
   </target>
 
   <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
-  <target name="load-ensembl-anopheles" depends="compile-main, build-db-anoph-test">
+  <target name="load-ensembl-anopheles" depends="compile-main, build-db-anoph-test, create-indexes-anoph-test">
     <taskdef name="load-anoph" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
