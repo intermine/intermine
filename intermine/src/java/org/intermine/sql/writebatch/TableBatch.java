@@ -36,6 +36,7 @@ public class TableBatch implements Table
     private String colNames[];
     private Set idsToDelete;
     private Map idsToInsert;
+    private int size = 0;
 
     /**
      * Constructor for this class. Generates a table batch with no data to write.
@@ -105,7 +106,9 @@ public class TableBatch implements Table
             newEntry.add(values);
             idsToInsert.put(idValue, newEntry);
         }
-        return sizeOfArray(values) + 16;
+        int deltaSize = sizeOfArray(values) + 16;
+        size += deltaSize;
+        return deltaSize;
     }
 
     /**
@@ -143,6 +146,7 @@ public class TableBatch implements Table
             }
         }
         idsToDelete.add(idValue);
+        size += retval;
         return retval;
     }
 
@@ -192,6 +196,14 @@ public class TableBatch implements Table
         if (idsToInsert != null) {
             idsToInsert.clear();
         }
+        size = 0;
+    }
+
+    /**
+     * @see Table#getSize
+     */
+    public int getSize() {
+        return size;
     }
 
     /**

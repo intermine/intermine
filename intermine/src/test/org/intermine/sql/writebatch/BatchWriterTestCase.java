@@ -737,7 +737,78 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
-   
+/*     --------This test works, and is important, but takes a huge amount of time to run.-------
+    public void testPartialFlushAccounting() throws Exception {
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection con = db.getConnection();
+        con.setAutoCommit(false);
+        try {
+            Statement s = con.createStatement();
+            try {
+                s.execute("DROP TABLE table1");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            try {
+                s.execute("DROP TABLE table2");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            s.addBatch("CREATE TABLE table1(col1 int, col2 text)");
+            s.addBatch("INSERT INTO table1 VALUES (1, 201)");
+            s.addBatch("CREATE TABLE table2(col1 int, col2 text)");
+            s.addBatch("INSERT INTO table2 VALUES (1, 201)");
+            s.executeBatch();
+            con.commit();
+            s = null;
+
+            StringBuffer longBuffer = new StringBuffer(1000000);
+            for (int i = 0; i < 19000; i++) {
+                longBuffer.append("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+            }
+            String longString = longBuffer.toString();
+            longBuffer = null;
+
+            BatchWriter writer = getWriter();
+            Batch batch = new Batch(writer);
+            String colNames[] = new String[] {"col1", "col2"};
+            for (int i = 0; i < 2000; i++) { // Write ~2GB to table1. Hope it doesn't run out of memory due to forgetting to flush table1.
+                batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(i), new String(longString)});
+                batch.addRow(con, "table2", null, colNames, new Object[] {new Integer(i), new String("Hello" + i)});
+                batch.flush(con, Collections.singleton("table2"));
+            }
+            con.commit();
+        } catch (SQLException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            while (e != null) {
+                e.printStackTrace(pw);
+                e = e.getNextException();
+            }
+            pw.flush();
+            throw new Exception(sw.toString());
+        } finally {
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table1");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table2");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+*/   
     private Set getGot(Connection con) throws SQLException {
         Statement s = con.createStatement();
         ResultSet r = s.executeQuery("SELECT a, b FROM table1");
