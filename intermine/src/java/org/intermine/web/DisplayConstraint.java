@@ -1,7 +1,7 @@
 package org.intermine.web;
 
 /*
- * Copyright (C) 2002-2004 FlyMine
+ * Copyright (C) 2002-2005 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,7 +27,8 @@ import org.intermine.objectstore.query.SimpleConstraint;
  *
  * @author Thomas Riley
  */
-public class DisplayConstraint {
+public class DisplayConstraint
+{
     /** . */
     protected PathNode node;
     /** The related model. */
