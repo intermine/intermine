@@ -116,7 +116,7 @@ public class AceDataLoader extends DataLoader
             iw.beginTransaction();
             
             WorkSource workSource = new WorkSource(clsIter, source);
-            for (int i = 0; i < 45; i++) {
+            for (int i = 0; i < 44; i++) {
                 (new ServiceThread(workSource, this)).start();
             }
             mainLoop(workSource);
@@ -141,9 +141,10 @@ public class AceDataLoader extends DataLoader
                     throw new NullPointerException("name is null");
                 }
                 AceObject aceObj = (AceObject) aceSet.retrieve(name);
+                Object obj = processAceObject(aceObj);
                 synchronized (this) {
                     try {
-                        store(processAceObject(aceObj));
+                        store(obj);
                     } catch (Exception e) {
                         commitCount = 0;
                         StringWriter sw = new StringWriter();
@@ -151,7 +152,7 @@ public class AceDataLoader extends DataLoader
                         e.printStackTrace(pw);
                         pw.flush();
                         sw.flush();
-                        LOG.error("Object " + todo.getName() + " not retrievable: "
+                        LOG.error("Object " + todo.getName() + " not storable: "
                                 + e.getMessage() + "\n" + sw);
                     } finally {
                         if (commitCount <= 0) {
