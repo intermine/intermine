@@ -83,6 +83,72 @@ public class StringUtilTest extends TestCase
         }
     }
 
+    public void testSplit() throws Exception {
+        {
+            String testString = "$_^abc$_^defaaa bbb ccc$_^zzzzz$_^";
+            String[] resArray = StringUtil.split(testString, "$_^");
+            assertEquals(5, resArray.length);
+            List expected = Arrays.asList(new String [] {"", "abc", "defaaa bbb ccc", "zzzzz", ""});
+            assertEquals(expected,  Arrays.asList(resArray));
+        }
+
+        {
+            String testString = "";
+            String[] resArray = StringUtil.split(testString, "splitter_string");
+            assertEquals(1, resArray.length);
+            assertEquals("", resArray[0]);
+        }
+
+        {
+            String testString = "abc_def";
+            String[] resArray = StringUtil.split(testString, "_");
+            assertEquals(2, resArray.length);
+            List expected = Arrays.asList(new String [] {"abc", "def"});
+            assertEquals(expected,  Arrays.asList(resArray));
+        }
+
+        {
+            String testString = "XXXXXX";
+            String[] resArray = StringUtil.split(testString, "XXX");
+            assertEquals(3, resArray.length);
+            List expected = Arrays.asList(new String [] {"", "", ""});
+            assertEquals(expected,  Arrays.asList(resArray));
+        }
+
+        {
+            String testString = " a b c XX d e f XX h i j XX";
+            String[] resArray = StringUtil.split(testString, "XX");
+            assertEquals(4, resArray.length);
+            List expected = Arrays.asList(new String [] {" a b c ", " d e f ", " h i j ", ""});
+            assertEquals(expected,  Arrays.asList(resArray));
+        }
+
+        try {
+            String testString = "";
+            StringUtil.split(testString, "");
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+
+        try {
+            StringUtil.split(null, "XXX");
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+
+        try {
+            StringUtil.split("XXX", null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+
+        try {
+            StringUtil.split(null, null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+
     public void testDuplicateQuotes() throws Exception{
         assertEquals("it''s", StringUtil.duplicateQuotes("it's"));
     }
