@@ -101,14 +101,14 @@ public class AceDataLoader extends DataLoader
 
             Iterator clsIter = model.getClassNames().iterator();
             WorkSource workSource = new WorkSource(clsIter, source);
-            for (int i = 0; i < 30 ; i++) {
+            for (int i = 0; i < 30; i++) {
                 (new ServiceThread(workSource, this)).start();
             }
             WorkItem todo = workSource.next();
             while (todo != null) {
                 try {
                     AceObject aceObj = (AceObject) todo.getFetched().retrieve(todo.getName());
-                    synchronized(this) {
+                    synchronized (this) {
                         store(processAceObject(aceObj));
                     }
                 } catch (Exception e) {
@@ -475,7 +475,7 @@ public class AceDataLoader extends DataLoader
                 while (todo != null) {
                     try {
                         AceObject aceObj = (AceObject) todo.getFetched().retrieve(todo.getName());
-                        synchronized(loader) {
+                        synchronized (loader) {
                             loader.store(loader.processAceObject(aceObj));
                         }
                     } catch (Exception e) {

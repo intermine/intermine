@@ -117,7 +117,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         }
     }
 
-    public static String description(Object obj) {
+    private static String description(Object obj) {
         Class c = obj.getClass();
         String retval = c.getName() + ": ";
         try {
