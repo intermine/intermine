@@ -220,6 +220,9 @@ null:karyotype__seq_region a owl:ObjectProperty ;
 :Transcript__gene a owl:ObjectProperty;
     owl:equivalentProperty e:transcript__gene.
 
+:Transcript__protein a owl:ObjectProperty;
+    owl:inverseOf :Protein__transcript.
+
 null:transcript__display_xref a owl:ObjectProperty ;
     owl:equivalentProperty e:transcript__display_xref .
 
