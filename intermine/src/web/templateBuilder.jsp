@@ -30,7 +30,14 @@
       <html:select property="category">
         <html:options name="CATEGORIES"/>
       </html:select>
-    </p><br/>
+    </p>
+    <c:if test="${IS_SUPERUSER}">
+      <p style="text-align:center">
+        <html:checkbox property="important"/>
+        <fmt:message key="templateBuilder.important"/>
+      </p>
+    </c:if>
+    <br/>
     <table border="0" width="10%" cellspacing="0" class="templateBuilder" align="center">
       <tr>
         <th width="1%" align="center" nowrap="nowrap">
