@@ -18,6 +18,31 @@
     </itemizedlist>
   </section>
 
+
+ <section>
+    <title>How to query FlyMine</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="../../introduction.xml">The FlyMine query builder</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="manualQuickstart.xml">Browsing FlyMine</ulink></para>
+      </listitem>
+
+   <listitem>
+        <para><ulink url="manualQuickstart.xml">Template Queries</ulink></para>
+      </listitem>
+
+
+    </itemizedlist>
+  
+
+
+ </section>
+
+
   <section>
     <title>The query interface</title>
 
@@ -70,6 +95,16 @@
         <para><ulink url="manualSavingdata.xml">Saving results to
         bags</ulink></para>
       </listitem>
+
+     <listitem>
+        <para><ulink url="manualCreatingBag.xml">Creating a bag of
+        identifiers</ulink></para>
+     </listitem>
+
+     <listitem>
+        <para><ulink url="manualUsingBags.xml">Making use of bags</ulink></para>
+     </listitem>
+
 
       <listitem>
         <para><ulink url="manualExportingdata.xml">Exporting
