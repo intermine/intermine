@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
 import org.intermine.web.Constants;
+import org.intermine.web.WebUtil;
 import org.intermine.web.InterMineBag;
 import org.intermine.web.Profile;
 import org.intermine.web.InterMineAction;
@@ -110,6 +111,10 @@ public class ChangeResultsSizeAction extends InterMineAction
 
         InterMineBag bag = new InterMineBag();
 
+        int DEFAULT_MAX = 100000;
+
+        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", DEFAULT_MAX);
+
         // Go through the selected items and add to the set
         for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
              itemIterator.hasNext();) {
@@ -123,12 +128,27 @@ public class ChangeResultsSizeAction extends InterMineAction
                      rowIterator.hasNext();) {
                     List thisRow = (List) rowIterator.next();
                     bag.add(thisRow.get(column));
+
+                    if (bag.size() > maxBagSize) {
+                        ActionMessage actionMessage =
+                            new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                        recordError(actionMessage, request);
+
+                        return mapping.findForward("results");
+                    }
                 }
             } else {
                 // use the column,row to pick out the object from PagedTable
                 int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
                 int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
                 bag.add(((List) pt.getRows().get(row)).get(column));
+                if (bag.size() > maxBagSize) {
+                    ActionMessage actionMessage =
+                        new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                    recordError(actionMessage, request);
+
+                    return mapping.findForward("results");
+                }
             }
         }
 
@@ -141,6 +161,13 @@ public class ChangeResultsSizeAction extends InterMineAction
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
             bag.addAll(existingBag);
+        }
+        if (bag.size() > maxBagSize) {
+            ActionMessage actionMessage =
+                new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+            recordError(actionMessage, request);
+
+            return mapping.findForward("results");
         }
         profile.saveBag(bagName, bag);
     
