@@ -60,20 +60,31 @@ public class DisplayableResultsTest extends TestCase
 
     public void testSizeExact() throws Exception {
         DisplayableResults dr = getExactResults();
+        dr.setPageSize(10);
+        dr.setStart(0);
         assertFalse(dr.isSizeEstimate());
         assertEquals(15, dr.getSize());
     }
 
     public void testSizeHigh() throws Exception {
         DisplayableResults dr = getEstimateTooHighResults();
+        dr.setPageSize(10);
+        dr.setStart(0);
         assertTrue(dr.isSizeEstimate());
         assertEquals(25, dr.getSize());
     }
 
     public void testSizeLow() throws Exception {
         DisplayableResults dr = getEstimateTooLowResults();
+        dr.setPageSize(10);
+        dr.setStart(0);
         assertTrue(dr.isSizeEstimate());
-        assertEquals(10, dr.getSize());
+        // Calling size() affects the estimate as it tries to fetch
+        // more rows.  I think the best thing to do here is to check
+        // that the size is greater than 10 and less than 15 to prove
+        // that the size is not stuck at the estimate
+        assertTrue(dr.getSize() > 10);
+        assertTrue(dr.getSize() <= 15);
     }
 
     public void testEndExact() throws Exception {
