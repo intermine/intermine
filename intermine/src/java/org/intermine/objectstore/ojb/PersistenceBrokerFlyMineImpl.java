@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.flymine.objectstore.query.Query;
+import org.flymine.sql.query.ExplainResult;
 
 /**
  * Extension of PersistenceBrokerImpl to allow execution of ObjectStore queries
@@ -30,7 +31,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     public PersistenceBrokerFlyMineImpl(PBKey key, PersistenceBrokerFactoryIF pbf)
     {
         super(key, pbf);
-    }   
+    }
 
     /**
      * Executes a query with start and limit result indices
@@ -44,10 +45,20 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
         List results = new ArrayList();
         Iterator iter = new MultiObjectRsIterator(query, this, start, limit);
         while (iter.hasNext()) { // if iterator is of the right length...
-            //?TODO uncomment this
             results.add(iter.next());
-            //results.add(new Object[] {});
         }
         return results;
+    }
+
+    /**
+     * Runs EXPLAIN on the given query with start and limit result indices
+     *
+     * @param query the ObjectStore query
+     * @param start start index
+     * @param limit maximum number of rows to return
+     * @return parsed results of the EXPLAIN
+     */
+    public ExplainResult explain(Query query, int start, int limit) {
+        return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).explainQuery(query, start, limit);
     }
 }
