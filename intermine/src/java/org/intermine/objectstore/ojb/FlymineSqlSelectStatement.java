@@ -352,6 +352,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
             needFromComma = true;
             Object fromElement = fromIter.next();
             if (fromElement instanceof QueryClass) {
+                boolean topLevel = true;
                 QueryClass qc = (QueryClass) fromElement;
                 ClassDescriptor cld = dr.getDescriptorFor(qc.getType());
                 String alias = (String) query.getAliases().get(qc);
@@ -373,7 +374,10 @@ public class FlymineSqlSelectStatement implements SqlStatement
                             tableNameToColumns.put(tableName, new HashSet());
                         }
                         Set tableColumns = (Set) tableNameToColumns.get(tableName);
-                        FieldDescriptor fields[] = subclassDesc.getFieldDescriptions();
+                        FieldDescriptor fields[] = (topLevel
+                                ? subclassDesc.getFieldDescriptorsInHeirarchy()
+                                : subclassDesc.getFieldDescriptions());
+                        topLevel = false;
                         for (int i = 0; i < fields.length; i++) {
                             String columnName = fields[i].getColumnName();
                             allColumnNames.add(columnName);
@@ -783,7 +787,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
             retval += (needComma ? ", " : " GROUP BY ");
             needComma = true;
             if (node instanceof QueryClass) {
-                retval += queryClassToString((QueryClass) node, false, true);
+                retval += queryClassToString((QueryClass) node, false, false);
             } else {
                 retval += queryEvaluableToString((QueryEvaluable) node);
             }
