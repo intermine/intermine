@@ -499,4 +499,71 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         res = writer.execute(q);
         assertEquals(0, res.size());
     }
+
+    public void testTransactionsAndCaches() throws Exception {
+        Address address1 = new Address();
+        address1.setAddress("Address 1");
+        Address address2 = new Address();
+        address2.setAddress("Address 2");
+
+        writer.flushObjectById();
+        realOs.flushObjectById();
+        
+        try {
+            writer.store(address1);
+            Integer id = address1.getId();
+            address2.setId(id);
+
+            assertNull(realOs.pilferObjectById(id));
+            assertNull(writer.pilferObjectById(id));
+
+            assertNotNull("Looked for id " + id, realOs.getObjectById(id));
+            assertNull(writer.pilferObjectById(id));
+            assertNotNull(realOs.pilferObjectById(id));
+            realOs.flushObjectById();
+
+            assertNotNull(writer.getObjectById(id));
+            assertNotNull(writer.pilferObjectById(id));
+            assertNull(realOs.pilferObjectById(id));
+            assertNotNull(realOs.getObjectById(id));
+
+            writer.store(address2);
+            assertNotNull(writer.getObjectById(id));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
+            assertNotNull(realOs.getObjectById(id));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+            
+            writer.delete(address2);
+            assertNull(writer.getObjectById(id));
+            assertNull(realOs.getObjectById(id));
+
+            writer.store(address1);
+            writer.beginTransaction();
+            writer.store(address2);
+            assertNotNull(writer.getObjectById(id));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
+            assertNotNull(realOs.getObjectById(id));
+            assertEquals("Address 1", ((Address) realOs.getObjectById(id)).getAddress());
+
+            writer.commitTransaction();
+            assertNotNull(writer.getObjectById(id));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
+            assertNotNull(realOs.getObjectById(id));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+
+            writer.beginTransaction();
+            writer.delete(address1);
+            assertNull(writer.getObjectById(id));
+            assertNotNull(realOs.getObjectById(id));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+            
+            writer.abortTransaction();
+            assertNotNull(writer.getObjectById(id));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
+            assertNotNull(realOs.getObjectById(id));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+        } finally {
+            writer.delete(address1);
+        }
+    }
 }

@@ -272,6 +272,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             }
 
             s.executeBatch();
+            invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
         } catch (IllegalAccessException e) {
@@ -344,6 +345,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             }
 
             s.executeBatch();
+            invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while deleting", e);
         } finally {
@@ -422,6 +424,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             c.rollback();
             c.setAutoCommit(true);
             os.flushObjectById(this);
+            flushObjectById();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error aborting transaction", e);
         } finally {
