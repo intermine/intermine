@@ -87,6 +87,9 @@ public class CalculateLocations
         fixPartials(Contig.class, Exon.class);
     }
 
+    /**
+     * Fix the Locations that connect objectCls and subjectCls objects.
+     */
     private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
         Iterator resIter = findLocations(os, objectCls, subjectCls);
 
@@ -102,9 +105,10 @@ public class CalculateLocations
 
             if (subject.getId().intValue() != previousSubjectId && batch.size() > 0) {
                 fixPartialBatch(batch);
+                batch = new HashSet();
             }
 
-            batch.add(location);
+            batch.add(rr);
             previousSubjectId = subject.getId().intValue();
         }
 
@@ -113,13 +117,17 @@ public class CalculateLocations
         }
     }
 
-
-
+    /**
+     * The argument should be a Set of ResultsRow objects returned by findLocations().  All of the
+     * Locations in the ResultsRow should have the same Subject.
+     */
     private void fixPartialBatch(Set batch) throws Exception {
         if (batch.size() < 2) {
             // if the object doesn't have two location objects the locations can't be partial
             return;
         }
+
+        LOG.info("processing partial batch size " + batch.size());
 
         Location startLocation = null;
         int startLocationObjectLength = -1;
@@ -134,16 +142,19 @@ public class CalculateLocations
 
         Iterator batchIter = batch.iterator();
         while (batchIter.hasNext()) {
-            Location location = (Location) batchIter.next();
+            ResultsRow rr = (ResultsRow) batchIter.next();
+            BioEntity object = (BioEntity) rr.get(0);
+            BioEntity subject = (BioEntity) rr.get(1);
+            Location location = (Location) rr.get(2);
 
             try {
-                Object objectLengthField = TypeUtil.getFieldValue(location.getObject(), "length");
+                Object objectLengthField = TypeUtil.getFieldValue(object, "length");
                 int objectLength = -1;
                 if (objectLengthField instanceof Integer) {
                     objectLength = ((Integer) objectLengthField).intValue();
                } else {
                     LOG.error("Object with ID: "
-                              + location.getObject().getId() + " has no Integer length field");
+                              + object.getId() + " has no Integer length field");
                     continue;
                 }
 
@@ -172,7 +183,7 @@ public class CalculateLocations
                     osw.store(pl);
                 }
             } catch (IllegalAccessException e) {
-                LOG.error("Object with ID: " + location.getObject().getId()
+                LOG.error("Object with ID: " + object.getId()
                           + " has no Integer length field");
             }
         }
@@ -180,7 +191,7 @@ public class CalculateLocations
         Iterator veryPartialLocationsIterator = veryPartialLocations.iterator();
 
         while (veryPartialLocationsIterator.hasNext()) {
-            Location location = (Location) batchIter.next();
+            Location location = (Location) veryPartialLocationsIterator.next();
 
             int thisObjectLength =
                 location.getEnd().intValue() - location.getStart().intValue() + 1;
@@ -194,9 +205,6 @@ public class CalculateLocations
             osw.store(pl);
             subjectLengthSoFar += thisObjectLength;
         }
-
-        //org.intermine.web.LogMe.log("i", "startLocation: " + startLocation);
-        //org.intermine.web.LogMe.log("i", "endLocation: " + endLocation);
 
         if (endLocation == null) {
             LOG.error("endLocation is null - startLocation: " + startLocation
@@ -292,9 +300,6 @@ public class CalculateLocations
             i++;
             ResultsRow rr = (ResultsRow) resIter.next();
             Location locBioOnContig = (Location) rr.get(2);
-            //org.intermine.web.LogMe.log("i", "0: " + rr.get(0).getClass().getName() + " " + ((InterMineObject) rr.get(0)).getId());
-            //org.intermine.web.LogMe.log("i", "1: " + rr.get(1).getClass().getName() + " " + ((InterMineObject) rr.get(1)).getId());
-            //org.intermine.web.LogMe.log("i", "2: " + rr.get(2).getClass().getName() + " " + ((InterMineObject) rr.get(2)).getId());
             Contig contig = (Contig) rr.get(0);
             BioEntity bio = (BioEntity) rr.get(1);
             SimpleLoc bioOnContig = new SimpleLoc(contig.getId().intValue(),
@@ -308,13 +313,7 @@ public class CalculateLocations
             Location bioOnChrLoc =
                 createChromosomeLocation(contigOnChr, bioOnContig, chr, bio);
 
-            //org.intermine.web.LogMe.log("i", "locBioOnContig: " + locBioOnContig);
-
-
-
             if (locBioOnContig instanceof PartialLocation) {
-                //org.intermine.web.LogMe.log("i", "found PartialLocation: " + locBioOnContig);
-
                 addToMapOfLists(partialsOnChromosomes, bio, bioOnChrLoc);
             } else {
                 osw.store(bioOnChrLoc);
@@ -327,27 +326,16 @@ public class CalculateLocations
             // create location of feature on Supercontig
             Set scs = (Set) chrToSc.get(chr.getId());
             if (scs != null) {
-                //org.intermine.web.LogMe.log("i", scs.size() + " scs");
-
-
                 Iterator iter = scs.iterator();
                 while (iter.hasNext()) {
                     SimpleLoc scOnChr = (SimpleLoc) iter.next();
-                    //org.intermine.web.LogMe.log("i", scOnChr + " = " + bioOnChr + " ?");
                     if (overlap(scOnChr, bioOnChr)) {
                         Supercontig sc = (Supercontig) idScs.get(new Integer(scOnChr.getChildId()));
-
-                        //org.intermine.web.LogMe.log("i", "making new Location:");
                         Location bioOnScLoc = createLocation(sc, scOnChr, bio, bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "scOnChr: " + scOnChr);
-                        //org.intermine.web.LogMe.log("i", "bioOnChr: " + bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "new: " + bioOnScLoc);
 
                         if (bioOnScLoc instanceof PartialLocation) {
-                            //org.intermine.web.LogMe.log("i", "found PartialLocation " + "on Supercontig: " + bioOnScLoc);
                             addToMapOfLists(partialsOnSupercontigs, bio, bioOnScLoc);
                         } else {
-                            //org.intermine.web.LogMe.log("i", "storing");
                             osw.store(bioOnScLoc);
                         }
                         j++;
@@ -358,26 +346,17 @@ public class CalculateLocations
             // create location of feature on ChromosomeBand
             Set bands = (Set) chrToBand.get(chr.getId());
             if (bands != null) {
-                //org.intermine.web.LogMe.log("i", bands.size() + " bands");
-
                 Iterator iter = bands.iterator();
                 while (iter.hasNext()) {
                     SimpleLoc bandOnChr = (SimpleLoc) iter.next();
-                    //org.intermine.web.LogMe.log("i", bandOnChr + " = " + bioOnChr + " ?");
                     if (overlap(bandOnChr, bioOnChr)) {
                         ChromosomeBand band = (ChromosomeBand)
                             idBands.get(new Integer(bandOnChr.getChildId()));
-                        //org.intermine.web.LogMe.log("i", "making new Location:");
                         Location bioOnBandLoc = createLocation(band, bandOnChr, bio, bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "bandOnChr: " + bandOnChr);
-                        //org.intermine.web.LogMe.log("i", "bioOnChr: " + bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "new: " + bioOnBandLoc);
 
                         if (bioOnBandLoc instanceof PartialLocation) {
-                            //org.intermine.web.LogMe.log("i", "found PartialLocation " + "on ChromosomeBand: " + bioOnBandLoc);
                             addToMapOfLists(partialsOnChromosomeBands, bio, bioOnBandLoc);
                         } else {
-                            //org.intermine.web.LogMe.log("i", "storing");
                             osw.store(bioOnBandLoc);
                         }
                         k++;
@@ -392,14 +371,10 @@ public class CalculateLocations
                          + ((60000L * i) / (now - start)) + " per minute)");
             }
         }
-        //org.intermine.web.LogMe.log("i", "partialsOnChromosome: " + partialsOnChromosomes);
 
         // process partials Locations
-        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomes):");
         processPartials(partialsOnChromosomes);
-        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnSupercontigs):");
         processPartials(partialsOnSupercontigs);
-        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomeBands):");
         processPartials(partialsOnChromosomeBands);
 
         osw.commitTransaction();
@@ -426,9 +401,8 @@ public class CalculateLocations
      * Process the Partial Locations in mapOfPartials and merge PartialLocations
      */
     private void processPartials(Map mapOfPartials) throws ObjectStoreException {
-        //org.intermine.web.LogMe.log("i", "processPartials - mapOfPartials: " + mapOfPartials);
-
         Iterator mapOfPartialsIter = mapOfPartials.keySet().iterator();
+
         while (mapOfPartialsIter.hasNext()) {
             int minBioStart = Integer.MAX_VALUE;
             int maxBioEnd = -1;
@@ -437,49 +411,42 @@ public class CalculateLocations
             int newStrand = 0;
             Integer newStartPhase = null;
             Integer newEndPhase = null;
-            BioEntity newLocationObject = null;
-
             BioEntity bioEntity = (BioEntity) mapOfPartialsIter.next();
-            //org.intermine.web.LogMe.log("i", "processPartials bioEntity: " + bioEntity);
             List partialLocList = (List) mapOfPartials.get(bioEntity);
-            //org.intermine.web.LogMe.log("i", "processPartials list: " + partialLocList.size());
 
-            Iterator partialLocListIter = partialLocList.iterator();
-            while (partialLocListIter.hasNext()) {
+            // check that all the PartialLocations have the same object BioEntity
+            if (!checkForSameObject(partialLocList)) {
+                // don't try to merge these PartialLocations
+                storeAll(partialLocList);
+                continue;
+            }
+
+            for (Iterator partialLocListIter = partialLocList.iterator();
+                 partialLocListIter.hasNext(); ) {
                 Object nextObject = partialLocListIter.next();
-                //org.intermine.web.LogMe.log("i", "nextObject: " + nextObject);
                 PartialLocation pl = (PartialLocation) nextObject;
-                //org.intermine.web.LogMe.log("i", "pl: " + pl);
-
+                
                 // createChromosomeLocation() doesn't set subjectStart or subjectEnd yet
                 //                 if (pl.getSubjectStart().intValue() < minBioStart) {
                 //                     minBioStart = pl.getSubjectStart().intValue();
-                //                     //org.intermine.web.LogMe.log("i", "setting minBioStart "
-                //                                                   + "to " + minBioStart);
                 //                 }
-
+                
                 //                 if (pl.getSubjectEnd().intValue() > maxBioEnd) {
                 //                     maxBioEnd = pl.getSubjectEnd().intValue();
-                //                     //org.intermine.web.LogMe.log("i", "setting maxBioEnd "
-                //                                                   + "to " + maxBioEnd);
                 //                 }
-
+                
                 if (pl.getStart().intValue() < minChrStart) {
                     minChrStart = pl.getStart().intValue();
-                    //org.intermine.web.LogMe.log("i", "setting minChrStart to " + minChrStart);
-
                     // use the start phase of the first Location in the new Location
                     newStartPhase = pl.getPhase();
                 }
-
+                
                 if (pl.getEnd().intValue() > maxChrEnd) {
                     maxChrEnd = pl.getEnd().intValue();
-                    //org.intermine.web.LogMe.log("i", "setting maxChrEnd to " + maxChrEnd);
-
                     // use the end phase of the last Location in the new Location
                     newEndPhase = pl.getEndPhase();
                 }
-
+                
                 if (newStrand == 0) {
                     newStrand = pl.getStrand().intValue();
                 } else {
@@ -489,23 +456,13 @@ public class CalculateLocations
                                                    + "with inconsistent strands");
                     }
                 }
-
-                if (newLocationObject == null) {
-                    newLocationObject = pl.getObject();
-                } else {
-                    if (!newLocationObject.equals(pl.getObject())) {
-                        throw new RuntimeException("BioEntity (" + bioEntity + ") is located "
-                                                   + "on two different BioEntities "
-                                                   + pl.getObject().getId()
-                                                   + " and "
-                                                   + newLocationObject.getId());
-                    }
-                }
             }
+            
+            BioEntity newLocationObject = ((Location) partialLocList.get(0)).getObject();
 
             // should check that maxChrEnd - minChrStart = maxBioEnd - minBioStart once
             // createChromosomeLocation() is fixed
-
+            
             Location newLocation =
                 (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
             newLocation.setStart(new Integer(minChrStart));
@@ -519,7 +476,40 @@ public class CalculateLocations
             newLocation.setObject(newLocationObject);
 
             osw.store(newLocation);
-            //org.intermine.web.LogMe.log("i", "created: " + newLocation);
+        }
+    }
+    
+    /**
+     * Return true if and only if all of the Locations in the List have the same object reference.
+     */
+    private boolean checkForSameObject(List list) {
+        BioEntity testObject = null;
+
+        for (Iterator iter = list.iterator(); iter.hasNext(); ) {
+            PartialLocation pl = (PartialLocation) iter.next();
+
+            if (testObject == null) {
+                testObject = pl.getObject();
+            } else {
+                if (!testObject.equals(pl.getObject())) {
+                    LOG.info("BioEntity (" + pl.getSubject() + ") is located "
+                             + "on two different BioEntities " + pl.getObject().getId() + " and "
+                             + testObject.getId());
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Store all the BioEntity objects from the List using osw.
+     */
+    private void storeAll(List list) throws ObjectStoreException {
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+            osw.store((InterMineObject) iter.next());
         }
     }
 
@@ -686,11 +676,9 @@ public class CalculateLocations
            }
         } else {
             if (childOnChr.startIsPartial()) {
-                //org.intermine.web.LogMe.log("i", "          XXXXXXXXXXXXXXXXXXXXX");
                 startIsPartial = true;
             }
             if (childOnChr.endIsPartial()) {
-                //org.intermine.web.LogMe.log("i", "          YYYYYYYYYYYYYYYYYYYYY");
                 endIsPartial = true;
             }
         }
@@ -977,9 +965,6 @@ public class CalculateLocations
         q.setConstraint(cs);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(20000);
-
-        //org.intermine.web.LogMe.log("i", "q: " + q);
-        //org.intermine.web.LogMe.log("i", "res.size(): " + res.size());
 
         return res.iterator();
     }
