@@ -14,6 +14,7 @@ package org.flymine.objectstore.query.presentation;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Date;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -26,7 +27,7 @@ import org.flymine.objectstore.query.*;
 
 public class QueryCreator
 {
-
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
     private Query q;
 
     /**
@@ -100,8 +101,8 @@ public class QueryCreator
         } else if (type.equals(Boolean.class)) {
             qv = new QueryValue(Boolean.valueOf(value));
         } else if (type.equals(Date.class)) {
-            SimpleDateFormat format = new SimpleDateFormat();
-            qv = new QueryValue(format.parse(value));
+            DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+            qv = new QueryValue(formatter.parse(value));
         } else if (type.equals(String.class)) {
             qv = new QueryValue(value);
         } else {
