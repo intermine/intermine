@@ -71,10 +71,15 @@ public class ResultsConverter
                         if (obj == null) {
                             String objectField = sqlResults.getString(alias);
                             currentColumn = objectField;
-                            LOG.warn("parsing object: " + idField);
                             obj = LiteParser.parse(objectField, os);
-                            LOG.warn("parsed object: " + idField);
-                            os.cacheObjectById(obj.getId(), obj);
+                            //if (objectField.length() < ObjectStoreFlyMineImpl
+                            //        .CACHE_LARGEST_OBJECT) {
+                                os.cacheObjectById(obj.getId(), obj);
+                            //} else {
+                            //    LOG.error("Not cacheing large object " + obj.getId()
+                            //            + " on read"
+                            //            + " (size = " + (objectField.length() / 512) + " kB)");
+                            //}
                         }
                         row.add(obj);
                     } else {

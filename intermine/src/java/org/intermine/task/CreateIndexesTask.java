@@ -115,10 +115,12 @@ public class CreateIndexesTask extends Task
             createIndex(tableName + "__" + keyName, tableName,
                         StringUtil.join(fieldNames, ", "));
         }
-        //and one for each N-to-1 relation to increase speed of e.g. company.getDepartments
+        //and one for each bidirectional N-to-1 relation to increase speed of
+        //e.g. company.getDepartments
         for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
             ReferenceDescriptor ref = (ReferenceDescriptor) j.next();
-            if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
+            if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
+                    && (ref.getReverseReferenceDescriptor() != null)) {
                 String tableName = DatabaseUtil.getTableName(cld);                      
                 dropIndex(tableName + "__"  + ref.getName());
                 createIndex(tableName + "__"  + ref.getName(), tableName,

@@ -50,9 +50,11 @@ public class PrefetchManager
                     // The request has not been done.
                     if (!serviced.contains(request)) {
                         // And it isn't currently being serviced.
+                        if (!pending.contains(request)) {
+                            LOG.info("addRequest - adding request:                          "
+                                    + request);
+                        }
                         pending.add(request);
-                        LOG.info("addRequest - adding request:                          "
-                                + request);
                         if ((pending.size() + serviced.size()) > (serviceThreads * LOADING)) {
                             // There are too many requests for the servicing threads.
                             Thread newThread = new ServiceThread();

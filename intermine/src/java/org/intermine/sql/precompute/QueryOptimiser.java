@@ -100,6 +100,10 @@ public class QueryOptimiser
         if (precompLookup instanceof Database) {
             database = (Database) precompLookup;
         }
+        PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
+        if (ptm.getPrecomputedTables().isEmpty()) {
+            return new BestQueryFallback(null, query);
+        }
         callCount++;
         if (callCount % REPORT_INTERVAL == 0) {
             LOG.error("Optimiser called " + callCount + " times");
@@ -136,7 +140,6 @@ public class QueryOptimiser
                 }
                 parseTime = new Date().getTime();
                 remapAliasesToAvoidPrecomputePrefix(originalQuery);
-                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
                 Set precomputedTables = ptm.getPrecomputedTables();
                 recursiveOptimise(precomputedTables, originalQuery, bestQuery, originalQuery);
             } catch (BestQueryException e) {

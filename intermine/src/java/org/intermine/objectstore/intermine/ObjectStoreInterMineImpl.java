@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements ObjectStore
 {
     protected static final Logger LOG = Logger.getLogger(ObjectStoreFlyMineImpl.class);
+    protected static final int CACHE_LARGEST_OBJECT = 5000000;
     protected static Map instances = new HashMap();
     protected Database db;
     protected boolean everOptimise = true;
@@ -254,12 +255,17 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             if (sqlResults.next()) {
                 currentColumn = sqlResults.getString("a1_");
-                FlyMineBusinessObject retval = LiteParser.parse(currentColumn, this);
-                cacheObjectById(retval.getId(), retval);
                 if (sqlResults.next()) {
                     throw new ObjectStoreException("More than one object in the database has this"
                             + " primary key");
                 }
+                FlyMineBusinessObject retval = LiteParser.parse(currentColumn, this);
+                //if (currentColumn.length() < CACHE_LARGEST_OBJECT) {
+                    cacheObjectById(retval.getId(), retval);
+                //} else {
+                //    LOG.error("Not cacheing large object " + retval.getId() + " on getObjectById"
+                //            + " (size = " + (currentColumn.length() / 512) + " kB)");
+                //}
                 return retval;
             } else {
                 return null;

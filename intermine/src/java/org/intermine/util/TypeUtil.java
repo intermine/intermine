@@ -379,6 +379,9 @@ public class TypeUtil
         if (clazz.equals(BigDecimal.class)) {
             return new BigDecimal(value);
         }
+        if (clazz.equals(String.class)) {
+            return new String(value);
+        }
         return value;
     }
     

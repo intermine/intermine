@@ -158,25 +158,47 @@ public class FqlShell
             throws Exception {
         java.util.Date startTime = new java.util.Date();
         PrintStream out = System.out;
+        PrintStream err = System.err;
 
         // The following will only work when there is one package in the model
         String modelPackage = TypeUtil.packageName(((ClassDescriptor) os.getModel()
                                                     .getClassDescriptors().iterator().next())
                                                    .getName());
         
+        boolean doDots = false;
+
+        if (fql.toUpperCase().startsWith("DOT ")) {
+            fql = fql.substring(4);
+            doDots = true;
+        }
         FqlQuery fq = new FqlQuery(fql, modelPackage);
         Query q = fq.toQuery();
 
         out.println("Query to run: " + q.toString());
 
         Results res = os.execute(q);
+        res.setBatchSize(5000);
         out.print("Column headings: ");
         outputList(QueryHelper.getColumnAliases(q));
         out.print("Column types: ");
         outputList(QueryHelper.getColumnTypes(q));
+        int rowNo = 0;
         Iterator rowIter = res.iterator();
         while (rowIter.hasNext()) {
-            outputList((List) (rowIter.next()));
+            List row = (List) rowIter.next();
+            if (doDots) {
+                if (rowNo % 100 == 0) {
+                    err.print(rowNo + " ");
+                }
+                err.print(".");
+                if (rowNo % 100 == 99) {
+                    err.print("\n");
+                }
+                err.flush();
+            } else {
+                outputList(row);
+            }
+            rowNo++;
         }
     }
 

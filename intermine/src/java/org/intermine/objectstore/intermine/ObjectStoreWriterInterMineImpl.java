@@ -61,7 +61,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected CacheMap recentSequences = new CacheMap();
 
     protected static final int SEQUENCE_MULTIPLE = 100;
-    protected static final int MAX_BATCH_CHARS = 20000000;
+    protected static final int MAX_BATCH_CHARS = 10000000;
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
      * Connection, grabbed from the provided ObjectStore.
@@ -259,7 +259,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                     String toAdd = "DELETE FROM " + tableName + " WHERE id = " + o.getId();
                     addBatch(s, toAdd);
                 }
-                StringBuffer sql = new StringBuffer("INSERT INTO ")
+                StringBuffer sql = new StringBuffer((int) (xml.length() * 1.01 + 1000))
+                    .append("INSERT INTO ")
                     .append(tableName)
                     .append(" (OBJECT");
                 fieldIter = cld.getAllFieldDescriptors().iterator();
@@ -273,7 +274,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 }
                 sql.append(") VALUES (");
                 SqlGenerator.objectToString(sql, xml);
-                sql.append("");
                 fieldIter = cld.getAllFieldDescriptors().iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
@@ -538,7 +538,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
 
     private void addBatch(Statement s, String toAdd) throws SQLException {
         s.addBatch(toAdd);
-        //System//.out.println(getModel().getName() + ": Batched SQL:  " + toAdd);
         logAddBatch();
         batchChars += toAdd.length();
         if (batchChars > MAX_BATCH_CHARS) {
@@ -556,8 +555,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 conn = getConnection();
                 batch.executeBatch();
                 logFlushBatch();
-                //System//.out.println(getModel().getName()
-                //        + ": Executed SQL batch in flushBatch()");
                 batch = null;
             } catch (SQLException e) {
                 throw new ObjectStoreException("Error while flushing a batch", e);
@@ -574,7 +571,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     private synchronized void logAddBatch() {
         logOps++;
         emptyBatch = false;
-        if ((logOps % 5000) == 0) {
+        if ((logOps % 50000) == 0) {
             outputLog();
         }
     }

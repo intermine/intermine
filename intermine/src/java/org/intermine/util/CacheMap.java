@@ -33,7 +33,7 @@ import java.util.WeakHashMap;
  * will empty out even if the system is not running out of memory.
  *
  * <p>Like most collection classes, this class is not synchronized.  A
- * synchronized <tt>WeakHashMap</tt> may be constructed using the
+ * synchronized <tt>CacheMap</tt> may be constructed using the
  * <tt>Collections.synchronizedMap</tt> method.
  *
  * <p>The holding system attempts to follow the following characteristics:

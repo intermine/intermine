@@ -75,7 +75,8 @@ public class DynamicBean implements MethodInterceptor
             if (args[0] instanceof FlyMineBusinessObject) {
                 Integer otherId = ((FlyMineBusinessObject) args[0]).getId();
                 Integer thisId = (Integer) map.get("Id");
-                return new Boolean((otherId != null) && (thisId != null) && thisId.equals(otherId));
+                return Boolean.valueOf((otherId != null) && (thisId != null)
+                        && thisId.equals(otherId));
             }
             return Boolean.FALSE;
         }

@@ -31,8 +31,6 @@ public class CreateIndexesTaskTest extends TestCase
         List expected = new ArrayList();
         expected.add("drop index Department__key");
         expected.add("create index Department__key on Department(name, companyId)");
-        expected.add("drop index Department__manager");
-        expected.add("create index Department__manager on Department(managerId)");
         expected.add("drop index Department__company");
         expected.add("create index Department__company on Department(companyId)");
 

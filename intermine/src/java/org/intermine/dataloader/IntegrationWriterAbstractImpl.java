@@ -54,6 +54,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected static final int FROM_DB = 1;
     protected static final int SOURCE = 2;
     protected LinkedHashMap idMap = new LinkedHashMap(MAX_MAPPINGS * 14 / 10, 0.75F, true);
+    protected int idMapOps = 0;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -260,6 +261,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public void assignMapping(Integer source, Integer dest) {
         if ((source != null) && (dest != null)) {
             idMap.put(source, dest);
+            idMapOps++;
+            if (idMapOps % 10000 == 0) {
+                LOG.error("idMap size = " + idMap.size() + ", ops = " + idMapOps);
+            }
             int removeItems = idMap.size() - MAX_MAPPINGS;
             if (removeItems > 10) {
                 Iterator iter = idMap.entrySet().iterator();

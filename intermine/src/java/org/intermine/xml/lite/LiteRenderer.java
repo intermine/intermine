@@ -88,6 +88,14 @@ public class LiteRenderer
                 .append("\"/>");
         }
         sb.append("</object>");
+        if ((sb.length() > 1000000) && ((1.1 * sb.length()) < sb.capacity())) {
+            // Yes, this looks silly, but it prevents the String holding a reference to a char
+            // array that is up to twice the size of the String. We throw away the larger char
+            // array immediately anyway.
+            LOG.error("Converting StringBuffer (size = " + (sb.length() / 512) + " kB, capacity = "
+                    + (sb.capacity() / 512) + " kb) to String");
+            return new String(sb.toString());
+        }
         return sb.toString();
     }
 
@@ -100,14 +108,22 @@ public class LiteRenderer
      * @return the XML for that object
      */
     public static String render(FlyMineBusinessObject obj, Model model) {
-        StringBuffer sb = new StringBuffer();
         Item item = objectToItem(obj, model);
+        int charLen = 300;
+        Iterator i = item.getFields().iterator();
+        while (i.hasNext()) {
+            Field f = (Field) i.next();
+            charLen += f.getValue().toString().length() + 200;
+        }
+        charLen += item.getReferences().size() * 200;
+        
+        StringBuffer sb = new StringBuffer(charLen);
 
         sb.append(item.getClassName())
             .append(DELIM)
             .append(item.getImplementations());
 
-        Iterator i = item.getFields().iterator();
+        i = item.getFields().iterator();
         while (i.hasNext()) {
             Field f = (Field) i.next();
             sb.append(DELIM)
@@ -125,6 +141,14 @@ public class LiteRenderer
                 .append(f.getName())
                 .append(DELIM)
                 .append(f.getValue());
+        }
+        if ((sb.length() > 1000000) && ((1.1 * sb.length()) < sb.capacity())) {
+            // Yes, this looks silly, but it prevents the String holding a reference to a char
+            // array that is up to twice the size of the String. We throw away the larger char
+            // array immediately anyway.
+            LOG.error("Converting StringBuffer (size = " + (sb.length() / 512) + " kB, capacity = "
+                    + (sb.capacity() / 512) + " kb) to String");
+            return new String(sb.toString());
         }
         return sb.toString();
     }

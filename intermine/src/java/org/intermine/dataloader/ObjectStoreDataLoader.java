@@ -70,17 +70,19 @@ public class ObjectStoreDataLoader extends DataLoader
         //}
         while (iter.hasNext()) {
             FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
-            //String objText = obj.toString();
-            //int objTextLen = objText.length();
-            //System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60
-            //                : objTextLen)));
-            iw.store(obj, source, skelSource);
+            //if (obj.getClass().getName().equals("org.flymine.model.chado.feature")) {
+            //    String objText = obj.toString();
+            //    int objTextLen = objText.length();
+            //    System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60
+            //                    : objTextLen)));
+            //}
+            //iw.store(obj, source, skelSource);
             opCount++;
             if (opCount % 1000 == 0) {
                 long now = (new Date()).getTime();
                 LOG.error("Dataloaded " + opCount + " objects - running at "
-                        + (60000000 / (now - time)) + " objects per minute");
-                LOG.error("Now on " + obj.getClass().getName());
+                        + (60000000 / (now - time)) + " objects per minute"
+                        + " -- now on " + obj.getClass().getName());
                 time = now;
                 iw.commitTransaction();
                 iw.beginTransaction();

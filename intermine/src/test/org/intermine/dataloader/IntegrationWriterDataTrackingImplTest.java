@@ -69,7 +69,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public void tearDown() throws Exception {
         super.tearDown();
         iw.commitTransaction();
-        removeDataFromTracker();
+        //removeDataFromTracker();
         removeDataFromStore();
         iw.idMap.clear();
     }
@@ -79,7 +79,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         //iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
         writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.unittest");
-        iw = new IntegrationWriterDataTrackingImpl(writer, ObjectStoreWriterFactory.getObjectStoreWriter("osw.datatrackingtest"));
+        iw = new IntegrationWriterDataTrackingImpl(writer, DataTrackerFactory.getDataTracker("dt.datatrackingtest"));
         os = iw.getObjectStore();
     }
 
@@ -126,7 +126,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
-
+/*
     public static void removeDataFromTracker() throws Exception {
         System.out.println("Removing data from tracker");
         long start = new Date().getTime();
@@ -154,7 +154,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
         System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from tracker");
     }
-
+*/
     public static void removeDataFromStore() throws Exception {
         System.out.println("Removing data from store");
         long start = new Date().getTime();
@@ -594,32 +594,29 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(conC);
         iw.store(conD);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
+        Source source = iw.getMainSource("testsource");
 
-        ObjectStoreWriter dataTracker = iw.getDataTracker();
-        DataTracking.clearObj(ca, dataTracker);
-        DataTracking.setSource(ca, "name", source, dataTracker);
-        DataTracking.setSource(ca, "address", source, dataTracker);
-        DataTracking.setSource(ca, "vatNumber", source, dataTracker);
-        DataTracking.setSource(ca, "cEO", source, dataTracker);
-        DataTracking.clearObj(conA, dataTracker);
-        DataTracking.setSource(conA, "personalAddress", source, dataTracker);
-        DataTracking.setSource(conA, "businessAddress", source, dataTracker);
-        DataTracking.setSource(conA, "name", source, dataTracker);
-        DataTracking.setSource(conA, "seniority", source, dataTracker);
-        DataTracking.clearObj(conC, dataTracker);
-        DataTracking.setSource(conC, "personalAddress", source, dataTracker);
-        DataTracking.setSource(conC, "businessAddress", source, dataTracker);
-        DataTracking.setSource(conC, "name", source, dataTracker);
-        DataTracking.setSource(conC, "seniority", source, dataTracker);
-        DataTracking.clearObj(conD, dataTracker);
-        DataTracking.setSource(conD, "personalAddress", source, dataTracker);
-        DataTracking.setSource(conD, "businessAddress", source, dataTracker);
-        DataTracking.setSource(conD, "name", source, dataTracker);
-        DataTracking.setSource(conD, "seniority", source, dataTracker);
+        DataTracker dataTracker = iw.getDataTracker();
+        dataTracker.clearObj(ca.getId());
+        dataTracker.setSource(ca.getId(), "name", source);
+        dataTracker.setSource(ca.getId(), "address", source);
+        dataTracker.setSource(ca.getId(), "vatNumber", source);
+        dataTracker.setSource(ca.getId(), "cEO", source);
+        dataTracker.clearObj(conA.getId());
+        dataTracker.setSource(conA.getId(), "personalAddress", source);
+        dataTracker.setSource(conA.getId(), "businessAddress", source);
+        dataTracker.setSource(conA.getId(), "name", source);
+        dataTracker.setSource(conA.getId(), "seniority", source);
+        dataTracker.clearObj(conC.getId());
+        dataTracker.setSource(conC.getId(), "personalAddress", source);
+        dataTracker.setSource(conC.getId(), "businessAddress", source);
+        dataTracker.setSource(conC.getId(), "name", source);
+        dataTracker.setSource(conC.getId(), "seniority", source);
+        dataTracker.clearObj(conD.getId());
+        dataTracker.setSource(conD.getId(), "personalAddress", source);
+        dataTracker.setSource(conD.getId(), "businessAddress", source);
+        dataTracker.setSource(conD.getId(), "name", source);
+        dataTracker.setSource(conD.getId(), "seniority", source);
 
         // Now set up a standard store operation that will set off a object merge.
         Contractor con = new Contractor();

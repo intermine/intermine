@@ -406,6 +406,19 @@ public class Results extends AbstractList
         return new Iter();
     }
 
+    /**
+     * Returns an iterator over the List, starting fromthe given position.
+     * This method is mainly useful for testing.
+     *
+     * @param from the index of the first object to be fetched
+     * @return an Interator
+     */
+    public Iterator iteratorFrom(int from) {
+        Iter iter = new Iter();
+        iter.cursor = from;
+        return iter;
+    }
+
     private class Iter implements Iterator
     {
         /**

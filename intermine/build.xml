@@ -354,24 +354,6 @@
 
   <!-- Models to build -->
 
-  <!-- Datatracking test -->
-  <target name="build-db-datatrackingtest" depends="compile-datatracking">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="datatracking"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.datatrackingtest"/>
-    </ant>
-  </target>
-
-  <!-- Datatracking -->
-  <target name="build-db-datatracking" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="datatracking"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.datatracking"/>
-    </ant>
-  </target>
-  
   <!-- Fulldata -->
    <target name="build-db-fulldatatest" depends="compile-main">
      <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
@@ -474,6 +456,16 @@
     </taskdef>
 
     <create-indexes database="db.unittest" model="testmodel"/>
+  </target>
+
+  <target name="create-indexes-chado-test" depends="build-db-chado-test">
+    <taskdef
+      name="create-indexes"
+      classname="org.flymine.task.CreateIndexesTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+
+    <create-indexes database="db.chado-test" model="chado"/>
   </target>
 
   <!-- Data Translation targets -->
@@ -632,7 +624,7 @@
   </target>
 
   <!-- Load data from chado-items into chado-test -->
-  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, build-db-datatracking">
+  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, create-indexes-chado-test">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
@@ -823,7 +815,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-datatrackingtest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest"
+  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">

@@ -20,64 +20,47 @@ import org.flymine.model.testmodel.Department;
 import junit.framework.TestCase;
 
 public class DataTrackingTest extends TestCase {
-    protected ObjectStoreWriter osw;
+    protected DataTracker dt;
     protected Source source1, source2;
     
     public void setUp() throws Exception {
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.datatrackingtest");
-        source1 = new Source();
-        source1.setName("Source1");
-        osw.store(source1);
-        source2 = new Source();
-        source2.setName("Source2");
-        osw.store(source2);
+        dt = DataTrackerFactory.getDataTracker("dt.datatrackingtest");
+        source1 = dt.stringToSource("Source1");
+        source2 = dt.stringToSource("Source2");
     }
 
     public void tearDown() throws Exception {
-        osw.delete(source1);
-        osw.delete(source2);
-        osw.close();
+        dt.flush();
     }
 
     public void testSetSourceNullIds() throws Exception {
         try {
-            DataTracking.setSource(new Department(), "", source1, osw);
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+            dt.setSource(null, "name", source1);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
         }
         
-        Department dept = new Department();
-        dept.setId(new Integer(42));
-        
         try {
-            DataTracking.setSource(dept, "", new Source(), osw);
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+            dt.setSource(new Integer(46), "name", new Source());
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+        }
+
+        try {
+            dt.setSource(new Integer(46), null, source1);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
         }
     }
 
     public void testGetSource() throws Exception {
-        Field field = new Field();
-        field.setSource(source1);
-        field.setName("name");
-        field.setObjectId(new Integer(13));
-        osw.store(field);
-        Department dept = new Department();
-        dept.setId(new Integer(13));
-        try {
-            assertEquals(source1.getName(), DataTracking.getSource(dept, "name", osw).getName());
-        } finally {
-            osw.delete(field);
-        }
-    }
+        dt.setSource(new Integer(13), "name", source1);
+        assertEquals(source1.getName(), dt.getSource(new Integer(13), "name").getName());
 
-    public void testSetSource() throws Exception {
-        Department dept = new Department();
-        dept.setId(new Integer(42));
-        DataTracking.clearObj(dept, osw);
-        DataTracking.setSource(dept, "name", source1, osw);
-        assertEquals(source1.getName(), DataTracking.getSource(dept, "name", osw).getName());
-        DataTracking.setSource(dept, "name", source2, osw);
-        assertEquals(source2.getName(), DataTracking.getSource(dept, "name", osw).getName());
+        for (int i = 100; i < 200; i++) {
+            dt.setSource(new Integer(i), "name", source2);
+        }
+
+        assertEquals(source1.getName(), dt.getSource(new Integer(13), "name").getName());
     }
 }

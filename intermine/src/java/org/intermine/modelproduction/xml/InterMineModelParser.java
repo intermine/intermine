@@ -63,7 +63,7 @@ public class FlyMineModelParser implements ModelParser
             } else if (qName.equals("class")) {
                 String name = attrs.getValue("name");
                 String supers = attrs.getValue("extends");
-                boolean isInterface = new Boolean(attrs.getValue("is-interface"))
+                boolean isInterface = Boolean.valueOf(attrs.getValue("is-interface"))
                     .booleanValue();
                 cls = new SkeletonClass(name, supers, isInterface);
             } else if (qName.equals("attribute")) {
@@ -79,7 +79,7 @@ public class FlyMineModelParser implements ModelParser
             } else if (qName.equals("collection")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("referenced-type");
-                boolean ordered = new Boolean(attrs.getValue("ordered")).booleanValue();
+                boolean ordered = Boolean.valueOf(attrs.getValue("ordered")).booleanValue();
                 String reverseReference = attrs.getValue("reverse-reference");
                 cls.collections.add(new CollectionDescriptor(name, type,
                                                              reverseReference, ordered));

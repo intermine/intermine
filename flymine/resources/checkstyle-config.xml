@@ -221,7 +221,7 @@
     </module>
 
     <module name="IllegalInstantiation">
-      <property name="classes" value="java.lang.String" />
+      <property name="classes" value="java.lang.Boolean" />
     </module>
 
     <module name="InnerAssignment"/>
@@ -231,7 +231,6 @@
       <property name="format" value="FAIL"/>
     </module>
     <module name="UpperEll"/>
-
   </module>
 
   <!-- enforce package documentation -->

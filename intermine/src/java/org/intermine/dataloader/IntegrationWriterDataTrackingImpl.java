@@ -10,7 +10,6 @@ package org.flymine.dataloader;
  *
  */
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +40,7 @@ import org.apache.log4j.Logger;
 public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstractImpl
 {
     protected static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
-    protected ObjectStoreWriter dataTracker;
+    protected DataTracker dataTracker;
 
     /**
      * Creates a new instance of this class, given the properties defining it.
@@ -65,7 +64,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
 
         ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
-        ObjectStoreWriter dataTracker = ObjectStoreWriterFactory.getObjectStoreWriter(trackerAlias);
+        DataTracker dataTracker = DataTrackerFactory.getDataTracker(trackerAlias);
         return new IntegrationWriterDataTrackingImpl(writer, dataTracker);
     }
 
@@ -73,56 +72,34 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * Constructs a new instance of IntegrationWriterDataTrackingImpl.
      *
      * @param osw an instance of an ObjectStoreWriter, which we can use to access the database
-     * @param dataTracker an instance of ObjectStoreWriter, which we can use to store data tracking
+     * @param dataTracker an instance of DataTracker, which we can use to store data tracking
      * information
      */
-    public IntegrationWriterDataTrackingImpl(ObjectStoreWriter osw, ObjectStoreWriter dataTracker) {
+    public IntegrationWriterDataTrackingImpl(ObjectStoreWriter osw, DataTracker dataTracker) {
         super(osw);
         this.dataTracker = dataTracker;
-        if (!dataTracker.getModel().getName().equals("datatracking")) {
-            throw new IllegalArgumentException("Data tracking objectstore must use the data"
-                    + " tracking model - currently using " + dataTracker.getModel().getName());
-        }
     }
 
     /**
      * @see IntegrationWriter#getMainSource
      */
     public Source getMainSource(String name) throws ObjectStoreException {
-        Source retval = new Source();
-        retval.setName(name);
-        retval.setSkeleton(false);
-        Source retval2 = (Source) dataTracker.getObjectByExample(retval, new HashSet(Arrays.asList(
-                        new String[] {"name", "skeleton"})));
-        if (retval2 != null) {
-            return retval2;
-        }
-        dataTracker.store(retval);
-        return retval;
+        return dataTracker.stringToSource(name);
     }
 
     /**
      * @see IntegrationWriter#getSkeletonSource
      */
     public Source getSkeletonSource(String name) throws ObjectStoreException {
-        Source retval = new Source();
-        retval.setName(name);
-        retval.setSkeleton(true);
-        Source retval2 = (Source) dataTracker.getObjectByExample(retval, new HashSet(Arrays.asList(
-                        new String[] {"name", "skeleton"})));
-        if (retval2 != null) {
-            return retval2;
-        }
-        dataTracker.store(retval);
-        return retval;
+        return dataTracker.stringToSource("skel_" + name);
     }
 
     /**
-     * Returns the data tracking objectstore being used.
+     * Returns the data tracker being used.
      *
      * @return dataTracker
      */
-    protected ObjectStoreWriter getDataTracker() {
+    protected DataTracker getDataTracker() {
         return dataTracker;
     }
     
@@ -180,7 +157,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     objIter = equivalentObjects.iterator();
                     while (objIter.hasNext()) {
                         FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
-                        Source fieldSource = DataTracking.getSource(obj, fieldName, dataTracker);
+                        Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
                         if ((equivalentObjects.size() == 1) && (fieldSource != null)
                                 && (fieldSource.equals(source) || (fieldSource.equals(skelSource)
                                         && (type != SOURCE)))) {
@@ -213,8 +190,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         copyField(obj, newObj, source, skelSource, field, type);
                         lastSource = (type == SOURCE ? source : skelSource);
                     } else {
-                        Source fieldSource = DataTracking.getSource(obj, fieldName,
-                                dataTracker);
+                        Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
                         copyField(obj, newObj, fieldSource, fieldSource, field, FROM_DB);
                         lastSource = fieldSource;
                     }
@@ -231,7 +207,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         // the data tracker can cache the writes without having to ask the db if records for that
         // objectid already exist - we know there aren't.
         if (newId == null) {
-            DataTracking.clearObj(newObj, dataTracker);
+            dataTracker.clearObj(newObj.getId());
         }
 
         Iterator trackIter = trackingMap.entrySet().iterator();
@@ -239,7 +215,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             Map.Entry trackEntry = (Map.Entry) trackIter.next();
             String fieldName = (String) trackEntry.getKey();
             Source lastSource = (Source) trackEntry.getValue();
-            DataTracking.setSource(newObj, fieldName, lastSource, dataTracker);
+            dataTracker.setSource(newObj.getId(), fieldName, lastSource);
         }
 
         while (equivalentIter.hasNext()) {
@@ -254,35 +230,18 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriterAbstractImpl#beginTransaction
-     */
-    public void beginTransaction() throws ObjectStoreException {
-        osw.beginTransaction();
-        dataTracker.beginTransaction();
-    }
-
-    /**
      * @see IntegrationWriterAbstractImpl#commitTransaction
-     */
     public void commitTransaction() throws ObjectStoreException {
         osw.commitTransaction();
-        dataTracker.commitTransaction();
+        dataTracker.flush();
     }
-
-    /**
-     * @see IntegrationWriterAbstractImpl#abortTransaction
      */
-    public void abortTransaction() throws ObjectStoreException {
-        osw.abortTransaction();
-        dataTracker.abortTransaction();
-    }
 
     /**
      * @see IntegrationWriterAbstractImpl#close
      */
     public void close() {
         osw.close();
-        dataTracker.close();
+        dataTracker.flush();
     }
 }
-
