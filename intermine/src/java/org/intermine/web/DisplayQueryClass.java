@@ -179,7 +179,7 @@ public class DisplayQueryClass
             return false;
         }
 
-        DisplayQueryClass d = (DisplayQueryClass)o;
+        DisplayQueryClass d = (DisplayQueryClass) o;
 
         return d.getType().equals(getType())
             && d.getConstraintNames().equals(getConstraintNames())
