@@ -21,8 +21,12 @@ every 10 minutes.</para>
 to check out the source.</listitem>
 
 <listitem>Issue the command <command>cvs -d
+:pserver:anonymous@cvs.flymine.org:/cvs
+login</command>. No password is needed.</listitem>
+
+<listitem>Then type <command>cvs -d
 :pserver:anonymous@cvs.flymine.org:/cvs co
-intermine</command>. No password is needed.</listitem>
+intermine</command>.</listitem>
 
 </itemizedlist>
 
