@@ -109,6 +109,10 @@
     <put name="body" value="empty.jsp"/>
     <put name="pageName" value="contextHelp"/>
   </definition>
+  <definition name="templateProblems.page" extends="layout.template">
+    <put name="body" value="templateProblems.jsp"/>
+    <put name="pageName" value="templateProblems"/>
+  </definition>
   <definition name="waiting.page" path="/waiting.jsp"/>
   <!--tiles-->
   <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
