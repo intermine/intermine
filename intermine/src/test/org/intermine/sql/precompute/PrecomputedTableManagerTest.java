@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
@@ -100,16 +101,6 @@ public class PrecomputedTableManagerTest extends TestCase
         }
     }
 
-    public void testDeleteNullString() throws Exception {
-        try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
-            ptm.delete((String) null);
-            fail("Expected: NullPointerException");
-        }
-        catch (NullPointerException e) {
-        }
-    }
-
     public void testGetInstanceForNullDatabase() throws Exception {
         try {
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance((Database) null);
@@ -120,9 +111,14 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     public void testGetInstance() throws Exception {
-        PrecomputedTableManager ptm1 = PrecomputedTableManager.getInstance(database);
-        PrecomputedTableManager ptm2 = PrecomputedTableManager.getInstance(database);
-        assertEquals(ptm1, ptm2);
+        try {
+            PrecomputedTableManager ptm1 = PrecomputedTableManager.getInstance(database);
+            PrecomputedTableManager ptm2 = PrecomputedTableManager.getInstance(database);
+            assertTrue(ptm1 == ptm2);
+        } finally {
+            // Make sure we don't muck up any tests in the future by having a PrecomputedTableManager lying around with no index table to match it.
+            PrecomputedTableManager.instances = new HashMap();
+        }
     }
 
     public void testAddNew() throws Exception {
@@ -171,7 +167,7 @@ public class PrecomputedTableManagerTest extends TestCase
     public void testDeleteInvalid() throws Exception {
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
-            ptm.delete("tablenotthere");
+            ptm.delete(new PrecomputedTable(new Query(), "tablenotthere"));
             fail("Expected: IllegalArgumentException");
         }
         catch (IllegalArgumentException e) {
