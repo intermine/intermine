@@ -32,9 +32,11 @@
           <%-- show/hide --%>
           <c:choose>
             <c:when test="${column.visible}">
-              [<html:link action="/changeResults?method=hideColumn&index=${status.index}">
-                <fmt:message key="results.hideColumn"/>
-              </html:link>]
+              <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
+                [<html:link action="/changeResults?method=hideColumn&index=${status.index}">
+                  <fmt:message key="results.hideColumn"/>
+                </html:link>]
+              </c:if>
             </c:when>
             <c:otherwise>
               [<html:link action="/changeResults?method=showColumn&index=${status.index}">
