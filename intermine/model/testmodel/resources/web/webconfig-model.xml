@@ -3,6 +3,7 @@
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="vatNumber"/>
+      <fieldconfig fieldExpr="address.address"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/companiesHouse.jsp"/>
@@ -18,13 +19,13 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.testmodel.Broke" fieldExpr="debt">
+  <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
     <longdisplayers>
       <displayer src="/model/debtField.jsp"/>
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.testmodel.HasAddress" fieldExpr="address">
+  <class className="org.intermine.model.testmodel.HasAddress" fieldName="address">
     <longdisplayers>
       <displayer src="/model/addressField.jsp"/>
     </longdisplayers>
