@@ -225,6 +225,7 @@
       <arg value="${build.model}/ensembl/ensembl_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
 
     <!-- merge ensembl model with target genomic model -->
@@ -236,6 +237,7 @@
       <arg value="${build.model}/ensembl/ensembl.n3" />
       <arg value="http://www.flymine.org/model/ensembl#" />
       <arg value="N3" />
+      <arg value="y" />
     </java>
   </target>
 
@@ -274,6 +276,7 @@
       <arg value="${build.model}/chado/chado_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
 
     <!-- merge chado model with target genomic model -->
@@ -285,6 +288,7 @@
       <arg value="${build.model}/chado/chado.n3" />
       <arg value="http://www.flymine.org/model/chado#" />
       <arg value="N3" />
+      <arg value="y" />
     </java>
   </target>
 
@@ -335,6 +339,7 @@
       <arg value="${build.model}/rnai/rnai_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
 
     <!-- merge rnai model with target genomic model -->
@@ -346,6 +351,7 @@
       <arg value="${build.model}/rnai/rnai.n3" />
       <arg value="http://www.flymine.org/model/rnai#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
   </target>
 
@@ -376,6 +382,7 @@
       <arg value="${build.model}/so/so_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
 
     <!-- merge so model with target genomic model -->
@@ -387,12 +394,36 @@
       <arg value="${build.model}/so/sofa.n3" />
       <arg value="http://www.flymine.org/model/so#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
 
   </target>
 
 
   <!-- GENE ONTOLOGY MODEL GENERATION -->
+  <!-- Convert GO to owl -->
+  <target name="go-to-owl" depends="prepare-build-model">
+    <mkdir dir="${build.model}/go" />
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${model}/go/component.ontology" />
+      <arg value="${build.model}/go/component.n3" />
+      <arg value="http://www.flymine.org/model/go#" />
+    </java>
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${model}/go/function.ontology" />
+      <arg value="${build.model}/go/function.n3" />
+      <arg value="http://www.flymine.org/model/go#" />
+    </java>
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${model}/go/process.ontology" />
+      <arg value="${build.model}/go/process.n3" />
+      <arg value="http://www.flymine.org/model/go#" />
+    </java>
+  </target>
+
 
   <!-- merge go model with current genomic model owl -->
   <target name="merge-go-model" depends="prepare-genomic-model">
@@ -407,7 +438,41 @@
       <arg value="${build.model}/go/go_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
+      <arg value="n" />
     </java>
+
+    <!-- merge go model with target genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/go/component.n3" />
+      <arg value="http://www.flymine.org/model/go#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/go/function.n3" />
+      <arg value="http://www.flymine.org/model/go#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/go/process.n3" />
+      <arg value="http://www.flymine.org/model/go#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+
   </target>
 
 
@@ -426,6 +491,7 @@
       <arg value="${build.model}/orthologue/orthologue.n3" />
       <arg value="http://www.flymine.org/model/orthologue#" />
       <arg value="N3" />
+      <arg value="y" />
     </java>
 
   </target>
@@ -451,6 +517,7 @@
       <arg value="${build.model}/phenotype/phenotype_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#"/>
       <arg value="N3"/>
+      <arg value="n" />
     </java>
     <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" failonerror="true">
       <classpath refid="models.class.path"/>
@@ -459,13 +526,14 @@
       <arg value="${build.model}/phenotype/phenotype.n3" />
       <arg value="http://www.flymine.org/model/phenotype#"/>
       <arg value="N3"/>
+      <arg value="n" />
     </java>
   </target>
 
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-       merge-orthologue-model, merge-go-model, merge-ensembl-model, merge-chado-model, merge-so-model,
+       merge-orthologue-model, merge-ensembl-model, merge-chado-model, merge-so-model,
        merge-phenotype-model, merge-rnai-model">
     <antcall target="create-genomic-model"/>
   </target>
@@ -480,6 +548,7 @@
 
   <!-- create java objects for the genomic model -->
   <target name="compile-genomic-model" depends="create-production-model">
+  <!--<target name="compile-genomic-model">-->
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -868,6 +937,9 @@
     <load-rnai integrationWriter="integration.production" source="os.rnai-translated" sourceName="rnai"/>
   </target>
 
+  <!-- load RNAI into production -->
+  <target name="build-rnai-production" depends="retrieve-rnai, translate-rnai, load-rnai"/>
+
 
   <!-- PHENOTYPE PIPELINE -->
 
@@ -924,6 +996,7 @@
     <load-phenotype integrationWriter="integration.production" source="os.phenotype-translated" sourceName="phenotype"/>
   </target>
 
+  <target name="build-phenotype-production" depends="retrieve-phenotype, translate-phenotype, load-phenotype"/>
 
 
   <!-- LOAD STATIC DATA -->
@@ -986,11 +1059,13 @@
   <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="production-build" depends="compile-genomic-model, jar-genomic,
+  <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
                                            build-orthologues-production,
+                                           build-rnai-production,
+                                           build-phenotype-production,
                                            load-static">
 
     <!-- analyse database -->
