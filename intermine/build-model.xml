@@ -5,8 +5,10 @@
   The following properties are used in this file:
 
   model.name: the name of the model
+  model: the directory containing model information
   class.path: the classpath to use
   db.name: the name of the database to build, if actually building the schema
+  objectstore.name: the name of the objectstore to access
   build.model: the location of the model build directory
   build.tmp: the location to store temporary files
   resources: the location of any static resource files
@@ -297,6 +299,20 @@
     </taskdef>
     <create-indexes database="${db.name}" model="${model.name}" 
                     attributeIndexes="${create.attribute.indexes}"/>
+  </target>
+
+  <target name="precompute-queries" depends="compile-java">
+    <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <precompute-queries alias="${objectstore.name}" modelName="${model.name}"/>
+  </target>
+
+  <target name="precompute-queries-test" depends="compile-java">
+    <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <precompute-queries alias="${objectstore.name}" modelName="${model.name}" testMode="true"/>
   </target>
 
   <target name="add-model-to-webapp" depends="build-model-from-db, compile-java, compile-webapp-java"
