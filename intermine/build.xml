@@ -339,7 +339,7 @@
   <!-- Models to build -->
 
   <!-- testmodel -->
-  <target name="compile-testmodel" depends="compile-main" >
+  <target name="compile-testmodel" depends="compile-main">
     <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <property name="model.src" value="${model}/testmodel"/>
@@ -429,8 +429,7 @@
   <!-- Unit test targets -->
 
   <!-- compile the tests -->
-  <target name="compile-test" depends="compile-testmodel, build-acedbtest"
-          description="compile the java test source" >
+  <target name="prepare-test" depends="compile-testmodel, build-acedbtest">
     <copy todir="${build.src.test}">
       <fileset dir="${src.test}">
         <include name="**/*.java"/>
@@ -441,6 +440,10 @@
         <pathelement path="${build.java}"/>
       </classpath>
     </depend>
+  </target>
+
+  <target name="compile-test" depends="prepare-test"
+          description="compile the java test source" >
     <javac destdir="${build.test}" listfiles="yes">
       <classpath refid="test.class.path"/>
       <src path="${build.src.test}" />
@@ -492,7 +495,15 @@
 
   </target>
 
-  <target name="test-webapp" depends="compile-test, build-testable-webapp"
+  <target name="compile-test-webapp" depends="prepare-test, compile-webapp">
+    <javac destdir="${build.test}" listfiles="yes">
+      <classpath refid="test.class.path"/>
+      <src path="${build.src.test}" />
+      <include name="org/intermine/web/**"/>
+    </javac>
+  </target>
+
+  <target name="test-webapp" depends="compile-test-webapp, build-testable-webapp"
           description="perform JUnit tests on web application" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
