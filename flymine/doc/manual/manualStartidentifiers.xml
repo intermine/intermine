@@ -1,19 +1,13 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- -*- DocBook -*- -->
 
 <article>
-
-<index>
-
-    <section>
-      <heading>Search using a list of identifiers</heading>
-      <item>
-      This option is not yet available.
-      </item>
-
-    </section>
-
-</index>
-
+  <sect1>
+    <title>Search using a list of identifiers</title>
+    <para>
+      Identifiers (eg. gene names) to use in your query can be loaded file
+      a file into a bag.  
+    </para>
+  </sect1>
 </article>
 

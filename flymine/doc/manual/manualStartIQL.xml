@@ -1,19 +1,11 @@
 <?xml version="1.0"?>
 <!-- -*- DocBook -*- -->
 
-<article>
-
-<index>
-
-    <section>
-      <heading>Perform a query using IQL</heading>
-      <item>IQL is the intermine query language.  See <ulink url = "http://www.intermine.org/doc/software/howto_query.html">querying intermine</ulink> for more details.  </item>
-  
-
-
-</section>
-
-</index>
-
-</article>
-
+<sect1>
+  <title>Perform a query using IQL</title>
+  <para>
+    IQL is the intermine query language.  See <ulink url =
+    "http://www.intermine.org/doc/software/howto_query.html">querying
+    intermine</ulink> for more details.
+  </para>
+</sect1>
