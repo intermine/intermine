@@ -122,12 +122,18 @@ Attributes:<br/>
 <c:forEach items="${object.clds}" var="cld">
   <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
     ${cld.unqualifiedName} displayers:<br/>
-    <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
-      <c:set var="object_bak" value="${object}"/>
-      <c:set var="object" value="${object.object}" scope="request"/>
-      <tiles:insert beanName="displayer" beanProperty="src"/><br/>
-      <c:set var="object" value="${object_bak}"/>
-    </c:forEach>
+    <table style="padding-left: 20px" cellspacing="10">
+      <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
+        <tr>
+          <td>
+            <c:set var="object_bak" value="${object}"/>
+            <c:set var="object" value="${object.object}" scope="request"/>
+            <tiles:insert beanName="displayer" beanProperty="src"/><br/>
+            <c:set var="object" value="${object_bak}"/>
+          </td>
+        </tr>
+      </c:forEach>
+    </table>
   </c:if>
 </c:forEach>
 <br/>
