@@ -12,7 +12,7 @@
   <tr>
     <td rowspan="2" valign="top" width="50%" class="modelbrowse">
       <div class="heading">
-        <fmt:message key="query.currentclass"/>
+        <fmt:message key="query.currentclass"/><im:helplink key="query.help.browser"/>
       </div>
       <div class="body">
       <div> 
@@ -88,8 +88,9 @@
                       <c:out value="${node.fieldName}"/>
                     </span>
                   </c:otherwise>
-                </c:choose>                  
-              </c:if>            
+                </c:choose>
+                <im:typehelp type="${node.parentType}.${node.fieldName}"/>
+              </c:if>
               <span class="collectionDescription">
               <c:if test="${node.type != 'String' && node.type != 'Integer'}">
                 <span class="type">${node.type}</span><im:typehelp type="${node.type}"/>
@@ -136,10 +137,10 @@
     
     <td valign="top">
       <div class="heading">
-        <fmt:message key="query.currentquery"/>
+        <fmt:message key="query.currentquery"/><im:helplink key="query.help.constraints"/>
       </div>
       <div class="body">
-      <div> 
+      <div>
         <fmt:message key="query.currentquery.detail"/>
       </div>
       <br/>
