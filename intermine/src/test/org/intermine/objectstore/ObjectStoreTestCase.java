@@ -21,7 +21,6 @@ import org.flymine.model.testmodel.*;
  * TestCase for all ObjectStores
  *
  */
-
 public abstract class ObjectStoreTestCase extends SetupDataTestCase
 {
     protected static ObjectStore os;
@@ -176,13 +175,16 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         Results res = os.execute((Query)queries.get(type));
         assertEquals(type + " has failed", results.get(type), res);
     }
-    protected static List toList(Object[][] o) {
-        List rows = new ArrayList();
-        for(int i=0;i<o.length;i++) {
-            rows.add(new ResultsRow(Arrays.asList((Object[])o[i])));
-        }
-        return rows;
+
+    public void testResults() throws Exception {
+        Object[][] r = new Object[][] { { data.get("CompanyA") },
+                                        { data.get("CompanyB") } };
+        List res = os.execute((Query) queries.get("SelectSimpleObject"));
+        assertEquals(toList(r).size(), res.size());
+        assertEquals(toList(r), res);
     }
+
+    // estimate tests
 
     public void testEstimateQueryNotNull() throws Exception {
         ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"));
@@ -198,8 +200,10 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         }
     }
 
-    // select manager with name=EmployeeB1 (actually a CEO)
+    // reference and collection proxy tests
+
     public void testCEOWhenSearchingForManager() throws Exception {
+        // select manager where manager.name="EmployeeB1" (actually a CEO)
         QueryClass c1 = new QueryClass(Manager.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -211,14 +215,6 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         List l1 = os.execute(q1);
         CEO ceo = (CEO) (((ResultsRow) l1.get(0)).get(0));
         assertEquals(45000, ceo.getSalary());
-    }
-
-    public void testResults() throws Exception {
-        Object[][] r = new Object[][] { { data.get("CompanyA") },
-                                        { data.get("CompanyB") } };
-        List res = os.execute((Query) queries.get("SelectSimpleObject"));
-        assertEquals(toList(r).size(), res.size());
-        assertEquals(toList(r), res);
     }
 
     public void testLazyCollection() throws Exception {
@@ -267,8 +263,8 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         assertEquals(companies, expected2);
     }
 
-    // select department from department where department.name="DepartmentA1"
     public void testLazyReference() throws Exception {
+        // select department where department.name="DepartmentA1"
         QueryClass qc1 = new QueryClass(Department.class);
         Query q1 = new Query();
         q1.addFrom(qc1);
@@ -342,6 +338,8 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         assertEquals(a, ((Company) data.get("CompanyA")).getAddress());
     }
 
+    // setDistinct tests
+
     public void testCountNoGroupByNotDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(false);
@@ -363,11 +361,65 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         assertEquals(count, 2);
     }
 
-    // distinct doesn't actually do anything to group by reuslt
     public void testCountGroupByDistinct() throws Exception {
+    // distinct doesn't actually do anything to group by reuslt        
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(true);
         int count = os.count(q);
         assertEquals(count, 2);
+    }
+
+    // getObjectByExample tests
+
+    public void testGetObjectByExampleNull() throws Exception {
+        try {
+            os.getObjectByExample(null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+    
+    public void testGetObjectByExampleNonExistent() throws Exception {
+        Address a = new Address();
+        a.setAddress("10 Downing Street");
+        assertNull(os.getObjectByExample(a));
+    }
+
+    public void testGetObjectByExampleIncomplete() throws Exception {
+        Employee e = new Employee();
+        e.setName("EmployeeA1");
+        e.setAge(10);
+        //address not set
+        try {
+            os.getObjectByExample(e);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException iae) {
+        }
+    }
+
+    public void testGetObjectByExampleAttribute() throws Exception {
+        Address a1 = ((Employee) data.get("EmployeeA1")).getAddress();
+        Address a = new Address();
+        a.setAddress(a1.getAddress());
+        assertEquals(a1, os.getObjectByExample(a1));
+    }
+
+    public void testGetObjectByExampleFields() throws Exception {
+        Employee e1 = (Employee) data.get("EmployeeA1");
+        Employee e = new Employee();
+        e.setName(e1.getName());
+        e.setAge(e1.getAge());
+        e.setAddress(e1.getAddress());
+        assertEquals(e1, os.getObjectByExample(e));
+    }
+
+    // helper method
+
+    protected static List toList(Object[][] o) {
+        List rows = new ArrayList();
+        for(int i=0;i<o.length;i++) {
+            rows.add(new ResultsRow(Arrays.asList((Object[])o[i])));
+        }
+        return rows;
     }
 }
