@@ -282,7 +282,7 @@ public class MainHelper
 
         if (onlySelectedClasses) {
             // if we've only selected classes the result must be distinct - this works around a
-            // postgres/ObjectStore
+            // postgres/ObjectStore problem
             q.setDistinct(false);
         }
 
