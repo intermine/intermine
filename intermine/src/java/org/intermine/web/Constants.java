@@ -91,11 +91,6 @@ public interface Constants
     public static final String TEMPLATE_PATHQUERY = "TEMPLATE_PATHQUERY";
     
     /**
-     * Session attribute used to store shared template queries
-     */
-    public static final String USER_TEMPLATE_QUERIES = "USER_TEMPLATE_QUERIES";
-    
-    /**
      * Session attribute used to store the results of running the current query
      */
     public static final String QUERY_RESULTS = "QUERY_RESULTS";
