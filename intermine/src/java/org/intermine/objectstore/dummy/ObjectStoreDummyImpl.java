@@ -14,10 +14,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.*;
-import org.intermine.metadata.Model;
-import org.intermine.util.DynamicUtil;
 
 /**
  * Generate dummy Results from a query. Used for testing purposes.
@@ -33,6 +37,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     private int executeTime = 10;
     private int executeCalls = 0;
     private int poisonRowNo = -1;
+    private Map objects = new HashMap();
 
     /**
      * Construct an ObjectStoreDummyImpl
@@ -126,7 +131,21 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
         }
         executeCalls++;
         return results;
+    }
 
+    /**
+     * @see ObjectStore#cacheObjectById
+     */
+    public Object cacheObjectById(Integer id, InterMineObject o) {
+        objects.put(id, o);
+        return o;
+    }
+
+    /**
+     * @see ObjectStore#getObjectById
+     */
+    public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
+        return (InterMineObject) objects.get(id);
     }
 
     /**
@@ -235,7 +254,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     /**
      * return the resultsSize parameter that simulates number of rows returned from query
      *
-     * @param q InterMine Query on which to run COUNT(*)
+     * @param q Intermine Query on which to run COUNT(*)
      * @param sequence an integer that is ignored
      * @return the number of rows to be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
