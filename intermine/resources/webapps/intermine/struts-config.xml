@@ -403,9 +403,6 @@
             type="org.intermine.web.TemplateController"
             validate="false"
             name="templateForm"/>
-            
-    <action path="/initTemplates"
-            type="org.intermine.web.TemplatesController"/>
         
     <action path="/initTemplateBuilder"
             validate="false"
