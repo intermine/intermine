@@ -50,7 +50,15 @@ public class Node
         path = prefix + "." + fieldName;
         parentType = parent.getType();
         ClassDescriptor cld = MainHelper.getClassDescriptor(parent.getType(), model);
+        if (cld == null) {
+            throw new RuntimeException("No class '" + parent.getType() + "' found in model"
+                                       + " '" + model.getName() + "'");
+        }
         FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+        if (fd == null) {
+            throw new RuntimeException("Class '" + cld.getName() + "' does not have field"
+                                        + " '" + fieldName + "'.");
+        }
         type = TypeUtil.unqualifiedName(fd.isAttribute()
                                         ? ((AttributeDescriptor) fd).getType()
                                         : ((ReferenceDescriptor) fd)
@@ -70,7 +78,7 @@ public class Node
     public String getParentType() {
         return parentType;
     }
-    
+
     /**
      * Gets the value of path
      *
@@ -91,7 +99,7 @@ public class Node
 
     /**
      * Set the value of type
-     * 
+     *
      * @param type the value of type
      */
     public void setType(String type) {
@@ -151,14 +159,14 @@ public class Node
     public int getIndentation()  {
         return indentation;
     }
-    
+
     /**
      * @see Object#toString
      */
     public String toString() {
         return path + ":" + type;
     }
-    
+
     /**
      * @see Object#equals
      */
@@ -167,7 +175,7 @@ public class Node
             && path.equals(((Node) o).path)
             && type.equals(((Node) o).type);
     }
-    
+
     /**
      * @see Object#hashCode
      */
