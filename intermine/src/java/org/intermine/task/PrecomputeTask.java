@@ -32,11 +32,13 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -54,6 +56,7 @@ public class PrecomputeTask extends Task
     String alias;
     String modelName;
     boolean testMode;
+    int minRows;
     // read by readProperties()
     Properties precomputeProperties = null;
     // set by setModel()
@@ -82,6 +85,15 @@ public class PrecomputeTask extends Task
      */
     public void setTestMode(Boolean testMode) {
         this.testMode = testMode.booleanValue();
+    }
+
+    /**
+     * Set the minimum row count for precomputed queries.  Queries that are estimated to have less
+     * than this number of rows will not be precomputed.
+     * @param minRows the minimum row count
+     */
+    public void setMinRows(Integer minRows) {
+        this.minRows = minRows.intValue();
     }
 
     /**
@@ -133,7 +145,10 @@ public class PrecomputeTask extends Task
             while (queriesIter.hasNext()) {
                 Query query = (Query) queriesIter.next();
                 try {
-                    ((ObjectStoreInterMineImpl) os).precompute(query);
+                    ResultsInfo resultsInfo = os.estimate(query);
+                    if (resultsInfo.getRows() >= minRows) {
+                        ((ObjectStoreInterMineImpl) os).precompute(query);
+                    }
                 } catch (ObjectStoreException e) {
                     throw new BuildException("Exception while precomputing query: " + query, e);
                 }
