@@ -60,15 +60,18 @@ public class QueryBuildAction extends LookupDispatchAction
 
         QueryClass qc = (QueryClass) session.getAttribute("queryClass");
         if (qc != null) {
-            Query query = (Query) session.getAttribute("query");
-            if (query == null) {
-                query = new Query();
+            Query q = (Query) session.getAttribute("query");
+            if (q == null) {
+                q = new Query();
             }
             Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+            if (model == null) {
+                throw new Exception("Model not found in session");
+            }
             QueryBuildForm queryBuildForm = (QueryBuildForm) form;
-            QueryHelper.addToQuery(query, qc, queryBuildForm.getFieldValues(),
+            QueryHelper.addToQuery(q, qc, queryBuildForm.getFieldValues(),
                                     queryBuildForm.getFieldOps(), model);
-            session.setAttribute("query", query);
+            session.setAttribute("query", q);
             session.removeAttribute("queryClass");
             session.removeAttribute("constraints");
         }
@@ -99,19 +102,20 @@ public class QueryBuildAction extends LookupDispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        Query q = (Query) session.getAttribute("query");
         QueryClass qc = (QueryClass) session.getAttribute("queryClass");
+        if (qc != null) {
+            Query q = (Query) session.getAttribute("query");
+            if (q != null) {
+                QueryHelper.removeFromQuery(q, qc);
 
-        if (q != null && qc != null) {            
-            QueryHelper.removeFromQuery(q, qc);
-
-            if (q.getFrom().size() > 0) {
-                session.setAttribute("query", q);
-            } else {
-                session.removeAttribute("query");
+                if (q.getFrom().size() > 0) {
+                    session.setAttribute("query", q);
+                } else {
+                    session.removeAttribute("query");
+                }
+                
+                session.removeAttribute("queryClass");
             }
-
-            session.removeAttribute("queryClass");
         }
 
         return mapping.findForward("buildquery");

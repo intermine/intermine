@@ -1,4 +1,3 @@
-
 package org.flymine.web;
 
 /*
@@ -14,10 +13,11 @@ package org.flymine.web;
 import servletunit.struts.MockStrutsTestCase;
 
 import javax.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
@@ -57,6 +57,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         verifyNoActionErrors();
         assertNotNull(session.getAttribute("query"));
         assertNull(session.getAttribute("queryClass"));
+        assertNull(session.getAttribute("constraints"));
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
@@ -77,27 +78,28 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         verifyNoActionErrors();
         assertNotNull(session.getAttribute("query"));
         assertNull(session.getAttribute("queryClass"));
+        assertNull(session.getAttribute("constraints"));
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
-//     public void testAddNoModel() throws Exception {
-//         HttpSession session = getSession();
-//         setRequestPathInfo("/query");
-//         addRequestParameter("action", "Add to query");
-//         session.setAttribute("queryClass", new QueryClass(Employee.class));
-//         session.setAttribute("query", new Query());
+    public void testAddNoModel() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Add to query");
+        session.setAttribute("queryClass", new QueryClass(Employee.class));
+        session.setAttribute("query", new Query());
 
-//         QueryBuildForm form = new QueryBuildForm();
-//         form.setFieldValue("name", "Dave");
-//         form.setFieldOp("name", ConstraintOp.EQUALS);
-//         setActionForm(form);
+        QueryBuildForm form = new QueryBuildForm();
+        form.setFieldValue("name", "Dave");
+        form.setFieldOp("name", ConstraintOp.EQUALS);
+        setActionForm(form);
 
-//         actionPerform();
-//         verifyForward("error");
-//         verifyActionErrors(new String[] {"exception.message"});
-//         assertNotNull(getSession().getAttribute("query"));
-//         assertNull(getSession().getAttribute("queryClass"));
-//     }
+        actionPerform();
+        verifyForward("error");
+        verifyActionErrors(new String[] {"exception.message"});
+        assertNotNull(getSession().getAttribute("query"));
+        assertNotNull(getSession().getAttribute("queryClass"));
+    }
 
     //commented out because we're overriding the ActionForm reset() method in QueryActionForm,
     //which is called before the form is displayed, clearing anything we set in preparation for
@@ -150,4 +152,24 @@ public class QueryBuildActionTest extends MockStrutsTestCase
          assertNotNull(session.getAttribute("query"));
          assertNull(session.getAttribute("queryClass"));
      }
+
+    public void testAddConstraint() {
+         HttpSession session = getSession();
+         setRequestPathInfo("/query");
+         addRequestParameter("action", "Add constraint");
+         session.setAttribute("constraints", new HashMap());
+
+        QueryBuildForm queryBuildForm = new QueryBuildForm();
+        queryBuildForm.setNewFieldName("name");
+        setActionForm(queryBuildForm);
+
+        actionPerform();
+        verifyForward("buildquery");
+        verifyNoActionErrors();
+
+        Map expected = new HashMap();
+        expected.put("name_0", "name");
+
+        assertEquals(expected, session.getAttribute("constraints"));
+    }
 }
