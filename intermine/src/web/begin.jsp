@@ -61,6 +61,40 @@
 <%-- /Build a query --%>
 
 
+<%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
+
+<c:if test="${!empty WEB_PROPERTIES['begin.browse.template'] && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
+  <p>
+
+  <table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
+    <tr>
+
+      <th class="title" align="left"><fmt:message key="begin.heading.browse"/></th>
+      <th class="help" align="right">
+        [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
+          <fmt:message key="begin.link.help"/>
+        </html:link>]
+      </th>
+
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <html:form action="/browseAction">
+          <fmt:message key="begin.input.browse"/>:
+          <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
+          <html:text property="attributeValues(1)"/>
+          <input type="hidden" name="templateType" value="global"/>
+          <input type="hidden" name="queryName" value="${browseTemplateName}"/>
+          <html:submit property="skipBuilder"><fmt:message key="begin.input.submit"/></html:submit>
+          <br/>
+          <span class="smallnote">${WEB_PROPERTIES["begin.browse.prompt"]}</span>
+        </html:form>
+      </td>
+    </tr>
+  </table>
+
+</c:if>
+<%-- /Browse --%>
 
 
 <p>
@@ -95,43 +129,5 @@
   </html:link>
 </span>
 </c:if>
-
-
-
-
-<%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
-
-<c:if test="${!empty WEB_PROPERTIES['begin.browse.template'] && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
-  <p>
-
-  <table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
-    <tr>
-
-      <th class="title" align="left"><fmt:message key="begin.heading.browse"/></th>
-      <th class="help" align="right">
-        [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
-          <fmt:message key="begin.link.help"/>
-        </html:link>]
-      </th>
-
-    </tr>
-    <tr>
-      <td colspan="2" align="center">
-        <html:form action="/browseAction">
-          <fmt:message key="begin.input.browse"/>
-          <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
-          <html:text property="attributeValues(1)"/>
-          <input type="hidden" name="templateType" value="global"/>
-          <input type="hidden" name="queryName" value="${browseTemplateName}"/>
-          <html:submit property="skipBuilder"><fmt:message key="begin.input.submit"/></html:submit>
-          <br/>
-          <span class="smallnote">${WEB_PROPERTIES["begin.browse.prompt"]}</span>
-        </html:form>
-      </td>
-    </tr>
-  </table>
-
-</c:if>
-<%-- /Browse --%>
 
 <!-- /begin.jsp -->
