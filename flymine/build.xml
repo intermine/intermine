@@ -553,7 +553,7 @@
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="Anopheles Gambiae" />
-      <arg value="A. Gambiae" />
+      <arg value="A. gambiae" />
       <arg value="7165" />
     </java>
 
@@ -584,7 +584,7 @@
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="Drosophila Melanogaster" />
-      <arg value="D. Melanogaster" />
+      <arg value="D. melanogaster" />
       <arg value="7227" />
     </java>
 
