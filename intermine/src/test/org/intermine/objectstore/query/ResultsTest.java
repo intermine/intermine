@@ -2,8 +2,15 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.ArrayList;
+import java.lang.reflect.Field;
+
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.flymine.objectstore.ojb.LazyCollection;
+import org.flymine.model.testmodel.Department;
+import org.flymine.model.testmodel.Employee;
 
 public class ResultsTest extends TestCase
 {
@@ -163,6 +170,47 @@ public class ResultsTest extends TestCase
         catch (IllegalStateException e) {
         }
 
+    }
+
+    public void testSimpleLazyCollection() throws Exception {
+        // Create a Department object with a LazyCollection
+        Department dept = getDeptExampleObject();
+
+        // build a List of ResultsRows to simulate call to promotProxies
+        ResultsRow rr = new ResultsRow();
+        rr.add(dept);
+        List list = new ArrayList(1);
+        list.add(rr);
+
+        Query q = new Query();
+        Results r = os.execute(q);
+        r.promoteProxies(list);
+        Department resDept = (Department) ((List)list.get(0)).get(0);
+
+        // Employees should now have become a Results object
+        Collection col = resDept.getEmployees();
+        if (!(col instanceof Results)) {
+            fail("LazyCollection was not converted to a Results object");
+        }
+    }
+
+
+    // set up a Department object with an id and Employees as a LazyCollection
+    private Department getDeptExampleObject() throws Exception {
+        Department dept = new Department();
+        Class deptClass = dept.getClass();
+        Field f = deptClass.getDeclaredField("id");
+        f.setAccessible(true);
+        f.set(dept, new Integer(1234));
+
+        Query lazyQuery = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        lazyQuery.addToSelect(qc);
+        lazyQuery.addFrom(qc);
+
+        LazyCollection lazyCol = new LazyCollection(lazyQuery);
+        dept.setEmployees((List)lazyCol);
+        return dept;
     }
 
 }
