@@ -83,7 +83,7 @@
   <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
 
   <path id="project.class.path">
-    <fileset dir="../../intermine/dist" includes="*.jar">
+    <fileset dir="../../intermine/dist" includes="*.jar"/>
   </path>
 
   <ant dir="../../intermine" antfile="build-model.xml" target="build-db" inheritRefs="true">
