@@ -5,7 +5,7 @@
 <!-- menu.jsp -->
 <div class="links">
   <span class="menu-item">
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}">
+    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
       <fmt:message key="menu.home"/>
     </html:link>
   </span>
@@ -41,7 +41,7 @@
     </span>
   </c:if>
   <span class="menu-item">
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}doc/manual/index.html">
+    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/index.html">
       <fmt:message key="menu.help"/>
     </html:link>
   </span>
