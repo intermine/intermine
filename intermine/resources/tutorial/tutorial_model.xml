@@ -1,4 +1,4 @@
-<model name="tutorial">
+<model name="tutorial" namespace="http://www.flymine.org/model/tutorial">
 
   <class name="org.flymine.model.tutorial.Address">
     <attribute name="address" type="java.lang.String" primary-key="true"/>
