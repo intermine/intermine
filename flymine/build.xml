@@ -2104,7 +2104,7 @@
     </ant>
   </target>
 
-  <target name="release-webapp"
+  <target name="release-webapp" depends="prepare-build-model"
           description="release the webapp to the server">
     <ant antfile="${build}/build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
@@ -2112,7 +2112,7 @@
     </ant>
   </target>
 
-  <target name="remove-webapp"
+  <target name="remove-webapp" depends="prepare-build-model"
           description="remove the webapp from the server">
     <ant antfile="${build}/build-webapp.xml" target="remove-webapp" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
