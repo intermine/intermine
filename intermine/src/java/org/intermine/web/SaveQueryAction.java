@@ -74,25 +74,8 @@ public class SaveQueryAction extends Action
                                new ActionError("errors.query.objectstoreerror"));
             saveErrors(request, actionErrors);
         }
-        saveQuery(request, queryName, query);
-
-        return mapping.findForward("query");
-    }
-
-    /**
-     * Save a query in the Map on the session, and clone it to allow further editing
-     * @param request The HTTP request we are processing
-     * @param queryName the name to save the query under
-     * @param query the PathQuery
-     */
-    public static void saveQuery(HttpServletRequest request,
-                                 String queryName,
-                                 PathQuery query) {
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
-        profile.saveQuery(queryName, query);
-        session.setAttribute(Constants.QUERY, query.clone());
+        
+        SessionMethods.saveQuery(request, queryName, query);
 
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
         if (messages == null) {
@@ -100,5 +83,7 @@ public class SaveQueryAction extends Action
         }
         messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
         request.setAttribute(Globals.MESSAGE_KEY, messages);
+        
+        return mapping.findForward("query");
     }
 }
