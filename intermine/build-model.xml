@@ -236,6 +236,14 @@
     <analyse-db database="${db.name}"/>
   </target>
 
+  <target name="get-model-from-os">
+    <taskdef name="get-model-from-os"
+             classname="org.intermine.objectstore.intermine.GetModelFromObjectStoreTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <get-model-from-os osAlias="${objectstore.name}" destFile="${build.model.dir}/${model.name}_model.xml"/>
+  </target>
+
   <!-- Targets that could be called from another build script -->
   <target name="generate-model-from-zargo"
           depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
@@ -271,6 +279,10 @@
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
+  <target name="build-model-from-os"
+          depends="get-model-from-os, compile-model-java, copy-keydefs"
+          description="Build model from description stored in database"/>
+
   <target name="jar" description="create a jar of a model">
     <jar destfile="${dist}/intermine-${model.name}.jar">
       <fileset dir="${build.model.dir}" >
@@ -288,7 +300,7 @@
                     attributeIndexes="${create.attribute.indexes}"/>
   </target>
 
-  <target name="add-model-to-webapp" depends="compile-java, compile-webapp-java"
+  <target name="add-model-to-webapp" depends="build-model-from-os, compile-java, compile-webapp-java"
           description="Add a model to the webapp">
     <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
     <unwar src="${war}" dest="${build.tmp}">   

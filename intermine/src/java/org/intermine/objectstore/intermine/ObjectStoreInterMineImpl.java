@@ -56,7 +56,6 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
 import org.apache.log4j.Logger;
@@ -119,36 +118,22 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * Read the Model from the intermine_metadata table of the given Database.
      * @param db the Database to read from
-     * @return a Model
+     * @return the Model
      */
-    private static Model getModelFromDatabase(Database db)
-        throws SQLException {
-        Connection connection = null;
+    protected static Model getModelFromDatabase(Database db) {
+        String modelXml = null;
         try {
-            connection = db.getConnection();
-            connection.setAutoCommit(true);
-            Statement statement = connection.createStatement();
-            statement.execute("SELECT value FROM intermine_metadata WHERE key = 'model'");
-            ResultSet rs = statement.getResultSet();
-            if (rs.next()) {
-                String modelXML = rs.getString(1);
-
-                ModelParser parser = new InterMineModelParser();
-                StringReader reader = new StringReader(modelXML);
-                try {
-                    return parser.process(reader);
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to read model from the database", e);
-                }
-            } else {
-                throw new IllegalArgumentException("Failed to get model from: " + db.getURL()
-                                                   + " - no model found");
-            }
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
+            modelXml = MetadataManager.retrieveModel(db);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to retrieve model from database", e);
         }
+        Model model = null;
+        try {
+            model = new InterMineModelParser().process(new StringReader(modelXml));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse model retrieved from database");
+        }
+        return model;
     }
 
     /**
@@ -242,16 +227,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             + " ObjectStore", e);
                 }
                 if (truncatedClassesString != null) {
-                    Model osModel;
-                    try {
-                        osModel = getModelFromDatabase(database);
-                    } catch (Exception e) {
-                        try {
-                            osModel = getModelFromClasspath(osAlias, props);
-                        } catch (MetaDataException metaDataException) {
-                            throw new ObjectStoreException("Cannot load model", metaDataException);
-                        }
-                    }
+                    Model osModel = getModelFromDatabase(database);
                     List truncatedClasses = new ArrayList();
                     String classes[] = truncatedClassesString.split(",");
                     for (int i = 0; i < classes.length; i++) {

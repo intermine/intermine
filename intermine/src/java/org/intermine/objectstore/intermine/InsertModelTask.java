@@ -16,11 +16,6 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
-
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.SQLException;
 
 /**
  * Copy a Model in the intermine_metadata table of an database
@@ -30,7 +25,7 @@ import java.sql.SQLException;
 public class InsertModelTask extends Task
 {
     protected String modelName;
-    protected Database database;
+    protected String database;
 
     /**
      * Sets the name of the model.
@@ -46,11 +41,7 @@ public class InsertModelTask extends Task
      * @param database String used to identify Database (usually dataSourceName)
      */
     public void setDatabase(String database) {
-        try {
-            this.database = DatabaseFactory.getDatabase(database);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.database = database;
     }
 
     /**
@@ -58,33 +49,17 @@ public class InsertModelTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (this.modelName == null) {
+        if (modelName == null) {
             throw new BuildException("modelName attribute is not set");
         }
-        if (this.database == null) {
+        if (database == null) {
             throw new BuildException("database attribute is not set");
         }
-
         try {
             Model model = Model.getInstanceByName(modelName);
-            Connection connection = null;
-            try {
-                connection = database.getConnection();
-                connection.setAutoCommit(false);
-                Statement statement = connection.createStatement();
-                statement.execute("INSERT INTO intermine_metadata (key, value) "
-                                  + "VALUES('model', '" + model + "')");
-                connection.commit();
-            } finally {
-                if (connection != null) {
-                    connection.close();
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(System.out);
-            throw new BuildException(e);
-        } catch (MetaDataException e) {
-            e.printStackTrace(System.out);
+            Database db = DatabaseFactory.getDatabase(database);
+            MetadataManager.storeModel(model.toString(), db);
+        } catch (Exception e) {
             throw new BuildException(e);
         }
     }
