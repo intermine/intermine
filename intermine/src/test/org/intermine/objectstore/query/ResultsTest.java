@@ -12,25 +12,15 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.lang.reflect.Field;
 
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreLimitReachedException;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.proxy.LazyCollection;
-import org.flymine.objectstore.proxy.LazyReference;
-import org.flymine.objectstore.proxy.LazyInitializer;
 import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Employee;
-import org.flymine.model.testmodel.Company;
 
 public class ResultsTest extends TestCase
 {
@@ -256,132 +246,6 @@ public class ResultsTest extends TestCase
         catch (IllegalStateException e) {
         }
 
-    }
-
-    public void testPromoteLazyCollection() throws Exception {
-        // Create a Department object with a LazyCollection
-        Department dept = getDeptExampleObject();
-        assertTrue(dept.getEmployees() instanceof LazyCollection);
-
-        // build a List of ResultsRows to simulate call to promoteProxies
-        ResultsRow rr = new ResultsRow();
-        rr.add(dept);
-        List list = new ArrayList(1);
-        list.add(rr);
-
-        Query q = new Query();
-        q.addFrom(new QueryClass(Department.class));
-        Results.promoteProxies(list, os);
-        Department resDept = (Department) ((List)list.get(0)).get(0);
-
-        // Employees should now have become a Results object
-        Collection col = resDept.getEmployees();
-        if (!(col instanceof SingletonResults)) {
-            fail("LazyCollection was not converted to a Results object");
-        }
-    }
-
-    public void testPromoteLazyCollectionSet() throws Exception {
-        // Create a Department object with a LazyCollection
-        Example ex = getExampleObjectWithSet();
-        assertTrue(ex.getSet() instanceof LazyCollection);
-
-        // build a List of ResultsRows to simulate call to promoteProxies
-        ResultsRow rr = new ResultsRow();
-        rr.add(ex);
-        List list = new ArrayList(1);
-        list.add(rr);
-
-        Query q = new Query();
-        q.addFrom(new QueryClass(Example.class));
-        Results.promoteProxies(list, os);
-        Example resEx = (Example) ((List)list.get(0)).get(0);
-
-        // Employees should now have become a Results object
-        Collection col = resEx.getSet();
-        if (!(col instanceof SingletonResults)) {
-            fail("LazyCollection was not converted to a Results object");
-        }
-    }
-
-    public void testPromoteLazyReference() throws Exception {
-        // Create a Department object with a LazyCollection
-        Department dept = getDeptExampleObject();
-        assertTrue(dept.getCompany() instanceof LazyReference);
-
-        // build a List of ResultsRows to simulate call to promoteProxies
-        ResultsRow rr = new ResultsRow();
-        rr.add(dept);
-        List list = new ArrayList(1);
-        list.add(rr);
-
-        Query q = new Query();
-        Results.promoteProxies(list, os);
-        Department resDept = (Department) ((List)list.get(0)).get(0);
-
-        // Company should now be materialized
-        Object obj = resDept.getCompany();
-        if (!(obj instanceof Company)) {
-            fail("LazyCollection was not converted to a Results object");
-        }
-    }
-
-    // set up a Department object with an id and Employees as a LazyCollection
-    // and a LazyReference
-    private Department getDeptExampleObject() throws Exception {
-        Department dept = new Department();
-        Class deptClass = dept.getClass();
-        Field f = deptClass.getDeclaredField("id");
-        f.setAccessible(true);
-        f.set(dept, new Integer(1234));
-
-        Query q1 = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        q1.addToSelect(qc1);
-        q1.addFrom(qc1);
-
-        LazyCollection lazyCol = new LazyCollection(q1);
-        dept.setEmployees((List)lazyCol);
-
-        Query q2 = new Query();
-        QueryClass qc2 = new QueryClass(Company.class);
-        q2.addToSelect(qc2);
-        q2.addFrom(qc2);
-
-        LazyReference lazyRef = (LazyReference) LazyInitializer.getDynamicProxy(Company.class, q2, new Integer(0));
-        dept.setCompany((Company)lazyRef);
-
-        return dept;
-    }
-
-    // set up an Example object with field of type Set that is actually a LazyCollection
-    private Example getExampleObjectWithSet() throws Exception {
-        Example ex = new Example();
-        Class exClass = ex.getClass();
-        //Field f = deptClass.getDeclaredField("id");
-        //f.setAccessible(true);
-        //f.set(dept, new Integer(1234));
-
-        Query q1 = new Query();
-        QueryClass qc1 = new QueryClass(Example.class);
-        q1.addToSelect(qc1);
-        q1.addFrom(qc1);
-
-        LazyCollection lazyCol = new LazyCollection(q1);
-        ex.setSet((Set)lazyCol);
-
-        return ex;
-    }
-
-    // example class with a set, for testing promoteProxies()
-    private class Example {
-        Set set = new HashSet();
-        public void setSet(Set set) {
-            this.set = set;
-        }
-        public Set getSet() {
-            return this.set;
-        }
     }
 
     public void testGarbageCollectionOnWeakHashMap() throws Exception {

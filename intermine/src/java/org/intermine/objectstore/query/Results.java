@@ -18,17 +18,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreLimitReachedException;
-import org.flymine.objectstore.proxy.LazyCollection;
-import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.util.CacheMap;
-import org.flymine.util.TypeUtil;
 
 /**
  * Results representation as a List of ResultRows
@@ -79,16 +74,28 @@ public class Results extends AbstractList
     /**
      * Constructor for a Results object
      *
-     * @param q the Query that produces this Results
+     * @param query the Query that produces this Results
      * @param os the ObjectStore that can be used to get results rows from
      */
-     public Results(Query q, ObjectStore os) {
-         if ((q == null) || (os == null)) {
-             throw new NullPointerException("Arguments must not be null");
+     public Results(Query query, ObjectStore os) {
+         if (query == null) {
+             throw new NullPointerException("query must not be null");
          }
-         this.query = q;
+
+         if (os == null) {
+             throw new NullPointerException("os must not be null");
+         }
+
+         this.query = query;
          this.os = os;
      }
+
+    /**
+     * Sets this Results object to bypass the optimiser.
+     */
+    public void setNoOptimise() {
+        optimise = false;
+    }
 
     /**
      * Get the Query that produced this Results object
@@ -96,7 +103,7 @@ public class Results extends AbstractList
      * @return the Query that produced this Results object
      */
     public Query getQuery() {
-        return this.query;
+        return query;
     }
 
     /**
@@ -172,8 +179,7 @@ public class Results extends AbstractList
 
         for (int i = startBatch; i <= endBatch; i++) {
             List rows = getRowsFromBatch(i, start, end);
-            promoteProxies(rows, os);
-            ret.addAll(rows);
+            ret.addAll(getRowsFromBatch(i, start, end));
         }
         return ret;
     }
@@ -402,70 +408,6 @@ public class Results extends AbstractList
         return (int) (row / batchSize);
     }
 
-
-    /**
-     * Iterate through a list of ResultsRows converting any objects' LazyCollection fields
-     * to Results objects.  The LazyCollection wraps a Query, these need to be converted to
-     * SingletonResults so that they have an ObjectStore reference and are able to run themselves.
-     * Instances of LazyReference have an ObjectStore set.
-     * @param rows a list of rows (Lists) to search through
-     * @param os the ObjectStore to do the promotion with
-     * @throws FlyMineException if errors occur accessing object fields
-     */
-    public static void promoteProxies(List rows, ObjectStore os) throws FlyMineException {
-        try {
-            Iterator listIter = rows.iterator();
-            while (listIter.hasNext()) {
-                List rr = (List) listIter.next();
-                Iterator rowIter = rr.iterator();
-                while (rowIter.hasNext()) {
-                    Object obj = (Object) rowIter.next();
-                    promoteProxiesInObject(obj, os);
-                }
-            }
-        } catch (Exception e) {
-            throw new FlyMineException(e);
-        }
-    }
-
-    /**
-     * Takes an Object, and promotes all the proxies in it.
-     *
-     * @param obj an Object to process
-     * @param os the ObjectStore to do the promotion with
-     * @throws Exception if something goes wrong
-     */
-    public static void promoteProxiesInObject(Object obj, ObjectStore os) throws Exception {
-        Class objClass = obj.getClass();
-
-        Map fieldToGetter = TypeUtil.getFieldToGetter(objClass);
-        Map fieldToSetter = TypeUtil.getFieldToSetter(objClass);
-        Iterator fields = fieldToGetter.entrySet().iterator();
-        while (fields.hasNext()) {
-            Map.Entry entry = (Map.Entry) fields.next();
-            Field field = (Field) entry.getKey();
-            Method getter = (Method) entry.getValue();
-            Object fieldVal = getter.invoke(obj, new Object[] {});
-
-            if (fieldVal instanceof LazyCollection) {
-                Query query = ((LazyCollection) fieldVal).getQuery();
-                Object singletonResult = new SingletonResults(query, os);
-                try {
-                    Method setter = (Method) fieldToSetter.get(field);
-                    setter.invoke(obj, new Object[] {new SingletonResults(query, os)});
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException("Error setting field "
-                            + field.getDeclaringClass().getName() + "."
-                            + field.getName() + " ( a " + field.getType().getName()
-                            + ") to object " + singletonResult + " (a "
-                            + singletonResult.getClass().getName() + ")");
-                }
-            } else if (fieldVal instanceof LazyReference) {
-                ((LazyReference) fieldVal).setObjectStore(os);
-            }
-        }
-    }
-
     /**
      * @see AbstractList#iterator
      */
@@ -523,12 +465,5 @@ public class Results extends AbstractList
         public void remove() {
             throw (new UnsupportedOperationException());
         }
-    }
-
-    /**
-     * Sets this Results object to bypass the optimiser.
-     */
-    public void setNoOptimise() {
-        optimise = false;
     }
 }
