@@ -246,7 +246,7 @@ public class CreateIndexesTask extends Task
         try {
             execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
         } catch (SQLException e) {
-            System.err .println("Failed to create index: " + e);
+            System.err.println("Failed to create index: " + e);
         }
     }
 
@@ -256,7 +256,6 @@ public class CreateIndexesTask extends Task
      * @throws SQLException if an error occurs
      */
     protected void execute(String sql) throws SQLException {
-        System.out.println("executing: " + sql);
         c.createStatement().execute(sql);
     }
 }
