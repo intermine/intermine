@@ -20,18 +20,20 @@ public class Constraint
 {
     protected ConstraintOp op;
     protected Object value;
-    protected String description;
-    protected String identifier;
+    protected boolean editable;
+    protected String description = null;
+    protected String identifier = null;
 
     /**
-     * Make a new Constraint with no description or identifier.
+     * Make a new Constraint with no description or identifier, and which has the editable flag set
+     * to false.
      * @param op the constraintOp for this constraint
      * @param value the value for this constraint
      */
     public Constraint(ConstraintOp op, Object value) {
         this.op = op;
         this.value = value;
-        this.description = description;
+        this.editable = false;
     }
 
     /**
@@ -42,10 +44,13 @@ public class Constraint
      * @param identifier a label for this Constraint used for refering to this it in a
      * template. null means that this Constraint has no identifier. 
      */
-    public Constraint(ConstraintOp op, Object value, String description, String identifier) {
+    public Constraint(ConstraintOp op, Object value,
+                      boolean editable, String description, String identifier) {
         this.op = op;
         this.value = value;
+        this.editable = editable;
         this.description = description;
+        this.identifier = identifier;
     }
 
     /**
@@ -67,8 +72,16 @@ public class Constraint
     }
     
     /**
+     * Return true if and only if this constraint should be editable in a template. 
+     * @return the editable flag
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+
+    /**
      * Return the description that was passed to the constructor.
-     * @return the description
+     * @return the description or null if unset
      */
     public String getDescription() {
         return description;
@@ -76,7 +89,7 @@ public class Constraint
 
     /**
      * Return the identifier that was passed to the constructor.
-     * @return the identifier
+     * @return the identifier or null if unset
      */
     public String getIdentifier() {
         return identifier;
@@ -113,9 +126,6 @@ public class Constraint
      * @see Object#equalsSet
      */
     public boolean equals(Object o) {
-        org.intermine.web.LogMe.log("i", "this : " + this);
-        org.intermine.web.LogMe.log("i", "other: " + o);
-
         if (o instanceof Constraint) {
             Constraint other = (Constraint) o;
             if (op.equals(other.op)
@@ -138,11 +148,9 @@ public class Constraint
                         return false;
                     }
                 }
-                org.intermine.web.LogMe.log("i", "equal");
                 return true;
             }
         }
-        org.intermine.web.LogMe.log("i", "not equal");
 
         return false;
     }
