@@ -12,7 +12,6 @@
     <item><ulink url="metadata/model_creation.xml">Using InterMine with your own model</ulink></item>
     <item><ulink url="building/using-own-model.xml">Creating your own model</ulink></item>
     <item><ulink url="metadata/model_behaviour.xml">Behaviour of a model</ulink></item>
-    <item><ulink url="building.xml">Building Intermine ?? </ulink></item>
     <item><ulink url="building/webservice.xml">The InterMine web service</ulink></item>
    </section>
 
