@@ -256,6 +256,35 @@ public class ClassDescriptorTest extends TestCase {
         assertEquals(pks, cld3.getPkFieldDescriptors());
     }
 
+    public void testGetSubclassDescriptors() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class1", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+
+        Model model2 = new Model("test2", Arrays.asList(new Object[] {cld1, cld2, cld3, cld4}));
+
+        // getSubclassDescriptrors should just return direct subclasses (cld2, cld3)
+        List subs = Arrays.asList(new Object[] {cld2, cld3});
+
+        assertEquals(subs, cld1.getSubclassDescriptors());
+    }
+
+
+    public void testGetImplementorDescriptors() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("interface1", null, null, true, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, "interface1", false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", null, "interface1", false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+
+        Model model2 = new Model("test2", Arrays.asList(new Object[] {cld1, cld2, cld3, cld4}));
+
+        // getImplementorDescriptrors should just return direct implementations (cld2, cld3)
+        List impls = Arrays.asList(new Object[] {cld2, cld3});
+
+        assertEquals(impls, cld1.getImplementorDescriptors());
+    }
+
     // ------------
 
     private List getAttributes() {
