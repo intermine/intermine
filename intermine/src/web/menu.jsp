@@ -4,6 +4,11 @@
 
 <!-- menu.jsp -->
 <div class="links">
+  <span class="menu-item">
+    <html:link href="/">
+      <fmt:message key="menu.home"/>
+    </html:link>
+  </span>
   <c:if test="${!empty QUERY}">
     <span class="menu-item">
       <html:link action="/query.do">
