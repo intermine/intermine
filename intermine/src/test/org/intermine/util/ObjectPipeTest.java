@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 
 public class ObjectPipeTest extends TestCase
 {
-    private int progress;
+    private volatile int progress;
     private ObjectPipe op;
 
     public ObjectPipeTest(String arg) {
@@ -85,5 +85,84 @@ public class ObjectPipeTest extends TestCase
         op.finish();
         Thread.sleep(100);
         assertEquals(-4000, progress);
+    }
+
+    public void testMultiThreaded2() throws Exception {
+        op = new ObjectPipe(2);
+        progress = 0;
+
+        Thread sender = new Thread() {
+            public void run() {
+                List l = new ArrayList();
+                l.add(new Integer(1));
+                l.add(new Integer(2));
+                l.add(new Integer(3));
+                l.add(new Integer(4));
+                op.putAll(l);
+                progress = 4;
+
+                op.put(new Integer(5));
+                progress = 5;
+
+                op.put(new Integer(6));
+                progress = 6;
+
+                op.finish();
+                progress = -4000;
+            }
+        };
+
+        sender.start();
+
+        assertEquals(4, progress);
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(1), op.next());
+        Thread.sleep(100);
+        assertEquals(4, progress);
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(2), op.next());
+        Thread.sleep(100);
+        assertEquals(4, progress);
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(3), op.next());
+        Thread.sleep(100);
+        assertEquals(5, progress);
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(4), op.next());
+        Thread.sleep(100);
+        assertEquals(-4000, progress);
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(5), op.next());
+        assertTrue(op.hasNext());
+        assertEquals(new Integer(6), op.next());
+        assertFalse(op.hasNext());
+    }
+
+    public void testPutFinished() throws Exception {
+        op = new ObjectPipe();
+        op.finish();
+        try {
+            op.put(new Integer(1));
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testFinishFinished() throws Exception {
+        op = new ObjectPipe();
+        op.finish();
+        try {
+            op.finish();
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testMaxBufferTooSmall() throws Exception {
+        try {
+            op = new ObjectPipe(0);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 }

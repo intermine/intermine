@@ -138,6 +138,7 @@ public class ObjectPipe implements Iterator
             } catch (InterruptedException e) {
             }
         }
+        notifyAll();
         return list.removeFirst();
     }
 
