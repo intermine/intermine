@@ -60,7 +60,7 @@ zip -r flymine-tutorial-$version.zip flymine-tutorial-$version
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
 then
-    command="ssh $server \"find $destdir -mtime +7 | xargs rm\""
+    command="ssh $server \"find $destdir -mtime +7 | xargs rm -f\""
     eval $command
 fi
 
