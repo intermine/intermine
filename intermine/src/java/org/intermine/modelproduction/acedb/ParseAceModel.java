@@ -318,6 +318,14 @@ public class ParseAceModel
         }
         if (collection) {
             cols.add(new CollectionDescriptor(fieldName, false, PACKAGE + type, xref, false));
+        } else if ("Text".equals(type)) {
+            atts.add(new AttributeDescriptor(fieldName, false, "java.lang.String"));
+        } else if ("Float".equals(type)) {
+            atts.add(new AttributeDescriptor(fieldName, false, "float"));
+        } else if ("Int".equals(type)) {
+            atts.add(new AttributeDescriptor(fieldName, false, "int"));
+        } else if ("DateType".equals(type)) {
+            atts.add(new AttributeDescriptor(fieldName, false, "java.util.Date"));
         } else {
             refs.add(new ReferenceDescriptor(fieldName, false, PACKAGE + type, xref));
         }
