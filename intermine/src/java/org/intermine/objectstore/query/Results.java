@@ -49,7 +49,6 @@ public class Results extends AbstractList
     protected int originalMaxSize = maxSize;
     protected int batchSize = 100;
     protected boolean initialised = false;
-    protected boolean doPrefetch = false;
 
     // Some prefetch stuff.
     protected int lastGet = -1;
