@@ -28,7 +28,6 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 
 /**
  * Perform initialisation steps for displaying a tree
@@ -60,7 +59,7 @@ public class TreeController extends TilesAction
             rootClass = "org.flymine.model.FlyMineBusinessObject";
         }
         ServletContext servletContext = session.getServletContext();
-        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
         request.setAttribute("nodes", makeNodes(root, openClasses, 0));

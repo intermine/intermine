@@ -36,7 +36,6 @@ import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 
 /**
  * Form bean to represent the inputs to a text-based query
@@ -266,7 +265,7 @@ public class QueryBuildForm extends ActionForm
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
-        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         
         DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);

@@ -5,20 +5,14 @@
 <!-- queryClassSelect -->
 <html:form action="/queryClassSelect">
   <fmt:message key="query.addclass"/>
-
   <br/>
-
   <html:select property="className" size="10">
-    <html:options name="MODEL" property="classNames" labelName="MODEL" 
-                  labelProperty="unqualifiedClassNames"/>
+    <html:options name="classNames" labelName="unqualifiedClassNames"/>
   </html:select>
-
   <br/>
-
   <html:submit property="action">
     <fmt:message key="button.addclass"/>
   </html:submit>
-
   <html:submit property="action">
     <fmt:message key="button.browse"/>
   </html:submit>

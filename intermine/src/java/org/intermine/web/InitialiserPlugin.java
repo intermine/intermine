@@ -20,7 +20,6 @@ import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 
 import org.flymine.metadata.Model;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.web.config.WebConfig;
 import org.flymine.objectstore.ObjectStoreFactory;
 
@@ -56,7 +55,7 @@ public class InitialiserPlugin implements PlugIn
             context.setAttribute("webconfig", wc);
 
             Model model = ObjectStoreFactory.getObjectStore().getModel();
-            context.setAttribute(Constants.MODEL, new DisplayModel(model));
+            context.setAttribute(Constants.MODEL, model);
         } catch (Exception e) {
             throw new ServletException("there was a problem while initialising", e);
         }

@@ -25,7 +25,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.Query;
 
 /**
@@ -49,7 +48,7 @@ public class QueryBuildController extends TilesAction
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
         Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         ServletContext servletContext = session.getServletContext();
-        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (queryClasses == null) {

@@ -56,7 +56,7 @@
 
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
 
-  <definition name="queryClassSelect.tile" path="/queryClassSelect.jsp"/>
+  <definition name="queryClassSelect.tile" path="/queryClassSelect.jsp" controllerUrl="/initQueryClassSelect.do"/>
 
   <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
 

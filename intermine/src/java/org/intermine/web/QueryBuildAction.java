@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.Model;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.Query;
 
 /**
@@ -93,7 +92,7 @@ public class QueryBuildAction extends Action
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         ServletContext servletContext = session.getServletContext();
-        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
         if (queryClasses.size() == 0) {
             throw new Exception("There are no classes present in the query");
@@ -290,7 +289,7 @@ public class QueryBuildAction extends Action
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         ServletContext servletContext = session.getServletContext();
-        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
         session.setAttribute(Constants.QUERY, QueryBuildHelper.createQuery(queryClasses, model,
                                                                            savedBags));
