@@ -211,11 +211,15 @@ public class Batch
         List jobs = batchWriter.write(con, tables);
         long middle = System.currentTimeMillis();
         putFlushJobs(jobs);
+        int oldBatchSize = batchSize;
         batchSize = 0;
         long end = System.currentTimeMillis();
         if ((end > middle + 10) && (lastDutyCycle < 75)) {
-            LOG.info("Enqueued batch to flush - took " + (middle - start) + " + "
-                    + (end - middle) + " ms");
+            LOG.info("Enqueued batch of size " + oldBatchSize + " to flush - took "
+                    + (middle - start) + " + " + (end - middle) + " ms");
+        } else {
+            LOG.debug("Enqueued batch of size " + oldBatchSize + " to flush - took "
+                    + (middle - start) + " + " + (end - middle) + " ms");
         }
     }
 
@@ -387,6 +391,13 @@ public class Batch
                     //                / (end - flusherStart)) + "%)");
                 } catch (SQLException e) {
                     reportProblem(e);
+                } catch (Throwable t) {
+                    SQLException e = new SQLException("Caught a Throwable in the Batch Flusher");
+                    e.initCause(t);
+                    reportProblem(e);
+                }
+                if (jobs != CLOSE_DOWN_COMMAND) {
+                    jobs = null;
                 }
             }
         }
