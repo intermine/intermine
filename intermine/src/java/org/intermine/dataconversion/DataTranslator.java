@@ -233,7 +233,6 @@ public class DataTranslator
         return Collections.singleton(tgtItem);
     }
 
-
     /**
      * Set an item property to value from within a referenced item.
      * @param tgtItem a target item to set property in
@@ -254,16 +253,24 @@ public class DataTranslator
     }
 
     /**
-     * A-[B1,B2] + B1-[C1,C2] + B2-[C3] -> A-[C1, C2, C3]
-     * deals with from collection to collection
+     * "Flattens" a collection by removing intermediate items
+     * eg. A-[B1,B2] + B1-[C1,C2] + B2-[C3] -> A'-[C1, C2, C3]
+     * @param srcItem the source item eg. A
+     * @param colName the collection name eg. Bs
+     * @param colFieldName the other collection name eg. Cs
+     * @param tgtItem the target item eg. A'
+     * @param fieldName the target collection name eg. Cs
+     * @throws ObjectStoreException if error retrieving referenced item
      */
-    protected void promoteField(Item srcItem, String colName, String colFieldName, Item tgtItem, String fieldName)
+    protected void promoteCollection(Item srcItem, String colName, String colFieldName,
+                                     Item tgtItem, String fieldName)
         throws ObjectStoreException {
         ReferenceList refList = new ReferenceList();
         refList.setName(fieldName);
         for (Iterator i = srcItem.getCollection(colName).getRefIds().iterator(); i.hasNext(); ) {
             Item colItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
-            for (Iterator j = colItem.getCollection(colFieldName).getRefIds().iterator(); j.hasNext(); ) {
+            for (Iterator j = colItem.getCollection(colFieldName).getRefIds().iterator();
+                 j.hasNext();) {
                 refList.addRefId((String) j.next());
             }
         }
