@@ -41,7 +41,7 @@ import org.xml.sax.InputSource;
 
 import org.apache.log4j.Logger;
 
-import org.flymine.modelproduction.AbstractModelParser;
+import org.flymine.modelproduction.ModelParser;
 import org.flymine.util.StringUtil;
 import org.flymine.metadata.*;
 
@@ -50,7 +50,7 @@ import org.flymine.metadata.*;
  *
  * @author Mark Woodbridge
  */
-public class XmiParser extends AbstractModelParser
+public class XmiParser implements ModelParser
 {
     protected static final Logger LOG = Logger.getLogger(XmiParser.class);
 
@@ -59,8 +59,12 @@ public class XmiParser extends AbstractModelParser
     private Set classes = new LinkedHashSet();
 
     /**
-     * @see ModelParser#process
-     * @throws Exception
+     * Read source model information in XMI format and
+     * construct a FlyMine Model object.
+     *
+     * @param is the source XMI file to parse
+     * @return the FlyMine Model created
+     * @throws Exception if Model not created successfully
      */
     public Model process(InputStream is) throws Exception {
         recurse(new XMIReader().parse(new InputSource(is)));
@@ -102,7 +106,7 @@ public class XmiParser extends AbstractModelParser
         while (strIter.hasNext()) {
             generateAttribute((MAttribute) strIter.next());
         }
-        
+
         references = new LinkedHashSet();
         collections = new LinkedHashSet();
         Iterator endIter = cls.getAssociationEnds().iterator();
