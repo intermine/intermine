@@ -16,6 +16,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.Database;
@@ -222,5 +224,23 @@ public class PrecomputedTableManagerTest extends TestCase
                 deleteTable();
             }
         }
+    }
+
+    public void testCanonicaliseIndexes() throws Exception {
+        Set indexes = new HashSet();
+        indexes.add("a");
+        indexes.add("b");
+        indexes.add("a, b, c");
+        indexes.add("a, c");
+        indexes.add("a, b");
+
+        Set expected = new HashSet();
+        expected.add("a, b, c");
+        expected.add("a, c");
+        expected.add("b");
+
+        Set got = PrecomputedTableManager.canonicaliseIndexes(indexes);
+
+        assertEquals(expected, got);
     }
 }

@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -687,13 +689,26 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Creates a precomputed table for the given query.
      *
      * @param q the Query for which to create the precomputed table
+     * @return the name of the new precomputed table
      * @throws ObjectStoreException if anything goes wrong
      */
-    public void precompute(Query q) throws ObjectStoreException {
+    public String precompute(Query q) throws ObjectStoreException {
+        return precompute(q, null);
+    }
+ 
+    /**
+     * Creates a precomputed table for the given query.
+     *
+     * @param q the Query for which to create the precomputed table
+     * @param indexes a Collection of QueryOrderables for which to create indexes
+     * @return the name of the new precomputed table
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public String precompute(Query q, Collection indexes) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
-            precomputeWithConnection(c, q);
+            return precomputeWithConnection(c, q, indexes);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
         } finally {
@@ -706,9 +721,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      *
      * @param c the Connection
      * @param q the Query
+     * @param indexes a Collection of QueryNodes for which to create indexes - they must all exist
+     * in the SELECT list of the query
+     * @return the name of the new precomputed table
      * @throws ObjectStoreException if anything goes wrong
      */
-    public void precomputeWithConnection(Connection c, Query q) throws ObjectStoreException {
+    public String precomputeWithConnection(Connection c, Query q,
+            Collection indexes) throws ObjectStoreException {
+        QueryNode qn = null;
         try {
             int tableNumber = -1;
             try {
@@ -732,8 +752,35 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     "pt_" + tableNumber, c);
+            Set stringIndexes = null;
+            if (indexes != null) {
+                Map aliases = q.getAliases();
+                stringIndexes = new HashSet();
+                String all = null;
+                Iterator indexIter = indexes.iterator();
+                while (indexIter.hasNext()) {
+                    qn = (QueryNode) indexIter.next();
+                    String alias = DatabaseUtil.generateSqlCompatibleName((String) aliases.get(qn));
+                    if (qn instanceof QueryClass) {
+                        alias += "id";
+                    }
+                    if (all == null) {
+                        all = alias;
+                    } else {
+                        stringIndexes.add(alias);
+                        all += ", " + alias;
+                    }
+                }
+                stringIndexes.add(all);
+                LOG.info("Creating precomputed table for query " + q + " with indexes "
+                        + stringIndexes);
+            }
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-            ptm.add(pt);
+            ptm.add(pt, stringIndexes);
+            return pt.getName();
+        } catch (NullPointerException e) {
+            throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not present in"
+                    + " the SELECT list of query " + q, e);
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
         }
