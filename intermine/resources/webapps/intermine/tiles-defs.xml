@@ -40,7 +40,7 @@
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="queryBuild" value="queryBuild.tile"/>
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
-    <put name="querySelectBuild" value="querySelectBuild.tile"/>
+    <put name="loadQuery" value="loadQuery.jsp"/>
   </definition>
   
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
