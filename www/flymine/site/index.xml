@@ -39,7 +39,7 @@
         FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>, 
         incorporating the following data sources:
       
-        <sources sources="/sources.xml" version="1.0"/>
+        <sources sources="/sources.xml" version="2.0"/>
       </para>
     </section>
   </column>
