@@ -39,6 +39,7 @@ public class PrecomputedTableManager
     protected Set precomputedTables = new HashSet();
     protected Database database = null;
     protected Connection conn = null;
+    protected Set queryStrings = new HashSet();
     protected static final String TABLE_INDEX = "precompute_index";
     protected static Map instances = new HashMap();
 
@@ -145,8 +146,12 @@ public class PrecomputedTableManager
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
-        addTableToDatabase(pt, indexes);
-        precomputedTables.add(pt);
+        String queryString = pt.getQuery().getSQLString();
+        if (! queryStrings.contains(queryString)) {
+            addTableToDatabase(pt, indexes);
+            precomputedTables.add(pt);
+            queryStrings.add(queryString);
+        }
     }
 
     /**
@@ -161,6 +166,7 @@ public class PrecomputedTableManager
             deleteTableFromDatabase(pt.getName());
             iter.remove();
         }
+        queryStrings.clear();
     }
 
     /**
@@ -181,6 +187,8 @@ public class PrecomputedTableManager
 
         deleteTableFromDatabase(pt.getName());
         precomputedTables.remove(pt);
+        String queryString = pt.getQuery().getSQLString();
+        queryStrings.remove(queryString);
     }
 
     /**
@@ -389,6 +397,7 @@ public class PrecomputedTableManager
             try {
                 precomputedTables.add(new PrecomputedTable(new Query(queryString, false),
                             tableName, con));
+                queryStrings.add(queryString);
             } catch (IllegalArgumentException e) {
                 // This would be a poor query string in the TABLE_INDEX
                 failedCount++;
