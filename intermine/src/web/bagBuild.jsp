@@ -13,9 +13,12 @@
       <fmt:message key="bagBuild.reset"/>
     </html:reset>
     <br/>
+    <fmt:message key="bagBuild.or"/>
+    <br/>
     <fmt:message key="bagBuild.bagFromFile"/>
     <br/>
     <html:file property="formFile"/>
+    <br/>
     <br/>
     <fmt:message key="bagBuild.bagNamePrompt"/>: <html:text property="bagName"/><br/>
     <html:submit property="action">
