@@ -27,9 +27,12 @@
 
 <c:choose>
   <c:when test="${RESULTS_TABLE.size == 0}">
-    <fmt:message key="results.pageinfo.empty"/><br/>
+    <div class="body">
+      <fmt:message key="results.pageinfo.empty"/><br/>
+    </div>
   </c:when>
   <c:otherwise>
+    <div class="body">
     <html:form action="/changeResultsSize" styleId="changeResultsForm">
 
       <table class="results" cellspacing="0">
@@ -224,7 +227,9 @@
       <%-- Save bag controls --%>
       <br/><br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
-        <fmt:message key="bag.saveselections"/>
+        <div class="heading">
+          <fmt:message key="results.saveandexport"/>
+        </div>
         <ul>
           <li>
             <fmt:message key="bag.new"/>
@@ -249,8 +254,8 @@
         </ul>
       </c:if>
     </html:form>
+    </div>
 
-    <br/>
     <tiles:get name="export.tile" />
   </c:otherwise>
 </c:choose>
