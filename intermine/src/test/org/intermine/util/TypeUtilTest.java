@@ -78,6 +78,17 @@ public class TypeUtilTest extends TestCase
         assertEquals(expected, TypeUtil.getFieldToGetter(c));
     }
 
+    public void testGetFieldToGetterNoGetters() throws Exception {
+        Map expected = new HashMap();
+        Class c = NoGetSet.class;  // random class with no getters
+        try {
+            TypeUtil.getFieldToGetter(c);
+        } catch (NullPointerException e) {
+            fail("Should not have thrown a NullPointerException");
+        }
+
+    }
+
     public void testGetFieldToSetter() throws Exception {
         Map expected = new HashMap();
         Class c = Address.class;
@@ -89,6 +100,17 @@ public class TypeUtilTest extends TestCase
         assertEquals(expected, TypeUtil.getFieldToSetter(c));
     }
 
+    public void testGetFieldToSetterNoSetters() throws Exception {
+        Map expected = new HashMap();
+        Class c = NoGetSet.class;  // random class with no setters
+        try {
+            TypeUtil.getFieldToSetter(c);
+        } catch (NullPointerException e) {
+            fail("Should not have thrown a NullPointerException");
+        }
+
+    }
+
     public void testPackageName() throws Exception {
         assertEquals("", TypeUtil.packageName("test"));
         assertEquals("package", TypeUtil.packageName("package.test"));
@@ -98,5 +120,11 @@ public class TypeUtilTest extends TestCase
         assertEquals("test", TypeUtil.unqualifiedName("test"));
         assertEquals("test", TypeUtil.unqualifiedName("package.test"));
     }
+
+    //===========================
+
+    private class NoGetSet {
+    }
+
 
 }

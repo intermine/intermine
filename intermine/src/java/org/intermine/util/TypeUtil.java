@@ -162,12 +162,14 @@ public class TypeUtil
                 for (int i = 0; i < pd.length; i++) {
                     try {
                         Method getter = pd[i].getReadMethod();
-                        if ((!getter.getName().equals("getClass"))
+                        if (getter != null) {
+                            if ((!getter.getName().equals("getClass"))
                                 && (!getter.getName().equals("getId"))) {
-                            Field field = c.getDeclaredField(pd[i].getName());
-                            retval.put(field, getter);
-                            Method setter = pd[i].getWriteMethod();
-                            fieldToSetter.put(field, setter);
+                                Field field = c.getDeclaredField(pd[i].getName());
+                                retval.put(field, getter);
+                                Method setter = pd[i].getWriteMethod();
+                                fieldToSetter.put(field, setter);
+                            }
                         }
                     } catch (NoSuchFieldException e) {
                     }
