@@ -63,12 +63,9 @@ public class PagedResults extends PagedTable
 
     /**
      * @see PagedTable#getAllRows
-     * Create new Results with the maximum possible batch size as we are retrieving the whole table
      */
     public List getAllRows() {
-        Results r = new Results(results.getQuery(), results.getObjectStore(),
-                                results.getObjectStore().getSequence());
-        return r;
+        return results;
     }
 
     /**
