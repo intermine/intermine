@@ -25,7 +25,6 @@ public class DisplayCollection
     ClassDescriptor cld;
     int size;
     Map classes = new LinkedHashMap();
-    boolean verbose = false;
     InlineResultsTable table;
 
     /**
@@ -81,21 +80,5 @@ public class DisplayCollection
      */
     public Map getClasses() {
         return classes;
-    }
-    
-    /**
-     * Set the verbosity level for display of this reference
-     * @param verbose the verbosity level
-     */
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
-    /**
-     * Get the verbosity level for display of this reference
-     * @return the verbosity level
-     */
-    public boolean isVerbose() {
-        return verbose;
     }
 }

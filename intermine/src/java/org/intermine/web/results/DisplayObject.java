@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collections;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.PrimaryKeyUtil;
@@ -38,6 +39,7 @@ public class DisplayObject
     Map attributes = new HashMap();
     Map references = new HashMap();
     Map collections = new HashMap();
+    Map verbosity = new HashMap();
     
     /**
      * Constructor
@@ -150,5 +152,22 @@ public class DisplayObject
      */
     public Map getCollections() {
         return collections;
+    }
+
+    /**
+     * Get the map indication whether individuals fields are to be display verbosely
+     * @return the map
+     */
+    public Map getVerbosity() {
+        return Collections.unmodifiableMap(verbosity);
+    }
+
+    /**
+     * Set the verbosity for a field
+     * @param fieldName the field name
+     * @param verbose true or false
+     */
+    public void setVerbosity(String fieldName, boolean verbose) {
+        verbosity.put(fieldName, verbose ? fieldName : null);
     }
 }
