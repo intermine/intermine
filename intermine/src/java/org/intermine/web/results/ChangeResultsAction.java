@@ -193,4 +193,23 @@ public class ChangeResultsAction extends DispatchAction
 
         return mapping.findForward("results");
     }
+
+    /**
+     * Return a user to the results of the last query that was run
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward reset(ActionMapping mapping, ActionForm form,
+                               HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        HttpSession session = request.getSession();
+        session.setAttribute(Constants.RESULTS_TABLE,
+                             session.getAttribute(Constants.QUERY_RESULTS));
+        
+        return mapping.findForward("results");
+    }
 }
