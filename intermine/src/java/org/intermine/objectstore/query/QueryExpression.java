@@ -56,18 +56,35 @@ public class QueryExpression implements QueryEvaluable
      * types and the specified operation
      */    
     public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) 
-        throws IllegalArgumentException {
-        if (!(Number.class.isAssignableFrom(arg1.getType()) 
-              && Number.class.isAssignableFrom(arg2.getType()))) {
-            throw new IllegalArgumentException("Invalid arguments for specified operation");
-        }
+            throws IllegalArgumentException {
         if (!(op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE)) {
             throw new IllegalArgumentException("Invalid operation for specified arguments");
+        }
+        if (Number.class.isAssignableFrom(arg1.getType()) 
+                && Number.class.isAssignableFrom(arg2.getType())
+                && arg1.getType().equals(arg2.getType())) {
+            this.type = arg1.getType();
+        } else if (arg1.getType().equals(UnknownTypeValue.class)
+                && (!(arg2.getType().equals(UnknownTypeValue.class)))) {
+            arg1.youAreType(arg2.getType());
+            this.type = arg1.getType();
+        } else if (arg2.getType().equals(UnknownTypeValue.class)
+                && (!(arg1.getType().equals(UnknownTypeValue.class)))) {
+            arg2.youAreType(arg1.getType());
+            this.type = arg2.getType();
+        } else if ((arg1.getType().equals(UnknownTypeValue.class))
+                && (arg2.getType().equals(UnknownTypeValue.class))) {
+            if (arg1.getApproximateType() != arg2.getApproximateType()) {
+                throw new ClassCastException("Incompatible expression with unknown type values");
+            }
+            this.type = UnknownTypeValue.class;
+        } else {
+            throw new IllegalArgumentException("Invalid arguments (" + arg1.getType() + ", "
+                    + arg2.getType() + ") for specified operation");
         }
         this.arg1 = arg1;
         this.op = op;
         this.arg2 = arg2;
-        this.type = Number.class;
     }
     
     /**
@@ -82,21 +99,27 @@ public class QueryExpression implements QueryEvaluable
      */    
     public QueryExpression(QueryEvaluable arg, QueryEvaluable pos, QueryEvaluable len) 
         throws IllegalArgumentException {
-        if (!(arg.getType().equals(String.class))) {
+        if (arg.getType().equals(UnknownTypeValue.class)) {
+            arg.youAreType(String.class);
+        } else if (!arg.getType().equals(String.class)) {
             throw new IllegalArgumentException("Invalid argument type for specified operation");
         }
-        if (!(Number.class.isAssignableFrom(pos.getType()))) {
+        if (pos.getType().equals(UnknownTypeValue.class)) {
+            pos.youAreType(Integer.class);
+        } else if (!Number.class.isAssignableFrom(pos.getType())) {
             throw new IllegalArgumentException("Invalid argument type pos for substring");
         }
-        if (!(Number.class.isAssignableFrom(len.getType()))) {
+        if (len.getType().equals(UnknownTypeValue.class)) {
+            len.youAreType(Integer.class);
+        } else if (!Number.class.isAssignableFrom(len.getType())) {
             throw new IllegalArgumentException("Invalid argument type len for substring");
         }
-        if ((pos instanceof QueryValue) && (((Number) ((QueryValue) pos).getValue()).longValue()
+        if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) pos).getValue()).intValue()
                     < 0)) {
             throw (new IllegalArgumentException("Invalid pos argument less than zero for "
                         + "substring"));
         }
-        if ((len instanceof QueryValue) && (((Number) ((QueryValue) len).getValue()).longValue()
+        if ((len instanceof QueryValue) && (((Integer) ((QueryValue) len).getValue()).intValue()
                     < 0)) {
             throw (new IllegalArgumentException("Invalid len argument less than zero for "
                         + "substring"));
@@ -150,4 +173,31 @@ public class QueryExpression implements QueryEvaluable
     public QueryEvaluable getArg3() {
         return arg3;
     }
+
+    /**
+     * @see QueryEvaluable#youAreType
+     */
+    public void youAreType(Class cls) {
+        if (type.equals(UnknownTypeValue.class)) {
+            // Must be the numeric operation
+            arg1.youAreType(cls);
+            arg2.youAreType(cls);
+            type = cls;
+        } else {
+            throw new ClassCastException("youAreType called on QueryExpression that already has "
+                    + "type");
+        }
+    }
+
+    /**
+     * @see QueryEvaluable#getApproximateType
+     */
+    public int getApproximateType() {
+        if (type.equals(UnknownTypeValue.class)) {
+            return arg1.getApproximateType();
+        } else {
+            throw new ClassCastException("getApproximateType called when type is known");
+        }
+    }
+
 }

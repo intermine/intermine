@@ -181,4 +181,18 @@ public class QueryField implements QueryEvaluable
     public String toString() {
         return "QueryField(" + qc + ", " + fieldName + ")";
     }
+
+    /**
+     * @see QueryEvaluable#youAreType
+     */
+    public void youAreType(Class cls) {
+        throw new ClassCastException("youAreType called on a QueryField");
+    }
+
+    /**
+     * @see QueryEvaluable#getApproximateType
+     */
+    public int getApproximateType() {
+        throw new ClassCastException("getApproximateType called on a QueryField");
+    }
 }

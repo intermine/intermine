@@ -46,7 +46,14 @@ public class FqlQueryParserTest extends FqlQueryTestCase
     public void executeTest(String type) throws Exception {
         FqlQuery fq = (FqlQuery) results.get(type);
         Query parsed = FqlQueryParser.parse(fq);
-        assertEquals(type + " has failed", (Query) queries.get(type), parsed);
+        if (type.equals("SubQuery") || type.equals("OrderByAnomaly")) {
+            // These two queries CANNOT be generated properly by FQL (as they contain 5 in the SELECT list).
+            // Therefore, we must merely check that they are regenerated back into FQL properly.
+            FqlQuery fqNew = new FqlQuery(parsed);
+            assertEquals(type + " has failed", fq, fqNew);
+        } else {
+            assertEquals(type + " has failed", (Query) queries.get(type), parsed);
+        }
     }
 
     public void testNotEnoughParameters() throws Exception {
@@ -161,13 +168,13 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select 'flibble' + 3 as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because an expression must type-match");
         } catch (IllegalArgumentException e) {
-            assertEquals("Invalid arguments for specified operation", e.getMessage());
+            assertEquals("Incompatible expression with unknown type values", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select Company.name + 3 as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because an expression must type-match");
         } catch (IllegalArgumentException e) {
-            assertEquals("Invalid arguments for specified operation", e.getMessage());
+            assertEquals("Cannot parse value \"3\" into class java.lang.String", e.getMessage());
         }
     }
 

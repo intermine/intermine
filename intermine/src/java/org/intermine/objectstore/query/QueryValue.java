@@ -10,6 +10,7 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -33,8 +34,10 @@ public class QueryValue implements QueryEvaluable
         if (!((value instanceof Number)
               || (value instanceof String)
               || (value instanceof Boolean)
-              || (value instanceof Date))) {
-            throw new IllegalArgumentException("value must be a Number, String, Boolean or Date");
+              || (value instanceof Date)
+              || (value instanceof UnknownTypeValue))) {
+            throw new IllegalArgumentException("value must be a Number, String, Boolean, Date, "
+                    + "or unknown");
         }
         this.value = value;
     }
@@ -65,7 +68,21 @@ public class QueryValue implements QueryEvaluable
         if (obj instanceof QueryValue) {
             Object objValue = ((QueryValue) obj).getValue();
             if ((value instanceof Number) && (objValue instanceof Number)) {
-                if ((value instanceof Float) || (value instanceof Double)
+                if ((value instanceof BigDecimal) || (objValue instanceof BigDecimal)) {
+                    BigDecimal bd1 = null;
+                    BigDecimal bd2 = null;
+                    if (value instanceof BigDecimal) {
+                        bd1 = (BigDecimal) value;
+                    } else {
+                        bd1 = new BigDecimal(value.toString());
+                    }
+                    if (objValue instanceof BigDecimal) {
+                        bd2 = (BigDecimal) objValue;
+                    } else {
+                        bd2 = new BigDecimal(objValue.toString());
+                    }
+                    return bd1.compareTo(bd2) == 0;
+                } else if ((value instanceof Float) || (value instanceof Double)
                         || (objValue instanceof Float) || (objValue instanceof Double)) {
                     return ((Number) value).doubleValue() == ((Number) objValue).doubleValue();
                 } else {
@@ -88,5 +105,27 @@ public class QueryValue implements QueryEvaluable
             return ((Number) value).intValue();
         }
         return value.hashCode();
+    }
+
+    /**
+     * @see QueryEvaluable#youAreType
+     */
+    public void youAreType(Class cls) {
+        if (value.getClass().equals(UnknownTypeValue.class)) {
+            value = ((UnknownTypeValue) value).getConvertedValue(cls);
+        } else {
+            throw new ClassCastException("youAreType called where type already known");
+        }
+    }
+
+    /**
+     * @see QueryEvaluable#getApproximateType
+     */
+    public int getApproximateType() {
+        if (value.getClass().equals(UnknownTypeValue.class)) {
+            return ((UnknownTypeValue) value).getApproximateType();
+        } else {
+            throw new ClassCastException("getApproximateType called when type is known");
+        }
     }
 }

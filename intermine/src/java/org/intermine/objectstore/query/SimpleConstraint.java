@@ -10,6 +10,7 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,14 @@ public class SimpleConstraint extends Constraint
             throw new NullPointerException("qe2 cannot be null");
         }
 
+        if (qe1.getType().equals(UnknownTypeValue.class)
+                && (!(qe2.getType().equals(UnknownTypeValue.class)))) {
+            qe1.youAreType(qe2.getType());
+        }
+        if (qe2.getType().equals(UnknownTypeValue.class)
+                && (!(qe1.getType().equals(UnknownTypeValue.class)))) {
+            qe2.youAreType(qe1.getType());
+        }
         if (!validComparison(qe1.getType(), type, qe2.getType())) {
             throw new IllegalArgumentException("Invalid constraint: "
                                                + qe1.getType().getName()
@@ -266,6 +275,16 @@ public class SimpleConstraint extends Constraint
         EQUALS,
         NOT_EQUALS};
 
+    protected static final ConstraintOp[] ALL_OPS = {
+        EQUALS,
+        NOT_EQUALS,
+        LESS_THAN,
+        LESS_THAN_EQUALS,
+        GREATER_THAN,
+        GREATER_THAN_EQUALS,
+        MATCHES,
+        DOES_NOT_MATCH};
+
     /**
      * Get type of constraint, taking negated into account.
      *
@@ -323,10 +342,12 @@ public class SimpleConstraint extends Constraint
      * @return whether the types are comparable
      */
     public static boolean comparable(Class arg1, Class arg2) {
-        if (Number.class.isAssignableFrom(arg1) && Number.class.isAssignableFrom(arg2)
-            || arg1.equals(String.class) && arg2.equals(String.class)
-            || arg1.equals(Boolean.class) && arg2.equals(Boolean.class)
-            || arg1.equals(Date.class) && arg2.equals(Date.class)) {
+        if (arg1.equals(arg2)
+                && (arg1.equals(String.class) || arg1.equals(Boolean.class)
+                    || arg1.equals(Date.class) || arg1.equals(Short.class)
+                    || arg1.equals(Integer.class) || arg1.equals(Long.class)
+                    || arg1.equals(Float.class) || arg1.equals(Double.class)
+                    || arg1.equals(BigDecimal.class) || arg1.equals(UnknownTypeValue.class))) {
             return true;
         }
         return false;
@@ -346,6 +367,8 @@ public class SimpleConstraint extends Constraint
             return Arrays.asList(BOOLEAN_OPS);
         } else if (Date.class.equals(arg)) {
             return Arrays.asList(DATE_OPS);
+        } else if (UnknownTypeValue.class.equals(arg)) {
+            return Arrays.asList(ALL_OPS);
         }
         return null;
     }

@@ -194,7 +194,28 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(int queryId) throws ObjectStoreException {
-        return lookupResults(queryId).getInfo();
+        try {
+            return lookupResults(queryId).getInfo();
+        } catch (RuntimeException e) {
+            try {
+                StringWriter message = new StringWriter();
+                PrintWriter pMessage = new PrintWriter(message);
+                e.printStackTrace(pMessage);
+                Class c = e.getClass();
+                Constructor cons = c.getConstructor(new Class[] {String.class});
+                RuntimeException toThrow = (RuntimeException) cons.newInstance(
+                        new Object[] {message.toString()});
+                throw toThrow;
+            } catch (NoSuchMethodException e2) {
+                throw e;
+            } catch (InstantiationException e2) {
+                throw e;
+            } catch (IllegalAccessException e2) {
+                throw e;
+            } catch (InvocationTargetException e2) {
+                throw e;
+            }
+        }
     }
 
     /**

@@ -17,13 +17,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.flymine.objectstore.proxy.LazyReference;
+import org.flymine.objectstore.query.ConstraintOp;
+import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsInfo;
+import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.SimpleConstraint;
 
 import org.flymine.model.testmodel.*;
@@ -453,9 +455,22 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
     public void testDataTypes() throws Exception {
         Types d1 = (Types) data.get("Types1");
-        Types d2 = new Types();
-        d2.setName(d1.getName());
-        Types d = (Types) (os.getObjectByExample(d2));
+        //Types d2 = new Types();
+        //d2.setName(d1.getName());
+        Query q = new Query();
+        QueryClass c = new QueryClass(Types.class);
+        q.addFrom(c);
+        q.addToSelect(c);
+        ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatType"), ConstraintOp.EQUALS, new QueryValue(new Float(0.6))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleType"), ConstraintOp.EQUALS, new QueryValue(new Double(0.88))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatObjType"), ConstraintOp.EQUALS, new QueryValue(new Float(1.6))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleObjType"), ConstraintOp.EQUALS, new QueryValue(new Double(1.88))));
+        q.setConstraint(cs);
+        Results res = os.execute(q);
+        Types d = (Types) ((List) res.get(0)).get(0);
+
+        //Types d = (Types) (os.getObjectByExample(d2));
 
         // Go through each attribute to check that it has been set correctly
         assertEquals(d1.getIntType(), d.getIntType());

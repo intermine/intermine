@@ -46,6 +46,7 @@ import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryCollectionReference;
+import org.flymine.objectstore.query.UnknownTypeValue;
 import org.flymine.util.TypeUtil;
 
 import org.apache.ojb.broker.metadata.ClassDescriptor;
@@ -295,12 +296,16 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         if (value instanceof Date) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             return "'" + format.format((Date) value) + "'";
+        } else if (value instanceof Float) {
+            return value.toString() + "::REAL";
         } else if (value instanceof Number) {
             return value.toString();
         } else if (value instanceof String) {
             return "'" + value + "'";
         } else if (value instanceof Boolean) {
             return (new Boolean2IntFieldConversion()).javaToSql(value).toString();
+        } else if (value instanceof UnknownTypeValue) {
+            return value.toString();
         }
         throw (new IllegalArgumentException("Invalid Object in QueryValue: "
                                             + value));

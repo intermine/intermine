@@ -10,9 +10,6 @@ package org.flymine.objectstore.query.fql;
  *
  */
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
@@ -71,19 +68,25 @@ public class FqlQueryParser
         } catch (antlr.RecognitionException e) {
             antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
             visitor.visit(ast);
-            IllegalArgumentException e2 = new IllegalArgumentException("Exception");
+            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage());
             e2.initCause(e);
             throw e2;
         } catch (antlr.TokenStreamException e) {
             antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
             visitor.visit(ast);
-            IllegalArgumentException e2 = new IllegalArgumentException("Exception");
+            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage());
             e2.initCause(e);
             throw e2;
         } catch (IllegalArgumentException e) {
             antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
             visitor.visit(ast);
             throw e;
+        } catch (ClassCastException e) {
+            antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+            visitor.visit(ast);
+            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage());
+            e2.initCause(e);
+            throw e2;
         }
     }
 
@@ -327,34 +330,7 @@ public class FqlQueryParser
                 return processNewField(ast.getFirstChild(), q);
             case FqlTokenTypes.CONSTANT:
                 String value = ast.getFirstChild().getText();
-                try {
-                    return new QueryValue(Long.valueOf(value));
-                } catch (NumberFormatException e) {
-                    // No problem - not a representable integer
-                }
-                try {
-                    return new QueryValue(Double.valueOf(value));
-                } catch (NumberFormatException e) {
-                    // No problem - not a representable number
-                }
-
-                if ("true".equals(value)) {
-                    return new QueryValue(Boolean.TRUE);
-                } else if ("false".equals(value)) {
-                    return new QueryValue(Boolean.FALSE);
-                } else if ((value.charAt(0) == '\'')
-                        && (value.charAt(value.length() - 1) == '\'')) {
-                    String innerValue = value.substring(1, value.length() - 1);
-                    try {
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                        return new QueryValue(format.parse(innerValue));
-                    } catch (ParseException e) {
-                        // No problem - not a parsable date
-                    }
-                    return new QueryValue(innerValue);
-                } else {
-                    throw new IllegalArgumentException("Unparsable constant \"" + value + "\"");
-                }
+                return new QueryValue(new UnknownTypeValue(value));
             case FqlTokenTypes.UNSAFE_FUNCTION:
                 return processNewUnsafeFunction(ast.getFirstChild(), q);
             case FqlTokenTypes.SAFE_FUNCTION:

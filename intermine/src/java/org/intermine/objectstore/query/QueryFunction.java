@@ -75,7 +75,10 @@ public class QueryFunction implements QueryEvaluable
        * @see QueryEvaluable
        */
     public Class getType() {
-        return Number.class;
+        if (op == COUNT) {
+            return Integer.class;
+        }
+        return obj.getType();
     }
 
     /**
@@ -100,10 +103,33 @@ public class QueryFunction implements QueryEvaluable
         if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");
         }
-        if (!(Number.class.isAssignableFrom(qe.getType()))) {
+        if (!(Number.class.isAssignableFrom(qe.getType())
+                    || qe.getType().equals(UnknownTypeValue.class))) {
             throw new IllegalArgumentException("Invalid argument type for specified operation");
         }
         obj = qe;
         this.op = op;
+    }
+
+    /**
+     * @see QueryEvaluable#youAreType
+     */
+    public void youAreType(Class cls) {
+        if (obj.getType().equals(UnknownTypeValue.class)) {
+            obj.youAreType(cls);
+        } else {
+            throw new ClassCastException("youAreType called on function that already has type");
+        }
+    }
+
+    /**
+     * @see QueryEvaluable#getApproximateType
+     */
+    public int getApproximateType() {
+        if (obj.getType().equals(UnknownTypeValue.class)) {
+            return obj.getApproximateType();
+        } else {
+            throw new ClassCastException("getApproximateType called when type is known");
+        }
     }
 }
