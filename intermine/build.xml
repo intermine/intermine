@@ -461,7 +461,6 @@
           <exclude name="org/intermine/web/**" />
           <exclude name="org/intermine/objectstore/webservice/**" />
           <exclude name="org/intermine/dataloader/XmlDataLoaderTest.class" />
-          <exclude name="org/intermine/dataconversion/*TranslatorTest.class" />
           <exclude name="org/intermine/dataconversion/ItemToObject*" />
           <exclude name="org/intermine/util/CacheMapTest.class" />
         </fileset>
