@@ -131,9 +131,15 @@ public class QueryCreatorTest extends TestCase
             fail("Expected NullPointerException, ops parameter null");
         } catch (NullPointerException e) {
         }
+
+        try {
+            QueryCreator.addToQuery(q, new QueryClass(Employee.class), new HashMap(), new HashMap(), null);
+            fail("Expected NullPointerException, model parameter null");
+        } catch (NullPointerException e) {
+        }
     }
 
-    public void testGenerateConstraints() throws Exception {
+    public void testGenerateConstraintsAttribute() throws Exception {
         Map fields = new HashMap();
         fields.put("name", "Dennis");
         fields.put("fullTime", "true");
@@ -160,11 +166,39 @@ public class QueryCreatorTest extends TestCase
         assertEquals(String.class, ((QueryValue) res2.getArg2()).getType());
     }
 
+    public void testGenerateConstraintsReference() throws Exception {
+        Map fields = new HashMap();
+        fields.put("department", "a1_");
+
+        Map ops = new HashMap();
+        ops.put("department", ConstraintOp.CONTAINS.getIndex().toString());
+
+        QueryClass qc1 = new QueryClass(Employee.class);
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+
+        Map aliases = new HashMap();
+        QueryClass qc2 = new QueryClass(Department.class);
+        aliases.put("a1_", qc2);
+
+        ConstraintSet cs = QueryCreator.generateConstraints(qc1, fields, ops, aliases, model);
+        ContainsConstraint cc = (ContainsConstraint) cs.getConstraints().iterator().next();
+        assertEquals(qc1.getType(), cc.getReference().getQueryClass().getType());
+        assertEquals(qc2.getType(), cc.getReference().getType());
+        assertEquals("department", cc.getReference().getFieldName());
+        assertEquals(qc2.getType(), cc.getQueryClass().getType());
+    }
+
     public void testAddConstraintNull() throws Exception {
+       try {
+            QueryCreator.addConstraint(null, new ConstraintSet(ConstraintSet.AND));
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+        }
+
         try {
             QueryCreator.addConstraint(new Query(), null);
             fail("Expected NullPointerException");
-        } catch (RuntimeException e) {
+        } catch (NullPointerException e) {
         }
     }
 
@@ -256,7 +290,6 @@ public class QueryCreatorTest extends TestCase
 
 
     public void testCreateQueryValue() throws Exception {
-        String value = null;
         QueryValue qv = null;
 
         qv = QueryCreator.createQueryValue(Integer.class, "101");
