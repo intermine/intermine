@@ -117,9 +117,12 @@ public class TransferSequences
     public void transferToLocatedSequenceFeatures()
         throws Exception {
         ObjectStore os = osw.getObjectStore();
+        osw.beginTransaction();
+
         Results results = PostProcessUtil.findLocations(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
 
+        results.setBatchSize(50000);
         Iterator resIter = results.iterator();        
 
         while (resIter.hasNext()) {
@@ -145,6 +148,8 @@ public class TransferSequences
             osw.store(feature);
             osw.store(sequence);
         }
+
+        osw.commitTransaction();
     }
 
     private String getSubSequence(Sequence chromosomeSequence, Location locationOnChr)
