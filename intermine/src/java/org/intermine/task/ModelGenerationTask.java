@@ -98,7 +98,7 @@ public class ModelGenerationTask extends Task
             FileInputStream fis = new FileInputStream(source);
             model = parser.process((InputStream) fis);
         } catch (Exception e) {
-            throw new BuildException(e);
+            throw new BuildException("Error parsing model: " + e);
         }
 
         if (model == null) {
