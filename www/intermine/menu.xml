@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
     <item url="/index.xml" title="Home"/>
-    <item url="http://www.intermine.org/query-demo/" title="Demo"/>
+    <item url="/begin.do" title="Demo"/>
     <item url="/doc/index.xml" title="Documentation">
         <item url="/doc/software/index.xml" match="/doc/software" title="Software"/>
         <item url="http://www.intermine.org/api/" title="API&#160;JavaDoc"/>
