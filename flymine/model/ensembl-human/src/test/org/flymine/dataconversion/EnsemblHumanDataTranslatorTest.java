@@ -222,16 +222,16 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
                     new MockItemReader(itemMap), getOwlModel(), tgtNs, "HS");
 
 
-        Item protein = createItem(tgtNs + "Protein", "-1_9", "");
+        Item protein = createItem(tgtNs + "Protein", "-1_12", "");
         //protein.addAttribute(new Attribute("idenitifer", "Q1001"));
         protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
         protein.addReference(new Reference("organism", "-1_1"));
-        protein.addCollection(new ReferenceList("subjects", new ArrayList(Arrays.asList(new Object[] {"-1_11","-1_17"}))));
-        protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_10"))));
-        Item synonym0 = createItem(tgtNs + "Synonym", "-1_10", "");
+        protein.addCollection(new ReferenceList("subjects", new ArrayList(Arrays.asList(new Object[] {"-1_14","-1_20"}))));
+        protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_13"))));
+        Item synonym0 = createItem(tgtNs + "Synonym", "-1_13", "");
         synonym0.addAttribute(new Attribute("type", "accession"));
         synonym0.addAttribute(new Attribute("value", "Q1001"));
-        synonym0.addReference(new Reference("subject", "-1_9"));
+        synonym0.addReference(new Reference("subject", "-1_12"));
         synonym0.addReference(new Reference("source", "-1_5"));
 
         Item synonym1 = createItem(tgtNs + "Synonym", "1_6", "");
@@ -249,38 +249,38 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         Item trans1 = createItem(tgtNs + "Transcript", "1_1", "");
         trans1.addAttribute(new Attribute("identifier", "TRANScript1"));
         trans1.addReference(new Reference("organism", "-1_1"));
-        trans1.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_13","-1_14"}))));
+        trans1.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_16","-1_17"}))));
         //trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
 
         Item trans2 = createItem(tgtNs + "Transcript", "2_1", "");
         trans2.addAttribute(new Attribute("identifier", "TRANScript2"));
         trans2.addReference(new Reference("organism", "-1_1"));
-        trans2.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_18","-1_19"}))));
+        trans2.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_21","-1_22"}))));
         //trans2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_13"))));
 
-        Item loca1 = createItem(tgtNs + "Location", "-1_14", "");
+        Item loca1 = createItem(tgtNs + "Location", "-1_17", "");
         loca1.addAttribute(new Attribute("start", "100"));
         loca1.addAttribute(new Attribute("end", "900"));
         loca1.addAttribute(new Attribute("strand", "1"));
         loca1.addAttribute(new Attribute("endIsPartial", "false"));
         loca1.addAttribute(new Attribute("startIsPartial", "false"));
         loca1.addReference(new Reference("subject", "1_1"));
-        loca1.addReference(new Reference("object", "-1_8"));
+        loca1.addReference(new Reference("object", "-1_11"));
 
-        Item loca2 = createItem(tgtNs + "Location", "-1_19", "");
+        Item loca2 = createItem(tgtNs + "Location", "-1_22", "");
         loca2.addAttribute(new Attribute("start", "1001"));
         loca2.addAttribute(new Attribute("end", "9001"));
         loca2.addAttribute(new Attribute("strand", "1"));
         loca2.addAttribute(new Attribute("endIsPartial", "false"));
         loca2.addAttribute(new Attribute("startIsPartial", "false"));
         loca2.addReference(new Reference("subject", "2_1"));
-        loca2.addReference(new Reference("object", "-1_12"));
+        loca2.addReference(new Reference("object", "-1_15"));
 
-        Item chr1 = createItem(tgtNs +"Chromosome", "-1_8", "");
+        Item chr1 = createItem(tgtNs +"Chromosome", "-1_11", "");
         chr1.addAttribute(new Attribute("identifier", "1"));
         chr1.addAttribute(new Attribute("length", "2461200"));
 
-        Item chr2 = createItem(tgtNs +"Chromosome", "-1_12", "");
+        Item chr2 = createItem(tgtNs +"Chromosome", "-1_15", "");
         chr2.addAttribute(new Attribute("identifier", "1"));
         chr2.addAttribute(new Attribute("length", "1124612"));
 
