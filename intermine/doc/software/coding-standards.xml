@@ -42,6 +42,9 @@ and setters. This <emphasis>must</emphasis> include testing for
 declared exceptions and runtime exceptions, and for invalid parameters
 (eg. null values, empty strings, negative numbers, etc.).</listitem>
 
+<listitem>All JUnit tests should pass on code that is checked in to
+CVS</listitem>
+
 <listitem>All classes and interfaces to have JavaDoc comments at the
 start (including author tags) and for every method apart from getters
 and setters.</listitem>
