@@ -47,25 +47,21 @@
         save your data to a bag select the required data and either add it to
         an existing bag or save it to a new bag. Selecting the checkboxes next
         to the column headings will select the entire column for export.
-        Alternativly, individual items can be saved by selecting checkboxes
+        Alternatively, individual items can be saved by selecting checkboxes
         next to the items. Saved bags of data can be viewed from the History
-        page (accessable form the menu bar).
+        page (accessible form the menu bar).
       </item>
       <item>
         Saved bags of data can be used to constrain new queries.  If you have
         saved bags of data these will become available for constraining
-        queries in the constaint list of the query builder page.
+        queries in the constraint list of the query builder page.
       </item>
     </section>
 
     <section>
       <heading>Exporting Data</heading>
       <item>
-        Data can be exported from the results page in various formats -
-        currently Excel format, comma separated values or tab separated
-        values.  The entire data set will be exported - you do not need to
-        select any checkboxes. If you do not wish to export certain columns
-        these can be hidden using the 'hide' option in the column header.
+        Data can be exported from the results page in various formats - currently as comma separated or tab separated files. Both are suitable for import into Excel or OpenOffice. By default, the entire data set will be exported, regardless of any selected checkboxes. However, if you do not wish to export certain columns these can be hidden using the 'hide' option in the column header. Note that for further data processing it is most useful to export columns containing simple values (such as gene names). Other columns containing objects (such as genes) will be exported in a human-readable textual representation similar to that displayed on the results display.
       </item>
     </section>
   </index>
