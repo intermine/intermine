@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Arrays;
 
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
@@ -180,7 +181,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             Item gene = getItemFactory().makeItem(null, tgtNs + "Gene", "");
             gene.setReference("organism", getOrganism().getIdentifier());
             gene.addCollection(new ReferenceList("evidence",
-                                                 Arrays.asList(new Object[] {getInfoSource.getIdentifier()})));
+                                                 Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
             Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
             while (fbIter.hasNext()) {
                 String organismDbId = (String) fbIter.next();
@@ -227,7 +228,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
             translation.addCollection(new ReferenceList("evidence",
-                                                 Arrays.asList(new Object[] {getInfoSource.getIdentifier()})));
+                                                 Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
 
             addItem(translation);
 
@@ -304,7 +305,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     }
 
 
-    private String getSourceIdentifier(String sourceName) {
+    protected String getSourceIdentifier(String sourceName) {
         String sourceId = null;
         if (sourceName.equals("FlyBase")) {
             sourceId = getInfoSource().getIdentifier();
