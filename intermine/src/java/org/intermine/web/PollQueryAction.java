@@ -66,19 +66,8 @@ public class PollQueryAction extends InterMineAction
         QueryMonitorTimeout controller = (QueryMonitorTimeout)
                 SessionMethods.getRunningQueryController(qid, session);
         if (controller == null) {
-            String referer = request.getHeader("Referer");
-            LOG.debug("referer = " + referer);
-            if (referer.indexOf("objectDetails") >= 0 || referer.indexOf("results") >= 0) {
-                LOG.debug("invalid qid " + qid + " redirect to query (from results/details)");
-                return mapping.findForward("cancelled");
-            } else if (session.getAttribute(Constants.QUERY_RESULTS) != null) {
-                LOG.debug("invalid qid " + qid + " redirect to results");
-                return mapping.findForward("cancelled");
-            } else {
-                LOG.debug("invalid qid, no results " + qid + " redirect to error");
-                recordError(new ActionMessage("errors.pollquery.badqid", qid), request);
-                return mapping.findForward("error");
-            }
+            LOG.debug("invalid qid " + qid + " redirecting as if cancelled");
+            return mapping.findForward("cancelled");
         }
         
         // First tickle the controller to avoid timeout
@@ -93,6 +82,7 @@ public class PollQueryAction extends InterMineAction
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
             LOG.debug("query qid " + qid + " complete");
+            //SessionMethods.forgetQuery(session, qid);
             // Look at results, if only one result, go straight to object details page
             PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
             if (followSingleResult && pr.getSize () == 1
