@@ -24,7 +24,6 @@
   <property name="src" location="src"/>
   <property name="src.java" location="${src}/java"/>
   <property name="src.test" location="${src}/test"/>
-  <property name="src.www" location="doc"/>
   <property name="src.webapp" location="${src}/web"/>
 
   <!-- resources directory -->
@@ -43,7 +42,6 @@
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
-  <property name="build.www" location="${build}/www"/>
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
 
@@ -58,7 +56,6 @@
 
   <!-- distributable directories -->
   <property name="dist"  location="dist"/>
-  <property name="dist.www"  location="${dist}/www"/>
   <property name="dist.webapp"  location="${dist}/webapp"/>
   <property name="dist.javadoc"  location="${dist}/api"/>
 
@@ -242,7 +239,6 @@
     <mkdir dir="${build.src.java}"/>
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
-    <mkdir dir="${build.www}"/>
     <mkdir dir="${build.tmp}"/>
 
     <mkdir dir="${results}"/>
@@ -274,7 +270,6 @@
 
   <target name="prepare-dist">
     <mkdir dir="${dist}"/>
-    <mkdir dir="${dist.www}"/>
     <mkdir dir="${dist.webapp}"/>
     <mkdir dir="${dist.javadoc}"/>
   </target>
@@ -621,59 +616,6 @@
   </target>
 
 
-  <!-- Web targets -->
-  <!-- main web site -->
-  <target name="build-www" depends="prepare">
-
-    <!-- make sure files dependent on sidebar are handled correctly -->
-    <dependset>
-      <srcfilelist dir="${src.www}" files="sidebar.xml,flymine.xsl" />
-      <targetfileset dir="${build.www}" includes="**/*.html" />
-    </dependset>
-
-    <dependset>
-      <srcfilelist dir="${bin}" files="diatopng,pstopng,buildpngfromdia,pnmscalealpha" />
-      <targetfileset dir="${build.www}" includes="**/*.png" />
-    </dependset>
-
-    <dependset>
-      <srcfilelist dir="${bin}" files="buildgiffrompng" />
-      <targetfileset dir="${build.www}" includes="**/*.gif" />
-    </dependset>
-
-    <copy todir="${build.www}">
-      <fileset dir="${src.www}">
-        <exclude name="**/*.xml" />
-        <exclude name="**/*.xsl" />
-        <exclude name="**/*.dia" />
-      </fileset>
-    </copy>
-
-    <style basedir="${src.www}" destdir="${build.www}" extension=".html"
-      style="${src.www}/flymine.xsl" includes="**/*.xml">
-      <classpath refid="project.class.path"/>
-      <param name="basedir" expression="${www.location}" />
-    </style>
-
-    <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www}">
-      <fileset dir="${src.www}">
-        <include name="**/*.dia" />
-      </fileset>
-      <mapper type="glob" from="*.dia" to="*.png" />
-      <srcfile />
-      <targetfile />
-    </apply>
-
-    <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www}">
-      <fileset dir="${build.www}">
-        <include name="**/*.png" />
-      </fileset>
-      <mapper type="glob" from="*.png" to="*.gif" />
-      <srcfile />
-      <targetfile />
-    </apply>
-  </target>
-
   <!-- Webapp targets -->
 
   <target name="prepare-webapp" depends="prepare,jar-intermine">
@@ -766,15 +708,10 @@
     <delete dir="${build.webapp}/intermine/WEB-INF/src"/>
   </target>
 
-  <target name="build-testable-webapp" depends="prepare-webapp, jar-testmodel"
+  <target name="build-testable-webapp" depends="prepare-webapp"
     description="Build a InterMine webapp including the test classes and libraries">
-    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="model.src" value="${model}/testmodel"/>
-    </ant>
 
-    <antcall target="build-webapp"/>
+    <antcall target="build-testmodel-webapp"/>
 
     <!-- now update war to include the test jars -->
     <war destfile="${dist.webapp}/intermine.war" update="true">
@@ -785,6 +722,16 @@
     </war>
   </target>
 
+  <target name="build-testmodel-webapp" depends="prepare-webapp, jar-testmodel"
+    description="Build a InterMine webapp including the test model">
+    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="model.src" value="${model}/testmodel"/>
+    </ant>
+
+    <antcall target="build-webapp"/>
+  </target>
   <!-- Webservice targets -->
   <target name="build-webservice" depends="prepare,prepare-dist,jar-intermine"
     description="Build the InterMine webservice">
@@ -836,14 +783,6 @@
 
 
   <!-- Packaging/distribution targets -->
-
-  <target name="dist-www" depends="prepare-dist,build-www"
-          description="makes the static website available for distribution">
-    <copy todir="${dist.www}">
-      <fileset dir="${build.www}">
-      </fileset>
-    </copy>
-  </target>
 
   <target name="dist-javadoc" depends="prepare-dist,javadoc"
           description="makes the javadoc available for distribution">
@@ -953,24 +892,6 @@
   </target>
 
   <!-- Releasing targets -->
-
-  <!-- website -->
-  <target name="release-www" depends="dist-www, dist-javadoc"
-    description="releases the static website to the webserver">
-    <chmod perm="a+r" type="file">
-      <fileset dir="${dist.www}">
-        <include name="**/**" />
-      </fileset>
-    </chmod>
-    <chmod perm="a+rx" type="dir">
-      <fileset dir="${dist.www}">
-        <include name="**/**" />
-      </fileset>
-    </chmod>
-    <exec executable="rsync">
-      <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
-    </exec>
-  </target>
 
   <!-- webapp -->
   <target name="release-webapp" depends=""
