@@ -40,7 +40,6 @@
   <property name="build.test" location="${build}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.src.java" location="${build}/javasrc"/>
-  <property name="build.src.web.java" location="${build}/webjavasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
@@ -228,7 +227,6 @@
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.src.java}"/>
-    <mkdir dir="${build.src.web.java}"/>
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
