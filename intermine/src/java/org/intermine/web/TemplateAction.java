@@ -20,13 +20,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.results.PagedResults;
 
 /**
  * Action to handle submit from the template page.
