@@ -27,7 +27,7 @@ public class PrintableConstraint
 {
     protected Query query;
     protected Constraint constraint;
-    
+
     /**
      * No-argument constructor, to allow overriding.
      */
@@ -71,5 +71,23 @@ public class PrintableConstraint
      */
     public boolean isAssociatedWithNothing() {
         return true;
+    }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object obj) {
+        if (obj.getClass() == this.getClass()) {
+            PrintableConstraint pc = (PrintableConstraint) obj;
+            return (query == pc.query) && (constraint == pc.constraint);
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 5 * constraint.hashCode();
     }
 }
