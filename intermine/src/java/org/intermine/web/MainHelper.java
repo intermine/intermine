@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -171,6 +172,7 @@ public class MainHelper
         for (Iterator i = query.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
+            QueryReference qr = null;
 
             if (path.indexOf(".") == -1) {
                 QueryClass qc = new QueryClass(getClass(node.getType(), model));
@@ -184,7 +186,6 @@ public class MainHelper
                     QueryField qf = new QueryField(parentQc, fieldName);
                     queryBits.put(path, qf);
                 } else {
-                    QueryReference qr = null;
                     if (node.isReference()) {
                         qr = new QueryObjectReference(parentQc, fieldName);
                     } else {
@@ -205,12 +206,24 @@ public class MainHelper
                                                        c.getOp(),
                                                        (Collection) savedBags.get(c.getValue())));
                 } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
-                    cs.addConstraint(new SimpleConstraint((QueryField) qn,
-                                                          c.getOp(),
-                                                          new QueryValue(c.getValue())));
+                    if (c.getOp() == ConstraintOp.IS_NOT_NULL
+                        || c.getOp() == ConstraintOp.IS_NULL) {
+                        cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn,
+                                                              c.getOp()));   
+                    } else {
+                        cs.addConstraint(new SimpleConstraint((QueryField) qn,
+                                                              c.getOp(),
+                                                              new QueryValue(c.getValue())));
+                    }
                 } else if (node.isReference()) {
-                    QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
-                    cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
+                    if (c.getOp() == ConstraintOp.IS_NOT_NULL
+                        || c.getOp() == ConstraintOp.IS_NULL) {
+                        cs.addConstraint(
+                            new ContainsConstraint((QueryObjectReference) qr, c.getOp()));
+                    } else {
+                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
+                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
+                    }
                 }
             }
         }

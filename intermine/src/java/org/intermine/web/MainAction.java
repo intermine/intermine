@@ -72,6 +72,14 @@ public class MainAction extends InterMineAction
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
         }
+        
+        if (request.getParameter("nullnotnull") != null) {
+            if (mf.getNullConstraint().equals("NotNULL")) {
+                node.getConstraints().add(new Constraint(ConstraintOp.IS_NOT_NULL, null));
+            } else {
+                node.getConstraints().add(new Constraint(ConstraintOp.IS_NULL, null));
+            }
+        }
 
         mf.reset(mapping, request);
 
