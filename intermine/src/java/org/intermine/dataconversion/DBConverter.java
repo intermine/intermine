@@ -80,19 +80,27 @@ public class DBConverter extends DataConverter
             // identifier dor that group of items.  It is assumed that the group of items
             // will become one after data translation.
 
-            for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
-                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
-                    if (idsProvided(cld) && !idIsUnique(cld)) {
-                        buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
+            try {
+                c = db.getConnection();
+
+                for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
+                    ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                    if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+                        if (idsProvided(cld) && !idIsUnique(cld)) {
+                            buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
+                        }
                     }
+                }
+            } finally {
+                if (c != null) {
+                    c.close();
                 }
             }
 
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
-                    processClassDescriptor(cld);
+                        processClassDescriptor(cld);
                 }
             }
         } finally {
@@ -168,14 +176,12 @@ public class DBConverter extends DataConverter
             String clsName = TypeUtil.unqualifiedName(cld.getName());
             Iterator iter;
 
-            //LOG.error("Processing class: " + clsName);
-
             boolean idsProvided = idsProvided(cld);
-            boolean nonUniqueId = !idIsUnique(cld);
-            if (idsProvided && !nonUniqueId) {
-                iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
-            } else {
+            boolean nonUniqueId = idsProvided && !idIsUnique(cld);
+            if (!idsProvided || nonUniqueId) {
                 iter = reader.execute("SELECT * FROM " + clsName).iterator();
+            } else {
+                iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
             }
 
             int identifier = 0;
@@ -227,18 +233,19 @@ public class DBConverter extends DataConverter
      * @throws SQLException if problem querying database
      */
     protected boolean idIsUnique(ClassDescriptor cld) throws SQLException {
-        String clsName = TypeUtil.unqualifiedName(cld.getName());
+        String clsName = TypeUtil.unqualifiedName(cld.getName()).toLowerCase();
         String idCol = clsName + "_id";
 
-        ResultSet rs = c.getMetaData().getIndexInfo(null, null, clsName, true, false);
-        while (rs.next()) {
-            if (rs.getString(9).equals(idCol)) {
-                return true;
-            }
-        }
+        // seems to return true even if index is not unique
+ //        ResultSet rs = c.getMetaData().getIndexInfo(null, null, clsName, true, false);
+//         while (rs.next()) {
+//             if (rs.getString(9).equals(idCol)) {
+//                 return true;
+//             }
+//         }
 
-        rs = executeQuery(c, "SELECT " + idCol + ", COUNT(*) FROM " + clsName
-                                   + " GROUP BY " + idCol + " HAVING COUNT(*) > 1");
+        ResultSet rs = executeQuery(c, "SELECT " + idCol + ", COUNT(*) FROM " + clsName
+                                    + " GROUP BY " + idCol + " HAVING COUNT(*) > 1");
         while (rs.next()) {
             return false;
         }
@@ -361,13 +368,15 @@ public class DBConverter extends DataConverter
      */
     protected String getNextTableId(String clsName) throws SQLException {
         if (!maxIdMap.containsKey(clsName)) {
-            Iterator i = reader.execute("SELECT MAX(" + clsName + "_id FROM " + clsName).iterator();
-            maxIdMap.put(clsName, (String) ((Map) i.next()).get(clsName + "_id"));
+            Iterator i = reader.execute("SELECT MAX(" + clsName + "_id) FROM " + clsName).iterator();
+            String id = "" + (((Map) i.next()).get("MAX(" + clsName + "_id)"));
+            maxIdMap.put(clsName, id);
         }
 
         String id = (String) maxIdMap.get(clsName);
         Integer newId = new Integer(Integer.parseInt(id) + 1);
         id = newId.toString();
-        return alias(clsName) + "_" + id;
+        maxIdMap.put(clsName, id);
+        return id;
     }
 }
