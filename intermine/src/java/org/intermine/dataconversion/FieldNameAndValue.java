@@ -171,4 +171,14 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
             }
         }
     }
+
+    /**
+     * Perform a deep clone of this object.  Needed to allow ObjectStoreItemPathFollowingImpl
+     * to manage memory.
+     * @return the cloned object
+     */
+    public ItemPrefetchConstraint deepClone() {
+        FieldNameAndValue clone = new FieldNameAndValue(this.fieldName, this.value, this.reference);
+        return clone;
+    }
 }

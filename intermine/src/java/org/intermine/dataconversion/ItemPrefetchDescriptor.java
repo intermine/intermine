@@ -103,19 +103,6 @@ public class ItemPrefetchDescriptor
         return retval;
     }
 
-    /**
-     * When ObjectStoreItemPathFOllowingImpl has finished with a batch of items
-     * local caches in ItemPrefetchConstraintDynamic can be cleared.
-     */
-    public void finishedBatch() {
-        Iterator conIter = constraints.iterator();
-        while (conIter.hasNext()) {
-            ItemPrefetchConstraint con = (ItemPrefetchConstraint) conIter.next();
-            if (con.getClass().equals(ItemPrefetchConstraintDynamic.class)) {
-                ((ItemPrefetchConstraintDynamic) con).clearIdToFnavs();
-            }
-        }
-    }
 
     /**
      * Builds a combinational product of a load of constraints.
@@ -168,6 +155,31 @@ public class ItemPrefetchDescriptor
     public Set getPaths() {
         return nextPath;
     }
+
+    /**
+     * Return deep clone of this object, releies on calling deepClone of all constituent
+     * objects.
+     * @return the deep cloned ItemPrefetchDescriptor
+     */
+    public ItemPrefetchDescriptor deepClone() {
+        ItemPrefetchDescriptor clone = new ItemPrefetchDescriptor(this.name);
+
+        Iterator iter = this.constraints.iterator();
+        while (iter.hasNext()) {
+            ItemPrefetchConstraint cloneConstraint
+                = ((ItemPrefetchConstraint) iter.next()).deepClone();
+            clone.addConstraint(cloneConstraint);
+        }
+
+        iter = this.nextPath.iterator();
+        while (iter.hasNext()) {
+            ItemPrefetchDescriptor cloneDescriptor
+                = ((ItemPrefetchDescriptor) iter.next()).deepClone();
+            clone.addPath(cloneDescriptor);
+        }
+        return clone;
+    }
+
 
     /**
      * @see Object#toString

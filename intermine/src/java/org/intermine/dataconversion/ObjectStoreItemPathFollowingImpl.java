@@ -212,11 +212,14 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      */
     private void fetchRelated(CacheHoldingArrayList batch) throws IllegalAccessException,
     ObjectStoreException {
+        // preform deep clone on classNameToDescriptors map -> need deepClone() method on all
+        // enclosed stuff
+        Map classNameToDescriptorsLocal = cloneClassNameToDescriptors();
         Map descriptorToConstraints = new HashMap();
         Iterator iter = batch.iterator();
         while (iter.hasNext()) {
             Item item = (Item) ((ResultsRow) iter.next()).get(0);
-            Set descriptors = (Set) classNameToDescriptors.get(item.getClassName());
+            Set descriptors = (Set) classNameToDescriptorsLocal.get(item.getClassName());
             if (descriptors != null) {
                 Iterator descIter = descriptors.iterator();
                 while (descIter.hasNext()) {
@@ -363,14 +366,9 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
 
                 long now = (new Date()).getTime();
                 LOG.info("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
-                        + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
-                        + (now - afterExecute) + " ms to process results for " + dac.descriptor);
+                         + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
+                         + (now - afterExecute) + " ms to process results for " + dac.descriptor);
             }
-        }
-        // finished batch so can clear local maps held in prefetch constraints
-        Iterator finIter = descriptorToConstraints.keySet().iterator();
-        while (finIter.hasNext()) {
-            ((ItemPrefetchDescriptor) finIter.next()).finishedBatch();
         }
     }
 
@@ -504,6 +502,25 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         }
         // We have a query.
         return q;
+    }
+
+    // create a deep clone of classNameToDescriptors map to prevent memory leaking
+    private Map cloneClassNameToDescriptors() {
+        Map clone = new HashMap();
+        Iterator iter = classNameToDescriptors.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String clsName = (String) entry.getKey();
+            Set cloneDescSet = new HashSet();
+            Iterator descIter = ((Set) entry.getValue()).iterator();
+            while (descIter.hasNext()) {
+                ItemPrefetchDescriptor descriptor
+                    = ((ItemPrefetchDescriptor) descIter.next()).deepClone();
+                cloneDescSet.add(descriptor);
+            }
+            clone.put(clsName, cloneDescSet);
+        }
+        return clone;
     }
 
     private static class DescriptorAndConstraints

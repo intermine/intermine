@@ -21,8 +21,10 @@ import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
-
 import org.intermine.util.StringUtil;
+
+import org.apache.log4j.Logger;
+
 
 /**
  * Provides an object that describes a constraint that is part of a path for the
@@ -34,7 +36,9 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
 {
     private String nearFieldName;
     private String farFieldName;
-    protected Map idToFnavs = new HashMap();
+    protected Map idToFnavs;
+
+    private static final Logger LOG = Logger.getLogger(ItemPrefetchConstraintDynamic.class);
 
     /**
      * Constructs a new instance of ItemPrefetchConstraint.
@@ -45,6 +49,7 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
     public ItemPrefetchConstraintDynamic(String nearFieldName, String farFieldName) {
         this.nearFieldName = nearFieldName;
         this.farFieldName = farFieldName;
+        this.idToFnavs = new HashMap();
     }
 
     /**
@@ -152,11 +157,33 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
 
 
     /**
-     * Clear map of item identifiers to contraints when identifiers no longer
-     * needed.  Need to keep memory usage sensible.
+     * Make a deep clone of this object.  Needed to allow ObjectStoreItemPathFollowingImpl
+     * to manage memory better.
+     * @return the cloned object
      */
-    public void clearIdToFnavs() {
-        idToFnavs = new HashMap();
+    public ItemPrefetchConstraint deepClone() {
+        ItemPrefetchConstraintDynamic clone
+            = new ItemPrefetchConstraintDynamic(this.nearFieldName, this.farFieldName);
+
+        // expect idToFnavs to empty but clone anyway
+        if (!idToFnavs.isEmpty()) {
+            LOG.error("idToFnavs was not empty: " + nearFieldName + ", " + farFieldName);
+
+            Iterator iter = idToFnavs.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String identifier = (String) entry.getValue();
+                Set fnavs = new HashSet();
+                Iterator fnavIter = ((Set) entry.getValue()).iterator();
+                while (fnavIter.hasNext()) {
+                    ItemPrefetchConstraint cloneFnav
+                        = ((ItemPrefetchConstraint) fnavIter.next()).deepClone();
+                    fnavs.add(cloneFnav);
+                }
+                clone.idToFnavs.put(identifier, fnavs);
+            }
+        }
+        return clone;
     }
 
 
