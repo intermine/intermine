@@ -154,7 +154,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});
-        form.setBagName("testBag1");
+        form.setExistingBagName("testBag1");
         setActionForm(form);
 
         Collection objs = new LinkedHashSet();
@@ -188,7 +188,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});
-        form.setBagName("testBag1");
+        form.setExistingBagName("testBag1");
         setActionForm(form);
 
         Collection objs = new LinkedHashSet();
