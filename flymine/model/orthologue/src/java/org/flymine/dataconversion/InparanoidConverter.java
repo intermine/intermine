@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.LinkedHashSet;
 
@@ -39,6 +40,7 @@ public class InparanoidConverter extends FileConverter
     protected Map proteins = new HashMap();
     protected Item db, analysis;
     protected Map ids = new HashMap();
+    protected Map organisms = new LinkedHashMap();
 
     /**
      * Constructor
@@ -59,7 +61,6 @@ public class InparanoidConverter extends FileConverter
         try {
             String line, species = null, oldIndex = null;
             Item protein = null;
-            Set organisms = new LinkedHashSet();
 
             while ((line = reader.readLine()) != null) {
                 String[] array = line.split("\t");
@@ -67,18 +68,31 @@ public class InparanoidConverter extends FileConverter
                 if (!index.equals(oldIndex)) {
                     oldIndex = index;
                     species = array[2];
-                    protein = newProtein(array[4]);
+                    protein = newProtein(array[4], species);
                     continue;
                 }
 
-                organisms.add(species);
-                Item newProtein = newProtein(array[4]);
+                Item organism = getOrganism(species);
+                Item newProtein = newProtein(array[4], species);
+                Item result = newResult(array[3]);
 
+                // create two organisms with subjects and objects reversed
                 Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
                 item.addReference(new Reference("subject", newProtein.getIdentifier()));
                 item.addReference(new Reference("object", protein.getIdentifier()));
                 item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                    {db.getIdentifier(), newResult(array[3]).getIdentifier()})));
+                    {db.getIdentifier(), result.getIdentifier()})));
+                addToCollection(newProtein, "objects", item.getIdentifier());
+                addToCollection(protein, "subjects", item.getIdentifier());
+                writer.store(ItemHelper.convert(item));
+
+                item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
+                item.addReference(new Reference("subject", protein.getIdentifier()));
+                item.addReference(new Reference("object", newProtein.getIdentifier()));
+                item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                    {db.getIdentifier(), result.getIdentifier()})));
+                addToCollection(newProtein, "subjects", item.getIdentifier());
+                addToCollection(protein, "objects", item.getIdentifier());
                 writer.store(ItemHelper.convert(item));
 
                 if (!species.equals(array[2])) {
@@ -86,9 +100,13 @@ public class InparanoidConverter extends FileConverter
                     protein = newProtein;
                 }
             }
-            Iterator iter = organisms.iterator();
+            Iterator iter = organisms.values().iterator();
             while (iter.hasNext()) {
-                writer.store(ItemHelper.convert(newOrganism((String) iter.next())));
+                writer.store(ItemHelper.convert((Item) iter.next()));
+            }
+            iter = proteins.values().iterator();
+            while (iter.hasNext()) {
+                writer.store(ItemHelper.convert((Item) iter.next()));
             }
         } finally {
             writer.close();
@@ -125,14 +143,14 @@ public class InparanoidConverter extends FileConverter
      * @return a new protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected Item newProtein(String swissProtId) throws ObjectStoreException {
+    protected Item newProtein(String swissProtId, String species) throws ObjectStoreException {
         if (proteins.containsKey(swissProtId)) {
             return (Item) proteins.get(swissProtId);
         }
         Item item = newItem("Protein");
         item.addAttribute(new Attribute("swissProtId", swissProtId));
         item.addAttribute(new Attribute("identifier", swissProtId));
-        writer.store(ItemHelper.convert(item));
+        item.addReference(new Reference("organism", getOrganism(species).getIdentifier()));
         proteins.put(swissProtId, item);
         return item;
     }
@@ -154,6 +172,16 @@ public class InparanoidConverter extends FileConverter
     protected Item newOrganism(String abbrev) {
         Item organism = newItem("Organism");
         organism.addAttribute(new Attribute("abbreviation", abbrev));
+        return organism;
+    }
+
+    private Item getOrganism(String abbrev) {
+        Item organism = (Item) organisms.get(abbrev);
+        if (organism == null) {
+            organism = newItem("Organism");
+            organism.addAttribute(new Attribute("abbreviation", abbrev));
+            organisms.put(abbrev, organism);
+        }
         return organism;
     }
 
@@ -196,6 +224,19 @@ public class InparanoidConverter extends FileConverter
         for (Iterator i = toStore.iterator(); i.hasNext();) {
             writer.store(ItemHelper.convert((Item) i.next()));
         }
+    }
+
+
+    private void addToCollection(Item item, String colName, String refid) {
+        ReferenceList col = null;
+        if (item.hasCollection(colName)) {
+            col = item.getCollection(colName);
+        } else {
+            col = new ReferenceList();
+            col.setName(colName);
+        }
+        col.addRefId(refid);
+        item.addCollection(col);
     }
 }
 
