@@ -128,7 +128,8 @@ public class TemplateAction extends InterMineAction
                 Object o = ((List) pr.getAllRows ().get(0)).get(0);
                 if (o instanceof InterMineObject) {
                     return new ActionForward("/objectDetails.do?id="
-                            + ((InterMineObject) o).getId(), true);
+                            + ((InterMineObject) o).getId()
+                            + "&trail=_" + ((InterMineObject) o).getId(), true);
                 }
             }
             return mapping.findForward("results");
