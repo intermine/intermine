@@ -105,7 +105,7 @@ public class FqlQuery
             }
         }
         retval += (q.getConstraint() == null ? "" : " WHERE "
-                   + constraintToString(q, q.getConstraint()));
+                   + constraintToString(q, q.getConstraint(), parameters));
         if (!q.getGroupBy().isEmpty()) {
             retval += " GROUP BY ";
             Iterator groupIter = q.getGroupBy().iterator();
@@ -135,7 +135,14 @@ public class FqlQuery
         queryString = retval;
     }
 
-    private String nodeToString(Query q, QueryNode qn) {
+    /**
+     * Converts a QueryNode into a String.
+     *
+     * @param q a Query, to provide aliases
+     * @param qn a QueryNode to convert
+     * @return a String
+     */
+    public static String nodeToString(Query q, QueryNode qn) {
         String nodeAlias = (String) q.getAliases().get(qn);
         if (qn instanceof QueryClass) {
             return nodeAlias;
@@ -212,7 +219,16 @@ public class FqlQuery
         }
     }
 
-    private String constraintToString(Query q, Constraint cc) {
+    /**
+     * Converts a Constraint into a String.
+     *
+     * @param q a Query, to provide aliases
+     * @param cc a Constraint to convert
+     * @param parameters a List, in which this method will place objects corresponding to the
+     * question marks in the resulting String
+     * @return a String
+     */
+    public static String constraintToString(Query q, Constraint cc, List parameters) {
         if (cc instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) cc;
             if ((c.getType() == SimpleConstraint.IS_NULL)
@@ -259,7 +275,7 @@ public class FqlQuery
                     retval += (c.getDisjunctive() ? " OR " : " AND ");
                 }
                 needComma = true;
-                retval += constraintToString(q, subC);
+                retval += constraintToString(q, subC, parameters);
             }
             return retval + (c.isNegated() ? "))" : ")");
         } else {
