@@ -140,4 +140,30 @@ public class ClassConstraint implements Constraint
         return type;
     }
 
+    /**
+     * Tests whether two ClassConstraints are equal.
+     *
+     * @param obj the object to compare with
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ClassConstraint) {
+            ClassConstraint objCC = (ClassConstraint) obj;
+            return  (qc1.equals(objCC.qc1)
+                     && (type == objCC.type)
+                     && ((qc2 != null) ? qc2.equals(objCC.qc2) : (objCC.qc2 == null))
+                     && ((this.obj != null) ? this.obj.equals(objCC.obj) : (objCC.obj == null)));
+        }
+        return false;
+    }
+
+    /**
+     * Get the hashCode for this object
+     *
+     * @return the hashCode
+     */
+    public int hashCode() {
+        return qc1.hashCode() + (3 * type)
+            + (5 * ((qc2 != null) ? qc2.hashCode() : obj.hashCode()));
+    }
+
 }
