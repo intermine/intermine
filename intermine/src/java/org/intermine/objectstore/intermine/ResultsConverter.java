@@ -72,7 +72,6 @@ public class ResultsConverter
                             currentColumn = objectField;
                             obj = LiteParser.parse(new ByteArrayInputStream(
                                         objectField.getBytes()), os);
-                            os.cacheObjectById(idField, obj);
                         }
                         row.add(obj);
                     } else {

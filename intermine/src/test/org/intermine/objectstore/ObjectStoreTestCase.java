@@ -436,6 +436,9 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         Secretary a = (Secretary) ((List) os.execute(q).get(0)).get(0);
 
         Secretary b = (Secretary) os.getObjectById(a.getId());
+        Secretary c = (Secretary) os.getObjectById(a.getId());
+        assertEquals(b, c);
+        assertTrue(b == c);
         assertEquals(a, b);
         assertTrue(a == b);
     }

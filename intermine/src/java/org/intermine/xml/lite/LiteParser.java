@@ -84,8 +84,9 @@ public class LiteParser
         digester.addSetNext("object/field", "addField");
         digester.addSetNext("object/reference", "addReference");
 
-        return convertToObject(((Item) digester.parse(is)), os);
-
+        FlyMineBusinessObject retval = convertToObject(((Item) digester.parse(is)), os);
+        os.cacheObjectById(retval.getId(), retval);
+        return retval;
    }
 
     /**
