@@ -16,9 +16,6 @@ form {
   padding-left: 5px;
   font-size: 11px;
 }
-.description {
-}
-
 .topBar {
   background: white;
   padding: 6px;
@@ -92,6 +89,11 @@ table.templateBuilder th {
 
 table.query {
   border: none;
+}
+
+.body > .templateDesc {
+  font-family: serif;
+  font-size: 14px;
 }
 
 /*
