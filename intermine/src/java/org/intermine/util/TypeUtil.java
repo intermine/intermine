@@ -1,5 +1,8 @@
 package org.flymine.util;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +31,26 @@ public class TypeUtil
     private static Map classToFieldToSetter = new HashMap();
     
     /**
+     * Returns the package name from a fully qualified class name
+     *
+     * @param className the fully qualified class name
+     * @return the package name
+     */
+    public static String packageName(String className) {
+        return className.substring(0, className.lastIndexOf("."));
+    }
+
+    /**
+     * Returns the unqualifed class name from a fully qualified class name
+     *
+     * @param className the fully qualified class name
+     * @return the unqualified name
+     */
+    public static String unqualifiedName(String className) {
+        return className.substring(className.lastIndexOf(".") + 1);
+    }
+
+    /**
      * Returns the value of a public or protected Field of an Object given the field name
      *
      * @param o the Object
@@ -35,7 +58,8 @@ public class TypeUtil
      * @return the value of the Field
      * @throws IllegalAccessException if the field is inaccessible
      */ 
-    public static Object getFieldValue(Object o, String fieldName) throws IllegalAccessException {
+    public static Object getFieldValue(Object o, String fieldName)
+        throws IllegalAccessException {            
         Field f  = getField(o.getClass(), fieldName);
         f.setAccessible(true);
         return f.get(o);
@@ -177,6 +201,46 @@ public class TypeUtil
             throw new NoSuchElementException("Collection cannot be empty");
         }
         return col.iterator().next().getClass();
+    }
+
+    /**
+     * Make all nested objects top-level in returned collection
+     *
+     * @param c a collection of top-level objects
+     * @return a (larger) set of objects
+     * @throws Exception if a problem occurred during flattening
+     */
+    public static List flatten(Collection c) throws Exception {
+        try {
+            List toStore = new ArrayList();
+            Iterator i = c.iterator();
+            while (i.hasNext()) {
+                flatten(i.next(), toStore);
+            }
+            return toStore;
+        } catch (Exception e) {
+            throw new Exception("Problem occurred flattening collection. ", e);
+        }
+    }
+
+    private static void flatten(Object o, Collection c) throws Exception {
+        if (o == null || c.contains(o)) {
+            return;
+        }
+        c.add(o);
+        Method[] getters = TypeUtil.getGetters(o.getClass());
+        for (int i = 0; i < getters.length; i++) {
+            Method getter = getters[i];
+            Class returnType = getter.getReturnType();
+            if (Collection.class.isAssignableFrom(returnType)) {
+                Iterator iter = ((Collection) getter.invoke(o, new Object[] {})).iterator();
+                while (iter.hasNext()) {
+                    flatten(iter.next(), c);
+                }
+            } else if (!returnType.isPrimitive() && !returnType.getName().startsWith("java")) {
+                flatten(getter.invoke(o, new Object[] {}), c);
+            }
+        }
     }
 
     /**
