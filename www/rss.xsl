@@ -7,7 +7,7 @@
   <xsl:template match="news">
     <xsl:variable name="items" select="document(concat($branding, @rss))/rss/channel"/>
     
-    <link href="{xsl:concat($basedir, @rss)}" rel="alternate" type="application/rss+xml" title="rss" />
+    <link href="{xsl:concat($basedir, @rss)}" rel="alternate" type="application/rss+xml" title="News" />
     
     <xsl:for-each select="$items/item">
       <div class="news-item">
