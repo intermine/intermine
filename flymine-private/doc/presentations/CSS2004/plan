@@ -1,219 +1,224 @@
-Advanced techniques for Object Warehousing:
-Multiple inheritance, collections & references, & advanced queries
-Schema - underlying database format, cglib
-Transaction processing
-Query optimiser
-Inserting the data:
-    DBConverter & DataTranslator (and owl)
-    DataLoader:
-        Primary keys
-        Dealing with different relation types
-        Data source priorities
-
-Plan:
-Introduction (9 minutes):
-    Who I am, and what I do (1 minute)
-    Caveats for this talk - ie what this talk does not do (1 minute):
-        OJB, Hibernate, etc.
-    Warning: this talk has InterMine & Flymine as its base (1 minute)
-    Assumptions that this talk makes (3 minutes):
-        You don't have a tyrannical DBA breathing down your neck and changing the DB schema under your feet (1 minute)
-        You want to build a database from data sources and present it to the data users as a read-only database (only half of the talk assumes this) (1 minute)
-        You wish to use complicated data (1 minute)
-    What I will be covering: (3 minutes)
-        Multiple inheritance and CGLib
-        Collections and references
-        Objectstores - brief introduction
-        Queries and results
-        ObjectStoreWriter and transaction processing
-        Inserting the data:
-            Models, ontologies, and OWL
-            Data transformations and why a simple pipe won't work
-            DBConverter and DataTranslator
-            DataLoader
-Multiple inheritance and CGLib (11 minutes)
-    Motivation - I'm using biological data, and it doesn't fit (3 minutes)
-    Classes in the model that implement multiple interfaces (2 minutes)
-    Interfaces in the model that can have direct implementations (2 minutes)
-    Objects in the database that are no particular class from the model, but dynamically implement and extend various classes and interfaces from the model (3 minutes)
-    Objects that implement no other interface than InterMineObject (1 minute)
-Schemas (13 minutes)
-    Map all classes onto one table (cheap read & write, really bad data density affects performance, plus field type conflicts) (3 minutes)
-    Map every class onto an individual table, put each object into only one table (cheap write, read must use UNIONs) (3 minutes)
-    Map every class onto an individual table, with only the new fields stored in the table, and write each object into all applicable tables (write must use multiple tables, read must use JOIN) (3 minutes)
-    Map every class onto an individual table, put each object into all applicable tables, have an OBJECT field (cheap & simple reads, write must use multiple tables, quite bad data density, but that does not affect read performance) (4 minutes)
-Collections and references (3 minutes)
-    Proxies
-        Advantages and disadvantages - more in the performance talk
-ObjectStores (7 minutes)
-    Take queries and return results (2 minutes)
-    Different implementations for different tasks (3 minutes)
-        ObjectStoreInterMineImpl
-        ObjectStorePassThruImpl
-            ObjectStoreFastCollectionsForTranslatorImpl
-            ObjectStoreFastCollectionsImpl
-            ObjectStoreItemPathFollowingImpl
-            ObjectStoreSafeImpl
-        ObjectStoreTranslatingImpl
-        ObjectStoreClient (with ObjectStoreServer)
-    Caches (2 minutes)
-Queries and results (27 minutes - 70 minutes so far)
-    Queries are effectively a description of the results (3 minutes)
-    Results are Collections of rows (3 minutes)
-    Results can be multi-column, where each column can be an object, field, constant, or computed value (4 minutes)
-    Results could be single-column. You could create a special single-column results Collection that is a collection of objects rather than a collection of rows, and use that as a Collection proxy (3 minutes)
-    Changing the Query - don't. Or use ObjectStoreSafeImpl (3 minutes)
-    SQL generation and results parsing (5 minutes)
-    Batching reads, so the Results object is even more lazy (3 minutes)
-    Maintaining consistency of results by imposing ORDER BY onto the SQL (3 minutes)
-ObjectStoreWriter and transaction processing (12 minutes - 82 minutes so far)
-    Attached to the ObjectStore (1 minute)
-    Delete (2 minutes)
-    Store: (4 minutes)
-        Setting IDs in the objects and related objects
-        Deleting any previous object - and the limitations
-        Merging collections, overwriting everything else
-    Transactions: (5 minutes)
-        Beginning (2 minutes)
-        The state of the ObjectStore during a transaction (1 minute)
-        Ending (and flushing caches) (2 minutes)
-Inserting the data: (23 minutes - 105 minutes so far)
-    Models, ontologies, and OWL (7 minutes)
-        Ontologies - basically big models, but useful for biology, and make use of multiple inheritance (2 minutes)
-        OWL as a format for describing models (3 minutes)
-        Merging models (2 minutes)
-    Relationship types (4 minutes)
-        1:1 - must be consistent
-        1:N - can be ignored by the data loader, as it is never unidirectional
-        N:1 - very simple - could be unidirectional
-        M:N - handled by indirection table
-    Data transformations and why a simple pipe won't work (12 minutes)
-        DBConverter stage: must transform M:N collections into ReferenceLists (searching in the source) (2 minutes)
-        DataTranslator stage: must follow references in the source to attach attributes to the correct object, also may generate new objects which must be kept in memory until the end, so that they can be searched like the source (3 minutes)
-        DataLoader stage: must be able to search in the source to build object graphs, and search in the destination to find equivalent objects
-            Searching in the source to build an object graph, using the ObjectStoreTranslatingImpl (2 minutes)
-            Searching in the destination for any equivalent objects (2 minutes)
-            Merging together equivalent objects using information from the data tracker, and data source priorities (3 minutes)
-QueryOptimiser (15 minutes - 120 minutes so far)
-
-
-Improving performance in Object Warehousing:
-The N + 1 reads problem
-Large offsets
-Batching writes & using COPY etc. Avoiding deletes by caching generated IDs. Avoiding waiting for the connection in getSerial
-Three-thread pipeline:
-    Batching & ReadAheadDBReader
-    Objectstore prefetch on ItemReader
-    sql.writebatch.Batch writer thread
-    DataTracker write-back cache & thread
-    Multiprocessor systems
-DataLoader:
-    ID map
-    Cheating in getEquivalentObjects and returning a ProxyReference
-    Batching writes by having getEquivalentObjects use osw.getObjectStore
-    Possibility for parallelising getEquivalentObjects (depends on whether disk-seek-bound)
-Remove any unneccessary features (InterMineObject table, OBJECT field)
-
-Plan:
-Introduction: (6 minutes)
-    Who I am, and what I do (1 minute)
-    Go to the previous talk, although it is not vital (1 minute)
-    Warning: this talk has InterMine & FlyMine as its base (1 minute)
-    What I will be covering: (3 minutes)
-        The N + 1 reads problem
-        Large offsets in SQL
-        Writing to the database
-        Reading from the database
-        The three-thread pipeline
-        Database-backed cached table (DataTracker)
-        Multiprocessor systems
-        Speeding up the DataLoader
-        Other tips
-Large offsets (using an index on the sort key) (5 minutes - 11 minutes so far)
-The principle of round-trip-time (make accesses big) (1 minute)
-Writing to the database (23 minutes - 35 minutes so far)
-    The store method needs unique IDs, get them efficiently (2 minutes)
-    When you write and you are in a transaction, batch together the writes and commit later (4 minutes)
-    Use the fastest insert method available to you - eg COPY (3 minutes)
-    Perform writes in another thread - that means your data-producing thread can keep on working while the database is writing your data (3 minutes)
-    Make sure you really do have multi-threaded action, and aren't blocking the producing thread (1 minute)
-    Really do as little processing as possible in the writing thread - perfect scenario is to completely prepare the statements in the producing thread, so the writing thread is only ever waiting (3 minutes)
-    Make sure that we still properly flush the write queue whenever there is a commit or a read (2 minutes)
-    Make sure there aren't any other database accesses that the producing thread makes that would cause the producing thread to wait for the writing thread (eg ID production) (2 minutes)
-    Deleting rows is expensive - if you are merely filling a database, you should be able to avoid them completely, then remove indexes. So, cache which IDs you have generated but not stored, and don't bother deleting those. (3 minutes)
-Reading from the database (27 minutes - 62 minutes so far)
-    Batching reads (3 minutes)
-        Choose a sensible batch size - bigger is faster, but only to a point, and there is memory to consider
-    The N + 1 reads problem: (16 minutes)
-        Why it is a problem (2 minutes)
-        You could rewrite your queries, so that another column is the content of a reference - BUT this breaks unless you use LEFT OUTER JOIN, and doesn't work very well for collections (3 minutes)
-        You could link the proxies together somehow, so they would trigger a batch read when one is accessed (3 minutes)
-        You could explicitly use an ObjectStore that does it for you - like ObjectStoreFastCollectionsImpl (5 minutes)
-        You may even put explicit knowledge of what data will be needed into the batching system, like ObjectStoreFastCollectionsForTranslatorImpl (for the DataLoader), and ObjectStoreItemPathFollowingImpl (for the DataTranslator) (2 minutes)
-        In the BatchingDBReader, we build a cache of likely SQL queries with results brought in by the batch (3 minutes)
-    Prefetching data in another thread (6 minutes)
-        This means that when your consuming thread is ready for more data, it is immediately available (1 minute)
-        Do as little processing in the producing thread as possible - perfect scenario is for this thread to ONLY wait for the database or the consuming thread (1 minute)
-        You can guess what data will be required next, as with the PrefetchManager (2 minute)
-        You can know what data will be required next, as with the DBReader (1 minute)
-        In general, if you are performing a bulk data transfer, prefetch will help a lot (1 minute)
-The three-thread pipeline (3 minutes - 65 minutes so far)
-    The ideal single-processor bulk transfer system
-    Ideally, the processing thread never waits for either the reading thread or the writing thread, therefore it is running at the fastest possible speed
-A database-backed lookup table (example - our DataTracker) (7 minutes - 70 minutes so far)
-    Different paradigm to the bulk transfer system (2 minutes)
-        There is random access
-        There is too much data to fit into memory
-        We still want to never wait for the writer
-    We want to construct a LRU cache, and always flush old entries out to the database (5 minutes)
-        LinkedHashMap is good for this
-        When it has become too big, atomically move a certain number into a different map
-        The reader must be able to read this second map until after the data is committed to the database, or entries will go missing while they are being written
-        A separate thread performs the flush while readers have full access.
-        When the flush is finished, the second map is atomically removed, freeing memory for new entries.
-Multiprocessor systems (21 minutes - 96 minutes so far)
-    There is a large overhead involved in moving data from one processor to another - so don't (eg. switching on Hyperthreading with the above system reduced performance by 40%) (4 minutes)
-    Guage the ratio of data quantity to processing time. If your program spends lots of time on small amounts of data, then multiprocessor systems will work a lot better than little processing on large amounts of data (2 minutes)
-    Particularly, don't do a pipeline like this: Reader -> Process 1 -> Process 2 -> Process 3 -> Writer (2 minutes)
-    Java is particularly bad at this, because objects will be scattered everywhere in the heap, resulting in lots of cache invalidation (2 minutes)
-    If your program does a reasonable amount of processing on a non-huge amount of data, then you could get away with:
-                               .-> Process 1 -.
-                       Reader ---> Process 2 ---> Writer
-                               `-> Process 3 -'                  (2 minutes)
-    If you are processing lots of data, then something like this would be better:
-                       Reader 1 -> Process 1 -> Writer 1
-                       Reader 2 -> Process 2 -> Writer 2
-                       Reader 3 -> Process 3 -> Writer 3
-        However, in this case you will really want each thread group to be on a single processor, or you get data transferred between processors again. (difficult anyway) (2 minutes)
-    To solve that problem, you will need to write one thread per processor, but try and use java.nio in order to get non-blocking reads -> difficult with JDBC, but fine with files or sockets (2 minutes)
-    This is a difficult topic, still subject to research, so try whatever you think of. If it goes faster with your idea, you weren't wrong (2 minutes)
-    However, your program may be IO bound anyway - throwing more CPU at it won't make it faster - make sure you engineer out the bottlenecks, rather than the fast bit (1 minute)
-    Additionally, applying multiple reader/writer threads to a disk usually will not help (2 minutes)
-Speeding up the DataLoader (18 minutes - 114 minutes so far)
-    The ID Map (5 minutes)
-        One of the operations of the DataLoader is to search for equivalent objects in the destination database. For each object to be stored, all connected objects need to be matched up against their equivalent objects in the destination in order to store the object with its collections and references properly (1 minute)
-        However, we only need to getEquivalentObjects() for each object once (1 minute)
-        So, we make an assumption: if we see an object for the second time, we can recognise it by ID, and return the same results as last time (1 minute)
-        In fact, the last time we saw that object, we merged ALL the equivalent objects together into one object in the destination database (1 minute)
-        Therefore there is a mapping between source object and destination object, indexed by ID, and we can create an efficient ID to ID map for this purpose (1 minute)
-        This also simplifies the getEquivalentObjects query, as it may not need to recurse down primary key references
-    Cheating, and avoiding getObjectById (3 minutes)
-        If an object has been previously seen, it is unlikely that it will be actually needed, so one can put in a ProxyReference instead. We can reify the ProxyReference if we need it (1 minute)
-        Handily, ProxyReference is an InterMineObject, so when an object pointing to it is stored, it is stored with a correct pointer to the existing object with that ID in the database (2 minutes)
-    GetEquivalentObjects calls can be made long before the data is needed (10 minutes)
-        Consider the circumstance where an object is presented to be stored twice. The first time getEquivalentObjects runs a search, and the second time it returns a ProxyReference from the ID map. Consider also that the results of a getEquivalentObject query cannot be changed by any action other than that of storing an object equivalent to the one we are interested in.
-        If we can make the assumption: we will never attempt to store an object that is equivalent to a previously-stored object (after some point in time) that the ID map does not recognise
-            we can then allow the getEquivalentObjects call to use "old" data, as old as that point in time.
-        This assumption is false for objects that have a null ID, because the ID map does not recognise them, so this cannot be applied to such objects
-        This allows a performance boost for several reasons:
-            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
-            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
-            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
-Other tips: (8 minutes - 122 minutes so far)
-    Get the database indexes right (1 minute)
-    Profile your program, and work out where it is spending its time, then optimise that bit (1 minute)
-    Use StringBuffer, rather than concatenating Strings (1 minute)
-    Remove any unneccessary features that slow down the system - eg the InterMineObject table and OBJECT field (2 minutes)
-    Throw a bigger computer at it (1 minute)
-    Moore's law: (2 minutes)
-    SQL_ASCII rather than UNICODE
+	Advanced techniques for Object Warehousing:
+	Multiple inheritance, collections & references, & advanced queries
+	Schema - underlying database format, cglib
+	Transaction processing
+	Query optimiser
+	Inserting the data:
+	    DBConverter & DataTranslator (and owl)
+	    DataLoader:
+	        Primary keys
+	        Dealing with different relation types
+	        Data source priorities
+	
+	Plan:
+	Introduction (9 minutes):
+	    Who I am, and what I do (1 minute)
+	    Caveats for this talk - ie what this talk does not do (1 minute):
+	        OJB, Hibernate, etc.
+	    Warning: this talk has InterMine & Flymine as its base (1 minute)
+	    Assumptions that this talk makes (3 minutes):
+	        You don't have a tyrannical DBA breathing down your neck and changing the DB schema under your feet (1 minute)
+	        You want to build a database from data sources and present it to the data users as a read-only database (only half of the talk assumes this) (1 minute)
+	        You wish to use complicated data (1 minute)
+	    What I will be covering: (3 minutes)
+	        Multiple inheritance and CGLib
+	        Collections and references
+	        Objectstores - brief introduction
+	        Queries and results
+	        ObjectStoreWriter and transaction processing
+	        Inserting the data:
+	            Models, ontologies, and OWL
+	            Data transformations and why a simple pipe won't work
+	            DBConverter and DataTranslator
+	            DataLoader
+	Multiple inheritance and CGLib (11 minutes)
+	    Motivation - I'm using biological data, and it doesn't fit (3 minutes)
+	    Classes in the model that implement multiple interfaces (2 minutes)
+	    Interfaces in the model that can have direct implementations (2 minutes)
+	    Objects in the database that are no particular class from the model, but dynamically implement and extend various classes and interfaces from the model (3 minutes)
+	    Objects that implement no other interface than InterMineObject (1 minute)
+	Schemas (13 minutes)
+	    Map all classes onto one table (cheap read & write, really bad data density affects performance, plus field type conflicts) (3 minutes)
+	    Map every class onto an individual table, put each object into only one table (cheap write, read must use UNIONs) (3 minutes)
+	    Map every class onto an individual table, with only the new fields stored in the table, and write each object into all applicable tables (write must use multiple tables, read must use JOIN) (3 minutes)
+	    Map every class onto an individual table, put each object into all applicable tables, have an OBJECT field (cheap & simple reads, write must use multiple tables, quite bad data density, but that does not affect read performance) (4 minutes)
+	Collections and references (3 minutes)
+	    Proxies
+	        Advantages and disadvantages - more in the performance talk
+	ObjectStores (7 minutes)
+	    Take queries and return results (2 minutes)
+	    Different implementations for different tasks (3 minutes)
+	        ObjectStoreInterMineImpl
+	        ObjectStorePassThruImpl
+	            ObjectStoreFastCollectionsForTranslatorImpl
+	            ObjectStoreFastCollectionsImpl
+	            ObjectStoreItemPathFollowingImpl
+	            ObjectStoreSafeImpl
+	        ObjectStoreTranslatingImpl
+	        ObjectStoreClient (with ObjectStoreServer)
+	    Caches (2 minutes)
+	Queries and results (27 minutes - 70 minutes so far)
+	    Queries are effectively a description of the results (3 minutes)
+	    Results are Collections of rows (3 minutes)
+	    Results can be multi-column, where each column can be an object, field, constant, or computed value (4 minutes)
+	    Results could be single-column. You could create a special single-column results Collection that is a collection of objects rather than a collection of rows, and use that as a Collection proxy (3 minutes)
+	    Changing the Query - don't. Or use ObjectStoreSafeImpl (3 minutes)
+	    SQL generation and results parsing (5 minutes)
+	    Batching reads, so the Results object is even more lazy (3 minutes)
+	    Maintaining consistency of results by imposing ORDER BY onto the SQL (3 minutes)
+	ObjectStoreWriter and transaction processing (12 minutes - 82 minutes so far)
+	    Attached to the ObjectStore (1 minute)
+	    Delete (2 minutes)
+	    Store: (4 minutes)
+	        Setting IDs in the objects and related objects
+	        Deleting any previous object - and the limitations
+	        Merging collections, overwriting everything else
+	    Transactions: (5 minutes)
+	        Beginning (2 minutes)
+	        The state of the ObjectStore during a transaction (1 minute)
+	        Ending (and flushing caches) (2 minutes)
+	Inserting the data: (23 minutes - 105 minutes so far)
+	    Models, ontologies, and OWL (7 minutes)
+	        Ontologies - basically big models, but useful for biology, and make use of multiple inheritance (2 minutes)
+	        OWL as a format for describing models (3 minutes)
+	        Merging models (2 minutes)
+	    Relationship types (4 minutes)
+	        1:1 - must be consistent
+	        1:N - can be ignored by the data loader, as it is never unidirectional
+	        N:1 - very simple - could be unidirectional
+	        M:N - handled by indirection table
+	    Data transformations and why a simple pipe won't work (12 minutes)
+	        DBConverter stage: must transform M:N collections into ReferenceLists (searching in the source) (2 minutes)
+	        DataTranslator stage: must follow references in the source to attach attributes to the correct object, also may generate new objects which must be kept in memory until the end, so that they can be searched like the source (3 minutes)
+	        DataLoader stage: must be able to search in the source to build object graphs, and search in the destination to find equivalent objects
+	            Searching in the source to build an object graph, using the ObjectStoreTranslatingImpl (2 minutes)
+	            Searching in the destination for any equivalent objects (2 minutes)
+	            Merging together equivalent objects using information from the data tracker, and data source priorities (3 minutes)
+	QueryOptimiser (15 minutes - 120 minutes so far)
+	
+	
+	Improving performance in Object Warehousing:
+	The N + 1 reads problem
+	Large offsets
+	Batching writes & using COPY etc. Avoiding deletes by caching generated IDs. Avoiding waiting for the connection in getSerial
+	Three-thread pipeline:
+	    Batching & ReadAheadDBReader
+	    Objectstore prefetch on ItemReader
+	    sql.writebatch.Batch writer thread
+	    DataTracker write-back cache & thread
+	    Multiprocessor systems
+	DataLoader:
+	    ID map
+	    Cheating in getEquivalentObjects and returning a ProxyReference
+	    Batching writes by having getEquivalentObjects use osw.getObjectStore
+	    Possibility for parallelising getEquivalentObjects (depends on whether disk-seek-bound)
+	Remove any unneccessary features (InterMineObject table, OBJECT field)
+	
+	Plan:
+	Introduction: (6 minutes)
+Title	    Who I am, and what I do (1 minute)
+Intro 1	    Warning: this talk has InterMine & FlyMine as its base (1 minute)
+Intro 1	    Go to the previous talk, although it is not vital (1 minute)
+Intro 2	    What I will be covering: (3 minutes)
+Intro 2	        Large offsets in SQL
+Intro 2	        Writing to the database
+Intro 2	        Reading from the database (N + 1 reads etc)
+Intro 2	        The three-thread pipeline
+Intro 2	        Database-backed cached table (DataTracker)
+Intro 2	        Multiprocessor systems
+Intro 2	        Speeding up the DataLoader
+Intro 2	        Other tips
+LO, LO 2	Large offsets (using an index on the sort key) (5 minutes - 11 minutes so far)
+Round-trip	The principle of round-trip-time (make accesses big) (1 minute)
+	Writing to the database (23 minutes - 35 minutes so far)
+Write 1	    The store method needs unique IDs, get them efficiently (2 minutes)
+Write 2	    When you write and you are in a transaction, batch together the writes and commit later (4 minutes)
+Write 2	    Use the fastest insert method available to you - eg COPY (3 minutes)
+Write 3	    Perform writes in another thread - that means your data-producing thread can keep on working while the database is writing your data (3 minutes)
+Write 3	    Really do as little processing as possible in the writing thread - perfect scenario is to completely prepare the statements in the producing thread, so the writing thread is only ever waiting (3 minutes)
+Write 3	    Make sure that we still properly flush the write queue whenever there is a commit or a read (2 minutes)
+Write 4	    Make sure you really do have multi-threaded action, and aren't blocking the producing thread (1 minute)
+Write 4	    Make sure there aren't any other database accesses that the producing thread makes that would cause the producing thread to wait for the writing thread (eg ID production) (2 minutes)
+Write 5	    Deleting rows is expensive - if you are merely filling a database, you should be able to avoid them completely, then remove indexes. So, cache which IDs you have generated but not stored, and don't bother deleting those. (3 minutes)
+	Reading from the database (27 minutes - 62 minutes so far)
+	    Batching reads (3 minutes)
+Read 1	        Choose a sensible batch size - bigger is faster, but only to a point, and there is memory to consider
+	    The N + 1 reads problem: (16 minutes)
+Read 2	        Why it is a problem (2 minutes)
+Read 3	        You could rewrite your queries, so that another column is the content of a reference - BUT this breaks unless you use LEFT OUTER JOIN, and doesn't work very well for collections (3 minutes)
+Read 3	        You could link the proxies together somehow, so they would trigger a batch read when one is accessed (3 minutes)
+Read 4	        You could explicitly use an ObjectStore that does it for you - like ObjectStoreFastCollectionsImpl (5 minutes)
+Read 4	        You may even put explicit knowledge of what data will be needed into the batching system, like ObjectStoreFastCollectionsForTranslatorImpl (for the DataLoader), and ObjectStoreItemPathFollowingImpl (for the DataTranslator) (2 minutes)
+Read 4	        In the BatchingDBReader, we build a cache of likely SQL queries with results brought in by the batch (3 minutes)
+	    Prefetching data in another thread (6 minutes)
+Read 5	        This means that when your consuming thread is ready for more data, it is immediately available (1 minute)
+Read 5	        Do as little processing in the producing thread as possible - perfect scenario is for this thread to ONLY wait for the database or the consuming thread (1 minute)
+Read 5	        You can guess what data will be required next, as with the PrefetchManager (2 minute)
+Read 5	        You can know what data will be required next, as with the DBReader (1 minute)
+	        In general, if you are performing a bulk data transfer, prefetch will help a lot (1 minute)
+	The three-thread pipeline (3 minutes - 65 minutes so far)
+Three	    The ideal single-processor bulk transfer system
+Three	    Ideally, the processing thread never waits for either the reading thread or the writing thread, therefore it is running at the fastest possible speed
+Three	    Broken if you need to search in the destination database.
+	Multiprocessor systems (21 minutes - 96 minutes so far)
+SMP 1	    There is a large overhead involved in moving data from one processor to another - so don't (eg. switching on Hyperthreading with the above system reduced performance by 40%) (4 minutes)
+SMP 1	    Guage the ratio of data quantity to processing time. If your program spends lots of time on small amounts of data, then multiprocessor systems will work a lot better than little processing on large amounts of data (2 minutes)
+SMP 2	    Particularly, don't do a pipeline like this: Reader -> Process 1 -> Process 2 -> Process 3 -> Writer (2 minutes)
+SMP 2	    Java is particularly bad at this, because objects will be scattered everywhere in the heap, resulting in lots of cache invalidation (2 minutes)
+SMP 2	    This is a difficult topic, still subject to research, so try whatever you think of. If it goes faster with your idea, you weren't wrong (2 minutes)
+SMP 3	    If your program does a reasonable amount of processing on a non-huge amount of data, then you could get away with:
+	                               .-> Process 1 -.
+	                       Reader ---> Process 2 ---> Writer
+	                               `-> Process 3 -'                  (2 minutes)
+SMP 3	    If you are processing lots of data, then something like this would be better:
+	                       Reader 1 -> Process 1 -> Writer 1
+	                       Reader 2 -> Process 2 -> Writer 2
+	                       Reader 3 -> Process 3 -> Writer 3
+	        However, in this case you will really want each thread group to be on a single processor, or you get data transferred between processors again. (difficult anyway) (2 minutes)
+SMP 4	    To solve that problem, you will need to write one thread per processor, but try and use java.nio in order to get non-blocking reads -> difficult with JDBC, but fine with files or sockets (2 minutes)
+SMP 5	    However, your program may be IO bound anyway - throwing more CPU at it won't make it faster - make sure you engineer out the bottlenecks, rather than the fast bit (1 minute)
+SMP 5	    Additionally, applying multiple reader/writer threads to a disk usually will not help (2 minutes)
+	A database-backed lookup table (example - our DataTracker) (7 minutes - 70 minutes so far)
+	    Different paradigm to the bulk transfer system (2 minutes)
+Track 1	        There is random access
+Track 1	        There is too much data to fit into memory
+Track 1	        We still want to never wait for the writer
+Track 1	        Need cache
+	    We want to construct a LRU cache, and always flush old entries out to the database (5 minutes)
+Track 2	        LinkedHashMap is good for this
+Track 2	        When it has become too big, atomically move a certain number into a different map
+	        The reader must be able to read this second map until after the data is committed to the database, or entries will go missing while they are being written
+	        A separate thread performs the flush while readers have full access.
+	        When the flush is finished, the second map is atomically removed, freeing memory for new entries.
+	Speeding up the DataLoader (18 minutes - 114 minutes so far)
+DL 1	    The DataLoader is more tricky than the other two stages to speed up.
+DL 2, DL 3	        The overwhelming bottleneck is the getEquivalentObjects() query
+DL 3	        This query searches for equivalent objects in the destination database. For each object to be stored, all connected objects need to be matched up against their equivalent objects in the destination in order to store the object with its collections and references properly (1 minute)
+	    The ID Map (5 minutes)
+DL 4	        However, we only need to getEquivalentObjects() for each object once (1 minute)
+DL 4	        So, we make an assumption: if we see an object for the second time, we can recognise it by ID, and return the same results as last time (1 minute)
+DL 4	        In fact, the last time we saw that object, we merged ALL the equivalent objects together into one object in the destination database (1 minute)
+DL 5	        Therefore there is a mapping between source object and destination object, indexed by ID, and we can create an efficient ID to ID map for this purpose (1 minute)
+DL 6	        This converts a complex query into a getObjectById(), which may hit the cache.
+DL 6	        This also simplifies the getEquivalentObjects query, as it may not need to recurse down primary key references
+	    Cheating, and avoiding getObjectById (3 minutes)
+DL 7	        If an object has been previously seen, it is unlikely that it will be actually needed, so one can put in a ProxyReference instead. We can reify the ProxyReference if we need it (1 minute)
+DL 7	        Handily, ProxyReference is an InterMineObject, so when an object pointing to it is stored, it is stored with a correct pointer to the existing object with that ID in the database (2 minutes)
+	    GetEquivalentObjects calls can be made long before the data is needed (10 minutes)
+	        Consider the circumstance where an object is presented to be stored twice. The first time getEquivalentObjects runs a search, and the second time it returns a ProxyReference from the ID map. Consider also that the results of a getEquivalentObject query cannot be changed by any action other than that of storing an object equivalent to the one we are interested in.
+	        If we can make the assumption: we will never attempt to store an object that is equivalent to a previously-stored object (after some point in time) that the ID map does not recognise
+	            we can then allow the getEquivalentObjects call to use "old" data, as old as that point in time.
+	        This assumption is false for objects that have a null ID, because the ID map does not recognise them, so this cannot be applied to such objects
+	        This allows a performance boost for several reasons:
+	            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
+	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
+	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
+	Other tips: (8 minutes - 122 minutes so far)
+	    Get the database indexes right (1 minute)
+	    Profile your program, and work out where it is spending its time, then optimise that bit (1 minute)
+	    Use StringBuffer, rather than concatenating Strings (1 minute)
+	    Remove any unneccessary features that slow down the system - eg the InterMineObject table and OBJECT field (2 minutes)
+	    Throw a bigger computer at it (1 minute)
+	    Moore's law: (2 minutes)
+	    Beware round-trip times (again)
+	    SQL_ASCII rather than UNICODE
