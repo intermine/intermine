@@ -84,25 +84,25 @@ public class Constraint extends AbstractConstraint
                 case EQ:
                     switch (objC.operation) {
                         case EQ:
-                            if (left.equalsIgnoreAlias(objC.left)) {
-                                return (right.equalsIgnoreAlias(objC.right) ? EQUAL : EXCLUDES);
-                            } else if (left.equalsIgnoreAlias(objC.right)) {
-                                return (right.equalsIgnoreAlias(objC.left) ? EQUAL : EXCLUDES);
-                            } else if (right.equalsIgnoreAlias(objC.left)) {
+                            if (left.equals(objC.left)) {
+                                return (right.equals(objC.right) ? EQUAL : EXCLUDES);
+                            } else if (left.equals(objC.right)) {
+                                return (right.equals(objC.left) ? EQUAL : EXCLUDES);
+                            } else if (right.equals(objC.left)) {
                                 return EXCLUDES;
-                            } else if (right.equalsIgnoreAlias(objC.right)) {
+                            } else if (right.equals(objC.right)) {
                                 return EXCLUDES;
                             } else {
                                 return INDEPENDENT;
                             }
                         case LT:
-                            if (left.equalsIgnoreAlias(objC.left)) {
+                            if (left.equals(objC.left)) {
                                 return (right.lessThan(objC.right) ? IMPLIES : EXCLUDES);
-                            } else if (left.equalsIgnoreAlias(objC.right)) {
+                            } else if (left.equals(objC.right)) {
                                 return (right.greaterThan(objC.left) ? IMPLIES : EXCLUDES);
-                            } else if (right.equalsIgnoreAlias(objC.left)) {
+                            } else if (right.equals(objC.left)) {
                                 return (left.lessThan(objC.right) ? IMPLIES : EXCLUDES);
-                            } else if (right.equalsIgnoreAlias(objC.right)) {
+                            } else if (right.equals(objC.right)) {
                                 return (left.greaterThan(objC.left) ? IMPLIES : EXCLUDES);
                             } else {
                                 return INDEPENDENT;
@@ -114,20 +114,20 @@ public class Constraint extends AbstractConstraint
                 case LT:
                     switch (objC.operation) {
                         case EQ:
-                            if (left.equalsIgnoreAlias(objC.left)) {
+                            if (left.equals(objC.left)) {
                                 return (objC.right.lessThan(right) ? IMPLIED_BY : EXCLUDES);
-                            } else if (left.equalsIgnoreAlias(objC.right)) {
+                            } else if (left.equals(objC.right)) {
                                 return (objC.left.lessThan(right) ? IMPLIED_BY : EXCLUDES);
-                            } else if (right.equalsIgnoreAlias(objC.left)) {
+                            } else if (right.equals(objC.left)) {
                                 return (objC.right.greaterThan(left) ? IMPLIED_BY : EXCLUDES);
-                            } else if (right.equalsIgnoreAlias(objC.right)) {
+                            } else if (right.equals(objC.right)) {
                                 return (objC.left.greaterThan(left) ? IMPLIED_BY : EXCLUDES);
                             } else {
                                 return INDEPENDENT;
                             }
                         case LT:
-                            if (left.equalsIgnoreAlias(objC.left)) {
-                                if (right.equalsIgnoreAlias(objC.right)) {
+                            if (left.equals(objC.left)) {
+                                if (right.equals(objC.right)) {
                                     return EQUAL;
                                 } else if (right.lessThan(objC.right)) {
                                     return IMPLIES;
@@ -137,8 +137,8 @@ public class Constraint extends AbstractConstraint
                                     // TODO: This shouldn't really happen in valid SQL. Log?
                                     return INDEPENDENT;
                                 }
-                            } else if (left.equalsIgnoreAlias(objC.right)) {
-                                if (right.equalsIgnoreAlias(objC.left)
+                            } else if (left.equals(objC.right)) {
+                                if (right.equals(objC.left)
                                         || right.lessThan(objC.left)) {
                                     return EXCLUDES;
                                 } else if (right.greaterThan(objC.left)) {
@@ -147,8 +147,8 @@ public class Constraint extends AbstractConstraint
                                     // TODO: This shouldn't really happen in valid SQL. Log?
                                     return INDEPENDENT;
                                 }
-                            } else if (right.equalsIgnoreAlias(objC.left)) {
-                                if (left.equalsIgnoreAlias(objC.right)
+                            } else if (right.equals(objC.left)) {
+                                if (left.equals(objC.right)
                                         || left.greaterThan(objC.right)) {
                                     return EXCLUDES;
                                 } else if (left.lessThan(objC.right)) {
@@ -157,8 +157,8 @@ public class Constraint extends AbstractConstraint
                                     // TODO: This shouldn't really happen in valid SQL. Log?
                                     return INDEPENDENT;
                                 }
-                            } else if (right.equalsIgnoreAlias(objC.right)) {
-                                if (left.equalsIgnoreAlias(objC.left)) {
+                            } else if (right.equals(objC.right)) {
+                                if (left.equals(objC.left)) {
                                     return EQUAL;
                                 } else if (left.greaterThan(objC.left)) {
                                     return IMPLIES;
@@ -178,8 +178,8 @@ public class Constraint extends AbstractConstraint
                         case LT:
                             return INDEPENDENT;
                         case LIKE:
-                            return (left.equalsIgnoreAlias(objC.left)
-                                    && right.equalsIgnoreAlias(objC.right)
+                            return (left.equals(objC.left)
+                                    && right.equals(objC.right)
                                     ? EQUAL : INDEPENDENT);
                     }
                     break;

@@ -26,17 +26,6 @@ public abstract class AbstractValue
      */
     public static final int INCOMPARABLE = 3;
 
-    protected String alias;
-
-    /**
-     * Returns the alias for this AbstractValue object.
-     *
-     * @return the alias of this value
-     */
-    public String getAlias() {
-        return alias;
-    }
-
     /**
      * Returns a String representation of this AbstractValue object, suitable for forming
      * part of an SQL query.
@@ -61,14 +50,6 @@ public abstract class AbstractValue
     public abstract int hashCode();
  
     /**
-     * Compare this AbstractValue to another, ignoring little details like aliases.
-     *
-     * @param obj an AbstractValue to compare to
-     * @return true if obj is equal
-     */
-    public abstract boolean equalsIgnoreAlias(AbstractValue obj);
-
-    /**
      * Compare the value of this AbstractValue with another. This only really makes sense with
      * Constants.
      *
@@ -76,7 +57,7 @@ public abstract class AbstractValue
      * @return EQUAL, LESS, GREATER, or INCOMPARABLE
      */
     public int compare(AbstractValue obj) {
-        return (equalsIgnoreAlias(obj) ? EQUAL : INCOMPARABLE);
+        return (equals(obj) ? EQUAL : INCOMPARABLE);
     }
 
     /**

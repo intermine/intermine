@@ -15,9 +15,8 @@ public class Field extends AbstractValue
      *
      * @param name the name of the field, as the database knows it
      * @param table the name of the table to which the field belongs, as the database knows it
-     * @param alias an arbitrary name that the field has been renamed to for the rest of the query
      */
-    public Field(String name, Table table, String alias) {
+    public Field(String name, Table table) {
         if (name == null) {
             throw (new NullPointerException("Field names cannot be null"));
         }
@@ -26,18 +25,6 @@ public class Field extends AbstractValue
         }
         this.name = name;
         this.table = table;
-        this.alias = alias;
-    }
-
-    /**
-     * Constructor for this Field object, without an alias.
-     *
-     * @param name the name of the field, as the database knows it. This name is also used in
-     * the rest of the query.
-     * @param table the name of the table to which the field belongs, as the database knows it
-     */
-    public Field(String name, Table table) {
-        this(name, table, null);
     }
 
     /**
@@ -48,8 +35,7 @@ public class Field extends AbstractValue
      */
     public String getSQLString() {
         String tableName = (table.getAlias() != null) ? table.getAlias() : table.getName();
-        String ret = tableName + "." + name;
-        return ((alias == null) || (alias.equals(name)) ? ret : ret + " AS " + alias);
+        return tableName + "." + name;
     }
 
     /**
@@ -62,9 +48,7 @@ public class Field extends AbstractValue
         if (obj instanceof Field) {
             Field objField = (Field) obj;
             return name.equals(objField.name)
-                && table.equals(objField.table)
-                && (((alias == null) && (objField.alias == null))
-                    || ((alias != null) && (alias.equals(objField.alias))));
+                && table.equals(objField.table);
         }
         return false;
     }
@@ -75,18 +59,17 @@ public class Field extends AbstractValue
      * @return an arbitrary integer based on the name of the Table
      */
     public int hashCode() {
-        return name.hashCode() + table.hashCode() + (alias == null ? 0 : alias.hashCode());
+        return name.hashCode() + table.hashCode();
     }
 
     /**
-     * Compare this Field to another AbstractValue, ignoring the field alias, but including the
-     * table alias.
+     * Compare this Field to another AbstractValue, including only the table alias.
      *
      * @param obj an AbstractField to compare to
      * @return true if the object is of the same class, and with the same value
      */
 
-    public boolean equalsIgnoreAlias(AbstractValue obj) {
+    public boolean equalsTableOnlyAlias(AbstractValue obj) {
         if (obj instanceof Field) {
             Field objField = (Field) obj;
             return name.equals(objField.name) && table.equalsOnlyAlias(objField.table);
