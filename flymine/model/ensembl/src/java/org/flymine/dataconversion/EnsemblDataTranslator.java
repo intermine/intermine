@@ -73,6 +73,7 @@ public class EnsemblDataTranslator extends DataTranslator
     private Map scLocs = new HashMap();
     private Map exonLocs = new HashMap();
     private Map exons = new HashMap();
+    private Set flybaseIds = new HashSet();
     private String orgAbbrev;
     private Item organism;
     private Reference orgRef;
@@ -508,7 +509,11 @@ public class EnsemblDataTranslator extends DataTranslator
                         tgtItem.addAttribute(new Attribute("name", accession));
                     } else { // flybase_gene
                         synonym.addAttribute(new Attribute("type", "accession"));
-                        tgtItem.addAttribute(new Attribute("organismDbId", accession));
+                        // temporary fix to deal with broken FlyBase identfiers in ensembl
+                        if (!flybaseIds.contains(accession)) {
+                            tgtItem.addAttribute(new Attribute("organismDbId", accession));
+                            flybaseIds.add(accession);
+                        }
                     }
                     synonym.addReference(getFlyBaseRef());
                     synonyms.add(synonym);
