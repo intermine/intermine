@@ -52,9 +52,12 @@ public class QueryBuildChangeAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         
+        String alias = request.getParameter("alias");
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
-        queryClasses.remove(request.getParameter("alias"));
-        
+
+        queryClasses.remove(alias);
+        QueryBuildHelper.removeContainsConstraints(queryClasses, alias);
+
         return mapping.findForward("buildquery");
     }
 

@@ -280,4 +280,28 @@ public class QueryBuildHelperTest extends QueryTestCase
 
         assertEquals(d, resultDisplayQueryClass);
     }
+    
+    //first two constraints should be removed
+    public void testRemoveContainsConstraints() throws Exception {
+        Map queryClasses = new HashMap();
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.getConstraintNames().add("department_0");
+        d.getFieldNames().put("department_0", "department");
+        d.getFieldOps().put("department_0", ConstraintOp.DOES_NOT_CONTAIN);
+        d.getFieldValues().put("department_0", "Department_0");
+        d.getConstraintNames().add("department_1");
+        d.getFieldNames().put("department_1", "department");
+        d.getFieldOps().put("department_1", ConstraintOp.CONTAINS);
+        d.getFieldValues().put("department_1", "Department_0");
+        d.getConstraintNames().add("department_2");
+        d.getFieldNames().put("department_2", "department");
+        d.getFieldOps().put("department_2", ConstraintOp.DOES_NOT_CONTAIN);
+        d.getFieldValues().put("department_2", "Department_1");
+        queryClasses.put("Employee_0", d);
+        QueryBuildHelper.removeContainsConstraints(queryClasses, "Department_0");
+        assertEquals(1, d.getConstraintNames().size());
+        assertEquals(1, d.getFieldNames().size());
+        assertEquals(1, d.getFieldOps().size());
+        assertEquals(1, d.getFieldValues().size());
+    }
 }

@@ -346,4 +346,27 @@ public class QueryBuildHelper
 
         return values;
     }
+
+    /**
+     * Remove all constraints that point to an certain alias
+     * @param queryClasses the DisplayQueryClass Map
+     * @param alias the relevant alias
+     */
+    protected static void removeContainsConstraints(Map queryClasses, String alias) {
+        for (Iterator i = queryClasses.values().iterator(); i.hasNext();) {
+            DisplayQueryClass d = (DisplayQueryClass) i.next();
+            // copy to avoid concurrent modification
+            for (Iterator j = new ArrayList(d.getConstraintNames()).iterator(); j.hasNext();) {
+                String constraintName = (String) j.next();
+                ConstraintOp op = (ConstraintOp) d.getFieldOps().get(constraintName);
+                if ((op == ConstraintOp.CONTAINS || op == ConstraintOp.DOES_NOT_CONTAIN)
+                    && d.getFieldValues().get(constraintName).equals(alias)) {
+                     d.getFieldNames().remove(constraintName);
+                     d.getFieldOps().remove(constraintName);
+                     d.getFieldValues().remove(constraintName);
+                     d.getConstraintNames().remove(constraintName);
+                }
+            }
+        }
+    }
 }
