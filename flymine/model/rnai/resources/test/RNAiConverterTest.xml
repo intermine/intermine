@@ -23,7 +23,7 @@
   </item>
   <item id="1_10" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="name" value="soc-2"/>
-    <attribute name="organismDbId" value="AC7.2a"/>
+    <attribute name="identifier" value="AC7.2a"/>
     <reference name="organism" ref_id="2_2"/>
     <collection name="annotations">
       <reference ref_id="7_13"/>
@@ -55,7 +55,7 @@
     <attribute name="pubMedId" value="12529635"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="AC7.1"/>
+    <attribute name="identifier" value="AC7.1"/>
     <reference name="organism" ref_id="2_2"/>
     <collection name="annotations">
       <reference ref_id="7_7"/>
@@ -69,7 +69,7 @@
     <attribute name="taxonId" value="6239"/>
   </item>
   <item id="1_14" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="Flibble"/>
+    <attribute name="identifier" value="Flibble"/>
     <reference name="organism" ref_id="2_2"/>
     <collection name="annotations">
       <reference ref_id="7_18"/>
