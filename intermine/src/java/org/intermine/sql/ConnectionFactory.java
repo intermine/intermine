@@ -22,6 +22,7 @@ public class ConnectionFactory
 {
 
     protected static Map dataSources = new HashMap();
+    protected static Object lock = new Object();
 
     /**
      * Returns a connection to the named database
@@ -36,11 +37,14 @@ public class ConnectionFactory
 
         DataSource ds;
 
-        // If we have this DataSource already configured
-        if (dataSources.containsKey(instance)) {
-            ds = (DataSource) dataSources.get(instance);
-        } else {
-            ds = configureDataSource(instance, PropertiesUtil.getPropertiesStartingWith(instance));
+        // Only one thread to configure or test for a DataSource
+        synchronized (lock) {
+            // If we have this DataSource already configured
+            if (dataSources.containsKey(instance)) {
+                ds = (DataSource) dataSources.get(instance);
+            } else {
+                ds = configureDataSource(instance, PropertiesUtil.getPropertiesStartingWith(instance));
+            }
         }
         return ds.getConnection();
 
