@@ -1590,8 +1590,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="osw.production"/>
-      <property name="objectstore.name" value="os.production"/>
+      <property name="os.alias" value="os.production"/>
       <property name="create.attribute.indexes" value="true"/>
     </ant>
   </target>
