@@ -109,8 +109,12 @@ public class EmployeeExporter implements TableExporter
                     if (!thisColumn.isVisible()) {
                         continue;
                     }
+                    
+                    // the column order from PagedTable.getList() isn't necessarily the order that
+                    // the user has chosen for the columns
+                    int realColumnIndex = thisColumn.getIndex();
 
-                    Employee employee = (Employee) row.get(columnIndex);
+                    Employee employee = (Employee) row.get(realColumnIndex);
 
                     printStream.println("Employee:");
                     printStream.println("  name: " + employee.getName());
