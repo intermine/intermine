@@ -156,12 +156,15 @@ public class DataTracker
         if (desc == null) {
             desc = new ObjectDescription();
             try {
+                //long start = System.currentTimeMillis();
                 Statement s = conn.createStatement();
                 ResultSet r = s.executeQuery("select fieldname, sourcename, version from tracker"
                         + " where objectid = " + id + " ORDER BY version");
                 while (r.next()) {
                     desc.putClean(r.getString(1).intern(), stringToSource(r.getString(2)));
                 }
+                //long now = System.currentTimeMillis();
+                //LOG.debug("Fetched entry from DB (time = " + (now - start) + " ms)");
             } catch (SQLException e) {
                 broken = e;
                 IllegalArgumentException e2 = new IllegalArgumentException();
@@ -338,6 +341,7 @@ public class DataTracker
      * @throws SQLException on any error with the backing database
      */
     private void writeMap(Map map, boolean clean) throws SQLException {
+        long start = System.currentTimeMillis();
         try {
             org.postgresql.copy.CopyManager copyManager = null;
             ByteArrayOutputStream baos = null;
@@ -409,6 +413,8 @@ public class DataTracker
         } catch (IOException e) {
             throw new SQLException(e.toString());
         }
+        long now = System.currentTimeMillis();
+        LOG.info("Finished storing batch (time = " + (now - start) + " ms)");
     }
 
     /**

@@ -39,6 +39,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
      */
     public void write(Connection con, Map tables) throws SQLException {
         this.con = con;
+        long start = System.currentTimeMillis();
         simpleBatch = con.createStatement();
         simpleBatchSize = 0;
         Iterator tableIter = tables.entrySet().iterator();
@@ -49,8 +50,13 @@ public class BatchWriterSimpleImpl implements BatchWriter
             doDeletes(name, table);
             doInserts(name, table);
         }
-        LOG.warn("Flushing simpleBatch (size = " + simpleBatchSize + ")");
-        simpleBatch.executeBatch();
+        if (simpleBatchSize > 0) {
+            long beforeFlush = System.currentTimeMillis();
+            simpleBatch.executeBatch();
+            long now = System.currentTimeMillis();
+            LOG.info("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
+                    + (now - start) + " ms, of which " + (now - beforeFlush) + " for flush)");
+        }
         simpleBatch = null;
     }
 
@@ -128,11 +134,15 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if an error occurs
      */
     protected void addToSimpleBatch(String sql) throws SQLException {
+        //LOG.warn("Batching " + sql);
         simpleBatch.addBatch(sql);
         simpleBatchSize += sql.length();
         if (simpleBatchSize > 10000000) {
-            LOG.warn("Flushing simpleBatch (size = " + simpleBatchSize + ") out-of-band");
+            long start = System.currentTimeMillis();
             simpleBatch.executeBatch();
+            long now = System.currentTimeMillis();
+            LOG.info("Flushing simpleBatch (size = " + simpleBatchSize + ", time = "
+                + (now - start) + " ms for flush) out-of-band");
             simpleBatch.clearBatch();
             simpleBatchSize = 0;
         }

@@ -184,7 +184,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 ExplainResult explainResult = ExplainResult.getInstance(sql, c);
                 //long now = (new Date()).getTime();
                 //if (now - time > 10) {
-                //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+                //    LOG.error(getModel().getName() + ": Executed SQL (time = "
                 //            + (now - time) + "): EXPLAIN " + sql);
                 //}
 
@@ -202,7 +202,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             long permittedTime = (objResults.size() * 2) - 100 + start + (150 * q.getFrom().size())
                     + (sql.length() / 20);
             if (now - time > permittedTime) {
-                if (now - time > 100000) {
+                if (now - time > sql.length()) {
                     LOG.error(getModel().getName() + ": Executed SQL (time = "
                             + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
                             + "): " + sql);
@@ -275,7 +275,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             ExplainResult explain = ExplainResult.getInstance(sql, c);
             //long now = (new Date()).getTime();
             //if (now - time > 10) {
-            //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+            //    LOG.error(getModel().getName() + ": Executed SQL (time = "
             //            + (now - time) + "): EXPLAIN " + sql);
             //}
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
@@ -323,7 +323,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             //long now = (new Date()).getTime();
             //if (now - time > 10) {
-            //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+            //    LOG.error(getModel().getName() + ": Executed SQL (time = "
             //            + (now - time) + "): " + sql);
             //}
             sqlResults.next();

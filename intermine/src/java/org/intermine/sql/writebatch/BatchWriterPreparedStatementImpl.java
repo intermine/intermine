@@ -33,6 +33,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
      */
     public void write(Connection con, Map tables) throws SQLException {
         this.con = con;
+        long start = System.currentTimeMillis();
         simpleBatch = con.createStatement();
         simpleBatchSize = 0;
         Iterator tableIter = tables.entrySet().iterator();
@@ -42,8 +43,13 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             TableBatch table = (TableBatch) tableEntry.getValue();
             doDeletes(name, table);
         }
-        LOG.warn("Flushing simpleBatch (size = " + simpleBatchSize + ")");
-        simpleBatch.executeBatch();
+        if (simpleBatchSize > 0) {
+            long beforeFlush = System.currentTimeMillis();
+            simpleBatch.executeBatch();
+            long now = System.currentTimeMillis();
+            LOG.info("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
+                    + (now - start) + " ms, of which " + (now - beforeFlush) + " for flush)");
+        }
         simpleBatch = null;
         tableIter = tables.entrySet().iterator();
         while (tableIter.hasNext()) {
@@ -58,6 +64,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
      * @see BatchWriterSimpleImpl#doInserts
      */
     protected void doInserts(String name, TableBatch table) throws SQLException {
+        long start = System.currentTimeMillis();
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer sqlBuffer = new StringBuffer("INSERT INTO ").append(name).append(" (");
@@ -88,9 +95,12 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                 prepS.addBatch();
                 insertCount++;
             }
-            LOG.warn("Flushing PreparedStatement batch for table " + name + " (" + insertCount
-                    + " inserts)");
+            long beforeFlush = System.currentTimeMillis();
             prepS.executeBatch();
+            long now = System.currentTimeMillis();
+            LOG.info("Flushing PreparedStatement batch for table " + name + " (" + insertCount
+                    + " inserts, total time = " + (now - start) + " ms, of which "
+                    + (now - beforeFlush) + " for flush)");
             table.getIdsToInsert().clear();
         }
     }

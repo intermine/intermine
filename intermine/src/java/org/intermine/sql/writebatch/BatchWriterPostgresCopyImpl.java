@@ -43,6 +43,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
      * @see BatchWriterSimpleImpl#doInserts
      */
     protected void doInserts(String name, TableBatch table) throws SQLException {
+        long start = System.currentTimeMillis();
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
@@ -83,9 +84,12 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     String sql = sqlBuffer.toString();
                     dos.writeShort(-1);
                     dos.flush();
-                    LOG.warn("Flushing COPY batch for table " + name + " (size = " + baos.size()
-                            + ")");
+                    long beforeFlush = System.currentTimeMillis();
                     copyManager.copyInQuery(sql, new ByteArrayInputStream(baos.toByteArray()));
+                    long now = System.currentTimeMillis();
+                    LOG.info("Flushing COPY batch for table " + name + " (size = " + baos.size()
+                            + ", total time = " + (now - start) + " ms, of which "
+                            + (now - beforeFlush) + " for flush)");
                     table.getIdsToInsert().clear();
                 }
             } catch (IOException e) {

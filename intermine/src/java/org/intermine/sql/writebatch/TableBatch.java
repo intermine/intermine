@@ -61,12 +61,14 @@ public class TableBatch
             this.colNames = colNames;
             idsToInsert = new HashMap();
         } else {
-            if (colNames.length != this.colNames.length) {
-                throw new IllegalStateException("Cannot change colNames once it is set");
-            }
-            for (int i = 0; i < colNames.length; i++) {
-                if (!colNames[i].equals(this.colNames[i])) {
-                    throw new IllegalStateException("Cannot changed colNames once it is set");
+            if (colNames != this.colNames) {
+                if (colNames.length != this.colNames.length) {
+                    throw new IllegalStateException("Cannot change colNames once it is set");
+                }
+                for (int i = 0; i < colNames.length; i++) {
+                    if (!colNames[i].equals(this.colNames[i])) {
+                        throw new IllegalStateException("Cannot change colNames once it is set");
+                    }
                 }
             }
         }

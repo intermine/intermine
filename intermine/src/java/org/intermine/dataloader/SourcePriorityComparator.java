@@ -16,6 +16,8 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 
+import org.apache.log4j.Logger;
+
 /**
  * Comparator, that compares two InterMineObjects, with reference to a particular
  * FieldDescriptor for priority.
@@ -25,6 +27,8 @@ import org.intermine.model.datatracking.Source;
  */
 public class SourcePriorityComparator implements Comparator
 {
+    protected static final Logger LOG = Logger.getLogger(SourcePriorityComparator.class);
+
     private DataTracker dataTracker;
     private FieldDescriptor field;
     private Source def;
@@ -85,6 +89,10 @@ public class SourcePriorityComparator implements Comparator
             }
             int retval = DataLoaderHelper.comparePriority(field, source1, source2);
             if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
+                LOG.error("Unequivalent objects have the same"
+                        + " non-skeleton Source; o1 = \"" + o1 + "\", o2 = \"" + o2
+                        + "\", source1 = \"" + source1 + "\", source2 = \"" + source2
+                        + "\" for field \"" + field.getName() + "\"");
                 throw new IllegalArgumentException("Unequivalent objects have the same"
                         + " non-skeleton Source; o1 = \"" + o1 + "\", o2 = \"" + o2
                         + "\", source1 = \"" + source1 + "\", source2 = \"" + source2
