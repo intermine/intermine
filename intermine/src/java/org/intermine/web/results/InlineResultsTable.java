@@ -14,16 +14,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
+import java.util.Collections;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.PrimaryKeyUtil;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.web.config.Type;
+import org.intermine.web.config.FieldConfig;
+import org.intermine.web.Constants;
+
+import org.apache.log4j.Logger;
 
 /**
  * An inline table created from a Collection
@@ -32,59 +38,86 @@ import org.intermine.objectstore.proxy.LazyCollection;
  */
 public class InlineResultsTable
 {
-    protected LazyCollection results;
-    protected int size = 10;
-    protected List keyAttributes;
-    protected Map keyReferences = new HashMap();
+    protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
+
+    protected List results;
+    // just those objects that we will display
+    protected List subList;
+    protected ClassDescriptor cld;
+    protected List columns = null;
+    // a list of list of values for the table
+    protected List tableRows = null;
+    protected Model model;
+    protected int size = 30;
+    protected Map webconfigTypeMap;
 
     /**
-     * Constructor
+     * Construct a new InlineResultsTable object
      * @param results the underlying SingletonResults object
-     * @param cld the metadata for this collection field
+     * @param cld the type of this collection field
+     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webProperties the web properties from the session
      * @throws ObjectStoreException if an error occurs
      */
-    public InlineResultsTable(LazyCollection results, ClassDescriptor cld)
+    public InlineResultsTable(List results, ClassDescriptor cld,
+                              Map webconfigTypeMap,
+                              Map webProperties)
         throws ObjectStoreException {
         this.results = results;
+        this.cld = cld;
+        this.webconfigTypeMap = webconfigTypeMap;
+        this.model = cld.getModel();
+
+        // default
+        int maxInlineTableSize = 30;
+
+        String maxInlineTableSizeString = (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
+
+        try {
+            maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
+        } catch (NumberFormatException e) {
+            LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
+                     + maxInlineTableSizeString);
+        }
+
+        size = maxInlineTableSize;
+
         try {
             results.get(size);
         } catch (IndexOutOfBoundsException e) {
             size = results.size();
         }
-     
-        keyAttributes = keyAttributes(cld);
-        for (Iterator i = keyReferences(cld).iterator(); i.hasNext();) {
-            ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
-            keyReferences.put(ref, keyAttributes(ref.getReferencedClassDescriptor()));
-        }
-    }
-    
-    /**
-     * Return the key attributes
-     * @return the key attributes
-     */
-    public List getKeyAttributes() {
-        return keyAttributes;
     }
 
     /**
-     * Return the key references
-     * @return the key attributes
+     * Return heading for the columns
+     * @return the column names
      */
-    public Map getKeyReferences() {
-        return keyReferences;
+    public List getColumnNames() {
+        if (columns == null) {
+            initialise();
+        }
+
+        List columnNames = new ArrayList();
+
+        Iterator columnIter = columns.iterator();
+
+        while (columnIter.hasNext()) {
+            columnNames.add(((FieldConfig) columnIter.next()).getFieldExpr());
+        }
+        return Collections.unmodifiableList(columnNames);
     }
-    
+
     /**
      * Return the list of fields that are both attributes and primary keys
      * @param cld the metadata for the class
      * @return the list of fields
      */
-    public static List keyAttributes(ClassDescriptor cld) {
+    private static List keyAttributes(ClassDescriptor cld) {
         List keyAttributes = new ArrayList();
-        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(),
-                                                             cld.getType()).iterator();
-             i.hasNext();) {
+        Iterator i =
+            PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(), cld.getType()).iterator();
+        while (i.hasNext()) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
             if (fd.isAttribute() && !fd.getName().equals("id")) {
                 keyAttributes.add(fd);
@@ -95,34 +128,13 @@ public class InlineResultsTable
     }
 
     /**
-     * Return the list of fields that are both references and primary keys
-     * @param cld the metadata for the class
-     * @return the list of fields
-     */
-    protected static List keyReferences(ClassDescriptor cld) {
-        List keyReferences = new ArrayList();
-        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(),
-                                                             cld.getType()).iterator();
-             i.hasNext();) {
-            FieldDescriptor fd = (FieldDescriptor) i.next();
-            if (fd.isReference()) {
-                ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                if (keyAttributes(refCld).size() > 0) {
-                    keyReferences.add(fd);
-                }
-            }
-        }
-        return keyReferences;
-    }
-
-    /**
      * Get a set of field values from an object, given the object and a list of fields
      * @param o the Object
-     * @param fieldDescriptors the list of fields
+     * @param FieldDescriptors the list of fields
      * @return the list of field values
      * @throws Exception if an error occurs
      */
-    protected static List getFieldValues(Object o, List fieldDescriptors) throws Exception {
+    private static List getFieldValues(Object o, List fieldDescriptors) throws Exception {
         List values = new ArrayList();
         for (Iterator i = fieldDescriptors.iterator(); i.hasNext();) {
             values.add(TypeUtil.getFieldValue(o, ((FieldDescriptor) i.next()).getName()));
@@ -136,27 +148,11 @@ public class InlineResultsTable
      * @throws Exception if an error occurs accessing the ObjectStore
      */
     public List getRows() throws Exception {
-        List rows = new ArrayList();
-        for (Iterator i = results.subList(0, size).iterator(); i.hasNext();) {
-            Object o = i.next();
-            List row = new ArrayList();
-            row.addAll(getFieldValues(o, keyAttributes));
-            for (Iterator j = keyReferences.entrySet().iterator(); j.hasNext();) {
-                Map.Entry entry = (Map.Entry) j.next();
-                Object ref = TypeUtil.getFieldValue(o, ((ReferenceDescriptor) entry
-                                                        .getKey()).getName());
-                List fieldDescriptors = (List) entry.getValue();
-                if (ref == null) {
-                    for (int k = 0; k < fieldDescriptors.size(); k++) {
-                        row.add(null);
-                    }
-                } else {
-                    row.addAll(getFieldValues(ref, fieldDescriptors));
-                }
-            }
-            rows.add(row);
+        if (tableRows == null) {
+            initialise();
         }
-        return rows;
+
+        return tableRows;
     }
 
     /**
@@ -166,8 +162,12 @@ public class InlineResultsTable
     public List getTypes() {
         List types = new ArrayList();
         for (Iterator i = results.subList(0, size).iterator(); i.hasNext();) {
-            types.add(ObjectViewController.getLeafClds(i.next().getClass(), results.getObjectStore()
-                                                       .getModel()));
+            Object o = i.next();
+            if (o instanceof ProxyReference) {
+                // special case for ProxyReference from DisplayReference objects
+                o = ((ProxyReference) o).getObject();
+            }
+            types.add(ObjectViewController.getLeafClds(o.getClass(), cld.getModel()));
         }
         return types;
     }
@@ -182,5 +182,133 @@ public class InlineResultsTable
             ids.add(((InterMineObject) i.next()).getId());
         }
         return ids;
+    }
+
+    /**
+     * Return the Objects that we are displaying in this table.
+     * @return a List of Objects, one per row
+     */
+    public List getRowObjects() {
+        if (subList == null) {
+            initialise();
+        }
+
+        return subList;
+    }
+
+    /**
+     * Create the tableRows, columnNames and subList Lists by looping over the first elements of the
+     * collection.  The names of all fields to be displayed are collected in the columns List then
+     * and the expressions to display are collected in the tableRows List.  The fields of the rows
+     * in the tableRows List will always be in the same order as the elements of the columns List.
+     */
+    protected void initialise() {
+        tableRows = new ArrayList();
+        columns = new ArrayList();
+        subList = new ArrayList();
+
+        Iterator resultsIter = results.subList(0, size).iterator();
+
+        while (resultsIter.hasNext()) {
+            Object o = resultsIter.next();
+
+            if (o instanceof ProxyReference) {
+                // special case for ProxyReference from DisplayReference objects
+                o = ((ProxyReference) o).getObject();
+            }
+
+            subList.add(o);
+
+            List objectFieldConfigs = getRowFieldConfigs(o);
+            Iterator objectFieldConfigIter = objectFieldConfigs.iterator();
+
+            while (objectFieldConfigIter.hasNext()) {
+                FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
+
+                if (!columns.contains(fc)) {
+                    columns.add(fc);
+                }
+            }
+
+            // add a row that contains the fields of the current object but add a null where this
+            // object doesn't have the given field
+            Iterator columnIter = columns.iterator();
+
+            List newRow = new ArrayList();
+
+            while (columnIter.hasNext()) {
+                FieldConfig fc = (FieldConfig) columnIter.next();
+
+                if (objectFieldConfigs.contains(fc)) {
+                    newRow.add(fc.getFieldExpr());
+                } else {
+                    newRow.add(null);
+                }
+            }
+
+            tableRows.add(newRow);
+        }
+
+        // now make sure that all rows are the same length by adding nulls to the ends of the short
+        // rows
+        Iterator tableRowIter = tableRows.iterator();
+
+        while (tableRowIter.hasNext()) {
+            List row = (List) tableRowIter.next();
+
+            while (row.size() < columns.size()) {
+                row.add(null);
+            }
+        }
+    }
+
+    /**
+     * Find the FieldConfig objects for the the given Object.
+     * @param rowObject an Object
+     * @return the FieldConfig objects for the the given Object.
+     */
+    protected List getRowFieldConfigs(Object rowObject) {
+        List returnFieldConfigs = new ArrayList();
+
+        Set objectClassDescriptors = ObjectViewController.getLeafClds(rowObject.getClass(), model);
+
+        Iterator classDescriptorsIter = objectClassDescriptors.iterator();
+
+        while (classDescriptorsIter.hasNext()) {
+            ClassDescriptor thisClassDescriptor = (ClassDescriptor) classDescriptorsIter.next();
+
+            returnFieldConfigs.addAll(getClassFieldConfigs(thisClassDescriptor));
+        }
+
+        return returnFieldConfigs;
+    }
+
+    /**
+     * Find the FieldConfig objects for the the given ClassDescriptor.
+     * @param cd a ClassDescriptor
+     * @return the FieldConfig objects for the the given ClassDescriptor
+     */
+    protected List getClassFieldConfigs(ClassDescriptor cd) {
+        Type type = (Type) webconfigTypeMap.get(cd.getName());
+
+        if (type != null) {
+            List fieldConfigs = type.getFieldConfigs();
+
+            if (fieldConfigs.size() > 0) {
+                return fieldConfigs;
+            }
+        }
+
+        // there are no configured fields for this Class so use the fields from the primary keys
+        List returnRow = new ArrayList();
+
+        Iterator keyAttributesIter = keyAttributes(cd).iterator();
+        while (keyAttributesIter.hasNext()) {
+            FieldConfig fc = new FieldConfig();
+            fc.setFieldExpr(((FieldDescriptor) keyAttributesIter.next()).getName());
+            returnRow.add(fc);
+        }
+
+        return returnRow;
     }
 }
