@@ -9,11 +9,10 @@
     <para>Running the tutorial involves a few simple steps:</para>
     <para>
       <orderedlist>
-        <listitem><ulink url="http://download.flymine.org/releases/">Download</ulink> the latest FlyMine source distribution</listitem>
+        <listitem><ulink url="http://download.flymine.org/nightly/">Download</ulink> and unpack the latest FlyMine tutorial (flymine-tutorial-xxxxxx)</listitem>
         <listitem>Install the <ulink url="http://ant.apache.org">Ant</ulink> build tool. Note that the <command>ant</command> executable must be on your PATH</listitem>
-        <listitem>Install the <ulink url="http://www.postgresql.org">PostgreSQL</ulink> database and create a database named "tutorial". Note that the postmaster must be set up to accept TCP/IP connections ("tcpip_socket=true" in <command>postgresql.conf</command>) from "localhost" (host 127.0.0.1 in <command>pg_ident.conf</command>). Consult the PostgreSQL documentation for more details on configuring access control and database creation.</listitem>
-        <listitem>Run the <command>ant build-tutorial</command> command from the FlyMine root directory</listitem>
-        <listitem>Change to the "build/tutorial" directory</listitem>
+        <listitem>Install the <ulink url="http://www.postgresql.org">PostgreSQL</ulink> database and create a database named "tutorial". Note that the postmaster must be set up to accept TCP/IP connections ("tcpip_socket=true" in <command>postgresql.conf</command>) from "localhost" (host 127.0.0.1 in <command>pg_ident.conf</command>). Consult the PostgreSQL documentation for more details on configuring access control and database creation</listitem>
+        <listitem>Change to the tutorial root directory</listitem>
         <listitem>Modify the "flymine.properties" configuration file to reflect your database username, and password if necessary</listitem>
             <listitem>Run the <command>ant</command> command to view the available build targets. <command>ant run</command> will compile the FlyMine system, build a simple model, store some data corresponding to the model (accessing the database), and run some queries to retrieve the data. The tutorial source (<command>src/java/org/flymine/tutorial/SimpleQuery.java</command>) demonstrates how to build a simple query for a model (<command>model/tutorial_model.xml</command>) and navigate the results, which can be compared to the test data (<command>resources/tutorial_data.xml</command>)</listitem>
       </orderedlist>
