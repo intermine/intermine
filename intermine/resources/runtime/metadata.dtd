@@ -1,9 +1,6 @@
 <!ELEMENT model (class*)>
 <!ATTLIST model name CDATA #REQUIRED>
 
-<!--ELEMENT package (class*, package*)>
-<!ATTLIST package name CDATA #REQUIRED-->
-
 <!ELEMENT class (attribute*,reference*,collection*)>
 <!ATTLIST class name CDATA #REQUIRED
                 extends CDATA #IMPLIED
