@@ -16,7 +16,11 @@
         <heading><ulink url="/user/building">Download</ulink></heading>
         <item><ulink url="http://download.flymine.org/releases/">Latest<nbsp/>release</ulink></item>
         <item><ulink url="http://download.flymine.org/nightly/">Nightly<nbsp/>build</ulink></item>
-        <item><ulink url="/user/cvs">CVS</ulink></item>
+    </section>
+    <section>
+        <heading>CVS</heading>
+        <item><ulink url="http://cvs.flymine.org">Browse</ulink></item>
+        <item><ulink url="/user/cvs">Anonymous</ulink></item>
     </section>
     <section>
         <heading><ulink url="http://mailman.flymine.org/listinfo/">Mailing<nbsp/>lists</ulink></heading>
