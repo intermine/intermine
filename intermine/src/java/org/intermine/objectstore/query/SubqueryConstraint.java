@@ -213,4 +213,32 @@ public class SubqueryConstraint implements Constraint
     public boolean isNotIn() {
         return (type == 1 ? negated : !negated);
     }
+
+    /**
+     * Test whether two SubqueryConstraints are equal, overrides Object.equals()
+     *
+     * @param obj the object to compare with
+     * @return true if objects are equal
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof SubqueryConstraint) {
+            SubqueryConstraint sc = (SubqueryConstraint) obj;
+            return (subquery.equals(sc.subquery)
+                    && (type == sc.type)
+                    && (negated == sc.negated)
+                    && ((qe != null) ? (qe.equals(sc.qe)) : (sc.qe == null))
+                    && ((cls != null) ? (cls.equals(sc.cls)) : (sc.cls == null)));
+        }
+        return false;
+    }
+    /**
+     * Get the hashCode for this object overrides Object.hashCode()
+     *
+     * @return the hashCode
+     */
+    public int hashCode() {
+        return subquery.hashCode() + (3 * type) + ((negated) ? 29 : 0)
+            + ((qe != null) ? (5 * qe.hashCode()) : 31)
+            + ((cls != null) ? (7 * cls.hashCode()) : 37);
+    }
 }
