@@ -51,10 +51,10 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Results results = new Results(new Query(), os, os.getSequence());
-        getSession().setAttribute("results", results);
         DisplayableResults dr = new DisplayableResults(results);
         dr.setStart(3);
         getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+
         actionPerform();
 
         verifyNoActionErrors();

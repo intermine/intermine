@@ -48,6 +48,31 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
+    public void testEditFql() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("buttons(editFql)", "");
+
+        String anAlias = "ClassAlias_0";
+        Map queryClasses = new HashMap();
+        DisplayQueryClass displayQueryClass = new DisplayQueryClass();
+        displayQueryClass.setType("org.flymine.model.testmodel.Department");
+        queryClasses.put(anAlias, displayQueryClass);
+
+        session.setAttribute(Constants.EDITING_ALIAS, anAlias);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
+
+        actionPerform();
+        
+        verifyNoActionErrors();
+        verifyForward("buildfqlquery");
+        assertNull(session.getAttribute(Constants.QUERY_CLASSES));
+        assertNull(session.getAttribute(Constants.EDITING_ALIAS));
+        assertNotNull(session.getAttribute(Constants.QUERY));
+        Query q = (Query) session.getAttribute(Constants.QUERY);
+        assertEquals(1, q.getFrom().size());
+    }
+
     public void testAddConstraint() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
