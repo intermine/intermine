@@ -11,6 +11,8 @@ package org.flymine.web.results;
  */
 
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +25,8 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.ObjectStoreFactory;
-  
+import org.flymine.util.DynamicUtil;
+
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
  * a results cell.
@@ -53,17 +56,27 @@ public class ResultsCellController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        
+
         Object obj = request.getAttribute("object");
-        
+
         // Put a map of all fields on to the request
         Model model = ObjectStoreFactory.getObjectStore().getModel();
-        
+
         Set clds = model.getClassDescriptorsForClass(obj.getClass());
-        
+
         if (clds.size() > 0) {
             context.putAttribute("clds", clds);
         }
+
+        Set leafClasses = DynamicUtil.decomposeClass(obj.getClass());
+        Set leafClds = new HashSet();
+        for (Iterator i = leafClasses.iterator(); i.hasNext(); ) {
+            leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
+        }
+        if (leafClds.size() > 0) {
+            context.putAttribute("leafClds", leafClds);
+        }
+
         return null;
     }
 }
