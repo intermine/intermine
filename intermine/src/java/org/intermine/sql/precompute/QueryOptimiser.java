@@ -21,6 +21,7 @@ import org.intermine.sql.query.Constraint;
 import org.intermine.sql.query.ConstraintSet;
 import org.intermine.sql.query.Field;
 import org.intermine.sql.query.Function;
+import org.intermine.sql.query.InListConstraint;
 import org.intermine.sql.query.NotConstraint;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SubQueryConstraint;
@@ -948,6 +949,13 @@ public class QueryOptimiser
         } else if (oldConstraint instanceof SubQueryConstraint) {
             // TODO: We need to think about this a bit more...
             throw (new UnsupportedOperationException("Need to think about SubQueryConstraints."));
+        } else if (oldConstraint instanceof InListConstraint) {
+            AbstractValue left = ((InListConstraint) oldConstraint).getLeft();
+            Set right = ((InListConstraint) oldConstraint).getRight();
+            left = reconstructAbstractValue(left, precomputedSqlTable, valueMap, tableSet, groupBy);
+            InListConstraint retval = new InListConstraint(left);
+            retval.addAll(right);
+            return retval;
         }
         throw (new IllegalArgumentException("Unknown constraint type."));
     }
