@@ -14,7 +14,7 @@ public class InsertAceDataTaskTest extends TestCase
 
     public void setUp() {
         task = new InsertAceDataTask();
-        task.setObjectStore("os.test");
+        task.setIntegrationWriter("integration.test");
         task.setUser("user");
         task.setPassword("secret");
         task.setHost("host");
@@ -22,7 +22,7 @@ public class InsertAceDataTaskTest extends TestCase
     }
 
     public void testNoStore() {
-        task.setObjectStore(null);
+        task.setIntegrationWriter(null);
         try {
             task.execute();
             fail("Expected: BuildException");

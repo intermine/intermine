@@ -16,12 +16,12 @@ public class InsertXmlDataTaskTest extends TestCase
 
     public void setUp() {
         task = new InsertXmlDataTask();
-        task.setObjectStore("os.test");
+        task.setIntegrationWriter("integration.test");
         task.setFile(new File("filename"));
     }
 
-    public void testNoStore() {
-        task.setObjectStore(null);
+    public void testNoIntegrationWriter() {
+        task.setIntegrationWriter(null);
         try {
             task.execute();
             fail("Expected: BuildException");
