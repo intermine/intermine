@@ -118,7 +118,7 @@ public class QueryOptimiser
         //        + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
         String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
                 limitOffsetQuery.getOffset());
-        if (cachedQuery != null) {
+        if (false && cachedQuery != null) {
             //LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
             //        + " ms - cache hit: " + query);
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
