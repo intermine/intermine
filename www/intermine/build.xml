@@ -83,15 +83,15 @@
     <ant dir="../../intermine-www" antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="demo.class.path"/>
-      <property name="db.name" value="db.demo"/>
-      <property name="objectstore.name" value="os.demo"/>
+      <property name="db.name" value="db.unittest"/>
+      <property name="objectstore.name" value="os.unittest"/>
     </ant>
 
     <taskdef name="insert-xml-data"
              classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="demo.class.path"/>
     </taskdef>
-    <insert-xml-data integrationWriter="integration.demo"
+    <insert-xml-data integrationWriter="integration.unittestsingle"
                      xmlFile="../../intermine-www/resources/test/testmodel_data.xml"
                      sourceName="testsource"/>
     <ant dir="../../intermine-www" target="release-webapp" inheritRefs="true"/>
@@ -102,4 +102,11 @@
     <ant dir="../../intermine-www" target="build-testmodel-webservice" inheritRefs="true"/>
     <ant dir="../../intermine-www" target="release-webservice" inheritRefs="true"/>
   </target>
+
+  <target name="setup-userprofile">
+    <ant dir="../../intermine-www" target="build-db-userprofile" inheritRefs="true">
+      <!--property name="intermine.dist.path" location="../../intermine-www/dist"/-->
+    </ant>
+  </target>
+
 </project>
