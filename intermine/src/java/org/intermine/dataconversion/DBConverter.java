@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
@@ -105,9 +106,11 @@ public class DBConverter extends DataConverter
         int identifier = 0;
         while (iter.hasNext()) {
             Map row = (Map) iter.next();
-            int clsId = idsProvided ? ((Integer) row.get(clsName + "_id")).intValue() : identifier++;
+            String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (identifier++);
             writer.store(getItem(cld, clsId, row));
         }
+
+        LOG.error("Aliases now: " + aliases);
      }
 
     /**
@@ -138,10 +141,10 @@ public class DBConverter extends DataConverter
      * @return the Item that has been constructed
      * @throws SQLException if an error occurs when accessing the database
      */
-    protected Item getItem(ClassDescriptor cld, int clsId, Map row) throws SQLException {
+    protected Item getItem(ClassDescriptor cld, String clsId, Map row) throws SQLException {
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         Item item = new Item();
-        item.setIdentifier(clsName + "_" + clsId);
+        item.setIdentifier(alias(clsName) + "_" + clsId);
         item.setClassName(cld.getModel().getNameSpace() + clsName);
         item.setImplementations("");
         for (Iterator fdIter = cld.getFieldDescriptors().iterator(); fdIter.hasNext();) {
@@ -164,7 +167,7 @@ public class DBConverter extends DataConverter
                 if (value != null) {
                     String refClsName = TypeUtil.unqualifiedName(
                         ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getName());
-                    ref.setRefId(refClsName + "_" + TypeUtil.objectToString(value));
+                    ref.setRefId(alias(refClsName) + "_" + TypeUtil.objectToString(value));
                     item.addReferences(ref);
                 }
             } else if (fd.isCollection()) {
@@ -190,7 +193,7 @@ public class DBConverter extends DataConverter
                 StringBuffer refIds = new StringBuffer();
                 while (idSet.hasNext()) {
                     Map idRow = (Map) idSet.next();
-                    refIds.append(refClsName + "_" + idRow.get(refClsName + "_id").toString() + " ");
+                    refIds.append(alias(refClsName) + "_" + idRow.get(refClsName + "_id") + " ");
                 }
                 if (refIds.length() > 0) {
                     refs.setRefIds(refIds.toString());
@@ -228,5 +231,23 @@ public class DBConverter extends DataConverter
     protected  ResultSet executeQuery(Connection c, String sql) throws SQLException {
         Statement s = c.createStatement();
         return s.executeQuery(sql);
+    }
+    
+    protected Map aliases = new HashMap();
+    protected static int index = 0;
+
+    /**
+     * Provide a (short) alias for a table name
+     * @param className the name of the class
+     * @return the alias for the class
+     */
+    protected String alias(String className) {
+        String alias = (String) aliases.get(className);
+        if (alias != null) {
+            return alias;
+        }
+        String nextIndex = "" + (index++);
+        aliases.put(className, nextIndex);
+        return nextIndex;
     }
 }
