@@ -2,6 +2,9 @@ package org.flymine.sql.query;
 
 import junit.framework.*;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import org.flymine.sql.DatabaseFactory;
 
 public class PostgresExplainResultTest extends TestCase
@@ -80,4 +83,29 @@ public class PostgresExplainResultTest extends TestCase
         catch (IllegalArgumentException e) {
         }
     }
+
+    public void testConstructNullPreparedStatement() throws Exception {
+        try {
+            er = new PostgresExplainResult(null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
+
+    public void testNullWarningPreparedStatement() throws Exception {
+        // pass in an sql statement without an EXPLAIN, should give no warnings
+
+        try {
+            String sql = "select 1";
+            PreparedStatement stmt = DatabaseFactory.getDatabase("db.unittest").getConnection().prepareStatement(sql);
+            er = new PostgresExplainResult(stmt);
+            fail("Expected: SQLException");
+        } catch (SQLException e) {
+        } catch (NullPointerException e) {
+            fail("Expected SQLException but Null PointerException thrown");
+        }
+    }
+
 }
+
