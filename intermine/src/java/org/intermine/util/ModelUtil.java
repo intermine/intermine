@@ -3,7 +3,7 @@ package org.flymine.util;
 import java.util.Set;
 import java.util.Collection;
 import java.util.StringTokenizer;
-//import java.util.Iterator;
+import java.util.Iterator;
 //import java.util.Set;
 import java.util.LinkedHashSet;
 //import java.util.Map;
@@ -98,6 +98,39 @@ public class ModelUtil
         }
         return set;
     }
+
+    /**
+     * Checks that an object has its primary keys set
+     *
+     * @param obj the Object to check
+     * @return true if primary keys set, false otherwise
+     */
+    public static boolean checkKey(Object obj) {
+        if (obj == null) {
+            throw new NullPointerException("obj must not be null");
+        }
+
+        Class clazz = obj.getClass();
+        Set keys = getKey(clazz);
+
+        Iterator keysIter = keys.iterator();
+
+        try {
+            while (keysIter.hasNext()) {
+                String field = (String) keysIter.next();
+
+                Object value = TypeUtil.getFieldValue(obj, field);
+
+                if (value == null) {
+                    return false;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+        return true;
+    }
+
 
 //     public static void makeMap(Object o, Map m) throws Exception {
 //         if (o == null) {
