@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
@@ -15,13 +16,14 @@
         <img src="images/blank.png"/>
       </c:when>
       <c:when test="${node.open}">
-        <html:link action="/changeTree?method=collapse&node=${node.object}">
+        <html:link action="/changeTree?method=collapse&node=${node.object}" anchor="${node.object}">
           <img border="0" src="images/minus.png" alt="-"/>
         </html:link>
       </c:when>
       <c:otherwise>
-        <html:link action="/changeTree?method=expand&node=${node.object}">
-          <img border="0" src="images/plus.png" alt="+"/></html:link>
+        <html:link action="/changeTree?method=expand&node=${node.object}" anchor="${node.object}">
+          <img border="0" src="images/plus.png" alt="+"/>
+        </html:link>
       </c:otherwise>
     </c:choose>
     <span
@@ -34,14 +36,13 @@ class="treeOpen"
 class="treeSelected"
        </c:if>
     >
+    <a name="${node.object}"/>
     <html:link action="/changeTree?method=select&node=${node.object}">
-      <c:out value="${node.object}"/>
+      <im:unqualify className="${node.object}"/>
     </html:link>
     </span>
     </span>
-    <span>
-      <c:out value="${node.text}"/>
-    </span>
+    ${node.text}
   </div>
 </c:forEach>
 <!-- /tree.jsp -->
