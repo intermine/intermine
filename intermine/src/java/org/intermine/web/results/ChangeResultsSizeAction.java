@@ -10,7 +10,11 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -23,6 +27,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsRow;
+
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the
  * size of the results displayed.
@@ -34,9 +41,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
     protected static final String DISPLAYABLERESULTS_NAME = "resultsTable";
 
     /**
-     * Move a column nearer to the bottom of the list of columns. Must
-     * pass in a parameter "columnAlias" to indicate the column being
-     * moved.
+     * Change the page size of the DisplayableResults
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -63,9 +68,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
     }
 
     /**
-     * Move a column nearer to the bottom of the list of columns. Must
-     * pass in a parameter "columnAlias" to indicate the column being
-     * moved.
+     * Save a new bag of objects
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -75,12 +78,80 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
      *
      * @exception ServletException if a servlet error occurs
      */
-    public ActionForward saveCollection(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse response)
+    public ActionForward saveNewBag(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
+        ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
+
+        saveBag(changeResultsForm.getNewBagName(), mapping, form, request, response);
         return mapping.findForward("results");
     }
 
+    /**
+     * Add to existing bag of objects
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward addToExistingBag(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
+
+        saveBag(changeResultsForm.getBagName(), mapping, form, request, response);
+        return mapping.findForward("results");
+    }
+
+    /**
+     * Save the selected objects to a bag on the session
+     *
+     * @param bagName the bag to save to
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public void saveBag(String bagName, ActionMapping mapping, ActionForm form,
+                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
+
+        HttpSession session = request.getSession();
+
+        Map savedBags = (Map) session.getAttribute("savedBags");
+        Results results = (Results) session.getAttribute("results");
+        String [] selectedObjects = changeResultsForm.getSelectedObjects();
+
+        Collection bag = (Collection) savedBags.get(bagName);
+
+        if (bag == null) {
+            bag = new LinkedHashSet();
+        }
+
+        // Go through the selected items and add to the set
+        Iterator iter = Arrays.asList(selectedObjects).iterator();
+        while (iter.hasNext()) {
+            String selectedObject = (String) iter.next();
+            // selectedObject is of the form column,row - we use those
+            // to pick out the object from the underlying results
+            int commaIndex = selectedObject.indexOf(",");
+            int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
+            int row = Integer.parseInt(selectedObject.substring(commaIndex+1));
+
+            bag.add(((ResultsRow) results.get(row)).get(column));
+
+        }
+
+        // Save the altered bag in the savedBags map
+        savedBags.put(bagName, bag);
+    }
 
     /**
      * Distributes the actions to the necessary methods, by providing a Map from action to
@@ -91,7 +162,8 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("button.change", "changePageSize");
-        map.put("button.save", "saveCollection");
+        map.put("bag.new", "saveNewBag");
+        map.put("bag.existing", "addToExistingBag");
         return map;
     }
 
