@@ -273,6 +273,7 @@ null:organism__comment a owl:DatatypeProperty ;
     owl:equivalentClass chado:feature .
 
 :LocatedSequenceFeature__synonyms a owl:ObjectProperty ;
+    rdfs:subPropertyOf :BioEntity__synonyms ;
     owl:equivalentProperty chado:feature__dbxref ;
     owl:equivalentProperty chado:feature__feature_synonyms .
 
