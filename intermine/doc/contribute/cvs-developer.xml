@@ -13,7 +13,7 @@
 <para>This document details how active developers can obtain FlyMine
 source code from the main CVS server. If you are looking for read-only
 access to the FlyMine public CVS server, instructions are <ulink
-url="/user/cvs">here</ulink>.</para>
+url="cvs-user">here</ulink>.</para>
 
 </sect1>
 
