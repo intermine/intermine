@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.dataloader.DataLoaderHelper;
 import org.intermine.dataloader.PrimaryKey;
 import org.intermine.metadata.Model;
@@ -34,37 +33,35 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.DatabaseSchema;
+import org.intermine.sql.Database;
 
 /**
  * Task to create indexes on a database holding objects conforming to a given model by
  * reading that model's primary key configuration information.
- * Three types of index are created: for the specified primary key fields, for all N-1 relations,
- * and for the indirection table columns of M-N relations.
- * This should speed up primary key queries, and other common queries
+ * By default three types of index are created: for the specified primary key fields, for all N-1
+ * relations, and for the indirection table columns of M-N relations.
+ * Alternatively, if attributeIndexes is true, indexes are created for all non-primary key
+ * attributes instead.
  * Note that all "id" columns are indexed automatically by virtue of InterMineTorqueModelOuput
  * specifying them as primary key columns.
  * @author Mark Woodbridge
  */
 public class CreateIndexesTask extends Task
 {
-    protected String database, model;
+    protected String alias;
     protected Connection c;
     protected boolean attributeIndexes = false;
 
     /**
-     * Set the database alias
-     * @param database the database alias
+     * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
+     * @param alias the ObjectStore alias
      */
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    /**
-     * Set the model name
-     * @param model the model name
-     */
-    public void setModel(String model) {
-        this.model = model;
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     /**
@@ -80,35 +77,54 @@ public class CreateIndexesTask extends Task
      * @see Task#execute
      */
     public void execute() throws BuildException {
-        if (database == null) {
-            throw new BuildException("database attribute is not set");
+        if (alias == null) {
+            throw new BuildException("alias attribute is not set");
         }
-        if (model == null) {
-            throw new BuildException("model attribute is not set");
-        }
-        
+
+        ObjectStore objectStore;
+
         try {
-            c = DatabaseFactory.getDatabase(database).getConnection();
-            c.setAutoCommit(true);
-            Model m = Model.getInstanceByName(model);
-            for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
-                ClassDescriptor cld = (ClassDescriptor) i.next();
-                if (attributeIndexes) {
-                    createAttributeIndexes(cld);
-                } else {
-                    createStandardIndexes(cld);
-                }
-            }
+            objectStore = ObjectStoreFactory.getObjectStore(alias);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
-            throw new BuildException(e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (Exception e) {
+            throw new BuildException("Exception while creating ObjectStore", e);
+        }
+
+        if (objectStore instanceof ObjectStoreInterMineImpl) {
+            ObjectStoreInterMineImpl osii = ((ObjectStoreInterMineImpl) objectStore);
+
+            Database database = osii.getDatabase();
+            DatabaseSchema databaseSchema = osii.getSchema();
+            Model m = objectStore.getModel();
+
+            try {
+                c = database.getConnection();
+                c.setAutoCommit(true);
+                for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
+                    ClassDescriptor cld = (ClassDescriptor) i.next();
+
+                    if (cld == databaseSchema.getTableMaster(cld)) {
+                        if (attributeIndexes) {
+                            createAttributeIndexes(cld);
+                        } else {
+                            createStandardIndexes(cld);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace(System.out);
+                throw new BuildException(e);
+            } finally {
+                if (c != null) {
+                    try {
+                        c.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
+        } else {
+            // change comment on setAlias() when this changes
+            throw new BuildException("the alias (" + alias + ") does not refer to an "
+                                     + "ObjectStoreInterMineImpl");
         }
     }
 
@@ -196,15 +212,15 @@ public class CreateIndexesTask extends Task
 
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
         String tableName = DatabaseUtil.getTableName(cld);
-        
+
       ATTRIBUTE: for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
                       attributeIter.hasNext();) {
             AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
-            
+
             if (att.getName().equals("id")) {
                 continue;
             }
-            
+
             String fieldName = DatabaseUtil.getColumnName(att);
 
             for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
@@ -212,7 +228,7 @@ public class CreateIndexesTask extends Task
                 Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
                 String keyName = (String) primaryKeyEntry.getKey();
                 PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
-                
+
                 String firstKeyField = (String) ((Set) key.getFieldNames()).iterator().next();
 
                 if (firstKeyField.equals(att.getName())) {
