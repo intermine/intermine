@@ -13,9 +13,16 @@ package org.flymine.objectstore.ojb;
 import junit.framework.Test;
 
 import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
+import org.flymine.objectstore.ObjectStoreTestCase;
+import org.flymine.objectstore.ObjectStoreFactory;
 
 public class ObjectStoreOjbImplTest extends ObjectStoreAbstractImplTestCase
 {
+    public static void oneTimeSetUp() throws Exception {
+        ObjectStoreTestCase.os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+    }
+
     public ObjectStoreOjbImplTest(String arg) throws Exception {
         super(arg);
     }
