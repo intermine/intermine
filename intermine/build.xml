@@ -113,7 +113,7 @@
     <!-- Specify that the tests depend on the java files in the main directories -->
     <dependset>
       <srcfileset dir="${src.java}" includes="**/*.java" />
-      <targetfileset dir="${junit.results}" includes="TEST-.*" />
+      <targetfileset dir="${results.junit}" includes="TEST-*.xml" />
     </dependset>
 
     <!-- Check if the tests have been run after the Java file last updated -->
@@ -126,9 +126,9 @@
       <classpath refid="test.class.path"/>
       <formatter type="xml" />
       <batchtest fork="yes" todir="${results.junit}" unless="test-main.uptodate">
-	<fileset dir="${build.test}">
-	  <include name="**/*.class" />
-	</fileset>
+        <fileset dir="${build.test}">
+         <include name="**/*.class" />
+        </fileset>
       </batchtest>
     </junit>
 
@@ -153,7 +153,7 @@
           description="generate a test report for all the unit tests" >
     <junitreport todir="${results.junit}">
       <fileset dir="${results.junit}">
-	<include name="TEST-*.xml"/>
+        <include name="TEST-*.xml"/>
       </fileset>
       <report format="frames" todir="${results.junit}"/>
     </junitreport>
@@ -232,7 +232,7 @@
       <fileset dir="${src.www}">
         <exclude name="**/*.xml" />
         <exclude name="**/*.xsl" />
-	<exclude name="**/*.dia" />
+        <exclude name="**/*.dia" />
       </fileset>
     </copy>
 
@@ -244,7 +244,7 @@
 
     <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www}">
       <fileset dir="${src.www}">
-	<include name="**/*.dia" />
+        <include name="**/*.dia" />
       </fileset>
       <mapper type="glob" from="*.dia" to="*.png" />
       <srcfile />
@@ -253,7 +253,7 @@
 
     <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www}">
       <fileset dir="${build.www}">
-	<include name="**/*.png" />
+        <include name="**/*.png" />
       </fileset>
       <mapper type="glob" from="*.png" to="*.gif" />
       <srcfile />
@@ -269,7 +269,7 @@
       <fileset dir="${src.www-internal}">
         <exclude name="**/*.xml" />
         <exclude name="**/*.xsl" />
-	<exclude name="**/*.dia" />
+        <exclude name="**/*.dia" />
       </fileset>
     </copy>
 
@@ -281,7 +281,7 @@
 
     <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www-internal}">
       <fileset dir="${src.www-internal}">
-	<include name="**/*.dia" />
+        <include name="**/*.dia" />
       </fileset>
       <mapper type="glob" from="*.dia" to="*.png" />
       <srcfile />
@@ -289,7 +289,7 @@
     </apply>
     <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www-internal}">
       <fileset dir="${build.www-internal}">
-	<include name="**/*.png" />
+        <include name="**/*.png" />
       </fileset>
       <mapper type="glob" from="*.png" to="*.gif" />
       <srcfile />
@@ -310,12 +310,12 @@
 
     <chmod perm="a+r" type="file">
       <fileset dir="${dist.www}">
-	<include name="**/**" />
+        <include name="**/**" />
       </fileset>
     </chmod>
     <chmod perm="a+rx" type="dir">
       <fileset dir="${dist.www}">
-	<include name="**/**" />
+        <include name="**/**" />
       </fileset>
     </chmod>
   </target>
