@@ -136,6 +136,7 @@ public class MainHelper
      * @return an InterMine Query
      */
     public static Query makeQuery(Map qNodes, List view, Model model, Map savedBags) {
+        //first merge the query and the view
         Map qNodes2 = new TreeMap(qNodes);
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
@@ -144,12 +145,14 @@ public class MainHelper
             }
         }
 
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        //create the real query
         Query q = new Query();
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(cs);
 
         Map queryBits = new HashMap();
 
+        //build the FROM and WHERE clauses
         for (Iterator i = qNodes2.values().iterator(); i.hasNext();) {
             RightNode node = (RightNode) i.next();
             String path = node.getPath();
@@ -158,32 +161,25 @@ public class MainHelper
                 QueryClass qc = new QueryClass(getClass(node.getType(), model));
                 q.addFrom(qc);
                 queryBits.put(path, qc);
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                    Constraint c = (Constraint) j.next();
-                    cs.addConstraint(new BagConstraint(qc,
-                                                       c.getOp(), 
-                                                       (Collection) savedBags.get(c.getValue())));
-                }
-                continue;
-            }
-            
-            String fieldName = node.getFieldName();
-            QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-
-            if (node.isAttribute()) {
-                QueryField qf = new QueryField(parentQc, fieldName);
-                queryBits.put(path, qf);
             } else {
-                QueryReference qr = null;
-                if (node.isReference()) {
-                    qr = new QueryObjectReference(parentQc, fieldName);
+                String fieldName = node.getFieldName();
+                QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
+                
+                if (node.isAttribute()) {
+                    QueryField qf = new QueryField(parentQc, fieldName);
+                    queryBits.put(path, qf);
                 } else {
-                    qr = new QueryCollectionReference(parentQc, fieldName);
+                    QueryReference qr = null;
+                    if (node.isReference()) {
+                        qr = new QueryObjectReference(parentQc, fieldName);
+                    } else {
+                        qr = new QueryCollectionReference(parentQc, fieldName);
+                    }
+                    QueryClass qc = new QueryClass(getClass(node.getType(), model));
+                    cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                    q.addFrom(qc);
+                    queryBits.put(path, qc);
                 }
-                QueryClass qc = new QueryClass(getClass(node.getType(), model));
-                cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
-                q.addFrom(qc);
-                queryBits.put(path, qc);
             }
 
             QueryNode qn = (QueryNode) queryBits.get(path);
@@ -201,9 +197,9 @@ public class MainHelper
             }
         }
 
+        //build the SELECT list
         for (Iterator i = view.iterator(); i.hasNext();) {
-            String path = (String) i.next();
-            q.addToSelect((QueryNode) queryBits.get(path));
+            q.addToSelect((QueryNode) queryBits.get((String) i.next()));
         }
         
         return q;
