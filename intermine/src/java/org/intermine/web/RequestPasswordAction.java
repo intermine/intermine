@@ -75,7 +75,8 @@ public class RequestPasswordAction extends Action
             String password = generatePassword();
             successful = email(username, password, webProperties);
             if (successful) {
-                pm.saveProfile(new Profile(pm, username, new HashMap(), new HashMap()));
+                pm.saveProfile(
+                        new Profile(pm, username, new HashMap(), new HashMap(), new HashMap()));
                 pm.setPassword(username, password);
             }
         }
