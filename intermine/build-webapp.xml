@@ -72,8 +72,7 @@
       <fileset dir="${resources}/webapps/intermine"
                includes="InterMineWebApp*.properties default.intermine.properties"/>
     </copy>
-    <copy todir="${build.webapp}/intermine/META-INF" file="${resources}/webapps/intermine/context.xml"/>
-    <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
+    
   </target>
   
   <target name="build-webapp" depends="prepare-webapp"
@@ -100,7 +99,16 @@
       </webinf>
     </war>
   </target>
-  
+
+   <target name="add-to-war-metainf"
+          description="Add file(s) to the META-INF directory">
+    <war destfile="${war}" update="true">
+      <metainf dir="${file.dir}">
+        <patternset refid="file.names"/>
+      </metainf>
+    </war>
+  </target>  
+
   <target name="add-to-war-lib"
           description="Add file(s) to the WEB-INF/lib directory">
     <war destfile="${war}" update="true">
@@ -157,6 +165,7 @@
   <target name="release-webapp" depends=""
           description="releases the InterMine web application to the server">
     
+
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="class.path"/>
     </taskdef>
