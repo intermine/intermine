@@ -72,9 +72,11 @@ public class CalculateLocationsUtil
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+// temporarily disabled - causes query failures because of missing precomputed tables
+//        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(20000);
+
+        res.setBatchSize(5000);
 
         return res.iterator();
     }
