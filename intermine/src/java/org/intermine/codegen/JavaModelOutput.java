@@ -124,8 +124,8 @@ public class JavaModelOutput extends ModelOutput
             }
         }
 
-        sb.append(";\n")            
-            .append(generateGetSet(generateNoncapitalName(attr.getName()), 
+        sb.append(";\n")
+            .append(generateGetSet(generateNoncapitalName(attr.getName()),
                                    generateClassifierRef(type)))
             .append("\n");
 
@@ -169,13 +169,13 @@ public class JavaModelOutput extends ModelOutput
         if (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m)) {
             type = generateClassifierRef(ae.getType());
         } else {
-            // if(ae.getOrdering()==null || ae.getOrdering().getName().equals("unordered")) {
-            // type="Set";
-            // impl="HashSet";
-            // } else {
-            type = "List";
-            impl = "ArrayList";
-            //             }
+            if(ae.getOrdering()==null || ae.getOrdering().getName().equals("unordered")) {
+                type="Set";
+                impl="HashSet";
+            } else {
+                type = "List";
+                impl = "ArrayList";
+            }
             name = "s";
             construct = " = new " + impl + "()";
         }
@@ -214,7 +214,7 @@ public class JavaModelOutput extends ModelOutput
 
     protected void generateFile(MClassifier cls, File path) {
          String filename = cls.getName() + ".java";
-        
+
          int lastIndex = -1;
          do {
              if (!path.isDirectory()) {
@@ -223,7 +223,7 @@ public class JavaModelOutput extends ModelOutput
                      return;
                  }
              }
-             
+
              String packagePath = getPackagePath(cls);
 
              if (lastIndex == packagePath.length()) {
@@ -316,7 +316,7 @@ public class JavaModelOutput extends ModelOutput
                 sb.append(INDENT + "protected int id;\n");
             }
             if (!baseClass.equals("") || cls.getSpecializations().size() > 0) {
-                sb.append(INDENT + "protected String ojbConcreteClass = \"" 
+                sb.append(INDENT + "protected String ojbConcreteClass = \""
                           + generateQualified(cls) + "\";\n");
             }
         }
@@ -363,7 +363,7 @@ public class JavaModelOutput extends ModelOutput
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
-                if (getAllAttributes(cls).containsKey(field) 
+                if (getAllAttributes(cls).containsKey(field)
                     && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
                     sb.append("((" + cls.getName() + ")o)." + field + "==" + field);
                 } else {
@@ -393,7 +393,7 @@ public class JavaModelOutput extends ModelOutput
 //             Iterator iter = keyFields.iterator();
 //             while (iter.hasNext()) {
 //                 String field = (String) iter.next();
-//                 if (getAllAttributes(cls).containsKey(field) 
+//                 if (getAllAttributes(cls).containsKey(field)
 //                     && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
 //                     if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
 //                         sb.append("(" + field + " ? 0 : 1)");
@@ -458,7 +458,7 @@ public class JavaModelOutput extends ModelOutput
                 sb.append(generate((MStructuralFeature) strIter.next()));
             }
         }
-        
+
         // (association) fields
         Collection ends = new ArrayList(cls.getAssociationEnds());
         if (!ends.isEmpty()) {
@@ -473,15 +473,15 @@ public class JavaModelOutput extends ModelOutput
         Collection behs = getOperations(cls);
         if (!behs.isEmpty()) {
             sb.append('\n');
-            
+
             Iterator behEnum = behs.iterator();
-            
+
             while (behEnum.hasNext()) {
                 MBehavioralFeature bf = (MBehavioralFeature) behEnum.next();
-                
+
                 sb.append(generate(bf));
-                
-                
+
+
                 if ((cls instanceof MClassImpl)
                     && (bf instanceof MOperation)
                     && (!((MOperation) bf).isAbstract())) {
@@ -657,11 +657,11 @@ public class JavaModelOutput extends ModelOutput
     }
 
     private boolean isPrimitive(String type) {
-        return type.equals("char") || type.equals("byte") || type.equals("short") 
-            || type.equals("int") || type.equals("long") || type.equals("float") 
+        return type.equals("char") || type.equals("byte") || type.equals("short")
+            || type.equals("int") || type.equals("long") || type.equals("float")
             || type.equals("double") || type.equals("boolean") ? true : false;
     }
-    
+
     public static void main(String[] args) throws Exception {
         if (args.length != 3) {
             System.err.println("Usage:  JavaModelOutput <project name> <input dir> <output dir>");
@@ -670,7 +670,7 @@ public class JavaModelOutput extends ModelOutput
         String projectName = args[0];
         String inputDir = args[1];
         String outputDir = args[2];
-        
+
         File xmiFile = new File(inputDir, projectName + "_.xmi");
         InputSource source = new InputSource(xmiFile.toURL().toString());
         File path = new File(outputDir);
