@@ -98,7 +98,7 @@ public class ExportAction extends DispatchAction
                         Date objectAsDate = (Date) thisObject;
                         excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
                     } else {
-                        excelRow.createCell(outputColumnIndex).setCellValue(thisObject.toString());
+                        excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
                     }
                 }
 
