@@ -26,7 +26,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
   
   <c:if test="${!empty results}">
     <p>
-      <b>${resultCount}</b> results for <b>${queryString}</b>. (${querySeconds} seconds)
+      <b>${resultCount}</b> results for <b>${queryString}</b>. <span class="tmplSearchTime">(${querySeconds} seconds)</span>
     </p>
     <c:forEach items="${results}" var="entry" varStatus="status">
       <%--
@@ -34,7 +34,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       --%>
       <fmt:formatNumber value="${entry.value*10}" maxFractionDigits="0" var="heat"/>
       <img class="searchHeatImg" src="images/heat${heat}.gif" width="${heat*2}" height="10"
-           style="margin-right:${20-(heat*2)}px"/>
+           style="margin-right:${24-(heat*2)}px"/>
       <im:templateLine type="${templateSearchForm.type}" templateQuery="${entry.key}"/>
       <c:if test="${!status.last}">
         <hr class="tmplSeperator"/>
