@@ -263,8 +263,8 @@ DL 8		        If we can make the assumption: we will never attempt to store an o
 -----------		        This assumption is false for objects that have a null ID, because the ID map does not recognise them, so this cannot be applied to such objects
 		        This allows a performance boost for several reasons:
 DL 9	1:00  53:10	            Reads can be done over a separate connection outside the transaction (old data...), therefore allowing writes to batch up in the ObjectStoreWriter - not much advantage as the bottleneck is the rate at which getEquivalentObjects queries can be answered
-DL 10	0:40  53:40	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
-DL 11	1:30  54:20	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
+DL 10	0:40  53:50	            We can parallelise this getEquivalentObjects data collection by using several connections - again not much advantage as this does not reduce the amount of work that the database server has to do
+DL 11	1:30  55:20	            We can batch the queries for the data collection - this probably will improve performance, as it allows the database to use more efficient algorithms with less overhead in order to do many times more work per query in proportionally less time.
 DL 12	2:00  57:20	        Knowing when to stop
 		Other tips:
 Other 1	1:30  58:50	    Get the database indexes right
