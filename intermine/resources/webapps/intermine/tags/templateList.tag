@@ -3,25 +3,37 @@
 
 <%@ attribute name="category" required="true" %>
 <%@ attribute name="type" required="true" %>
+<%@ attribute name="className" required="false" %>
+<%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
 
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<c:if test="${type == 'global'}">
+<c:if test="${type == 'global' && empty className}">
   <c:set var="templates" value="${CATEGORY_TEMPLATES[category]}"/>
+</c:if>
+<c:if test="${type == 'global' && !empty className}">
+  <c:set var="templates" value="${CLASS_CATEGORY_TEMPLATES[className][category]}"/>
 </c:if>
 <c:if test="${type == 'user'}">
   <c:set var="templates" value="${PROFILE.categoryTemplates[category]}"/>
 </c:if>
-
 
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
   <span class="templateDesc"><c:out value="${templateQuery.description}"/></span>&nbsp;
   <fmt:message var="linkTitle" key="templateList.run">
     <fmt:param value="${templateQuery.name}"/>
   </fmt:message>
-  <html:link action="/template?name=${templateQuery.name}&type=${type}" title="${linkTitle}">
+  <c:set var="extra" value=""/>
+  <c:if test="${!empty className}">
+    <c:set var="fieldName" value="${CLASS_TEMPLATE_FIELDNAMES[className][templateQuery.name]}"/>
+    <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
+    <c:set var="extra" value="&${fn:split(className, '.')[fn:length(fn:split(className, '.')) - 1]}.${fieldName}_value=${fieldValue}"/>
+  </c:if>
+  <html:link action="/template?name=${templateQuery.name}&type=${type}${extra}" 
+             title="${linkTitle}">
     <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
   </html:link>
   <c:if test="${type == 'user'}">
@@ -42,8 +54,6 @@
       <img border="0" src="images/cross.gif" alt="x"/>
     </html:link>
     <c:remove var="deleteParams"/>
-  </c:if>
-  <c:if test="${type == 'user'}">
     <fmt:message var="linkTitle" key="templateList.edit">
       <fmt:param value="${templateQuery.name}"/>
     </fmt:message>
