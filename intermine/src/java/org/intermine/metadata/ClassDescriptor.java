@@ -180,7 +180,8 @@ public class ClassDescriptor
                                 && (fdAlready instanceof AttributeDescriptor)
                                 && (((AttributeDescriptor) fd).getType()
                                     .equals(((AttributeDescriptor) fdAlready).getType())))) {
-                        throw new MetaDataException("Incompatible similarly named fields inherited"
+                        throw new MetaDataException("Incompatible similarly named fields ("
+                                                    + fd.getName() + ") inherited"
                                 + " from multiple superclasses and interfaces in " + getName());
                     }
                 } else {
