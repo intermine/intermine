@@ -86,8 +86,6 @@ public class CreateIndexesTask extends Task
             throw new BuildException("model attribute is not set");
         }
         
-        org.intermine.web.LogMe.log("i", "attributeIndexes: " + attributeIndexes);
-
         try {
             c = DatabaseFactory.getDatabase(database).getConnection();
             c.setAutoCommit(true);
@@ -195,9 +193,6 @@ public class CreateIndexesTask extends Task
     protected void createAttributeIndexes(ClassDescriptor cld)
         throws SQLException, MetaDataException {
 
-        org.intermine.web.LogMe.log("i", "examining: " + cld);
-        org.intermine.web.LogMe.log("i", "examining: " + cld.getName());
-        
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
         String tableName = DatabaseUtil.getTableName(cld);
         
@@ -205,16 +200,11 @@ public class CreateIndexesTask extends Task
                       attributeIter.hasNext();) {
             AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
             
-            org.intermine.web.LogMe.log("i", " got att: " + att);
-
             if (att.getName().equals("id")) {
-                org.intermine.web.LogMe.log("i", " -skipping id");
                 continue;
             }
             
             String fieldName = DatabaseUtil.getColumnName(att);
-
-            org.intermine.web.LogMe.log("i", " fieldName: " + fieldName);
 
             for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
                  primaryKeyIter.hasNext();) {
@@ -222,14 +212,9 @@ public class CreateIndexesTask extends Task
                 String keyName = (String) primaryKeyEntry.getKey();
                 PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
                 
-                org.intermine.web.LogMe.log("i", "  entry: " + primaryKeyEntry);
-
                 String firstKeyField = (String) ((Set) key.getFieldNames()).iterator().next();
 
-                org.intermine.web.LogMe.log("i", "  firstKeyField: " + firstKeyField);
-
                 if (firstKeyField.equals(att.getName())) {
-                    org.intermine.web.LogMe.log("i", "   -skipping: " + att.getName());
                     continue ATTRIBUTE;
                 }
             }
@@ -245,7 +230,6 @@ public class CreateIndexesTask extends Task
      */
     protected void dropIndex(String indexName) {
         try {
-            org.intermine.web.LogMe.log("i", "    dropping: " + indexName);
             execute("drop index " + indexName);
         } catch (SQLException e) {
         }
@@ -259,9 +243,6 @@ public class CreateIndexesTask extends Task
      */
     protected void createIndex(String indexName, String tableName, String columnNames) {
         try {
-            org.intermine.web.LogMe.log("i", "    creating: create index " + indexName
-                                        + " on " + tableName + "(" + columnNames + ")");
-                
             execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
         } catch (SQLException e) {
             System.err .println("Failed to create index: " + e);
