@@ -49,6 +49,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 
 /**
@@ -187,6 +188,10 @@ public class FastaReadTask extends Task
         flymineSequence.setResidues(bioJavaSequence.seqString());
 
         lsf.setSequence(flymineSequence);
+        
+        if (lsf instanceof Chromosome) {
+            ((Chromosome) lsf).setLength(new Integer(bioJavaSequence.length()));
+        }
 
         try {
             osw.store(flymineSequence);
