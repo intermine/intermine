@@ -59,6 +59,10 @@ public class ObjectStoreAbstractImplTest extends TestCase
         public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException {
             return null;
         }
+
+        public int count(Query q) {
+            return 0;
+        }
     }
 
 
