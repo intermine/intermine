@@ -214,17 +214,17 @@
             type="org.intermine.web.IqlQueryController"
             name="iqlQueryForm"/>
 
-    <action path="/initObjectSummary"
-            type="org.intermine.web.results.ObjectSummaryController"/>
-
-    <action path="/initObjectDetails"
-            type="org.intermine.web.results.ObjectDetailsController"/>
+    <action path="/initObjectView"
+            type="org.intermine.web.results.ObjectViewController"/>
 
     <action path="/initCollectionDetails"
             type="org.intermine.web.results.CollectionDetailsController"/>
 
     <action path="/initBagDetails"
             type="org.intermine.web.results.BagDetailsController"/>
+
+    <action path="/initOneField"
+            type="org.intermine.web.results.OneFieldController"/>
 
     <action path="/initTree"
             type="org.intermine.web.TreeController"/>
