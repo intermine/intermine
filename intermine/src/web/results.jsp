@@ -194,4 +194,6 @@
 </html:form>
 
 <tiles:get name="saveQuery"/>
+
+<html:link action="/buildquery">Return to query</html:link>
 <!-- /results.jsp -->
