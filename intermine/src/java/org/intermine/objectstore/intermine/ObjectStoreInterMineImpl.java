@@ -338,8 +338,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 logTableConnection = getConnection();
                 if (!DatabaseUtil.tableExists(logTableConnection, tableName)) {
                     logTableConnection.createStatement().execute("CREATE TABLE " + tableName
-                            + "(optimise bigint, estimated bigint, execute bigint, "
-                            + "permitted bigint, convert bigint, iql text, sql text)");
+                        + "(timestamp bigint, optimise bigint, estimated bigint, "
+                        + "execute bigint, permitted bigint, convert bigint, iql text, sql text)");
                 }
                 logTableBatch = new Batch(new BatchWriterPostgresCopyImpl());
                 logTableName = tableName;
@@ -377,7 +377,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         if (logTableName != null) {
             try {
                 logTableBatch.addRow(logTableConnection, logTableName, null, LOG_TABLE_COLUMNS,
-                        new Object[] {new Long(optimise), new Long(estimated), new Long(execute),
+                        new Object[] {new Long(System.currentTimeMillis()), new Long(optimise),
+                            new Long(estimated), new Long(execute),
                             new Long(permitted), new Long(convert), q.toString(), sql});
             } catch (SQLException e) {
                 LOG.error("Failed to write to log table: " + e);
