@@ -11,10 +11,10 @@ package org.intermine.web.results;
  */
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +60,9 @@ public class ChangeResultsSizeAction extends Action
         if ("changePageSize".equals(button)) {
             return changePageSize(mapping, form, request, response);
         } else if ("saveNewBag".equals(button)) {
-            return saveNewBag(mapping, form, request, response);
+            return saveBag(mapping, form, request, response);
         } else if ("addToExistingBag".equals(button)) {
-            return addToExistingBag(mapping, form, request, response);
+            return saveBag(mapping, form, request, response);
         }
 
         return null;
@@ -83,76 +83,37 @@ public class ChangeResultsSizeAction extends Action
                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
-
+        
         pt.setPageSize(Integer.parseInt(changeResultsForm.getPageSize()));
 
-        // Need to set the start so that we are on the page containing the current start item
-        pt.setStartIndex((pt.getStartIndex() / pt.getPageSize()) * pt.getPageSize());
-
-        return mapping.findForward("results");
-    }
-
-    /**
-     * Save a new bag of objects
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     *
-     * @exception ServletException if a servlet error occurs
-     */
-    public ActionForward saveNewBag(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-        saveBag(((ChangeResultsForm) form).getNewBagName(), form, request);
-        return mapping.findForward("results");
-    }
-
-    /**
-     * Add to existing bag of objects
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     *
-     * @exception ServletException if a servlet error occurs
-     */
-    public ActionForward addToExistingBag(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-        saveBag(((ChangeResultsForm) form).getBagName(), form, request);
         return mapping.findForward("results");
     }
 
     /**
      * Save the selected objects to a bag on the session
-     *
-     * @param bagName the bag to save to
+     * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     *
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
      * @exception ServletException if a servlet error occurs
      */
-    public void saveBag(String bagName, ActionForm form, HttpServletRequest request)
+    public ActionForward saveBag(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request, 
+                                 HttpServletResponse response)
         throws ServletException {
-        ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
-
         HttpSession session = request.getSession();
-
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
-        String[] selectedObjects = changeResultsForm.getSelectedObjects();
+        ChangeResultsForm crf = (ChangeResultsForm) form;
 
         InterMineBag bag = new InterMineBag();
 
         // Go through the selected items and add to the set
-        for (Iterator itemIterator = Arrays.asList(selectedObjects).iterator();
+        for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
              itemIterator.hasNext();) {
             String selectedObject = (String) itemIterator.next();
             // selectedObject is of the form "column,row" or "column"
@@ -160,7 +121,7 @@ public class ChangeResultsSizeAction extends Action
             if (commaIndex == -1) {
                 int column = Integer.parseInt(selectedObject);
 
-                for (Iterator rowIterator = pt.getList().iterator();
+                for (Iterator rowIterator = pt.getRows().iterator();
                      rowIterator.hasNext();) {
                     List thisRow = (List) rowIterator.next();
                     bag.add(thisRow.get(column));
@@ -169,24 +130,17 @@ public class ChangeResultsSizeAction extends Action
                 // use the column,row to pick out the object from PagedTable
                 int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
                 int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-                bag.add(((List) pt.getList().get(row)).get(column));
+                bag.add(((List) pt.getRows().get(row)).get(column));
             }
         }
 
-        BagHelper.saveBag(request, bagName, bag);
-    }
+        if (savedBags == null) {
+            savedBags = new LinkedHashMap();
+            session.setAttribute(Constants.SAVED_BAGS, savedBags);
+        }
 
-    /**
-     * Distributes the actions to the necessary methods, by providing a Map from action to
-     * the name of a method.
-     *
-     * @return a Map
-     */
-    protected Map getKeyMethodMap() {
-        Map map = new HashMap();
-        map.put("button.change", "changePageSize");
-        map.put("bag.new", "saveNewBag");
-        map.put("bag.existing", "addToExistingBag");
-        return map;
+        BagHelper.saveBag(bag, crf.getBagName(), savedBags);
+
+        return mapping.findForward("results");
     }
 }

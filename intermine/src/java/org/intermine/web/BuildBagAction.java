@@ -10,12 +10,14 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.LinkedHashMap;
+
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
@@ -49,6 +51,8 @@ public class BuildBagAction extends LookupDispatchAction
                                        HttpServletRequest request,
                                        HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
         InterMineBag bag = new InterMineBag();
@@ -67,7 +71,12 @@ public class BuildBagAction extends LookupDispatchAction
 
         String newBagName = "new_bag";
 
-        BagHelper.saveBag(request, newBagName, bag);
+        if (savedBags == null) {
+            savedBags = new LinkedHashMap();
+            session.setAttribute(Constants.SAVED_BAGS, savedBags);
+        }
+
+        BagHelper.saveBag(bag, newBagName, savedBags);
 
         String forwardPath = mapping.findForward("bagDetails").getPath() + "?bagName=" + newBagName;
 

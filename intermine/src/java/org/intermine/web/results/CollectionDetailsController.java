@@ -63,7 +63,7 @@ public class CollectionDetailsController extends TilesAction
         Object o = os.getObjectById(id);
 
         Collection c = (Collection) TypeUtil.getFieldValue(o, field);
-        session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(c, field));
+        session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(field, c));
 
         return null;
     }

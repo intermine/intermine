@@ -34,15 +34,24 @@ public class ChangeResultsForm extends ActionForm
     protected String pageSize;
     protected String[] selectedObjects;
     protected String bagName;
-    protected String newBagName;
     // map from "name" of last button pressed to text of that button
     protected Map buttons;
 
     /**
-     * Create a new ChangeResultsForm object.
+     * Constructor
      */
     public ChangeResultsForm() {
-        internalReset();
+        initialise();
+    }
+
+    /**
+     * Initialiser
+     */
+    public void initialise() {
+        pageSize = "10";
+        selectedObjects = new String[0];
+        bagName = null;
+        buttons = new HashMap();
     }
 
     /**
@@ -62,7 +71,6 @@ public class ChangeResultsForm extends ActionForm
     public String getPageSize() {
         return pageSize;
     }
-
 
     /**
      * Sets the selected objects
@@ -98,24 +106,6 @@ public class ChangeResultsForm extends ActionForm
      */
     public String getBagName() {
         return bagName;
-    }
-
-    /**
-     * Set the bag name (new bag)
-     *
-     * @param bagName the bag name to save to
-     */
-    public void setNewBagName(String bagName) {
-        this.newBagName = bagName;
-    }
-
-    /**
-     * Get the bag name (new bag)
-     *
-     * @return the bag name
-     */
-    public String getNewBagName() {
-        return newBagName;
     }
 
     /**
@@ -181,18 +171,18 @@ public class ChangeResultsForm extends ActionForm
             && selectedObjects.length == 0) {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.savebag.nothingSelected", newBagName));
+                       new ActionError("errors.savebag.nothingSelected", bagName));
         }
 
         if ("saveNewBag".equals(getButton())) {
-            if (newBagName.equals("")) {
+            if (bagName.equals("")) {
                 errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.savebag.blank", newBagName));
-            } else if (savedBags != null && savedBags.containsKey(newBagName)) {
+                           new ActionError("errors.savebag.blank", bagName));
+            } else if (savedBags != null && savedBags.containsKey(bagName)) {
                 errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.savebag.existing", newBagName));
+                           new ActionError("errors.savebag.existing", bagName));
             }
             return errors;
         }
@@ -202,22 +192,11 @@ public class ChangeResultsForm extends ActionForm
 
     /**
      * Reset the form to the initial state
-     */
-    public void internalReset() {
-        pageSize = "10";
-        selectedObjects = new String[] {};
-        newBagName = null;
-        bagName = null;
-        buttons = new HashMap();
-    }
-
-    /**
-     * Reset the form to the initial state
      *
      * @param mapping the mapping
      * @param request the request
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-        internalReset();
+        initialise();
     }
 }

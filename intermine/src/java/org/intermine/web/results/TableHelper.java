@@ -61,6 +61,6 @@ public abstract class TableHelper
             }
         }
 
-        return new PagedResults(r, view);
+        return new PagedResults(view, r);
     }
 }

@@ -67,7 +67,7 @@ public class ExportAction extends DispatchAction
 
         try {
             List columns = pt.getColumns();
-            List rowList = pt.getList();
+            List rowList = pt.getRows();
 
             for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
                 List row;
@@ -155,7 +155,7 @@ public class ExportAction extends DispatchAction
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
 
-        TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getList(),
+        TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getRows(),
                                    getOrder(pt), getVisible(pt));
 
         return null;
@@ -184,7 +184,7 @@ public class ExportAction extends DispatchAction
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getList(),
+        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getRows(),
                                             getOrder(pt), getVisible(pt));
 
         return null;

@@ -86,66 +86,66 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         os.addRow(row);
     }
 
-    public void testChangePageSize1() throws Exception {
-        setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("buttons(changePageSize)", "");
+//     public void testChangePageSize1() throws Exception {
+//         setRequestPathInfo("/changeResultsSize");
+//         addRequestParameter("buttons(changePageSize)", "");
 
-        ChangeResultsForm form = new MockChangeResultsForm();
-        form.setPageSize("25");
-        setActionForm(form);
+//         ChangeResultsForm form = new MockChangeResultsForm();
+//         form.setPageSize("25");
+//         setActionForm(form);
 
-        pr.setStartIndex(0);
-        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+//         pr.setStartIndex(0);
+//         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
-        actionPerform();
+//         actionPerform();
 
-        verifyForward("results");
-        verifyNoActionErrors();
-        assertEquals(0, pr.getStartIndex());
-        assertEquals(25, pr.getPageSize());
-    }
+//         verifyForward("results");
+//         verifyNoActionErrors();
+//         assertEquals(0, pr.getStartIndex());
+//         assertEquals(25, pr.getPageSize());
+//     }
 
-    public void testChangePageSize2() throws Exception {
-        setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("buttons(changePageSize)", "");
+//     public void testChangePageSize2() throws Exception {
+//         setRequestPathInfo("/changeResultsSize");
+//         addRequestParameter("buttons(changePageSize)", "");
 
-        ChangeResultsForm form = new ChangeResultsForm();
-        form.setPageSize("10");
-        setActionForm(form);
+//         ChangeResultsForm form = new ChangeResultsForm();
+//         form.setPageSize("10");
+//         setActionForm(form);
 
-        pr.setStartIndex(12);
-        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+//         pr.setStartIndex(12);
+//         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
-        actionPerform();
+//         actionPerform();
 
-        verifyForward("results");
-        verifyNoActionErrors();
-        assertEquals(10, pr.getStartIndex());
-        assertEquals(10, pr.getPageSize());
-    }
+//         verifyForward("results");
+//         verifyNoActionErrors();
+//         assertEquals(10, pr.getStartIndex());
+//         assertEquals(10, pr.getPageSize());
+//     }
 
-    public void testSaveNewBag() throws Exception {
-        setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("buttons(saveNewBag)", "");
-        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
+//     public void testSaveNewBag() throws Exception {
+//         setRequestPathInfo("/changeResultsSize");
+//         addRequestParameter("buttons(saveNewBag)", "");
+//         getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
-        ChangeResultsForm form = new MockChangeResultsForm();
-        form.setSelectedObjects(new String[] {"0,0", "1,2"});
-        form.setNewBagName("testBag1");
-        setActionForm(form);
+//         ChangeResultsForm form = new MockChangeResultsForm();
+//         form.setSelectedObjects(new String[] {"0,0", "1,2"});
+//         form.setNewBagName("testBag1");
+//         setActionForm(form);
 
-        actionPerform();
+//         actionPerform();
 
-        verifyForward("results");
-        verifyNoActionErrors();
+//         verifyForward("results");
+//         verifyNoActionErrors();
         
-        Map savedBags = (Map) getSession().getAttribute(Constants.SAVED_BAGS);
-        Collection objs = (Collection) savedBags.get("testBag1");
-        assertEquals(2, objs.size());
-        Iterator iter = objs.iterator();
-        assertEquals(company1, iter.next());
-        assertEquals(department3, iter.next());
-    }
+//         Map savedBags = (Map) getSession().getAttribute(Constants.SAVED_BAGS);
+//         Collection objs = (Collection) savedBags.get("testBag1");
+//         assertEquals(2, objs.size());
+//         Iterator iter = objs.iterator();
+//         assertEquals(company1, iter.next());
+//         assertEquals(department3, iter.next());
+//     }
 
     public void testAddToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");

@@ -82,8 +82,7 @@ function unselectColumnCheckbox(column) {
 
     <%-- Row --%>
     <c:if test="${RESULTS_TABLE.size > 0}">
-      <c:forEach var="row" items="${RESULTS_TABLE.list}" varStatus="status"
-                 begin="${RESULTS_TABLE.startIndex}" end="${RESULTS_TABLE.endIndex}">
+      <c:forEach var="row" items="${RESULTS_TABLE.rows}" varStatus="status">
 
         <c:set var="rowClass">
           <c:choose>
@@ -142,15 +141,15 @@ function unselectColumnCheckbox(column) {
     </c:when>
     <c:when test="${RESULTS_TABLE.sizeEstimate}">
       <fmt:message key="results.pageinfo.estimate">
-        <fmt:param value="${RESULTS_TABLE.startIndex+1}"/>
-        <fmt:param value="${RESULTS_TABLE.endIndex+1}"/>
+        <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
+        <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
         <fmt:param value="${RESULTS_TABLE.size}"/>
       </fmt:message>
     </c:when>
     <c:otherwise>
       <fmt:message key="results.pageinfo.exact">
-        <fmt:param value="${RESULTS_TABLE.startIndex+1}"/>
-        <fmt:param value="${RESULTS_TABLE.endIndex+1}"/>
+        <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
+        <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
         <fmt:param value="${RESULTS_TABLE.size}"/>
       </fmt:message>
     </c:otherwise>
@@ -158,12 +157,10 @@ function unselectColumnCheckbox(column) {
   <br/>
 
   <%-- Paging controls --%>
-  <c:if test="${RESULTS_TABLE.startIndex > 0}">
+  <c:if test="${!RESULTS_TABLE.firstPage}">
     <html:link action="/changeResults?method=first">
       <fmt:message key="results.first"/>
     </html:link>
-  </c:if>
-  <c:if test="${!RESULTS_TABLE.firstPage}">
     <html:link action="/changeResults?method=previous">
       <fmt:message key="results.previous"/>
     </html:link>
@@ -172,8 +169,6 @@ function unselectColumnCheckbox(column) {
     <html:link action="/changeResults?method=next">
       <fmt:message key="results.next"/>
     </html:link>
-  </c:if>
-  <c:if test="${!RESULTS_TABLE.sizeEstimate && !RESULTS_TABLE.lastPage}">
     <html:link action="/changeResults?method=last">
       <fmt:message key="results.last"/>
     </html:link>
@@ -211,7 +206,7 @@ function unselectColumnCheckbox(column) {
       <br/>
     </c:if>
 
-    <html:text property="newBagName"/>
+    <html:text property="bagName"/>
     <html:submit property="buttons(saveNewBag)">
       <fmt:message key="bag.new"/>
     </html:submit>

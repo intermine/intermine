@@ -10,10 +10,7 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Collections;
 import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
@@ -26,13 +23,9 @@ import org.intermine.objectstore.query.QueryHelper;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
-public class PagedResults implements PagedTable
+public class PagedResults extends PagedTable
 {
-    private Results results;
-
-    private List columns = new LinkedList();
-    private int startIndex = 0;
-    private int pageSize = 10;
+    protected Results results;
 
     /**
      * Create a new PagedResults object from the given Results object.
@@ -40,7 +33,7 @@ public class PagedResults implements PagedTable
      * @param results the Results object
      */
     public PagedResults(Results results) {
-        this(results, QueryHelper.getColumnAliases(results.getQuery()));
+        this(QueryHelper.getColumnAliases(results.getQuery()), results);
     }
 
     /**
@@ -49,122 +42,16 @@ public class PagedResults implements PagedTable
      * @param results the Results object
      * @param columnNames the headings for the Results columns
      */
-    public PagedResults(Results results, List columnNames) {
+    public PagedResults(List columnNames, Results results) {
+        super(columnNames);
         this.results = results;
-
-        for (int i = 0; i < columnNames.size(); i++) {
-            Column column = new Column();
-            column.setName((String) columnNames.get(i));
-            column.setIndex(i);
-            column.setVisible(true);
-            columns.add(column);
-        }
     }
 
     /**
-     * @see PagedTable#getColumns
+     * @see PagedTable#getRows
      */
-    public List getColumns() {
-        return Collections.unmodifiableList(columns);
-    }
-
-    /**
-     * @see PagedTable#getVisibleColumnCount
-     */
-    public int getVisibleColumnCount() {
-        int count = 0;
-        for (Iterator i = columns.iterator(); i.hasNext();) {
-            if (((Column) i.next()).isVisible())  {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * @see PagedTable#getColumnCount
-     */
-    public int getColumnCount() {
-        return columns.size();
-    }
-
-    /**
-     * @see PagedTable#moveColumnLeft
-     */
-    public void moveColumnLeft(int index) {
-        if (index > 0 && index <= columns.size() - 1) {
-            columns.add(index - 1, columns.remove(index));
-        }
-    }
-
-    /**
-     * @see PagedTable#moveColumnRight
-     */
-    public void moveColumnRight(int index) {
-        if (index >= 0 && index < columns.size() - 1) {
-            columns.add(index + 1, columns.remove(index));
-        }
-    }
-
-    /**
-     * @see PagedTable#getStartIndex
-     */
-    public int getStartIndex() {
-        return this.startIndex;
-    }
-
-    /**
-     * @see PagedTable#setStartIndex
-     */
-    public void setStartIndex(int startIndex) {
-        this.startIndex = startIndex;
-    }
-
-    /**
-     * @see PagedTable#getPageSize
-     */
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    /**
-     * @see PagedTable#setPageSize
-     */
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    /**
-     * @see PagedTable#getEnd
-     */
-    public int getEndIndex() {
-        int end = startIndex + pageSize - 1;
-        if (!isSizeEstimate() && (end + 1 > getSize())) {
-            return getSize() - 1;
-        } else {
-            return end;
-        }
-    }
-
-    /**
-     * @see PagedTable#isPreviousRows
-     */
-    public boolean isFirstPage() {
-        return (startIndex == 0);
-    }
-
-    /**
-     * @see PagedTable#isMoreRows
-     */
-    public boolean isLastPage() {
-        return (!isSizeEstimate() && getEndIndex() == getSize() - 1);
-    }
-
-    /**
-     * @see PagedTable#getList
-     */
-    public List getList() {
-        return results;
+    public List getRows() {
+        return results.subList(startRow, getEndRow() + 1);
     }
 
     /**
@@ -173,12 +60,10 @@ public class PagedResults implements PagedTable
     public int getSize() {
         //this ensures that if we're on the last page then we get an exact count
         try {
-            results.range(startIndex, startIndex + pageSize);
+            results.subList(startRow, startRow + pageSize + 1);
         } catch (IndexOutOfBoundsException e) {
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException(e);
         }
-
+        
         try {
             return results.getInfo().getRows();
         } catch (ObjectStoreException e) {

@@ -32,13 +32,11 @@ public class ChangeResultsAction extends DispatchAction
 {
     /**
      * Change to the next results page
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward next(ActionMapping mapping, ActionForm form,
@@ -47,20 +45,18 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        pt.setStartIndex(pt.getStartIndex() + pt.getPageSize());
+        pt.nextPage();
 
         return mapping.findForward("results");
     }
 
     /**
      * Change to the previous results page
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward previous(ActionMapping mapping, ActionForm form,
@@ -69,20 +65,18 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        pt.setStartIndex(pt.getStartIndex() - pt.getPageSize());
+        pt.previousPage();
 
         return mapping.findForward("results");
     }
 
     /**
      * Change to the first results page
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward first(ActionMapping mapping, ActionForm form,
@@ -91,20 +85,18 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        pt.setStartIndex(0);
+        pt.firstPage();
 
         return mapping.findForward("results");
     }
 
     /**
      * Change to the last results page
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward last(ActionMapping mapping, ActionForm form,
@@ -113,22 +105,18 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int pageSize = pt.getPageSize();
-        pt.setStartIndex(((pt.getSize() - 1) / pageSize) * pageSize);
+        pt.lastPage();
 
         return mapping.findForward("results");
     }
 
     /**
-     * Hide a column. Must pass in a parameter "columnAlias" to
-     * indicate the column being hidden.
-     *
+     * Hide a column
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward hideColumn(ActionMapping mapping, ActionForm form,
@@ -144,15 +132,12 @@ public class ChangeResultsAction extends DispatchAction
     }
 
     /**
-     * Show a column. Must pass in a parameter "columnAlias" to
-     * indicate the column being shown.
-     *
+     * Show a column
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward showColumn(ActionMapping mapping, ActionForm form,
@@ -168,16 +153,12 @@ public class ChangeResultsAction extends DispatchAction
     }
 
     /**
-     * Move a column nearer the top of the list of columns. Must pass
-     * in a parameter "columnAlias" to indicate the column being
-     * moved.
-     *
+     * Move a column left
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward moveColumnLeft(ActionMapping mapping, ActionForm form,
@@ -193,16 +174,12 @@ public class ChangeResultsAction extends DispatchAction
     }
 
     /**
-     * Move a column nearer to the bottom of the list of columns. Must
-     * pass in a parameter "columnAlias" to indicate the column being
-     * moved.
-     *
+     * Move a column right
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward moveColumnRight(ActionMapping mapping, ActionForm form,
