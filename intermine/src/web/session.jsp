@@ -28,3 +28,8 @@
   <c:out value="${item}"/>
   <br/>
 </c:forEach>
+<h3>Header</h3>
+<c:forEach var="item" items="${header}">
+  <c:out value="${item}"/>
+  <br/>
+</c:forEach>
