@@ -276,7 +276,7 @@ public class CalculateLocations
             idBands.put(band.getId(), band);
         }
         LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
-
+        
         // create map of Supercontigs to avoid calling getObjectById
         // need to keep running query after each commit transaction
         Map idScs = new HashMap();
@@ -307,6 +307,7 @@ public class CalculateLocations
 
             // first create location of feature on Chromosome
             SimpleLoc contigOnChr = (SimpleLoc) contigToChr.get(contigId);
+
             Chromosome chr = (Chromosome)
                 chrById.get(new Integer(contigOnChr.getParentId()));
             Location bioOnChrLoc =
@@ -507,10 +508,9 @@ public class CalculateLocations
         //                  Contig23 ->     Exon1 -> SimpleLoc {start -> 1111, end -> 1999}
         Map locatedOnObjectMap = new HashMap();
 
-        int count = 0;
-
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
+
             BioEntity parentObject = (BioEntity) rr.get(0);
             BioEntity childObject = (BioEntity) rr.get(1);
             Location location = (Location) rr.get(2);
@@ -518,18 +518,18 @@ public class CalculateLocations
             // the object that childObject is located on
             BioEntity locatedOnObject = (BioEntity) rr.get(3);
 
-            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject);
+            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject.getId());
 
             if (parentObjectMap == null) {
                 parentObjectMap = new HashMap();
-                locatedOnObjectMap.put(locatedOnObject, parentObjectMap);
+                locatedOnObjectMap.put(locatedOnObject.getId(), parentObjectMap);
             }
 
-            SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject);
+            SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject.getId());
 
             if (parentObjectSimpleLoc == null) {
                 parentObjectSimpleLoc = new SimpleLoc(-1, -1, Integer.MAX_VALUE, -1, 0);
-                parentObjectMap.put(parentObject, parentObjectSimpleLoc);
+                parentObjectMap.put(parentObject.getId(), parentObjectSimpleLoc);
             }
 
             int currentParentStart = parentObjectSimpleLoc.getStart();
@@ -553,15 +553,18 @@ public class CalculateLocations
         // make new locations and store them
         Iterator locatedOnObjectIterator = locatedOnObjectMap.keySet().iterator();
         while (locatedOnObjectIterator.hasNext()) {
-            BioEntity locatedOnObject = (BioEntity) locatedOnObjectIterator.next();
-            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject);
+            Integer locatedOnObjectId = (Integer) locatedOnObjectIterator.next();
+            BioEntity locatedOnObject = (BioEntity) os.getObjectById(locatedOnObjectId);
+            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObjectId);
             Iterator parentObjectMapIterator = parentObjectMap.keySet().iterator();
 
             while (parentObjectMapIterator.hasNext()) {
-                BioEntity parentObject = (BioEntity) parentObjectMapIterator.next();
-                SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject);
+                Integer parentObjectId = (Integer) parentObjectMapIterator.next();
+                BioEntity parentObject = (BioEntity) os.getObjectById(parentObjectId);
+                SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObjectId);
                 Location newLocation =
                     (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+
 
                 newLocation.setStart(new Integer(parentObjectSimpleLoc.getStart()));
                 newLocation.setEnd(new Integer(parentObjectSimpleLoc.getEnd()));
@@ -619,8 +622,8 @@ public class CalculateLocations
         q.setConstraint(cs);
 
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(20000);
 
+        res.setBatchSize(10000);
         return res.iterator();
     }
 
@@ -1304,7 +1307,7 @@ public class CalculateLocations
          */
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start
-                + " end " + end + " startIsPartial: " + startIsPartial
+                + " end " + end + " strand " + strand + " startIsPartial: " + startIsPartial
                 + " endIsPartial: " + endIsPartial;
         }
     }
