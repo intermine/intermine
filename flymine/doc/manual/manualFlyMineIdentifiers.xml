@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+   <section>
+       <heading>Identifiers, Accessions and Synonyms in FlyMine</heading>
+       <item>
+This page describes the meanings and origins of identifiers of biological
+objects in FlyMine.  As FlyMine aggregates data from multiple sources there
+are often many different identifiers for the same entity.  Available 
+identifiers vary between biological object type, organism and data source.
+FlyMine attempts to choose a standard or commonly used unique identifier 
+for each biological type and retains all other identifiers as synonyms 
+with a reference to their source.
+       </item>
+       <item>
+BioEntity is the root class of all biological objects in the FlyMine model.
+This has an identifier field that all subclasses (e.g. Chromosome, Gene, Exon) 
+inherit.  The identifier field is almost always populated with  a value unique 
+in the context of a particular organism.  The only time when 'identifier' can
+be empty is when another primay identifier field exists (e.g. Gene, Protein)
+and a data source has only provided the alternative.
+       </item>
+       <item>
+In some cases this is a standard identifier (e.g. Protein - UNIPROT id), for
+biological types that are not so widely referenced this will be the identifier
+for the primary data source used (e.g. Exon - Ensembl stable id).  For some
+types the identifier is more akin to a name than a universal identifier
+(e.g. Chromsome - 'X').  All widely used identifiers that FlyMine has loaded
+are also stored as Synonyms of the BioEntity linked to the source.
+       </item>
+       <item>
+Gene - for some organisms there are two commonly used identification schemes,
+for example Drosophila has FlyBase FBgn*** and Celera CG***.  Gene has an 
+additional identifier field, 'organismDbId', which contains the id used in the
+main annotation database for each organism.  So for Drosophila 'organismDbId' 
+is a FlyBase id and 'identifier' is CG*** id.  When there is only one main 
+identifier for an organism the same id is used in both fields.  In addition 
+Gene has 'name' and 'description' fields.  All gene names are stored as Synonyms,
+only one should have the 'isPrimary' flag set to true.
+       </item>
+       <item>
+Protein - current situation (July 2004)
+The 'identifier' and 'primaryAccession' fields of Protein are set to the 
+accession with which it was labelled in the source it came from.  In many
+cases this will be the UNIPROT primary accession but no verification is
+performed against UNIPROT.  
+       </item>
+       <item>
+Protein - future plan (~September 2004) - proteins will be classified where possible according to UNIPROT.  
+The 'identifier' field will be the UNIPROT identifer when available (e.g. 18C_DROME).
+Protein has an additional 'primaryAccession' field which will be the UNIPROT
+primary accession where available (e.g. P16909).  All accession numbers
+available in UNIPROT are stored as synonyms with type 'accession' (i.e.
+P16909, Q9VPA8).  Only the primary accession will have the 'isPrimary' flag 
+set to true.
+       </item>
+       <item>
+It is conceivable that a data source could provide a Protein with a TREMBL 
+identifier/accession which has been superceeded as the primary UNIPROT
+identifier/accesssion by the inclusion of that protein in SWISSPROT.  This 
+could result in two Protein objects existing in the FlyMine database 
+representing the same actual protein - one with the current UNIPROT ids, on 
+with TREMBl ids.  We aim to run a post-processing step to find and correct
+these situations once we have integrated UNIPROT data.  The two Proteins
+would then be merged.
+     </item> 
+     <item>
+Synonyms represent alternative names and accessions for a BioEntity.  The
+'source' reference points at an InfoSource object (i.e. Database, Publication)
+from which the synonym was loaded.  Synonym has a 'type' field which defines
+it as an 'accession' or a 'name'.  An 'isPrimary' flag is set to true if
+the synonym is the main name or accession for that source - e.g. UNIPROT
+primary accession or main FlyBase gene name.
+     </item>
+    </section>
+
+</index>
+
+</article>
+
