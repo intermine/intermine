@@ -77,7 +77,8 @@ public class IqlQueryAction extends InterMineLookupDispatchAction
             session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
             return mapping.findForward("results");
         } catch (java.lang.IllegalArgumentException e) {
-            recordError(new ActionMessage("errors.iqlquery.illegalargument"), request, e, LOG);
+            recordError(new ActionMessage("errors.iqlquery.illegalargument",
+                                          e.getMessage()), request, e, LOG);
             return mapping.findForward("iqlQuery");
         } catch (ObjectStoreException e) {
             ActionErrors errors = new ActionErrors();
