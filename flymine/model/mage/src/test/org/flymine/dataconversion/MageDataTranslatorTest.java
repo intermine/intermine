@@ -149,11 +149,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
                                                               getOwlModel(), tgtNs);
 
-        Item tgtItem = createItem(tgtNs+"MicroArraySlideDesign", "3_1", "");
+        Item tgtItem = createItem(tgtNs+"MicroArraySlideDesign", "0_0", "");
 
         Map expected = new HashMap();
-        expected.put("1_2", "3_1");
-        translator.createFeatureMap(srcItem1, tgtItem);
+        expected.put("1_2", "0_0");
+        translator.createFeatureMap(srcItem1);
         assertEquals(expected, translator.featureToDesign);
     }
 
@@ -327,18 +327,66 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item srcItem7= createItem(ns+"Database", "3_9", "");
         srcItem7.addAttribute(new Attribute("name", "embl"));
 
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3, srcItem4, srcItem5, srcItem6, srcItem7 }));
+        Item srcItem10=createItem(ns+"Reporter", "12_50", "");
+        srcItem10.addAttribute(new Attribute("name","LD04815"));
+        srcItem10.addCollection(new ReferenceList("featureReporterMaps",
+                   new ArrayList(Arrays.asList(new Object[]{"7_46"}))));
+        srcItem10.addCollection(new ReferenceList("immobilizedCharacteristics",
+                   new ArrayList(Arrays.asList(new Object[]{"0_11"}))));
+
+        Item srcItem11 = createItem(ns+"FeatureReporterMap", "7_46", "");
+        srcItem11.addReference(new Reference("reporter", "12_50"));
+        srcItem11.addCollection(new ReferenceList("featureInformationSources",
+                   new ArrayList(Arrays.asList(new Object[]{"8_47"}))));
+
+        Item srcItem12= createItem(ns+"FeatureInformation", "8_47", "");
+        srcItem12.addReference(new Reference("feature", "11_49"));
+
+        Item srcItem13= createItem(ns+"Feature", "11_49", "");
+        srcItem13.addReference(new Reference("featureLocation", "9_480"));
+        srcItem13.addReference(new Reference("zone", "10_290"));
+
+        Item srcItem14= createItem(ns+"FeatureLocation", "9_480", "");
+        srcItem14.addAttribute(new Attribute("column", "1"));
+        srcItem14.addAttribute(new Attribute("row", "3"));
+
+        Item srcItem15= createItem(ns+"FeatureLocation", "10_290", "");
+        srcItem15.addAttribute(new Attribute("column", "2"));
+        srcItem15.addAttribute(new Attribute("row", "5"));
+
+
+        Item srcItem20= createItem(ns+"BioAssayDatum", "58_828", "");
+        srcItem20.addAttribute(new Attribute("normalised", "false"));
+        srcItem20.addReference(new Reference("designElement", "11_49"));
+
+        Item srcItem21= createItem(ns+"BioAssayDatum", "58_821", "");
+        srcItem21.addAttribute(new Attribute("normalised", "false"));
+        srcItem21.addReference(new Reference("designElement", "11_49"));
+
+        Item srcItem22= createItem(ns+"BioAssayDatum", "58_823", "");
+        srcItem22.addAttribute(new Attribute("normalised", "false"));
+        srcItem22.addReference(new Reference("designElement", "11_49"));
+
+        Item srcItem30=createItem(ns+"PhysicalArrayDesign", "20_69", "");
+        srcItem30.addCollection(new ReferenceList("featureGroups", new ArrayList(Arrays.asList(new Object[]{ "17_63"}))));
+
+        Item srcItem31=createItem(ns+"FeatureGroup", "17_63", "");
+        srcItem31.addCollection(new ReferenceList("features", new ArrayList(Arrays.asList(new Object[]{"11_49"}))));
+
+        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3, srcItem4, srcItem5, srcItem6, srcItem7, srcItem10, srcItem11, srcItem12, srcItem13, srcItem14, srcItem15, srcItem20, srcItem21, srcItem22, srcItem30, srcItem31 }));
 
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
 
         Item expectedItem = createItem(tgtNs+"CDNAClone", "0_11", "");
-        // expectedItem.addAttribute(new Attribute("identifier","LD04815"));
+        expectedItem.addAttribute(new Attribute("identifier","LD04815"));
         expectedItem.addCollection(new ReferenceList("synonyms", new ArrayList(Arrays.asList(new Object[]{"2_15", "2_16", "2_17"}))));
+        expectedItem.addCollection(new ReferenceList("microArrayExperimentalResults", new ArrayList(Arrays.asList(new Object[]{"58_821", "58_828", "58_823"}))));
 
-        Item expectedItem1 = createItem(tgtNs+"Gene", "-1_1", "");
+        Item expectedItem1 = createItem(tgtNs+"Gene", "2_14", "");
         expectedItem1.addAttribute(new Attribute("organismDbId", "FBgn0010173"));
+        expectedItem1.addCollection(new ReferenceList("microArrayExperimentalResults", new ArrayList(Arrays.asList(new Object[]{"58_821", "58_828", "58_823"}))));
 
         Item expectedItem2 = createItem(tgtNs+"Synonym", "2_15", "");
         expectedItem2.addAttribute(new Attribute("type", "accession"));
@@ -367,12 +415,33 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expectedItem7 = createItem(tgtNs+"Database", "3_9", "");
         expectedItem7.addAttribute(new Attribute("title", "embl"));
 
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2,expectedItem3, expectedItem4, expectedItem5, expectedItem6, expectedItem7 }));
+        Item expectedItem10 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_821", "");
+        expectedItem10.addAttribute(new Attribute("normalised", "false"));
+
+        Item expectedItem11 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_823", "");
+        expectedItem11.addAttribute(new Attribute("normalised", "false"));
+
+        Item expectedItem12 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_828", "");
+        expectedItem12.addAttribute(new Attribute("normalised", "false"));
+
+        Item expectedItem13=createItem(tgtNs+"Reporter", "12_50", "");
+        expectedItem13.addReference(new Reference("material", "0_11"));
+
+        Item expectedItem14 = createItem(tgtNs+"MicroArraySlideDesign", "20_69", "");
+
+        Item expectedItem15 = createItem(tgtNs + "ReporterLocation", "7_46", "");
+        expectedItem15.addAttribute(new Attribute("localX", "1"));
+        expectedItem15.addAttribute(new Attribute("localY", "3"));
+        expectedItem15.addAttribute(new Attribute("zoneX", "2"));
+        expectedItem15.addAttribute(new Attribute("zoneY", "5"));
+        expectedItem15.addReference(new Reference("design", "20_69"));
+        expectedItem15.addReference(new Reference("reporter", "12_50"));
+
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem1, expectedItem2,expectedItem3, expectedItem4, expectedItem5, expectedItem6, expectedItem7,expectedItem10,  expectedItem11,  expectedItem12,expectedItem13, expectedItem14, expectedItem15 }));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        // assertEquals(expected, translator.translateItem(srcItem));
         assertEquals(expected, tgtIw.getItems());
 
 
@@ -421,6 +490,15 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem.addAttribute(new Attribute("name", "LD14383"));
         srcItem.addCollection(new ReferenceList("immobilizedCharacteristics",
                    new ArrayList(Arrays.asList(new Object[]{"0_3"}))));
+        srcItem.addCollection(new ReferenceList("featureReporterMaps",
+                   new ArrayList(Arrays.asList(new Object[]{"7_41"}))));
+
+        Item srcItem1= createItem(ns+"FeatureReporterMap", "7_41", "");
+        srcItem1.addCollection(new ReferenceList("featureInformationSources",
+                    new ArrayList(Arrays.asList(new Object[]{"8_42"}))));
+
+        Item srcItem2= createItem(ns+"FeatureInformation", "8_42", "");
+        srcItem2.addReference(new Reference("feature","11_44"));
 
         Item srcItem3= createItem(ns+"BioSequence", "0_3", "");
         srcItem3.addReference(new Reference("type", "1_5"));
@@ -428,7 +506,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item srcItem4 =createItem(ns+"OntologyEntry", "1_5", "");
         srcItem4.addAttribute(new Attribute("value", "cDNA_clone"));
 
-        Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem, srcItem3, srcItem4}));
+        Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem, srcItem1,srcItem2, srcItem3, srcItem4}));
         Map itemMap = writeItems(srcItems);
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
                                                               getOwlModel(), tgtNs);
@@ -455,6 +533,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         //converter = new MageConverter( mockIw);
         converter.process(srcReader);
         converter.close();
+
         return mockIw.getItems();
 
     }
