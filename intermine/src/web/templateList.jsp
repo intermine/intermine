@@ -28,7 +28,20 @@
             <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
           </html:link>
           <c:if test="${showDelete == 1}">
-            <html:link action="/userTemplateAction?method=delete&name=${templateQuery.key}&type=${templateType}">
+            <%-- pull required messages --%>
+            <fmt:message var="confirmMessage" key="templateList.deleteMessage">
+             <fmt:param value="${templateQuery.key}"/>
+            </fmt:message>
+            <fmt:message var="linkTitle" key="templateList.delete">
+              <fmt:param value="${templateQuery.key}"/>
+            </fmt:message>
+            <%-- map of parameters to pass to the confirm action --%>
+            <jsp:useBean id="deleteParams" scope="page" class="java.util.TreeMap">
+              <c:set target="${deleteParams}" property="message" value="${confirmMessage}" />
+              <c:set target="${deleteParams}" property="confirmAction" value="/userTemplateAction?method=delete&name=${templateQuery.key}&type=${templateType}" />
+              <c:set target="${deleteParams}" property="cancelAction" value="/begin" />
+            </jsp:useBean>
+            <html:link action="/confirm" name="deleteParams" title="${linkTitle}">
               <img border="0" src="images/cross.png" alt="x"/>
             </html:link>
           </c:if>
