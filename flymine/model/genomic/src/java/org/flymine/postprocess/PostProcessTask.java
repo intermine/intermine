@@ -10,13 +10,17 @@ package org.flymine.postprocess;
  *
  */
 
+import java.io.File;
+import java.io.Writer;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.dataloader.IntegrationWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreFactory;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Transcript;
@@ -33,113 +37,131 @@ public class PostProcessTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
-    protected String type, alias, integrationWriter, ensemblDb;
-
+    protected String operation, objectStore, objectStoreWriter, ensemblDb;
+    protected File outputFile;
+    protected ObjectStoreWriter osw;
+    
     /**
-     * Set the ObjectStoreWriter alias
-     * @param alias name of the ObjectStoreWriter
+     * Sets the value of operation
+     *
+     * @param operation the operation to perform eg. 'Download publications'
      */
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     /**
-     * Set the type of post process operation.  Possible types:
-     * @param type the type of post process operation
+     * Sets the value of objectStore
+     *
+     * @param objectStore an objectStore alias for operations that require one
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setObjectStore(String objectStore) {
+        this.objectStore = objectStore;
     }
 
     /**
-     * Set the name of ensembl db:
-     * @param ensemblDb the name of database
+     * Sets the value of objectStoreWriter
+     *
+     * @param objectStoreWriter an objectStoreWriter alias for operations that require one
+     */
+    public void setObjectStoreWriter(String objectStoreWriter) {
+        this.objectStoreWriter = objectStoreWriter;
+    }
+
+    /**
+     * Sets the value of outputFile
+     *
+     * @param outputFile an output file for operations that require one
+     */
+    public void setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
+    }
+
+    /**
+     * Sets the value of ensemblDb
+     *
+     * @param ensemblDb a database alias
      */
     public void setEnsemblDb(String ensemblDb) {
         this.ensemblDb = ensemblDb;
     }
-    /**
-     * Set the alias of the integration writer, if necessary
-     * @param integrationWriter the alias
-     */
-    public void setIntegrationWriter(String integrationWriter) {
-        this.integrationWriter = integrationWriter;
+
+    private ObjectStoreWriter getObjectStoreWriter() throws Exception {
+        if (objectStoreWriter == null) {
+            throw new BuildException("objectStoreWriter attribute is not set");
+        }
+        if (osw == null) {
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(objectStoreWriter);
+        }
+        return osw;
     }
 
     /**
      * @see Task#execute
      */
     public void execute() throws BuildException {
-        if (type == null) {
-            throw new BuildException("type attribute is not set");
+        if (operation == null) {
+            throw new BuildException("operation attribute is not set");
         }
-        if (alias == null) {
-            throw new BuildException("alias attribute is not set");
-        }
-
-        ObjectStoreWriter osw = null;
         try {
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(alias);
-            if ("calculate-locations".equals(type)) {
-                CalculateLocations cl = new CalculateLocations(osw);
-                 LOG.info("Starting CalculateLocations.fixPartials()");
-                 cl.fixPartials();
-                 LOG.info("Starting CalculateLocations.createLocations()");
-                 cl.createLocations();
-            } else if ("create-references".equals(type)) {
-                CreateReferences cr = new CreateReferences(osw);
+            if ("calculate-locations".equals(operation)) {
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
+                LOG.info("Starting CalculateLocations.fixPartials()");
+                cl.fixPartials();
+                LOG.info("Starting CalculateLocations.createLocations()");
+                cl.createLocations();
+            } else if ("create-references".equals(operation)) {
+                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
-                LOG.info("Finsihed create-references");
-            } else if ("fetch-contig-sequences-human".equals(type)) {
-                StoreSequences ss = new StoreSequences(osw, ensemblDb);
+            } else if ("fetch-contig-sequences-human".equals(operation)) {
+                if (ensemblDb == null) {
+                    throw new BuildException("ensemblDb attribute is not set");
+                }
+                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), ensemblDb);
                 LOG.info("Starting StoreSequences.storeContigSequences()");
                 ss.storeContigSequences();
-                LOG.info("Finished StoreSequences.storeContigSequences()");
-            } else if ("transfer-sequences-chromosome".equals(type)) {
-                TransferSequences ts = new TransferSequences(osw);
+            } else if ("transfer-sequences-chromosome".equals(operation)) {
+                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
-                LOG.info("Finished transfer-sequences-chromosome");
-            } else if ("transfer-sequences".equals(type)) {
-                TransferSequences ts = new TransferSequences(osw);
+            } else if ("transfer-sequences".equals(operation)) {
+                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
                 LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
                 LOG.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
-                LOG.info("Finished transfer-sequences");
-            } else if ("make-spanning-locations".equals(type)) {
-                CalculateLocations cl = new CalculateLocations(osw);
+            } else if ("make-spanning-locations".equals(operation)) {
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOG.info("Starting CalculateLocations.createSpanningLocations()");
                 cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
-                LOG.info("Finished calculate-locations");
-            } else if ("update-publications".equals(type)) {
-                if (integrationWriter == null) {
-                    throw new BuildException("integrationWriter attribute is not set");
+            } else if ("update-publications".equals(operation)) {
+                if (objectStore == null) {
+                    throw new BuildException("objectStore attribute is not set");
                 }
-                IntegrationWriter iw =
-                    IntegrationWriterFactory.getIntegrationWriter("integration.production");
-                iw.setIgnoreDuplicates(true);
+                if (outputFile == null) {
+                    throw new BuildException("outputFile attribute is not set");
+                }
                 LOG.info("Starting update-publications");
-                new UpdatePublications(iw).execute();
-                LOG.info("Finished update-publications");
-            } else if ("add-licences".equals(type)) {
+                Writer writer = new BufferedWriter(new FileWriter(outputFile));
+                new UpdatePublications(ObjectStoreFactory.getObjectStore(objectStore), writer)
+                    .execute();
+                writer.close();
+            } else if ("add-licences".equals(operation)) {
                 LOG.info("Starting add-licences");
-                new AddLicences(osw).execute();
-                LOG.info("Finished add-licences");
-            } else if ("update-orthologues".equals(type)) {
-                UpdateOrthologues uo = new UpdateOrthologues(osw);
+                new AddLicences(getObjectStoreWriter()).execute();
+            } else if ("update-orthologues".equals(operation)) {
+                UpdateOrthologues uo = new UpdateOrthologues(getObjectStoreWriter());
                 LOG.info("Starting UpdateOrthologues.process()");
                 uo.process();
-                CreateReferences cr = new CreateReferences(osw);
+                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
                 cr.populateOrthologuesCollection();
-                LOG.info("Finsihed update-orthologues");
             } else {
-                throw new BuildException("unknown type: " + type);
+                throw new BuildException("unknown operation: " + operation);
             }
         } catch (BuildException e) {
             throw e;
@@ -147,7 +169,9 @@ public class PostProcessTask extends Task
             throw new BuildException(e);
         } finally {
             try {
-                osw.close();
+                if (osw != null) {
+                    osw.close();
+                }
             } catch (Exception e) {
                 throw new BuildException(e);
             }

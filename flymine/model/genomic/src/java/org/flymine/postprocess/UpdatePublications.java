@@ -10,27 +10,29 @@ package org.flymine.postprocess;
  *
  */
 
+import java.io.Writer;
 import java.io.Reader;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.dataloader.IntegrationWriterFactory;
-import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -38,10 +40,12 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.SAXParser;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.Attribute;
 
-import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.Publication;
-import org.flymine.model.genomic.Author;
 
 import org.apache.log4j.Logger;
 
@@ -57,16 +61,17 @@ public class UpdatePublications
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=";
     // number of summaries to retrieve per request
     protected static final int BATCH_SIZE = 50;
-    // source name for IntegrationWriter
-    protected static final String SOURCE_NAME = "pubmed";
-    protected IntegrationWriter iw;
+    protected ObjectStore os;
+    protected Writer writer;
 
     /**
      * Constructor
-     * @param iw the relevent IntegrationWriter
+     * @param os ObjectStore from which to retrieve skeleton publications
+     * @param writer the writer to which the publication items are written as XML
      */
-    public UpdatePublications(IntegrationWriter iw) {
-        this.iw = iw;
+    public UpdatePublications(ObjectStore os, Writer writer) {
+        this.os = os;
+        this.writer = writer;
     }
 
     /**
@@ -74,15 +79,16 @@ public class UpdatePublications
      * @throws Exception if an error occurs
      */
     public void execute() throws Exception {
-        Map publications = new HashMap();
+        Set pubMedIds = new HashSet();
+        Set toStore = new HashSet();
         for (Iterator i = getPublications().iterator(); i.hasNext();) {
-            Publication publication = (Publication) i.next();
-            publications.put(publication.getPubMedId(), publication);
-            if (publications.size() == BATCH_SIZE || !i.hasNext()) {
-                SAXParser.parse(new InputSource(getReader(publications.keySet())),
-                                new Handler(publications));
-                storePublications(publications.values());
-                publications = new HashMap();
+            pubMedIds.add(((Publication) i.next()).getPubMedId());
+            if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
+                SAXParser.parse(new InputSource(getReader(pubMedIds)),
+                                new Handler(toStore));
+                writer.write(FullRenderer.render(toStore));
+                pubMedIds.clear();
+                toStore.clear();
             }
         }
     }
@@ -97,7 +103,7 @@ public class UpdatePublications
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        return new SingletonResults(q, iw.getObjectStore(), iw.getObjectStore().getSequence());
+        return new SingletonResults(q, os, os.getSequence());
     }
 
     /**
@@ -112,41 +118,21 @@ public class UpdatePublications
     }
 
     /**
-     * Store a collection of publications
-     * @param publications the publications
-     * @throws ObjectStoreException if an error occurs
-     */
-    protected void storePublications(Collection publications) throws ObjectStoreException {
-        Source mainSource = iw.getMainSource(SOURCE_NAME);
-        Source skeletonSource = iw.getSkeletonSource(SOURCE_NAME);
-        iw.beginTransaction();
-        for (Iterator i = publications.iterator(); i.hasNext();) {
-            Publication publication = (Publication) i.next();
-            iw.store(publication, mainSource, skeletonSource);
-            for (Iterator j = publication.getAuthors().iterator(); j.hasNext();) {
-                iw.store((InterMineObject) j.next(), mainSource, skeletonSource);
-            }
-        }
-        iw.commitTransaction();
-        iw.close();
-    }
-
-    /**
      * Extension of DefaultHandler to handle an esummary for a publication
      */
-    static class Handler extends DefaultHandler
+    class Handler extends DefaultHandler
     {
-        Map publications;
-        Publication publication;
+        Set toStore;
+        MyItem publication;
         String name;
         StringBuffer characters;
 
         /**
          * Constructor
-         * @param publications Map from pubMedId to publication that needs to be updated
+         * @param toStore a set in which the new publication items are stored
          */
-        public Handler(Map publications) {
-            this.publications = publications;
+        public Handler(Set toStore) {
+            this.toStore = toStore;
         }
          
         /**
@@ -176,26 +162,27 @@ public class UpdatePublications
          */
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if ("Id".equals(name)) {
-                publication = (Publication) publications.get(characters.toString());
-                publication.setAuthors(new ArrayList());
+                publication = new MyItem("Publication");
+                toStore.add(publication);
+                publication.setAttribute("pubMedId", characters.toString());
             } else if ("PubDate".equals(name)) {
-                publication.setYear(new Integer(characters.toString().split(" ")[0]));
+                publication.setAttribute("year", characters.toString().split(" ")[0]);
             } else if ("Source".equals(name)) {
-                publication.setJournal(characters.toString());
+                publication.setAttribute("journal", characters.toString());
             } else if ("Title".equals(name)) {
-                publication.setTitle(characters.toString());
+                publication.setAttribute("title", characters.toString());
             } else if ("Volume".equals(name)) {
-                publication.setVolume(characters.toString());
+                publication.setAttribute("volume", characters.toString());
             } else if ("Issue".equals(name)) {
-                publication.setIssue(characters.toString());
+                publication.setAttribute("issue", characters.toString());
             } else if ("Pages".equals(name)) {
-                publication.setPages(characters.toString());
+                publication.setAttribute("pages", characters.toString());
             } else if ("Author".equals(name)) {
-                Author author = (Author)
-                    DynamicUtil.createObject(Collections.singleton(Author.class));
-                author.setName(characters.toString());
-                author.getPublications().add(publication);
-                publication.getAuthors().add(author);
+                MyItem author = new MyItem("Author");
+                toStore.add(author);
+                author.setAttribute("name", characters.toString());
+                author.addReference("publications", publication);
+                publication.addReference("authors", author);
             }
             name = null;
         }
@@ -207,17 +194,64 @@ public class UpdatePublications
      * @throws Exception if an error occurs
      */
     public static void main(String[] args) throws Exception {
-        IntegrationWriter iw =
-            IntegrationWriterFactory.getIntegrationWriter("integration.production");
-        iw.setIgnoreDuplicates(true);
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.production");
         List ids = new ArrayList();
         ids.add("10021333");
+        ids.add("10021351");
         for (Iterator i = ids.iterator(); i.hasNext();) {
             Publication publication = (Publication)
                 DynamicUtil.createObject(Collections.singleton(Publication.class));
             publication.setPubMedId((String) i.next());
-            iw.store(publication, iw.getMainSource("rnai"), iw.getSkeletonSource("rnai"));
+            osw.store(publication);
         }
-        new UpdatePublications(iw).execute();
+        osw.close();
+        Writer writer = new BufferedWriter(new FileWriter("items.xml"));
+        new UpdatePublications(ObjectStoreFactory.getObjectStore("os.production"), writer)
+            .execute();
+        writer.close();
+    }
+}
+
+/**
+ * Convenience subclass of Item
+ * @author Mark Woodbridge
+ */
+class MyItem extends Item
+{
+    static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
+    static int id;
+
+    /**
+     * Constructor
+     * @param className the class name of the item
+     */
+    MyItem(String className) {
+        super();
+        setIdentifier("-1_" + (id++));
+        setClassName(TARGET_NS + className);
+        setImplementations("");
+    }
+
+    /**
+     * Add an attribute to this item
+     * @param name the name of the attribute
+     * @param value the value of the attribute
+     */
+    void setAttribute(String name, String value) {
+        addAttribute(new Attribute(name, value));
+    }
+
+    /**
+     * Add a reference to a collection of this item
+     * @param name the name of the collection
+     * @param reference the item to add to the collection
+     */
+    void addReference(String name, Item reference) {
+        ReferenceList list = getCollection(name);
+        if (list == null) {
+            list = new ReferenceList(name);
+            addCollection(list);
+        }
+        list.addRefId(reference.getIdentifier());
     }
 }
