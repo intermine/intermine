@@ -96,7 +96,6 @@ public abstract class ViewHelper
             String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
             ResultsInfo resultsInfo = pr.getResults().getInfo();
             SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
-            request.setAttribute("savedQueryName", queryName);
         } catch (ObjectStoreException e) {
             ActionMessages actionMessages = new ActionMessages();
             ActionError error = new ActionError("errors.query.objectstoreerror");
