@@ -95,7 +95,6 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     dos.writeShort(-1);
                     dos.flush();
                     retval.add(new FlushJobPostgresCopyImpl(copyManager, sql, baos.toByteArray()));
-                    table.getIdsToInsert().clear();
                 }
             } catch (IOException e) {
                 throw new SQLException(e.toString());
@@ -187,6 +186,51 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             }
         } else {
             throw new IllegalArgumentException("Cannot store values of type " + o.getClass());
+        }
+    }
+
+    /**
+     * @see BatchWriterSimpleImpl#doIndirectionInserts
+     */
+    protected void doIndirectionInserts(String name,
+            IndirectionTableBatch table) throws SQLException {
+        if (!table.getRowsToInsert().isEmpty()) {
+            try {
+                CopyManager copyManager = null;
+                if (con instanceof PGConnection) {
+                    copyManager = ((PGConnection) con).getCopyAPI();
+                }
+                if (copyManager == null) {
+                    LOG.warn("Database is incompatible with the PostgreSQL COPY command - falling"
+                            + " back to prepared statements");
+                    super.doIndirectionInserts(name, table);
+                } else {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    DataOutputStream dos = new DataOutputStream(baos);
+                    dos.writeBytes("PGCOPY\n");
+                    dos.writeByte(255);
+                    dos.writeBytes("\r\n");
+                    dos.writeByte(0); // Signature done
+                    dos.writeInt(0); // Flags - we aren't supplying OIDS
+                    dos.writeInt(0); // Length of header extension
+                    Iterator insertIter = table.getRowsToInsert().iterator();
+                    while (insertIter.hasNext()) {
+                        Row row = (Row) insertIter.next();
+                        dos.writeShort(2);
+                        dos.writeInt(4);
+                        dos.writeInt(row.getLeft());
+                        dos.writeInt(4);
+                        dos.writeInt(row.getRight());
+                    }
+                    String sql = "COPY " + name + " (" + table.getLeftColName() + ", "
+                        + table.getRightColName() + ") FROM STDIN BINARY";
+                    dos.writeShort(-1);
+                    dos.flush();
+                    retval.add(new FlushJobPostgresCopyImpl(copyManager, sql, baos.toByteArray()));
+                }
+            } catch (IOException e) {
+                throw new SQLException(e.toString());
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ public interface BatchWriter
      * of jobs to do the actual flushing.
      *
      * @param con the SQL connection
-     * @param tables a Map from table name to TableBatch
+     * @param tables a Map from table name to Table
      * @return a List of jobs to run to actually do the flushing
      * @throws SQLException if there is an underlying DB problem
      */

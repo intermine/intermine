@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  *
  * @author Matthew Wakeling
  */
-public class TableBatch
+public class TableBatch implements Table
 {
     private static final Logger LOG = Logger.getLogger(TableBatch.class);
 
