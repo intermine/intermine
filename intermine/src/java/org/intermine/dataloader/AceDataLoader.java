@@ -14,6 +14,8 @@ import org.acedb.IntValue;
 import org.acedb.FloatValue;
 import org.acedb.Reference;
 
+import org.acedb.staticobj.StaticAceObject;
+
 import java.lang.reflect.Field;
 
 import org.flymine.FlyMineException;
@@ -88,7 +90,7 @@ public class AceDataLoader extends AbstractDataLoader
             throw new FlyMineException(e);
         }
 
-        processAceNode(aceObject, currentObject);
+        processAceNode(aceObject, currentObject, model);
         return currentObject;
     }
 
@@ -98,18 +100,29 @@ public class AceDataLoader extends AbstractDataLoader
      *
      * @param aceNode the AceNode to process
      * @param currentObject the object in which to set field
+     * @param model the model this object comes from, or null if AceObject name is fully qualified
      *
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected static void processAceNode(AceNode aceNode, Object currentObject)
+    protected static void processAceNode(AceNode aceNode, Object currentObject, String model)
         throws AceException, FlyMineException {
         String nodeType;
         Object nodeValue;
         String nodeName;
         if (aceNode instanceof Reference) {
+            // nodeName is the name of the field in currentObject
             nodeName = getName(aceNode);
+            // nodeValue is the identifier of the referred to object
             nodeValue = aceNode.getName();
+            // nodeClass is the class of the referred to object, and is part of the target AceURL
+            String nodeClass = ((Reference) aceNode).getTarget().getPath();
+            nodeClass = nodeClass.substring(1, nodeClass.indexOf("/", 1));
+            // Set up a dummy AceObject to encapsulate this info and convert to proper Object
+            AceObject referredToAceObject = new StaticAceObject((String) nodeValue,
+                                                                null, nodeClass);
+            Object referredToObject = processAceObject(referredToAceObject, model);
+            setField(currentObject, nodeName, referredToObject);
         } else if (aceNode instanceof FloatValue) {
             nodeName = getName(aceNode);
             nodeValue = new Float(((FloatValue) aceNode).toFloat());
@@ -129,12 +142,17 @@ public class AceDataLoader extends AbstractDataLoader
             if ((nodeField != null) && (nodeField.getType() == Boolean.class)) {
                 setField(currentObject, nodeName, Boolean.TRUE);
             }
+
+            // Is it a hash? If it is, currentObject will have a field of this name
+            // and node will not have any values hanging off it
+            // TODO: this logic
+
         }
         // Now iterate through all the child nodes
         if (aceNode instanceof AceNode) {
             Iterator objIter = aceNode.iterator();
             while (objIter.hasNext()) {
-                processAceNode((AceNode) objIter.next(), currentObject);
+                processAceNode((AceNode) objIter.next(), currentObject, model);
             }
         } else {
             throw new FlyMineException("Node type " + aceNode.getClass() + " not dealt with");
@@ -164,10 +182,10 @@ public class AceDataLoader extends AbstractDataLoader
     }
 
     /**
-     * Get the name of an AceNode, or of the parent if it is a data node
+     * Get the name of the parent of an AceNode, with suffix if a multi-valued tag
      *
      * @param aceNode the node
-     * @return the name of the node, or the parent's name if this node is a data node
+     * @return the name of the parent of the node, or the parent's name if this node is a data node
      */
     protected static String getName(AceSet aceNode) {
         String name = aceNode.getParent().getName();

@@ -17,5 +17,12 @@ public class AceTestObject {
 
     public Boolean onOrOff;
 
+    public AceTestObject reference;
+    public Collection references = new HashSet();
+
+    public AceTestObject hashValue;
+
+    public Collection hashValues = new HashSet();
+
 }
 
