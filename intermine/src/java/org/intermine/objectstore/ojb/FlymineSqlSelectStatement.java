@@ -109,6 +109,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
     private DescriptorRepository dr;
     private boolean isSubQuery;
     private boolean isAConstraint;
+    private boolean count;
 
     private boolean needWhereComma;
     private String whereText;
@@ -135,6 +136,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
         this.dr = dr;
         this.isSubQuery = false;
         this.isAConstraint = false;
+        this.count = false;
     }
 
     /**
@@ -150,6 +152,26 @@ public class FlymineSqlSelectStatement implements SqlStatement
         this.dr = dr;
         this.isSubQuery = true;
         this.isAConstraint = isAConstraint;
+        this.count = false;
+    }
+
+    /**
+     * Constructor requires a FlyMine Query and associated array of ClassDescriptors,
+     * Should be a ClassDescriptor for each class in FROM clause of query.  Flag to force
+     * a COUNT(*) of query.
+     *
+     * @param query a flymine query
+     * @param dr DescriptorRepository for the database
+     * @param isAConstraint true if this is a query that is part of a subquery constraint
+     * @param count if true create a statement that will run a COUNT(*) on query
+     */
+    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint,
+                                     boolean count) {
+        this.query = query;
+        this.dr = dr;
+        this.isSubQuery = false;
+        this.isAConstraint = isAConstraint;
+        this.count = count;
     }
 
     /**
@@ -828,9 +850,22 @@ public class FlymineSqlSelectStatement implements SqlStatement
         indirectionTables = new HashMap();
         buildFromComponent();
         buildWhereClause();
-        return "SELECT " + (query.isDistinct() ? "DISTINCT " : "") + buildSelectComponent()
+        if (count) {
+            if ((query.getGroupBy().size() > 0) || query.isDistinct()) {
+                // need to perform a COUNT(*) with this entire query as a subquery
+                String temp = "SELECT COUNT(*) FROM ("
+                    + (new FlymineSqlSelectStatement(query, dr, false).getStatement())
+                    + ") AS count_";
+                return temp;
+            } else {
+                // no group by, not distinct -> remove select list and add COUNT(*), no ORDER BY
+                return "SELECT COUNT(*) AS count_ FROM " + fromText + whereText;
+            }
+        } else {
+            return "SELECT " + (query.isDistinct() ? "DISTINCT " : "") + buildSelectComponent()
             + " FROM " + fromText + whereText + buildGroupBy()
             + (isSubQuery ? "" : buildOrderBy());
+        }
     }
 
 }
