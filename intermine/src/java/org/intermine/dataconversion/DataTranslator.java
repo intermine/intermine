@@ -606,13 +606,13 @@ public class DataTranslator
         String namespace = args[4];
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
+        ItemReader sourceItemReader = new ObjectStoreItemReader(osSrc);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
         ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new DataTranslator(srcItemReader, model, namespace);
+        DataTranslator dt = new DataTranslator(sourceItemReader, model, namespace);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();

@@ -76,9 +76,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             int maxSize = Integer.parseInt(trackerMaxSizeString);
             int commitSize = Integer.parseInt(trackerCommitSizeString);
             Database db = ((ObjectStoreWriterInterMineImpl) writer).getDatabase();
-            DataTracker dataTracker = new DataTracker(db, maxSize, commitSize);
+            DataTracker newDataTracker = new DataTracker(db, maxSize, commitSize);
 
-            return new IntegrationWriterDataTrackingImpl(writer, dataTracker);
+            return new IntegrationWriterDataTrackingImpl(writer, newDataTracker);
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException("Problem instantiating"
                     + " IntegrationWriterDataTrackingImpl " + props.getProperty("alias"));
