@@ -1169,13 +1169,13 @@
   <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
-                                           build-ensembl-drosophila-production,
-                                           build-ensembl-anopheles-production,
                                            build-orthologues-production,
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
-                                           load-static">
+                                           load-static,
+                                           build-ensembl-drosophila-production,
+                                           build-ensembl-anopheles-production">
 
     <!-- analyse database -->
     <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
