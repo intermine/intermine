@@ -10,6 +10,7 @@ options {
     exportVocab = Sql;
     k = 6;
     buildAST = true;
+    defaultErrorHandler = false;
 }
 
 tokens {
@@ -286,6 +287,7 @@ options {
     exportVocab = Sql;
     k = 6;
     buildAST = true;
+    defaultErrorHandler = false;
 }
 
 start_rule: sql (SEMI!)?;
@@ -483,6 +485,7 @@ options {
     caseSensitive = false;
     caseSensitiveLiterals = false;
     charVocabulary = '\3'..'\177';
+    defaultErrorHandler = false;
 }
 
 IDENTIFIER options { testLiterals=true; } :
