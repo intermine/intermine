@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
+  <entry dataset="Swiss-Prot" created="2001-10-16" modified="2005-01-25">
+    <accession>Q9W0Y1</accession>
+    <name>TINA1_DROME</name>
+    <protein>
+      <name>Troponin C-akin-1 protein</name>
+    </protein>
+    <gene>
+      <name type="primary">Tina-1</name>
+      <name type="ORF">CG2803</name>
+    </gene>
+    <organism key="1">
+      <name type="scientific">Drosophila melanogaster</name>
+      <name type="common">Fruit fly</name>
+      <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+      <lineage>
+        <taxon>Drosophilidae</taxon>
+        <taxon>Drosophila</taxon>
+      </lineage>
+    </organism>
+    <dbReference type="FlyBase" id="FBgn0035083" key="22">
+      <property type="gene designation" value="Tina-1"/>
+    </dbReference>
+  </entry>
+  <entry dataset="Swiss-Prot" created="2001-10-16" modified="2005-01-25">
+    <accession>Q12345</accession>
+    <name>DAVE1_DROME</name>
+    <protein>
+      <name>Troponin C-akin-1 protein</name>
+    </protein>
+    <gene>
+      <name type="primary">Dave-1</name>
+      <name type="ORF">CG2803</name>
+    </gene>
+    <organism key="1">
+      <name type="scientific">Drosophila melanogaster</name>
+      <name type="common">Fruit fly</name>
+      <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+      <lineage>
+        <taxon>Drosophilidae</taxon>
+        <taxon>Drosophila</taxon>
+      </lineage>
+    </organism>
+    <dbReference type="FlyBase" id="FBgn0012345" key="22">
+      <property type="gene designation" value="Dave-1"/>
+    </dbReference>
+  </entry>
+</uniprot>
