@@ -119,7 +119,7 @@ public class Query implements SQLStringable
 
             AST ast = parser.getAST();
             if (ast == null) {
-                throw (new IllegalArgumentException("Invalid SQL string"));
+                throw (new IllegalArgumentException("Invalid SQL string " + sql));
             }
             AST oldAst;
             do {
@@ -128,7 +128,7 @@ public class Query implements SQLStringable
                 treeparser.start_rule(ast);
                 ast = treeparser.getAST();
                 if (ast == null) {
-                    throw (new IllegalArgumentException("Invalid SQL string"));
+                    throw (new IllegalArgumentException("Invalid SQL string " + sql));
                 }
             } while (!oldAst.equalsList(ast));
 
