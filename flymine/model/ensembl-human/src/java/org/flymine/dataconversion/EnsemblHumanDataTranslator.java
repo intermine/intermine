@@ -511,7 +511,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     simpleFeature = createItem(tgtNs + "CpGIsland", "");
                 } else if (name.equals("Eponine")) {
                     simpleFeature = createItem(tgtNs + "TranscriptionStartSite", "");
-                } else if (name.equals("FirstEF")) {
+                    // } else if (name.equals("FirstEF")) {
                     //5 primer exon and promoter including coding and noncoding
                 }
                 simpleFeature.addReference(getOrgRef());
