@@ -42,7 +42,7 @@ public class GFF3ConverterTask extends Task
 
     protected FileSet fileSet;
     protected String converter, targetAlias,
-        seqClsName, orgAbbrev, infoSourceTitle, model;
+        seqClsName, orgAbbrev, infoSourceTitle, model, handlerClassName;
     protected GFF3Parser parser;
 
      /**
@@ -104,6 +104,13 @@ public class GFF3ConverterTask extends Task
         this.model = model;
     }
 
+    /**
+     * Set the name of GFF3RecordHandler class to use when processing.
+     * @param handlerClassName the name of the handler
+     */
+    public void setHandlerClassName(String handlerClassName) {
+        this.handlerClassName = handlerClassName;
+    }
 
 
     /**
@@ -132,7 +139,6 @@ public class GFF3ConverterTask extends Task
             throw new BuildException("model attribute not set");
         }
 
-
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         try {
@@ -140,9 +146,23 @@ public class GFF3ConverterTask extends Task
             writer = new ObjectStoreItemWriter(osw);
             parser = new GFF3Parser();
             Model tgtModel = Model.getInstanceByName(model);
+            GFF3RecordHandler handler;
+            if (handlerClassName == null) {
+                handler = new GFF3RecordHandler(tgtModel);
+            } else {
+                Class handlerClass;
+                try {
+                    handlerClass = Class.forName(handlerClassName);
+                } catch (ClassNotFoundException e) {
+                    throw new BuildException("Class not found for " + handlerClassName, e);
+                }
+                Class [] types = new Class[] {Model.class};
+                Object [] args = new Object[] {tgtModel};
+                handler = (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
+            }
             GFF3Converter gff3converter =
                 new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle,
-                                  tgtModel, new GFF3RecordHandler(tgtModel));
+                                  tgtModel, handler);
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
