@@ -36,7 +36,7 @@ public class DisplayableResultsTest extends TestCase
     }
 
 
-    public void testEnd() {
+    public void testEnd() throws Exception {
         DisplayableResults dr = new DisplayableResults(results);
         dr.setEnd(10);
         assertEquals(10, dr.getEnd());
