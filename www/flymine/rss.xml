@@ -30,11 +30,20 @@
       <title>FlyMine 1.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
-        FlyMine 1.0 is now publically available at &lt;a
-        href="http://www.flymine.org/release-1.0/"&gt;
-        http://www.flymine.org/release-1.0/&lt;/a&gt;.
+        Initial public release of FlyMine.
       </description>
       <pubDate>Mon, 01 Nov 2004 11:39:21 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 1.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        FlyMine 1.1 is now publically available at &lt;a
+        href="http://www.flymine.org/release-1.1/"&gt;
+        http://www.flymine.org/release-1.1/&lt;/a&gt;.
+      </description>
+      <pubDate>Fri, 18 Feb 2005 20:16:58 GMT</pubDate>
     </item>
     
   </channel>
