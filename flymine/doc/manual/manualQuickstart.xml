@@ -64,7 +64,7 @@
      </section>
      
 	  <entry>
-	      <inlinegraphic fileref="../tutorials/classSelection1" format="PNG"/>
+	      <inlinegraphic fileref="../tutorials/classSelection1.png"/>
 	  </entry>
 
 
@@ -88,7 +88,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="queryBuilder1" format="PNG"/>
+	      <inlinegraphic fileref="queryBuilder1.png"/>
 	  </entry>
  
 
@@ -105,7 +105,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="modelBrowser2" format="PNG"/>
+	      <inlinegraphic fileref="modelBrowser2.png"/>
 	  </entry>
 
 
@@ -120,7 +120,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="constraintsList1" format="PNG"/>
+	      <inlinegraphic fileref="constraintsList1.png"/>
 	  </entry>
          
 
@@ -136,7 +136,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="fieldsSelected1" format="PNG"/>
+	      <inlinegraphic fileref="fieldsSelected1.png"/>
 	  </entry>
  
 
@@ -164,7 +164,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="../tutorials/resultsQuery1" format="PNG"/>
+	      <inlinegraphic fileref="../tutorials/resultsQuery1.png"/>
 	  </entry>
 
  

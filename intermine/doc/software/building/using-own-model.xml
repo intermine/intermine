@@ -30,7 +30,7 @@
     <tbody>
         <row>
 	  <entry>
-	      <inlinegraphic fileref="argotype.gif" format="GIF"/>
+	      <inlinegraphic fileref="argotype.gif"/>
 	  </entry>
 	</row>
     </tbody>
@@ -55,7 +55,7 @@
     <tbody>
         <row>
 	  <entry>
-	      <inlinegraphic fileref="build.gif" format="GIF"/>
+	      <inlinegraphic fileref="build.gif"/>
 	  </entry>
 	</row>
     </tbody>
@@ -68,7 +68,7 @@
     <tbody>
         <row>
 	  <entry>
-	      <inlinegraphic fileref="insert.gif" format="GIF"/>
+	      <inlinegraphic fileref="insert.gif"/>
 	  </entry>
 	</row>
     </tbody>

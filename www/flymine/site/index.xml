@@ -1,104 +1,32 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
 <article>
-  <para>
-    The FlyMine project is building an integrated database of
-    genomic, expression and protein data for
-    <firstterm>Drosophila</firstterm> and <firstterm>Anopheles</firstterm>
-    and making this available to the worldwide research community via web
-    and bioinformatics interfaces. The FlyMine project is based at the
+  <para>The FlyMine project is building an integrated database of genomic, expression and protein data for <firstterm>Drosophila</firstterm> and <firstterm>Anopheles</firstterm> and making this available to the worldwide research community via web and bioinformatics interfaces.</para>
+
+  <para>An initial release of the database is <ulink url="/begin.do">now accessible</ulink>, accompanied by full <ulink url="doc/index.xml">documentation</ulink>. For more information about FlyMine please consult the more detailed <ulink url="introduction.xml">introduction</ulink>.</para>
+
+<para>FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>, incorporating the following data sources:
+  <itemizedlist>
+      <listitem>Genome Annotation for D. melanogaster and A. gambiae from <ulink url="http://www.ensembl.org">Ensembl</ulink></listitem> 
+      
+      <listitem>Orthologues between D. melanogaster and A. gambiae from <ulink url="http://www.ensembl.org">Ensembl</ulink></listitem>
+      
+      <listitem>Orthologues and Paralogues between D. melanogaster and C. elegans from <ulink url="http://inparanoid.cgb.ki.se/index.html">inParanoid</ulink></listitem> 
+
+      <listitem>2-hybrid protein-protein interactions for D. melanogaster: Curagen set (Giot et al (2003) Science 302 1727-1736) and <ulink url= "http://pim.hybrigenics.com/pimrider/nologin/prhome.html">Hybrigenics</ulink> set</listitem>
+
+      <listitem>2-hybrid protein-protein interactions for C. elegans (Li et al (2004) Science 303 540-543)</listitem> 
+      
+      <listitem>RNAi phenotypes for C. elegans from <ulink url="http://www.wormbase.org">WormBase</ulink></listitem>
+      
+      <listitem>GO Ontology</listitem>
+    </itemizedlist>
+  </para>
+
+  <para>The FlyMine project is based at the
     <ulink url="http://www.gen.cam.ac.uk">Department of Genetics</ulink>,
     <ulink url="http://www.cam.ac.uk">University of Cambridge</ulink> and
     is a collaboration between the Genetics and 
     <ulink url="http://www.bioc.cam.ac.uk">Biochemistry</ulink> departments of
     the University of Cambridge.
   </para>
-
-<index>
-<section id = "frontPageIntroduction">
-     <heading>The FlyMine database project</heading>
-        <item><ulink url = "introduction.xml">Introduction </ulink>to the project</item>
-        <item>New Users:<ulink url = "doc/manual/manualQuickstart.xml"> quick start guide</ulink></item> 
-
-</section>
-
-<section>
-      <heading>Query The Database</heading>
-      <item>
-        Start a new query with a <ulink url="/classChooser.do">particular class</ulink>
-      </item>
-      <item>
-        Start a query using a <ulink url="/history.do">previous query</ulink>
-      </item>
-      <item>
-        Search using a list of<ulink url="/bagBuild.do"> identifiers</ulink>
-      </item>
-      <item>
-        Use a <ulink url="/examples.do">query example</ulink>
-      </item>
-      <item>
-        Perform a query using <ulink url="/iqlQuery.do">IQL (advanced usage)</ulink>
-      </item>
-    </section>
-
-
-   
-    <section>
-      <heading>Help</heading>
-      <item>
-        FlyMine <ulink url="doc/manual/manualQuickstart.xml">quick start guide</ulink>
-      </item>
-      <item>
-        <ulink url="doc/tutorials/index.xml">Tutorials</ulink> - step-by-step guide to queries
-      </item>
-      <item>
-        <ulink url="/examples.do">Query examples</ulink>
-      </item>
-      <item>
-        <ulink url="doc/manual/index.xml">User Manual</ulink>
-      </item>
-    </section>
-
-
-
-
-
-    <section>
-      <heading>Current Data Sources</heading>
-      <item>
-        Genome Annotation for D. melanogaster and A. gambiae from Ensembl
-        (<ulink url= "http://www.ensembl.org"></ulink>)
-      </item> 
-      
-      <item>
-        Orthologues between D. melanogaster and A. gambiae from Ensembl
-        (<ulink url= "http://www.ensembl.org"></ulink>)
-      </item>
-      
-      <item>
-        Orthologues and Paralogues between D. melanogaster and C. elegans from
-        inParanoid (<ulink url= "http://inparanoid.cgb.ki.se/index.html"></ulink>)
-      </item> 
-
-      <item>
-        2-hybrid protein-protein interactions for D. melanogaster:  Curagen
-        set (Giot et al (2003) Science 302 1727-1736) and Hybrigenics set
-        (<ulink url= "http://pim.hybrigenics.com/pimrider/nologin/prhome.html"></ulink>)
-      </item>
-
-      <item>
-        2-hybrid protein-protein interactions for C. elegans: (Li et al
-        (2004) Science 303 540-543)
-      </item> 
-      
-      <item>
-        RNAi phenotypes for C. elegans from WormBase (<ulink url="http://www.wormbase.org"></ulink>)
-      </item>
-      
-      <item>GO Ontology</item>
-    </section>
-    
-    </index>
- 
+  
 </article>
