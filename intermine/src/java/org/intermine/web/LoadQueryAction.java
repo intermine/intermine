@@ -51,20 +51,13 @@ public class LoadQueryAction extends DispatchAction
         Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
         String queryName = request.getParameter("name");
 
-        org.intermine.web.LogMe.log("i", "queryName: " + queryName);
-        org.intermine.web.LogMe.log("i", "queryName: " + exampleQueries);
-
         if (exampleQueries != null && exampleQueries.containsKey(queryName)) {
-            org.intermine.web.LogMe.log("i", "queryName not null: " + queryName);
-
             QueryInfo queryInfo = (QueryInfo) exampleQueries.get(queryName);
             session.setAttribute(Constants.QUERY, queryInfo.getQuery());
             session.setAttribute(Constants.VIEW, queryInfo.getView());
 
             session.removeAttribute("path");
             session.removeAttribute("prefix");
-
-            org.intermine.web.LogMe.log("i", "queryInfo: " + queryInfo);
 
             return mapping.findForward("query");
         } else {
