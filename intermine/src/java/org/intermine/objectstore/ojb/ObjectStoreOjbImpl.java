@@ -12,9 +12,8 @@ import org.apache.ojb.broker.ta.PersistenceBrokerFactoryFactory;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.ExplainResult;
-import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreLimitReachedException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
@@ -26,14 +25,11 @@ import org.flymine.util.PropertiesUtil;
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class ObjectStoreOjbImpl implements ObjectStore
+public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
 {
     protected static Map instances = new HashMap();
     protected Database db;
     protected String model;
-    protected long maxTime;
-    protected int maxLimit;
-    protected int maxOffset;
     protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
 
     /**
@@ -133,17 +129,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int limit) throws ObjectStoreException {
-        // check limit and offset are valid
-        if (start > maxOffset) {
-            throw (new ObjectStoreLimitReachedException("start parameter (" + start
-                                            + ") is greater than permitted maximum ("
-                                            + maxOffset + ")"));
-        }
-        if (limit > maxLimit) {
-            throw (new ObjectStoreLimitReachedException("number of rows required (" + limit
-                                            + ") is greater than permitted maximum ("
-                                            + maxLimit + ")"));
-        }
+        checkStartLimit(start, limit);
 
         PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
         ExplainResult explain = pb.explain(q, start, limit);
