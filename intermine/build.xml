@@ -874,7 +874,7 @@
       </fileset>
     </chmod>
     <exec executable="rsync">
-      <arg line="-e ssh -Cavz --delete ${dist.webapp}/flymine.war ${webapp.serverlocation}/" />
+      <arg line="-e ssh -Cavz --delete ${dist.webapp}/flymine.war ${webapp.serverlocation}" />
     </exec>
     <taskdef name="tomcat-install"
         classname="org.apache.catalina.ant.InstallTask">
