@@ -17,7 +17,7 @@ package org.intermine.objectstore;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class ObjectStoreLimitReachedException extends IndexOutOfBoundsException
+public class ObjectStoreLimitReachedException extends ObjectStoreException
 {
     /**
      * Constructs an ObjectStoreLimitReachedException.
