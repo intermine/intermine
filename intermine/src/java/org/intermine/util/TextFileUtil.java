@@ -32,10 +32,13 @@ public abstract class TextFileUtil
      * @param columnOrder the real order of the column in the output - a map from the column index
      * in the output to the column index in the listOfLists
      * @param columnVisible an array mapping from columns in listOfLists to their visibility
+     * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
+     * listOfLists
      */
     public static void writeTabDelimitedTable(OutputStream os, List listOfLists,
-                                              int [] columnOrder, boolean [] columnVisible) {
-        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, '\t');
+                                              int [] columnOrder, boolean [] columnVisible,
+                                              int maxRows) {
+        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, '\t');
     }
 
     /**
@@ -45,10 +48,13 @@ public abstract class TextFileUtil
      * @param columnOrder the real order of the column in the output - a map from the column index
      * in the output to the column index in the listOfLists
      * @param columnVisible an array mapping from columns in listOfLists to their visibility
+     * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
+     * listOfLists
      */
     public static void writeCSVTable(OutputStream os, List listOfLists,
-                                     int [] columnOrder, boolean [] columnVisible) {
-        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, ',');
+                                     int [] columnOrder, boolean [] columnVisible,
+                                     int maxRows) {
+        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, ',');
     }
 
     /**
@@ -59,10 +65,12 @@ public abstract class TextFileUtil
      * in the output to the column index in the listOfLists
      * @param columnVisible an array mapping from columns in listOfLists to their visibility
      * @param delimiter the character to use to separate the fields in the output
+     * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
+     * listOfLists
      */
     public static void writeDelimitedTable(OutputStream os, List listOfLists,
                                            int [] columnOrder, boolean [] columnVisible,
-                                           char delimiter) {
+                                           int maxRows, char delimiter) {
         PrintStream printStream = new PrintStream(os);
 
         String delimiters = "" + delimiter;
@@ -76,10 +84,16 @@ public abstract class TextFileUtil
             }
         }
 
+        int rowCount = 0;
+
         Iterator rowIterator = listOfLists.iterator();
         while (rowIterator.hasNext()) {
-            List row = (List) rowIterator.next();
+            if (rowCount == maxRows) {
+                break;
+            }
 
+            List row = (List) rowIterator.next();
+            
             for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 int realColumnIndex = columnOrder[columnIndex];
 
@@ -102,6 +116,8 @@ public abstract class TextFileUtil
             }
 
             printStream.println();
+
+            rowCount++;
         }
 
         printStream.flush();
