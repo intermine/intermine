@@ -26,7 +26,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.web.results.PagedResults;
 
 /**
- * repeatedly poll the status of a running query and forward client to appropriate page
+ * Repeatedly poll the status of a running query and forward client to appropriate page
  * each time.
  * 
  * @see org.intermine.web.QueryMonitor
