@@ -9,6 +9,6 @@
   <field name="booleanObjType" value="true"/>
   <field name="floatObjType" value="2.2"/>
   <field name="doubleObjType" value="2.3"/>
-  <field name="dateObjType" value="Sat Aug 09 12:22:00 +0000 2003"/>
+  <field name="dateObjType" value="7777777777"/>
   <field name="stringObjType" value="A String"/>
 </object>

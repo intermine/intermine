@@ -13,8 +13,7 @@ package org.flymine.xml.lite;
 import junit.framework.TestCase;
 
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.flymine.model.testmodel.*;
 
@@ -49,8 +48,7 @@ public class LiteParserTest extends TestCase
         assertEquals(new Double(2.3d), obj1.getDoubleObjType());
         assertEquals(new Integer(4), obj1.getIntObjType());
         assertEquals(Boolean.TRUE, obj1.getBooleanObjType());
-        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
-        assertEquals(df.parse("Sat Aug 09 12:22:00 +0000 2003"), obj1.getDateObjType());
+        assertEquals(new Date(7777777777l), obj1.getDateObjType());
         assertEquals("A String", obj1.getStringObjType());
 
     }

@@ -137,11 +137,7 @@ public class LiteRenderer
                     .append(fieldname)
                     .append("\" value=\"");
                     if (value instanceof Date) {
-                        // Dates need to be output in a standard timezone, otherwise
-                        // testing is very difficult
-                        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
-                        df.setTimeZone(new SimpleTimeZone(0, "GMT"));
-                        sb.append(df.format((Date) value));
+                        sb.append(((Date) value).getTime());
                     } else {
                         sb.append(value);
                     }

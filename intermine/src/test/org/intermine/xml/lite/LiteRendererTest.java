@@ -13,8 +13,7 @@ package org.flymine.xml.lite;
 import junit.framework.*;
 
 import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.flymine.util.TypeUtil;
 import org.flymine.model.testmodel.*;
@@ -52,8 +51,7 @@ public class LiteRendererTest extends TestCase
         t.setIntObjType(new Integer(4));
         t.setFloatObjType(new Float(2.2f));
         t.setDoubleObjType(new Double(2.3d));
-        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-        t.setDateObjType(df.parse("Sat Aug 09 12:22:00 GMT 2003"));
+        t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
         String expected = "<object class=\"org.flymine.model.testmodel.Types\" implements=\"\">"
@@ -68,7 +66,7 @@ public class LiteRendererTest extends TestCase
             + "<field name=\"intType\" value=\"2\"/>"
             + "<field name=\"name\" value=\"Types1\"/>"
             + "<field name=\"id\" value=\"1234\"/>"
-            + "<field name=\"dateObjType\" value=\"Sat Aug 09 12:22:00 +0000 2003\"/>"
+            + "<field name=\"dateObjType\" value=\"7777777777\"/>"
             + "</object>";
 
         assertEquals(expected, LiteRenderer.render(t));

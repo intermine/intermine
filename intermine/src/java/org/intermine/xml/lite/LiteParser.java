@@ -12,9 +12,6 @@ package org.flymine.xml.lite;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -154,12 +151,7 @@ public class LiteParser
             return new Character(value.charAt(0));
         }
         if (clazz.equals(Date.class)) {
-            try {
-                DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-                return df.parse(value);
-            } catch (ParseException e) {
-                return null;
-            }
+            return new Date(Long.parseLong(value));
         }
         return value;
     }
