@@ -121,13 +121,15 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
             af.printStackTrace();
             Exception real = null;
             try {
-                String[] split = af.toString().split(":"); //<exceptionClassName>:<errorString>
-                if (split.length == 1) { // probably a server error string
+                String message = af.toString(); //<exceptionClassName>:<errorString>
+                int firstColon = message.indexOf(':');
+                if (firstColon == -1) { // probably a server error string
                     throw new ObjectStoreException(af);
                 }
-                Class c = Class.forName(split[0]);
+                Class c = Class.forName(message.substring(0, firstColon));
                 Constructor cons = c.getConstructor(new Class[] {String.class});
-                real = (Exception) cons.newInstance(new Object[] {split[1]});
+                real = (Exception) cons.newInstance(new Object[] {message.substring(firstColon
+                            + 1)});
             } catch (Exception e) {
                 throw new ObjectStoreException(e);
             }

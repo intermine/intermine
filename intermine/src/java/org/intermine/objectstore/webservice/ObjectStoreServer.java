@@ -10,6 +10,10 @@ package org.flymine.objectstore.webservice;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,10 +119,31 @@ public class ObjectStoreServer
         Results results = lookupResults(queryId);
         List rows = null;
         try {
-            rows = results.subList(start, start + limit);
-        } catch (IndexOutOfBoundsException e) {
-            //assume start + limit > size and try again (may still fail)
-            rows = results.subList(start, results.size());
+            try {
+                rows = results.subList(start, start + limit);
+            } catch (IndexOutOfBoundsException e) {
+                //assume start + limit > size and try again (may still fail)
+                rows = results.subList(start, results.size());
+            }
+        } catch (RuntimeException e) {
+            try {
+                StringWriter message = new StringWriter();
+                PrintWriter pMessage = new PrintWriter(message);
+                e.printStackTrace(pMessage);
+                Class c = e.getClass();
+                Constructor cons = c.getConstructor(new Class[] {String.class});
+                RuntimeException toThrow = (RuntimeException) cons.newInstance(
+                        new Object[] {message.toString()});
+                throw toThrow;
+            } catch (NoSuchMethodException e2) {
+                throw e;
+            } catch (InstantiationException e2) {
+                throw e;
+            } catch (IllegalAccessException e2) {
+                throw e;
+            } catch (InvocationTargetException e2) {
+                throw e;
+            }
         }
         return rows;
     }
