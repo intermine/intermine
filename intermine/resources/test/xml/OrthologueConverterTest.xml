@@ -7,6 +7,7 @@
     <attribute name="title" value="Automatic clustering of orthologs andin-paralogs from pairwise species comparisons"/>
     <attribute name="volume" value="314"/>
     <attribute name="year" value="2001"/>
+    <attribute name="pubMedId" value="11743721"/>
     <collection name="authors">
       <reference ref_id="1_1"/>
       <reference ref_id="1_2"/>
@@ -14,13 +15,22 @@
     </collection>
   </item>
   <item id="1_1" class="http://flymine.org/model/genomic#Author">
-    <attribute name="name" value="Maido Remm"/>
+    <attribute name="name" value="Remm, Maido"/>
+    <collection name="publications">
+      <reference ref_id="0_0"/>
+    </collection>
   </item>
   <item id="1_2" class="http://flymine.org/model/genomic#Author">
-    <attribute name="name" value="Christian E. V. Storm"/>
+    <attribute name="name" value="Storm, Christian E. V."/>
+    <collection name="publications">
+      <reference ref_id="0_0"/>
+    </collection>
   </item>
   <item id="1_3" class="http://flymine.org/model/genomic#Author">
-    <attribute name="name" value="Erik L. L. Sonnhammer"/>
+    <attribute name="name" value="Sonnhammer, Erik L. L."/>
+    <collection name="publications">
+      <reference ref_id="0_0"/>
+    </collection>
   </item>
   <item id="2_4" class="http://flymine.org/model/genomic#INPARANOIDAnalysis">
     <attribute name="algorithm" value="INPARANOID"/>

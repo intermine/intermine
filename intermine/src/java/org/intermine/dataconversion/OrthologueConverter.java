@@ -144,7 +144,7 @@ public class OrthologueConverter extends FileConverter
         pub.addAttribute(new Attribute("pages", "1041-1052"));
         pub.addAttribute(new Attribute("pubMedId", "11743721"));
         Item author1 = newItem("Author"), author2 = newItem("Author"), author3 = newItem("Author");
-        ReferenceList publications = ReferenceList("publications", Arrays.asList(new Object[] 
+        ReferenceList publications = new ReferenceList("publications", Arrays.asList(new Object[]
             {pub.getIdentifier()}));
         author1.addAttribute(new Attribute("name", "Remm, Maido"));
         author1.addCollection(publications);
