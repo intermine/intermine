@@ -12,12 +12,13 @@ package org.flymine.ontology;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URL;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 /**
  * This class (simplistically) converts a daml+oil schema to owl by swapping the daml namespace
@@ -35,14 +36,14 @@ public class Daml2Owl
     protected static final String ENDL = System.getProperty("line.separator");
 
     /**
-     * Convert a DAML file to the corresponding OWL file
-     * @param daml the input file
-     * @param owl the output file
+     * Convert a DAML document to the corresponding OWL OntModel
+     * @param daml the input document
+     * @return the corresponding OntModel
      * @throws IOException if something goes wrong in accessing either of the files
      */
-    public static void process(File daml, File owl) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(daml));
-        BufferedWriter out = new BufferedWriter(new FileWriter(owl));
+    public static OntModel process(URL daml) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(daml.openStream()));
+        StringBuffer sb = new StringBuffer();
         String damlNS = null;
         Pattern pattern = Pattern.compile("xmlns:(.*)=.*" + DAML_NS_PATTERN);
         for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -63,9 +64,11 @@ public class Daml2Owl
             line.replaceAll("toClass", "allValuesFrom");
             line.replaceAll("UnambiguousProperty", "InverseFunctionalProperty");
             line.replaceAll("UniqueProperty", "FunctionalProperty");
-            out.write(line + ENDL);
+            sb.append(line + ENDL);
         }
         in.close();
-        out.close();
+        OntModel ontModel = ModelFactory.createOntologyModel();
+        ontModel.read(new ByteArrayInputStream(sb.toString().getBytes()), null);
+        return ontModel;
     }
 }
