@@ -15,7 +15,8 @@ import java.lang.reflect.Field;
 import org.flymine.util.TypeUtil;
 
 /**
- * Represents a QueryClass field that is not a collection
+ * Represents a QueryClass field that is neither a collection or reference to
+ * another business object.
  *
  * @author Mark Woodbridge
  * @author Richard Smith
@@ -27,7 +28,7 @@ public class QueryField implements QueryEvaluable
     private String fieldName;
     private String secondFieldName;
     private Class type;
-    
+
     /**
      * Constructs a QueryField representing the specified field of a QueryClass
      *
@@ -36,7 +37,7 @@ public class QueryField implements QueryEvaluable
      * @throws NullPointerException if the field name is null
      * @throws NoSuchFieldException if the field does not exist
      * @throws IllegalArgumentException if the field is a collection
-     */    
+     */
     public QueryField(QueryClass qc, String fieldName)
         throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
         if (fieldName == null) {
@@ -62,7 +63,7 @@ public class QueryField implements QueryEvaluable
         this.secondFieldName = null;
         this.type = TypeUtil.toContainerType(field.getType());
     }
-    
+
     /**
      * Constructs a QueryField representing the specified field of the specified QueryClass, as seen
      * outside the specified subquery.
@@ -123,7 +124,7 @@ public class QueryField implements QueryEvaluable
      * Gets the QueryClass of which the field is a member
      *
      * @return the QueryClass
-     */    
+     */
     public FromElement getFromElement() {
         return qc;
     }
