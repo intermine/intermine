@@ -218,6 +218,11 @@
             type="org.intermine.web.EditTemplateAction">
       <forward name="templateBuilder" path="templateBuilder.page"/>
     </action>
+    
+    <action path="/collapseElement"
+            type="org.intermine.web.CollapseAction">
+    </action>
+    
 
     <!-- Actions invoked using buttons - no other form input -->
     <action path="/viewAction"
@@ -362,6 +367,8 @@
       <forward name="login" path="login.page"/>
       <forward name="history" path="history.page"/>
     </action>
+    
+    <!-- Other actions -->
     
     <action path="/portal"
 	        type="org.intermine.web.PortalQuery">
