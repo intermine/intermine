@@ -22,6 +22,8 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.sql.Database;
 
+import org.apache.log4j.Logger;
+
 /**
  * Collection of commonly used Database utilities
  *
@@ -30,6 +32,8 @@ import org.intermine.sql.Database;
  */
 public class DatabaseUtil
 {
+    private static final Logger LOG = Logger.getLogger(DatabaseUtil.class);
+
     private DatabaseUtil() {
     }
 
@@ -219,13 +223,21 @@ public class DatabaseUtil
      */
     public static void grant(Database db, String user, String perm) throws SQLException {
         Connection conn = db.getConnection();
+        boolean autoCommit = conn.getAutoCommit();
         try {
+            conn.setAutoCommit(true);
             Statement s = conn.createStatement();
-            ResultSet res = conn.getMetaData().getTables(null, null, null, new String[] {"TABLE"});
+            ResultSet res = conn.getMetaData().getTables(null, null, null, null);
             while (res.next()) {
-                s.execute("GRANT " + perm + " ON " + res.getString(3) + " TO " + user);
+                if ("TABLE".equals(res.getString(4))) {
+                    String sql = "GRANT " + perm + " ON " + res.getString(3) + " TO " + user;
+                    LOG.debug(sql);
+                    s.execute(sql);
+                }
             }
+            conn.setAutoCommit(autoCommit);
         } finally {
+            conn.setAutoCommit(autoCommit);
             conn.close();
         }
     }
