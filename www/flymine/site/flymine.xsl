@@ -179,18 +179,19 @@ version="1.0">
 </xsl:template>
 
 <xsl:template match="ulink">
-<a>
-<xsl:attribute name="href">
-<xsl:choose>
-    <xsl:when test="substring(@url, 1, 1) = '/'">
-            <xsl:copy-of select="$basedir"/>
-            <xsl:value-of select="@url"/>
-    </xsl:when>
-    <xsl:otherwise>
-        <xsl:value-of select="@url"/>
-    </xsl:otherwise>
-</xsl:choose>
-</xsl:attribute>
+  <a>
+    <xsl:attribute name="href">
+      <xsl:choose>
+        <xsl:when test="substring(@url, 1, 1) = '/'">
+          <xsl:copy-of select="$basedir"/>
+          <xsl:value-of select="@url"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@url"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+
     <xsl:choose>
       <xsl:when test="count(child::node())=0">
         <xsl:value-of select="@url"/>
@@ -199,7 +200,24 @@ version="1.0">
         <xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
-</a>
+
+    <!-- Icon, if present -->
+    <xsl:choose>
+      <xsl:when test="substring(@url, string-length(@url)-2, string-length(@url)) = 'sxi'">
+        <img>
+          <xsl:attribute name="border">0</xsl:attribute>
+          <xsl:attribute name="hspace">5</xsl:attribute>
+          <xsl:attribute name="src">
+            <xsl:copy-of select="$basedir"/>/images/openoffice.ico
+          </xsl:attribute>
+        </img>
+      </xsl:when>
+      <xsl:otherwise>
+      <!-- no icon-->
+      </xsl:otherwise>
+    </xsl:choose>
+
+  </a>
 </xsl:template>
 
 <xsl:template match="url">
