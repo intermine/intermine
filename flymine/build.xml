@@ -1687,7 +1687,7 @@
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
-                                           build-uniprot-production,
+                                           build-protein_structure-production,
                                            analyse-db-production,
                                            grant-db-production"/>
 
