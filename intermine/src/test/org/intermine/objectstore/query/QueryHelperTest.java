@@ -189,6 +189,68 @@ public class QueryHelperTest extends QueryTestCase
         assertEquals(expected, q);
     }
 
+    public void testQueryForExampleObjectNullObject() throws Exception {
+        try {
+            QueryHelper.createQueryForExampleObject(null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
 
+    public void testQueryForExampleObjectKeyAttributes() throws Exception {
+        // Address's key is "address" field
+        Address a = new Address();
+        a.setAddress("1 The Street");
+        Query q = QueryHelper.createQueryForExampleObject(a);
+
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Address.class);
+        expected.addToSelect(qc);
+        expected.addFrom(qc);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        QueryField qf = new QueryField(qc, "address");
+        cs1.addConstraint(new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+        expected.setConstraint(cs1);
+
+        assertEquals(expected, q);
+
+    }
+
+    public void testQueryForExampleObjectKeyAttributesReferences() throws Exception {
+        // Employee's key is "name", "address", "fullTime" fields
+        Address a = new Address();
+        a.setAddress("1 The Street");
+
+        Employee e = new Employee();
+        e.setAddress(a);
+        e.setName("Employee 1");
+        e.setAge(20);
+
+        Query q = QueryHelper.createQueryForExampleObject(e);
+
+        Query expected = new Query();
+        QueryClass qcEmployee = new QueryClass(Employee.class);
+        QueryClass qcAddress = new QueryClass(Address.class);
+        expected.addToSelect(qcEmployee);
+        expected.addFrom(qcEmployee);
+        expected.addFrom(qcAddress);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+
+        QueryField qf1 = new QueryField(qcEmployee, "name");
+        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
+
+        QueryField qf2 = new QueryField(qcEmployee, "age");
+        cs1.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
+
+        QueryReference qr1 = new QueryObjectReference(qcEmployee, "address");
+        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress));
+
+        QueryField qf3 = new QueryField(qcAddress, "address");
+        cs1.addConstraint(new SimpleConstraint(qf3, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+
+        expected.setConstraint(cs1);
+
+        assertEquals(expected, q);
+    }
 
 }
