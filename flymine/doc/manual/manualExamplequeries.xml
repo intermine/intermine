@@ -7,7 +7,7 @@
 
     <section>
       <heading>Example queries</heading>
-      <item>A number of <ulink url = "examples.do">example queries</ulink> are available to help you construct your own queries.
+      <item>A number of <ulink url = "/examples.do">example queries</ulink> are available to help you construct your own queries.
       </item>
       <item>
        Click on the query name to display the query in the query builder interface.  From here you can edit the query or run it again.
