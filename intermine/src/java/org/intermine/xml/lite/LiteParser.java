@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 public class LiteParser
 {
     protected static final Logger LOG = Logger.getLogger(LiteParser.class);
-    protected static String DELIM = "\\$_\\^";
+    protected static final String DELIM = "\\$_\\^";
 
     /**
      * Parse a FlyMine Lite XML file

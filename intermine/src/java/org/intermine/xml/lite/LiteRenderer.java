@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 public class LiteRenderer
 {
     protected static final Logger LOG = Logger.getLogger(LiteRenderer.class);
-    protected static String DELIM = "$_^";
+    protected static final String DELIM = "$_^";
     /**
      * Don't allow construction
      */
