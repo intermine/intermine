@@ -22,15 +22,17 @@
         <fmt:message key="export.tabdelimited"/>
       </html:link>
     </li>
-  </ul>
 
   <fmt:setBundle basename="model"/>
 
   <c:forEach var="entry" items="${exporters}" varStatus="status">
-    <c:set var="exporterMessageId" value="exporter.${entry.key}.description"/>
-    <html:link action="${entry.value.actionPath}">
-      <fmt:message key="${exporterMessageId}"/>
-    </html:link>
+    <li>
+      <html:link action="${entry.value.actionPath}">
+        <fmt:message key="exporter.${entry.key}.description"/>
+      </html:link>
+    </li>
   </c:forEach>
+
+  </ul>
 </div>
 <!-- /export.jsp -->
