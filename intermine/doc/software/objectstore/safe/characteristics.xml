@@ -24,7 +24,7 @@
 		<para>Simply put, the implementation is constructed with a reference to another valid ObjectStore.
 			Whenever any of the methods of the implementation are called with a Query object, the Query is cloned and passed to the equivalent method in the other ObjectStore.
 			Therefore, whenever a Query object is passed by the user to the implementation, a clone is made that can be treated independently of the user's Query (which may well be subsequently altered).</para>
-		<graphic fileref="results" align="Right"/>
+		<graphic fileref="results.png" align="Right"/>
 		<para>Obviously, it would be a very significant performance problem if every call to the database was made using a fresh clone of the Query.
 			Apart from the overhead used to clone the Query objects, some ObjectStore implementations (such as org.intermine.objectstore.webservice.ObjectStoreClientImpl) cache Query objects, and give a significant performance difference between using a new Query on every operation and using the same Query every time.
 			Therefore, it is recommended that the only method of the ObjectStoreSafeImpl that is called is ObjectStore.execute(Query), which returns a Results object.

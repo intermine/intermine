@@ -15,7 +15,7 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>This document is intended to provide information on the Java interface to the InterMine Query.
-			The <ulink url="../iql_query/spec">IQL document</ulink> provides a reasonable background to the structure of the interface, since IQL maps fairly directly onto the Java interface.
+			The <ulink url="../iql_query/spec.xml">IQL document</ulink> provides a reasonable background to the structure of the interface, since IQL maps fairly directly onto the Java interface.
 			In fact, by far the easiest method of creating a Java InterMine Query object is to use the following constructor:</para>
 		<programlisting>
 import <ulink url="../../../api/org/intermine/objectstore/query/Query.html">org.intermine.objectstore.query.Query</ulink>;

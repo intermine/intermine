@@ -111,7 +111,7 @@
 			<title>The addRequest method</title>
 			<para>This method is called by the Results object in order to report to the PrefetchManager the possibility of a certain item of data being required in the future.
 				The entire method runs synchronised on the system-wide lock, but this should not be a problem because the method does not perform any lengthy operations.</para>
-			<inlinegraphic fileref="results_prefetch_addRequest"/>
+			<inlinegraphic fileref="results_prefetch_addRequest.png"/>
 		</sect2>
 
 		<sect2>
@@ -120,7 +120,7 @@
 				The method's return value is the data required.
 				This method goes through two stages, the first stage synchronised on the system-wide lock, which performs fact-finding and telling everyone what it is going to do.
 				The method then releases all locks and enters the second stage, where it either locks and waits for notify on the Results-specific lock, or performs the data fetch by itself.</para>
-			<inlinegraphic fileref="results_prefetch_doRequest"/>
+			<inlinegraphic fileref="results_prefetch_doRequest.png"/>
 		</sect2>
 
 		<sect2>
@@ -128,7 +128,7 @@
 			<para>This method is called by the second stage of the doRequest() method (when the method performs a data fetch), and by the prefetch Thread, if it performs a data fetch.
 				The method records the fact that a particular request is no longer in progress - note that this does not necessarily mean that the request was successfully completed.
 				The method also notifies all threads which are waiting on the Results object lock, as these are the Threads that may benefit from the new data.</para>
-			<inlinegraphic fileref="results_prefetch_reportDone"/>
+			<inlinegraphic fileref="results_prefetch_reportDone.png"/>
 		</sect2>
 
 		<sect2>
@@ -136,7 +136,7 @@
 			<para>This method is called by the prefetch Thread in order to get hold of a request to process.
 				The method synchronises on the system-wide lock, and waits for the request queue to be non-empty.
 				Having completed that wait, the method retrieves a request from the pending queue, adds it to the in-progress list, and removes it from the pending queue, before returning the request to the caller.</para>
-			<inlinegraphic fileref="results_prefetch_getRequest"/>
+			<inlinegraphic fileref="results_prefetch_getRequest.png"/>
 		</sect2>
 		<para>These diagrams show that there is no possibility for a deadlock in the Prefetch Manager, as the locks are synchronised on in a strict order - left to right in the diagrams.</para>
 	</sect1>

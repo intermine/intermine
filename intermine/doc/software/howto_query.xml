@@ -14,7 +14,7 @@
   </artheader>
   
   <sect1>
-    <para>This document presents an introduction to the general form of query used in InterMine. Actual queries can be specified using a <ulink url="java_query/spec">Java API</ulink> or as <ulink url="iql_query/spec.xml">FQL strings</ulink> (which are transparently mapped to the equivalent Java representation). The examples below are specified in FQL, which is generally more concise and readable that the equivalent Java. They refer to types in the model used by the <ulink url="start/tutorial.xml">tutorial</ulink>, so that the query strings can be directly substituted in to SimpleQuery.java.</para>
+    <para>This document presents an introduction to the general form of query used in InterMine. Actual queries can be specified using a <ulink url="java_query/spec.xml">Java API</ulink> or as <ulink url="iql_query/spec.xml">FQL strings</ulink> (which are transparently mapped to the equivalent Java representation). The examples below are specified in FQL, which is generally more concise and readable that the equivalent Java. They refer to types in the model used by the <ulink url="start/tutorial.xml">tutorial</ulink>, so that the query strings can be directly substituted in to SimpleQuery.java.</para>
   </sect1>
   
   <sect1>

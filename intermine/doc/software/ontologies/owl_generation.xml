@@ -14,7 +14,7 @@
   </artheader>
   
   <para>
-    The InterMine merged ontology is an OWL format file created by merging OWL versions of all source ontologies (an overview of the process can be found <ulink url="overview">here</ulink>.  For merging to take place each source ontology must first be converted into OWL format, this document describes the translation of source formats (currently DAG and Daml) into OWL.
+    The InterMine merged ontology is an OWL format file created by merging OWL versions of all source ontologies (an overview of the process can be found <ulink url="overview.xml">here</ulink>.  For merging to take place each source ontology must first be converted into OWL format, this document describes the translation of source formats (currently DAG and Daml) into OWL.
   </para>
 
   <sect1>

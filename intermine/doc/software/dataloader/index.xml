@@ -24,7 +24,7 @@
 			The DataLoader also deals with the problem of multiple data sources containing an instance of the same object, and merging the attributes, references, and collections, without losing any data.</para>
 	</sect1>
 
-	<inlinegraphic fileref="dataloader"/>
+	<inlinegraphic fileref="dataloader.png"/>
 
 	<sect1>
 		<title>A list of problems that DataLoader has to solve</title>
@@ -65,11 +65,11 @@
 		<sect2>
 			<title>New data overrides old data</title>
 			<para>
-				<graphic fileref="objectReferenceMerge1" align="Left"/>
-				<graphic fileref="objectReferenceMerge2" align="Left"/>
+				<graphic fileref="objectReferenceMerge1.png" align="Left"/>
+				<graphic fileref="objectReferenceMerge2.png" align="Left"/>
 				In order to avoid horribleness, we will impose the restriction that an object reference that is part of an object's primary keys must be an object reference that is part of a many-to-one relationship.
 				This restriction prevents the situation where a data source changes the object reference of one object in the database, thereby changing the primary key of the object that is pointed to by the reference.
-				<graphic fileref="objectReferenceMerge3" align="Right"/></para>
+				<graphic fileref="objectReferenceMerge3.png" align="Right"/></para>
 			<para>The eventual outcome of updating the database from the data source should be independent of the order of the objects in that data source.
 				The diagrams show an example of a database that has three objects linked as A - B1 - C, and a data source that has three objects linked as A - B2 - C, where each of the links is a one-to-one relationship.
 				Note that none of the links can possibly form part of the primary keys of any of the objects.
@@ -80,8 +80,8 @@
 		<sect2>
 			<title>Old data overrides new data</title>
 			<para>
-				<graphic fileref="objectReferenceMerge1_notOverride" align="Left"/>
-				<graphic fileref="objectReferenceMerge2_notOverride" align="Right"/>
+				<graphic fileref="objectReferenceMerge1_notOverride.png" align="Left"/>
+				<graphic fileref="objectReferenceMerge2_notOverride.png" align="Right"/>
 				If instead the database has more "reliable" data than the data source we are currently loading, then the data in the database, including object references, must not be altered.
 				Again, the system must produce results independent of the order of the objects provided by the data source.</para>
 			<para>On the left is the result of adding object A (attached to B2) to the database.
@@ -110,8 +110,8 @@
 	<sect1>
 		<title>Many-to-one relationships</title>
 		<para>
-			<graphic fileref="collectionMerge1" align="Left"/>
-			<graphic fileref="collectionMerge2" align="Right"/>
+			<graphic fileref="collectionMerge1.png" align="Left"/>
+			<graphic fileref="collectionMerge2.png" align="Right"/>
 			Many-to-one relationships can be seen as either a object reference, or a collection, depending on the side of the relationship that is being looked at.
 			When adding an object to the database that has an object reference to another object, then the simple rules in the previous section will apply.
 			However, when adding an object to the database, that has a collection of other objects, then that collection needs to be merged.
@@ -126,8 +126,8 @@
 		<sect2>
 			<title>New data overrides old data</title>
 			<para>
-				<graphic fileref="collectionMergeConflict1" align="Left"/>
-				<graphic fileref="collectionMergeConflict2" align="Right"/>
+				<graphic fileref="collectionMergeConflict1.png" align="Left"/>
+				<graphic fileref="collectionMergeConflict2.png" align="Right"/>
 				With a many-to-one relationship, the functionality is defined by the characteristics of the object reference side of the relation.
 				For example, if the new data source overrides the object reference field in all B objects, then these diagrams show the operations that take place when an object A2 linked to object B2 is added to a database holding object A1 linked to B1 and B2, where A objects have a one-to-many relationship with B objects.
 				On the left is the situation if A2 is added before B2, and on the right is the situation of B2 is added before A2.
@@ -136,13 +136,13 @@
 		<sect2>
 			<title>Old data overrides new data</title>
 			<para>
-				<graphic fileref="collectionMergeConflict3" align="Left"/>
+				<graphic fileref="collectionMergeConflict3.png" align="Left"/>
 				If, however, the data that is in the database overrides the new data source, then there is a different outcome.
 				The system should always behave as if the object references are the controllers for what happens.
 				The diagram on the right indicates what happens when object A2 is added before B2.
 				Notice that absolutely nothing happens when B2 is added to the database.
 				The same thing happens when B2 is added before A2 - B2 does not change the database, and A2 makes the same modification as in the diagram.</para>
-			<graphic fileref="many2many1" align="Right"/>
+			<graphic fileref="many2many1.png" align="Right"/>
 		</sect2>
 	</sect1>
 
@@ -233,7 +233,7 @@
 	<sect1>
 		<title>Implementation</title>
 		<para>Here is a flowchart describing a possible implementation strategy:</para>
-		<inlinegraphic fileref="execution1"/>
+		<inlinegraphic fileref="execution1.png"/>
 	</sect1>
 
 	<sect1>
