@@ -205,7 +205,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      *
      * @param q the query to estimate rows for
      * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explining the query
+     * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(Query q) throws ObjectStoreException {
         return new ExplainResult();
@@ -218,7 +218,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @param start first row required, numbered from zero
      * @param limit the maximum number of rows to be returned
      * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explining the query
+     * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
         return new ExplainResult();
@@ -229,8 +229,9 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      *
      * @param q Flymine Query on which to run COUNT(*)
      * @return the number of rows to be produced by query
+     * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q) {
+    public int count(Query q) throws ObjectStoreException {
         return this.resultsSize;
     }
 
