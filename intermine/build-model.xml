@@ -12,6 +12,8 @@
   resources: the location of any static resource files
   namespace: the namespace to use when processing XML model files
   packagename: the packagename to use for the generated classes
+  create.attribute.indexes: flag for create-indexes to choose to build the indexes
+                       on attributes instead of the standard indexes
   -->
 
   <property name="build.model.dir" location="${build.model}/${model.name}"/>
@@ -267,7 +269,8 @@
     <taskdef name="create-indexes" classname="org.intermine.task.CreateIndexesTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <create-indexes database="${db.name}" model="${model.name}"/>
+    <create-indexes database="${db.name}" model="${model.name}" 
+                    attributeIndexes="${create.attribute.indexes}"/>
   </target>
 
   <target name="add-model-to-webapp" depends="compile-java, compile-webapp-java"
