@@ -27,18 +27,19 @@ import org.apache.struts.action.ActionError;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
+import org.intermine.web.results.TableHelper;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
  *
  * @author Andrew Varley
  */
-
 public class IqlQueryAction extends LookupDispatchAction
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -68,64 +69,24 @@ public class IqlQueryAction extends LookupDispatchAction
         IqlQueryForm queryform = (IqlQueryForm) form;
 
         try {
-            Query q = new IqlQuery(queryform.getQuerystring(), model.getPackageName()).toQuery();
-            session.setAttribute(Constants.QUERY, q);
-
-            return mapping.findForward("runquery");
+            Query q = new IqlQuery(queryform.getQuerystring(),
+                                   ((Model) os.getModel()).getPackageName()).toQuery();
+            session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
+            return mapping.findForward("results");
         } catch (java.lang.IllegalArgumentException e) {
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("errors.iqlquery.illegalargument", e.getMessage());
-            errors.add("iqlquery", error);
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                       new ActionError("errors.iqlquery.illegalargument", e.getMessage()));
             saveErrors(request, errors);
-            return mapping.findForward("buildiqlquery");
-        }
-    }
-
-    /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     *
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward view(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
-        
-        IqlQueryForm queryform = (IqlQueryForm) form;
-
-        String queryString = queryform.getQuerystring();
-
-        try {
-            if (queryString == null || queryString.length() == 0) {
-                session.setAttribute(Constants.QUERY, null);
-            } else {
-                Query q = new IqlQuery(queryString, model.getPackageName()).toQuery();
-                session.setAttribute(Constants.QUERY, q);
-            }
-
-            return mapping.findForward("buildquery");
-        } catch (java.lang.IllegalArgumentException e) {
+            return mapping.findForward("iqlQuery");
+        } catch (ObjectStoreException e) {
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("errors.iqlquery.illegalargument", e.getMessage());
-            errors.add("iqlquery", error);
+            String key = (e instanceof ObjectStoreQueryDurationException)
+                ? "errors.query.estimatetimetoolong"
+                : "errors.query.objectstoreerror";
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
             saveErrors(request, errors);
-            return mapping.findForward("buildiqlquery");
+            return mapping.findForward("iqlQuery");
         }
     }
 
@@ -138,7 +99,6 @@ public class IqlQueryAction extends LookupDispatchAction
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("button.run", "run");
-        map.put("button.view", "view");
         return map;
     }
 }

@@ -13,20 +13,16 @@ package org.intermine.web;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionForward;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
-
-import org.intermine.objectstore.query.Query;
 
 /**
  * Perform the initialisation for the IqlQueryAction.
  *
  * @author Kim Rutherford
  */
-
 public class IqlQueryController extends TilesAction
 {
     /**
@@ -37,19 +33,7 @@ public class IqlQueryController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
-        HttpSession session = request.getSession();
-
-        IqlQueryForm iqlQueryForm = (IqlQueryForm) form;
-
-        Query q = (Query) session.getAttribute(Constants.QUERY);
-
-        if (q == null || q.getFrom().size () == 0) {
-            iqlQueryForm.setQuerystring("");
-        } else {
-            iqlQueryForm.setQuerystring(q.toString());
-        }
-
+        ((IqlQueryForm) form).reset(mapping, request);
         return null;
     }
 }

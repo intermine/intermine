@@ -4,7 +4,7 @@
 
 <!-- iqlQuery.jsp -->
 <div class="iqlQueryForm">
-  <html:form action="/iqlquery" focus="querystring" onsubmit="return validateIqlQueryForm(this);">
+  <html:form action="/iqlQueryAction">
     <fmt:message key="iqlquery.prompt"/>:
     <br/>
     <html:textarea property="querystring" rows="10" cols="80"/>
@@ -12,9 +12,6 @@
     <html:submit property="action">
       <fmt:message key="button.run"/>
     </html:submit>
-    <%-- html:submit property="action">
-      <fmt:message key="button.view"/>
-    </html:submit --%>
     <html:reset>
       <fmt:message key="button.reset"/>
     </html:reset>

@@ -22,7 +22,6 @@ import org.intermine.objectstore.query.Results;
  *
  * @author Kim Rutherford
  */
-
 public abstract class TableHelper
 {
     /**
@@ -31,10 +30,19 @@ public abstract class TableHelper
     public static final int BATCH_SIZE = 100;
 
     /**
-     * Add a PagedTable object to the session for the given query (by executing the Query and
-     * creating a PagedResults object).  The PagedResults object is stored as RESULTS_TABLE in the
-     * session.
-     *
+     * Make a results table from an objectstore and a query
+     * @param os the ObjectStore against which to run the Query
+     * @param query the Query to create the PagedTable for
+     * @return a PagedResults object for the argument Query
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     */
+    public static PagedResults makeTable(ObjectStore os, Query query)
+    throws ObjectStoreException {
+        return new PagedResults(makeResults(os, query));
+    }
+
+    /**
+     * Make a results table from an objectstore, a query and a view
      * @param os the ObjectStore against which to run the Query
      * @param query the Query to create the PagedTable for
      * @param view the list of paths to SELECT
@@ -42,6 +50,18 @@ public abstract class TableHelper
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
     public static PagedResults makeTable(ObjectStore os, Query query, List view)
+        throws ObjectStoreException {
+        return new PagedResults(view, makeResults(os, query));
+    }
+
+    /**
+     * Make a results object from an objectstore and a query
+     * @param os the ObjectStore against which to run the Query
+     * @param query the Query to create the results for
+     * @return a results object for the argument Query
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     */
+    protected static Results makeResults(ObjectStore os, Query query)
         throws ObjectStoreException {
         Results r = os.execute(query);
         r.setBatchSize(BATCH_SIZE);
@@ -60,7 +80,7 @@ public abstract class TableHelper
                 throw e;
             }
         }
-
-        return new PagedResults(view, r);
+        
+        return r;
     }
 }

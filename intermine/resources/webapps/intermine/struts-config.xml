@@ -59,6 +59,9 @@
     <action path="/query"
             forward="query.page"/>
 
+    <action path="/iqlQuery"
+            forward="iqlQuery.page"/>
+
     <action path="/bagBuild"
             forward="bagBuild.page"/>
 
@@ -177,14 +180,13 @@
       <forward name="query" path="query.page"/>
     </action>
 
-    <action path="/iqlquery"
+    <action path="/iqlQueryAction"
             type="org.intermine.web.IqlQueryAction"
             name="iqlQueryForm"
-            input="buildiqlquery"
+            input="iqlQuery"
             parameter="action">
-      <forward name="runquery" path="/runQuery.do"/>
-      <forward name="buildquery" path="query.page"/>
-      <forward name="buildiqlquery" path="iqlquery.page"/>
+      <forward name="iqlQuery" path="iqlQuery.page"/>
+      <forward name="results" path="results.page"/>
     </action>
 
     <!-- Controllers -->

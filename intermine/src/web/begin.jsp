@@ -26,7 +26,7 @@
   </html:link>
 </div>
 <div>
-  <html:link page="/buildiqlquery">
+  <html:link action="/iqlQuery">
     <fmt:message key="index.iqlQuery"/>
   </html:link>
 </div>

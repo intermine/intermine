@@ -21,7 +21,7 @@
     <put name="body" value="query.tile"/>
     <put name="pageDescription" value="query.page.description"/>
   </definition>
-  <definition name="iqlquery.page" extends="layout.template">
+  <definition name="iqlQuery.page" extends="layout.template">
     <put name="body" value="iqlQuery.tile"/>
     <put name="pageDescription" value="iqlquery.page.description"/>
   </definition>
