@@ -59,6 +59,65 @@ public class TypeUtilTest extends TestCase
         assertEquals(c.getMethod("setAddress", new Class[] {String.class}), addressInfo.getSetter());
     }
 
+    public void testGetFieldInfosSuper() throws Exception {
+        Class c = Company.class;
+
+        Map got = TypeUtil.getFieldInfos(c);
+        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "address", "oldContracts", "contractors", "cEO", "departments", "secretarys"})), got.keySet());
+
+        TypeUtil.FieldInfo idInfo = (TypeUtil.FieldInfo) got.get("id");
+        assertEquals("id", idInfo.getName());
+        assertEquals(c.getMethod("getId", new Class[] {}), idInfo.getGetter());
+        assertEquals(c.getMethod("setId", new Class[] {Integer.class}), idInfo.getSetter());
+
+        TypeUtil.FieldInfo addressInfo = (TypeUtil.FieldInfo) got.get("address");
+        assertEquals("address", addressInfo.getName());
+        assertEquals(c.getMethod("getAddress", new Class[] {}), addressInfo.getGetter());
+        assertEquals(c.getMethod("setAddress", new Class[] {Address.class}), addressInfo.getSetter());
+
+        TypeUtil.FieldInfo nameInfo = (TypeUtil.FieldInfo) got.get("name");
+        assertEquals("name", nameInfo.getName());
+        assertEquals(c.getMethod("getName", new Class[] {}), nameInfo.getGetter());
+        assertEquals(c.getMethod("setName", new Class[] {String.class}), nameInfo.getSetter());
+
+        TypeUtil.FieldInfo vatInfo = (TypeUtil.FieldInfo) got.get("vatNumber");
+        assertEquals("vatNumber", vatInfo.getName());
+        assertEquals(c.getMethod("getVatNumber", new Class[] {}), vatInfo.getGetter());
+        assertEquals(c.getMethod("setVatNumber", new Class[] {Integer.TYPE}), vatInfo.getSetter());
+
+
+    }
+
+
+    public void testGetFieldInfosDynamic() throws Exception {
+        Class c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
+
+        Map got = TypeUtil.getFieldInfos(c);
+        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "address", "oldContracts", "contractors", "cEO", "departments", "secretarys"})), got.keySet());
+
+        TypeUtil.FieldInfo idInfo = (TypeUtil.FieldInfo) got.get("id");
+        assertEquals("id", idInfo.getName());
+        assertEquals(c.getMethod("getId", new Class[] {}), idInfo.getGetter());
+        assertEquals(c.getMethod("setId", new Class[] {Integer.class}), idInfo.getSetter());
+
+        TypeUtil.FieldInfo addressInfo = (TypeUtil.FieldInfo) got.get("address");
+        assertEquals("address", addressInfo.getName());
+        assertEquals(c.getMethod("getAddress", new Class[] {}), addressInfo.getGetter());
+        assertEquals(c.getMethod("setAddress", new Class[] {Address.class}), addressInfo.getSetter());
+
+        TypeUtil.FieldInfo nameInfo = (TypeUtil.FieldInfo) got.get("name");
+        assertEquals("name", nameInfo.getName());
+        assertEquals(c.getMethod("getName", new Class[] {}), nameInfo.getGetter());
+        assertEquals(c.getMethod("setName", new Class[] {String.class}), nameInfo.getSetter());
+
+        TypeUtil.FieldInfo vatInfo = (TypeUtil.FieldInfo) got.get("vatNumber");
+        assertEquals("vatNumber", vatInfo.getName());
+        assertEquals(c.getMethod("getVatNumber", new Class[] {}), vatInfo.getGetter());
+        assertEquals(c.getMethod("setVatNumber", new Class[] {Integer.TYPE}), vatInfo.getSetter());
+
+
+    }
+
     public void testGetFieldInfosNoGetters() throws Exception {
         Map expected = new HashMap();
         Class c = NoGetSet.class;  // random class with no getters
