@@ -12,9 +12,6 @@ package org.flymine.web;
 
 import org.apache.struts.action.ActionForm;
 
-import java.util.Map;
-import java.util.HashMap;
-
 /**
  * Form bean to represent the inputs to a text-based query
  *
@@ -24,7 +21,6 @@ public class QueryClassSelectForm extends ActionForm
 {
 
     protected String cldName;
-    protected Map fields = new HashMap();
 
     /**
      * Set the class name
