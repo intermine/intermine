@@ -261,7 +261,6 @@ public class OJBModelOutput extends ModelOutput
                     .append(generateNoncapitalName(name2))
                     .append("\" class-ref=\"" + generateQualified(ae2.getType()) + "\"")
                     .append(" proxy=\"true\"")
-                    .append(" auto-delete=\"true\"")
                     .append(">\n" + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"")
                     .append(generateNoncapitalName(name2) + "Id")
                     .append("\" />\n" + INDENT + INDENT + "</reference-descriptor>\n");
@@ -281,7 +280,6 @@ public class OJBModelOutput extends ModelOutput
                 .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
                 .append(" collection-class=\"" + impl + "\"")
                 .append(" proxy=\"true\"")
-                .append(" auto-delete=\"true\"")
                 .append(">\n" + INDENT + INDENT + INDENT + "<inverse-foreignkey field-ref=\"")
                 .append(generateNoncapitalName(name1) + "Id")
                 .append("\"/>\n")
@@ -306,7 +304,6 @@ public class OJBModelOutput extends ModelOutput
                 .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
                 .append(" collection-class=\"" + impl + "\"")
                 .append(" proxy=\"true\"")
-                .append(" auto-delete=\"true\"")
                 .append(" indirection-table=\"")
                 .append(joiningTableName)
                 .append("\">\n")
