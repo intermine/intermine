@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.log4j.Logger;
 
@@ -108,7 +109,7 @@ public class PortalQuery extends TemplateAction
         collapsed.put("summary", Boolean.FALSE);
 
         ActionForward forward = handleTemplateQuery(mapping, request, response, true, false);
-        if (forward.getName().equals("results")) {
+        if (StringUtils.equals(forward.getName(), "results")) {
             PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
             if (pr.getSize () == 0) {
                 LOG.warn("Portal query resulted in no result for identifier \"" + extId + "\"");
