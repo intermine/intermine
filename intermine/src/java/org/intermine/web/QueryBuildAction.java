@@ -102,8 +102,8 @@ public class QueryBuildAction extends Action
         
         Query q = QueryBuildHelper.createQuery(queryClasses, model, savedBags);
         session.setAttribute(Constants.QUERY, q);
-        session.setAttribute(Constants.QUERY_CLASSES, null);
-        session.setAttribute(Constants.EDITING_ALIAS, null);
+        session.removeAttribute(Constants.QUERY_CLASSES);
+        session.removeAttribute(Constants.EDITING_ALIAS);
 
         return mapping.findForward("buildfqlquery");
     }
