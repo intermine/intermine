@@ -20,17 +20,21 @@ public class TreeNode
     boolean selected, leaf, open;
     int indentation;
     Object o;
+    String text;
 
     /**
      * Constructor
      * @param o the Object
+     * @param text extra text describing this node
      * @param indentation the indentation
      * @param selected whether the node has been selected
      * @param leaf whether this is a leaf node
      * @param open whether this node is 'open' ie. expanded
      */
-    public TreeNode(Object o, int indentation, boolean selected, boolean leaf, boolean open) {
+    public TreeNode(Object o, String text,
+                    int indentation, boolean selected, boolean leaf, boolean open) {
         this.o = o;
+        this.text = text;
         this.indentation = indentation;
         this.selected = selected;
         this.leaf = leaf;
@@ -43,6 +47,14 @@ public class TreeNode
      */
     public Object getObject() {
         return o;
+    }
+
+    /**
+     * Get the text that was passed to the constructor
+     * @return the test
+     */
+    public String getText() {
+        return text;
     }
 
     /**
@@ -107,7 +119,7 @@ public class TreeNode
      * @see Object#toString
      */
     public String toString() {
-        return o + " " + indentation + " " + selected + " " + leaf + " " + open;
+        return o + " " + text + " " + indentation + " " + selected + " " + leaf + " " + open;
     }
 }
 
