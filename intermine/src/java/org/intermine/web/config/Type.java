@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class Type
 {
-    // if fieldName is null it's ignored and the webapp will use 
+    // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
     private List shortDisplayers = new ArrayList();
@@ -32,7 +32,7 @@ public class Type
      *
      * @param name the name of the Type
      */
-    public void setClassName(String name) {
+    public void setClassName(String className) {
         this.className = className;
     }
 
@@ -50,7 +50,7 @@ public class Type
      *
      * @param name the field name of the Type
      */
-    public void setFieldName(String name) {
+    public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
     }
 
@@ -130,7 +130,7 @@ public class Type
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<class name=\"" + className + "\"");
+        sb.append("<class className=\"" + className + "\"");
         if (fieldName != null) {
             sb.append(" fieldName=\"" + fieldName + "\"");
         }
@@ -151,7 +151,4 @@ public class Type
 
         return sb.toString();
     }
-
-
 }
-
