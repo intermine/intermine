@@ -10,5 +10,5 @@ ProteinInteractionExperiment.featureDetection = ExperimentType.featureDetection
 ProteinInteractionExperiment.hostOrganism = ExperimentType.hostOrganism
 ProteinInteractionExperiment.interactionDetection = ExperimentType.interactionDetection
 ProteinInteractionExperiment.participantDetection = ExperimentType.participantDetection
-ProteinInteractionExperiment.xref = ExperimentType.xref
+#ProteinInteractionExperiment.xref = ExperimentType.xref
 ProteinInteractionTerm = CvType
