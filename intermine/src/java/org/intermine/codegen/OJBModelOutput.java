@@ -34,7 +34,7 @@ public class OJBModelOutput extends ModelOutput
      */
     public void process() {
         File path = new File(file, "repository_" + model.getName() + ".xml");
-        //initFile(path);
+        initFile(path);
         outputToFile(path, generate(model));
     }
 
