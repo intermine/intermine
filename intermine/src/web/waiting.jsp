@@ -17,7 +17,10 @@
 <body>
   <tiles:insert page="/header.jsp"/>
   <div class="waitmsg">
-    <fmt:message key="waiting.message"/>${dots}
+    <fmt:message key="waiting.message"/>
+    <p>
+      <img border="0" src="images/progress${imgnum}.gif" width="118" height="118" alt="progress"/>
+    </p>
   </div>
   <script language="JavaScript">
   <!--
