@@ -2695,10 +2695,13 @@
  <!-- create human genomic model from core and all additions files -->
   <target name="create-human-production-model"
           depends="remove-genomic, prepare-build-model,
-                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
-                merge-uniprot-model, merge-protein_structure-model, merge-ucsc-model, merge-so-model">
+                merge-uniprot-model, merge-protein_structure-model, merge-ucsc-model, 
+                merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
+                merge-shortcuts">
   </target>
+
 
   <!-- create java objects for the genomic human model-->
   <target name="compile-genomic-human-model" depends="create-human-production-model">
