@@ -21,6 +21,7 @@ import java.util.Collections;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -965,8 +966,9 @@ public class CalculateLocations
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
+        ((ObjectStoreInterMineImpl)os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(20000);
+        res.setBatchSize(2000);
 
         return res.iterator();
     }
