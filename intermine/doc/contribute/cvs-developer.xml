@@ -4,7 +4,7 @@
 
 <artheader>
 <date>2003-1-8</date>
-<title>Obtaining FlyMine source code using CVS</title>
+<title>Obtaining write access to FlyMine source code</title>
 <authorgroup>
 <author>
 <firstname>Andrew</firstname>
@@ -15,7 +15,12 @@
 
 <sect1>
 <title>Introduction</title>
-<para>This document details how to obtain FlyMine source code from the CVS server.</para>
+
+<para>This document details how active developers can obtain FlyMine
+source code from the main CVS server. If you are looking for read-only
+access to the FlyMine public CVS server, instructions are <ulink
+url="/user/cvs">here</ulink>.</para>
+
 </sect1>
 
 <sect1>
@@ -45,10 +50,11 @@ possible build targets.</listitem>
 
 <title>From outside flymine.org domain</title>
 
-<para>The FlyMine cvs server is on a machine inside the firewall and
-does not have an external IP address. However, a port on the firewall
-is set up to forward ssh packets to the cvs server. You will require
-ssh access to the FlyMine system in order to use this machine. </para>
+<para>The FlyMine main CVS server is on a machine inside the firewall
+and does not have an external IP address. However, a port on the
+firewall is set up to forward ssh packets to the cvs server. You will
+require ssh access to the FlyMine system in order to use this
+machine.</para>
 
 <itemizedlist>
 
