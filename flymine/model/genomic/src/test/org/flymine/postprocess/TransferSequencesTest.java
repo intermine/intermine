@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.io.InputStream;
@@ -54,6 +55,7 @@ public class TransferSequencesTest extends TestCase
     private Contig [] storedContigs;
     private Sequence [] storedContigSequences;
     private Exon [] storedExons;
+    private Transcript [] storedTranscripts;
     private RepeatRegion [] storedRepeatRegions;
     private Model model;
 
@@ -88,16 +90,37 @@ public class TransferSequencesTest extends TestCase
         LOG.error("closed objectstore");
     }
 
-    public void testExonSequence() throws Exception {
+    public void testChromosomeSequenceTransfer() throws Exception {
         CalculateLocations cl = new CalculateLocations(osw);
         cl.fixPartials();
         cl.createLocations();
         TransferSequences ts = new TransferSequences(osw);
-        ts.transferSequences();
-        checkSequences();
+        ts.transferToChromosome();
+        checkChromosomeSequences();
     }
 
-    public void checkSequences() throws Exception {
+    public void testTransferToLocatedSequenceFeatures() throws Exception {
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.fixPartials();
+        cl.createLocations();
+        TransferSequences ts = new TransferSequences(osw);
+        ts.transferToChromosome();
+        ts.transferToLocatedSequenceFeatures();
+        checkExonSequences();
+    }
+
+    public void testTranscriptSequence() throws Exception {
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.fixPartials();
+        cl.createLocations();
+        TransferSequences ts = new TransferSequences(osw);
+        ts.transferToChromosome();
+        ts.transferToLocatedSequenceFeatures();
+        ts.transferToTranscripts();
+        checkTranscriptSequences();
+    }
+
+    public void checkChromosomeSequences() throws Exception {
         osw.flushObjectById();
 
         ObjectStore os = osw.getObjectStore();
@@ -174,6 +197,13 @@ public class TransferSequencesTest extends TestCase
             "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
         assertEquals(expectedChrSequence, resChromosome.getSequence().getSequence());
 
+    }
+
+    public void checkExonSequences() throws Exception {
+        osw.flushObjectById();
+
+        ObjectStore os = osw.getObjectStore();
+
         String expectedExonSequence0 =
             "tatgactgtaacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatct" +
             "cttttccgagtaagacgttttccagtc";
@@ -190,11 +220,11 @@ public class TransferSequencesTest extends TestCase
         Exon resExon1 = (Exon) os.getObjectById(storedExons[1].getId());
         assertEquals(expectedExonSequence1, resExon1.getSequence().getSequence());
         String expectedExonSequence2 =
-            "agacgattgtttactttacacgccggaaatgaaaaccgcaatggtgctcaaggcaaaaga" +
-            "cgttatccgccgtggctgtctggaatacgacgtcagcgccaccgacatcaccagctcgtt" +
-            "tatggctatccgcaagaccatgaccagcagcggacgcagcgccacctatgaggccagccg" +
-            "cagcgaggaagccagccacgccgacctcgcctgggcgaccatgcacgccctgttaaatga" +
-            "gccactcaccgccggtatcagcaccccgctgacatccaccattctggagttttac";
+            "gacgattgtttactttacacgccggaaatgaaaaccgcaatggtgctcaaggcaaaagac" +
+            "gttatccgccgtggctgtctggaatacgacgtcagcgccaccgacatcaccagctcgttt" +
+            "atggctatccgcaagaccatgaccagcagcggacgcagcgccacctatgaggccagccgc" +
+            "agcgaggaagccagccacgccgacctcgcctgggcgaccatgcacgccctgttaaatgag" +
+            "ccactcaccgccggtatcagcaccccgctgacatccaccattctggagttttac";
         Exon resExon2 = (Exon) os.getObjectById(storedExons[2].getId());
         assertEquals(expectedExonSequence2, resExon2.getSequence().getSequence());
         String expectedExonSequence5 =
@@ -205,15 +235,15 @@ public class TransferSequencesTest extends TestCase
         Exon resExon5 = (Exon) os.getObjectById(storedExons[5].getId());
         assertEquals(expectedExonSequence5, resExon5.getSequence().getSequence());
         String expectedExonSequence3 =
-            "cgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgaccg" +
-            "ccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccggt" +
-            "cagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctcgccgattta" +
-            "cgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttcccagcagga" +
-            "tttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctggaaaagcgtta" +
-            "cagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatacccgccgtgg" +
-            "cgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagccttcgcgcc" +
-            "cggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccgga" +
-            "atatctcagcgcccttaactctgcctggc";
+            "accgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgac" +
+            "cgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccg" +
+            "gtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctcgccgatt" +
+            "tacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttcccagcag" +
+            "gatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctggaaaagcgt" +
+            "tacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatacccgccgt" +
+            "ggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagccttcgcg" +
+            "cccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccg" +
+            "gaatatctcagcgcccttaactctgcctggc";
         Exon resExon3 = (Exon) os.getObjectById(storedExons[3].getId());
         assertEquals(expectedExonSequence3, resExon3.getSequence().getSequence());
         String expectedExonSequence6 =
@@ -249,6 +279,40 @@ public class TransferSequencesTest extends TestCase
                      resRepeatRegion3.getSequence().getSequence());
     }
 
+    public void checkTranscriptSequences() throws Exception {
+        osw.flushObjectById();
+
+        ObjectStore os = osw.getObjectStore();
+
+        Transcript resTranscript0 =
+            (Transcript) os.getObjectById(storedTranscripts[0].getId());
+        assertEquals("caaaaatcttctagtttttttttagaaaggatacaccaagtagacgattgtttactttac" +
+                     "acgccggaaatgaaaaccgcaatggtgctcaaggcaaaagacgttatccgccgtggctgt" +
+                     "ctggaatacgacgtcagcgccaccgacatcaccagctcgtttatggctatccgcaagacc" +
+                     "atgaccagcagcggacgcagcgccacctatgaggccagccgcagcgaggaagccagccac" +
+                     "gccgacctcgcctgggcgaccatgcacgccctgttaaatgagccactcaccgccggtatc" +
+                     "agcaccccgctgacatccaccattctggagttttacaccgccagcggcccgaaaatggag" +
+                     "gcattcacctttggtgagccggtgccggtactcgaccgccgtgacattctggattacgtc" +
+                     "gagtgcatcagtaacggcagatggtatgagccaccggtcagctttaccggtctggcaaaa" +
+                     "agcctgcgggctgccgtgcatcacagctcgccgatttacgtcaaacgcaatattctggcc" +
+                     "tcgacatttatcccgcatccatggctttcccagcaggatttcagccgctttgtgctggat" +
+                     "tttctggtgttcggtaatgcgtttctggaaaagcgttacagcaccaccggtaaggtcatc" +
+                     "agactggaaacctcaccggcaaaatatacccgccgtggcgtggaagaggatgtttactgg" +
+                     "tgggtgccgtccttcaacgagccgacagccttcgcgcccggctccgtgtttcacctgctg" +
+                     "gagccggatattaatcaggagctgtacggcctgccggaatatctcagcgcccttaactct" +
+                     "gcctggc",
+                     resTranscript0.getSequence().getSequence());
+
+        Transcript resTranscript1 =
+            (Transcript) os.getObjectById(storedTranscripts[1].getId());
+        assertEquals("cggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctcagcgcg" +
+                     "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
+                     "tggtgagcgtgaaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttga" +
+                     "tattaaaaaaatcgtccttcgtcgccacttcactgagggggataattttaatgccgtcgg" +
+                     "ctttcccctgtggggca",
+                     resTranscript1.getSequence().getSequence());
+    }
+
     private void createData() throws Exception {
         osw.flushObjectById();
 
@@ -263,7 +327,6 @@ public class TransferSequencesTest extends TestCase
 
         storedContigs = new Contig[3];
         storedContigSequences = new Sequence[3];
-        storedExons = new Exon[3];
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     storedChromosome,
@@ -306,7 +369,7 @@ public class TransferSequencesTest extends TestCase
         storedContigs[1] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         storedContigs[1].setIdentifier("contig1");
-        storedContigs[1].setId(new Integer(301)); 
+        storedContigs[1].setId(new Integer(301));
         storedContigs[1].setLength(new Integer(1500));
         String contigResidues1 =
             "ggcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtct" +
@@ -369,27 +432,60 @@ public class TransferSequencesTest extends TestCase
 
         toStore.add(createLocation(storedSupercontig, storedContigs[2], -1, 1, 1000));
 
+        storedTranscripts = new Transcript[2];
+        for (int i = 0 ; i < storedTranscripts.length ; i++) {
+            storedTranscripts[i] =
+                (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+            storedTranscripts[i].setIdentifier("transcript_" + i);
+        }
+
         storedExons = new Exon [8];
-        for (int i = 0 ; i < 8 ; i++) {
+        for (int i = 0 ; i < storedExons.length ; i++) {
             storedExons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-            storedExons[i].setIdentifier("exon" + i);
+            storedExons[i].setIdentifier("exon_" + i);
+        }
+
+        List transcript0Exons =
+            Arrays.asList(new Object[] {storedExons[1], storedExons[2], storedExons[3]});
+        storedTranscripts[0].setExons(transcript0Exons);
+
+        List transcript1Exons = Arrays.asList(new Object[] {storedExons[7], storedExons[6]});
+        storedTranscripts[1].setExons(transcript1Exons);
+
+        for (int i = 0; i < transcript0Exons.size() ; i++) {
+            RankedRelation rankedRelation =
+                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
+            rankedRelation.setRank(new Integer(i + 1));
+            rankedRelation.setSubject((BioEntity) transcript0Exons.get(i));
+            rankedRelation.setObject(storedTranscripts[0]);
+            toStore.add(rankedRelation);
+        }
+
+        for (int i = 0; i < transcript1Exons.size() ; i++) {
+            RankedRelation rankedRelation =
+                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
+            rankedRelation.setRank(new Integer(i + 1));
+            rankedRelation.setSubject((BioEntity) transcript1Exons.get(i));
+            rankedRelation.setObject(storedTranscripts[1]);
+            toStore.add(rankedRelation);
         }
 
         storedRepeatRegions = new RepeatRegion [4];
-        for (int i = 0 ; i < 4 ; i++) {
+        for (int i = 0 ; i < storedRepeatRegions.length ; i++) {
             storedRepeatRegions[i] =
                 (RepeatRegion) DynamicUtil.createObject(Collections.singleton(RepeatRegion.class));
-            storedRepeatRegions[i].setIdentifier("repeat_region" + i);
+            storedRepeatRegions[i].setIdentifier("repeat_region_" + i);
         }
 
         toStore.add(createLocation(storedContigs[0], storedExons[0], 1,   173,  259));
         toStore.add(createLocation(storedContigs[0], storedExons[4], -1,  454,  605));
         toStore.add(createLocation(storedContigs[0], storedExons[1], 1,   773,  814));
-        toStore.add(createLocation(storedContigs[0], storedExons[2], 1,   983, 1000));
+        toStore.add(createLocation(storedContigs[0], storedExons[2], 1,   984, 1000));
         toStore.add(createLocation(storedContigs[0], storedExons[5], -1,  996, 1000));
+
         toStore.add(createLocation(storedContigs[1], storedExons[7], 1,     8,  138));
         toStore.add(createLocation(storedContigs[1], storedExons[6], 1,   368,  493));
-        toStore.add(createLocation(storedContigs[1], storedExons[3], -1,  663, 1171));
+        toStore.add(createLocation(storedContigs[1], storedExons[3], -1,  663, 1173));
         toStore.add(createLocation(storedContigs[1], storedExons[2], -1, 1224, 1500));
         toStore.add(createLocation(storedContigs[1], storedExons[5], 1,  1287, 1500));
 
@@ -404,12 +500,16 @@ public class TransferSequencesTest extends TestCase
         while (iter.hasNext()) {
             osw.store((InterMineObject) iter.next());
         }
+        for (int i = 0; i<storedTranscripts.length; i++) {
+            osw.store(storedTranscripts[i]);
+        }
         for (int i = 0; i<storedExons.length; i++) {
             osw.store(storedExons[i]);
         }
         for (int i = 0; i<storedRepeatRegions.length; i++) {
             osw.store(storedRepeatRegions[i]);
         }
+
         osw.store(storedContigs[0]);
         osw.store(storedContigs[1]);
         osw.store(storedContigs[2]);
