@@ -573,7 +573,7 @@
   <target name="build-acedbtest" depends="compile-main" >
     <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedbtest"/>
-      <property name="model.src" value="${model}/acedb/acedbtest.wrm"/>
+      <property name="model.src" value="${model}/acedb/"/>
       <reference torefid="class.path" refid="acedbtest.class.path"/>
     </ant>
   </target>
@@ -596,7 +596,7 @@
   <target name="build-acedb" depends="compile-main">
     <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedb"/>
-      <property name="model.src" value="${model}/acedb/acedb.wrm"/>
+      <property name="model.src" value="${model}/acedb/"/>
       <reference torefid="class.path" refid="acedb.class.path"/>
     </ant>
   </target> 
