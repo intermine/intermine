@@ -93,4 +93,13 @@ public class Table extends AbstractTable
         }
         return false;
     }
+
+    /**
+     * A toString method, which helps us when debugging.
+     *
+     * @return a String representation of the object
+     */
+    public String toString() {
+        return getSQLString();
+    }
 }
