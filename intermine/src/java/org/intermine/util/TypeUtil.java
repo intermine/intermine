@@ -3,6 +3,7 @@ package org.flymine.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.lang.reflect.Field;
 
 /**
@@ -17,11 +18,25 @@ public class TypeUtil
     }
 
     /**
+     * Returns the value of a public or protected Field of an Object given the field name
+     *
+     * @param o the Object
+     * @param fieldName the name of the relevant Field
+     * @return the value of the Field
+     * @throws IllegalAccessException if the field is inaccessible
+     */ 
+    public static Object getFieldValue(Object o, String fieldName) throws IllegalAccessException {
+        Field f  = getField(o.getClass(), fieldName);
+        f.setAccessible(true);
+        return f.get(o);
+    }
+
+    /**
      * Returns the Field object of a Class given the field name
      *
      * @param c the Class
      * @param fieldName the name of the relevant field
-     * @return the Field
+     * @return the Field, or null if the field is not found
      */ 
     public static Field getField(Class c, String fieldName) {
         Field f = null;
@@ -51,6 +66,22 @@ public class TypeUtil
             }
         } while ((c = c.getSuperclass()) != null);
         return fields;
+    }
+
+    /**
+     * Get the type of the elements of a collection
+     *
+     * @param col the collection
+     * @return the Class of the elements of the collection
+     */
+    public static Class getElementType(Collection col) {
+        if (col == null) {
+            throw new NullPointerException("Collection cannot be null");
+        }
+        if (col.size() == 0) {
+            throw new NoSuchElementException("Collection cannot be empty");
+        }
+        return col.iterator().next().getClass();
     }
 
     /**
