@@ -1,0 +1,17 @@
+<index>
+    <section>
+        <heading>FlyMine Database Documentation</heading>
+        <item><ulink url="presentations/index.xml">Presentations, slides, posters...</ulink></item>
+        <item><ulink url="usage_scenarios/index.xml">Usage scenarios</ulink></item>
+        <item><ulink url="ontology_merging/index.xml">Object Model from Ontology Merging</ulink></item>
+        <item><ulink url="http://www.flymine.org/api/">API&#160;JavaDoc</ulink></item>
+    </section>
+
+    <section>
+        <heading>InterMine Documentation</heading>
+        <item><ulink url="http://www.intermine.org/software/">Software</ulink></item>
+        <item><ulink url="http://www.intermine.org/api/">API&#160;JavaDoc</ulink></item>
+        <item><ulink url="http://www.intermine.org/doc/contribute/">Contributing code to InterMine</ulink></item>
+    </section>
+
+</index>
