@@ -32,7 +32,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
     public void setUp() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
-        dr = ((PersistenceBrokerFlyMineImpl) pb).getDescriptorRepository();
+        dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
         super.setUp();
     }
 

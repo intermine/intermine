@@ -39,7 +39,7 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
 {
     private JdbcAccessFlymineImpl ja;
     private Query q1, q2;
-    private PersistenceBrokerFlyMineImpl pb;
+    private PersistenceBrokerFlyMine pb;
 
     public JdbcAccessFlymineImplTest(String arg) {
         super(arg);
@@ -59,7 +59,7 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
 
         // Get db and writer in order to store data
         ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
+        pb = (PersistenceBrokerFlyMine) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         db = pb.getDatabase();
         DescriptorRepository dr = pb.getDescriptorRepository();
         writer = new ObjectStoreWriterOjbImpl(os);

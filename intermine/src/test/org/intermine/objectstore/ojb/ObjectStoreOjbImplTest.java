@@ -26,7 +26,7 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
     public void setUp() throws Exception {
         super.setUp();
         os = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        PersistenceBrokerFlyMineImpl pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
+        PersistenceBrokerFlyMine pb = (PersistenceBrokerFlyMine) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         db = pb.getDatabase();
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         storeData();
