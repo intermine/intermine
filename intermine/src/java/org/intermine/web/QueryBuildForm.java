@@ -48,7 +48,7 @@ import org.flymine.metadata.presentation.DisplayModel;
 public class QueryBuildForm extends ActionForm
 {
     // field to which a constraint is to be added - used when the user adds a constraint
-    protected String newFieldName;
+    protected String newFieldName = null;
     // map from constraint name to constaintOp index
     protected Map fieldOps = new HashMap();
     // map from constraint name to constraint value (a string)
@@ -178,6 +178,18 @@ public class QueryBuildForm extends ActionForm
     }
 
     /**
+     * @see ActionForm#reset
+     */
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        fieldValues = new HashMap();
+        fieldOps = new HashMap();
+        parsedFieldValues = new HashMap();
+        parsedFieldOps = new HashMap();
+        newFieldName = null;
+        errors = new ActionErrors();
+    }
+
+    /**
      * Validate the values entered in the form and populate the Maps needed by getParsedFieldOps()
      * and getParsedFieldValues().
      *
@@ -190,12 +202,12 @@ public class QueryBuildForm extends ActionForm
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         Map savedBags = (Map) session.getAttribute("savedBags");
         String editingAlias = (String) session.getAttribute("editingAlias");
-        
+
         if (editingAlias == null) {
             // all is well - nothing has happened yet
             return null;
         }
-        
+
         parsedFieldValues = new HashMap();
         parsedFieldOps = new HashMap();
 
@@ -218,7 +230,7 @@ public class QueryBuildForm extends ActionForm
             if (fieldValue == null || fieldOp == null) {
                 continue;
             }
-            
+
             Integer opCode = Integer.valueOf((String) fieldOp);
             ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
             parsedFieldOps.put(fieldName, op);
@@ -277,7 +289,7 @@ public class QueryBuildForm extends ActionForm
                 }
             } else {
                 String stringFieldValue = (String) fieldValue;
-                        
+
                 if (stringFieldValue != null) {
                     if (fieldClass.equals(Date.class)) {
                         DateFormat dateFormat =
