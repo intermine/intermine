@@ -50,6 +50,7 @@
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
   <property name="build.gbrowse" location="${build}/gbrowse"/>
+  <property name="build.gbrowse.data" location="${build.gbrowse}/data"/>
   <property name="build.webapp.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
   <property name="build.webservice.lib" location="${build.webapp}/webservice/WEB-INF/lib"/>
 
@@ -169,6 +170,7 @@
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
     <mkdir dir="${build.gbrowse}"/>
+    <mkdir dir="${build.gbrowse.data}"/>
     <mkdir dir="${build.webapp}/intermine"/>
 
     <mkdir dir="${results}"/>
@@ -1499,9 +1501,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
   
-    <write-gff alias="os.production" dest="${build.gbrowse}"/>
+    <write-gff alias="os.production" dest="${build.gbrowse.data}"/>
   </target>
-
 
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
 
@@ -1824,6 +1825,57 @@
       <property name="war" value="${dist.webapp}/webservice.war"/>
       <reference torefid="class.path" refid="webservice.class.path"/>
     </ant>    
+  </target>
+
+  <!-- GBROWSE TARGETS -->
+
+  <target name="prepare-gbrowse-conf" depends="prepare">
+    <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
+          toFile="${build.gbrowse}/${gbrowse.config.file}"
+          overwrite="yes"/>
+  </target>
+
+  <target name="install-gbrowse-conf" 
+          description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory"
+          depends="prepare-gbrowse-conf">
+    <replace file="${build.gbrowse}/${gbrowse.config.file}" 
+             token="@@@FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX@@@" 
+             value="${webapp.prefix}/${webapp.viewByID.prefix}"/>
+    <copy file="${build.gbrowse}/${gbrowse.config.file}"
+          toFile="${gbrowse.config.directory}/${gbrowse.config.file}"/>
+    <chmod file="${gbrowse.config.directory}/${gbrowse.config.file}" perm="a+r"/>
+  </target>
+
+  <target name="load-gbrowse-data" 
+          description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse"
+          depends="write-gff">
+    <exec dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
+      <arg value="--adaptor"/>
+      <arg value="dbi::Pg"/>
+      <arg value="--create"/>
+      <arg value="--dsn"/>
+      <arg value="dbi:Pg:dbname=flymine"/>
+      <arg value="--user"/>
+      <arg value="kmr"/>
+      <arg value="--password"/>
+      <arg value="kmr"/>
+    </exec>
+    <apply dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
+      <arg value="--adaptor"/>
+      <arg value="dbi::Pg"/>
+      <arg value="--dsn"/>
+      <arg value="dbi:Pg:dbname=flymine"/>
+      <arg value="--user"/>
+      <arg value="kmr"/>
+      <arg value="--password"/>
+      <arg value="kmr"/>
+      <fileset dir="${build.gbrowse.data}">
+        <patternset>
+          <include name="*.fa"/>
+          <include name="*.gff"/>
+        </patternset>
+      </fileset>
+    </apply>
   </target>
 
   <!-- MODEL COMPILATION TARGETS -->
