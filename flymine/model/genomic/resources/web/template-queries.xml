@@ -1,4 +1,10 @@
 <query-list>
+  <query name="Object_Synonym" model="genomic" view="Synonym.subject">
+    <node path="Synonym" type="Synonym"/>
+    <node path="Synonym.value" type="String">
+      <constraint op="=" value="timeout"/>
+    </node>
+  </query>
   <query name="DM_GoTerms" model="genomic" view="Gene">
     <node path="Gene" type="Gene">
     </node>
@@ -15,7 +21,7 @@
       <constraint op="=" value="GO:0007568"/>
     </node>
   </query>
-  <query name="Gene_Synonyms2" model="genomic" view="Gene.organismDbId Gene.synonyms.value">
+  <query name="Gene_Synonyms" model="genomic" view="Gene.organismDbId Gene.synonyms.value">
     <node path="Gene" type="Gene"/>
     <node path="Gene.organismDbId" type="String">
       <constraint op="=" value="FBgn0004053"/>
