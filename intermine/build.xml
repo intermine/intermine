@@ -1061,6 +1061,7 @@
     <delete dir="${build.test}"/>
     <delete dir="${build.src.test}"/>
     <delete dir="${build.resources}"/>
+    <delete dir="${build.model}"/>
     <delete>
     <fileset dir=".">
       <include name="velocity.log*"/>
