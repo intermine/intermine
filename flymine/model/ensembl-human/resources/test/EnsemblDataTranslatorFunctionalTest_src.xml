@@ -335,6 +335,11 @@
     <attribute name="length" value="246127941"/>
     <reference name="coord_system" ref_id="30_1"/>
  </item>
+<item id="1_965452" class="http://www.flymine.org/model/ensembl-human#seq_region">
+    <attribute name="name" value="21"/>
+    <attribute name="length" value="46976097"/>
+    <reference name="coord_system" ref_id="30_1"/>
+ </item>
 
  <item id="1_965519" class="http://www.flymine.org/model/ensembl-human#seq_region">
     <attribute name="name" value="22"/>
@@ -344,6 +349,11 @@
  <item id="1_965526" class="http://www.flymine.org/model/ensembl-human#seq_region">
     <attribute name="name" value="6"/>
     <attribute name="length" value="170914576"/>
+    <reference name="coord_system" ref_id="30_1"/>
+ </item>
+ <item id="1_965433" class="http://www.flymine.org/model/ensembl-human#seq_region">
+    <attribute name="name" value="14"/>
+    <attribute name="length" value="105311216"/>
     <reference name="coord_system" ref_id="30_1"/>
  </item>
 
