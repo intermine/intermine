@@ -242,12 +242,8 @@ public class InitialiserPlugin implements PlugIn
             profile = new Profile(pm, superuser, new HashMap(), new HashMap(), new HashMap());
             String password = RequestPasswordAction.generatePassword();
             Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-            if (RequestPasswordAction.email(profile.getUsername(), password, webProperties)) {
-                pm.saveProfile(profile);
-                pm.setPassword(superuser, password);
-            } else {
-                LOG.warn("Failed to send password notification email to superuser " + superuser);
-            }
+            pm.saveProfile(profile);
+            pm.setPassword(superuser, password);
         } else {
             profile = pm.getProfile(superuser, pm.getPassword(superuser));
         }
