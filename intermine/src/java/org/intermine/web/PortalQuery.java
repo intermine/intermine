@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web;
 
 /*
  * Copyright (C) 2002-2004 FlyMine
@@ -10,7 +10,8 @@ package org.flymine.web;
  *
  */
 
-import java.util.Collections;
+import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,16 +20,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 
-import org.intermine.web.TemplateAction;
-import org.intermine.web.PathQuery;
-import org.intermine.web.PathNode;
-import org.intermine.web.Constraint;
-import org.intermine.web.Constants;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.SessionMethods;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
@@ -65,24 +60,30 @@ public class PortalQuery extends TemplateAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         
         String extId = request.getParameter("externalid");
-        String className = request.getParameter("class");
         
-        if (extId == null || className == null) {
+        if (extId == null) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("errors.badportalquery"));
+            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.badportalquery"));
             saveErrors(request, errors);
             return mapping.findForward("failure");
         }
         
-        PathQuery query = new PathQuery(os.getModel());
-        PathNode node = query.addNode("Synonym");
-        node = query.addNode("Synonym.value");
-        node.setConstraints(Collections.singletonList(new Constraint(ConstraintOp.EQUALS, extId)));
-        query.setView(Collections.singletonList("Synonym.subject"));
+        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String templateName = properties.getProperty("begin.browse.template");
+        Integer op = ConstraintOp.EQUALS.getIndex();
         
-        // Stop handleTemplateQuery trying to forward to query builder
-        SessionMethods.loadQuery(query, request.getSession());
-        return handleTemplateQuery(mapping, request, response, true);
+        TemplateQuery template = TemplateHelper.findTemplate(request, templateName, "global");
+        // Populate template form bean
+        TemplateForm tf = new TemplateForm();
+        tf.setAttributeOps("1", op.toString());
+        tf.setAttributeValues("1", extId);
+        tf.parseAttributeValues(template, session, new ActionErrors());
+        // Convert form to path query
+        PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
+        // Convert path query to intermine query
+        SessionMethods.loadQuery(queryCopy, request.getSession());
+        
+        return handleTemplateQuery(mapping, request, response, true, false);
     }
 }
 

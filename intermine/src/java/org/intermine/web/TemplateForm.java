@@ -125,7 +125,6 @@ public class TemplateForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         String queryName = request.getParameter("queryName");
         String templateType = request.getParameter("templateType");
         
@@ -141,7 +140,22 @@ public class TemplateForm extends ActionForm
         
         ActionErrors errors = new ActionErrors();
         
-        int j = 0;
+        parseAttributeValues(template, session, errors);
+
+        return errors;
+    }
+    
+    /**
+     * For each value entered, parse the value into a format that can be
+     * applied to the particular constraint.
+     * 
+     * @param template the related template query
+     * @param session the current session
+     * @param errors a place to store any parse errors
+     */
+    protected void parseAttributeValues(TemplateQuery template, HttpSession session, ActionErrors errors) {
+    	Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+    	int j = 0;
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
@@ -157,8 +171,6 @@ public class TemplateForm extends ActionForm
                 j++;
             }
         }
-
-        return errors;
     }
 
     /**
