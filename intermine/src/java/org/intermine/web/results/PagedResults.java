@@ -11,12 +11,21 @@ package org.intermine.web.results;
  */
 
 import java.util.List;
+import java.util.Map;
+import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.FieldDescriptor;
 
 /**
  * A pageable and configurable table created from the Results object.
@@ -33,8 +42,8 @@ public class PagedResults extends PagedTable
      *
      * @param results the Results object
      */
-    public PagedResults(Results results) {
-        this(QueryHelper.getColumnAliases(results.getQuery()), results);
+    public PagedResults(Results results, Model model) {
+        this(QueryHelper.getColumnAliases(results.getQuery()), results, model);
     }
 
     /**
@@ -43,9 +52,10 @@ public class PagedResults extends PagedTable
      * @param results the Results object
      * @param columnNames the headings for the Results columns
      */
-    public PagedResults(List columnNames, Results results) {
+    public PagedResults(List columnNames, Results results, Model model) {
         super(columnNames);
         this.results = results;
+        setColumnTypes(model);
         updateRows();
     }
 
@@ -63,6 +73,7 @@ public class PagedResults extends PagedTable
         try {
             return results.getInfo().getRows();
         } catch (ObjectStoreException e) {
+            org.intermine.web.LogMe.log("i", e);
             throw new RuntimeException(e);
         }
     }
@@ -74,6 +85,7 @@ public class PagedResults extends PagedTable
         try {
             return results.getInfo().getStatus() != ResultsInfo.SIZE;
         } catch (ObjectStoreException e) {
+            org.intermine.web.LogMe.log("i", e);
             throw new RuntimeException(e);
         }
     }
@@ -105,5 +117,42 @@ public class PagedResults extends PagedTable
      */
     public ResultsInfo getResultsInfo() throws ObjectStoreException {
         return results.getInfo();
+    }
+
+    /**
+     * Call setType() on each Column, setting it the type to a ClassDescriptor, a FieldDescriptor
+     * or Object.class
+     */
+    private void setColumnTypes(Model model) {
+        Query q = results.getQuery();
+
+        Iterator columnIter = getColumns().iterator();
+        Iterator selectListIter = q.getSelect().iterator();
+
+        while (columnIter.hasNext()) {
+            Column thisColumn = (Column) columnIter.next();
+            QueryNode thisQueryNode = (QueryNode) selectListIter.next();
+
+            if (thisQueryNode instanceof QueryClass) {
+                Class thisQueryNodeClass = ((QueryClass) thisQueryNode).getType();
+                thisColumn.setType(model.getClassDescriptorByName(thisQueryNodeClass.getName()));
+            } else {
+                if (thisQueryNode instanceof QueryField) {
+                    QueryField queryField = (QueryField) thisQueryNode;
+                    FromElement fe = queryField.getFromElement();
+                    if (fe instanceof QueryClass) {
+                        QueryClass queryClass = (QueryClass) fe;
+                        Map fieldMap = model.getFieldDescriptorsForClass(queryClass.getType());
+                        FieldDescriptor fd =
+                            (FieldDescriptor) fieldMap.get(queryField.getFieldName());
+                        thisColumn.setType(fd);
+                    } else {
+                        thisColumn.setType(Object.class);
+                    }
+                } else {
+                    thisColumn.setType(Object.class);
+                }
+            }
+        }
     }
 }
