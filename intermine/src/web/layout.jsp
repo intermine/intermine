@@ -25,7 +25,6 @@
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
-    <script src="${WEB_PROPERTIES['project.sitePrefix']}/style/footer.js" type="text/javascript">;</script>
     <title>
       <fmt:message key="${pageName}.title" var="pageTitle"/>
       <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
@@ -37,7 +36,6 @@
       {
         document.getElementById('feedbackFormDiv').style.display='';
         document.getElementById('feedbackFormDivButton').style.display='none';
-        setFooter();
         window.scrollTo(0, 99999);
         document.getElementById("fbname").focus();
       }
@@ -90,7 +88,6 @@
       </div>
     </c:if>
     
-    <tiles:get name="footer"/>
   </body>
 </html:html>
 <!-- /layout.jsp -->
