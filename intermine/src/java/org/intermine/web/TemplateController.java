@@ -51,6 +51,9 @@ public class TemplateController extends TilesAction
             queryName = (String) session.getAttribute("queryName");
         }
 
+        //this to work around struts crappiness - the controller should be configured to expect
+        //a templateForm, but when it is the controller isn't called on page redisplay if validation
+        //fails. so we retrieve it manually, creating it if necessary.
         boolean populate = false;
         TemplateForm templateForm = (TemplateForm) session.getAttribute("templateForm");
         if (templateForm == null) {
