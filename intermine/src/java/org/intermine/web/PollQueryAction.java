@@ -97,13 +97,13 @@ public class PollQueryAction extends InterMineAction
         } else {
             LOG.debug("query qid " + qid + " still running, making client wait");
             request.setAttribute("qid", request.getParameter("qid"));
-            if (controller.getTickleCount() < 3) {
+            if (controller.getTickleCount() < 4) {
                 request.setAttribute("POLL_REFRESH_SECONDS", new Integer(1));
             } else {
                 request.setAttribute("POLL_REFRESH_SECONDS",
                                             new Integer(Constants.POLL_REFRESH_SECONDS));
             }
-            int imgnum = ((controller.getTickleCount()+1) % 4) + 1;
+            int imgnum = ((controller.getTickleCount() + 1) % 4) + 1;
             if (controller.getTickleCount() < 4) {
                 request.setAttribute("imgnum", new Integer(1));
             } else {
