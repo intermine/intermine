@@ -28,6 +28,8 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.objectstore.query.ResultsRow;
 import org.flymine.model.genomic.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * Transfer sequences from the Contig objects to the other objects that are located on the Contigs
  * and to the objects that the Contigs are located on (eg. Chromosomes).
@@ -38,6 +40,8 @@ import org.flymine.model.genomic.*;
 public class TransferSequences
 {
     protected ObjectStoreWriter osw;
+
+    private static final Logger LOG = Logger.getLogger(CreateReferences.class);
 
     /**
      * Create a new TransferSequences object from the given ObjectStoreWriter
@@ -59,7 +63,8 @@ public class TransferSequences
         ObjectStore os = osw.getObjectStore();
 
         Results results = PostProcessUtil.findLocations(os, Chromosome.class, Contig.class, false);
-        results.setBatchSize(200);
+        // could try reducing further if still OutOfMemeory problems
+        results.setBatchSize(50);
 
         Iterator resIter = results.iterator();
 
@@ -76,6 +81,7 @@ public class TransferSequences
             if (currentChr == null || !chr.equals(currentChr)) {
                 if (currentChr != null) {
                     storeNewSequence(currentChr, currentChrBases);
+                    LOG.info("finished Chromosome: " + currentChr.getIdentifier());
                 }
                 currentChrBases = new char[chr.getLength().intValue()];
                 // fill with '.' so we can see the parts of the Chromosome sequence that haven't
@@ -92,6 +98,7 @@ public class TransferSequences
                          contigOnChrLocation.getStrand().intValue());
         }
         storeNewSequence(currentChr, currentChrBases);
+        LOG.info("finished Chromosome: " + currentChr.getIdentifier());
         osw.commitTransaction();
     }
 
@@ -123,6 +130,8 @@ public class TransferSequences
 
         Iterator resIter = results.iterator();
 
+        long start = System.currentTimeMillis();
+        int i = 0;
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
@@ -145,6 +154,12 @@ public class TransferSequences
             feature.setSequence(sequence);
             osw.store(feature);
             osw.store(sequence);
+            i++;
+            if (i % 1000 == 0) {
+                long now = System.currentTimeMillis();
+                LOG.info("Set sequences for " + i + " features"
+                         + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+            }
         }
 
         osw.commitTransaction();
@@ -253,6 +268,8 @@ public class TransferSequences
         Transcript currentTranscript = null;
         StringBuffer currentTranscriptBases = new StringBuffer();
 
+        long start = System.currentTimeMillis();
+        int i = 0;
         while (resIter.hasNext()) {
            ResultsRow rr = (ResultsRow) resIter.next();
 
@@ -273,8 +290,13 @@ public class TransferSequences
            }
 
            currentTranscriptBases.append(exon.getSequence().getResidues());
+           i++;
+           if (i % 100 == 0) {
+               long now = System.currentTimeMillis();
+               LOG.info("Set sequences for " + i + " Transcripts"
+                        + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+           }
         }
-
         storeNewSequence(currentTranscript, currentTranscriptBases.toString().toCharArray());
 
         osw.commitTransaction();
