@@ -84,6 +84,12 @@ null:gene_description a owl:Class ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:contig .
 
+:Contig__identifier a owl:DatatypeProperty ;
+    rdfs:subPropertyOf :BioEntity__identifier;
+    rdfs:domain :Contig;
+    rdfs:range xsd:string;
+    owl:equivalentProperty e:contig__name.    
+
 null:contig__embl_offset a owl:DatatypeProperty ;
     owl:equivalentProperty e:contig__embl_offset .
     
@@ -101,6 +107,13 @@ null:dna a owl:Class ;
 :Clone a owl:Class ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:clone .
+
+:Clone__identifier a owl:DatatypeProperty ;
+    rdfs:subPropertyOf :BioEntity__identifier;
+    rdfs:domain :Clone;
+    rdfs:range xsd:string;
+    owl:equivalentProperty e:clone__name.    
+
 
 :Clone__htgPhase a owl:DatatypeProperty ;
     owl:equivalentProperty e:clone__htg_phase .
@@ -180,14 +193,21 @@ null:assembly a owl:Class ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:chromosome .
 
+:Chromosome__identifier a owl:DatatypeProperty ;
+    rdfs:subPropertyOf :BioEntity__identifier;
+    rdfs:domain :Chromosome;
+    rdfs:range xsd:string;
+    owl:equivalentProperty e:chromosome__name.    
+
+
 # ------------ karyotype is a ChromosomeBand ----------- #
 
 :ChromosomeBand a owl:Class ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:karyotype .
 
-:ChromosomeBand__name a owl:DatatypeProperty ;
-    rdfs:subPropertyOf :BioEntity__name ;
+:ChromosomeBand__identifier a owl:DatatypeProperty ;
+    rdfs:subPropertyOf :BioEntity__identifier ;
     rdfs:domain :ChromosomeBand ;
     rdfs:range xsd:string ;
     owl:equivalentProperty e:karyotype__band .
@@ -252,10 +272,6 @@ null:transcript__display_xref a owl:ObjectProperty ;
    
 # main identifier for protein is chosen from other ids in order:
 # 1) SWISSPROT, 2) trEmbl id, 3) EMBL id
-
-:Protein__identifier a owl:DataTypeProperty;
-    rdfs:domain :Protein;
-    rdfs:range xsd:string.
 
 :Protein__swissProtId a owl:DataTypeProperty;
     rdfs:domain :Protein;

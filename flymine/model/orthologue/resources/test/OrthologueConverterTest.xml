@@ -15,7 +15,7 @@
 <attribute name="abbreviation" value="ORG1"/>
 </item>
 <item id="1_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="name" value="GENE2"/>
+<attribute name="identifier" value="GENE2"/>
 <reference name="organism" ref_id="0_2"/>
 <collection name="objects">
 <reference ref_id="5_1"/>
@@ -25,7 +25,7 @@
 </collection>
 </item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="name" value="GENE1"/>
+<attribute name="identifier" value="GENE1"/>
 <reference name="organism" ref_id="0_1"/>
 <collection name="objects">
 <reference ref_id="5_2"/>

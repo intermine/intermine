@@ -156,7 +156,7 @@ public class OrthologueConverter extends FileConverter
         Item gene = (Item) genes.get(key);
         if (gene == null) {
             gene = newItem("Gene");
-            gene.addAttribute(new Attribute("name", name));
+            gene.addAttribute(new Attribute("identifier", name));
             gene.addReference(new Reference("organism", organism.getIdentifier()));
             genes.put(key, gene);
         }
