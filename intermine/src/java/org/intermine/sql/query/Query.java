@@ -1,6 +1,8 @@
 package org.flymine.sql.query;
 
 import java.util.*;
+import java.io.*;
+import antlr.collections.AST;
 
 /**
  * Represents an SQL query in parsed form.
@@ -21,9 +23,10 @@ public class Query implements SQLStringable
     protected boolean explain;
     protected boolean distinct;
 
+    private Map aliasToTable;
+
     /**
-     * Construct a new parsed Query.
-     *
+     * Construct a new Query.
      */
     public Query() {
         select = new ArrayList();
@@ -36,6 +39,40 @@ public class Query implements SQLStringable
         offset = 0;
         explain = false;
         distinct = false;
+        aliasToTable = new HashMap();
+    }
+
+    /**
+     * Construct a new parsed Query from a String.
+     *
+     * @param sql a SQL SELECT String to parse
+     * @throws antlr.RecognitionException if the text is not recognised properly
+     * @throws antlr.TokenStreamException if something else goes wrong
+     */
+    public Query(String sql) throws antlr.RecognitionException, antlr.TokenStreamException {
+        select = new ArrayList();
+        from = new HashSet();
+        where = new HashSet();
+        groupBy = new HashSet();
+        having = new HashSet();
+        orderBy = new ArrayList();
+        limit = 0;
+        offset = 0;
+        explain = false;
+        distinct = false;
+        aliasToTable = new HashMap();
+
+        InputStream is = new ByteArrayInputStream(sql.getBytes());
+        
+        SqlLexer lexer = new SqlLexer(is);
+        SqlParser parser = new SqlParser(lexer);
+        parser.start_rule();
+
+        AST ast = parser.getAST();
+        if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
+            throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
+        }
+        processAST(ast.getFirstChild());
     }
 
     /**
@@ -109,6 +146,7 @@ public class Query implements SQLStringable
      */
     public void addFrom(AbstractTable obj) {
         from.add(obj);
+        aliasToTable.put(obj.getAlias(), obj);
     }
 
     /**
@@ -283,5 +321,217 @@ public class Query implements SQLStringable
             + (7 * where.hashCode()) + (11 * groupBy.hashCode())
             + (13 * having.hashCode()) + (17 * orderBy.hashCode()) + (19 * limit) + (23 * offset)
             + (explain ? 29 : 0) + (distinct ? 31 : 0);
+    }
+
+    /**
+     * Processes an AST node produced by antlr, at the top level of the SQL query.
+     *
+     * @param ast an AST node to process
+     */
+    private void processAST(AST ast) {
+        boolean processSelect = false;
+        switch (ast.getType()) {
+            case SqlTokenTypes.LITERAL_select:
+            case SqlTokenTypes.LITERAL_from:
+            case SqlTokenTypes.SEMI:
+            case SqlTokenTypes.OPEN_PAREN:
+            case SqlTokenTypes.CLOSE_PAREN:
+                break;
+            case SqlTokenTypes.SELECT_LIST:
+                processSelect = true;
+                break;
+            case SqlTokenTypes.FROM_LIST:
+                processFromList(ast.getFirstChild());
+                break;
+            case SqlTokenTypes.WHERE_CLAUSE:
+//                processWhereCondition(astgetFirstChild());
+                break;
+            default:
+                throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                            + ast.getType() + "]"));
+        }
+        if (ast.getNextSibling() != null) {
+            processAST(ast.getNextSibling());
+        }
+        if (processSelect) {
+            processSelectList(ast.getFirstChild());
+        }
+    }
+
+    /**
+     * Processes an AST node that describes a FROM list.
+     *
+     * @param ast an AST node to process
+     */
+    private void processFromList(AST ast) {
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.LITERAL_from:
+                case SqlTokenTypes.COMMA:
+                    break;
+                case SqlTokenTypes.TABLE:
+                    processNewTable(ast.getFirstChild());
+                    break;
+                case SqlTokenTypes.SUBQUERY:
+                    processNewSubQuery(ast.getFirstChild());
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+    }
+
+    /**
+     * Processes an AST node that describes a table in the FROM list.
+     *
+     * @param ast an AST node to process
+     */
+    private void processNewTable(AST ast) {
+        String tableName = null;
+        String tableAlias = null;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.LITERAL_as:
+                    break;
+                case SqlTokenTypes.TABLE_NAME:
+                    tableName = ast.getFirstChild().getText();
+                    break;
+                case SqlTokenTypes.TABLE_ALIAS:
+                    tableAlias = ast.getFirstChild().getText();
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        addFrom(new Table(tableName, tableAlias));
+    }
+    
+    /**
+     * Processes an AST node that describes a subquery in the FROM list.
+     *
+     * @param ast an AST node to process
+     */
+    private void processNewSubQuery(AST ast) {
+        AST subquery = null;
+        String alias = null;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.LITERAL_as:
+                case SqlTokenTypes.OPEN_PAREN:
+                case SqlTokenTypes.CLOSE_PAREN:
+                    break;
+                case SqlTokenTypes.SQL_STATEMENT:
+                    subquery = ast.getFirstChild();
+                    break;
+                case SqlTokenTypes.TABLE_ALIAS:
+                    alias = ast.getFirstChild().getText();
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        Query q = new Query();
+        q.processAST(subquery);
+        addFrom(new SubQuery(q, alias));
+    }
+    
+    /**
+     * Processes an AST node that describes a SELECT list.
+     *
+     * @param ast an AST node to process
+     */
+    public void processSelectList(AST ast) {
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.COMMA:
+                    break;
+                case SqlTokenTypes.SELECT_VALUE:
+                    processNewSelect(ast.getFirstChild());
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+    }
+
+    /**
+     * Processes an AST node that describes a SelectValue.
+     *
+     * @param ast an AST node to process
+     */
+    public void processNewSelect(AST ast) {
+        AbstractValue v = null;
+        String alias = null;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.LITERAL_as:
+                    break;
+                case SqlTokenTypes.FIELD_ALIAS:
+                    alias = ast.getFirstChild().getText();
+                    break;
+                case SqlTokenTypes.FIELD:
+                    v = processNewField(ast.getFirstChild());
+                    break;
+                case SqlTokenTypes.CONSTANT:
+                    v = new Constant(ast.getFirstChild().getText());
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        SelectValue sv = new SelectValue(v, alias);
+        addSelect(sv);
+    }
+
+    /**
+     * Processes an AST node that describes a Field.
+     *
+     * @param ast an AST node to process
+     * @return a Field object corresponding to the input
+     */
+    public Field processNewField(AST ast) {
+        String table = null;
+        String field = null;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.DOT:
+                    break;
+                case SqlTokenTypes.TABLE_ALIAS:
+                    table = ast.getFirstChild().getText();
+                    break;
+                case SqlTokenTypes.FIELD_NAME:
+                    field = ast.getFirstChild().getText();
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        AbstractTable t = (AbstractTable) aliasToTable.get(table);
+        return new Field(field, t);
+    }
+
+    /**
+     * A testing method - converts the argument into a Query object, and then converts it back to
+     * a String again.
+     *
+     * @param args command-line arguments
+     * @throws Exception anytime
+     */
+    public static void main(String args[]) throws Exception {
+        Query q = new Query(args[0]);
+        PrintStream out = System.out;
+        out.println(q.getSQLString());
     }
 }

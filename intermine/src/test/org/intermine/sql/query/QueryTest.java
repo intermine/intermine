@@ -62,4 +62,18 @@ public class QueryTest extends TestCase
         assertEquals(q1.hashCode(), q2.hashCode());
         assertTrue("Expected q1 hashcode not to equal q3 hashcode", q1.hashCode() != q3.hashCode());
     }   
+
+    public void testAntlr() throws Exception {
+        Query q = new Query("select flibble.flobble from flibble");
+        //throw (new Exception(q.getSQLString()));
+        //assertEquals("SELECT FROM flibble".length(), q.getSQLString().trim().length());
+        assertTrue("Expected \"" + q.getSQLString() + "\" to equal \"SELECT flibble.flobble FROM flibble\"", q.getSQLString().equals("SELECT flibble.flobble FROM flibble"));
+        q = new Query("select flibble.flobble from flibble, wotsit");
+        assertEquals("SELECT flibble.flobble FROM wotsit, flibble", q.getSQLString());
+        q = new Query("select flibble.flobble from (select flobble.flib from flobble) as flibble");
+        assertEquals("SELECT flibble.flobble FROM (SELECT flobble.flib FROM flobble) AS flibble", q.getSQLString());
+    }
+
+    //public static String toHexDump(String in) {
+    //    for (int i = 0; i<
 }
