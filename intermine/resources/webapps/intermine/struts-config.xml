@@ -118,6 +118,7 @@
     <action    path="/runQuery"
                type="org.flymine.web.RunQueryAction"
                name="runQueryForm">
+      <forward name="buildquery" path="query.page"/>
       <forward name="results" path="results.page"/>
     </action>
 
