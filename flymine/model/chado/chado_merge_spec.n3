@@ -256,8 +256,9 @@ null:analysisprop a owl:Class ;
 :Publication__journal a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__pubplace .
 
-:Publication__year a owl:DatatypeProperty ;
-    owl:equivalentProperty chado:pub__pyear .
+# not compatible type
+#:Publication__year a owl:DatatypeProperty ;
+#    owl:equivalentProperty chado:pub__pyear .
 
 :Publication__authors a owl:ObjectProperty ;
     owl:equivalentProperty chado:pub__authors .

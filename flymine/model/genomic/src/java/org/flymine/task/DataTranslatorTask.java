@@ -10,16 +10,13 @@ package org.flymine.task;
  *
  */
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemReader;
@@ -28,6 +25,7 @@ import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.metadata.Model;
 
 /**
  * Task to translate data
@@ -35,7 +33,8 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
  */
 public class DataTranslatorTask extends Task
 {
-    protected String translator, source, target, model, targetNamespace, organism, dataLocation;
+    protected String translator, source, target, srcModel, tgtModel, organism,
+        dataLocation, mapping;
 
     /**
      * Set the translator
@@ -62,19 +61,19 @@ public class DataTranslatorTask extends Task
     }
 
     /**
-     * Set the model
-     * @param model the model
+     * Set the source model name
+     * @param srcModel source model name
      */
-    public void setModel(String model) {
-        this.model = model;
+    public void setSrcModel(String srcModel) {
+        this.srcModel = srcModel;
     }
 
     /**
-     * Set the target namespace
-     * @param targetNamespace the target namespace
+     * Set the target model name
+     * @param tgtModel target model name
      */
-    public void setTargetNamespace(String targetNamespace) {
-        this.targetNamespace = targetNamespace;
+    public void setTgtModel(String tgtModel) {
+        this.tgtModel = tgtModel;
     }
 
     /**
@@ -106,11 +105,11 @@ public class DataTranslatorTask extends Task
         if (target == null) {
             throw new BuildException("target attribute not set");
         }
-        if (model == null) {
-            throw new BuildException("model attribute not set");
+        if (tgtModel == null) {
+            throw new BuildException("tgtModel attribute not set");
         }
-        if (targetNamespace == null) {
-            throw new BuildException("targetNamespace attribute not set");
+        if (srcModel == null) {
+            throw new BuildException("srcModel attribute not set");
         }
 
         try {
@@ -125,35 +124,39 @@ public class DataTranslatorTask extends Task
             }
             Class[] types = null;
             Object[] args = null;
-            if ("org.flymine.dataconversion.UniprotDataTranslator".equals(translator)) {
-                types = new Class[] {ItemReader.class, String.class};
-                args = new Object[] {reader, targetNamespace};
+            Properties mappingProps = new Properties();
+            InputStream is = getClass().getClassLoader().getResourceAsStream(srcModel
+                                                                             + "_mappings");
+            if (is != null) {
+                mappingProps.load(is);
             } else {
-                OntModel modelValue = ModelFactory.createOntologyModel();
-                modelValue.read(new FileReader(new File(model)), null, "N3");
-                if ("org.flymine.dataconversion.EnsemblDataTranslator".equals(translator)
-                    || "org.flymine.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
-                    if (organism == null) {
-                        throw new BuildException("organism attribute not set");
-                    }
-                    types = new Class[]
-                        {ItemReader.class, OntModel.class, String.class, String.class};
-                    args = new Object[] {reader, modelValue, targetNamespace, organism};
-                } else if ("org.flymine.dataconversion.ProteinStructureDataTranslator"
-                           .equals(translator)) {
-                    if (dataLocation == null) {
-                        throw new BuildException("dataLocation attribute not set");
-                    }
-                    types = new Class[]
-                        {ItemReader.class, OntModel.class, String.class, String.class};
-                    args = new Object[] {reader, modelValue, targetNamespace, dataLocation};
-                } else if ("org.flymine.dataconversion.ChadoDataTranslator".equals(translator)
-                           || "org.flymine.dataconversion.PsiDataTranslator".equals(translator)
-                           || "org.flymine.dataconversion.MageDataTranslator".equals(translator)) {
-                    types = new Class[] {ItemReader.class, OntModel.class, String.class};
-                    args = new Object[] {reader, modelValue, targetNamespace};
+                System .out.println("WARNING: did not find any mappings, serached for: "
+                                   + srcModel + "_mappings");
+            }
+            Model src = Model.getInstanceByName(srcModel);
+            Model tgt = Model.getInstanceByName(tgtModel);
+            if ("org.flymine.dataconversion.EnsemblDataTranslator".equals(translator)
+                || "org.flymine.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
+                if (organism == null) {
+                    throw new BuildException("organism attribute not set");
                 }
-                modelValue = null;
+                types = new Class[]
+                    {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
+                args = new Object[] {reader, mappingProps, src, tgt, organism};
+            } else if ("org.flymine.dataconversion.ProteinStructureDataTranslator"
+                       .equals(translator)) {
+                if (dataLocation == null) {
+                    throw new BuildException("dataLocation attribute not set");
+                }
+                types = new Class[]
+                    {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
+                args = new Object[] {reader, mappingProps, src, tgt, dataLocation};
+            } else if ("org.flymine.dataconversion.ChadoDataTranslator".equals(translator)
+                       || "org.flymine.dataconversion.PsiDataTranslator".equals(translator)
+                       || "org.flymine.dataconversion.MageDataTranslator".equals(translator)
+                       || "org.flymine.dataconversion.UniprotDataTranslator".equals(translator)) {
+                types = new Class[] {ItemReader.class, Properties.class, Model.class, Model.class};
+                args = new Object[] {reader, mappingProps, src, tgt};
             }
             DataTranslator dt = (DataTranslator) cls.getConstructor(types).newInstance(args);
             ItemWriter writer = new ObjectStoreItemWriter(ObjectStoreWriterFactory

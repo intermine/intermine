@@ -42,8 +42,10 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.Attribute;
+import org.intermine.metadata.Model;
 
 import org.flymine.model.genomic.Publication;
 
@@ -64,6 +66,8 @@ public class UpdatePublications
     protected static final int BATCH_SIZE = 50;
     protected ObjectStore os;
     protected Writer writer;
+
+    static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
 
     /**
      * Constructor
@@ -128,9 +132,10 @@ public class UpdatePublications
     class Handler extends DefaultHandler
     {
         Set toStore;
-        MyItem publication;
+        Item publication;
         String name;
         StringBuffer characters;
+        ItemFactory itemFactory;
 
         /**
          * Constructor
@@ -138,6 +143,8 @@ public class UpdatePublications
          */
         public Handler(Set toStore) {
             this.toStore = toStore;
+            itemFactory = new ItemFactory(os.getModel(), "-1_");
+            
         }
 
         /**
@@ -169,7 +176,7 @@ public class UpdatePublications
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {
-                publication = new MyItem("Publication");
+                publication = itemFactory.makeItem(TARGET_NS + "Publication");
                 toStore.add(publication);
                 publication.setAttribute("pubMedId", characters.toString());
             } else if ("PubDate".equals(name)) {
@@ -192,11 +199,11 @@ public class UpdatePublications
             } else if ("Pages".equals(name)) {
                 publication.setAttribute("pages", characters.toString());
             } else if ("Author".equals(name)) {
-                MyItem author = new MyItem("Author");
+                Item author = itemFactory.makeItem(TARGET_NS + "Author");
                 toStore.add(author);
                 author.setAttribute("name", characters.toString());
-                author.addReference("publications", publication);
-                publication.addReference("authors", author);
+                author.addToCollection("publications", publication);
+                publication.addToCollection("authors", author);
             }
             name = null;
         }
@@ -223,49 +230,5 @@ public class UpdatePublications
         new UpdatePublications(ObjectStoreFactory.getObjectStore("os.production"), writer)
             .execute();
         writer.close();
-    }
-}
-
-/**
- * Convenience subclass of Item
- * @author Mark Woodbridge
- */
-class MyItem extends Item
-{
-    static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
-    static int id;
-
-    /**
-     * Constructor
-     * @param className the class name of the item
-     */
-    MyItem(String className) {
-        super();
-        setIdentifier("-1_" + (id++));
-        setClassName(TARGET_NS + className);
-        setImplementations("");
-    }
-
-    /**
-     * Add an attribute to this item
-     * @param name the name of the attribute
-     * @param value the value of the attribute
-     */
-    void setAttribute(String name, String value) {
-        addAttribute(new Attribute(name, value));
-    }
-
-    /**
-     * Add a reference to a collection of this item
-     * @param name the name of the collection
-     * @param reference the item to add to the collection
-     */
-    void addReference(String name, Item reference) {
-        ReferenceList list = getCollection(name);
-        if (list == null) {
-            list = new ReferenceList(name);
-            addCollection(list);
-        }
-        list.addRefId(reference.getIdentifier());
     }
 }

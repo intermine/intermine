@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -35,6 +36,8 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.intermine.metadata.Model;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
@@ -42,15 +45,18 @@ import org.intermine.dataconversion.MockItemWriter;
 
 public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
+    private Model srcModel;
 
     public void setUp() throws Exception {
         super.setUp();
+        InterMineModelParser parser = new InterMineModelParser();
+        srcModel = Model.getInstanceByName("ensembl-human");
     }
 
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
-        DataTranslator translator = new EnsemblHumanDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs, "HS");
+        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(new MockItemReader(itemMap),
+                                                              mapping, srcModel, tgtNs, "HS");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -81,8 +87,8 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         externalDb.addAttribute(new Attribute("db_name", "RefSeq"));
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, xref, externalDb})));
-        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(
-                   new MockItemReader(itemMap), getOwlModel(), tgtNs, "HS");
+        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(new MockItemReader(itemMap),
+                                                              mapping, srcModel, tgtNs, "HS");
 
         Item exp1 = createItem(tgtNs + "Synonym", "-1_1", "");
         exp1.addAttribute(new Attribute("value", "FBgn1001"));
@@ -119,8 +125,8 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         stableId.addReference(new Reference("gene", "1_1"));
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, genedes, stableId, transcript, seq, coord})));
-        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(
-                      new MockItemReader(itemMap), getOwlModel(), tgtNs, "HS");
+        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(new MockItemReader(itemMap),
+                                                              mapping, srcModel, tgtNs, "HS");
 
         Item exp1 = createItem(tgtNs + "Gene", "1_1", "");
         exp1.addAttribute(new Attribute("organismDbId", "FBgn1001"));
@@ -202,8 +208,8 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
 
 
         Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {transcript1, translation1, xref1, stableId1, externalDb1, seq1, coord1, transcript2, translation2,  xref2, externalDb2, stableId2, seq2})));
-        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(
-                    new MockItemReader(itemMap), getOwlModel(), tgtNs, "HS");
+        EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(new MockItemReader(itemMap),
+                                                              mapping, srcModel, tgtNs, "HS");
 
 
         Item protein = createItem(tgtNs + "Protein", "-1_12", "");
@@ -291,8 +297,6 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, result);
     }
 
-
-
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
     }
@@ -301,16 +305,12 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_src.xml"));
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
-    }
-
     protected String getModelName() {
         return "genomic";
+    }
+
+    protected String getSrcModelName() {
+        return "ensembl-human";
     }
 
     private Item createItem(String clsName, String identifier, String imps) {

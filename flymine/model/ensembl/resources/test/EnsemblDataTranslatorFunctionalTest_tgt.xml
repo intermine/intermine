@@ -58,7 +58,7 @@
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9357480"/>
     <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="-1"/>
+    <attribute name="strand" value="1"/>
     <reference name="object" ref_id="-1_15"/>
     <reference name="subject" ref_id="1_11168"/>
   </item>
@@ -245,7 +245,7 @@
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9357480"/>
     <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="-1"/>
+    <attribute name="strand" value="1"/>
     <reference name="object" ref_id="-1_15"/>
     <reference name="subject" ref_id="1_11169"/>
   </item>
@@ -363,7 +363,7 @@
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="9357480"/>
     <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="-1"/>
+    <attribute name="strand" value="1"/>
     <reference name="object" ref_id="-1_15"/>
     <reference name="subject" ref_id="1_11167"/>
   </item>

@@ -27,9 +27,6 @@ import java.io.FileWriter;
 import java.io.File;
 import java.io.BufferedReader;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Attribute;
@@ -53,6 +50,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
     private String ns = "http://www.flymine.org/model/mage#";
 
+    public MageDataTranslatorTest(String arg) {
+        super(arg);
+    }
+
     public void setUp() throws Exception {
         super.setUp();
     }
@@ -67,7 +68,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Map itemMap = writeItems(srcItems);
         DataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                           getOwlModel(), tgtNs);
+                                                           mapping, srcModel, getTargetModel(tgtNs));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -80,7 +81,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     }
 
-    public void testCreateAuthors() {
+    public void testCreateAuthors() throws Exception {
 
         Item srcItem = createItem(ns + "BibliographicReference", "0_0", "");
         srcItem.addAttribute(new Attribute("authors", " William Whitfield; FlyChip Facility"));
@@ -93,7 +94,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2}));
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
-                                                           getOwlModel(), tgtNs);
+                                                               mapping, srcModel, getTargetModel(tgtNs));
         assertEquals(expected, translator.createAuthors(srcItem));
     }
 
@@ -118,7 +119,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Set srcItems = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem2, srcItem3, srcItem4, srcItem5}));
         Map itemMap = writeItems(srcItems);
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap), getOwlModel(), tgtNs);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
         //MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         //translator.translate(tgtIw);
 
@@ -147,7 +149,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2}));
         Map itemMap = writeItems(srcItems);
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs);
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         Item tgtItem = createItem(tgtNs+"MicroArraySlideDesign", "0_0", "");
 
@@ -185,7 +187,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map itemMap = writeItems(srcItems);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs);
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         //MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         //translator.translate(tgtIw);
@@ -227,7 +229,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3, srcItem4, srcItem5}));
         Map srcMap = writeItems(src);
 
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         Item expectedItem =createItem(tgtNs+"MicroArrayExperiment", "61_748", "");
         expectedItem.addAttribute(new Attribute("name", "P10005"));
@@ -272,7 +275,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2,srcItem10, srcItem11, srcItem13, srcItem14, srcItem15, srcItem16 }));
         Map srcMap = writeItems(src);
 
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         Item expectedItem = createItem(tgtNs+"MicroArrayAssay", "57_709", "");
         //expectedItem.addCollection(new ReferenceList("results", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744", "58_755"}))));
@@ -313,7 +317,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                       getOwlModel(), tgtNs);
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         Item expectedItem = createItem(tgtNs+"MicroArrayExperimentalResult", "58_762", "");
         expectedItem.addAttribute(new Attribute("normalised","true"));
@@ -415,7 +419,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Map srcMap = writeItems(src);
 
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         Item expectedItem = createItem(tgtNs+"CDNAClone", "0_11", "");
         expectedItem.addAttribute(new Attribute("identifier","LD04815"));
@@ -522,7 +527,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                        {srcItem, srcItem1, srcItem2, srcItem3, srcItem4}));
         Map itemMap = writeItems(srcItems);
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs);
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         Item tgtItem = createItem(tgtNs+"cDNAClone", "0_3", "");
 
@@ -558,8 +563,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem, srcItem1,srcItem2, srcItem3, srcItem4}));
         Map itemMap = writeItems(srcItems);
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs);
-
+                                                               mapping, srcModel, getTargetModel(tgtNs));
         Item tgtItem = createItem(tgtNs+"cDNAClone", "0_3", "");
 
         Map expected = new HashMap();
@@ -590,8 +594,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     protected Collection getExpectedItems() throws Exception {
         Collection srcItems = getSrcItems();
         Map itemMap = writeItems(srcItems);
-        DataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                           getOwlModel(), tgtNs);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -600,18 +604,12 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(
-            getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-
-        return ont;
-    }
-
     protected String getModelName() {
         return "genomic";
+    }
+
+    protected String getSrcModelName() {
+        return "mage";
     }
 
     private Item createItem(String className, String itemId, String implementation){

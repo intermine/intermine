@@ -13,6 +13,7 @@ package org.flymine.dataconversion;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Properties;
 
 import com.hp.hpl.jena.ontology.OntModel;
 
@@ -23,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.util.XmlUtil;
+import org.intermine.metadata.Model;
 
 import org.apache.log4j.Logger;
 
@@ -40,8 +42,9 @@ public class ChadoDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#DataTranslator
      */
-    public ChadoDataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
-        super(srcItemReader, model, ns);
+    public ChadoDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                               String tgtModel) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
     }
 
     /**

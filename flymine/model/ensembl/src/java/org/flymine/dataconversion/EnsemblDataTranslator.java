@@ -19,8 +19,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.ArrayList;
-
-import com.hp.hpl.jena.ontology.OntModel;
+import java.util.Properties;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -36,6 +35,7 @@ import org.intermine.dataconversion.FieldNameAndValue;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
 import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
+import org.intermine.metadata.Model;
 import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
@@ -76,9 +76,9 @@ public class EnsemblDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#DataTranslator
      */
-    public EnsemblDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
-                                 String orgAbbrev) {
-        super(srcItemReader, model, ns);
+    public EnsemblDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                                 Model tgtModel, String orgAbbrev) {
+        super(srcItemReader, mapping, srcModel, tgtModel);
         this.orgAbbrev = orgAbbrev;
 
         organism = createItem("Organism");
@@ -116,14 +116,14 @@ public class EnsemblDataTranslator extends DataTranslator
         super.translate(tgtItemWriter);
 
         for (Iterator i = createSuperContigs().iterator(); i.hasNext();) {
-            Item supercontig = (Item) i.next();
-            if (supercontig.hasAttribute("identifier")) {
-                Item synonym = createSynonym(supercontig.getIdentifier(), "identifier",
-                        supercontig.getAttribute("identifier").getValue(), ensemblRef);
-                addReferencedItem(supercontig, synonym, "synonyms", true, "subject", false);
+            Item item = (Item) i.next();
+            if (item.getClassName().equals(tgtNs + "Supercontig")) {
+                Item synonym = createSynonym(item.getIdentifier(), "identifier",
+                        item.getAttribute("identifier").getValue(), ensemblRef);
+                addReferencedItem(item, synonym, "synonyms", true, "subject", false);
                 tgtItemWriter.store(ItemHelper.convert(synonym));
             }
-            tgtItemWriter.store(ItemHelper.convert(supercontig));
+            tgtItemWriter.store(ItemHelper.convert(item));
         }
         for (Iterator i = exons.values().iterator(); i.hasNext();) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
@@ -299,7 +299,7 @@ public class EnsemblDataTranslator extends DataTranslator
                                      Integer.parseInt(srcItem.getAttribute("chr_end").getValue()),
                                      srcItem.getAttribute("superctg_ori").getValue());
 
-            // locate contig on supercontig
+            // locate contig on supercontig - for drosophila and anopheles strans is always 1
             Item location = createLocation(srcItem, sc, "contig", "superctg", false);
             result.add(location);
         }
@@ -342,14 +342,17 @@ public class EnsemblDataTranslator extends DataTranslator
         if (srcItem.hasAttribute(locPrefix + "_strand")) {
             moveField(srcItem, location, locPrefix + "_strand", "strand");
         }
+        // if creating location between contig and supercontig strand will always be 1
+        // for drosophila and anopheles
+        if (idPrefix.equals("contig") && locPrefix.equals("superctg")) {
+            location.setAttribute("strand", "1");
+        }
+
         if (srcItem.hasAttribute("phase")) {
             moveField(srcItem, location, "phase", "phase");
         }
         if (srcItem.hasAttribute("end_phase")) {
             moveField(srcItem, location, "end_phase", "endPhase");
-        }
-        if (srcItem.hasAttribute(locPrefix + "_ori")) {
-            moveField(srcItem, location, locPrefix + "_ori", "strand");
         }
         if (srcItemIsChild) {
             addReferencedItem(tgtItem, location, "objects", true, "subject", false);

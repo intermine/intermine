@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.Phenotype" is-interface="true">
+  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="phenotypes"/>
+</class>
+<class name="org.flymine.model.genomic.Chromosome" is-interface="true">
+  <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="chromosome"/>
+  <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="chromosome"/>
+  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="chromosome"/>
+  <collection name="bands" referenced-type="org.flymine.model.genomic.ChromosomeBand" ordered="true" reverse-reference="chromosome"/>
+</class>
+<class name="org.flymine.model.genomic.Exon" is-interface="true">
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="exons"/>
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="exons"/>
+</class>
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="genes"/>
+  <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="gene"/>
+  <collection name="phenotypes" referenced-type="org.flymine.model.genomic.Phenotype" ordered="true" reverse-reference="genes"/>
+  <collection name="GOTerms" referenced-type="org.flymine.model.genomic.GOTerm" ordered="true" reverse-reference="genes"/>
+  <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
+</class>
+<class name="org.flymine.model.genomic.Transcript" is-interface="true">
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="transcripts"/>
+</class>
+<class name="org.flymine.model.genomic.ChromosomeBand" is-interface="true">
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="bands"/>
+</class>
+<class name="org.flymine.model.genomic.GOTerm" is-interface="true">
+  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="GOTerms"/>
+</class>
+</classes>

@@ -239,10 +239,10 @@ public class FlyMineFixture extends TestCase {
     _C2.setId(_C2ID);
     _C2.setLength(new Integer(30));
     _C2.addChromosomalStructuralElements(_CSE1);
-    _CSE1.addChromosomes(_C2);
+    _CSE1.setChromosome(_C2);
     _C2BioEntities.add(_CSE1);
     _C2.addChromosomalStructuralElements(_CSE2);
-    _CSE2.addChromosomes(_C2);
+    _CSE2.setChromosome(_C2);
     _C2BioEntities.add(_CSE2);
 
     _LOcCHROMOSOME1EXON50 = (Location) DynamicUtil.createObject(Collections

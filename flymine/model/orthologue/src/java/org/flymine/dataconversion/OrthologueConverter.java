@@ -38,7 +38,6 @@ public class OrthologueConverter extends FileConverter
 {
     protected static final String ORTHOLOGUE_NS = "http://www.flymine.org/model/genomic#";
 
-    protected int id = 0;
     protected Map sources = new HashMap();
     protected Map analyses = new HashMap();
     protected Map ids = new HashMap();
@@ -59,10 +58,6 @@ public class OrthologueConverter extends FileConverter
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-        if (id > 0) {
-            throw new RuntimeException("Cannot run process() more than one");
-        }
-
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
 
