@@ -80,7 +80,7 @@ public class NotXmlParser
                     Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName)
                         .getType();
                     StringBuffer string = new StringBuffer(i + 1 == a.length ? "" : a[i + 1]);
-                    while ((i + 2 < a.length) && (a[i + 2].startsWith("d"))) {
+                    while ((i + 2 < a.length) && (a[i + 2].startsWith(ENCODED_DELIM))) {
                         i++;
                         string.append(DELIM)
                             .append(a[i + 1].substring(1));
