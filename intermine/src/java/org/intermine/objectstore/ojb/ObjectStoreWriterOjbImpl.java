@@ -6,9 +6,10 @@ import org.apache.ojb.broker.TransactionInProgressException;
 import org.apache.ojb.broker.TransactionNotInProgressException;
 import org.apache.ojb.broker.TransactionAbortedException;
 
-import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStore;
+
 import org.flymine.util.ModelUtil;
 
 /**
@@ -17,9 +18,8 @@ import org.flymine.util.ModelUtil;
  * @author Mark Woodbridge
  * @author Andrew Varley
  */
-public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
+public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
 {
-    protected ObjectStoreOjbImpl os = null;
     protected PersistenceBroker pb = null;
 
     /**
@@ -36,9 +36,9 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * @throws ObjectStoreException if there is any problem with the underlying ObjectStore
      */
     public ObjectStoreWriterOjbImpl(ObjectStore os) throws ObjectStoreException {
+        super(os);
         try {
-            this.os = (ObjectStoreOjbImpl) os;
-            pb = this.os.getPersistenceBroker();
+            pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         } catch (Exception e) {
             throw new ObjectStoreException(e);
         }
@@ -50,7 +50,7 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
     public void store(Object o) throws ObjectStoreException {
         boolean valid = false;
         try {
-            valid = ModelUtil.hasValidKey(o);
+            valid = ModelUtil.hasValidKey(o, model);
         } catch (Exception e) {
             throw new ObjectStoreException("Error in checking primary key fields:" + e);
         }
