@@ -13,6 +13,8 @@ package org.flymine.web;
 import servletunit.struts.MockStrutsTestCase;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.Locale;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.text.ParseException;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMapping;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ConstraintOp;
@@ -66,7 +69,11 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute("queryClasses", queryClasses);
 
-        QueryBuildForm form = new QueryBuildForm();
+        QueryBuildForm form = new QueryBuildForm() {
+            public void reset(ActionMapping mapping, HttpServletRequest request) {
+                // override to avoid the form being reset by Struts
+            }
+        };
 
         form.setNewFieldName("name");
 
@@ -93,7 +100,12 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         setRequestPathInfo("/query");
         addRequestParameter("action", "Add");
 
-        QueryBuildForm form = new QueryBuildForm();
+        QueryBuildForm form = new QueryBuildForm() {
+            public void reset(ActionMapping mapping, HttpServletRequest request) {
+                // override to avoid the form being reset by Struts
+            }
+        };
+
         form.setFieldValue("name_1", "Dave");
         form.setFieldOp("name_1", ConstraintOp.EQUALS.getIndex().toString());
         setActionForm(form);
@@ -161,7 +173,12 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute("queryClasses", queryClasses);
 
-        QueryBuildForm queryBuildForm = new QueryBuildForm();
+        QueryBuildForm queryBuildForm = new QueryBuildForm() {
+            public void reset(ActionMapping mapping, HttpServletRequest request) {
+                // override to avoid the form being reset by Struts
+            }
+        };
+
         queryBuildForm.setFieldValue("floatType_0", "1.234");
         queryBuildForm.setFieldOp("floatType_0", ConstraintOp.EQUALS.getIndex().toString());
         queryBuildForm.setFieldValue("doubleType_0", "1.234");
@@ -280,7 +297,12 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute("queryClasses", queryClasses);
 
-        QueryBuildForm queryBuildForm = new QueryBuildForm();
+        QueryBuildForm queryBuildForm = new QueryBuildForm() {
+            public void reset(ActionMapping mapping, HttpServletRequest request) {
+                // override to avoid the form being reset by Struts
+            }
+        };
+
         queryBuildForm.setFieldValue("floatType_0", "a string that can't be parsed");
         queryBuildForm.setFieldOp("floatType_0", ConstraintOp.EQUALS.getIndex().toString());
         queryBuildForm.setFieldValue("doubleType_0", "a string that can't be parsed");
