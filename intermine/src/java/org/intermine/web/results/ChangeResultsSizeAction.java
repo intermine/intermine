@@ -29,6 +29,7 @@ import org.intermine.web.WebUtil;
 import org.intermine.web.InterMineBag;
 import org.intermine.web.Profile;
 import org.intermine.web.InterMineAction;
+import org.intermine.objectstore.query.Results;
 
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the
@@ -111,7 +112,7 @@ public class ChangeResultsSizeAction extends InterMineAction
 
         InterMineBag bag = new InterMineBag();
 
-        int defaultMax = 100000;
+        int defaultMax = 10000;
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
@@ -124,11 +125,26 @@ public class ChangeResultsSizeAction extends InterMineAction
             if (commaIndex == -1) {
                 int column = Integer.parseInt(selectedObject);
 
-                for (Iterator rowIterator = pt.getAllRows().iterator();
-                     rowIterator.hasNext();) {
+                List allRows = pt.getAllRows();
+
+                if (allRows instanceof Results) {
+                    Results results = (Results) allRows;
+
+                    results.setBatchSize(maxBagSize);
+
+                    if (results.size() > maxBagSize) {
+                        ActionMessage actionMessage =
+                            new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                        recordError(actionMessage, request);
+                        
+                        return mapping.findForward("results");
+                    }
+                }
+
+                for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
                     List thisRow = (List) rowIterator.next();
                     bag.add(thisRow.get(column));
-
+                    
                     if (bag.size() > maxBagSize) {
                         ActionMessage actionMessage =
                             new ActionMessage("bag.tooBig", new Integer(maxBagSize));
