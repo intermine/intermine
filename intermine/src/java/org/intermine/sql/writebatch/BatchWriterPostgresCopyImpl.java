@@ -14,7 +14,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +45,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     /**
      * @see BatchWriterSimpleImpl#doInserts
      */
-    protected void doInserts(String name, TableBatch table) throws SQLException {
+    protected int doInserts(String name, TableBatch table) throws SQLException {
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
@@ -100,7 +103,9 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             } catch (IOException e) {
                 throw new SQLException(e.toString());
             }
+            return table.getIdsToInsert().size();
         }
+        return 0;
     }
 
     private static void writeObject(DataOutputStream dos, Object o) throws IOException {
@@ -193,7 +198,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     /**
      * @see BatchWriterSimpleImpl#doIndirectionInserts
      */
-    protected void doIndirectionInserts(String name,
+    protected int doIndirectionInserts(String name,
             IndirectionTableBatch table) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             try {
@@ -232,6 +237,29 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             } catch (IOException e) {
                 throw new SQLException(e.toString());
             }
+        }
+        return table.getRowsToInsert().size();
+    }
+
+    /**
+     * @see BatchWriterSimpleImpl#getTableSize
+     */
+    protected int getTableSize(String name, Connection conn) throws SQLException {
+        long start = System.currentTimeMillis();
+        Statement s = conn.createStatement();
+        ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = '"
+                + name.toLowerCase() + "'");
+        if (r.next()) {
+            int retval = r.getInt(1);
+            if (r.next()) {
+                throw new SQLException("Too many results");
+            }
+            long end = System.currentTimeMillis();
+            LOG.info("Finding size of table " + name + " (" + retval + ") took " + (end - start)
+                    + "ms");
+            return retval;
+        } else {
+            throw new SQLException("No results");
         }
     }
 }

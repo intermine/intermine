@@ -14,12 +14,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 public class TableBatch implements Table
 {
     private static final Logger LOG = Logger.getLogger(TableBatch.class);
+    private static final Integer NULL_VALUE = new Integer(0);
 
     private String idField;
     private String colNames[];
@@ -68,7 +69,7 @@ public class TableBatch implements Table
     public int addRow(Object idValue, String colNames[], Object values[]) {
         if (this.colNames == null) {
             this.colNames = colNames;
-            idsToInsert = new HashMap();
+            idsToInsert = new LinkedHashMap();
         } else {
             if (colNames != this.colNames) {
                 if (colNames.length != this.colNames.length) {
@@ -130,7 +131,7 @@ public class TableBatch implements Table
     public int deleteRow(String idField, Object idValue) {
         if (this.idField == null) {
             this.idField = idField;
-            idsToDelete = new HashSet();
+            idsToDelete = new TreeSet();
         } else if (!this.idField.equals(idField)) {
             throw new IllegalStateException("Cannot change idField once it is set");
         }

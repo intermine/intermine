@@ -565,6 +565,7 @@
         </fileset>
       </batchtest>
     </junit>
+    <antcall target="build-db-unittest"/>
     <antcall target="test-report"/>
   </target>
 
