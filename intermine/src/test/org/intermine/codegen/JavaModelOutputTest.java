@@ -236,7 +236,7 @@ public class JavaModelOutputTest extends TestCase
         String expected = INDENT + "public java.lang.String getAtd1() { return this.atd1; }" + ENDL
             + INDENT + "public void setAtd1(java.lang.String atd1) { this.atd1=atd1; }" + ENDL;
 
-        assertEquals(expected, mo.generateGetSet(atd1));
+        assertEquals(expected, mo.generateGetSet(atd1, false));
     }
 
 

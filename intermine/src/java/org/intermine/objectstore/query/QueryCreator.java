@@ -132,7 +132,7 @@ public class QueryCreator
                         csThisObject.addConstraint(c);
                     } else if (field instanceof ReferenceDescriptor) {
                         // Get the class that this reference refers to
-                        Class otherClass = TypeUtil.getField(clazz, fieldName).getType();
+                        Class otherClass = TypeUtil.getGetter(clazz, fieldName).getReturnType();
 
                         QueryClass otherQueryClass;
                         QueryReference qr = new QueryObjectReference(qc, fieldName);
@@ -302,7 +302,8 @@ public class QueryCreator
                 }
 
                 QueryReference qr = new QueryObjectReference(qc, field.getName());
-                Class otherClass = TypeUtil.getField(obj.getClass(), field.getName()).getType();
+                Class otherClass = TypeUtil.getGetter(obj.getClass(),
+                        field.getName()).getReturnType();
                 QueryClass otherQueryClass = new QueryClass(otherClass);
                 q.addFrom(otherQueryClass);
                 // And add a ClassConstraint for it

@@ -12,7 +12,7 @@ package org.flymine.dataloader;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -270,10 +270,10 @@ public class AceDataLoader extends DataLoader
         } else if (!(aceNode instanceof AceObject)) { //node representing a field
             nodeName = aceNode.getName();
             //check whether currentObject has a field of this name (if not, it's a nesting tag)
-            Field nodeField = TypeUtil.getField(currentObject.getClass(), nodeName);
+            Method nodeField = TypeUtil.getGetter(currentObject.getClass(), nodeName);
             if (nodeField != null) {
                  if (!aceNode.iterator().hasNext()) {
-                    if (nodeField.getType().equals(Boolean.TYPE)) {
+                    if (nodeField.getReturnType().equals(Boolean.TYPE)) {
                         // there's no boolean value type - if the tag's present, the value is true
                         nodeValue = Boolean.TRUE;
                     } else {
@@ -294,7 +294,7 @@ public class AceDataLoader extends DataLoader
                         ClassDescriptor referencedCld = fdCld.getReferencedClassDescriptor();
                         nodeClass = TypeUtil.unqualifiedName(referencedCld.getName());
                     } else {
-                        nodeClass = TypeUtil.unqualifiedName(nodeField.getType().getName());
+                        nodeClass = TypeUtil.unqualifiedName(nodeField.getReturnType().getName());
                     }
                     StaticAceObject referredToAceObject =
                         new StaticAceObject(StringUtil.uniqueString(), null, nodeClass);
@@ -331,9 +331,10 @@ public class AceDataLoader extends DataLoader
             if ((fieldValue instanceof String)) {  // single quotes need to duplicated for DB
                 fieldValue = StringUtil.duplicateQuotes((String) fieldValue);
             }
-            Field field = TypeUtil.getField(target.getClass(), fieldName);
+            Method field = TypeUtil.getGetter(target.getClass(), fieldName);
             if (field != null) {
-                if (Collection.class.isAssignableFrom(field.getType()) && fieldValue != null) {
+                if (Collection.class.isAssignableFrom(field.getReturnType())
+                        && fieldValue != null) {
                     ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
                 } else {
                     try {

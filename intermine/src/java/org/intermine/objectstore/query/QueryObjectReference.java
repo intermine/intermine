@@ -10,7 +10,7 @@ package org.flymine.objectstore.query;
  *
  */
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.flymine.util.TypeUtil;
 
@@ -19,6 +19,7 @@ import org.flymine.util.TypeUtil;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
 public class QueryObjectReference extends QueryReference
 {
@@ -36,24 +37,24 @@ public class QueryObjectReference extends QueryReference
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
-        Field field = TypeUtil.getField(qc.getType(), fieldName);
+        Method field = TypeUtil.getGetter(qc.getType(), fieldName);
         if (field == null) {
             throw new NoSuchFieldException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
-        if (java.util.Collection.class.isAssignableFrom(field.getType())) {
+        if (java.util.Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
         }
-        if (Number.class.isAssignableFrom(field.getType())
-                || String.class.isAssignableFrom(field.getType())
-                || Boolean.class.isAssignableFrom(field.getType())
-                || java.util.Date.class.isAssignableFrom(field.getType())
-                || field.getType().isPrimitive()) {
+        if (Number.class.isAssignableFrom(field.getReturnType())
+                || String.class.isAssignableFrom(field.getReturnType())
+                || Boolean.class.isAssignableFrom(field.getReturnType())
+                || java.util.Date.class.isAssignableFrom(field.getReturnType())
+                || field.getReturnType().isPrimitive()) {
             throw new IllegalArgumentException("Field " + fieldName + " is not a separate database "
                     + "object");
         }
         this.qc = qc;
         this.fieldName = fieldName;
-        this.type = field.getType();
+        this.type = field.getReturnType();
     }
 }

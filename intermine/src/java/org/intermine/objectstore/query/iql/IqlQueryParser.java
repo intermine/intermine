@@ -370,7 +370,9 @@ public class FqlQueryParser
                     try {
                         return new QueryField((QueryClass) obj, secondAst.getText());
                     } catch (NoSuchFieldException e) {
-                        throw new IllegalArgumentException(e.toString());
+                        IllegalArgumentException e2 = new IllegalArgumentException(e.toString());
+                        e2.initCause(e);
+                        throw e2;
                     }
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."

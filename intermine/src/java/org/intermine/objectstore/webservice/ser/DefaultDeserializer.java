@@ -10,7 +10,7 @@ package org.flymine.objectstore.webservice.ser;
  *
  */
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.axis.encoding.DeserializerTarget;
@@ -66,7 +66,7 @@ public class DefaultDeserializer extends DeserializerImpl
             return null;
         }
         
-        Field field = TypeUtil.getField(javaType, localName);
+        Method field = TypeUtil.getGetter(javaType, localName);
 
         if (field == null) {
             throw new SAXException("field not found");
@@ -76,14 +76,14 @@ public class DefaultDeserializer extends DeserializerImpl
 
         String href = attributes.getValue(soapConstants.getAttrHref());
         
-        Deserializer dSer = getDeserializer(childXMLType, field.getType(), href, context);
+        Deserializer dSer = getDeserializer(childXMLType, field.getReturnType(), href, context);
 
         if (dSer == null) {
             dSer = new DeserializerImpl();
             return (SOAPHandler) dSer;
         }
 
-        dSer.registerValueTarget(new DeserializerTarget(this, field.getName()));
+        dSer.registerValueTarget(new DeserializerTarget(this, localName));
         addChildDeserializer(dSer);
 
         return (SOAPHandler) dSer;

@@ -127,6 +127,25 @@ public class TypeUtil
     }
 
     /**
+     * Returns the Method object that is the getter for the field name
+     *
+     * @param c the Class
+     * @param fieldName the name of the relevant field
+     * @return the Getter, or null if the field is not found
+     */
+    public static Method getGetter(Class c, String fieldName) {
+        Method m = null;
+        String getterName = "get" + (fieldName.length() <= 0 ? ""
+                : fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
+        try {
+            m = c.getMethod(getterName, new Class[] {});
+        } catch (NoSuchMethodException e) {
+            m = null;
+        }
+        return m;
+    }
+
+    /**
      * Gets the Fields of a Class
      *
      * @param c the Class

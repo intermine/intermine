@@ -112,23 +112,25 @@ public class JavaModelOutput extends ModelOutput
         Iterator iter;
         iter = cld.getAttributeDescriptors().iterator();
         while (iter.hasNext()) {
-            sb.append(generate((AttributeDescriptor) iter.next()));
+            sb.append(generate((AttributeDescriptor) iter.next(), cld.isInterface()));
         }
         iter = cld.getReferenceDescriptors().iterator();
         while (iter.hasNext()) {
-            sb.append(generate((ReferenceDescriptor) iter.next()));
+            sb.append(generate((ReferenceDescriptor) iter.next(), cld.isInterface()));
         }
         iter = cld.getCollectionDescriptors().iterator();
         while (iter.hasNext()) {
-            sb.append(generate((CollectionDescriptor) iter.next()));
+            sb.append(generate((CollectionDescriptor) iter.next(), cld.isInterface()));
         }
 
-        sb.append(generateEquals(cld))
-            .append(generateEqualsPK(cld))
-            .append(generateHashCode(cld))
-            .append(generateToString(cld))
-            .append("}");
+        if (!cld.isInterface()) {
+            sb.append(generateEquals(cld))
+                .append(generateEqualsPK(cld))
+                .append(generateHashCode(cld))
+                .append(generateToString(cld));
+        }
 
+        sb.append("}");
         return sb.toString();
     }
 
@@ -136,30 +138,52 @@ public class JavaModelOutput extends ModelOutput
      * @see ModelOutput#generate(AttributeDescriptor)
      */
     protected String generate(AttributeDescriptor attr) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(INDENT + "protected ")
-            .append(attr.getType())
-            .append(" ")
-            .append(attr.getName())
-            .append(";" + ENDL)
-            .append(generateGetSet(attr))
-            .append(ENDL);
+        return generate(attr, false);
+    }
+    /**
+     * @see ModelOutput#generate(ReferenceDescriptor)
+     */
+    protected String generate(ReferenceDescriptor attr) {
+        return generate(attr, false);
+    }
+    /**
+     * @see ModelOutput#generate(CollectionDescriptor)
+     */
+    protected String generate(CollectionDescriptor attr) {
+        return generate(attr, false);
+    }
 
+    /**
+     * @see ModelOutput#generate(AttributeDescriptor)
+     */
+    protected String generate(AttributeDescriptor attr, boolean interf) {
+        StringBuffer sb = new StringBuffer();
+        if (!interf) {
+            sb.append(INDENT + "protected ")
+                .append(attr.getType())
+                .append(" ")
+                .append(attr.getName())
+                .append(";" + ENDL);
+        }
+        sb.append(generateGetSet(attr, interf))
+            .append(ENDL);
         return sb.toString();
     }
 
     /**
      * @see ModelOutput#generate(ReferenceDescriptor)
      */
-    protected String generate(ReferenceDescriptor ref) {
+    protected String generate(ReferenceDescriptor ref, boolean interf) {
         StringBuffer sb = new StringBuffer();
-        sb.append(INDENT)
-            .append("protected ")
-            .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getName()))
-            .append(" ")
-            .append(ref.getName())
-            .append(";" + ENDL)
-            .append(generateGetSet(ref))
+        if (!interf) {
+            sb.append(INDENT)
+                .append("protected ")
+                .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getName()))
+                .append(" ")
+                .append(ref.getName())
+                .append(";" + ENDL);
+        }
+        sb.append(generateGetSet(ref, interf))
             .append(ENDL);
         return sb.toString();
     }
@@ -167,20 +191,22 @@ public class JavaModelOutput extends ModelOutput
     /**
      * @see ModelOutput#generate(CollectionDescriptor)
      */
-    protected String generate(CollectionDescriptor col) {
+    protected String generate(CollectionDescriptor col, boolean interf) {
         String type = col.isOrdered() ? "java.util.List" : "java.util.Set";
         String impl = col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet";
 
         StringBuffer sb = new StringBuffer();
-        sb.append(INDENT)
-            .append("protected ")
-            .append(type)
-            .append(" ")
-            .append(col.getName())
-            .append(" = new ")
-            .append(impl)
-            .append("();" + ENDL)
-            .append(generateGetSet(col))
+        if (!interf) {
+            sb.append(INDENT)
+                .append("protected ")
+                .append(type)
+                .append(" ")
+                .append(col.getName())
+                .append(" = new ")
+                .append(impl)
+                .append("();" + ENDL);
+        }
+        sb.append(generateGetSet(col, interf))
             .append(ENDL);
         return sb.toString();
     }
@@ -190,9 +216,10 @@ public class JavaModelOutput extends ModelOutput
     /**
      * Write code for getters and setters for given field.
      * @param field descriptor for field
+     * @param interf true if this class is an interface
      * @return string with generated java code
      */
-    protected String generateGetSet(FieldDescriptor field) {
+    protected String generateGetSet(FieldDescriptor field, boolean interf) {
         String name = field.getName(), type = getType(field);
 
         StringBuffer sb = new StringBuffer();
@@ -203,10 +230,15 @@ public class JavaModelOutput extends ModelOutput
             .append(type)
             .append(" get")
             .append(StringUtil.capitalise(name))
-            .append("() { ")
-            .append("return this.")
-            .append(name)
-            .append("; }" + ENDL);
+            .append("()");
+        if (interf) {
+            sb.append(";" + ENDL);
+        } else {
+            sb.append(" { ")
+                .append("return this.")
+                .append(name)
+                .append("; }" + ENDL);
+        }
 
         // Set method
         sb.append(INDENT)
@@ -217,12 +249,17 @@ public class JavaModelOutput extends ModelOutput
             .append(type)
             .append(" ")
             .append(name)
-            .append(") { ")
-            .append("this.")
-            .append(name)
-            .append("=")
-            .append(name)
-            .append("; }" + ENDL);
+            .append(")");
+        if (interf) {
+            sb.append(";" + ENDL);
+        } else {
+            sb.append(" { ")
+                .append("this.")
+                .append(name)
+                .append("=")
+                .append(name)
+                .append("; }" + ENDL);
+        }
 
         return sb.toString();
     }
