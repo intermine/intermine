@@ -31,12 +31,12 @@ import org.intermine.web.Constants;
 public class ChangeResultsForm extends ActionForm
 {
 
-    protected String pageSize = "10";
-    protected String[] selectedObjects = {};
+    protected String pageSize;
+    protected String[] selectedObjects;
     protected String bagName;
     protected String newBagName;
     // map from "name" of last button pressed to text of that button
-    protected Map buttons = new HashMap();
+    protected Map buttons;
 
     /**
      * Set the page size
@@ -200,8 +200,10 @@ public class ChangeResultsForm extends ActionForm
      * @param request the request
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
+        pageSize = "10";
         selectedObjects = new String[] {};
         newBagName = null;
+        bagName = null;
         buttons = new HashMap();
     }
 }
