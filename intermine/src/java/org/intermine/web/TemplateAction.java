@@ -116,7 +116,7 @@ public class TemplateAction extends InterMineAction
             }
             // Look at results, if only one result, go straight to object details page
             PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
-            if (pr.getSize () == 1) {
+            if (pr.getSize () == 1 && ((List) pr.getAllRows ().get(0)).size() == 1) {
                 Object o = ((List) pr.getAllRows ().get(0)).get(0);
                 if (o instanceof InterMineObject) {
                     return new ActionForward("/objectDetails.do?id="
