@@ -39,7 +39,7 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
 
     public void testMapOps() throws Exception {
         List ops = Arrays.asList(new Object[] { ConstraintOp.EQUALS, ConstraintOp.CONTAINS });
-        Map result = QueryBuildController.mapOps(ops);
+        Map result = QueryBuildHelper.mapOps(ops);
     
         for (Iterator i = ops.iterator(); i.hasNext();) {
             ConstraintOp op = (ConstraintOp) i.next();
@@ -49,27 +49,26 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
 
     public void testGetOpsNoBagsPresent() throws Exception {
         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");      
-        Map result = QueryBuildController.getValidOps(cld, false);
+        Map result = QueryBuildHelper.getValidOps(cld, false);
         
-        assertEquals(QueryBuildController.mapOps(SimpleConstraint.validOps(String.class)), result.get("name"));
-        assertEquals(QueryBuildController.mapOps(ContainsConstraint.VALID_OPS), result.get("employees"));
-        assertEquals(QueryBuildController.mapOps(ContainsConstraint.VALID_OPS), result.get("manager"));
-        assertEquals(QueryBuildController.mapOps(ContainsConstraint.VALID_OPS), result.get("rejectedEmployee"));
-        assertEquals(QueryBuildController.mapOps(ContainsConstraint.VALID_OPS), result.get("company"));
+        assertEquals(QueryBuildHelper.mapOps(SimpleConstraint.validOps(String.class)), result.get("name"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("employees"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("manager"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("rejectedEmployee"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("company"));
     }
     
     public void testGetOpsBagsPresent() throws Exception {
         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");      
-        QueryBuildController qbc = new QueryBuildController();
-        Map result = qbc.getValidOps(cld, true);
+        Map result = QueryBuildHelper.getValidOps(cld, true);
         
         List nameValidOps = new ArrayList(SimpleConstraint.validOps(String.class));
         nameValidOps.addAll(BagConstraint.VALID_OPS);
-        assertEquals(qbc.mapOps(nameValidOps), result.get("name"));
-        assertEquals(qbc.mapOps(ContainsConstraint.VALID_OPS), result.get("employees"));
-        assertEquals(qbc.mapOps(ContainsConstraint.VALID_OPS), result.get("manager"));
-        assertEquals(qbc.mapOps(ContainsConstraint.VALID_OPS), result.get("rejectedEmployee"));
-        assertEquals(qbc.mapOps(ContainsConstraint.VALID_OPS), result.get("company"));
+        assertEquals(QueryBuildHelper.mapOps(nameValidOps), result.get("name"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("employees"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("manager"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("rejectedEmployee"));
+        assertEquals(QueryBuildHelper.mapOps(ContainsConstraint.VALID_OPS), result.get("company"));
     }
 
 //     public void testGetAliases() throws Exception {
