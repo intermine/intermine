@@ -75,12 +75,17 @@ public class WebConfig
    }
 
     /**
-     * Add a type
+     * Add a type to the WebConfig Map.  Use className as the key of the Map if fieldName of the
+     * Type is null, otherwise use the class name, a space, and the field name.
      *
      * @param type the Type to add
      */
     public void addType(Type type) {
-        types.put(type.getClassName(), type);
+        if (type.getFieldName() == null) {
+            types.put(type.getClassName(), type);
+        } else {
+            types.put(type.getClassName() + " " + type.getFieldName(), type);
+        }
     }
 
     /**
