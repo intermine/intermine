@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# The following environment variables need to be set
+# INTERMINE: location of local InterMine installation
+# FLYMINE: location of local FlyMine installation
+
+cd $FLYMINE
+
+CP=$CLASSPATH
+
+for i in $FLYMINE/lib/*.jar ; do
+    CP=$CP:$i
+done
+
+CP=$CP:$FLYMINE/build/model/genomic/
+CP=$CP:$INTERMINE/dist/intermine-all.jar
+
+CP=$CP:$FLYMINE/resources/runtime:~
+CP=$CP:$HOME
+CP=$CP:.
+
+if test -z "$LD_LIBRARY_PATH" ; then
+    export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
+else
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/lib:/usr/lib/jni
+fi
+
+echo "Using classpath: $CP"
+echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+
+java -cp $CP org.flymine.util.CreateFlyBaseLinkIns $*
+
