@@ -14,8 +14,12 @@ package org.flymine.sql.query;
 
 import java.util.*;
 import java.io.*;
+
 import antlr.collections.AST;
 import antlr.debug.misc.ASTFrame;
+
+import org.flymine.util.ConsistentSet;
+
 
 /**
  * Represents an SQL query in parsed form.
@@ -46,10 +50,10 @@ public class Query implements SQLStringable
      */
     public Query() {
         select = new ArrayList();
-        from = new HashSet();
-        where = new HashSet();
-        groupBy = new HashSet();
-        having = new HashSet();
+        from = new ConsistentSet();
+        where = new ConsistentSet();
+        groupBy = new ConsistentSet();
+        having = new ConsistentSet();
         orderBy = new ArrayList();
         limit = 0;
         offset = 0;
@@ -480,7 +484,7 @@ public class Query implements SQLStringable
             (new Query(originalAliasToTable, queriesInUnion)).processSqlStatementAST(ast);
         }
     }
-    
+
     /**
      * Processes an AST node produced by antlr, at the top level of the SQL query.
      *
