@@ -185,6 +185,11 @@ public class EnsemblDataTranslator extends DataTranslator
                     // display_xref is gene name (?)
                     //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
+                    // if no organismDbId set to be same as identifier
+                    if (!tgtItem.hasAttribute("organismDbId")) {
+                        tgtItem.addAttribute(new Attribute("organismDbId", tgtItem.getAttribute("identifier").getValue()));
+                    }
+
                 } else if ("contig".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     Item relation = createItem(tgtNs + "SimpleRelation", "");
