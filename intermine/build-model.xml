@@ -122,7 +122,7 @@
     </taskdef>
 
     <model-output type="torque" model="${model.name}" destdir="${build.model}/${model.name}"/>
-    <copy todir="${build.model}/${model.name}">
+    <copy todir="${build.model}/${model.name}" flatten="true">
       <fileset dir="${resources}">
         <include name="**/*-schema.xml"/>
       </fileset>
