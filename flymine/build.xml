@@ -260,6 +260,7 @@
     <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
       <fileset dir="${model}">
         <include name="testmodel/resources/**"/>
+        <include name="chado/resources/**"/>
       </fileset>
       <fileset dir="${resources}/test/">
         <include name="**/*"/>
@@ -366,11 +367,29 @@
    </target>
 
   <!-- Chado items -->
-    <target name="build-db-chado-items" depends="convert-chado">
+  <target name="build-db-chado-items" depends="convert-chado">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.chado-items"/>
+    </ant>
+  </target>
+
+  <!-- Chado main -->
+  <target name="build-db-chado-main" depends="convert-chado">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="chado"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.chado-main"/>
+    </ant>
+  </target>
+
+  <!-- Chado model -->
+  <target name="build-chado" depends="compile-main, convert-chado">
+    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
+      <property name="model.name" value="chado"/>
+      <property name="model.src" value="${build.model}/chado"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -536,6 +555,15 @@
     <retrieve-chado database="db.chado" model="chado" osName="osw.chado-items"/>
   </target>
 
+  <!-- Load data from chado-items into chado-main -->
+  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-main">
+    <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+
+    <load-chado integrationWriter="integration.chado-main" source="os.chado-translated" sourceName="chado"/>
+  </target>
+
   <!-- convert MAGE-OM xmi to FlyMine model -->
   <target name="convert-mage" depends="compile-main">
     <ant antfile="build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
@@ -611,7 +639,6 @@
           </depend>
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
-          <exclude name="org/flymine/dataloader/DataLoaderTest.class" />
           <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
         </fileset>
       </batchtest>
