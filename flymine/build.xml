@@ -316,7 +316,7 @@
   <target name="build-testmodel" depends="compile-main, copy-model-testmodel" >
     <ant antfile="build-model.xml" target="build-model-from-xml">
       <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${model}/flymine"/>
+      <property name="model.src" value="${model}/testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
@@ -361,13 +361,13 @@
 
   <!-- copy original flymine model file to model directory for testmodel -->
   <target name="copy-model-testmodel">
-    <copy todir="${build.model}/testmodel" file="${model}/flymine/testmodel_model.xml"/>
+    <copy todir="${build.model}/testmodel" file="${model}/testmodel/testmodel_model.xml"/>
   </target>
 
   <!-- copy original .xmi file to model directory for XmiParserFunctionalTest -->
   <target name="copy-model-xmitest">
-    <copy todir="${build.model}/xmitest" file="${model}/uml/xmitest.xmi"/>
-    <copy todir="${build.model}/xmitest" file="${model}/uml/xmitest.xml"/>
+    <copy todir="${build.model}/xmitest" file="${model}/xmitest/xmitest.xmi"/>
+    <copy todir="${build.model}/xmitest" file="${model}/xmitest/xmitest.xml"/>
   </target>
 
 
@@ -429,7 +429,7 @@
   <target name="build-productionmodel" depends="compile-main">
     <ant antfile="build-model.xml" target="build-model-from-zargo">
       <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${model}/uml"/>
+      <property name="model.src" value="${model}/testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target> 
@@ -733,22 +733,22 @@
     </copy>
     
     <!-- model-specific files -->
-    <loadfile property="model.struts.config" srcFile="${model}/uml/resources/struts-config-model.xml"/>
+    <loadfile property="model.struts.config" srcFile="${model}/testmodel/resources/struts-config-model.xml"/>
     <replace file="${build.webapp}/flymine/WEB-INF/struts-config.xml" value="${model.struts.config}">
       <!-- can't use normal token as xml must be parseable before this replacement -->
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
 
     <copy todir="${build.webapp}/flymine/model">
-      <fileset dir="${model}/uml/src/web"/>
+      <fileset dir="${model}/testmodel/src/web"/>
     </copy>
 
     <copy todir="${build.webapp}/flymine/WEB-INF">
-       <fileset dir="${model}/uml/resources"/>
+       <fileset dir="${model}/testmodel/resources"/>
     </copy>
 
     <copy todir="${build.webapp}/flymine/WEB-INF/classes">
-       <fileset dir="${model}/uml/resources" includes="model*.properties"/>
+       <fileset dir="${model}/testmodel/resources" includes="model*.properties"/>
     </copy>
 
     <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
@@ -897,7 +897,7 @@
     <ant antfile="build-model.xml" target="jar">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="model.src" value="${model}/uml"/>
+      <property name="model.src" value="${model}/testmodel"/>
     </ant>    
   </target>
 
