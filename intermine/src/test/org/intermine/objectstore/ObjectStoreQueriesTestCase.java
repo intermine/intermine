@@ -25,6 +25,7 @@ import org.flymine.objectstore.query.*;
 import org.flymine.sql.Database;
 import org.flymine.util.ModelUtil;
 import org.flymine.util.TypeUtil;
+import org.flymine.objectstore.SetupDataTestCase;
 
 /**
  * TestCase for testing FlyMine Queries or FlyMine data
@@ -35,13 +36,16 @@ import org.flymine.util.TypeUtil;
 
 public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 {
-    protected Map data = new LinkedHashMap();
-    protected Map queries = new HashMap();
-    protected Map results = new LinkedHashMap();
+    protected static final org.apache.log4j.Logger LOG
+        = org.apache.log4j.Logger.getLogger(ObjectStoreQueriesTestCase.class);
+
+    protected static Map data = new LinkedHashMap();
+    protected static Map queries = new HashMap();
+    protected static Map results = new LinkedHashMap();
 
     // These must be given if the data is to be stored in a database
-    protected ObjectStoreWriter writer;
-    protected Database db;
+    protected static ObjectStoreWriter writer;
+    protected static Database db;
 
     /**
      * Constructor
@@ -71,7 +75,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
      *
      * @throws Exception if an error occurs
      */
-    public void setUpResults() throws Exception {
+    public static void setUpResults() throws Exception {
     }
 
     /**
@@ -111,7 +115,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
      *
      * @throws Exception if an error occurs
      */
-    public void storeData() throws Exception {
+    public static void storeData() throws Exception {
         if ((writer == null) || (db == null)) {
             throw new NullPointerException("writer and db must be set before trying to store data");
         }
@@ -136,7 +140,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
 
-    public void removeDataFromStore() throws Exception {
+    public static void removeDataFromStore() throws Exception {
         if (writer == null) {
             throw new NullPointerException("writer must be set before trying to store data");
         }
@@ -158,7 +162,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
      *
      * @throws Exception if an error occurs
      */
-    public void setUpQueries() throws Exception {
+    public static void setUpQueries() throws Exception {
         queries.put("SelectSimpleObject", selectSimpleObject());
         queries.put("SubQuery", subQuery());
         queries.put("WhereSimpleEquals", whereSimpleEquals());
@@ -197,7 +201,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       select company
       from Company
     */
-    public Query selectSimpleObject() throws Exception {
+    public static Query selectSimpleObject() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -209,7 +213,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       select subquery.company.name, subquery.alias
       from (select company, 5 as alias from Company) as subquery
     */
-    public Query subQuery() throws Exception {
+    public static Query subQuery() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue(new Integer(5));
         Query q1 = new Query();
@@ -230,7 +234,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where vatNumber = 1234
     */
-    public Query whereSimpleEquals() throws Exception {
+    public static Query whereSimpleEquals() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
@@ -248,7 +252,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where vatNumber! = 1234
     */
-    public Query whereSimpleNotEquals() throws Exception {
+    public static Query whereSimpleNotEquals() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
@@ -266,7 +270,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where name like "Company%"
     */
-    public Query whereSimpleLike() throws Exception {
+    public static Query whereSimpleLike() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("Company%");
         QueryField f1 = new QueryField(c1, "name");
@@ -283,7 +287,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where name = "CompanyA"
     */
-    public Query whereEqualString() throws Exception {
+    public static Query whereEqualString() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("CompanyA");
         QueryField f1 = new QueryField(c1, "name");
@@ -301,7 +305,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where name LIKE "Company%"
       and vatNumber > 2000
     */
-    public Query whereAndSet() throws Exception {
+    public static Query whereAndSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("Company%");
         QueryValue v2 = new QueryValue(new Integer(2000));
@@ -325,7 +329,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where name LIKE "CompanyA%"
       or vatNumber > 2000
     */
-    public Query whereOrSet() throws Exception {
+    public static Query whereOrSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("CompanyA%");
         QueryValue v2 = new QueryValue(new Integer(2000));
@@ -349,7 +353,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where not (name LIKE "Company%"
       and vatNumber > 2000)
     */
-    public Query whereNotSet() throws Exception {
+    public static Query whereNotSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("Company%");
         QueryValue v2 = new QueryValue(new Integer(2000));
@@ -374,7 +378,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where department.name IN (select name from Department)
       order by Department.name
     */
-    public Query whereSubQueryField() throws Exception {
+    public static Query whereSubQueryField() throws Exception {
         QueryClass c1 = new QueryClass(Department.class);
         QueryField f1 = new QueryField(c1, "name");
         Query q1 = new Query();
@@ -396,7 +400,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where company IN (select company from Company where name = "CompanyA")
     */
-    public Query whereSubQueryClass() throws Exception {
+    public static Query whereSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -418,7 +422,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where company NOT IN (select company from Company where name = "CompanyA")
     */
-    public Query whereNotSubQueryClass() throws Exception {
+    public static Query whereNotSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -440,7 +444,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where not company IN (select company from Company where name = "CompanyA")
     */
-    public Query whereNegSubQueryClass() throws Exception {
+    public static Query whereNegSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -463,7 +467,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company c1, Company c2
       where c1 = c2
     */
-    public Query whereClassClass() throws Exception {
+    public static Query whereClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, qc2);
@@ -481,7 +485,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company c1, Company c2
       where c1 != c2
     */
-    public Query whereNotClassClass() throws Exception {
+    public static Query whereNotClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.NOT_EQUALS, qc2);
@@ -499,7 +503,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company c1, Company c2
       where not (c1 = c2)
     */
-    public Query whereNegClassClass() throws Exception {
+    public static Query whereNegClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, qc2);
@@ -518,11 +522,11 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company
       where c1 = <company object>
     */
-    public Query whereClassObject() throws Exception {
+    public static Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         Object obj = data.get("CompanyA");
         //obj hasn't actually been stored, so set id manually
-        TypeUtil.setFieldValue(obj, "id", new Integer(42));
+        //TypeUtil.setFieldValue(obj, "id", new Integer(42));
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
         Query q1 = new Query();
         q1.addFrom(qc1);
@@ -538,7 +542,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and department.name = "DepartmentA1"
     */
 
-      public Query contains11() throws Exception {
+      public static Query contains11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -565,7 +569,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and department.name = "DepartmentA1"
     */
 
-      public Query containsNot11() throws Exception {
+      public static Query containsNot11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -592,7 +596,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and department.name = "DepartmentA1"
     */
 
-      public Query containsNeg11() throws Exception {
+      public static Query containsNeg11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -619,7 +623,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where company.departments contains department
       and company.name = "CompanyA"
     */
-      public Query contains1N() throws Exception {
+      public static Query contains1N() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
@@ -645,7 +649,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where department.company = company
       and company.name = "CompanyA"
     */
-      public Query containsN1() throws Exception {
+      public static Query containsN1() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "company");
@@ -671,7 +675,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where contractor.companys contains company
       and contractor.name = "ContractorA"
     */
-    public Query containsMN() throws Exception {
+    public static Query containsMN() throws Exception {
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "companys");
@@ -696,7 +700,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Contractor, Company
       where contractor.oldComs CONTAINS company
     */
-    public Query containsDuplicatesMN() throws Exception {
+    public static Query containsDuplicatesMN() throws Exception {
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "oldComs");
@@ -716,7 +720,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where company contains department
       group by company
     */
-    public Query simpleGroupBy() throws Exception {
+    public static Query simpleGroupBy() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
@@ -739,7 +743,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and manager.address = address
       and manager.name = "EmployeeA1"
     */
-    public Query multiJoin() throws Exception {
+    public static Query multiJoin() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryClass qc3 = new QueryClass(Manager.class);
@@ -773,7 +777,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Company, Department
       group by department
     */
-    public Query selectComplex() throws Exception {
+    public static Query selectComplex() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryClass c2 = new QueryClass(Department.class);
         QueryField f1 = new QueryField(c1, "name");
@@ -797,7 +801,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       from Employee
       order by employee.name
     */
-    public Query selectClassAndSubClasses() throws Exception {
+    public static Query selectClassAndSubClasses() throws Exception {
         QueryClass qc1 = new QueryClass(Employee.class);
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -812,7 +816,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       select employable
       from Employable
     */
-    public Query selectInterfaceAndSubClasses() throws Exception {
+    public static Query selectInterfaceAndSubClasses() throws Exception {
         QueryClass qc1 = new QueryClass(Employable.class);
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -825,7 +829,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       select randominterface
       from RandomInterface
     */
-    public Query selectInterfaceAndSubClasses2() throws Exception {
+    public static Query selectInterfaceAndSubClasses2() throws Exception {
         QueryClass qc1 = new QueryClass(RandomInterface.class);
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -838,7 +842,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       select ImportantPerson
       from ImportantPerson
     */
-    public Query selectInterfaceAndSubClasses3() throws Exception {
+    public static Query selectInterfaceAndSubClasses3() throws Exception {
         QueryClass qc1 = new QueryClass(ImportantPerson.class);
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -853,7 +857,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     */
     /*
      * TODO: this currently cannot be done.
-    public Query selectClassFromSubQuery() throws Exception {
+    public static Query selectClassFromSubQuery() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryClass c2 = new QueryClass(Company.class);
         Query q1 = new Query();
@@ -868,9 +872,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
     */
 
-    private void setUpData() throws Exception {
+    public static void setUpData() throws Exception {
 
-        URL mapFile = getClass().getClassLoader().getResource("castor_xml_testmodel.xml");
+        URL mapFile = ObjectStoreQueriesTestCase.class.getClassLoader().getResource("castor_xml_testmodel.xml");
         Mapping map = new Mapping();
         map.loadMapping(mapFile);
 
@@ -883,7 +887,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         map(flatten(result));
     }
 
-    private void map(Collection c) throws Exception {
+    private static void map(Collection c) throws Exception {
         Iterator iter = c.iterator();
         while(iter.hasNext()) {
             Object o = iter.next();
@@ -899,7 +903,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         }
     }
 
-    private Collection flatten(Collection c) throws Exception {
+    private static Collection flatten(Collection c) throws Exception {
         List toStore = new ArrayList();
         Iterator i = c.iterator();
         while(i.hasNext()) {
@@ -908,7 +912,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         return toStore;
     }
 
-    private void flatten_(Object o, Collection c) throws Exception {
+    private static void flatten_(Object o, Collection c) throws Exception {
         if(o == null || c.contains(o)) {
             return;
         }
