@@ -1,12 +1,23 @@
 <webconfig>
   <class className="org.intermine.model.testmodel.Company">
-    <shortdisplayers>
-      <displayer src="/model/companyShort.jsp"/>
-    </shortdisplayers>
+    <fields>
+      <fieldconfig fieldName="name"/>
+      <fieldconfig fieldName="vatNumber"/>
+    </fields>
     <longdisplayers>
       <displayer src="/model/companiesHouse.jsp"/>
     </longdisplayers>
   </class>
+
+  <class className="org.intermine.model.testmodel.Employee">
+    <fields>
+      <fieldconfig fieldName="age"/>
+      <fieldconfig fieldName="end"/>
+      <fieldconfig fieldName="name"/>
+      <fieldconfig fieldName="department.name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
     <longdisplayers>
       <displayer src="/model/debtField.jsp"/>
