@@ -10,8 +10,11 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.flymine.FlyMineException;
@@ -27,7 +30,11 @@ import org.flymine.objectstore.query.ResultsInfo;
  */
 public class DisplayableResults
 {
-    protected Map columns = new LinkedHashMap();
+    // Map to quickly look up columns from aliases
+    protected Map aliasToColumn = new HashMap();
+
+    // The columns and their order
+    protected List columns = new LinkedList();
     protected int start = 0;
     protected int pageSize = 10;
 
@@ -49,17 +56,18 @@ public class DisplayableResults
             Column column = new Column();
             column.setAlias(alias);
             column.setIndex(i++);
-            columns.put(alias, column);
+            aliasToColumn.put(alias, column);
+            columns.add(column);
         }
     }
 
     /**
      * Get the list of column configurations
      *
-     * @return the Map of column aliases to Columns
+     * @return the List of columns in the order they are to be displayed
      */
-    public Map getColumns() {
-        return this.columns;
+    public List getColumns() {
+        return Collections.unmodifiableList(columns);
     }
 
     /**
@@ -69,7 +77,35 @@ public class DisplayableResults
      * @return the column for the given alias
      */
     public Column getColumn(String alias) {
-        return (Column) this.columns.get(alias);
+        return (Column) aliasToColumn.get(alias);
+    }
+
+    /**
+     * Move a column up in the display order
+     *
+     * @param alias the alias of the column to move
+     */
+    public void moveColumnUp(String alias) {
+        Column column = getColumn(alias);
+        int index = columns.indexOf(column);
+        if (index > 0) {
+            columns.remove(index);
+            columns.add(index - 1, column);
+        }
+    }
+
+    /**
+     * Move a column down in the display order
+     *
+     * @param alias the alias of the column to move
+     */
+    public void moveColumnDown(String alias) {
+        Column column = getColumn(alias);
+        int index = columns.indexOf(column);
+        if ((index != -1) && (index < (columns.size() - 1))) {
+            columns.remove(index);
+            columns.add(index + 1, column);
+        }
     }
 
     /**
