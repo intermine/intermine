@@ -27,6 +27,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.*;
 
+import org.apache.log4j.Logger;
 
 /**
  * Class to merge OWL ontologies according to an OWL format merge specification.  Construct
@@ -44,6 +45,8 @@ public class MergeOwl
     private final String tgtNs;
     protected Map equiv;
     protected Map subMap;
+
+    protected static final Logger LOG = Logger.getLogger(MergeOwl.class);
 
     /**
      * Construct with a Reader for the merge spec (which becomes the initial target model) and
@@ -92,9 +95,11 @@ public class MergeOwl
      * @param srcNs the namespace of the source OWL ontology
      */
     protected void mergeByEquivalence(OntModel srcModel, String srcNs) {
+        LOG.error("building equivalence map");
         equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
 
         // build map from source class to restricted subclasses
+        LOG.error("building restricted subclass map");
         subMap = new HashMap();
         Iterator clsIter = srcModel.listClasses();
         while (clsIter.hasNext()) {
@@ -169,6 +174,7 @@ public class MergeOwl
             }
         }
         tgtModel.add(statements);
+        LOG.error("calling reorganiseProperties");
         OntologyUtil.reorganiseProperties(tgtModel, tgtNs);
     }
 

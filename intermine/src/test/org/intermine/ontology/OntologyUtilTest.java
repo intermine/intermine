@@ -813,7 +813,7 @@ public class OntologyUtilTest extends TestCase
         OntClass pos = model.getOntClass(ns + "PostalAddress");
         expected.put(sr3, pos.getURI());
 
-        assertEquals(expected, OntologyUtil.getRestrictionSubclassMap(model));
+        assertEquals(expected, OntologyUtil.getRestrictionSubclassMap(model, OntologyUtil.getRestrictedSubclassMap(model)));
     }
 
     public void testGetRestrictionSubclassTemplateMap() throws Exception {
@@ -891,7 +891,7 @@ public class OntologyUtilTest extends TestCase
         expected.put(org.getURI(), new HashSet(Arrays.asList(new Object[] {sr1, sr2})));
         expected.put(add.getURI(), new HashSet(Collections.singleton(sr3)));
 
-        assertEquals(expected, OntologyUtil.getRestrictionSubclassTemplateMap(model));
+        assertEquals(expected, OntologyUtil.getRestrictionSubclassTemplateMap(model, OntologyUtil.getRestrictedSubclassMap(model)));
     }
 
 

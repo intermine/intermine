@@ -241,15 +241,19 @@ public class OntologyUtil
     protected static Set findRestrictedSubclasses(OntModel model, OntClass srcCls, OntClass top) {
         OntClass tgtCls = model.getOntClass(srcCls.getURI());
         Set subclasses = new HashSet();
-        Iterator i = tgtCls.listSubClasses();
+        ExtendedIterator i = tgtCls.listSubClasses();
         while (i.hasNext()) {
             OntClass subcls = (OntClass) i.next();
 
-            Iterator j = model.listRestrictions();
+            ExtendedIterator j = subcls.listSuperClasses(true);
             while (j.hasNext()) {
-                Restriction res = (Restriction) j.next();
-                if (res.hasSubClass(subcls) && res.isHasValueRestriction()) {
-                    Iterator propIter = srcCls.listDeclaredProperties(false);
+                OntResource tmp = (OntResource) j.next();
+                Restriction res = null;
+                if (tmp.canAs(Restriction.class)) {
+                    res = (Restriction) tmp.as(Restriction.class);
+                }
+                if (res != null && res.isHasValueRestriction()) {
+                    ExtendedIterator propIter = srcCls.listDeclaredProperties(false);
                     while (propIter.hasNext()) {
                         OntProperty prop = (OntProperty) propIter.next();
                         if (res.onProperty(prop) && isDatatypeProperty(prop)) {
@@ -273,25 +277,24 @@ public class OntologyUtil
                             }
                         }
                     }
+                    propIter.close();
                 }
             }
+            j.close();
         }
+        i.close();
         return subclasses;
     }
 
-
     /**
-     * Use model to build a map from class URI to all possible SubclassRestriction templates
-     * (where a template is defined as a SubclassRestriction with null values for
-     * each path expression.
-     * @param model the model to examine
-     * @return a map of class URI to possible SubclassRestriction templates
+     * Create a map of class URI -> restricted subclass URIs
+     * @param model the model to process
+     * @return restricted subclass map
      */
-    public static Map getRestrictionSubclassTemplateMap(OntModel model) {
-
+    public static Map getRestrictedSubclassMap(OntModel model) {
         // build a map of class/restricted subclasses
         Map classesMap = new HashMap();
-        Iterator clsIter = model.listClasses();
+        ExtendedIterator clsIter = model.listClasses();
         while (clsIter.hasNext()) {
             OntClass cls = (OntClass) clsIter.next();
             if (!cls.isAnon()) {
@@ -301,6 +304,19 @@ public class OntologyUtil
                 }
             }
         }
+        clsIter.close();
+        return classesMap;
+    }
+
+    /**
+     * Use model to build a map from class URI to all possible SubclassRestriction templates
+     * (where a template is defined as a SubclassRestriction with null values for
+     * each path expression.
+     * @param model the model to examine
+     * @param classesMap restricted subclass map
+     * @return a map of class URI to possible SubclassRestriction templates
+     */
+    public static Map getRestrictionSubclassTemplateMap(OntModel model, Map classesMap) {
 
         Map srMap = new HashMap();
 
@@ -326,22 +342,10 @@ public class OntologyUtil
      * Build a map from SubclassRetriction objects (with values filled in) to
      * URI of restricted subclass that this defines.
      * @param model the ontology model to process
+     * @param classesMap restricted subclass map
      * @return map from SubclassRestriction to class URI
      */
-    public static Map getRestrictionSubclassMap(OntModel model) {
-
-        // build a map of class/restricted subclasses
-        Map classesMap = new HashMap();
-        Iterator clsIter = model.listClasses();
-        while (clsIter.hasNext()) {
-            OntClass cls = (OntClass) clsIter.next();
-            if (!cls.isAnon()) {
-                Set subs = OntologyUtil.findRestrictedSubclasses(model, cls);
-                if (subs.size() > 0) {
-                    classesMap.put(cls, subs);
-                }
-            }
-        }
+    public static Map getRestrictionSubclassMap(OntModel model, Map classesMap) {
 
         // create a map of SubclassRestriction objects to restricted subclass URIs
         Map restrictionMap = new HashMap();
@@ -378,10 +382,12 @@ public class OntologyUtil
         if (sr == null) {
             sr = new SubclassRestriction();
         }
-        for (Iterator i = model.listRestrictions(); i.hasNext();) {
+        ExtendedIterator i = model.listRestrictions();
+        while (i.hasNext()) {
             Restriction res = (Restriction) i.next();
             if (res.hasSubClass(cls, true) && res.isHasValueRestriction()) {
-                for (Iterator j = cls.listDeclaredProperties(true); j.hasNext();) {
+                ExtendedIterator j = cls.listDeclaredProperties(true);
+                while (j.hasNext()) {
                     OntProperty prop = (OntProperty) j.next();
                     if (res.onProperty(prop)) {
                         if (prop.getLocalName().indexOf("__") == -1) {
@@ -408,8 +414,10 @@ public class OntologyUtil
                         }
                     }
                 }
+                j.close();
             }
         }
+        i.close();
         return sr;
     }
 
@@ -479,11 +487,12 @@ public class OntologyUtil
 
         // deal with restrictions on property
         Set restrictions = new HashSet();
-        Iterator r = model.listRestrictions();
+        Iterator r = ((OntClass) prop.getDomain().as(OntClass.class)).listSuperClasses(true);
         while (r.hasNext()) {
-            Restriction res = (Restriction) r.next();
-            if (res.onProperty(prop)) {
-                restrictions.add(res);
+            OntResource res = (OntResource) r.next();
+            if (res.canAs(Restriction.class)
+                && ((Restriction) res.as(Restriction.class)).onProperty(prop)) {
+                restrictions.add((Restriction) res.as(Restriction.class));
             }
         }
         ((ExtendedIterator) r).close();
