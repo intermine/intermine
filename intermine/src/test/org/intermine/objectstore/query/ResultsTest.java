@@ -258,7 +258,6 @@ public class ResultsTest extends TestCase
         }
     }
 
-
     // set up a Department object with an id and Employees as a LazyCollection
     // and a LazyReference
     private Department getDeptExampleObject() throws Exception {
@@ -281,10 +280,9 @@ public class ResultsTest extends TestCase
         q2.addToSelect(qc2);
         q2.addFrom(qc2);
 
-        LazyReference lazyRef = (LazyReference) LazyInitializer.getDynamicProxy(Company.class, q2, new Integer(101));
+        LazyReference lazyRef = (LazyReference) LazyInitializer.getDynamicProxy(Company.class, q2);
         dept.setCompany((Company)lazyRef);
 
         return dept;
     }
-
 }

@@ -26,7 +26,6 @@ import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
 
-
 /**
  * Extension of PersistenceBrokerImpl to allow execution of ObjectStore queries
  *
@@ -35,8 +34,8 @@ import org.flymine.sql.query.ExplainResult;
  */
 public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
 {
-    protected static final org.apache.log4j.Logger LOG =
-        org.apache.log4j.Logger.getLogger(PersistenceBrokerFlyMineImpl.class);
+    //protected static final org.apache.log4j.Logger LOG =
+    //org.apache.log4j.Logger.getLogger(PersistenceBrokerFlyMineImpl.class);
 
     private Database database;
 
@@ -118,7 +117,6 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 // run an ojb query to materialize the entire contents of the collection
                 Class collectionClass = cod.getCollectionClass();
 
-
                 ojbQuery = getFKQuery1toN(obj, cld, cod);
                 if (collectionClass == null) {
                     // TODO could be an array?
@@ -155,7 +153,6 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
      */
     protected Query getCollectionQuery(Object thisObj, ClassDescriptor thisCld,
                                        CollectionDescriptor cod) {
-
         // TODO: handle ordering on collections?
         try {
             Query query = new Query();
@@ -230,13 +227,12 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 constraints.addConstraint(cc2);
 
                 query.setConstraint(constraints);
-                //TODO this pkVals stuff is a temporary measure until .equals is sensible
+
                 return (LazyReference)
-                    LazyInitializer.getDynamicProxy(referencedClass, query, (Integer) pkVals[0]);
+                    LazyInitializer.getDynamicProxy(referencedClass, query);
             } catch (NoSuchFieldException e) {
                 throw new PersistenceBrokerException(e);
             }
-
         } else {
             Class referencedProxy = rds.getItemProxyClass();
             if (referencedProxy != null) {

@@ -16,29 +16,25 @@ public class LazyInitializer implements MethodInterceptor
     private Query query;
     private Object realSubject;
     private ObjectStore os;
-    private Integer id;
 
     /**
      * Construct a dynamic proxy for a given class representing a persistent object
      *
      * @param cls the class to proxy
      * @param query the query that retrieves the real object
-     * @param id the internal id of the persistent object
      * @return the proxy object
      */
-    public static Object getDynamicProxy(Class cls, Query query, Integer id) {
+    public static Object getDynamicProxy(Class cls, Query query) {
         return Enhancer.enhance(cls, new Class[] {LazyReference.class},
-                                new LazyInitializer(query, id));
+                                new LazyInitializer(query));
     }
 
     /**
      * Construct the interceptor using an object identifier
      * @param query the query that retrieves the real object
-     * @param id the internal id of the persistent object
      */
-    LazyInitializer(Query query, Integer id) {
+    LazyInitializer(Query query) {
         this.query = query;
-        this.id = id;
     }
 
     /**
