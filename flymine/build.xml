@@ -757,7 +757,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-anoph integrationWriter="integration.anoph-test" source="os.anoph-translated" sourceName="ensembl"/>
+    <load-anoph integrationWriter="integration.ensembl-anoph-test" source="os.anoph-translated" sourceName="ensembl"/>
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
