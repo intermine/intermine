@@ -9,6 +9,7 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="0_13" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+<attribute name="identifier" value="MI:0018"/>
 </item>
 <item id="-1_6" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="14605208"/>
@@ -52,11 +53,13 @@
 </collection>
 </item>
 <item id="0_17" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+<attribute name="identifier" value="MI:0078"/>
 </item>
 <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
 <attribute name="title" value="Swiss-Prot"/>
 </item>
 <item id="0_45" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+<attribute name="identifier" value="MI:0018"/>
 </item>
 <item id="-1_2" class="http://www.flymine.org/model/genomic#Database">
 <attribute name="title" value="IntAct"/>
