@@ -10,10 +10,7 @@ package org.flymine.web;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean to represent the inputs to the query saving action
@@ -43,15 +40,4 @@ public class SaveQueryForm extends ActionForm
     public String getQueryName() {
         return queryName;
     }
-
-    /**
-     * Reset the form to the initial state
-     *
-     * @param mapping the mapping
-     * @param request the request
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        queryName = "";
-    }
 }
-
