@@ -1,26 +1,14 @@
 <?xml version="1.0"?>
 <!-- -*- DocBook -*- -->
 
-<article>
-
-<index>
-
-    <section>
-      <heading>Browsing data</heading>
-      <item>If you select an entire class to 'show' in the output (see xxx) it is possible to browse the links from that class in the results output.  For example, if you select to show the Gene class for a partcular gene object as shown in the screen shot below, you will be able to browse the links between classes for that Gene as shown in the second screen shot.</item>
-
-      
-
-
-
-
-
-
-
-
-
-   </section>
-
-</index>
-
-</article>
+<sect1>
+  <title>Browsing data</title>
+  <para>
+    If you select an entire class to 'show' in the output (see xxx) it
+    is possible to browse the links from that class in the results output.
+    For example, if you select to show the Gene class for a partcular gene
+    object as shown in the screen shot below, you will be able to browse the
+    links between classes for that Gene as shown in the second screen
+    shot.
+  </para>
+</sect1>

@@ -1,37 +1,26 @@
 <?xml version="1.0"?>
 <!-- -*- DocBook -*- -->
 
-<article>
-
-<index>
-
-    <section>
-      <heading>Starting a FlyMine query</heading>
-      <item>
-      The following options are available to start a FlyMine query:
-      </item>   
-      <item>
+<sect1>
+  <title>Starting a FlyMine query</title>
+  The following options are available to start a FlyMine query:
+  <itemizedlist>
+    <listitem>
       <ulink url= "manualStartingaquery.xml">Start a new query with a particular class</ulink>
-      </item>
-      <item>
-      <ulink url= "manualStartpreviousquery.xml">Begin a query using a previous query</ulink> (Only available if you have queries stored in your query history)
-      </item>
-      <item>
+    </listitem>
+    <listitem>
+      <ulink url= "manualStartpreviousquery.xml">Begin a query using a
+        previous query</ulink> (Only available if you have queries stored in
+      your query history) 
+    </listitem>
+    <listitem>
       <ulink url= "manualStartidentifiers.xml">Search using a list of identifiers</ulink>
-      </item>
-      <item>
+    </listitem>
+    <listitem>
       <ulink url= "manualStartexample.xml">Use an example query</ulink>
-      </item>
-      <item>
-      <ulink url= "manualStartIQL.xml">Perform a query using IQL</ulink>
-      </item> (advanced usage).
-
-
-</section>
-
-
-
-</index>
-
-</article>
-
+    </listitem>
+    <listitem>
+      <ulink url= "manualStartIQL.xml">Perform a query using IQL</ulink> (advanced usage.)
+    </listitem>
+  </itemizedlist>
+</sect1>
