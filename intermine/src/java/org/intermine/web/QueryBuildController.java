@@ -78,7 +78,8 @@ public class QueryBuildController extends TilesAction
                 qbf.setFieldValues(QueryBuildHelper.toStrings(d.getFieldValues()));
             }
 
-            session.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, false));
+            boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;
+            session.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
             List allFieldNames = QueryBuildHelper.getAllFieldNames(cld);
             if (allFieldNames.size() == 0) {
                 session.setAttribute("allFieldNames", null);
