@@ -35,5 +35,5 @@
       </c:forEach>
     </c:otherwise>
   </c:choose>
-<div>
+</div>
 <!-- /objectSummary.jsp -->
