@@ -140,7 +140,8 @@ public class InitialiserPlugin implements PlugIn
             String className = (String) i.next();
             classes.put(className, TypeUtil.unqualifiedName(className));
             try {
-                classCounts.put(className, new Integer(oss.getClassCount(className)));
+                classCounts.put(className, new Integer(1));
+                //classCounts.put(className, new Integer(oss.getClassCount(className)));
             } catch (Exception e) {
                 throw new ServletException("Unable to get class count for " + className, e);
             }
