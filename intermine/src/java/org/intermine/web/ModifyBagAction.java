@@ -13,7 +13,6 @@ package org.intermine.web;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Collection;
 
 import javax.servlet.http.HttpSession;
@@ -56,7 +55,7 @@ public class ModifyBagAction extends LookupDispatchAction
         Collection bag1 = (Collection) savedBags.get(bag1Name);
         Collection bag2 = (Collection) savedBags.get(bag2Name);
         
-        Set combined = new HashSet();
+        Set combined = new InterMineBag();
         combined.addAll(bag1);
         combined.addAll(bag2);
 
@@ -90,7 +89,7 @@ public class ModifyBagAction extends LookupDispatchAction
         Collection bag1 = (Collection) savedBags.get(bag1Name);
         Collection bag2 = (Collection) savedBags.get(bag2Name);
         
-        Set combined = new HashSet();
+        Set combined = new InterMineBag();
         combined.addAll(bag1);
         combined.retainAll(bag2);
 
