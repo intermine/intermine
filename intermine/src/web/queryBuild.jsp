@@ -8,7 +8,7 @@
   <fmt:message key="query.current"/>
   <br/>
   <div class="queryBuildCurrentQuery">
-  <c:forEach items="${queryClasses}" var="entry" varStatus="classStatus">
+  <c:forEach items="${QUERY_CLASSES}" var="entry" varStatus="classStatus">
     <c:set var="alias" value="${entry.key}"/>
     <c:set var="queryClass" value="${entry.value}"/>
     <font class="queryViewFromItemTitle">

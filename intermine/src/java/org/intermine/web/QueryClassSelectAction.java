@@ -55,7 +55,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
         //duplication: see TreeAction#select
         HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String className = ((QueryClassSelectForm) form).getClassName();
 
         //it's possible that someone has clicked the button without selecting a class from the list

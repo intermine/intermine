@@ -64,9 +64,6 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         session.setAttribute(Constants.SAVED_QUERIES, new HashMap());
         session.setAttribute(Constants.SAVED_QUERIES_INVERSE, new IdentityHashMap());
         session.setAttribute(Constants.QUERY, new Query());
-        session.setAttribute("queryClass", new QueryClass(Employee.class));
-        session.setAttribute("constraints", "constraints");
-        session.setAttribute("ops", "ops");
 
         SaveQueryForm form = new SaveQueryForm();
         form.setQueryName("query1");
@@ -76,9 +73,6 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNull(session.getAttribute(Constants.QUERY));
-        assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("constraints"));
-        assertNull(session.getAttribute("ops"));
         assertEquals(1, ((Map)session.getAttribute(Constants.SAVED_QUERIES)).size());
     }
 
@@ -95,9 +89,6 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         session.setAttribute(Constants.SAVED_QUERIES_INVERSE,
                              new IdentityHashMap(savedQueriesInverse));
         session.setAttribute(Constants.QUERY, new Query());
-        session.setAttribute("queryClass", new QueryClass(Employee.class));
-        session.setAttribute("constraints", "constraints");
-        session.setAttribute("ops", "ops");
 
         SaveQueryForm form = new SaveQueryForm();
         form.setQueryName("query3");
@@ -107,9 +98,6 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNull(session.getAttribute(Constants.QUERY));
-        assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("constraints"));
-        assertNull(session.getAttribute("ops"));
         Map savedQueriesFromSession =
             (Map)session.getAttribute(Constants.SAVED_QUERIES);
         assertEquals(3, savedQueriesFromSession.size());
@@ -132,9 +120,6 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         session.setAttribute(Constants.SAVED_QUERIES_INVERSE,
                              new IdentityHashMap(savedQueriesInverse));
         session.setAttribute(Constants.QUERY, new Query());
-        session.setAttribute("queryClass", new QueryClass(Employee.class));
-        session.setAttribute("constraints", "constraints");
-        session.setAttribute("ops", "ops");
 
         SaveQueryForm form = new SaveQueryForm();
         form.setQueryName("query2");
@@ -144,9 +129,6 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNull(session.getAttribute(Constants.QUERY));
-        assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("constraints"));
-        assertNull(session.getAttribute("ops"));
         Map savedQueriesFromSession =
             (Map)session.getAttribute(Constants.SAVED_QUERIES);
         assertEquals(2, savedQueries.size ());

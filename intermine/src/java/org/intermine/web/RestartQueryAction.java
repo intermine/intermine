@@ -49,7 +49,7 @@ public class RestartQueryAction extends Action
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.removeAttribute("queryClasses");
+        session.removeAttribute(Constants.QUERY_CLASSES);
         session.removeAttribute(Constants.EDITING_ALIAS);
 
         return mapping.findForward("buildquery");

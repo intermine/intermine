@@ -63,7 +63,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         session.setAttribute(Constants.EDITING_ALIAS, newAlias);
         queryClasses.put(newAlias, displayQueryClass);
-        session.setAttribute("queryClasses", queryClasses);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
         QueryBuildForm form = new QueryBuildForm() {
             public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -79,7 +79,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertEquals(newAlias, session.getAttribute(Constants.EDITING_ALIAS));
-        Map afterQueryClasses = (Map)session.getAttribute("queryClasses");
+        Map afterQueryClasses = (Map)session.getAttribute(Constants.QUERY_CLASSES);
         assertEquals(1, afterQueryClasses.size());
         DisplayQueryClass afterDisplayQueryClass =
             (DisplayQueryClass) afterQueryClasses.get(newAlias);
@@ -119,7 +119,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("error");
         assertNotNull(session.getAttribute(Constants.QUERY));
-        assertNull(session.getAttribute("queryClass"));
     }
 
     // test that we can parse all possible types without an error
@@ -165,7 +164,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         session.setAttribute(Constants.EDITING_ALIAS, newAlias);
         queryClasses.put(newAlias, displayQueryClass);
-        session.setAttribute("queryClasses", queryClasses);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
         QueryBuildForm queryBuildForm = new QueryBuildForm() {
             public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -288,7 +287,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         session.setAttribute(Constants.EDITING_ALIAS, newAlias);
         queryClasses.put(newAlias, displayQueryClass);
-        session.setAttribute("queryClasses", queryClasses);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
         QueryBuildForm queryBuildForm = new QueryBuildForm() {
             public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -392,7 +391,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(anAlias, displayQueryClass);
 
         session.setAttribute(Constants.EDITING_ALIAS, anAlias);
-        session.setAttribute("queryClasses", queryClasses);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
         actionPerform();
 

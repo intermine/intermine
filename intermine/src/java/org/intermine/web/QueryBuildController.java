@@ -45,7 +45,7 @@ public class QueryBuildController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
         Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         ServletContext servletContext = session.getServletContext();
@@ -53,14 +53,14 @@ public class QueryBuildController extends TilesAction
         Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (queryClasses == null) {
-            session.setAttribute("queryClasses", new LinkedHashMap());
+            session.setAttribute(Constants.QUERY_CLASSES, new LinkedHashMap());
         }
         
         //there's a query on the session but it hasn't been rendered yet
         if (q != null) {
             queryClasses = QueryBuildHelper.getQueryClasses(q, savedBagsInverse);
 
-            session.setAttribute("queryClasses", queryClasses);
+            session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
             session.setAttribute(Constants.QUERY, null);
         }
     

@@ -108,7 +108,7 @@ public class TreeAction extends DispatchAction
         //duplication: see QueryClassSelectAction#select
         HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String className = (String) request.getParameter("node");
 
         QueryBuildHelper.addClass(queryClasses, className);

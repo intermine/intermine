@@ -37,13 +37,13 @@ public class RestartQueryActionTest extends MockStrutsTestCase
 
         queryClasses.put(anAlias, displayQueryClass);
 
-        session.setAttribute("queryClasses", queryClasses);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
         session.setAttribute(Constants.EDITING_ALIAS, anAlias);
 
         actionPerform();
         
         verifyForward("buildquery");
-        assertNull(session.getAttribute("queryClasses"));
+        assertNull(session.getAttribute(Constants.QUERY_CLASSES));
         assertNull(session.getAttribute(Constants.EDITING_ALIAS));
     }
 }

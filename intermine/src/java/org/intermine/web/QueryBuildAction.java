@@ -60,7 +60,7 @@ public class QueryBuildAction extends LookupDispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.removeAttribute("queryClasses");
+        session.removeAttribute(Constants.QUERY_CLASSES);
         session.removeAttribute(Constants.EDITING_ALIAS);
 
         return mapping.findForward("buildquery");
@@ -89,7 +89,7 @@ public class QueryBuildAction extends LookupDispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         if (queryClasses == null || editingAlias == null) {
@@ -148,7 +148,7 @@ public class QueryBuildAction extends LookupDispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         QueryBuildForm qbf = (QueryBuildForm) form;
@@ -185,7 +185,7 @@ public class QueryBuildAction extends LookupDispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         ServletContext servletContext = session.getServletContext();
         Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();

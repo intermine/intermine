@@ -68,9 +68,6 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         verifyNoActionErrors();
 
         assertNotNull(session.getAttribute(Constants.QUERY));
-        assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("constraints"));
-        assertNull(session.getAttribute("ops"));
         assertEquals(1, ((Query) session.getAttribute(Constants.QUERY)).getFrom().size());
     }
 
@@ -84,9 +81,6 @@ public class LoadQueryActionTest extends MockStrutsTestCase
 
         session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
         session.setAttribute(Constants.QUERY, new Query());
-        session.setAttribute("queryClass", new QueryClass(Employee.class));
-        session.setAttribute("constraints", "constraints");
-        session.setAttribute("ops", "ops");
 
         LoadQueryForm form = new LoadQueryForm();
         form.setQueryName("query2");
@@ -96,9 +90,6 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNotNull(session.getAttribute(Constants.QUERY));
-        assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("constraints"));
-        assertNull(session.getAttribute("ops"));
         assertEquals(2, ((Query) session.getAttribute(Constants.QUERY)).getFrom().size());
     }
 }
