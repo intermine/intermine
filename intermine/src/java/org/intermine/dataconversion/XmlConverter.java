@@ -32,6 +32,8 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 
+import org.apache.log4j.Logger;
+
 /**
  * Convert XML format data conforming to given InterMine model to fulldata
  * Items, requires an XML Schema to understand references.
@@ -39,13 +41,18 @@ import org.intermine.xml.full.ItemHelper;
  * @author Andrew Varley
  * @author Richard Smith
  */
- public class XmlConverter extends DataConverter
+public class XmlConverter extends DataConverter
 {
+    private static final Logger LOG = Logger.getLogger(XmlConverter.class);
+
     protected Model model;
     protected XmlMetaData xmlInfo;
     protected Reader xmlReader;
     protected Reader xsdReader;
     private int id = 1;
+
+    private long count = 0;
+    private long start, time, times[];
 
     /**
      * Construct with model, reader for xml data, reader for schema and an ItemWriter
@@ -67,6 +74,13 @@ import org.intermine.xml.full.ItemHelper;
     * @throws Exception if an error occurs during processing
     */
     public void process(Reader xmlReader) throws Exception {
+        start = System.currentTimeMillis();
+        time = start;
+        times = new long[20];
+        for (int i = 0; i < 20; i++) {
+            times[i] = -1;
+        }
+
         SAXParser.parse(new InputSource(xmlReader), new XmlHandler());
     }
 
@@ -116,16 +130,17 @@ import org.intermine.xml.full.ItemHelper;
             } else {
                 Item item = (Item) items.peek();
                 ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
-                if (cld.getAttributeDescriptorByName(qName, true) != null) {
-                    attributeName = qName;
+                String fieldName = ("id".equals(qName) ? "identifier" : qName);
+                if (cld.getAttributeDescriptorByName(fieldName, true) != null) {
+                    attributeName = fieldName;
                     isAttribute = true;
-                } else if (cld.getReferenceDescriptorByName(qName, true) != null) {
-                    if (item.hasReference(qName)) {
-                        throw new SAXException("Field (" + cld.getName() + "." + qName
+                } else if (cld.getReferenceDescriptorByName(fieldName, true) != null) {
+                    if (item.hasReference(fieldName)) {
+                        throw new SAXException("Field (" + cld.getName() + "." + fieldName
                                                + ") is defined in model as"
                                                + " a reference but attempted to add two values");
                     }
-                    ReferenceDescriptor rfd = cld.getReferenceDescriptorByName(qName, true);
+                    ReferenceDescriptor rfd = cld.getReferenceDescriptorByName(fieldName, true);
                     String clsName = rfd.getReferencedClassDescriptor().getName();
                     String path = pushPaths(qName);
                     String identifier = null;
@@ -144,12 +159,12 @@ import org.intermine.xml.full.ItemHelper;
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                     }
-                    item.addReference(new Reference(qName, identifier));
+                    item.addReference(new Reference(fieldName, identifier));
                     elements.push(qName);
-                } else if (cld.getCollectionDescriptorByName(StringUtil.pluralise(qName), true)
+                } else if (cld.getCollectionDescriptorByName(StringUtil.pluralise(fieldName), true)
                            != null) {
                     CollectionDescriptor cod
-                        = cld.getCollectionDescriptorByName(StringUtil.pluralise(qName), true);
+                        = cld.getCollectionDescriptorByName(StringUtil.pluralise(fieldName), true);
                     String clsName = cod.getReferencedClassDescriptor().getName();
                     String path = pushPaths(qName);
                     String identifier = null;
@@ -168,14 +183,14 @@ import org.intermine.xml.full.ItemHelper;
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                     }
-                    if (!item.hasCollection(StringUtil.pluralise(qName))) {
-                        item.addCollection(new ReferenceList(StringUtil.pluralise(qName),
+                    if (!item.hasCollection(StringUtil.pluralise(fieldName))) {
+                        item.addCollection(new ReferenceList(StringUtil.pluralise(fieldName),
                                                              new ArrayList()));
                     }
-                    item.getCollection(StringUtil.pluralise(qName)).addRefId(identifier);
+                    item.getCollection(StringUtil.pluralise(fieldName)).addRefId(identifier);
                     elements.push(qName);
                 } else {
-                    throw new SAXException("Field (" + qName + "[s]) not found in class ("
+                    throw new SAXException("Field (" + fieldName + "[s]) not found in class ("
                                            + cld.getName() + ")");
                 }
             }
@@ -235,6 +250,7 @@ import org.intermine.xml.full.ItemHelper;
                     // If no attribute name set, will be name og last element
                     String path = (String) paths.peek();
                     attributeName = path.substring(path.lastIndexOf('/') + 1);
+                    attributeName = ("id".equals(attributeName) ? "identifier" : attributeName);
 
                     if (cld.getAttributeDescriptorByName(attributeName) == null) {
                         throw new SAXException("Class (" + cld.getName() + ") does not have"
@@ -275,6 +291,25 @@ import org.intermine.xml.full.ItemHelper;
                 try {
                     if (!xmlInfo.isReference(path)) {
                         writer.store((ItemHelper.convert((Item) items.pop())));
+                        count++;
+                        if (count % 10000 == 0) {
+                            long now = System.currentTimeMillis();
+                            if (times[(int) ((count / 10000) % 20)] == -1) {
+                                LOG.info("Processed " + count + " objects - running at "
+                                        + (600000000L / (now - time)) + " (avg "
+                                        + ((60000L * count) / (now - start))
+                                        + ") objects per minute");
+                            } else {
+                                LOG.info("Processed " + count + " objects - running at "
+                                        + (600000000L / (now - time)) + " (200000 avg "
+                                        + (12000000000L / (now - times[(int) ((count / 10000)
+                                                    % 20)]))
+                                        + ") (avg " + ((60000L * count) / (now - start))
+                                        + ") objects per minute");
+                            }
+                            time = now;
+                            times[(int) ((count / 10000) % 20)] = now;
+                        }
                     }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);

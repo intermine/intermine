@@ -74,6 +74,7 @@ public class XmlMetaData
         Schema schema = schemaUnmarshaller.getSchema();
 
         buildRefsMap(schema);
+        LOG.info("clsNameMap: " + clsNameMap);
     }
 
     /**
@@ -88,6 +89,7 @@ public class XmlMetaData
         refIdPaths = new HashMap();
         clsNameMap = new HashMap();
         buildRefsMap(schema);
+        LOG.info("clsNameMap: " + clsNameMap);
     }
 
     /**
@@ -148,9 +150,15 @@ public class XmlMetaData
      */
     public String getClsNameFromXPath(String xpath) {
         if (isReference(xpath)) {
-            return (String) clsNameMap.get(getIdPath(xpath));
+            String retval = (String) clsNameMap.get(getIdPath(xpath));
+            LOG.debug("getClsNameFromXPath(\"" + xpath + "\") is a reference - returning \""
+                    + retval + "\"");
+            return retval;
         }
-        return (String) clsNameMap.get(xpath);
+        String retval = (String) clsNameMap.get(xpath);
+        LOG.debug("getClsNameFromXPath(\"" + xpath + "\") is not a reference - returning \""
+                + retval + "\"");
+        return retval;
     }
 
 
@@ -160,31 +168,44 @@ public class XmlMetaData
 
         while (structures.hasMoreElements()) {
             ElementDecl e = (ElementDecl) structures.nextElement();
-            processElementDecl((ElementDecl) e);
+            processElementDecl((ElementDecl) e, false);
         }
     }
 
 
-    private void processElementDecl(ElementDecl eDecl) throws Exception {
+    private void processElementDecl(ElementDecl eDecl, boolean isCollection) throws Exception {
         String path = eDecl.getName();
         if (!paths.empty()) {
             path = (String) paths.peek() + "/" + path;
         }
-        LOG.debug("pushing paths: " + path);
+        if (path.length() > 1000) {
+            // TODO: Infinite recursion
+            return;
+        }
+        LOG.debug("pushing path: " + path);
         paths.push(path);
 
         String clsName = null;
         XMLType xmlType = eDecl.getType();
+        isCollection = isCollection || (eDecl.getMaxOccurs() < 0) || (eDecl.getMaxOccurs() > 1);
+        LOG.debug("Processing path: " + path + ", isCollection = " + isCollection
+                + (xmlType == null ? "" : ", isComplexType = " + xmlType.isComplexType()
+                    + ", isSimpleType = " + xmlType.isSimpleType() + ", xmlType.getName() = "
+                    + xmlType.getName()) + ", isReference = " + eDecl.isReference());
         if (eDecl.isReference()) {
             // nothing needs to be done to name
             clsName = eDecl.getReference().getName();
+        } else if ((xmlType != null) && xmlType.isSimpleType() && isCollection) {
+            clsName = eDecl.getName() + "_" + ((String) clsNameMap.get(path.substring(0,
+                            path.lastIndexOf('/'))));
         } else if ((xmlType != null) && (xmlType.getName() != null)) {
             // named complex type
             clsName = xmlType.getName();
         } else if (xmlType != null && xmlType.isComplexType() && (xmlType.getName() != null)) {
             LOG.debug("named complex type");
             clsName = xmlType.getName();
-        } else if (xmlType != null && xmlType.isComplexType()) {
+        } else if (xmlType != null && (xmlType.isComplexType()
+                    || (xmlType.isSimpleType() && isCollection))) {
             LOG.debug("anon complex type");
             // anon complex type
             String encPath = null;
@@ -205,31 +226,37 @@ public class XmlMetaData
         if (eDecl.getType().isComplexType()) {
             ComplexType complexType = (ComplexType) eDecl.getType();
             LOG.debug("processContentModel");
-            processContentModelGroup(complexType);
+            processContentModelGroup(complexType, false);
             if (complexType.getBaseType() != null && complexType.getBaseType().isComplexType()) {
                 LOG.error("processContentModel(parent)");
-                processContentModelGroup((ComplexType) complexType.getBaseType());
+                processContentModelGroup((ComplexType) complexType.getBaseType(), false);
             }
         }
 
         path = (String) paths.pop();
-        LOG.debug("popped paths: " + path);
+        LOG.debug("popped path: " + path);
     }
 
 
-    private void processContentModelGroup(ContentModelGroup cmGroup) throws Exception {
+    private void processContentModelGroup(ContentModelGroup cmGroup,
+            boolean isCollection) throws Exception {
+        if (cmGroup instanceof Group) {
+            if ((((Group) cmGroup).getMaxOccurs() < 0) || (((Group) cmGroup).getMaxOccurs() > 1)) {
+                isCollection = true;
+            }
+        }
         Enumeration cmGroupEnum = cmGroup.enumerate();
         while (cmGroupEnum.hasMoreElements()) {
-            Structure struct = (Structure) cmGroupEnum.nextElement();
-            switch (struct.getStructureType()) {
+            Structure struc = (Structure) cmGroupEnum.nextElement();
+            switch (struc.getStructureType()) {
             case Structure.ELEMENT:
                 LOG.debug("process element");
-                processElementDecl((ElementDecl) struct);
+                processElementDecl((ElementDecl) struc, isCollection);
                 break;
             case Structure.GROUP:
                 LOG.debug("process group");
                 //handle nested groups
-                processContentModelGroup((Group) struct);
+                processContentModelGroup((Group) struc, isCollection);
                 break;
             default:
                 break;
