@@ -239,7 +239,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 query.setConstraint(constraints);
 
                 return (LazyReference)
-                    LazyInitializer.getDynamicProxy(referencedClass, query);
+                    LazyInitializer.getDynamicProxy(referencedClass, query, (Integer) pkVals[0]);
             } catch (NoSuchFieldException e) {
                 throw new PersistenceBrokerException(e);
             }

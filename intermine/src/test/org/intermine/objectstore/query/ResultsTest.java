@@ -315,7 +315,7 @@ public class ResultsTest extends TestCase
         q2.addToSelect(qc2);
         q2.addFrom(qc2);
 
-        LazyReference lazyRef = (LazyReference) LazyInitializer.getDynamicProxy(Company.class, q2);
+        LazyReference lazyRef = (LazyReference) LazyInitializer.getDynamicProxy(Company.class, q2, new Integer(0));
         dept.setCompany((Company)lazyRef);
 
         return dept;
