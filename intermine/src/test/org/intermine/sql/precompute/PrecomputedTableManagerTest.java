@@ -7,11 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.sql.DatabaseFactory;
+import org.flymine.sql.Database;
 import org.flymine.sql.query.*;
 
 public class PrecomputedTableManagerTest extends TestCase
 {
     private PrecomputedTable pt1;
+    private Database database;
 
     public PrecomputedTableManagerTest(String arg1) {
         super(arg1);
@@ -19,6 +21,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void setUp() throws Exception {
 
+        database = DatabaseFactory.getDatabase("db.unittest");
         Query q1 = new Query();
         Table t = new Table("tabletest");
         Constant c = new Constant("50");
@@ -37,7 +40,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     protected void createTable() throws Exception {
         // Set up some tables in the database
-        Connection con = DatabaseFactory.getDatabase("db.unittest").getConnection();
+        Connection con = database.getConnection();
         Statement stmt = con.createStatement();
         stmt.addBatch("CREATE TABLE tabletest(col1 int, col2 int)");
         for (int i = 1; i<100; i++) {
@@ -50,7 +53,7 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     protected void deleteTable() throws Exception {
-        Connection con = DatabaseFactory.getDatabase("db.unittest").getConnection();
+        Connection con = database.getConnection();
         Statement stmt = con.createStatement();
         stmt.addBatch("DROP TABLE tabletest");
         stmt.addBatch("DROP TABLE precompute_index");
@@ -68,18 +71,9 @@ public class PrecomputedTableManagerTest extends TestCase
         }
     }
 
-    public void testInvalidDatabase() throws Exception {
-        try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.notthere");
-            fail("Expected: IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e) {
-        }
-    }
-
     public void testValidDatabase() throws Exception {
         try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         }
         catch (RuntimeException e) {
             fail("No exception should be thrown");
@@ -88,7 +82,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testAddNull() throws Exception {
         try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             ptm.add(null);
             fail("Expected: NullPointerException");
         }
@@ -98,7 +92,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testDeleteNullTable() throws Exception {
         try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             ptm.delete((PrecomputedTable) null);
             fail("Expected: NullPointerException");
         }
@@ -108,7 +102,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testDeleteNullString() throws Exception {
         try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             ptm.delete((String) null);
             fail("Expected: NullPointerException");
         }
@@ -116,9 +110,9 @@ public class PrecomputedTableManagerTest extends TestCase
         }
     }
 
-    public void testGetInstanceForNullName() throws Exception {
+    public void testGetInstanceForNullDatabase() throws Exception {
         try {
-            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance((String) null);
+            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance((Database) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -126,19 +120,19 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     public void testGetInstance() throws Exception {
-        PrecomputedTableManager ptm1 = PrecomputedTableManager.getInstance("db.unittest");
-        PrecomputedTableManager ptm2 = PrecomputedTableManager.getInstance("db.unittest");
+        PrecomputedTableManager ptm1 = PrecomputedTableManager.getInstance(database);
+        PrecomputedTableManager ptm2 = PrecomputedTableManager.getInstance(database);
         assertEquals(ptm1, ptm2);
     }
 
     public void testAddNew() throws Exception {
         synchronized (pt1) {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             try {
                 createTable();
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
-                assertTrue(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "precomp1"));
+                assertTrue(DatabaseUtil.tableExists(database.getConnection(), "precomp1"));
             }
             finally {
                 ptm.delete(pt1);
@@ -150,13 +144,13 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testDelete() throws Exception {
         synchronized (pt1) {
-            PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             try {
                 createTable();
                 ptm.add(pt1);
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
-                assertTrue(!(DatabaseUtil.tableExists(DatabaseFactory.getDatabase("db.unittest").getConnection(), "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(database.getConnection(), "precomp1")));
             }
             finally {
                 deleteTable();
@@ -165,7 +159,7 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     public void testAddInvalid() throws Exception {
-        PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+        PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
             ptm.add(new PrecomputedTable(new Query("select table.blah from table"), "precomp1"));
             fail("Expected: SQLException");
@@ -175,7 +169,7 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     public void testDeleteInvalid() throws Exception {
-        PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
+        PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
             ptm.delete("tablenotthere");
             fail("Expected: IllegalArgumentException");
@@ -187,12 +181,12 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testExistingTables() throws Exception {
         synchronized (pt1) {
-            PrecomputedTableManager ptm1 = new PrecomputedTableManager("db.unittest");
+            PrecomputedTableManager ptm1 = new PrecomputedTableManager(database);
             try {
                 createTable();
                 ptm1.add(pt1);
 
-                PrecomputedTableManager ptm2 = new PrecomputedTableManager("db.unittest");
+                PrecomputedTableManager ptm2 = new PrecomputedTableManager(database);
 
                 PrecomputedTable pt2 = (PrecomputedTable) ptm2.getPrecomputedTables().iterator().next();
 

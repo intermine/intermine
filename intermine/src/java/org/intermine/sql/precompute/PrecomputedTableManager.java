@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.sql.*;
 import org.flymine.util.DatabaseUtil;
-import org.flymine.sql.DatabaseFactory;
+import org.flymine.sql.Database;
 import org.flymine.sql.query.Query;
 
 /**
@@ -17,7 +17,7 @@ public class PrecomputedTableManager
 {
 
     protected Map precomputedTables = new HashMap();
-    protected String dbName = null;
+    protected Database database = null;
     protected static final String TABLE_INDEX = "precompute_index";
     protected static Map instances = new HashMap();
     Date lastChecked;
@@ -25,21 +25,18 @@ public class PrecomputedTableManager
     /**
      * Create a PrecomputedTableManager for the given underlying database
      *
-     * @param dbName the name of the underlying database
-     * @throws IllegalArgumentException if dbName is invalid
+     * @param database the underlying database
      * @throws SQLException if an error occurs in the underlying database
      */
-    protected PrecomputedTableManager(String dbName) throws SQLException {
-        if (dbName == null) {
-            throw new NullPointerException("dbName cannot be null");
+    protected PrecomputedTableManager(Database database) throws SQLException {
+        if (database == null) {
+            throw new NullPointerException("database cannot be null");
         }
 
         Connection con = null;
         try {
-            con = DatabaseFactory.getDatabase(dbName).getConnection();
+            con = database.getConnection();
             synchroniseWithDatabase(con);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(dbName + "is invalid: " + e.getMessage());
         } finally {
             try {
                 if (con != null) {
@@ -48,24 +45,24 @@ public class PrecomputedTableManager
             } catch (SQLException e) {
             }
         }
-        this.dbName = dbName;
+        this.database = database;
     }
 
     /**
      * Gets a PrecomputedTableManager instance for the given underlying database
      *
-     * @param dbName the name of the underlying database
+     * @param database the underlying database
      * @return the PrecomputedTableManager for this database
-     * @throws IllegalArgumentException if dbName is invalid
+     * @throws IllegalArgumentException if database is invalid
      * @throws SQLException if an error occurs in the underlying database
      */
-    public static PrecomputedTableManager getInstance(String dbName) throws SQLException {
+    public static PrecomputedTableManager getInstance(Database database) throws SQLException {
         synchronized (instances) {
-            if (!(instances.containsKey(dbName))) {
-                instances.put(dbName, new PrecomputedTableManager(dbName));
+            if (!(instances.containsKey(database))) {
+                instances.put(database, new PrecomputedTableManager(database));
             }
         }
-        return (PrecomputedTableManager) instances.get(dbName);
+        return (PrecomputedTableManager) instances.get(database);
     }
 
     /**
@@ -136,7 +133,7 @@ public class PrecomputedTableManager
     protected void addTableToDatabase(PrecomputedTable pt) throws SQLException {
         Connection con = null;
         try {
-            con = DatabaseFactory.getDatabase(dbName).getConnection();
+            con = database.getConnection();
 
             // Create the table
             Statement stmt = con.createStatement();
@@ -150,8 +147,6 @@ public class PrecomputedTableManager
             pstmt.execute();
 
             con.commit();
-        } catch (ClassNotFoundException e) {
-            // This would have been dealt with in the constructor
         } finally {
             if (con != null) {
                 con.close();
@@ -168,7 +163,7 @@ public class PrecomputedTableManager
     protected void deleteTableFromDatabase(String name) throws SQLException {
         Connection con = null;
         try {
-            con = DatabaseFactory.getDatabase(dbName).getConnection();
+            con = database.getConnection();
             // Drop the table
             Statement stmt = con.createStatement();
             stmt.execute("DROP TABLE " + name);
@@ -180,8 +175,6 @@ public class PrecomputedTableManager
             pstmt.execute();
 
             con.commit();
-        } catch (ClassNotFoundException e) {
-            // This would have been dealt with in the constructor
         } finally {
             if (con != null) {
                 con.close();
