@@ -1986,9 +1986,9 @@
       <arg value="--dsn"/>
       <arg value="dbi:Pg:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
       <arg value="--user"/>
-      <arg value="${gbrowse.database.user}"/>
+      <arg value="${gbrowse.database.write.user}"/>
       <arg value="--password"/>
-      <arg value="${gbrowse.database.password}"/>
+      <arg value="${gbrowse.database.write.password}"/>
     </exec>
     <apply dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
       <arg value="--adaptor"/>
@@ -1996,9 +1996,9 @@
       <arg value="--dsn"/>
       <arg value="dbi:Pg:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
       <arg value="--user"/>
-      <arg value="${gbrowse.database.user}"/>
+      <arg value="${gbrowse.database.write.user}"/>
       <arg value="--password"/>
-      <arg value="${gbrowse.database.password}"/>
+      <arg value="${gbrowse.database.write.password}"/>
       <fileset dir="${build.gbrowse.data}">
         <patternset>
           <include name="*.fa"/>
