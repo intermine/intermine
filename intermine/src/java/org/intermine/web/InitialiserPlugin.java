@@ -41,7 +41,6 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;

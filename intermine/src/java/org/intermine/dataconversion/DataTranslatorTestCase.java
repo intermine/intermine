@@ -61,6 +61,7 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * Get the target Model for this test.
      * @param ns the namespace for the target model
      * @return the target Model
+     * @throws MetaDataException if the Model cannot be found
      */
     public Model getTargetModel(String ns) throws MetaDataException {
         if (ns.equals("http://www.flymine.org/model/genomic#")) {
