@@ -252,12 +252,8 @@ public class QueryBuildHelperTest extends QueryTestCase
         d.getFieldOps().put("age_0", ConstraintOp.IN);
         d.getFieldValues().put("age_0", "my_saved_bag");
 
-        LogMe.log("log", "1: " + myBag);
-
         DisplayQueryClass resultDisplayQueryClass =
             QueryBuildHelper.toDisplayable(qc, q, savedBagsInverse);
-
-        LogMe.log("log", "3: " + myBag);
 
         assertEquals(d, resultDisplayQueryClass);
     }
