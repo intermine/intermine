@@ -149,10 +149,14 @@ public class ClassDescriptor
         }
         return allPkFields;
     }
-
-//     public Set getFieldDescriptors() {
-//         return new HashSet(fieldDescriptors.values());
-//     }
+    
+    /**
+     * Gets the FieldDescriptors for this class (but not subclasses)
+     * @return set of FieldDescriptors
+     */
+    public Set getFieldDescriptors() {
+        return new LinkedHashSet(fieldDescriptors.values());
+    }
 
 //     public Set getAllFieldDescriptors() {
 //         if (superclassDescriptor == null) {
