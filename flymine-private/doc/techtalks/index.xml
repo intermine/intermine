@@ -10,33 +10,13 @@
         <table>
           <tbody>
             <row>
-              <entry>8th October 2003</entry>
-              <entry>Andy</entry>
-              <entry>The BioMoby project</entry>
+              <entry>5th November 2003</entry>
+              <entry>Matthew/Mark</entry>
+              <entry>Software summit feedback</entry>
             </row>
             <row>
-              <entry>7th November 2003</entry>
-              <entry>Richard</entry>
-              <entry></entry>
-            </row>
-            <row>
-              <entry>5th December 2003</entry>
-              <entry>Matthew</entry>
-              <entry></entry>
-            </row>
-            <row>
-              <entry>9th January 2004</entry>
-              <entry>Mark</entry>
-              <entry></entry>
-            </row>
-            <row>
-              <entry>6th February 2004</entry>
+              <entry>3rd December 2003</entry>
               <entry>François??</entry>
-              <entry></entry>
-            </row>
-            <row>
-              <entry>5th March 2004</entry>
-              <entry>New person</entry>
               <entry></entry>
             </row>
           </tbody>
@@ -46,6 +26,16 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>8th October 2003</entry>
+              <entry>Richard</entry>
+              <entry><ulink uri="rdf.sxi">RDF/OWL demystified</ulink></entry>
+            </row>
+            <row>
+              <entry>8th October 2003</entry>
+              <entry>Andy</entry>
+              <entry><ulink uri="http://www.biomoby.org/MOBY_2003_HOOKED.ppt">The BioMoby project</ulink></entry>
+            </row>
             <row>
               <entry>2nd June 2003</entry>
               <entry>François</entry>
