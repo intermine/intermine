@@ -35,4 +35,27 @@ public class ForwardParametersTest extends TestCase
         
         assertEquals(oaf.getPath() + "?p1=v1&p2=v2", af.getPath());
     }
+    
+    public void testNoParameters() {
+        ActionForward oaf = new ActionForward("/dummy.do", true);
+        ActionForward af = new ForwardParameters(oaf).forward();
+        
+        assertEquals(oaf.getPath(), af.getPath());
+    }
+    
+    public void testParametersWithAnchor() {
+        ActionForward oaf = new ActionForward("/dummy.do", true);
+        ActionForward af = new ForwardParameters(oaf).addParameter("p1", "v1")
+                                                     .addParameter("p2", "v2")
+                                                     .addAnchor("asdf").forward();
+        
+        assertEquals(oaf.getPath() + "?p1=v1&p2=v2#asdf", af.getPath());
+    }
+    
+    public void testOnlyAnchor() {
+        ActionForward oaf = new ActionForward("/dummy.do", true);
+        ActionForward af = new ForwardParameters(oaf).addAnchor("asdf").forward();
+        
+        assertEquals(oaf.getPath() + "#asdf", af.getPath());
+    }
 }
