@@ -62,12 +62,14 @@ public class BestQueryExplainerTest extends TestCase
     }*/
 
     public void testReturnFirst() throws Exception {
+        System.gc();
         BestQueryExplainer bq = new BestQueryExplainer();
         bq.add(q1);
         assertEquals(q1, bq.getBestQuery());
     }
 
     public void testReturnBest() throws Exception {
+        System.gc();
         BestQueryExplainer bq = new BestQueryExplainer();
         bq.add(q1);
         bq.add(q2);
@@ -80,6 +82,7 @@ public class BestQueryExplainerTest extends TestCase
     }
 
     public void testStopsWhenQueryBetterThanElapsed() throws Exception {
+        System.gc();
         BestQueryExplainer bq = new BestQueryExplainer();
         bq.add(q1); // Takes 600 milliseconds
         Thread.currentThread().sleep(700);

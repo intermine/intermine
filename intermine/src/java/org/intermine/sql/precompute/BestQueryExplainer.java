@@ -68,10 +68,11 @@ public class BestQueryExplainer extends BestQuery
 
         // throw BestQueryException if the bestQuery is will take less time to run than the
         // amount of time we have spent optimising so far
-        Date elapsed = new Date();
-        if (bestExplainResult.getTime() < (elapsed.getTime() + OVERHEAD - start.getTime())) {
+        Date now = new Date();
+        long elapsed = now.getTime() - start.getTime();
+        if (bestExplainResult.getTime() < (elapsed + OVERHEAD)) {
             throw (new BestQueryException("Explain time: " + bestExplainResult.getTime()
-                        + ", elapsed time: " + (elapsed.getTime() - start.getTime())));
+                        + ", elapsed time: " + elapsed));
         }
     }
 
