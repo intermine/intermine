@@ -12,6 +12,7 @@ package org.flymine.dataconversion;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.flymine.model.fulldata.Item;
 import org.flymine.model.fulldata.Attribute;
@@ -40,7 +41,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreItemReader implements ItemReader
 {
-    private ObjectStore os;
+    private ObjectStoreItemPathFollowingImpl os;
     protected static final Logger LOG = Logger.getLogger(ObjectStoreItemReader.class);
 
     /**
@@ -49,7 +50,7 @@ public class ObjectStoreItemReader implements ItemReader
      * @param os the ObjectStore
      */
     public ObjectStoreItemReader(ObjectStore os) {
-        this.os = os;
+        this.os = new ObjectStoreItemPathFollowingImpl(os);
     }
 
     /**
@@ -115,5 +116,11 @@ public class ObjectStoreItemReader implements ItemReader
         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
         return sr.iterator();
     }
-}
 
+    /**
+     * @see ItemReader#getItemsByDescription
+     */
+    public List getItemsByDescription(Set constraints) throws ObjectStoreException {
+        return os.getItemsByDescription(constraints);
+    }
+}

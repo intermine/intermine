@@ -10,13 +10,15 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.model.fulldata.Item;
@@ -69,6 +71,7 @@ public class MockItemReader implements ItemReader
         return null;
     }
 
-
+    public List getItemsByDescription(Set constraints) {
+        return Collections.EMPTY_LIST;
+    }
 }
-

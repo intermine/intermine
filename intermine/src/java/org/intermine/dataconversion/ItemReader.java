@@ -11,6 +11,8 @@ package org.flymine.dataconversion;
  */
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.flymine.model.fulldata.Item;
 import org.flymine.objectstore.ObjectStoreException;
@@ -52,4 +54,16 @@ public interface ItemReader
     public Iterator getItemsByAttributeValue(String className, String fieldName, String value)
         throws ObjectStoreException;
 
+    /**
+     * Returns a set of items with the fields constrained to certain values. This method takes a Set
+     * of FieldNameAndValue objects, each describing a constraint on a field of the items to be
+     * returned. The field names "identifier" and "classname" are mapped onto the Item fields of
+     * those names, and the remaining FieldNameAndValue objects are searched for with the Attribute
+     * objects attached to the Item.
+     *
+     * @param constraints a Set of FieldNameAndValue objects
+     * @return a List of Items
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public List getItemsByDescription(Set constraints) throws ObjectStoreException;
 }
