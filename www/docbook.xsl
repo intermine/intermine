@@ -58,6 +58,18 @@ xmlns="http://www.w3.org/1999/xhtml">
 
 <!-- ******* -->
 
+<xsl:template match="article">
+<div class="docbook-page">
+<xsl:apply-templates/>
+</div>
+</xsl:template>
+
+<xsl:template match="book">
+<div class="docbook-page">
+<xsl:apply-templates/>
+</div>
+</xsl:template>
+
 <xsl:template match="articleinfo/title">
 <h2 class="title"><xsl:apply-templates/></h2>
 </xsl:template>
