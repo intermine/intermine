@@ -59,12 +59,10 @@ public class ResultsTest extends TestCase
         Results res = os.execute(new Query());
         res.setBatchSize(5);
         ResultsRow row = (ResultsRow) res.get(6);
-        assertEquals(1, res.batches.size());
-        assertTrue(res.batches.containsKey(new Integer(1)));
+        assertEquals(1, os.getExecuteCalls());
         assertEquals("6", (String) row.get(0));
          row = (ResultsRow) res.get(3);
-         assertEquals(2, res.batches.size());
-         assertTrue(res.batches.containsKey(new Integer(0)));
+         assertEquals(2, os.getExecuteCalls());
          assertEquals("3", (String) row.get(0));
     }
 
