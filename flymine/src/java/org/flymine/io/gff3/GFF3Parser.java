@@ -12,6 +12,8 @@ package org.flymine.io.gff3;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -25,12 +27,12 @@ import java.io.BufferedReader;
 public class GFF3Parser
 {
     /**
-     * Read GFF3 lines from a BufferedReader and return a List of GFF3Records, one per line.
+     * Read GFF3 lines from a BufferedReader and return an Iterator over the GFF3Records.
      * @param reader the Reader to reader from
-     * @return a List of GFF3Record objects
+     * @return an Iterator over the GFF3Record objects from the reader
      * @throws IOException if there is an error during reading or parsing
      */
-    public static List parse(final BufferedReader reader) throws IOException {
+    public static Iterator parse(final BufferedReader reader) throws IOException {
         int lineNum = 0;
         List list = new ArrayList();
 
@@ -43,9 +45,45 @@ public class GFF3Parser
                 continue;
             }
 
-            list.add(new GFF3Record(line));
+            // throws IOException if the first GFF line isn't valid
+            new GFF3Record(trimmedLine);
+
+            break;
         }
 
-        return list;
+        final String firstGFFLine = line;
+
+        return new Iterator() {
+            String currentLine = firstGFFLine;
+
+            public boolean hasNext() {
+                return (currentLine != null);
+            }
+            
+            public Object next() {
+                if (currentLine == null) {
+                    throw new NoSuchElementException();
+                } else {
+                    Object objectToReturn = null;
+                    try {
+                        objectToReturn = new GFF3Record(currentLine);
+                        while ((currentLine = reader.readLine()) != null) {
+                            String trimmedLine = currentLine.trim();
+                            if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
+                                continue;
+                            }
+                            break;
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("IOException while getting next GFF record", e);
+                    }
+                    return objectToReturn;
+                }
+            }
+
+            public void remove() throws UnsupportedOperationException {
+                throw new UnsupportedOperationException("remove not supported");
+            }
+        };
     }
 }
