@@ -27,13 +27,13 @@ snapshot. The source code is available in tar.gz or ZIP
 format.</para>
 
 <para><ulink
-url="http://www.flymine.org/archives/releases/"><inlinegraphic
+url="http://download.flymine.org/releases/"><inlinegraphic
 fileref="/images/download" align="center"/>Official releases</ulink> -
 these are the official FlyMine releases. Official releases happen
 every couple of months, on average.</para>
 
 <para><ulink
-url="http://www.flymine.org/archives/nightly/"><inlinegraphic
+url="http://download.flymine.org/nightly/"><inlinegraphic
 fileref="/images/download" align="center"/>Nightly dump</ulink> - this
 is an up-to-the-minute snapshot of the FlyMine source code, as it was
 last night. This will work, but may be in a state of flux, and with
@@ -49,7 +49,7 @@ anonymously from our CVS server using the following commands:</para>
 
 <para><command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs login</command></para>
 
-<para><command>Password: &lt;return&gt;</command></para>
+<para><command>Password: &lt;none&gt;</command></para>
 <para><command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs co flymine</command></para>
 
 </sect2>
@@ -68,7 +68,7 @@ installed on your machine.</para>
 
 <itemizedlist>
 
-<listitem>Issue the command <command>ant dist</command> (if building
+<listitem>Issue the command <command>ant jar</command> (if building
 from source). This will create a file <filename>flymine.jar</filename>
 in the <filename>dist</filename> directory.</listitem>
 
