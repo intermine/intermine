@@ -3,7 +3,10 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- export.jsp -->
-<div>
+<div class="heading">
+  <fmt:message key="export.export"/>
+</div>
+<div class="body">
   <ul>
     <li>
       <html:link action="/exportAction?type=csv">
