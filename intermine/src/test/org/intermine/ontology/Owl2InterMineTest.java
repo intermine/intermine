@@ -210,47 +210,5 @@ public class Owl2FlyMineTest extends TestCase
         assertEquals(cod2, cod1.getReverseReferenceDescriptor());
         assertEquals(cod1, cod2.getReverseReferenceDescriptor());
 
-        }
-
-
-
-    public void testPropertyTypes() throws Exception {
-        String owl = "@prefix : <" + ns + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + ENDL
-            + ":Company a owl:Class ." + ENDL
-            + ":Address a owl:Class ." + ENDL
-            + ":prop1 a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain :Company ;" + ENDL
-            + "       rdfs:range xsd:String." + ENDL
-            + ":prop2 a rdf:Property ;" + ENDL
-            + "         rdfs:domain :Company ;" + ENDL
-            + "         rdfs:range \"this is a literal\" ." + ENDL
-            + ":prop3 a owl:ObjectProperty ;" + ENDL
-            + "       rdfs:domain :Company ;" + ENDL
-            + "       rdfs:range :Address ." + ENDL
-            + ":prop4 a rdf:Property ;" + ENDL
-            + "         rdfs:domain :Company ;" + ENDL
-            + "         rdfs:range :Address ." + ENDL
-            + ":prop5 a rdf:Property ;" + ENDL
-            + "       rdfs:domain :Company ;" + ENDL
-            + "       rdfs:range xsd:String." + ENDL;
-
-        ont.read(new StringReader(owl), null, "N3");
-
-        assertTrue(generator.isDatatypeProperty(ont.getOntProperty(ns + "prop1")));
-        assertTrue(generator.isDatatypeProperty(ont.getOntProperty(ns + "prop2")));
-        assertFalse(generator.isDatatypeProperty(ont.getOntProperty(ns + "prop3")));
-        assertFalse(generator.isDatatypeProperty(ont.getOntProperty(ns + "prop4")));
-        assertTrue(generator.isDatatypeProperty(ont.getOntProperty(ns + "prop5")));
-        assertTrue(generator.isObjectProperty(ont.getOntProperty(ns + "prop3")));
-        assertTrue(generator.isObjectProperty(ont.getOntProperty(ns + "prop4")));
-        assertFalse(generator.isObjectProperty(ont.getOntProperty(ns + "prop1")));
-        assertFalse(generator.isObjectProperty(ont.getOntProperty(ns + "prop2")));
-        assertFalse(generator.isObjectProperty(ont.getOntProperty(ns + "prop5")));
     }
 }

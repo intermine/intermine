@@ -20,9 +20,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Property;
 
 import org.flymine.metadata.*;
 
@@ -185,7 +183,7 @@ public class Owl2FlyMine
             reverseRef = OntologyUtil.generateFieldName(invProp, range);
         }
 
-        if (!isInverse && isDatatypeProperty(prop)) {
+        if (!isInverse && OntologyUtil.isDatatypeProperty((Property) prop)) {
             String javaType;
             if (range.getNameSpace().equals(OntologyUtil.RDFS_NAMESPACE)
                 && range.getLocalName().equals("Literal")) {
@@ -203,7 +201,7 @@ public class Owl2FlyMine
                                           javaType);
             HashSet atds = getFieldSetForClass(attributes, domain.getLocalName());
             atds.add(atd);
-        } else if (isInverse || isObjectProperty(prop)) {
+        } else if (isInverse || OntologyUtil.isObjectProperty((Property) prop)) {
             // TODO set package correctly if java type not business object in collection
             String referencedType = pkg + "." + range.getLocalName();
 
@@ -232,7 +230,6 @@ public class Owl2FlyMine
     }
 
 
-
     /**
      * Get or create a set of FieldsDescriptors in the given map for a class.
      * @param fieldMap the map to search/create field set in
@@ -248,42 +245,4 @@ public class Owl2FlyMine
         return fields;
     }
 
-
-    /**
-     * Test whether a OntProperty is a datatype property - if type of property
-     * is not owl:DatatypeProperty checks if object is a literal or a Resource
-     * that is an xml datatype.
-     * @param prop the property in question
-     * @return true if is a DatatypeProperty
-     */
-    protected boolean isDatatypeProperty(OntProperty prop) {
-        if (prop.isDatatypeProperty()) {
-            return true;
-        }
-        Statement stmt = (Statement) OntologyUtil.getStatementsFor((OntModel) prop.getModel(), prop,
-            OntologyUtil.RDFS_NAMESPACE + "range").iterator().next();
-        if (stmt.getObject() instanceof Literal) {
-            return true;
-        } else if (stmt.getObject() instanceof Resource) {
-            Resource res = (Resource) stmt.getObject();
-            if (res.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * Test whether a given property is an object property.  If type of property
-     * is not owl:ObjectProperty establishes whether it is a DatatypeProperty.
-     * @param prop the property in question
-     * @return true if this is an ObejctProperty
-     */
-    protected boolean isObjectProperty(OntProperty prop) {
-        if (prop.isObjectProperty()) {
-            return true;
-        }
-        return !isDatatypeProperty(prop);
-    }
 }

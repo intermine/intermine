@@ -207,4 +207,97 @@ public class OntologyUtilTest extends TestCase
                      OntologyUtil.correctNamespace("http://www.flymine.org/test"));
     }
 
+
+    public void testFindRestrictedSubclasses() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Organisation a owl:Class ." + ENDL
+            + ":organisationType a owl:DatatypeProperty ;" + ENDL
+            + "                  rdfs:domain :Organisation ;" + ENDL
+            + "                  rdfs:range xsd:string ." + ENDL
+            + ":Business a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf :Organisation ;" + ENDL
+            + "          rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:hasValue \"business\" ] ." + ENDL
+            + ":Charity a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf :Organisation ;" + ENDL
+            + "          rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:hasValue \"charity\" ] ." + ENDL
+            + ":OtherOrganisation a owl:Class ;" + ENDL
+            + "                   rdfs:subClassOf :Organisation ." + ENDL;
+
+        OntModel ont = ModelFactory.createOntologyModel();
+        ont.read(new StringReader(owl), null, "N3");
+
+        assertNotNull(ont.getOntClass(ns + "Organisation"));
+        OntClass cls1 = ont.getOntClass(ns + "Organisation");
+        assertNotNull(ont.getOntClass(ns + "Business"));
+        assertNotNull(ont.getOntClass(ns + "Charity"));
+        assertNotNull(ont.getOntClass(ns + "OtherOrganisation"));
+        assertNotNull(ont.getOntProperty(ns + "organisationType"));
+        OntProperty prop1 = ont.getOntProperty(ns + "organisationType");
+        assertEquals(prop1, (OntProperty) cls1.listDeclaredProperties(false).next());
+        assertTrue(cls1.hasSubClass(ont.getOntClass(ns + "Business")));
+        assertTrue(cls1.hasSubClass(ont.getOntClass(ns + "Charity")));
+        assertTrue(cls1.hasSubClass(ont.getOntClass(ns + "OtherOrganisation")));
+
+
+        OntClass cls2 = ont.getOntClass(ns + "Business");
+        OntClass cls3 = ont.getOntClass(ns + "Charity");
+        Set expected = new HashSet(Arrays.asList(new Object[] {cls2, cls3}));
+
+        assertEquals(expected, OntologyUtil.findRestrictedSubclasses(ont, cls1));
+    }
+
+
+    public void testPropertyTypes() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":Address a owl:Class ." + ENDL
+            + ":prop1 a owl:DatatypeProperty ;" + ENDL
+            + "       rdfs:domain :Company ;" + ENDL
+            + "       rdfs:range xsd:String." + ENDL
+            + ":prop2 a rdf:Property ;" + ENDL
+            + "         rdfs:domain :Company ;" + ENDL
+            + "         rdfs:range \"this is a literal\" ." + ENDL
+            + ":prop3 a owl:ObjectProperty ;" + ENDL
+            + "       rdfs:domain :Company ;" + ENDL
+            + "       rdfs:range :Address ." + ENDL
+            + ":prop4 a rdf:Property ;" + ENDL
+            + "         rdfs:domain :Company ;" + ENDL
+            + "         rdfs:range :Address ." + ENDL
+            + ":prop5 a rdf:Property ;" + ENDL
+            + "       rdfs:domain :Company ;" + ENDL
+            + "       rdfs:range xsd:String." + ENDL;
+
+        OntModel ont = ModelFactory.createOntologyModel();
+        ont.read(new StringReader(owl), null, "N3");
+
+        assertTrue(OntologyUtil.isDatatypeProperty(ont.getOntProperty(ns + "prop1")));
+        assertTrue(OntologyUtil.isDatatypeProperty(ont.getOntProperty(ns + "prop2")));
+        assertFalse(OntologyUtil.isDatatypeProperty(ont.getOntProperty(ns + "prop3")));
+        assertFalse(OntologyUtil.isDatatypeProperty(ont.getOntProperty(ns + "prop4")));
+        assertTrue(OntologyUtil.isDatatypeProperty(ont.getOntProperty(ns + "prop5")));
+        assertTrue(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop3")));
+        assertTrue(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop4")));
+        assertFalse(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop1")));
+        assertFalse(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop2")));
+        assertFalse(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop5")));
+    }
+
 }

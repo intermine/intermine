@@ -233,7 +233,6 @@ public class MergeOwlFunctionalTest extends TestCase
             + "           owl:equivalentClass src2:Corporation ." + ENDL
             + ENDL
             + ":name a rdf:Property ;" + ENDL
-            + "        rdfs:domain :Company ;" + ENDL
             + "        owl:equivalentProperty src1:companyName ;" + ENDL
             + "        owl:equivalentProperty src2:corpName ." + ENDL;
     }

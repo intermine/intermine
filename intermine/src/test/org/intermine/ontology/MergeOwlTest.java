@@ -271,6 +271,104 @@ public class MergeOwlTest extends TestCase
         assertTrue(s.getResource().equals(subject));
     }
 
+
+    public void testGrowSpecificSubclass() throws Exception {
+        String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
+            + "@prefix src1: <" + src1Namespace + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "         owl:equivalentClass src1:Business ." + ENDL
+            + ":Charity a owl:Class ;" + ENDL
+            + "         owl:equivalentClass src1:CharitableOrganisation ." + ENDL
+            + "src1:Business a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf src1:Organisation ;" + ENDL
+            + "          rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:onProperty src1:organisationType ;" + ENDL
+            + "              owl:hasValue \"business\" ] ." + ENDL
+            + "src1:CharitableOrganisation a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf src1:Organisation ;" + ENDL
+            + "          rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:onProperty src1:organisationType ;" + ENDL
+            + "              owl:hasValue \"charity\" ] ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "        owl:equivalentProperty src1:organisationName ." + ENDL;
+
+
+        String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Organisation a owl:Class ." + ENDL
+            + ":address a owl:ObjectProperty ;" + ENDL
+            + "      rdfs:domain :Organisation ;" + ENDL
+            + "      rdfs:range :Address ." + ENDL
+            + ":organisationName a owl:DatatypeProperty ;" + ENDL
+            + "        rdfs:domain :Organisation ;" + ENDL
+            + "        rdfs:range xsd:string ." + ENDL
+            + ":organisationType a owl:DatatypeProperty ;" + ENDL
+            + "                  rdfs:domain :Organisation ;" + ENDL
+            + "                  rdfs:range xsd:string ." + ENDL
+            + ":Address a owl:Class ." + ENDL;
+
+
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        OntModel src1 = ModelFactory.createOntologyModel();
+        src1.read(new StringReader(src1Str), null, "N3");
+
+        merger.mergeByEquivalence(src1, src1Namespace);
+
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Organisation"));
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Charity"));
+        assertNotNull( merger.tgtModel.getOntProperty(tgtNamespace + "name"));
+        assertNotNull( merger.tgtModel.getOntProperty(tgtNamespace + "address"));
+        assertNotNull( merger.tgtModel.getOntProperty(tgtNamespace + "organisationType"));
+        assertNull(merger.tgtModel.getOntClass(tgtNamespace + "Business"));
+        assertNull(merger.tgtModel.getOntClass(tgtNamespace + "CharitableOrganisation"));
+
+
+        OntClass ontCls0 = merger.tgtModel.getOntClass(tgtNamespace + "Organisation");
+        OntClass ontCls1 = merger.tgtModel.getOntClass(tgtNamespace + "Company");
+        OntClass ontCls2 = merger.tgtModel.getOntClass(tgtNamespace + "Charity");
+
+        // Company and Charity should be subclass of organisation but not of eachother
+        assertTrue(ontCls0.hasSubClass(ontCls1));
+        assertTrue(ontCls0.hasSubClass(ontCls2));
+        assertFalse(ontCls1.hasSubClass(ontCls2));
+        assertFalse(ontCls2.hasSubClass(ontCls1));
+
+
+        // name, address and organisationType should have Organisationm Company and Charity as domains
+        OntProperty ontProp1 = merger.tgtModel.getOntProperty(tgtNamespace + "name");
+        OntProperty ontProp2 = merger.tgtModel.getOntProperty(tgtNamespace + "address");
+        OntProperty ontProp3 = merger.tgtModel.getOntProperty(tgtNamespace + "organisationType");
+
+        assertTrue(ontProp1.hasDomain(ontCls0));
+        assertTrue(ontProp2.hasDomain(ontCls0));
+        assertTrue(ontProp3.hasDomain(ontCls0));
+
+        assertTrue(ontProp1.hasDomain(ontCls1));
+        assertTrue(ontProp2.hasDomain(ontCls1));
+        assertTrue(ontProp3.hasDomain(ontCls1));
+
+        assertTrue(ontProp1.hasDomain(ontCls2));
+        assertTrue(ontProp2.hasDomain(ontCls2));
+        assertTrue(ontProp3.hasDomain(ontCls2));
+
+    }
+
+
+
     //================================================================================================
 
 
@@ -304,7 +402,6 @@ public class MergeOwlTest extends TestCase
             + "           owl:equivalentClass src2:Corporation ." + ENDL
             + ENDL
             + ":name a rdf:Property ;" + ENDL
-            + "        rdfs:domain :Company ;" + ENDL
             + "        owl:equivalentProperty src1:companyName ;" + ENDL
             + "        owl:equivalentProperty src2:corpName ." + ENDL;
     }

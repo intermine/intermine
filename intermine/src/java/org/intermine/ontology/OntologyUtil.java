@@ -17,8 +17,12 @@ import java.util.Set;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.Restriction;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Property;
 
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.ClassDescriptor;
@@ -176,13 +180,85 @@ public class OntologyUtil
 
 
     /**
+     * For the given OntClass get a set of subclasses with a hasValue restriction
+     * on a particular DatatypeProperty.  srcCls may be from a different OntModel,
+     * use this class to find properties, look in given model for subclasses.  If
+     * srcCls is from given model then this is no different.
+     * @param model the ontology model to search for subclasses in
+     * @param srcCls the OntClass to find restricted subclasses for
+     * @return a set of subclasses with a hasValue Restriction
+     */
+    public static Set findRestrictedSubclasses(OntModel model, OntClass srcCls) {
+        OntClass tgtCls = model.getOntClass(srcCls.getURI());
+        Set subclasses = new HashSet();
+        Iterator i = tgtCls.listSubClasses();
+        while (i.hasNext()) {
+            OntClass subcls = (OntClass) i.next();
+
+            Iterator j = model.listRestrictions();
+            while (j.hasNext()) {
+                Restriction res = (Restriction) j.next();
+                if (res.hasSubClass(subcls) && res.isHasValueRestriction()) {
+                    Iterator propIter = srcCls.listDeclaredProperties(false);
+                    while (propIter.hasNext()) {
+                        Property prop = (Property) propIter.next();
+                        if (res.onProperty(prop) && isDatatypeProperty(prop)) {
+                            subclasses.add(subcls);
+                        }
+                    }
+                }
+            }
+        }
+        return subclasses;
+    }
+
+    /**
+     * Test whether a OntProperty is a datatype property - if type of property
+     * is not owl:DatatypeProperty checks if object is a literal or a Resource
+     * that is an xml datatype.
+     * @param prop the property in question
+     * @return true if is a DatatypeProperty
+     */
+    public static boolean isDatatypeProperty(Property prop) {
+        if (prop instanceof OntProperty && ((OntProperty) prop).isDatatypeProperty()) {
+            return true;
+        }
+        Statement stmt = (Statement) getStatementsFor((OntModel) prop.getModel(), prop,
+            RDFS_NAMESPACE + "range").iterator().next();
+        if (stmt.getObject() instanceof Literal) {
+            return true;
+        } else if (stmt.getObject() instanceof Resource) {
+            Resource res = (Resource) stmt.getObject();
+            if (res.getNameSpace().equals(XSD_NAMESPACE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test whether a given property is an object property.  If type of property
+     * is not owl:ObjectProperty establishes whether it is a DatatypeProperty.
+     * @param prop the property in question
+     * @return true if this is an ObejctProperty
+     */
+    public static boolean isObjectProperty(Property prop) {
+        if (prop instanceof OntProperty && ((OntProperty) prop).isObjectProperty()) {
+            return true;
+        }
+        return !isDatatypeProperty(prop);
+    }
+
+
+
+    /**
      * Return a set of jena rdf statement objects from model for given subject and predicate.
      * @param model the OntModel to search for statements
      * @param subject subject of the desired statements
      * @param predicate predicate of the desired statements
      * @return a set of Statement objects
      */
-    public static Set getStatementsFor(OntModel model, OntResource subject, String predicate) {
+    public static Set getStatementsFor(OntModel model, Resource subject, String predicate) {
         Set statements = new HashSet();
         Iterator stmtIter = model.listStatements();
         while (stmtIter.hasNext()) {
@@ -234,6 +310,17 @@ public class OntologyUtil
         } else {
             return ns + "#";
         }
+    }
+
+
+    /**
+     * Return a valid resource given a resource name fragment i.e. replaces spaces
+     * with underscores and encode invalid characters.
+     * @param fragment fragment part of a resource name uri
+     * @return a valid resource name fragment
+     */
+    public static String validResourceName(String fragment) {
+        return fragment.replace(' ', '_');
     }
 
 }

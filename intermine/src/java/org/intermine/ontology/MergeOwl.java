@@ -20,8 +20,12 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.*;
 
@@ -41,6 +45,7 @@ public class MergeOwl
     protected OntModel tgtModel = null;
     private final String tgtNamespace;
     protected Map equiv;
+    protected Map subMap;
 
     /**
      * Construct with a Reader for the merge spec (which becomes the initial target model) and
@@ -107,6 +112,18 @@ public class MergeOwl
             }
         }
 
+        subMap = new HashMap();
+        Iterator clsIter = srcModel.listClasses();
+        while (clsIter.hasNext()) {
+            OntClass srcCls = (OntClass) clsIter.next();
+            if (!srcCls.isAnon()) {
+                OntClass tgtCls = tgtModel.getOntClass(srcCls.getURI());
+                if (tgtCls != null) {
+                    subMap.put(tgtCls, OntologyUtil.findRestrictedSubclasses(tgtModel, srcCls));
+                }
+            }
+        }
+
         // adding statements to Jena model by batch method is supposedly faster
         List statements = new ArrayList();
 
@@ -114,37 +131,69 @@ public class MergeOwl
         stmtIter = srcModel.listStatements();
         while (stmtIter.hasNext()) {
             Statement stmt = (Statement) stmtIter.next();
-            Resource subject = stmt.getSubject();
-            if (!subject.isAnon() && subject.getNameSpace().equals(srcNamespace)) {
-                if (stmt.getPredicate().getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
-                    && stmt.getPredicate().getLocalName().equals("type")) {
-                    if (!equiv.containsKey(subject.getURI())) {
-                        Resource target = tgtModel.createResource(tgtNamespace
-                                                                  + subject.getLocalName());
-                        Resource object = getTargetResource(stmt.getResource(), srcNamespace);
-                        statements.add(tgtModel.createStatement(target,
-                                                                stmt.getPredicate(), object));
-                        addEquivalenceStatement(target, object, subject, statements);
-                    }
-                } else {
-                    subject = getTargetResource(subject, srcNamespace);
-                    RDFNode object = stmt.getObject();  // RDFNode can be Resource or literal
-                    if (object instanceof Resource) {
-                        object = getTargetResource((Resource) object, srcNamespace);
-                    }
-                    statements.add(tgtModel.createStatement(subject, stmt.getPredicate(), object));
+            HashSet subjects = new HashSet(Collections.singleton(stmt.getSubject()));
+            if (subMap.containsKey(stmt.getSubject())) {
+                subjects.addAll((Set) subMap.get(stmt.getSubject()));
+            }
+            Iterator subjIter = subjects.iterator();
+            while (subjIter.hasNext()) {
+                Resource subject = (Resource) subjIter.next();
+                RDFNode tmpObj = stmt.getObject();  // RDFNode can be Resource or literal
+                HashSet objects = new HashSet(Collections.singleton(tmpObj));
+                // transfer all statements to new subclasses EXCEPT other subClassOf
+                if (tmpObj instanceof Resource && subMap.containsKey(tmpObj)
+                    && !stmt.getPredicate().getURI()
+                                           .equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")) {
+                    objects.addAll((Set) subMap.get(tmpObj));
                 }
-            } else if (subject.isAnon()) {
-                subject = getTargetResource(subject, srcNamespace);
-                RDFNode object = stmt.getObject();  // RDFNode can be Resource or literal
-                if (object instanceof Resource) {
-                    object = getTargetResource((Resource) object, srcNamespace);
+                Resource newSubject = subject;
+                Iterator objIter = objects.iterator();
+                while (objIter.hasNext()) {
+                    RDFNode object = (RDFNode) objIter.next();
+                    RDFNode newObject = object;
+                    if (!subject.isAnon() && subject.getNameSpace().equals(srcNamespace)) {
+                        if (stmt.getPredicate().getNameSpace()
+                                               .equals(OntologyUtil.RDF_NAMESPACE)
+                            && stmt.getPredicate().getLocalName().equals("type")) {
+
+                            if (!equiv.containsKey(subject.getURI())) {
+                                newSubject = tgtModel.createResource(tgtNamespace
+                                                                     + subject.getLocalName());
+                                newObject = getTargetResource((Resource) object, srcNamespace);
+                                statements.add(tgtModel.createStatement(newSubject,
+                                    stmt.getPredicate(), newObject));
+                                addEquivalenceStatement(newSubject, (Resource) newObject,
+                                                        subject, statements);
+                            }
+                        } else if (stmt.getPredicate().getNameSpace()
+                                                      .equals(OntologyUtil.RDFS_NAMESPACE)
+                                   && stmt.getPredicate().getLocalName().equals("subClassOf")
+                                   && subject.equals(object)) {
+                            continue;  // stop business objects being subClasses of themselves
+                        } else {
+                            newSubject = getTargetResource(subject, srcNamespace);
+                            if (object instanceof Resource) {
+                                newObject = getTargetResource((Resource) object, srcNamespace);
+                            }
+                            statements.add(tgtModel.createStatement(newSubject, stmt.getPredicate(),
+                                                                    newObject));
+                        }
+                    } else if (subject.isAnon()) {
+                        newSubject = getTargetResource(subject, srcNamespace);
+                        if (object instanceof Resource) {
+                            newObject = getTargetResource((Resource) object, srcNamespace);
+                        }
+                        statements.add(tgtModel.createStatement(newSubject, stmt.getPredicate(),
+                                                                newObject));
+                    }
                 }
-                statements.add(tgtModel.createStatement(subject, stmt.getPredicate(), object));
             }
         }
+
         tgtModel.add(statements);
     }
+
+
 
     /**
      * Given a resource and the namespace of the source OWL find the equivalent resource
