@@ -165,7 +165,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         if (c != null) {
             try {
                 if (!c.getAutoCommit()) {
-                    LOG.error("releaseConnection called while in transaction - rolling back");
+                    Exception e = new Exception();
+                    e.fillInStackTrace();
+                    StringWriter message = new StringWriter();
+                    PrintWriter pw = new PrintWriter(message);
+                    e.printStackTrace(pw);
+                    pw.close();
+                    LOG.error("releaseConnection called while in transaction - rolling back."
+                              + System.getProperty("line.separator") + message.toString());
                     c.rollback();
                     c.setAutoCommit(true);
                 }
@@ -645,7 +652,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Create temporary tables for the bag in the BagConstraints of the given Query, then call
      * SqlGenerator.generate().  A Map of BagConstraint -> table name is created for Query and saved
      * in the queryBagTables Map.
-     * 
+     *
      * @param c a Connection to use
      * @param q the Query
      * @param start the start row number (inclusive, from zero)
@@ -731,7 +738,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             } catch (SQLException e) {
                 throw new ObjectStoreException("database error while creating temporary "
                                                + "table for bag", e);
-            }    
+            }
         }
     }
 
