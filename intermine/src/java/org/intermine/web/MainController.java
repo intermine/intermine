@@ -124,10 +124,20 @@ public class MainController extends TilesAction
      */
     protected static Set getChildren(ClassDescriptor cld) {
         Set children = new HashSet();
-        for (Iterator i = cld.getSubDescriptors().iterator(); i.hasNext();) {
-            children.add(TypeUtil.unqualifiedName(cld.getName()));
-            children.addAll(getChildren((ClassDescriptor) i.next()));
-        }
+        getChildren(cld, children);
         return children;
+    }
+    
+    /**
+     * Add the names of the descendents of a ClassDescriptor to a Set
+     * @param cld the ClassDescriptor
+     * @param children the Set of child names
+     */
+    protected static void getChildren(ClassDescriptor cld, Set children) {
+        for (Iterator i = cld.getSubDescriptors().iterator(); i.hasNext();) {
+            ClassDescriptor child = (ClassDescriptor) i.next();
+            children.add(TypeUtil.unqualifiedName(child.getName()));
+            getChildren(child, children);
+        }
     }
 }
