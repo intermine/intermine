@@ -17,7 +17,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
-import org.flymine.xml.full.FullParser;
+import org.intermine.xml.full.FullParser;
 
 public class OrthologueConverterTest extends TestCase
 {

@@ -27,30 +27,30 @@ import java.util.Iterator;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
-import org.flymine.xml.full.FullRenderer;
-import org.flymine.xml.full.FullParser;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.FullParser;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
-import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.translating.ObjectStoreTranslatingImpl;
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
-import org.flymine.dataloader.IntegrationWriter;
-import org.flymine.dataloader.DataLoader;
-import org.flymine.dataloader.ObjectStoreDataLoader;
-import org.flymine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
+import org.intermine.model.InterMineObject;
+import org.intermine.dataloader.IntegrationWriterSingleSourceImpl;
+import org.intermine.dataloader.IntegrationWriter;
+import org.intermine.dataloader.DataLoader;
+import org.intermine.dataloader.ObjectStoreDataLoader;
+import org.intermine.metadata.Model;
 
 public class EnsemblDataTranslatorTest extends TestCase {
     private String srcNs = "http://www.flymine.org/model/ensembl#";
@@ -60,13 +60,13 @@ public class EnsemblDataTranslatorTest extends TestCase {
 
     public void setUp() throws Exception {
         itemMap = new LinkedHashMap();
-        osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.fulldatatest");
     }
 
     public void tearDown() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
         Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
@@ -74,7 +74,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
         Iterator iter = toDelete.iterator();
         osw.beginTransaction();
         while (iter.hasNext()) {
-            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            InterMineObject obj = (InterMineObject) iter.next();
             System.out.println("Deleting " + obj);
             osw.delete(obj);
         }
@@ -90,8 +90,8 @@ public class EnsemblDataTranslatorTest extends TestCase {
         while (i.hasNext()) {
             iw.store(ItemHelper.convert((Item) i.next()));
         }
-        OntModel model = getFlyMineOwl();
-        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs, "wildebeast", "W. beast", "1001");
+        OntModel model = getInterMineOwl();
+        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs, "wildebeast", "W. beast", "1001");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -99,7 +99,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
     }
 
     public void testDataLoadEnsembl() throws Exception {
-        ObjectStoreWriter osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.fulldatatest");
         ItemWriter iw = new ObjectStoreItemWriter(osw);
 
@@ -114,15 +114,15 @@ public class EnsemblDataTranslatorTest extends TestCase {
         ItemToObjectTranslator t = new ItemToObjectTranslator(Model.getInstanceByName("genomic"), osw.getObjectStore());
         ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName("genomic"), osw.getObjectStore(), t);
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setDistinct(false);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
-            //FlyMineBusinessObject obj = t.translateFromDbObject((FlyMineBusinessObject) iter.next());
-            FlyMineBusinessObject o = (FlyMineBusinessObject) iter.next();
+            //InterMineObject obj = t.translateFromDbObject((InterMineObject) iter.next());
+            InterMineObject o = (InterMineObject) iter.next();
         }
     }
 
@@ -136,7 +136,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
     }
 
 
-    protected OntModel getFlyMineOwl() {
+    protected OntModel getInterMineOwl() {
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
 
         OntModel ont = ModelFactory.createOntologyModel();

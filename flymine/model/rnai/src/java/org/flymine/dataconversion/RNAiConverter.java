@@ -16,12 +16,14 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
 
 /**
  * DataConverter to parse an RNAi data file into Items

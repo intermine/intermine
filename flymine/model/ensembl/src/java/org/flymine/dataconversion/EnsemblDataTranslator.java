@@ -26,24 +26,26 @@ import java.util.ArrayList;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.flymine.FlyMineException;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.InterMineException;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.dataconversion.ItemReader;
+import org.intermine.dataconversion.ItemWriter;
 
 import org.apache.log4j.Logger;
 
 /**
  * Convert Ensembl data in fulldata Item format conforming to a source OWL definition
- * to fulldata Item format conforming to FlyMine OWL definition.
+ * to fulldata Item format conforming to InterMine OWL definition.
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
@@ -84,7 +86,9 @@ public class EnsemblDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#translate
      */
-    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
+    public void translate(ItemWriter tgtItemWriter)
+        throws ObjectStoreException, InterMineException {
+
         tgtItemWriter.store(ItemHelper.convert(getOrganism()));
         tgtItemWriter.store(ItemHelper.convert(getEnsemblDb()));
         tgtItemWriter.store(ItemHelper.convert(getEmblDb()));
@@ -109,7 +113,9 @@ public class EnsemblDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#translateItem
      */
-    protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
+    protected Collection translateItem(Item srcItem)
+        throws ObjectStoreException, InterMineException {
+
         Collection result = new HashSet();
         String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
@@ -423,7 +429,7 @@ public class EnsemblDataTranslator extends DataTranslator
         //Iterator i = objectXrefs.iterator();
         while (objectXrefs.hasNext()) {
             Item objectXref = ItemHelper.convert(
-                                  (org.flymine.model.fulldata.Item) objectXrefs.next());
+                                  (org.intermine.model.fulldata.Item) objectXrefs.next());
             Item xref = ItemHelper.convert(srcItemReader
                         .getItemById(objectXref.getReference("xref").getRefId()));
 
@@ -505,7 +511,7 @@ public class EnsemblDataTranslator extends DataTranslator
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
         if (stableIds.hasNext()) {
-            return ItemHelper.convert((org.flymine.model.fulldata.Item) stableIds.next());
+            return ItemHelper.convert((org.intermine.model.fulldata.Item) stableIds.next());
         } else {
             return null;
         }

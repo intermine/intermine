@@ -21,21 +21,23 @@ import java.util.HashMap;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.flymine.FlyMineException;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Item;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.InterMineException;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.dataconversion.ItemReader;
+import org.intermine.dataconversion.ItemWriter;
 
 import org.apache.log4j.Logger;
 
 /**
  * Convert Chado data in fulldata Item format conforming to a source OWL definition
- * to fulldata Item format conforming to FlyMine OWL definition.
+ * to fulldata Item format conforming to InterMine OWL definition.
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
@@ -55,7 +57,9 @@ public class ChadoDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#translateItem
      */
-    protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
+    protected Collection translateItem(Item srcItem)
+        throws ObjectStoreException, InterMineException {
+
         Collection result = new HashSet();
         String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);

@@ -22,14 +22,15 @@ import java.io.Writer;
 
 import org.biomage.tools.xmlutils.MAGEReader;
 
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
-import org.flymine.util.TypeUtil;
+import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Reference;
+import org.intermine.model.fulldata.ReferenceList;
+import org.intermine.util.TypeUtil;
+import org.intermine.dataconversion.ItemWriter;
 
 /**
- * Convert MAGE-ML to FlyMine Full Data Xml via MAGE-OM objects.
+ * Convert MAGE-ML to InterMine Full Data Xml via MAGE-OM objects.
  *
  * @author Andrew Varley
  * @author Richard Smith

@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Attribute;
-import org.flymine.xml.full.Reference;
-import org.flymine.xml.full.ReferenceList;
-import org.flymine.xml.full.ItemHelper;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemHelper;
 
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
