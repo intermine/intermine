@@ -84,7 +84,7 @@ public class AceDataLoader extends DataLoader
         floatType = pkgName + FLOAT;
         intType = pkgName + INT;
         textType = pkgName + TEXT;
-    }        
+    }
 
     /**
      * Static method to unmarshall business objects from a given Ace server and call
@@ -105,6 +105,7 @@ public class AceDataLoader extends DataLoader
             while (clazzIter.hasNext()) {
                 String clsName = (String) clazzIter.next();
                 if (true) {
+                    LOG.warn("CLASS: " + clsName);
                     String aceClazzName = AceModelParser
                         .unformatAceName(TypeUtil.unqualifiedName(clsName));
                     AceURL objURL = source.relativeURL(aceClazzName);
@@ -120,9 +121,10 @@ public class AceDataLoader extends DataLoader
                                 LOG.debug("Processing object: " + aceObj.getName());
                                 Object obj = processAceObject(aceObj);
                                 // Now store that object
-                                LOG.debug("Storing object: " + obj);
                                 store(obj);
                             } catch (NoSuchElementException e) {
+                                LOG.error("Object not retrievable: " + e.getMessage());
+                            } catch (StringIndexOutOfBoundsException e) {
                                 LOG.error("Object not retrievable: " + e.getMessage());
                             }
                         }
@@ -159,21 +161,20 @@ public class AceDataLoader extends DataLoader
         LOG.debug("Processing Ace Object: " + aceObject.getClassName() + ", "
                 + aceObject.getName());
 
-        String clsName = pkgName 
+        String clsName = pkgName
             + AceModelParser.formatAceName(((AceObject) aceObject).getClassName());
-        Object currentObject = null;        
+        Object currentObject = null;
         try {
             currentObject = Class.forName(clsName).newInstance();
         } catch (Exception e) {
             LOG.error(e.toString());
         }
-
         Object identifier = aceObject.getName();
 //         if ("".equals(identifier)) {
 //             identifier = null;
 //         }
         setField(currentObject, "identifier", identifier);
-        
+
         processAceNode(aceObject, currentObject);
         return currentObject;
     }
@@ -235,7 +236,8 @@ public class AceDataLoader extends DataLoader
             try {
                 nodeName = getName(aceNode);
                 nodeValue = instantiate(textType);
-                TypeUtil.setFieldValue(nodeValue, "identifier", ((StringValue) aceNode).toString());
+                TypeUtil.setFieldValue(nodeValue, "identifier", StringUtil
+                                       .duplicateQuotes(((StringValue) aceNode).toString()));
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
                 throw new FlyMineException(e);
@@ -301,6 +303,9 @@ public class AceDataLoader extends DataLoader
     protected void setField(Object target, String fieldName, Object fieldValue)
         throws FlyMineException {
         try {
+            if ((fieldValue instanceof String)) {  // single quotes need to duplicated for DB
+                fieldValue = StringUtil.duplicateQuotes((String) fieldValue);
+            }
             Field field = TypeUtil.getField(target.getClass(), fieldName);
             if (field != null) {
                 if (Collection.class.isAssignableFrom(field.getType()) && fieldValue != null) {
@@ -315,6 +320,9 @@ public class AceDataLoader extends DataLoader
                     } catch (Exception e) {
                         throw new FlyMineException(e);
                     }
+                    LOG.debug("Setting field: obj=" + target.getClass().getName() + " field="
+                             + fieldName + " type=" + field.getType().getName()
+                             + " value=" + fieldValue);
                     TypeUtil.setFieldValue(target, fieldName, fieldValue);
                 }
             } else {
