@@ -47,10 +47,16 @@ public class TemplateQuery
      * @param query the query itself
      */
     public TemplateQuery(String name, String description, String category, PathQuery query) {
-        this.description = description;
+        if (description != null) {
+            this.description = description;
+        }
+        if (category != null) {
+            this.category = category;
+        }
+        if (name != null) {
+            this.name = name;
+        }
         this.query = query;
-        this.category = category;
-        this.name = name;
         
         // Find the editable constraints in the query.
         Iterator iter = query.getNodes().entrySet().iterator();
