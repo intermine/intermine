@@ -21,6 +21,7 @@ public class ObjectStoreWriterFactoryTest extends TestCase
     public void testValid() throws Exception {
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         assertNotNull(osw);
+        osw.close();
     }
 
     public void testNull() throws Exception {

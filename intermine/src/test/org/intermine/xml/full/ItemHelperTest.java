@@ -47,18 +47,22 @@ public class ItemHelperTest extends TestCase
         org.flymine.model.fulldata.Attribute dbAttr1 = new  org.flymine.model.fulldata.Attribute();
         dbAttr1.setName("name");
         dbAttr1.setValue("Department1");
+        dbAttr1.setItem(dbItem);
         dbItem.addAttributes(dbAttr1);
         org.flymine.model.fulldata.Attribute dbAttr2 = new  org.flymine.model.fulldata.Attribute();
         dbAttr2.setName("debt");
         dbAttr2.setValue("10");
+        dbAttr2.setItem(dbItem);
         dbItem.addAttributes(dbAttr2);
         org.flymine.model.fulldata.Reference dbRef1 = new  org.flymine.model.fulldata.Reference();
         dbRef1.setName("address");
         dbRef1.setRefId("2");
+        dbRef1.setItem(dbItem);
         dbItem.addReferences(dbRef1);
         org.flymine.model.fulldata.ReferenceList dbCol1 = new  org.flymine.model.fulldata.ReferenceList();
         dbCol1.setName("employees");
         dbCol1.setRefIds("3 4");
+        dbCol1.setItem(dbItem);
         dbItem.addCollections(dbCol1);
     }
 

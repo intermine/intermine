@@ -54,6 +54,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected Statement batch = null;
+    protected String createSituation;
 
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
@@ -72,11 +73,16 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             throw new ObjectStoreException("Could not obtain connection to database", e);
         }
         this.os.writers.add(this);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                outputLog();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new StatsShutdownHook(this));
+        Exception e = new Exception();
+        e.fillInStackTrace();
+        StringWriter message = new StringWriter();
+        PrintWriter pw = new PrintWriter(message);
+        e.printStackTrace(pw);
+        pw.close();
+        createSituation = message.toString();
+        int index = createSituation.indexOf("at junit.framework.TestCase.runBare");
+        createSituation = (index < 0 ? createSituation : createSituation.substring(0, index));
     }
     
     /**
@@ -84,6 +90,9 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      */
     public Connection getConnection() throws SQLException {
         synchronized (conn) {
+            if (conn == null) {
+                throw new SQLException("This ObjectStoreWriter is closed");
+            }
             while (connInUse) {
                 /*Exception trace = new Exception();
                 trace.fillInStackTrace();
@@ -138,13 +147,19 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * Overrides Object.finalize - release the connection back to the objectstore.
      */
     public void finalize() {
-        close();
+        if (conn != null) {
+            LOG.error("Garbage collecting open ObjectStoreWriterFlyMineImpl with sequence = "
+                    + sequence + " createSituation: " + createSituation);
+            outputLog();
+            close();
+        }
     }
 
     /**
      * @see ObjectStoreWriter#close
      */
     public void close() {
+        LOG.error("Close called on ObjectStoreWriterFlyMineImpl with sequence = " + sequence);
         try {
            if (isInTransaction()) {
                abortTransaction();
@@ -552,6 +567,18 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         if (batches > 0) {
             LOG.error(getModel().getName() + ": Performed " + logOps + " write statements in "
                     + logBatch + " batches. Average batch size: " + (logOps / logBatch));
+        }
+    }
+
+    /**
+     * Called by the StatsShutdownHook on shutdown
+     */
+    public void shutdown() {
+        if (conn != null) {
+            LOG.error("Shutting down open ObjectStoreWriterFlyMineImpl with sequence = "
+                    + sequence + ", createSituation = " + createSituation);
+            outputLog();
+            close();
         }
     }
 

@@ -258,7 +258,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             e.printStackTrace(pw);
             pw.flush();
             String m = sw.toString();
-            LOG.error(m.substring(0, m.indexOf("at junit.framework.TestCase.runBare")));
+            int index = m.indexOf("at junit.framework.TestCase.runBare");
+            LOG.error(index < 0 ? m : m.substring(0, index));
         }
     }
 

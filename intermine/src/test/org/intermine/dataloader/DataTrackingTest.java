@@ -36,6 +36,7 @@ public class DataTrackingTest extends TestCase {
     public void tearDown() throws Exception {
         osw.delete(source1);
         osw.delete(source2);
+        osw.close();
     }
 
     public void testSetSourceNullIds() throws Exception {

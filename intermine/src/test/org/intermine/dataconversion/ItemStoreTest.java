@@ -17,18 +17,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
 import org.flymine.xml.full.FullParser;
 import org.flymine.xml.full.Item;
 
 public class ItemStoreTest extends TestCase {
     protected List items;
     protected ItemStore itemStore;
+    protected ObjectStoreWriter writer;
     
     public void setUp() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
         items = FullParser.parse(is);
-        itemStore = new ItemStore(ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest"));
+        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.fulldatatest");
+        itemStore = new ItemStore(writer);
         for (Iterator i = items.iterator(); i.hasNext();) {
             itemStore.store((Item) i.next());
         }
@@ -38,6 +43,7 @@ public class ItemStoreTest extends TestCase {
         for (Iterator i = items.iterator(); i.hasNext();) {
             itemStore.delete((Item) i.next());
         }
+        writer.close();
     }
     
     public void testGetItems() throws Exception {

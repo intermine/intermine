@@ -10,6 +10,8 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.util.Collection;
+
 import org.flymine.model.fulldata.Item;
 import org.flymine.objectstore.ObjectStoreException;
 
@@ -31,6 +33,18 @@ public interface ItemWriter
      * later time
      */
     public void store(Item item) throws ObjectStoreException;
+
+    /**
+     * Stores the given Collection of Items and all their associated attributes, references, and
+     * referencelists.
+     *
+     * @param items the Collection of Items to store
+     * @throws ObjectStoreException if something goes wrong. Note that for performance reasons, not
+     * all implementations of ItemWriter necessarily actually perform the store before this method
+     * terminates, therefore a problem could result in an ObjectStoreException being thrown at a
+     * later time
+     */
+    public void storeAll(Collection items) throws ObjectStoreException;
 
     /**
      * Flushes any store queue, closes transactions, and generally makes sure that every Item passed

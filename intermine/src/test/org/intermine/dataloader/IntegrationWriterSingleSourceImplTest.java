@@ -58,7 +58,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
         //iw = (IntegrationWriterSingleSourceImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
-        iw = new IntegrationWriterSingleSourceImpl(writer);
+        iw = new IntegrationWriterSingleSourceImpl(storeDataWriter);
         os = iw.getObjectStore();
     }
 

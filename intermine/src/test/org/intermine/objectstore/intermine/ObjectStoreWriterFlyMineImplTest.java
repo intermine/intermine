@@ -22,6 +22,11 @@ public class ObjectStoreWriterFlyMineImplTest extends ObjectStoreWriterTestCase
         ObjectStoreWriterTestCase.oneTimeSetUp();
     }
 
+    public static void oneTimeTearDown() throws Exception {
+        writer.close();
+        ObjectStoreWriterTestCase.oneTimeTearDown();
+    }
+
     public ObjectStoreWriterFlyMineImplTest(String arg) throws Exception {
         super(arg);
     }
@@ -30,5 +35,4 @@ public class ObjectStoreWriterFlyMineImplTest extends ObjectStoreWriterTestCase
         return buildSuite(ObjectStoreWriterFlyMineImplTest.class);
     }
 }
-
 

@@ -39,6 +39,7 @@ public class ItemHelper
             newAttr.setName(attr.getName());
             newAttr.setValue(attr.getValue());
             newItem.getAttributes().add(newAttr);
+            newAttr.setItem(newItem);
         }
         
         for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
@@ -48,6 +49,7 @@ public class ItemHelper
             newRef.setName(ref.getName());
             newRef.setRefId(ref.getRefId());
             newItem.getReferences().add(newRef);
+            newRef.setItem(newItem);
         }
 
         for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
@@ -57,6 +59,7 @@ public class ItemHelper
             newRefs.setName(refs.getName());
             newRefs.setRefIds(StringUtil.join(refs.getRefIds(), " "));
             newItem.getCollections().add(newRefs);
+            newRefs.setItem(newItem);
         }
 
         return newItem;

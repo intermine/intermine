@@ -30,7 +30,6 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.SetupDataTestCase;
-import org.flymine.objectstore.StoreDataTestCase;
 import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
@@ -41,8 +40,9 @@ import org.flymine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
-public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
+public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 {
+    protected static ObjectStoreWriter writer;
     protected static ObjectStore os;
     protected static IntegrationWriterDataTrackingImpl iw;
     protected static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImplTest.class);
@@ -79,6 +79,11 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
             .getObjectStoreWriter("osw.unittest");
         iw = new IntegrationWriterDataTrackingImpl(writer, ObjectStoreWriterFactory.getObjectStoreWriter("osw.datatrackingtest"));
         os = iw.getObjectStore();
+    }
+
+    public static void oneTimeTearDown() throws Exception {
+        iw.close();
+        SetupDataTestCase.oneTimeTearDown();
     }
 
     public static void storeData() throws Exception {
@@ -131,7 +136,7 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
         long start = new Date().getTime();
         ObjectStoreWriter dataTracker = iw.getDataTracker();
         if (dataTracker == null) {
-            throw new NullPointerException("writer must be set before trying to remove data");
+            throw new NullPointerException("dataTracker must be set before trying to remove data");
         }
         try {
             dataTracker.beginTransaction();
@@ -152,6 +157,33 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
             throw e;
         }
         System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from tracker");
+    }
+
+    public static void removeDataFromStore() throws Exception {
+        System.out.println("Removing data from store");
+        long start = new Date().getTime();
+        if (writer == null) {
+            throw new NullPointerException("writer must be set before trying to remove data");
+        }
+        try {
+            writer.beginTransaction();
+            Query q = new Query();
+            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            Set dataToRemove = new SingletonResults(q, writer.getObjectStore(),
+                    writer.getObjectStore().getSequence());
+            Iterator iter = dataToRemove.iterator();
+            while (iter.hasNext()) {
+                FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
+                writer.delete(toDelete);
+            }
+            writer.commitTransaction();
+        } catch (Exception e) {
+            writer.abortTransaction();
+            throw e;
+        }
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from store");
     }
 
 

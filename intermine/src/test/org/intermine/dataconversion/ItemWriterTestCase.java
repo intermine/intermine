@@ -10,46 +10,48 @@ package org.flymine.dataconversion;
  *
  */
 
+import junit.framework.TestCase;
+
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
+import org.flymine.model.fulldata.Item;
 import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.translating.Translator;
-import org.flymine.objectstore.translating.ObjectStoreTranslatingImpl;
-import org.flymine.xml.full.Item;
-import org.flymine.xml.full.FullRenderer;
 import org.flymine.xml.full.FullParser;
+import org.flymine.xml.full.ItemHelper;
 
-import junit.framework.TestCase;
-
-public class ItemToObjectTranslatorFunctionalTest extends TestCase
-{
-    ObjectStoreWriter osw;
-    List items;
+public class ItemWriterTestCase extends TestCase {
+    protected List items = new ArrayList();
+    protected ItemWriter itemWriter;
+    protected ObjectStoreWriter osw;
     
-    public ItemToObjectTranslatorFunctionalTest(String arg) {
-        super(arg);
+    public ItemWriterTestCase(String arg1) {
+        super(arg1);
     }
 
     public void setUp() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
-        items = FullParser.parse(is);
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
-        ItemStore itemStore = new ItemStore(osw);
-        for (Iterator i = items.iterator(); i.hasNext();) {
-            itemStore.store((Item) i.next());
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
+        List xmlItems = FullParser.parse(is);
+        Iterator iter = xmlItems.iterator();
+        while (iter.hasNext()) {
+            items.add((Item) ItemHelper.convert((org.flymine.xml.full.Item) iter.next()));
         }
+        iter = items.iterator();
+        while (iter.hasNext()) {
+            itemWriter.store((Item) iter.next());
+        }
+        itemWriter.close();
     }
-
+    
     public void tearDown() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
@@ -67,18 +69,15 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         osw.commitTransaction();
         osw.close();
     }
- 
-    public void testTranslation() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
-        Translator translator = new ItemToObjectTranslator(model);
-        ObjectStore os = new ObjectStoreTranslatingImpl(model, osw, translator);
-
+    
+    public void testGetItems() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
-        q.addFrom(qc);
+        QueryClass qc = new QueryClass(Item.class);
         q.addToSelect(qc);
-        List objects = new SingletonResults(q, os, os.getSequence());
-
-        assertEquals(items, FullRenderer.toItems(objects, model));
+        q.addFrom(qc);
+        Collection results = new SingletonResults(q, osw, osw.getSequence());
+        //assertEquals(items.size(), results.size());
+        assertEquals(items, results);
     }
 }
+

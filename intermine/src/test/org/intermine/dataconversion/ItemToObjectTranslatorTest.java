@@ -141,18 +141,22 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         Attribute dbAttr1 = new  Attribute();
         dbAttr1.setName("name");
         dbAttr1.setValue("Department1");
+        dbAttr1.setItem(dbItem);
         dbItem.addAttributes(dbAttr1);
         Attribute dbAttr2 = new  Attribute();
         dbAttr2.setName("debt");
         dbAttr2.setValue("10");
+        dbAttr2.setItem(dbItem);
         dbItem.addAttributes(dbAttr2);
         Reference dbRef1 = new  Reference();
         dbRef1.setName("company");
         dbRef1.setRefId("2");
+        dbRef1.setItem(dbItem);
         dbItem.addReferences(dbRef1);
         ReferenceList dbCol1 = new  ReferenceList();
         dbCol1.setName("employees");
         dbCol1.setRefIds("3 4");
+        dbCol1.setItem(dbItem);
         dbItem.addCollections(dbCol1);
 
         FlyMineBusinessObject result = translator.translateFromDbObject(dbItem);

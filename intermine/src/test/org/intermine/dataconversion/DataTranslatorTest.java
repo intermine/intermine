@@ -19,13 +19,15 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 
+import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.flymine.ontology.OntologyUtil;
+import org.flymine.ontology.SubclassRestriction;
 import org.flymine.xml.full.Attribute;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Reference;
 import org.flymine.xml.full.ReferenceList;
-import org.flymine.ontology.OntologyUtil;
-import org.flymine.ontology.SubclassRestriction;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
 
 public class DataTranslatorTest extends TestCase
 {
@@ -33,16 +35,20 @@ public class DataTranslatorTest extends TestCase
     private String tgtNs = "http://www.flymine.org/target#";
     private ItemStore srcIs;
     private DataTranslator translator;
+    private ObjectStoreWriter writer;
 
 
     public void setUp() throws Exception {
-        srcIs = new ItemStore(ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest"));
+        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.fulldatatest");
+        srcIs = new ItemStore(writer);
     }
 
     public void tearDown() throws Exception {
         for (Iterator i = srcIs.getItems(); i.hasNext();) {
             srcIs.delete((Item) i.next());
         }
+        writer.close();
     }
 
     public void testTranslateItems() throws Exception {

@@ -25,11 +25,13 @@ public class IntegrationWriterFactoryTest extends TestCase
     public void testValidSingleAlias() throws Exception {
         IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
         assertNotNull(iw);        
+        iw.close();
     }
 
     public void testValidMultiAlias() throws Exception {
         IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
         assertNotNull(iw);
+        iw.close();
     }
 
     public void testInvalidAlias() throws Exception {

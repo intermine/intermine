@@ -67,12 +67,12 @@ public class ObjectPipeTest extends TestCase
 
         assertEquals(0, progress);
         op.put(new Integer(1));
-        for (int i = 0; (i < 20) && (progress < 1); i++) {
+        for (int i = 0; (i < 40) && (progress < 1); i++) {
             Thread.sleep(50);
         }
         assertEquals(1, progress);
         op.put(new Integer(2));
-        for (int i = 0; (i < 20) && (progress < 2); i++) {
+        for (int i = 0; (i < 40) && (progress < 2); i++) {
             Thread.sleep(50);
         }
         assertEquals(2, progress);
@@ -83,13 +83,13 @@ public class ObjectPipeTest extends TestCase
         l.add(new Integer(5));
         l.add(new Integer(6));
         op.putAll(l);
-        for (int i = 0; (i < 20) && (progress < 6); i++) {
+        for (int i = 0; (i < 40) && (progress < 6); i++) {
             Thread.sleep(50);
         }
         assertEquals(6, progress);
 
         op.finish();
-        for (int i = 0; (i < 20) && (progress < 2000); i++) {
+        for (int i = 0; (i < 40) && (progress < 2000); i++) {
             Thread.sleep(50);
         }
         assertEquals(2000, progress);
@@ -125,7 +125,7 @@ public class ObjectPipeTest extends TestCase
         assertEquals(4, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(1), op.next());
-        for (int i = 0; (i < 20) && (progress < 4); i++) {
+        for (int i = 0; (i < 40) && (progress < 4); i++) {
             Thread.sleep(50);
         }
         assertEquals(4, progress);
@@ -135,13 +135,13 @@ public class ObjectPipeTest extends TestCase
         assertEquals(4, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(3), op.next());
-        for (int i = 0; (i < 20) && (progress < 5); i++) {
+        for (int i = 0; (i < 40) && (progress < 5); i++) {
             Thread.sleep(50);
         }
         assertEquals(5, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(4), op.next());
-        for (int i = 0; (i < 20) && (progress < 2000); i++) {
+        for (int i = 0; (i < 40) && (progress < 2000); i++) {
             Thread.sleep(50);
         }
         assertEquals(2000, progress);

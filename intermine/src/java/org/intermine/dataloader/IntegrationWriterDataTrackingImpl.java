@@ -218,5 +218,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         osw.abortTransaction();
         dataTracker.abortTransaction();
     }
+
+    /**
+     * @see IntegrationWriterAbstractImpl#close
+     */
+    public void close() {
+        osw.close();
+        dataTracker.close();
+    }
 }
 

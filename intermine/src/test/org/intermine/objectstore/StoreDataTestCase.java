@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
 public abstract class StoreDataTestCase extends SetupDataTestCase
 {
     protected static final Logger LOG = Logger.getLogger(StoreDataTestCase.class);
-    protected static ObjectStoreWriter writer;
+    protected static ObjectStoreWriter storeDataWriter;
     
     public StoreDataTestCase(String arg) {
         super(arg);
@@ -62,14 +62,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
         try {
-            if (writer == null) {
-                writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+            if (storeDataWriter == null) {
+                storeDataWriter = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
                     .getObjectStoreWriter("osw.unittest");
             }
             storeData();
         } catch (Exception e) {
-            if (writer != null) {
-                writer.close();
+            if (storeDataWriter != null) {
+                storeDataWriter.close();
             }
             throw e;
         }
@@ -78,14 +78,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
     public static void oneTimeTearDown() throws Exception {
         ObjectStoreQueriesTestCase.oneTimeTearDown();
         removeDataFromStore();
-        writer.close();
-        writer = null;
+        storeDataWriter.close();
+        storeDataWriter = null;
     }
 
     public static void storeData() throws Exception {
         System.out.println("Storing data");
-        if (writer == null) {
-            throw new NullPointerException("writer must be set before trying to store data");
+        if (storeDataWriter == null) {
+            throw new NullPointerException("storeDataWriter must be set before trying to store data");
         }
         long start = new Date().getTime();
         try {
@@ -95,26 +95,26 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
                     .getValue();
                 o.setId(null);
             }
-            writer.beginTransaction();
+            storeDataWriter.beginTransaction();
             iter = data.entrySet().iterator();
             while (iter.hasNext()) {
                 FlyMineBusinessObject o = (FlyMineBusinessObject) ((Map.Entry) iter.next())
                     .getValue();
-                writer.store(o);
+                storeDataWriter.store(o);
             }
-            writer.commitTransaction();
+            storeDataWriter.commitTransaction();
         } catch (Exception e) {
-            writer.abortTransaction();
+            storeDataWriter.abortTransaction();
             throw new Exception(e);
         }
 
         //Database db = DatabaseFactory.getDatabase("db.unittest");
         //java.sql.Connection con = db.getConnection();
-        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
+        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) storeDataWriter).getConnection();
         java.sql.Statement s = con.createStatement();
         //con.setAutoCommit(true);
         s.execute("vacuum analyze");
-        ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
+        ((ObjectStoreWriterFlyMineImpl) storeDataWriter).releaseConnection(con);
         //con.close();
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
@@ -122,25 +122,25 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
     public static void removeDataFromStore() throws Exception {
         System.out.println("Removing data");
         long start = new Date().getTime();
-        if (writer == null) {
-            throw new NullPointerException("writer must be set before trying to remove data");
+        if (storeDataWriter == null) {
+            throw new NullPointerException("storeDataWriter must be set before trying to remove data");
         }
         try {
-            writer.beginTransaction();
+            storeDataWriter.beginTransaction();
             Query q = new Query();
             QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, writer.getObjectStore(),
-                    writer.getObjectStore().getSequence());
+            Set dataToRemove = new SingletonResults(q, storeDataWriter.getObjectStore(),
+                    storeDataWriter.getObjectStore().getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
-                writer.delete(toDelete);
+                storeDataWriter.delete(toDelete);
             }
-            writer.commitTransaction();
+            storeDataWriter.commitTransaction();
         } catch (Exception e) {
-            writer.abortTransaction();
+            storeDataWriter.abortTransaction();
             throw e;
         }
         System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data");
