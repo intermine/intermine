@@ -20,6 +20,7 @@ public class Column
     protected boolean visible;
     protected String name = "";
     protected int index;
+    protected Object type;
 
     /**
      * Gets the value of visible
@@ -73,6 +74,22 @@ public class Column
      */
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    /**
+     * Return the type of this Column
+     * @return a Class or a FieldDescriptor
+     */
+    public Object getType() {
+        return type;
+    }
+
+    /**
+     * Set the type of this Column
+     * @param type a Class or a FieldDescriptor
+     */
+    public void setType(Object type) {
+        this.type = type;
     }
 
     /**
