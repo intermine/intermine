@@ -112,6 +112,7 @@
   <tiles:put name="headingKey" value="begin.heading.mytemplates"/>
   <tiles:put name="templateType" value="user"/>
   <tiles:put name="showDelete" value="1"/>
+  <tiles:put name="showEdit" value="1"/>
 </tiles:insert>
 
 <p>
