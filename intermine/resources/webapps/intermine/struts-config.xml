@@ -201,7 +201,7 @@
             type="org.intermine.web.TreeAction"
             parameter="method">
       <forward name="renderTree" path="tree.page"/>
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
 
     <action path="/modifyDetails"
