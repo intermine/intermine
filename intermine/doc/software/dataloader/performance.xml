@@ -36,6 +36,15 @@
 	</sect1>
 
 	<sect1>
+		<title>Local implementation of data tracking</title>
+		<para><highlights>This is NOT implemented</highlights>.
+			PostgreSQL stores data tracking data in a single table, with an index.
+			The table uses 70 bytes per field entry, and the index uses about 50 bytes per field entry.
+			It should be possible to write a custom on-disk format that uses only two to four bytes per field entry, increasing the write performance and improving the cache coherency.
+		</para>
+	</sect1>
+
+	<sect1>
 		<title>ID Map</title>
 		<para>This is implemented.
 			The IntegrationWriter currently keeps a Map from IDs of objects from the data source to the corresponding IDs of objects in the destination objectstore.
@@ -92,7 +101,7 @@
 
 	<sect1>
 		<title>Improve the objectstore with large result sets</title>
-		<para><highlights>This is NOT implemented</highlights>.
+		<para>This is implemented.
 			An SQL database is very bad at running queries with large OFFSETs.
 			Therefore, we should sent queries to the database that use knowledge of which row the sort key changes from a certain value to allow us to generate queries with smaller OFFSETs.
 			Probably the best method is to have the ObjectStore tell the Optimiser what that knowledge is, and the Optimiser can add the predicates and alter the OFFSETs.
@@ -169,6 +178,15 @@
 			<programlisting>SELECT Department FROM Department
 	WHERE Department.company CONTAINS <emphasis>&lt;object&gt;</emphasis></programlisting>
 			however they should, at least for the case where the collection is a one-to-many collection.
+		</para>
+	</sect1>
+
+	<sect1>
+		<title>getObjectById() may be unnecessary in many situations</title>
+		<para><highlights>This is NOT implemented</highlights>.
+			getEquivalentObjects() method returns the result of getObjectById() if the id is in the ID Map.
+			This may be unnecessary.
+			We could let it return a placeholder, which can be traded in for a real object if it is really needed.
 		</para>
 	</sect1>
 </article>
