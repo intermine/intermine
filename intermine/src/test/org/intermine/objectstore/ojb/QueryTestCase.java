@@ -79,6 +79,10 @@ public abstract class QueryTestCase extends TestCase
         queries.put("WhereNotClassClass", whereNotClassClass());
         queries.put("WhereNegClassClass", whereNegClassClass());
         queries.put("WhereClassObject", whereClassObject());
+        queries.put("Contains11", contains11());
+        queries.put("Contains1N", contains1N());
+        queries.put("ContainsMN", containsMN());
+        queries.put("SimpleGroupBy", simpleGroupBy());
     }
 
     /**
@@ -400,6 +404,11 @@ public abstract class QueryTestCase extends TestCase
         return q2;
     }
 
+    /*
+      select c1, c2
+      from Company c1, Company c2
+      where c1 = c2
+    */
     public Query whereClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
@@ -413,6 +422,11 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select c1, c2
+      from Company c1, Company c2
+      where c1 != c2
+    */
     public Query whereNotClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
@@ -426,6 +440,11 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select c1, c2
+      from Company c1, Company c2
+      where not (c1 = c2)
+    */
     public Query whereNegClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
@@ -440,6 +459,11 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select company,
+      from Company
+      where c1 = <company object>
+    */
     public Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         Company obj = new Company();
@@ -451,6 +475,107 @@ public abstract class QueryTestCase extends TestCase
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
         q1.setConstraint(cc1);
+        return q1;
+    }
+
+    /*
+      select department, manager
+      from Department, Manager
+      where department.manager contains manager
+      and department.name = "departmentA1"
+    */
+
+      public Query contains11() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Manager.class);
+        QueryReference qr1 = new QueryObjectReference(qc1, "manager");
+        QueryValue v1 = new QueryValue("departmentA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
+      select company, department
+      from Company, Department
+      where company contains department
+      and company.name = "companyA"
+    */
+      public Query contains1N() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        QueryValue v1 = new QueryValue("companyA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
+      select contractor, company
+      from Contractor, Company
+      where contractor.companys contains company
+      and contractor.name = "contractorA"
+
+    */
+      public Query containsMN() throws Exception {
+        QueryClass qc1 = new QueryClass(Contractor.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "companys");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        QueryValue v1 = new QueryValue("contractorA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
+      select company, count(*)
+      from Company, Department
+      where company contains department
+      group by company
+    */
+    public Query simpleGroupBy() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS,  qc2);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(new QueryFunction());
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.setConstraint(cc1);
+        q1.addToGroupBy(qc1);
         return q1;
     }
 
