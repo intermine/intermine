@@ -76,4 +76,13 @@ public class Field extends AbstractValue
         }
         return false;
     }
+
+    /**
+     * Returns the table of this field.
+     *
+     * @return table
+     */
+    public AbstractTable getTable() {
+        return table;
+    }
 }

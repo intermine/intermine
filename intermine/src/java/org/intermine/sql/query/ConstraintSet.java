@@ -128,4 +128,13 @@ public class ConstraintSet extends AbstractConstraint
         }
         return retval;
     }
+
+    /**
+     * Returns the Set of constraints forming this object.
+     *
+     * @return the Set of Constraints
+     */
+    public Set getConstraints() {
+        return cons;
+    }
 }

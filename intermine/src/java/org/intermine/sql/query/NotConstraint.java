@@ -63,4 +63,12 @@ public class NotConstraint extends AbstractConstraint
         return -con.hashCode();
     }
 
+    /**
+     * Returns the contained constraint.
+     *
+     * @return the contained constraint
+     */
+    public AbstractConstraint getConstraint() {
+        return con;
+    }
 }

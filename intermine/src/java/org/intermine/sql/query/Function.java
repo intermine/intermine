@@ -200,5 +200,23 @@ public class Function extends AbstractValue
         return (operation == COUNT) || (operation == MAX) || (operation == MIN)
             || (operation == SUM) || (operation == AVG);
     }
+
+    /**
+     * Returns the operation of the function.
+     *
+     * @return operation
+     */
+    public int getOperation() {
+        return operation;
+    }
+
+    /**
+     * Returns the List of operands of this function.
+     *
+     * @return all operands in a List
+     */
+    public List getOperands() {
+        return operands;
+    }
 }
 

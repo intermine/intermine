@@ -213,4 +213,31 @@ public class Constraint extends AbstractConstraint
         return (3 * left.hashCode()) + (5 * operation) 
             + ((operation == EQ ? 3 : 7) * right.hashCode());
     }
+
+    /**
+     * Returns the left argument of the constraint.
+     *
+     * @return left
+     */
+    public AbstractValue getLeft() {
+        return left;
+    }
+
+    /**
+     * Returns the right argument of the constraint.
+     *
+     * @return right
+     */
+    public AbstractValue getRight() {
+        return right;
+    }
+
+    /**
+     * Returns the operation of the constraint.
+     *
+     * @return operation
+     */
+    public int getOperation() {
+        return operation;
+    }
 }
