@@ -361,9 +361,9 @@ public abstract class QueryTestCase extends TestCase
     }
 
     /*
-      select department
-      from Department
-      where (select company from Company where name = "CompanyA") contains department
+      select company
+      from Company
+      where (select company from Company where name = "CompanyA") contains company
     */
     public Query whereSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -373,7 +373,7 @@ public abstract class QueryTestCase extends TestCase
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
         q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
-        QueryClass c2 = new QueryClass(Department.class);
+        QueryClass c2 = new QueryClass(Company.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
         Query q2 = new Query();
         q2.addFrom(c2);
@@ -383,9 +383,9 @@ public abstract class QueryTestCase extends TestCase
     }
 
     /*
-      select department
-      from Department
-      where (select company from Company where name = "CompanyA") !contains department
+      select company
+      from Company
+      where (select company from Company where name = "CompanyA") !contains company
     */
     public Query whereNotSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -395,7 +395,7 @@ public abstract class QueryTestCase extends TestCase
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
         q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
-        QueryClass c2 = new QueryClass(Department.class);
+        QueryClass c2 = new QueryClass(Company.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.DOES_NOT_CONTAIN, c2);
         Query q2 = new Query();
         q2.addFrom(c2);
@@ -405,9 +405,9 @@ public abstract class QueryTestCase extends TestCase
     }
 
     /*
-      select department
-      from Department
-      where not (select company from Company where name = "CompanyA") contains department
+      select company
+      from Company
+      where not (select company from Company where name = "CompanyA") contains company
     */
     public Query whereNegSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -417,7 +417,7 @@ public abstract class QueryTestCase extends TestCase
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
         q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
-        QueryClass c2 = new QueryClass(Department.class);
+        QueryClass c2 = new QueryClass(Company.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
         sqc1.setNegated(true);
         Query q2 = new Query();
@@ -814,8 +814,7 @@ public abstract class QueryTestCase extends TestCase
         Department d1 = new Department();
         d1.setName("DepartmentA1");
         d1.setManager((Manager) e1);
-        e1.setDepartment(d1); // bidirectional one-to-one
-        d1.setEmployees(Arrays.asList(new Object[] { e2, e3 }));
+        d1.setEmployees(Arrays.asList(new Object[] { e1, e2, e3 }));
         Company p = new Company();
         p.setName("CompanyA");
         p.setVatNumber(1234);
@@ -847,12 +846,10 @@ public abstract class QueryTestCase extends TestCase
         Department d1 = new Department();
         d1.setName("DepartmentB1");
         d1.setManager((Manager) e1);
-        e1.setDepartment(d1); // bidirectional one-to-one
-        d1.setEmployees(Arrays.asList(new Object[] { e2 }));
+        d1.setEmployees(Arrays.asList(new Object[] { e1, e2 }));
          Department d2 = new Department();
         d2.setName("DepartmentB2");
         d2.setManager((Manager) e3);
-        e3.setDepartment(d2); // bidirectional one-to-one
         d2.setEmployees(Arrays.asList(new Object[] { e3 }));
         Company p = new Company();
         p.setName("CompanyB");

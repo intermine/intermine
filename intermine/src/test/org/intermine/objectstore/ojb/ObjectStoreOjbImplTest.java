@@ -64,15 +64,13 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
                              { data.get("DepartmentB2") } };
         results.put("WhereSubQueryField", toList(r));
         
-        r = new Object[][] { { data.get("DepartmentA1") } };
+        r = new Object[][] { { data.get("CompanyA") } };
         results.put("WhereSubQueryClass", toList(r));
         
-        r = new Object[][] { { data.get("DepartmentB1") },
-                             { data.get("DepartmentB2") } };
+        r = new Object[][] { { data.get("CompanyB") } };
         results.put("WhereNotSubQueryClass", toList(r));
         
-        r = new Object[][] { { data.get("DepartmentB1") },
-                             { data.get("DepartmentB2") } };
+        r = new Object[][] { { data.get("CompanyB") } };
         results.put("WhereNegSubQueryClass", toList(r));
         
         r = new Object[][] { { data.get("CompanyA"), data.get("CompanyA") }, 

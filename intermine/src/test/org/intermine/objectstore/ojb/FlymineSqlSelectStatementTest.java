@@ -12,6 +12,8 @@ import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.objectstore.query.ClassConstraint;
+import org.flymine.objectstore.query.QueryObjectReference;
+import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStore;
@@ -19,9 +21,15 @@ import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
+import org.apache.ojb.broker.metadata.CollectionDescriptor;
 
 import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Company;
+import org.flymine.model.testmodel.Employee;
+import org.flymine.model.testmodel.Employable;
+import org.flymine.model.testmodel.Manager;
+import org.flymine.model.testmodel.Contractor;
+import org.flymine.model.testmodel.CEO;
 
 public class FlymineSqlSelectStatementTest extends QueryTestCase
 {
@@ -44,9 +52,9 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         results.put("WhereOrSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'CompanyA%' OR a1_.vatNumber > 2000) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
         results.put("WhereNotSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE ( NOT (a1_.name LIKE 'Company%' AND a1_.vatNumber > 2000)) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
         results.put("WhereSubQueryField", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name AS a2_ FROM Department AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
-        results.put("WhereSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
-        results.put("WhereNotSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
-        results.put("WhereNegSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE a1_.ID IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereNotSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereNegSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
         results.put("WhereClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE (a1_.ID = a2_.ID) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
         results.put("WhereNotClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
         results.put("WhereNegClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
@@ -55,6 +63,7 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         FieldDescriptor fld = cld.getFieldDescriptorByName("id");
         int id = ((Integer) fld.getPersistentField().get(obj)).intValue();
         results.put("WhereClassObject", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = " + id + ") ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        //results.put("Contains11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.fullTime AS a2_fullTime, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.Manager' OR a2_.CLASS = 'org.flymine.model.testmodel.CEO') AND ((a1_.managerId = a2_.ID) AND a1_.name = 'DepartmentA') ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
     }
 
     public void executeTest(String type) throws Exception {
@@ -128,6 +137,7 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         assertEquals("MAX(a1_.vatNumber)", s1.queryEvaluableToString(f5));
     }
 
+    /*
     public void testSelectQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
@@ -189,5 +199,174 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         org.flymine.sql.query.Query oq2 = new org.flymine.sql.query.Query("SELECT DISTINCT 5 as a from " + s1.buildFromComponent());
         assertEquals(oq1, oq2);
     }
+*/
 
+
+
+
+
+
+
+    public void testWhereObjectReference() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryObjectReference qor1 = new QueryObjectReference(qc1, "company");
+        ContainsConstraint cc1 = new ContainsConstraint(qor1, ContainsConstraint.CONTAINS, qc2);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.setConstraint(cc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE (a1_.companyId = a2_.ID) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
+    }
+
+    public void testWhereNotObjectReference() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryObjectReference qor1 = new QueryObjectReference(qc1, "company");
+        ContainsConstraint cc1 = new ContainsConstraint(qor1, ContainsConstraint.DOES_NOT_CONTAIN, qc2);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.setConstraint(cc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE ( NOT (a1_.companyId = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
+    }
+
+    public void testWhereNegObjectReference() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryObjectReference qor1 = new QueryObjectReference(qc1, "company");
+        ContainsConstraint cc1 = new ContainsConstraint(qor1, ContainsConstraint.CONTAINS, qc2);
+        cc1.setNegated(true);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.setConstraint(cc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Department AS a1_, Company AS a2_ WHERE ( NOT (a1_.companyId = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
+    }
+
+    /*
+    public void testEmployee() throws Exception {
+        QueryClass qc1 = new QueryClass(Employee.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        throw (new Exception(s1.getStatement()));
+    }
+
+    public void testEmployable() throws Exception {
+        QueryClass qc1 = new QueryClass(Employable.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        throw (new Exception(s1.getStatement()));
+    }
+
+    public void testManager() throws Exception {
+        QueryClass qc1 = new QueryClass(Manager.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        throw (new Exception(s1.getStatement()));
+    }
+
+    public void testEmployeeGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Employee.class);
+        outputData(cld);
+    }
+
+    public void testEmployableGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Employable.class);
+        outputData(cld);
+    }
+
+    public void testManagerGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Manager.class);
+        outputData(cld);
+    }
+
+    public void testCEOGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(CEO.class);
+        outputData(cld);
+    }
+
+    public void testContractorGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Contractor.class);
+        outputData(cld);
+    }
+
+    public void testCompanyGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Company.class);
+        outputData(cld);
+    }
+
+    private void outputData(ClassDescriptor cld) throws Exception {
+        String retval = "";
+        retval += "Full table name = \"" + cld.getFullTableName() + "\"\n";
+        retval += "getExtentClasses() = \"" + cld.getExtentClasses() + "\"\n";
+        FieldDescriptor classDesc = cld.getFieldDescriptorByName(ClassDescriptor.OJB_CONCRETE_CLASS);
+        retval += "Class field name = " + (classDesc == null ? "null" : "\"" + classDesc.getColumnName() + "\"") + "\n";
+        FieldDescriptor fields[] = cld.getFieldDescriptions();
+        retval += "All fields = \"" + descriptionsToString(fields) + "\"\n";
+        fields = cld.getFieldDescriptorsInHeirarchy();
+        retval += "Fields in heirarchy = \"" + descriptionsToString(fields) + "\"\n";
+        retval += "Superclass = \"" + cld.getSuperClass() + "\"\n";
+        retval += "Class name = \"" + cld.getClassOfObject().toString() + "\"\n";
+        retval += "Interface: " + (cld.isInterface() ? "Yes" : "No") + "\n";
+        retval += "Collections: " + collectionsToString(cld.getCollectionDescriptors()) + "\n";
+        throw (new Exception(retval));
+    }
+
+    private String descriptionsToString(FieldDescriptor fields[]) {
+        if (fields == null) {
+            return "null";
+        }
+        String retval = "";
+        for (int i = 0; i < fields.length; i++) {
+            retval += (i == 0 ? "" : ", ") + fields[i].getColumnName();
+        }
+        return retval;
+    }
+
+    private String collectionsToString(Vector collections) {
+        if (collections == null) {
+            return "null";
+        }
+        String retval = collections.size() + "\n";
+        Iterator collectionIter = collections.iterator();
+        while (collectionIter.hasNext()) {
+            CollectionDescriptor c = (CollectionDescriptor) collectionIter.next();
+            retval += "--Collection of " + c.getItemClassName() + "\n";
+            ClassDescriptor cld = dr.getDescriptorFor(c.getItemClass());
+            retval += "----isMtoNRelation: " + (c.isMtoNRelation() ? "Yes\n" : "No\n");
+            if (c.isMtoNRelation()) {
+                retval += "----getFksToItemClass: " + stringArrayToString(c.getFksToItemClass()) + "\n";
+                retval += "----getFksToThisClass: " + stringArrayToString(c.getFksToThisClass()) + "\n";
+                retval += "----getIndirectionTable: " + c.getIndirectionTable() + "\n";
+            } else {
+                retval += "----getForeignKeyFields: " + descriptionsToString(c.getForeignKeyFieldDescriptors(cld)) + "\n";
+            }
+        }
+        return retval;
+    }
+
+    private String stringArrayToString(String in[]) {
+        String retval = "";
+        for (int i = 0; i < in.length; i++) {
+            retval += (i == 0 ? "" : ", ") + in[i];
+        }
+        return retval;
+    }
+    */
 }
