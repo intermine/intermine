@@ -1,5 +1,15 @@
 package org.flymine.postprocess;
 
+/*
+ * Copyright (C) 2002-2004 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.*;
 import java.util.Iterator;
 import java.util.Collections;
@@ -8,7 +18,6 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -17,13 +26,28 @@ import org.intermine.util.DynamicUtil;
 import org.flymine.model.genomic.Contig;
 import org.flymine.model.genomic.Sequence;
 
+/**
+ * Fetch sequences from the ensembl human src db and store them via ObjectStore
+ * Temp fix for ensembl human
+ *
+ * @author Wenyan Ji
+ * @author Richard Smith
+ */
 
-
-public class StoreSequences {
+public class StoreSequences
+{
 
     protected ObjectStoreWriter osw;
     private Database db;
 
+
+    /**
+     * Create a new StoreSequences object from the given ObjectStoreWriter
+     * @param osw writer on genomic ObjectStore
+     * @param dbAlias database
+     * @throws SQLException if there are any problems with getting db
+     * @throws ClassNotFoundException if no db class be found
+     */
     public StoreSequences (ObjectStoreWriter osw, String dbAlias)
           throws SQLException, ClassNotFoundException {
           this.osw = osw;
@@ -31,6 +55,11 @@ public class StoreSequences {
     }
 
 
+    /**
+     * Iterator through all the contigs in the ObjectStore, fetch every sequence and store it
+     * in the ObjectStore
+     * @throws Exception if there are any problems
+     */
     public void storeContigSequences() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Contig.class);
@@ -44,7 +73,8 @@ public class StoreSequences {
             osw.beginTransaction();
             Contig contig = (Contig) PostProcessUtil.cloneInterMineObject((Contig) resIter.next());
             String sequence = getSequence(contig.getIdentifier());
-            Sequence seq = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+            Sequence seq = (Sequence) DynamicUtil.createObject(
+                             Collections.singleton(Sequence.class));
             seq.setResidues(sequence);
             contig.setSequence(seq);
             osw.store(contig);
@@ -54,14 +84,22 @@ public class StoreSequences {
     }
 
 
-    protected String getSequence(String contigId) throws SQLException{
+    /**
+     * Get contig sequences from ensembl human src db by contigId
+     * @param contigId the id for the contig
+     * @throws SQLException if there are any problems
+     * @return a sequence for this contig
+     */
+    protected String getSequence(String contigId) throws SQLException {
         String sequence = null;
 
         Connection connection = db.getConnection();
         Statement statement = connection.createStatement();
         ResultSet rs = null;
         String query = null;
-        query = "SELECT d.sequence FROM dna d, seq_region s where d.seq_region_id = s.seq_region_id and s.name = '"  + contigId + "'";
+        query = "SELECT d.sequence FROM dna d, seq_region s "
+              + "WHERE d.seq_region_id = s.seq_region_id and s.name = '"
+              + contigId + "'";
 
         rs = statement.executeQuery(query);
         while (rs.next()) {
