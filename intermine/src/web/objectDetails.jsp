@@ -40,7 +40,7 @@
       <td valign="top" width="30%">
 
         <im:heading id="summary">
-          Summary for selected
+          Primary keys for selected
           <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
           </c:forEach>
@@ -79,6 +79,29 @@
           </table>
         </im:body>
 
+        <im:heading id="summary">
+          Summary for selected
+          <c:forEach items="${object.clds}" var="cld">
+            ${cld.unqualifiedName}
+          </c:forEach>
+        </im:heading>
+
+        <im:body id="summary">
+          <table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
+            <c:forEach items="${object.fieldExprs}" var="expr">
+              <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
+              <tr>
+                <td>
+                  <span class="attributeField">${expr}</span>
+                </td>
+                <td>
+                  ${outVal}
+                </td>
+              </tr>
+            </c:forEach>
+          </table>
+        </im:body>
+
 
         <c:if test="${!empty object.attributes}">
           <im:heading id="fields">Fields</im:heading>
@@ -110,12 +133,12 @@
         </c:if>
 
         <c:forEach items="${object.clds}" var="cld">
-          <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
+          <c:if test="${fn:length(WEBCONFIG.types[cld.name].longDisplayers) > 0}">
             <im:heading id="further">
               <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
             </im:heading>
             <im:body id="further">
-              <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
+              <c:forEach items="${WEBCONFIG.types[cld.name].longDisplayers}" var="displayer">
                 <c:set var="object_bak" value="${object}"/>
                 <c:set var="object" value="${object.object}" scope="request"/>
                 <c:set var="cld" value="${cld}" scope="request"/>
@@ -199,7 +222,7 @@
                     <td colspan="2">
                       <table border="0" cellspacing="0" cellpadding="0" width="100%">
                         <tr>
-                          <td width="15"><img border="0" src="images/blank.gif" alt="" width="15"/></td><td>
+                          <td width="15"> <img border="0" src="images/blank.gif" alt="" width="15"/></td><td>
                           <table border="0" cellspacing="0" class="refSummary" align="right">
                             <thead style="text-align: center">
                               <tr>
