@@ -49,6 +49,8 @@ public class PrecomputedTable implements SQLStringable, Comparable
      *
      * @param q the Query that this PrecomputedTable materialises
      * @param name the name of this PrecomputedTable
+     * @param conn a Connection to use to work out if the order by fields are compatible with a
+     * unified orderby_field
      */
     public PrecomputedTable(Query q, String name, Connection conn) {
         if (q == null) {
