@@ -1,0 +1,368 @@
+package org.flymine.objectstore.query;
+
+/*
+ * Copyright (C) 2002-2003 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import junit.framework.TestCase;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.flymine.objectstore.query.*;
+import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.objectstore.query.fql.FqlQueryParser;
+import org.flymine.model.testmodel.Company;
+import org.flymine.model.testmodel.Department;
+import org.flymine.model.testmodel.CEO;
+
+
+public class ConstraintHelperTest extends TestCase
+{
+    private Query q, subquery1, subquery2;
+    private QueryClass qc1, qc2, qc3;
+    private SimpleConstraint simpleConstraint1, simpleConstraint2, simpleConstraint3, simpleConstraint4, simpleConstraint5, simpleConstraint6, simpleConstraint7;
+    private ClassConstraint classConstraint1, classConstraint2;
+    private ContainsConstraint containsConstraint1;
+    private SubqueryConstraint subqueryConstraint1, subqueryConstraint2;
+    private ConstraintSet cs1;
+
+    public ConstraintHelperTest(String arg) {
+        super(arg);
+    }
+
+    public void setUp() throws Exception {
+        // Set up a query with every type of constraint in it
+        q = new Query();
+        qc1 = new QueryClass(Company.class);
+        qc2 = new QueryClass(Department.class);
+        qc3 = new QueryClass(Department.class);
+        QueryField qf1 = new QueryField(qc1, "name");
+        QueryField qf2 = new QueryField(qc2, "name");
+        QueryField qf3 = new QueryField(qc3, "name");
+        QueryField qf4 = new QueryField(qc1, "vatNumber");
+
+        QueryCollectionReference qcr1 = new QueryCollectionReference(qc1, "departments");
+
+        QueryValue value1 = new QueryValue("Company1");
+        QueryValue value2 = new QueryValue(new Integer(1001));
+
+        QueryExpression expr1 = new QueryExpression(qf1, new QueryValue(new Integer(1)), new QueryValue(new Integer(1)));
+        QueryExpression expr2 = new QueryExpression(qf2, new QueryValue(new Integer(1)), new QueryValue(new Integer(1)));
+        QueryFunction func1 = new QueryFunction(qf4, QueryFunction.SUM);
+
+        subquery1 = new Query();
+        QueryClass subQc1 = new QueryClass(Department.class);
+        subquery1.addToSelect(subQc1);
+        subquery1.addFrom(subQc1);
+
+        subquery2 = new Query();
+        QueryClass subQc2 = new QueryClass(Department.class);
+        QueryField subQf1 = new QueryField(subQc2, "name");
+        subquery2.addToSelect(subQf1);
+        subquery2.addFrom(subQc2);
+
+        q.addFrom(qc1, "company1");
+        q.addFrom(qc2, "department1");
+        q.addFrom(qc3, "department2");
+        cs1 = new ConstraintSet(ConstraintSet.AND);
+        simpleConstraint1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, value1);
+        cs1.addConstraint(simpleConstraint1);
+        simpleConstraint2 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, qf3);
+        cs1.addConstraint(simpleConstraint2);
+        simpleConstraint3 = new SimpleConstraint(expr1, SimpleConstraint.EQUALS, expr2);
+        cs1.addConstraint(simpleConstraint1);
+        simpleConstraint4 = new SimpleConstraint(value1, SimpleConstraint.EQUALS, qf1);
+        cs1. addConstraint(simpleConstraint4);
+        simpleConstraint5 = new SimpleConstraint(value1, SimpleConstraint.EQUALS, expr2);
+        cs1. addConstraint(simpleConstraint5);
+        simpleConstraint6 = new SimpleConstraint(value2, SimpleConstraint.EQUALS, func1);
+        cs1. addConstraint(simpleConstraint6);
+        simpleConstraint7 = new SimpleConstraint(qf1, SimpleConstraint.IS_NULL);
+        cs1. addConstraint(simpleConstraint7);
+        classConstraint1 = new ClassConstraint(qc2, ClassConstraint.NOT_EQUALS, qc3);
+        cs1.addConstraint(classConstraint1);
+        classConstraint2 = new ClassConstraint(qc2, ClassConstraint.NOT_EQUALS, new Department());
+        cs1.addConstraint(classConstraint2);
+        containsConstraint1 = new ContainsConstraint(qcr1, ContainsConstraint.CONTAINS, qc2);
+        cs1.addConstraint(containsConstraint1);
+        subqueryConstraint1 = new SubqueryConstraint(subquery1, SubqueryConstraint.CONTAINS, qc2);
+        cs1.addConstraint(subqueryConstraint1);
+        subqueryConstraint2 = new SubqueryConstraint(subquery2, SubqueryConstraint.CONTAINS, qf1);
+        cs1.addConstraint(subqueryConstraint2);
+
+        q.setConstraint(cs1);
+    }
+
+
+    public void testCreateListNoConstraints() throws Exception {
+        FqlQuery fq = new FqlQuery("select a from Company as a", "org.flymine.model.testmodel");
+        Query q = FqlQueryParser.parse(fq);
+        List expected = new ArrayList();
+        List got = ConstraintHelper.createList(q);
+
+        assertEquals(expected, got);
+    }
+
+    public void testCreateListSingleConstraint() throws Exception {
+        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5", "org.flymine.model.testmodel");
+        Query q = FqlQueryParser.parse(fq);
+        List expected = new ArrayList();
+        expected.add(q.getConstraint());
+        List got = ConstraintHelper.createList(q);
+
+        assertEquals(expected, got);
+    }
+
+    public void testCreateListAnd() throws Exception {
+        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 and a.name = 'hello'", "org.flymine.model.testmodel");
+        Query q = FqlQueryParser.parse(fq);
+        List expected = new ArrayList();
+        Iterator conIter = ((ConstraintSet) q.getConstraint()).getConstraints().iterator();
+        while (conIter.hasNext()) {
+            expected.add((Constraint) conIter.next());
+        }
+        List got = ConstraintHelper.createList(q);
+
+        assertEquals(expected, got);
+    }
+
+    public void testCreateListOr() throws Exception {
+        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 or a.name = 'hello'", "org.flymine.model.testmodel");
+        Query q = FqlQueryParser.parse(fq);
+        List expected = new ArrayList();
+        expected.add(q.getConstraint());
+        List got = ConstraintHelper.createList(q);
+
+        assertEquals(expected, got);
+    }
+
+    public void testFilterQueryClass() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("company1"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("department1"));
+        ContainsConstraint cc1 = new ContainsConstraint(new QueryCollectionReference(qc1, "departments"),
+                                                        ContainsConstraint.CONTAINS,
+                                                        qc2);
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        c.addConstraint(cc1);
+        q.setConstraint(c);
+
+        List expectedAll = new ArrayList(Arrays.asList(new Object[] {sc1, sc2, cc1}));
+        List expected1 = new ArrayList(Arrays.asList(new Object[] {sc1, cc1}));
+        List expected2 = new ArrayList(Arrays.asList(new Object[] {sc2}));
+        List got = ConstraintHelper.createList(q);
+
+        assertEquals(expectedAll, ConstraintHelper.createList(q));
+        assertEquals(expected1, ConstraintHelper.filter(got, qc1));
+        assertEquals(expected2, ConstraintHelper.filter(got, qc2));
+    }
+
+
+    public void testCreateListQueryClass() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("company1"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("department1"));
+        ContainsConstraint cc1 = new ContainsConstraint(new QueryCollectionReference(qc1, "departments"),
+                                                        ContainsConstraint.CONTAINS,
+                                                        qc2);
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        c.addConstraint(cc1);
+        q.setConstraint(c);
+
+        List expected1 = new ArrayList(Arrays.asList(new Object[] {sc1, cc1}));
+        List expected2 = new ArrayList(Arrays.asList(new Object[] {sc2}));
+
+        assertEquals(expected1, ConstraintHelper.createList(q, qc1));
+        assertEquals(expected2, ConstraintHelper.createList(q, qc2));
+    }
+
+
+    public void testIsAssociatedWith() throws Exception {
+        assertTrue(ConstraintHelper.isAssociatedWith(classConstraint1, qc2));
+        assertTrue(ConstraintHelper.isAssociatedWith(classConstraint1, qc3));
+        assertTrue(ConstraintHelper.isAssociatedWith(classConstraint2, qc2));
+
+        assertTrue(ConstraintHelper.isAssociatedWith(containsConstraint1, qc1));
+        assertFalse(ConstraintHelper.isAssociatedWith(containsConstraint1, qc2));
+
+        assertTrue(ConstraintHelper.isAssociatedWith(subqueryConstraint1, qc2));
+        assertTrue(ConstraintHelper.isAssociatedWith(subqueryConstraint2, qc1));
+        assertFalse(ConstraintHelper.isAssociatedWith(subqueryConstraint1, subquery1));
+
+        assertTrue(ConstraintHelper.isAssociatedWith(simpleConstraint1, qc1));
+        assertTrue(ConstraintHelper.isAssociatedWith(simpleConstraint4, qc1));
+        assertFalse(ConstraintHelper.isAssociatedWith(simpleConstraint2, qc2));
+        assertFalse(ConstraintHelper.isAssociatedWith(simpleConstraint2, qc3));
+
+        // QueryExpression & QueryFunction
+        assertTrue(ConstraintHelper.isAssociatedWith(simpleConstraint5, qc2));
+        assertTrue(ConstraintHelper.isAssociatedWith(simpleConstraint6, qc1));
+
+        // single argument constraint
+        assertTrue(ConstraintHelper.isAssociatedWith(simpleConstraint7, qc1));
+    }
+
+
+    public void testIsAssociatedWithNothing() throws Exception {
+        QueryValue qv1 = new QueryValue("test");
+        SimpleConstraint sc1 = new SimpleConstraint(qv1, SimpleConstraint.IS_NULL);
+        assertTrue(ConstraintHelper.isAssociatedWithNothing(sc1));
+
+        // cross-references not associated with anything
+        assertTrue(ConstraintHelper.isAssociatedWithNothing(simpleConstraint2));
+        assertTrue(ConstraintHelper.isAssociatedWithNothing(simpleConstraint3));
+
+        // everthing else is associated with something
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(classConstraint1));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(classConstraint1));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(classConstraint2));
+
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(containsConstraint1));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(containsConstraint1));
+
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(subqueryConstraint1));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(subqueryConstraint2));
+
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(simpleConstraint1));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(simpleConstraint4));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(simpleConstraint5));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(simpleConstraint6));
+        assertFalse(ConstraintHelper.isAssociatedWithNothing(simpleConstraint7));
+    }
+
+
+
+    public void testIsCrossReference() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(CEO.class);
+        QueryField qf1 = new QueryField(qc1, "vatNumber");
+        QueryField qf2 = new QueryField(qc2, "salary");
+        QueryExpression expr1 = new QueryExpression(qf1, QueryExpression.ADD, qf2);
+        QueryFunction func1 = new QueryFunction(qf1, QueryFunction.SUM);
+        QueryValue qv1 = new QueryValue(new Integer(100));
+
+        assertFalse(ConstraintHelper.isCrossReference(simpleConstraint1));
+        assertTrue(ConstraintHelper.isCrossReference(simpleConstraint2));
+        assertFalse(ConstraintHelper.isCrossReference(simpleConstraint7));
+
+        SimpleConstraint sc1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, expr1);
+        assertTrue(ConstraintHelper.isCrossReference(sc1));
+        SimpleConstraint sc2 = new SimpleConstraint(qv1, SimpleConstraint.EQUALS, expr1);
+        assertTrue(ConstraintHelper.isCrossReference(sc2));
+        SimpleConstraint sc3 = new SimpleConstraint(qv1, SimpleConstraint.EQUALS, func1);
+        assertFalse(ConstraintHelper.isCrossReference(sc3));
+        SimpleConstraint sc4 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, func1);
+        assertFalse(ConstraintHelper.isCrossReference(sc4));
+        SimpleConstraint sc5 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, func1);
+        assertTrue(ConstraintHelper.isCrossReference(sc5));
+
+    }
+
+
+    public void testGetQueryFields() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryField qf1 = new QueryField(qc1, "vatNumber");
+        QueryField qf2 = new QueryField(qc1, "vatNumber");
+        QueryField qf3 = new QueryField(qc1, "vatNumber");
+        QueryValue qv1 = new QueryValue(new Integer(100));
+
+        QueryExpression expr1 = new QueryExpression(qf1, QueryExpression.ADD, qf2);
+        QueryExpression expr2 = new QueryExpression(expr1, QueryExpression.ADD, qf3);
+        QueryFunction func1 = new QueryFunction(qf1, QueryFunction.SUM);
+        QueryFunction func2 = new QueryFunction(expr1, QueryFunction.SUM);
+        QueryExpression expr3 = new QueryExpression(func2, QueryExpression.ADD, qv1);
+
+        Set expected = new HashSet();
+        assertEquals(expected, ConstraintHelper.getQueryFields(qv1));
+        expected = new HashSet(Arrays.asList(new Object[] {qf1}));
+        assertEquals(expected, ConstraintHelper.getQueryFields(qf1));
+        expected = new HashSet(Arrays.asList(new Object[] {qf1, qf2}));
+        assertEquals(expected, ConstraintHelper.getQueryFields(expr1));
+        expected = new HashSet(Arrays.asList(new Object[] {qf1, qf2, qf3}));
+        assertEquals(expected, ConstraintHelper.getQueryFields(expr2));
+        expected = new HashSet(Arrays.asList(new Object[] {qf1}));
+        assertEquals(expected, ConstraintHelper.getQueryFields(func1));
+        expected = new HashSet(Arrays.asList(new Object[] {qf1, qf2}));
+        assertEquals(expected, ConstraintHelper.getQueryFields(func2));
+        expected = new HashSet(Arrays.asList(new Object[] {qf1, qf2}));
+        assertEquals(expected, ConstraintHelper.getQueryFields(expr3));
+
+        expected = new HashSet();
+        assertEquals(expected, ConstraintHelper.getQueryFields(null));
+    }
+
+
+    public void testGetLeftArgument() {
+        assertTrue(ConstraintHelper.getLeftArgument(simpleConstraint1) instanceof QueryField);
+        assertEquals("name", ((QueryField) ConstraintHelper.getLeftArgument(simpleConstraint1)).getFieldName());
+        assertTrue(ConstraintHelper.getLeftArgument(simpleConstraint4) instanceof QueryValue);
+        assertEquals("Company1", ((QueryValue) ConstraintHelper.getLeftArgument(simpleConstraint4)).getValue());
+        assertTrue(ConstraintHelper.getLeftArgument(simpleConstraint3) instanceof QueryExpression);
+
+        assertTrue(ConstraintHelper.getLeftArgument(classConstraint1) instanceof QueryClass);
+        assertEquals(Department.class, ((QueryClass) ConstraintHelper.getLeftArgument(classConstraint1)).getType());
+
+        assertTrue(ConstraintHelper.getLeftArgument(containsConstraint1) instanceof QueryReference);
+        assertEquals(qc1, ((QueryReference) ConstraintHelper.getLeftArgument(containsConstraint1)).getQueryClass());
+        assertEquals("departments", ((QueryReference) ConstraintHelper.getLeftArgument(containsConstraint1)).getFieldName());
+
+        assertTrue(ConstraintHelper.getLeftArgument(subqueryConstraint1) instanceof QueryClass);
+        assertEquals(Department.class, ((QueryClass) ConstraintHelper.getLeftArgument(subqueryConstraint1)).getType());
+        assertTrue(ConstraintHelper.getLeftArgument(subqueryConstraint2) instanceof QueryField);
+        assertEquals("name", ((QueryField) ConstraintHelper.getLeftArgument(subqueryConstraint2)).getFieldName());
+
+        assertNull(ConstraintHelper.getLeftArgument(cs1));
+    }
+
+    public void testGetRightArgument() {
+        assertTrue(ConstraintHelper.getRightArgument(simpleConstraint1) instanceof QueryValue);
+        assertEquals("Company1", ((QueryValue) ConstraintHelper.getRightArgument(simpleConstraint1)).getValue());
+        assertTrue(ConstraintHelper.getRightArgument(simpleConstraint2) instanceof QueryField);
+        assertEquals("name", ((QueryField) ConstraintHelper.getRightArgument(simpleConstraint2)).getFieldName());
+        assertTrue(ConstraintHelper.getRightArgument(simpleConstraint3) instanceof QueryExpression);
+
+        assertTrue(ConstraintHelper.getRightArgument(classConstraint1) instanceof QueryClass);
+        assertEquals(Department.class, ((QueryClass) ConstraintHelper.getRightArgument(classConstraint1)).getType());
+        assertTrue(ConstraintHelper.getRightArgument(classConstraint2) instanceof Department);
+
+        assertTrue(ConstraintHelper.getRightArgument(containsConstraint1) instanceof QueryClass);
+        assertEquals(Department.class, ((QueryClass) ConstraintHelper.getRightArgument(containsConstraint1)).getType());
+
+        assertTrue(ConstraintHelper.getRightArgument(subqueryConstraint1) instanceof Query);
+
+        assertNull(ConstraintHelper.getRightArgument(cs1));
+    }
+
+}
+
