@@ -192,6 +192,8 @@
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
+    <pathelement location="${build.model}/so"/>
+    <pathelement location="${build.model}/genomic"/>
     <pathelement location="${build.model}/ensembl"/>
   </path>
 
@@ -378,7 +380,7 @@
   </target>
 
   <!-- Orthologue items -->
-    <target name="build-db-orthologue-items" depends="convert-ensembl">
+  <target name="build-db-orthologue-items" depends="convert-ensembl">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -387,11 +389,11 @@
   </target>
 
   <!-- Chado items -->
-  <target name="build-db-chado-items" depends="convert-chado">
+  <target name="build-db-chado-src-items" depends="convert-chado">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.chado-items"/>
+      <property name="db.name" value="db.chado-src-items"/>
     </ant>
   </target>
 
@@ -567,15 +569,15 @@
   </target>
 
   <!-- test out creating java objects from chado model -->
-  <target name="retrieve-chado" depends="convert-chado, build-db-chado-items">
+  <target name="retrieve-chado" depends="convert-chado, build-db-chado-src-items">
     <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.DBRetrieverTask">
       <classpath refid="test.class.path"/>
     </taskdef>
     
-    <retrieve-chado database="db.chado" model="chado" osName="osw.chado-items"/>
+    <retrieve-chado database="db.chado" model="chado" osName="osw.chado-src-items"/>
   </target>
 
-  <!-- Load data from chado-items into chado-test -->
+  <!-- Load data from chado-src-items into chado-main -->
   <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, build-db-datatrackingtest">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="test.class.path"/>
@@ -634,27 +636,106 @@
     </ant>
   </target>
 
+   <!-- convert MAGE-OM to OWL -->
    <target name="mage-to-owl" depends="convert-mage">
     <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
       <classpath refid="test.class.path" />
       <arg value="${build.model}/mage/mage_model.xml" />
-      <arg value="${build.model}/mage/mage.owl" />
+      <arg value="${build.model}/mage/mage.n3" />
       <arg value="N3" />
     </java>
   </target>
 
-<!--  <target name="mage-to-owl" depends="convert-mage">
-    <taskdef
-      name="flymine-to-owl"
-      classname="org.flymine.task.FlyMine2OwlTask">
-      <classpath refid="test.class.path"/>
-    </taskdef>
 
-    <flymine-to-owl source="${build.model}/mage/mage_model.xml"
-                    dest="${build.model}/mage/mage.owl"
-                    format="N3">
-    </flymine-to-owl>
-  </target>  -->
+   <!-- convert chado model to OWL -->
+   <target name="chado-to-owl" depends="convert-chado">
+    <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
+      <classpath refid="test.class.path" />
+      <arg value="${build.model}/chado/chado_model.xml" />
+      <arg value="${build.model}/chado/chado.n3" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+
+  <!-- convert Sequence Ontology (SO) to OWL -->
+  <target name="so-to-owl" depends="compile-main">
+    <mkdir dir="${build.model}/so" />
+    <copy file="${model}/so/sofa.ontology" todir="${build.model}/so/"/>
+    <java classname="org.flymine.ontology.Dag2Owl" fork="true">
+      <classpath refid="test.class.path" />
+      <arg value="${build.model}/so/sofa.ontology" />
+      <arg value="${build.model}/so/sofa.n3" />
+      <arg value="http://www.flymine.org/model/so#" />
+    </java>
+  </target>
+
+  <!-- create merged model from source OWL ontologies -->
+  <target name="create-genomic-model" depends="merge-chado-model">
+    <java classname="org.flymine.ontology.Owl2FlyMine" fork="true">
+      <classpath refid="test.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="${build.model}/genomic/genomic_model.xml" />
+      <arg value="genomic" />
+      <arg value="org.flymine.model.genomic" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+  </target>
+
+  <target name="jar-genomic" depends="prepare-dist, create-genomic-model"
+          description="create a jar of the genomic model">
+    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="model.src" value="${model}/genomic"/>
+    </ant>    
+  </target>
+
+  <!-- check whether genomic.n3 already copied into build directory -->
+  <target name="genomic-model-present" depends="compile-main">
+    <property name="copy_genomic" value="true"/>
+    <available file="${build.model}/genomic/genomic.n3" type="file" 
+       value="false" property="copy_genomic"/>   
+  </target>
+
+  <!-- if genomic.n3 not copied into build directory then copy it -->
+  <target name="prepare-genomic-model" depends="genomic-model-present" if="copy_genomic">        
+    <copy file="${model}/genomic/genomic.n3" todir="${build.model}/genomic/"/>
+  </target>
+
+  <!-- remove build/model/genomic/genomic.n3 -->
+  <target name="remove-genomic">
+    <delete file="${build.model}/genomic/genomic.n3"/>
+  </target>
+
+  <!-- merge the chado owl model with the current genomic model in build/model/genomic
+      this target file may already be the result of previous merges -->
+  <target name="merge-chado-model" depends="prepare-genomic-model, chado-to-owl">
+    <mkdir dir="${build.model}/genomic" />
+    <copy file="${model}/chado/chado_merge_spec.n3" todir="${build.model}/chado/"/>
+
+    <!-- combine the chado merge_spec with current genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true">
+      <classpath refid="test.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/chado/chado_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+    </java> 
+
+    <!-- merge chado model with target genomic model --> 
+    <java classname="org.flymine.ontology.MergeOwl" fork="true">
+      <classpath refid="test.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/chado/chado.n3" />
+      <arg value="http://www.flymine.org/model/chado#" />
+      <arg value="N3" />
+    </java>
+
+  </target>
 
 
   <!-- Unit test targets -->
