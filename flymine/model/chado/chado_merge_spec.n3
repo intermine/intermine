@@ -56,21 +56,23 @@ null:featureprop a owl:Class ;
             ]
        ] .
 
+null:feature_relationship__rank a owl:DatatypeProperty ;
+      owl:equivalentClass chado:feature_relationship__rank .
 
-:RankedRelation__rank a owl:DatatypeProperty ;
-    owl:equivalentProperty chado:feature_relationship__rank .
+#:RankedRelation__rank a owl:DatatypeProperty ;
+#    owl:equivalentProperty chado:feature_relationship__rank .
 
-:RankedRelation__subject a owl:ObjectProperty;
-    rdfs:domain :RankedRelation ;
-    rdfs:range :BioEntity ;
-    rdfs:subPropertyOf :Relation__subject ;
-    owl:equivalentProperty chado:feature_relationship__subject .
+#:RankedRelation__subject a owl:ObjectProperty;
+#    rdfs:domain :RankedRelation ;
+#    rdfs:range :BioEntity ;
+#    rdfs:subPropertyOf :Relation__subject ;
+#    owl:equivalentProperty chado:feature_relationship__subject .
 
-:RankedRelation__object a owl:ObjectProperty;
-    rdfs:domain :RankedRelation ;
-    rdfs:range :BioEntity ;
-    rdfs:subPropertyOf :Relation__object ;
-    owl:equivalentProperty chado:feature_relationship__object .
+#:RankedRelation__object a owl:ObjectProperty;
+#    rdfs:domain :RankedRelation ;
+#    rdfs:range :BioEntity ;
+#    rdfs:subPropertyOf :Relation__object ;
+#    owl:equivalentProperty chado:feature_relationship__object .
 
 :SimpleRelation a owl:Class ;
     owl:equivalentClass chado:feature_relationship .
