@@ -121,7 +121,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see ObjectStoreWriter.getObjectStore
+     * @see org.flymine.objectstore.ObjectStoreWriter#getObjectStore
      */
     public ObjectStore getObjectStore() {
         return osw.getObjectStore();

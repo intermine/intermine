@@ -39,7 +39,7 @@ public abstract class ModelOutput
      * @param file the destination directory for generated output   
      * @throws Exception if problem occurs in loading model
      */
-    protected ModelOutput(Model model, File file) throws Exception {
+    public ModelOutput(Model model, File file) throws Exception {
         this.model = model;
         this.file = file;
     }

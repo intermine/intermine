@@ -66,7 +66,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     }
 
     /**
-     * @see ObjectStoreWriter#store
+     * @see org.flymine.objectstore.ObjectStoreWriter#store(Object)
      */
     public void store(Object o) throws ObjectStoreException {
         boolean valid = false;
@@ -86,7 +86,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     }
 
     /**
-     * @see ObjectStoreWriter#delete
+     * @see org.flymine.objectstore.ObjectStoreWriter#delete(Object)
      */
     public void delete(Object o) throws ObjectStoreException {
         try {
@@ -97,7 +97,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     }
 
     /**
-     * @see ObjectStoreWriter#isInTransaction
+     * @see org.flymine.objectstore.ObjectStoreWriter#isInTransaction
      */
     public boolean isInTransaction() throws ObjectStoreException {
         boolean result;
@@ -109,7 +109,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     }
 
     /**
-     * @see ObjectStoreWriter#beginTransaction
+     * @see org.flymine.objectstore.ObjectStoreWriter#beginTransaction
      */
     public void beginTransaction() throws ObjectStoreException {
         try {
@@ -124,7 +124,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     }
 
     /**
-     * @see ObjectStoreWriter#commitTransaction
+     * @see org.flymine.objectstore.ObjectStoreWriter#commitTransaction
      */
     public void commitTransaction() throws ObjectStoreException {
         try {
@@ -139,7 +139,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
     }
 
     /**
-     * @see ObjectStoreWriter#abortTransaction
+     * @see org.flymine.objectstore.ObjectStoreWriter#abortTransaction
      */
     public void abortTransaction() throws ObjectStoreException {
         try {

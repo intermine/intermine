@@ -27,7 +27,7 @@ import org.flymine.metadata.*;
 public class JavaModelOutput extends ModelOutput
 {
     /**
-     * @see ModelOutput#Constructor
+     * @see ModelOutput#ModelOutput(Model, File)
      */
     public JavaModelOutput(Model model, File file) throws Exception {
         super(model, file);

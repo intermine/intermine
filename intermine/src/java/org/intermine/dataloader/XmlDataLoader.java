@@ -34,7 +34,7 @@ import org.xml.sax.InputSource;
 public class XmlDataLoader extends DataLoader
 {
     /**
-     * @see AbstractDataLoader#Constructor
+     * @see DataLoader#DataLoader
      */
     public XmlDataLoader(IntegrationWriter iw) {
         super(iw);

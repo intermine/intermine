@@ -20,14 +20,14 @@ import java.util.Collection;
 public class ResultsRow extends ArrayList
 {
     /**
-     * @see ArrayList#Constructor()
+     * @see ArrayList#ArrayList
      */
     public ResultsRow() {
         super();
     }
 
     /**
-     * @see ArrayList#Constructor(Collection)
+     * @see ArrayList#ArrayList(Collection)
      */
     public ResultsRow(Collection c) {
         super(c);

@@ -31,7 +31,7 @@ public class OJBModelOutput extends ModelOutput
     protected StringBuffer references, collections;
 
     /**
-     * @see ModelOutput#Constructor
+     * @see ModelOutput#ModelOutput(Model, File)
      */
     public OJBModelOutput(Model model, File file) throws Exception {
         super(model, file);
