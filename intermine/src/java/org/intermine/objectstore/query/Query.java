@@ -124,7 +124,7 @@ public class Query
      */    
     public Query addToSelect(QueryNode node) {
         select.add(node);
-        aliases.put(node, "a" + (alias++));
+        aliases.put(node, "a" + (alias++) + "_");
         return this;
     }
 
