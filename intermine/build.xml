@@ -67,7 +67,7 @@
     <include name="ant*.jar"/>
     <include name="castor*.jar" />
     <include name="cglib*.jar" />
-    <include name="poi-2.5-final-20040302.jar" />
+    <include name="poi*.jar" />
     <include name="commons-collections*.jar" />
     <include name="commons-dbcp*.jar" />
     <include name="commons-lang*.jar" />
@@ -331,14 +331,6 @@
   <target name="compile-fulldata" depends="precompile-main">
     <copy todir="${build.model}/fulldata" file="${model}/fulldata/fulldata_keyDefs.properties"/>
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <property name="model.src" value="${model}/fulldata"/>
-      <reference torefid="class.path" refid="project.class.path"/>
-    </ant>
-  </target>
-
-  <target name="jar-fulldata" depends="compile-fulldata">
-    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <property name="model.src" value="${model}/fulldata"/>
       <reference torefid="class.path" refid="project.class.path"/>
@@ -709,22 +701,18 @@
     <delete dir="${build.webapp}/intermine/WEB-INF/src"/>
   </target>
 
-  <target name="build-testable-webapp" depends="prepare-webapp"
-    description="Build a InterMine webapp including the test classes and libraries">
-
-    <antcall target="build-testmodel-webapp"/>
-
+  <target name="build-testable-webapp" depends="build-testmodel-webapp"
+    description="Build webapp including the test model and test libraries">
     <!-- now update war to include the test jars -->
     <war destfile="${dist.webapp}/intermine.war" update="true">
       <lib dir="${lib}">
         <patternset refid="lib.webapptest"/>
       </lib>
-      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
     </war>
   </target>
 
   <target name="build-testmodel-webapp" depends="prepare-webapp, jar-testmodel"
-    description="Build a InterMine webapp including the test model">
+    description="Build webapp including the test model">
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -733,6 +721,7 @@
 
     <antcall target="build-webapp"/>
   </target>
+
   <!-- Webservice targets -->
   <target name="build-webservice" depends="prepare,prepare-dist,jar-intermine"
     description="Build the InterMine webservice">
@@ -1024,13 +1013,12 @@
     <delete dir="${dist}"/>
   </target>
 
-  <!-- AntDoc target -->
-  
-  <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
-    <classpath refid="project.class.path"/>
-  </taskdef>
+  <!-- antdoc target -->
+  <target name="antdoc"> 
+    <taskdef name="antdoc" classname="org.ed.pack.ant.AntDoc">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <antdoc destination="${results.antdoc}" buildfile="${ant.file}"/>
+  </target>
 
-   <target name="ant-doc"> 
-     <AntDoc destination="${results.antdoc}" buildfile="${ant.file}"/>
-   </target>
 </project>
