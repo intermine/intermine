@@ -33,7 +33,7 @@ public class QueryField implements QueryEvaluable
         }
         Field field = TypeUtil.getField(qc.getType(), fieldName);
         if (field == null) {
-            throw new NoSuchFieldException("Field " + fieldName + " not found in class "
+            throw new NoSuchFieldException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
         if (java.util.Collection.class.isAssignableFrom(field.getType())) {
@@ -62,7 +62,7 @@ public class QueryField implements QueryEvaluable
         }
         Field field = TypeUtil.getField(qc.getType(), fieldName);
         if (field == null) {
-            throw new NoSuchFieldException("Field " + fieldName + " not found in class "
+            throw new NoSuchFieldException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
         if (java.util.Collection.class.isAssignableFrom(field.getType())) {
@@ -80,11 +80,9 @@ public class QueryField implements QueryEvaluable
      * @param q the Query object that is the subquery
      * @param v the entry of the SELECT list
      * @throws NullPointerException if the field name is null
-     * @throws NoSuchFieldException if the field does not exist
-     * @throws IllegalArgumentException if the field is a collection
      */
     public QueryField(Query q, QueryEvaluable v)
-        throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
+        throws NullPointerException {
         if (q == null) {
             throw new NullPointerException("Subquery parameter is null");
         }
@@ -116,5 +114,14 @@ public class QueryField implements QueryEvaluable
      */
     public String getFieldName() {
         return fieldName;
+    }
+
+    /**
+     * Produces a String, for debugging purposes.
+     *
+     * @return a String representation
+     */
+    public String toString() {
+        return "QueryField(" + qc + ", " + fieldName + ")";
     }
 }

@@ -8,6 +8,7 @@ package org.flymine.objectstore.query;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
 public class QueryClass implements QueryNode, FromElement
 {
@@ -31,4 +32,12 @@ public class QueryClass implements QueryNode, FromElement
         return type;
     }
 
+    /**
+     * Returns a String representation.
+     *
+     * @return a String representation
+     */
+    public String toString() {
+        return type.getName();
+    }
 }
