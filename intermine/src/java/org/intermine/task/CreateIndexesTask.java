@@ -28,6 +28,7 @@ import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.metadata.MetaDataException;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.StringUtil;
 
@@ -97,8 +98,10 @@ public class CreateIndexesTask extends Task
      * Add indexes to the relevant tables for a given ClassDescriptor
      * @param cld the ClassDescriptor
      * @throws SQLException if an error occurs
+     * @throws MetaDataException if a field os not found in model
      */
-    protected void processClassDescriptor(ClassDescriptor cld) throws SQLException {
+    protected void processClassDescriptor(ClassDescriptor cld) throws SQLException,
+                                                                      MetaDataException {
         //add an index for each primary key
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
         for (Iterator j = primaryKeys.entrySet().iterator(); j.hasNext();) {
@@ -109,7 +112,12 @@ public class CreateIndexesTask extends Task
             for (Iterator k = key.getFieldNames().iterator(); k.hasNext();) {
                 String fieldName = (String) k.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                fieldNames.add(DatabaseUtil.getColumnName(fd));
+                if (fd != null) {
+                    fieldNames.add(DatabaseUtil.getColumnName(fd));
+                } else {
+                    throw new MetaDataException("field (" + fieldName + ") not found for class: "
+                                                + cld.getName() + ".");
+                }
             }
             String tableName = DatabaseUtil.getTableName(cld);
             dropIndex(tableName + "__" + keyName);
@@ -118,18 +126,20 @@ public class CreateIndexesTask extends Task
         }
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
-        for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
+        //for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
+        for (Iterator j = cld.getReferenceDescriptors().iterator(); j.hasNext();) {
             ReferenceDescriptor ref = (ReferenceDescriptor) j.next();
             if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
                     && (ref.getReverseReferenceDescriptor() != null)) {
-                String tableName = DatabaseUtil.getTableName(cld);                      
+                String tableName = DatabaseUtil.getTableName(cld);
                 dropIndex(tableName + "__"  + ref.getName());
                 createIndex(tableName + "__"  + ref.getName(), tableName,
                             DatabaseUtil.getColumnName(ref));
             }
         }
         //finally add an index to all M-to-N indirection table columns
-        for (Iterator j = cld.getAllCollectionDescriptors().iterator(); j.hasNext();) {
+        //for (Iterator j = cld.getAllCollectionDescriptors().iterator(); j.hasNext();) {
+        for (Iterator j = cld.getCollectionDescriptors().iterator(); j.hasNext();) {
             CollectionDescriptor col = (CollectionDescriptor) j.next();
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 String tableName = DatabaseUtil.getIndirectionTableName(col);
@@ -150,7 +160,7 @@ public class CreateIndexesTask extends Task
         } catch (SQLException e) {
         }
     }
-    
+
     /**
      * Create an named index on the specified columns of a table
      * @param indexName the index name
