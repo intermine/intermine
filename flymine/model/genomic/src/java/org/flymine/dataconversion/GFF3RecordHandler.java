@@ -11,13 +11,20 @@ package org.flymine.dataconversion;
  */
 
 
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ReferenceList;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
 
 import org.flymine.io.gff3.GFF3Record;
 
@@ -53,7 +60,7 @@ public class GFF3RecordHandler
      * @param record the GFF line being processed
      */
     public void process(GFF3Record record) {
-        
+
     }
 
     /**
@@ -150,16 +157,28 @@ public class GFF3RecordHandler
      * Get the SimpleRelation item from feature to parent feature for this record.
      * @param relation the relation item
      */
-    public void setParentRelation(Item relation) {
-        items.put("_relation", relation);
+    public void addParentRelation(Item relation) {
+        items.put("_relation" + relation.getIdentifier(), relation);
     }
 
     /**
      * Return the SimpleRelation Item set by setParentRelation()
      * @return the location Item
      */
-    protected Item getParentRelation() {
-        return (Item) items.get("_relation");
+    protected Set getParentRelations() {
+        Set entrySet = items.entrySet();
+        if (entrySet != null) {
+            Iterator entryIter = entrySet.iterator();
+            Set relations = new HashSet();
+            while (entryIter.hasNext()) {
+                Map.Entry entry = (Map.Entry) entryIter.next();
+                if (((String) entry.getKey()).startsWith("_relation")) {
+                    relations.add(entry.getValue());
+                }
+            }
+            return relations;
+        }
+        return null;
     }
 
     /**
@@ -202,5 +221,50 @@ public class GFF3RecordHandler
      */
     public void addItem(Item item) {
         items.put(item.getIdentifier(), item);
+    }
+
+
+    /**
+     * Given a map from class name to refernece name populate the reference for
+     * a particulare class with the parents of any SimpleRelations.
+     * @param references map from classname to name of reference/collection to populate
+     */
+    protected void setReferences(Map references) {
+        Item feature = getFeature();
+
+        // set additional references from parents according to references map
+        String clsName = classFromURI(feature.getClassName());
+        if (references.containsKey(clsName) && getParentRelations() != null) {
+            ClassDescriptor cld = tgtModel.getClassDescriptorByName(tgtModel
+                .getPackageName() + "." + clsName);
+
+            String refName = (String) references.get(clsName);
+            Iterator parentIter = getParentRelations().iterator();
+
+            if (cld.getReferenceDescriptorByName(refName, true) != null && parentIter.hasNext()) {
+                Item relation = (Item) parentIter.next();
+                feature.setReference(refName, relation.getReference("object").getRefId());
+                if (parentIter.hasNext()) {
+                    throw new RuntimeException("Feature has multiple relations for reference: "
+                                               + refName + " for feature: " + feature.getClassName()
+                                               + ", " + feature.getIdentifier());
+                }
+            } else if (cld.getCollectionDescriptorByName(refName, true) != null
+                       && parentIter.hasNext()) {
+                List refIds = new ArrayList();
+                while (parentIter.hasNext()) {
+                    refIds.add(((Item) parentIter.next()).getReference("object").getRefId());
+                }
+                feature.addCollection(new ReferenceList(refName, refIds));
+            } else if (parentIter.hasNext()) {
+                throw new RuntimeException("No '" + refName + "' reference/collection found in "
+                                      + "class: " + clsName + " - is map configured correctly?");
+            }
+        }
+    }
+
+
+    private String classFromURI(String uri) {
+        return uri.split("#")[1].split("[.]")[0];
     }
 }

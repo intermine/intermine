@@ -249,9 +249,9 @@ public class GFF3Record
      * Return the first value of the Parent field from the attributes of this record.
      * @return the Parent from the attributes of this record or null of there isn't a value
      */
-    public String getParent () {
+    public List getParents () {
         if (getAttributes().containsKey("Parent")) {
-            return (String) ((List) getAttributes().get("Parent")).get(0);
+            return (List) getAttributes().get("Parent");
         } else {
             return null;
         }

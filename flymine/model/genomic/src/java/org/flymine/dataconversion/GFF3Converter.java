@@ -164,11 +164,15 @@ public class GFF3Converter
         feature.addReference(getOrgRef());
 
         // if parents -> create a SimpleRelation
-        if (record.getParent() != null) {
-            Item simpleRelation = createItem("SimpleRelation");
-            simpleRelation.setReference("object", getIdentifier(record.getParent()));
-            simpleRelation.setReference("subject", feature.getIdentifier());
-            handler.setParentRelation(simpleRelation);
+        if (record.getParents() != null) {
+            Iterator parentIter = record.getParents().iterator();
+            while (parentIter.hasNext()) {
+                String parentId = (String) parentIter.next();
+                Item simpleRelation = createItem("SimpleRelation");
+                simpleRelation.setReference("object", getIdentifier(parentId));
+                simpleRelation.setReference("subject", feature.getIdentifier());
+                handler.addParentRelation(simpleRelation);
+            }
         }
 
 
