@@ -93,7 +93,7 @@ public class FeedbackAction extends Action
         
         } catch (Exception err) {
             
-            ActionErrors errors = getErrors(request);
+            ActionMessages errors = getErrors(request);
             errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("feedback.failed", err));
             saveErrors(request, errors);
             
