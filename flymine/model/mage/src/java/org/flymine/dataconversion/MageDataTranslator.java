@@ -356,6 +356,7 @@ public class MageDataTranslator extends DataTranslator
         StringBuffer sb = new StringBuffer();
         boolean controlFlg = false;
         ReferenceList failTypes = new ReferenceList();
+        //prefetch done
         if (srcItem.hasCollection("failTypes")) {
             failTypes = srcItem.getCollection("failTypes");
             if (failTypes != null) {
@@ -369,7 +370,7 @@ public class MageDataTranslator extends DataTranslator
             }
 
         }
-
+        //prefetch done
         if (srcItem.hasReference("controlType")) {
             Reference controlType = srcItem.getReference("controlType");
             if (controlType != null) {
@@ -414,7 +415,7 @@ public class MageDataTranslator extends DataTranslator
             //create bioEntity2IdentifierMap
             //identifier = reporter: name for CDNAClone, Vector
             //identifier = reporter: controlType;name;descriptions for genomic_dna
-
+            //prefetch done
             identifier = getFirstId(immobilizedChar);
             String identifierAttribute = null;
             Item bioSequence = ItemHelper.convert(srcItemReader.getItemById(identifier));
@@ -502,6 +503,7 @@ public class MageDataTranslator extends DataTranslator
     protected void translateMicroArraySlideDesign(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
         // move descriptions reference list
+        //prefetch done
         if (srcItem.hasCollection("descriptions")) {
             ReferenceList des =  srcItem.getCollection("descriptions");
             if (des != null) {
@@ -516,6 +518,7 @@ public class MageDataTranslator extends DataTranslator
         }
 
         // change substrateType reference to attribute
+        //prefetch done
         if (srcItem.hasReference("surfaceType")) {
             Item surfaceType = ItemHelper.convert(srcItemReader
                                 .getItemById(srcItem.getReference("surfaceType").getRefId()));
@@ -658,7 +661,7 @@ public class MageDataTranslator extends DataTranslator
                          srcItem.getReference("designElement").getRefId());
             maerSet.add(tgtItem.getIdentifier());
         }
-
+        //prefetch done
         if (srcItem.hasReference("quantitationType")) {
             Item qtItem = ItemHelper.convert(srcItemReader.getItemById(
                             srcItem.getReference("quantitationType").getRefId()));
@@ -742,7 +745,7 @@ public class MageDataTranslator extends DataTranslator
         Item synonym = new Item();
         String s = null;
         String identifier = null;
-
+        //prefetch done
         if (srcItem.hasReference("type")) {
             Item item = ItemHelper.convert(srcItemReader.getItemById(
                                srcItem.getReference("type").getRefId()));
@@ -780,8 +783,7 @@ public class MageDataTranslator extends DataTranslator
                             gene = createGene(tgtNs + "Gene", "", dbEntryItem.getIdentifier(),
                                       organismDbId);
                             geneList.add(dbItem.getIdentifier());
-                            // } else if (dbName.equals("flybase")
-                            // && organismDbId.startsWith("FBmc")) {
+                     // } else if (dbName.equals("flybase") && organismDbId.startsWith("FBmc")) {
                             // tgtItem.addAttribute(new Attribute("organismDbId", organismDbId));
 
                         } else if (dbName.equals("embl") && dbEntryItem.hasAttribute("accession")) {
@@ -853,7 +855,7 @@ public class MageDataTranslator extends DataTranslator
      */
     public void translateLabeledExtract(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
-
+        //prefetch done
         if (srcItem.hasReference("materialType")) {
             Item type = ItemHelper.convert(srcItemReader.getItemById(
                   (String) srcItem.getReference("materialType").getRefId()));
@@ -979,6 +981,7 @@ public class MageDataTranslator extends DataTranslator
      */
     public void translateTreatment(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
+        //prefetch done
         if (srcItem.hasReference("action")) {
             Item action = ItemHelper.convert(srcItemReader.getItemById(
                               (String) srcItem.getReference("action").getRefId()));
@@ -1333,17 +1336,16 @@ public class MageDataTranslator extends DataTranslator
 
     protected Set processReporterMaterial() {
         Set results = new HashSet();
-
         for (Iterator i = reporterSet.iterator(); i.hasNext();) {
             Item reporter = (Item) i.next();
-            String bioEntityId = (String) reporter.getReference("material").getRefId();
-            if (bioEntityRefMap.containsKey("bioEntityId")) {
-                String newBioEntityId = (String) bioEntityRefMap.get("bioEntityId");
-                reporter.addReference(new Reference("material", newBioEntityId));
-                results.add(reporter);
-            } else {
-                results.add(reporter);
+            if (reporter.hasReference("material")) {
+                String bioEntityId = (String) reporter.getReference("material").getRefId();
+                if (bioEntityRefMap.containsKey(bioEntityId)) {
+                    String newBioEntityId = (String) bioEntityRefMap.get(bioEntityId);
+                    reporter.addReference(new Reference("material", newBioEntityId));
+                }
             }
+            results.add(reporter);
         }
         return results;
 
@@ -1430,6 +1432,7 @@ public class MageDataTranslator extends DataTranslator
         Map paths = new HashMap();
         HashSet descSet = new HashSet();
 
+        //setReporterLocationCoords
         ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor(
                 "(FeatureGroup <- Feature.featureGroup)");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic(
@@ -1477,13 +1480,19 @@ public class MageDataTranslator extends DataTranslator
                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descSet.add(desc1);
 
-        // BioSequence.sequenceDatabases.database
+        // BioSequence.sequenceDatabases.databaseEntry.database
         desc1 = new ItemPrefetchDescriptor("BioSequence.sequenceDatabases");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("sequenceDatabases",
                                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2 = new ItemPrefetchDescriptor("(BioSequence.sequenceDatabases).database");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("database",
+        desc2 = new ItemPrefetchDescriptor("(BioSequence.sequenceDatabases).databaseEntry");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("databaseEntry",
                                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+        desc3 = new ItemPrefetchDescriptor(
+                      "((BioSequence.sequenceDatabases).databaseEntry).database");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("database",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2.addPath(desc3);
         desc1.addPath(desc2);
         descSet.add(desc1);
 
@@ -1527,7 +1536,7 @@ public class MageDataTranslator extends DataTranslator
 
         ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
             "(...).sourceBioMaterialMeasurements");
-        desc5.addConstraint(new ItemPrefetchConstraintDynamic("sorceBioMaterialMeasurements",
+        desc5.addConstraint(new ItemPrefetchConstraintDynamic("sourceBioMaterialMeasurements",
                                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         ItemPrefetchDescriptor desc6 = new ItemPrefetchDescriptor(
             "((...).sourceBioMaterialMeasurements).bioMaterial");
