@@ -11,7 +11,7 @@
 
 function enterPath(path)
 {
-  setBorderStyle(path, "#fafafa");
+  setBorderStyle(path, "#fff");
 }
 
 function exitPath(path)
