@@ -79,7 +79,9 @@ public class MageDataTranslator extends DataTranslator
     protected Map bioEntity2IdentifierMap = new HashMap();
     protected Set bioEntitySet = new HashSet();
     protected Set geneSet = new HashSet();
-
+    protected Map synonymMap = new HashMap(); //key:itemId value:synonymItem
+    protected Map synonymAccessionMap = new HashMap();//key:accession value:synonymItem
+    protected Set synonymAccession = new HashSet();
 
     protected Map identifier2BioEntity = new HashMap();
     protected Map organismDbId2Gene = new HashMap();
@@ -140,7 +142,6 @@ public class MageDataTranslator extends DataTranslator
 
         Collection translated = super.translateItem(srcItem);
         Item gene = new Item();
-        Set bioSequenceResult = new HashSet();
         Item organism = new Item();
 
         if (translated != null) {
@@ -177,9 +178,8 @@ public class MageDataTranslator extends DataTranslator
                 } else if (className.equals("Reporter")) {
                     setBioEntityMap(srcItem, tgtItem);
                 } else if (className.equals("BioSequence")) {
-                    bioSequenceResult = translateBioEntity(srcItem, tgtItem);
+                    translateBioEntity(srcItem, tgtItem);
                     storeTgtItem = false;
-                    result.addAll(bioSequenceResult);
                 } else if (className.equals("LabeledExtract")) {
                     translateLabeledExtract(srcItem, tgtItem);
                 } else if (className.equals("BioSource")) {
@@ -714,17 +714,17 @@ public class MageDataTranslator extends DataTranslator
      * @param tgtItem = flymine:BioEntity(genomic_DNA =>NuclearDNA cDNA_clone=>CDNAClone,
      *                  vector=>Vector)
      * extra will create for Gene(FBgn), Vector(FBmc) and Synonym(embl)
-     * @return set  flymine:Synonym,
+     * synonymMap(itemid, item), synonymAccessionMap(accession, item) and
+     * synonymAccession (HashSet) created for flymine:Synonym,
      * geneList include Gene and Vector to reprocess to add mAER collection
      * bioEntityList include CDNAClone and NuclearDNA to add identifier attribute
      * and mAER collection
      * @throws ObjectStoreException if problem occured during translating
      */
-    protected Set translateBioEntity(Item srcItem, Item tgtItem)
+    protected void translateBioEntity(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
         Item gene = new Item();
         Item vector = new Item();
-        Set result = new HashSet();
         Item synonym = new Item();
         String s = null;
         String identifier = null;
@@ -770,11 +770,18 @@ public class MageDataTranslator extends DataTranslator
                             // && organismDbId.startsWith("FBmc")) {
                             // tgtItem.addAttribute(new Attribute("organismDbId", organismDbId));
 
-                        } else if (dbName.equals("embl")) {
-                            emblList.add(dbEntryItem.getIdentifier());
-                            synonym = createSynonym(dbEntryItem, synonymSourceId,
-                                                    srcItem.getIdentifier());
-                            result.add(synonym);
+                        } else if (dbName.equals("embl") && dbEntryItem.hasAttribute("accession")) {
+                            String accession = dbEntryItem.getAttribute("accession").getValue();
+                            //make sure synonym only create once for same accession
+                            if (!synonymAccession.contains(accession)) {
+                                emblList.add(dbEntryItem.getIdentifier());
+                                synonym = createSynonym(dbEntryItem, synonymSourceId,
+                                                             srcItem.getIdentifier());
+                                synonymAccession.add(accession); //Set
+                                synonymMap.put(dbEntryItem.getIdentifier(), synonym);
+                                synonymAccessionMap.put(accession, synonym);
+                            }
+                            // result.add(synonym);
                         } else {
                             //getDatabaseRef();
 
@@ -785,7 +792,6 @@ public class MageDataTranslator extends DataTranslator
             if (!geneList.isEmpty()) {
                 geneSet.add(gene);
                 gene2BioEntity.put(gene.getIdentifier(), srcItem.getIdentifier());
-
             }
 
             if (!emblList.isEmpty()) {
@@ -797,14 +803,13 @@ public class MageDataTranslator extends DataTranslator
         if (tgtItem != null) {
             bioEntitySet.add(tgtItem);
         }
-        return result;
 
     }
 
     /**
      * @param srcItem = databaseEntry item refed in BioSequence
      * @param sourceId = database id
-     * @param subjectId = bioEntity identifier
+     * @param subjectId = bioEntity identifier will probably be changed when reprocessing bioEntitySet
      * @return synonym item
      */
     protected Item createSynonym(Item srcItem, String sourceId, String subjectId) {
@@ -815,10 +820,10 @@ public class MageDataTranslator extends DataTranslator
         synonym.addAttribute(new Attribute("type", "accession"));
         synonym.addReference(new Reference("source", sourceId));
 
-        if (srcItem.hasAttribute("accession")) {
-            synonym.addAttribute(new Attribute("value",
+
+        synonym.addAttribute(new Attribute("value",
                                  srcItem.getAttribute("accession").getValue()));
-        }
+
         synonym.addReference(new Reference("subject", subjectId));
 
         return synonym;
@@ -1155,14 +1160,20 @@ public class MageDataTranslator extends DataTranslator
                 }
                 if (bioEntity.hasCollection("synonyms")) {
                     ReferenceList synonymList2 = bioEntity.getCollection("synonyms");
+                    String subject = anotherEntity.getIdentifier();
                     for  (Iterator k = synonymList2.getRefIds().iterator(); k.hasNext();) {
                         String refId = (String) k.next();
                         if (!synonymList.contains(refId)) {
                             synonymList.add(refId);
                         }
+                        //change subjectId for sysnonym when its bioentity is merged
+                        Item synonym = (Item) synonymMap.get(refId);
+                        String accession = synonym.getAttribute("value").getValue();
+                        synonym.addReference(new Reference("subject", subject));
+                        synonymAccessionMap.put(accession, synonym);
                     }
                 }
-                bioEntity.addCollection(new ReferenceList("synonyms", synonymList));
+                anotherEntity.addCollection(new ReferenceList("synonyms", synonymList));
 
                 List maerList = new ArrayList();
                 if (anotherEntity.hasCollection("microArrayExperimentalResults")) {
@@ -1185,10 +1196,10 @@ public class MageDataTranslator extends DataTranslator
                         }
                     }
                 }
-                bioEntity.addCollection(new ReferenceList("microArrayExperimentalResults",
+                anotherEntity.addCollection(new ReferenceList("microArrayExperimentalResults",
                                           maerList));
 
-                identifier2BioEntity.put(identifierAttribute, bioEntity);
+                identifier2BioEntity.put(identifierAttribute, anotherEntity);
 
             } else {
                 bioEntity.addAttribute(new Attribute("identifier", identifierAttribute));
@@ -1201,7 +1212,14 @@ public class MageDataTranslator extends DataTranslator
         for (Iterator i = identifierSet.iterator(); i.hasNext();) {
             Item bioEntity = (Item) identifier2BioEntity.get((String) i.next());
             results.add(bioEntity);
+
         }
+        for (Iterator i = synonymAccession.iterator(); i.hasNext();) {
+            Item synonym = (Item) synonymAccessionMap.get((String) i.next());
+            results.add(synonym);
+
+        }
+
         return results;
     }
 
@@ -1220,14 +1238,12 @@ public class MageDataTranslator extends DataTranslator
 
         feature2Maer = new HashMap();
         Map organismDbId2Gene = new HashMap();
-        Map organismDbId2GeneDes = new HashMap();
 
         feature2Maer = createFeature2MaerMap(maer2Feature, maerSet);
         String organismDbId = null;
 
         for (Iterator i = geneSet.iterator(); i.hasNext();) {
             Item gene = (Item) i.next();
-            organismDbId = gene.getAttribute("organismDbId").getValue();
             List maerIds = new ArrayList();
             String geneId = (String) gene.getIdentifier();
             String bioEntityId = (String) gene2BioEntity.get(geneId);
@@ -1248,14 +1264,14 @@ public class MageDataTranslator extends DataTranslator
 
                 ReferenceList maerRl = new ReferenceList("microArrayExperimentalResults", maerIds);
                 gene.addCollection(maerRl);
-                organismDbId2Gene.put(organismDbId, gene);
                 destGene.add(gene);
             }
         }
 
         for (Iterator i = destGene.iterator(); i.hasNext();) {
             Item gene = (Item) i.next();
-            if (organismDbId2GeneDes.containsKey(organismDbId)) {
+            organismDbId = gene.getAttribute("organismDbId").getValue();
+            if (organismDbId2Gene.containsKey(organismDbId)) {
                 Item anotherGene = (Item)  organismDbId2Gene.get(organismDbId);
                 List maerList = new ArrayList();
                 if (anotherGene.hasCollection("microArrayExperimentalResults")) {
@@ -1276,17 +1292,18 @@ public class MageDataTranslator extends DataTranslator
                         }
                     }
                 }
-                gene.addCollection(new ReferenceList("microArrayExperimentalResults", maerList));
-                organismDbId2GeneDes.put(organismDbId, gene);
+                anotherGene.addCollection(new ReferenceList("microArrayExperimentalResults",
+                             maerList));
+                organismDbId2Gene.put(organismDbId, anotherGene);
             } else {
-                organismDbId2GeneDes.put(organismDbId, gene);
+                organismDbId2Gene.put(organismDbId, gene);
                 organismDbSet.add(organismDbId);
             }
 
         }
 
         for (Iterator i = organismDbSet.iterator(); i.hasNext();) {
-            Item gene = (Item) organismDbId2GeneDes.get((String) i.next());
+            Item gene = (Item) organismDbId2Gene.get((String) i.next());
             results.add(gene);
         }
         return results;
