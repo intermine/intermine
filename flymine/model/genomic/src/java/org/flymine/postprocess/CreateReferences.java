@@ -61,6 +61,8 @@ public class CreateReferences
 
         insertReferences(Chromosome.class, "subjects", Location.class, "subject",
                          Exon.class, "chromosome");
+        insertReferences(Chromosome.class, "subjects", Location.class, "subject",
+                         ChromosomeBand.class, "chromosome");
         insertReferences(Gene.class, "subjects", SimpleRelation.class, "subject",
                          Transcript.class, "gene");
         insertReferences(Gene.class, "transcripts", Transcript.class, "exons",
@@ -69,10 +71,18 @@ public class CreateReferences
                          Gene.class, "chromosome");
         insertReferences(Chromosome.class, "exons", Exon.class, "transcripts",
                          Transcript.class, "chromosome");
+
+        insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
+        insertReferences(Gene.class, ProteinInteraction.class, "subjects", "interactions");
+        insertReferences(Gene.class, ProteinInteraction.class, "objects", "interactions");
+
+        insertReferences(Gene.class, GOTerm.class, "GOTerms");
+        insertReferences(Gene.class, Phenotype.class, "phenotypes");
     }
 
     /**
      * Fill in missing references/collectiosn in model by querying relations
+     * BioEntity1 -> Relation -> BioEntity2   ==>   BioEntity1 -> BioEntity2
      * @param objectClass the class of the objects to which the collection will be added
      * @param subjectClass the class of the objects added to the collection
      * @param relationClass the class that relates subjectClass and objectClass
@@ -91,7 +101,7 @@ public class CreateReferences
         List newCollection = new ArrayList();
         Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), objectClass,
                                                          subjectClass, relationClass);
-        // results will be ordered by object
+        // results will be:  object ; subject ; relation  (ordered by object_
         osw.beginTransaction();
 
         int count = 0;
@@ -156,6 +166,7 @@ public class CreateReferences
      *   SELECT DISTINCT gene, exon FROM Gene AS gene, Transcript AS transcript, Exon AS exon WHERE
      *   (gene.transcripts CONTAINS transcript AND transcript.exons CONTAINS exon) ORDER BY gene
      * and then set exon.gene
+     * BioEntity1 -> BioEntity2 -> BioEntity3   ==>   BioEntitiy1 -> BioEntity3
      * @param sourceClass the first class in the query
      * @param sourceClassFieldName the field in the sourceClass which should contain the
      * connectingClass
@@ -189,7 +200,7 @@ public class CreateReferences
                                           connectingClass, connectingClassFieldName,
                                           destinationClass);
 
-        // results will be ordered by object
+        // results will be sourceClass ; destClass (ordered by sourceClass)
         osw.beginTransaction();
 
         int count = 0;
@@ -222,4 +233,170 @@ public class CreateReferences
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
+
+
+
+    /**
+     * Create specific named collection of a particulay Relation type.
+     * For example Gene.subjects contains Orthologues and other Relations, create collection
+     * called Gene.orthologues with just Orthologues in (but remain duplicated in Gene.subjects.
+     * BioEntity.collection1 -> Relation   ==>   BioEntity.collection2 -> subclass of Relation
+     * @param thisClass the class of the objects to fill in a collection for
+     * @param collectionClass the type of Relation in the collection
+     * @param oldCollectionName the name of the collection to find objects in
+     * @param newCollectionName the name of the collection to add objects to
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertReferences(Class thisClass, Class collectionClass,
+                                    String oldCollectionName, String newCollectionName)
+        throws Exception {
+
+        LOG.info("Beginning insertReferences(" + thisClass.getName() + ", "
+                 + collectionClass.getName() + ", " + oldCollectionName + ", "
+                 + newCollectionName + ")");
+
+        InterMineObject lastObject = null;
+        List newCollection = new ArrayList();
+        Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), thisClass,
+                                                         collectionClass, oldCollectionName);
+        // results will be: thisClass ; collectionClass  (ordered by thisClass)
+        osw.beginTransaction();
+
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            InterMineObject thisObject = (InterMineObject) rr.get(0);
+            InterMineObject collectionObject = (InterMineObject) rr.get(1);
+
+            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
+                if (lastObject != null) {
+                    // clone so we don't change the ObjectStore cache
+                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+
+                    try {
+                        TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+                        count += newCollection.size();
+
+                        osw.store(tempObject);
+                    } catch (IllegalAccessException e) {
+                        LOG.error("Object with ID: " + tempObject.getId()
+                                  + " has no " + newCollectionName + " field");
+                    }
+                }
+
+                newCollection = new ArrayList();
+            }
+
+            newCollection.add(collectionObject);
+
+            lastObject = thisObject;
+        }
+
+        if (lastObject != null) {
+            // clone so we don't change the ObjectStore cache
+            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+            try {
+                TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+                count += newCollection.size();
+                osw.store(tempObject);
+            } catch (IllegalAccessException e) {
+                LOG.error("Object with ID: " + tempObject.getId()
+                          + " has no " + newCollectionName + " field");
+            }
+        }
+        LOG.info("Created " + count + " " + newCollectionName + " collections in "
+                 + thisClass.getName() + " of " + collectionClass.getName());
+        osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(thisClass.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
+
+    /**
+     * Fill in missing references/collections in model by querying relations
+     * BioEntity -> Annotation -> BioProperty   ==>   BioEntity -> BioProperty
+     * @param entityClass the class of the objects to which the collection will be added
+     * @param propertyClass the class of the BioProperty to transkfer
+     * @param newCollectionName the collection in entityClass to add objects to
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertReferences(Class entityClass, Class propertyClass,
+                                    String newCollectionName)
+        throws Exception {
+
+        LOG.info("Beginning insertReferences(" + entityClass.getName() + ", "
+                 + propertyClass.getName() + ", " + newCollectionName + ")");
+
+        InterMineObject lastObject = null;
+        List newCollection = new ArrayList();
+        Iterator resIter = PostProcessUtil.findProperties(osw.getObjectStore(), entityClass,
+                                                         propertyClass);
+        // results will be:  entityClass ; properyClass (ordered by entityClass)
+        osw.beginTransaction();
+
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            LOG.error("next results....");
+            ResultsRow rr = (ResultsRow) resIter.next();
+            InterMineObject thisObject = (InterMineObject) rr.get(0);
+            InterMineObject thisProperty = (InterMineObject) rr.get(1);
+
+            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
+                if (lastObject != null) {
+                    // clone so we don't change the ObjectStore cache
+                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+
+                    try {
+                        TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+                        count += newCollection.size();
+
+                        osw.store(tempObject);
+                    } catch (IllegalAccessException e) {
+                        LOG.error("Object with ID: " + tempObject.getId()
+                                  + " has no " + newCollectionName + " field");
+                    }
+                }
+
+                newCollection = new ArrayList();
+                LOG.error("newCollection: " + newCollection);
+            }
+
+            newCollection.add(thisProperty);
+
+            lastObject = thisObject;
+        }
+
+        if (lastObject != null) {
+            // clone so we don't change the ObjectStore cache
+            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+            try {
+                LOG.error("set " + newCollectionName + " to " + newCollection);
+                TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+                count += newCollection.size();
+                osw.store(tempObject);
+            } catch (IllegalAccessException e) {
+                LOG.error("Object with ID: " + tempObject.getId()
+                          + " has no " + newCollectionName + " field");
+            }
+        }
+        LOG.info("Created " + count + newCollectionName + " collections in "
+                 + entityClass.getName() + " of " + propertyClass.getName());
+        osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(entityClass.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
+
 }
