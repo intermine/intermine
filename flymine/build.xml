@@ -1947,7 +1947,8 @@
     </ant>
   </target>
 
-  <target name="genomic-test" depends="prepare-build-model, prepare-test">
+  <target name="genomic-test" 
+          depends="prepare-build-model, prepare-test, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -2145,7 +2146,7 @@
           description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory"
           depends="prepare-gbrowse-conf">
     <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX"
-            value="${webapp.path}/${webapp.viewByID.prefix}"/>
+            value="${webapp.baseurl}${webapp.path}/${webapp.viewByID.prefix}"/>
     <filter token="FLYMINE_SITE_PREFIX"
             value="${www.location}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE"
