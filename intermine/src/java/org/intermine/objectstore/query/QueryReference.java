@@ -1,9 +1,5 @@
 package org.flymine.objectstore.query;
 
-import java.lang.reflect.Field;
-
-import org.flymine.util.TypeUtil;
-
 /**
  * Represents a field of a QueryClass that is a non-primitive type
  *
