@@ -13,6 +13,8 @@ package org.flymine.dataloader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -47,12 +49,68 @@ import org.flymine.util.PropertiesUtil;
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
+ * @author Richard Smith
  */
 public class DataLoaderHelper
 {
     protected static Map modelKeys = new HashMap();
     protected static Map sourceKeys = new HashMap();
+    protected static Map modelDescriptors = new HashMap();
  
+    /**
+     * Compare the priorities of two sources over a field
+     * @param fd FieldDescriptor for the field
+     * @param src1 the first Source
+     * @param src2 the second Source
+     * @return true if src1 is of higher priority than src2, false if src2 is of higher
+     * priority than src1 or null if the class is not in the file, or both of the sources are not
+     * listed for that class
+     */
+    public static Boolean comparePriority(FieldDescriptor fd, Source src1, Source src2) {
+        ClassDescriptor cld = fd.getClassDescriptor();
+        String cldName = TypeUtil.unqualifiedName(cld.getName());
+        Map descriptorSources = getDescriptors(cld.getModel());
+        List srcs = (List) descriptorSources.get(cldName + "." + fd.getName());
+        if (srcs == null) {
+            srcs = (List) descriptorSources.get(cldName);
+        }
+        if (srcs != null && srcs.contains(src1.getName()) && srcs.contains(src2.getName())) {
+            return new Boolean(srcs.indexOf(src1.getName()) < srcs.indexOf(src2.getName()));
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Build a map from model to a list of the Class- and FieldDescriptors for which priority
+     * information is available
+     * @param model the Model
+     * @return the Map
+     */
+    protected static Map getDescriptors(Model model) {
+        Map descriptorSources = null;
+        synchronized (modelDescriptors) {
+            descriptorSources = (Map) modelDescriptors.get(model);
+            if (descriptorSources == null) {
+                descriptorSources = new HashMap();
+                Properties priorities = loadProperties(model.getName() + "_priorities.properties");
+                for (Iterator i = priorities.entrySet().iterator(); i.hasNext();) {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    String descriptorName = (String) entry.getKey();
+                    String sourceNames = (String) entry.getValue();
+                    List sources = new ArrayList();
+                    for (StringTokenizer st = new StringTokenizer(sourceNames, ", ");
+                         st.hasMoreTokens();) {
+                        sources.add(st.nextToken());
+                    }
+                    descriptorSources.put(descriptorName, sources);
+                }
+                modelDescriptors.put(model, descriptorSources);
+            }
+        }
+        return descriptorSources;
+    }
+
     /**
      * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
      * that exist on a particular class, without performing any recursion.

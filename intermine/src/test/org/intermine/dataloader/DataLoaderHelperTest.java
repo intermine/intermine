@@ -10,11 +10,13 @@ package org.flymine.dataloader;
  *
  */
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 
 import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
@@ -191,5 +193,45 @@ public class DataLoaderHelperTest extends QueryTestCase
         c.setAddress(null);
 
         assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source));
+    }
+
+    public void testGetDescriptors() throws Exception {
+        Map expected = new HashMap();
+        expected.put("Employee.age", Arrays.asList(new Object[] {"SourceA", "SourceB"}));
+        expected.put("Employee", Arrays.asList(new Object[] {"SourceB", "SourceA"}));
+        expected.put("Address", Arrays.asList(new Object[] {"SourceB", "SourceA"}));
+        assertEquals(expected, DataLoaderHelper.getDescriptors(model));
+    }
+
+    public void testComparePriorityField() throws Exception {
+        Source sourceA = new Source();
+        sourceA.setName("SourceA");
+        Source sourceB = new Source();
+        sourceB.setName("SourceB");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+        FieldDescriptor fd = cld.getFieldDescriptorByName("age");
+        assertEquals(new Boolean(true), DataLoaderHelper.comparePriority(fd, sourceA, sourceB));
+        assertEquals(new Boolean(false), DataLoaderHelper.comparePriority(fd, sourceB, sourceA));
+    }
+
+    public void testComparePriorityClass() throws Exception {
+        Source sourceA = new Source();
+        sourceA.setName("SourceA");
+        Source sourceB = new Source();
+        sourceB.setName("SourceB");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+        FieldDescriptor fd = cld.getFieldDescriptorByName("fullTime");
+        assertEquals(new Boolean(true), DataLoaderHelper.comparePriority(fd, sourceB, sourceA));
+        assertEquals(new Boolean(false), DataLoaderHelper.comparePriority(fd, sourceA, sourceB));
+    }
+
+    public void testComparePriorityMissing() throws Exception {
+        Source sourceA = new Source();
+        sourceA.setName("SourceA");
+        Source sourceB = new Source();
+        sourceB.setName("SourceB");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        FieldDescriptor fd = cld.getFieldDescriptorByName("name");
+        assertNull(DataLoaderHelper.comparePriority(fd, sourceA, sourceB));
     }
 }
