@@ -853,9 +853,10 @@ public class FlymineSqlSelectStatement implements SqlStatement
         if (count) {
             if ((query.getGroupBy().size() > 0) || query.isDistinct()) {
                 // need to perform a COUNT(*) with this entire query as a subquery
-                String temp = "SELECT COUNT(*) FROM ("
-                    + (new FlymineSqlSelectStatement(query, dr, false).getStatement())
-                    + ") AS count_";
+                String temp = "SELECT COUNT(*) AS count_ FROM (SELECT "
+                    + (query.isDistinct() ? "DISTINCT " + buildSelectComponent() + " FROM "
+                            : "1 AS flibble FROM ") + fromText + whereText + buildGroupBy()
+                    + ") AS fake_table";
                 return temp;
             } else {
                 // no group by, not distinct -> remove select list and add COUNT(*), no ORDER BY
