@@ -58,7 +58,9 @@ public class ModifyDetails extends DispatchAction
         String trail = request.getParameter("trail");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
-        object.setVerbosity(fieldName, true);
+        if (object != null) {
+            object.setVerbosity(fieldName, true);
+        }
         
         return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
     }
