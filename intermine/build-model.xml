@@ -189,7 +189,7 @@
     </junit>
   </target>
 
-  <target name="build-db" depends="generate-torque"
+  <target name="build-db"
           description="Build database tables from a Torque description">
     <taskdef
       name="build-db"
@@ -197,42 +197,48 @@
       <classpath refid="class.path"/>
     </taskdef>
     
+    <echo message="${model.name}-schema.xml"/>
+
     <build-db
       database="${db.name}"
-      destdir="${build.model.dir}">
-      <fileset dir="${build.model.dir}">
-        <include name="*-schema.xml" />
-      </fileset>
+      tempdir="${build.tmp}"
+      schemafile="${model.name}-schema.xml">
     </build-db>
   </target>
 
 
   <!-- Targets that could be called from another build script -->
-  <target name="build-model-from-xml" depends="copy-xml-model, compile-model-java, copy-keydefs"
+  <target name="build-model-from-xml"
+          depends="copy-xml-model, compile-model-java, copy-keydefs, generate-torque"
           description="Build a usable model from a InterMine model XML file">
   </target>
 
-  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-model-java, copy-keydefs"
+  <target name="build-model-from-zargo" depends="generate-model-from-zargo, compile-model-java"
           description="Build a usable model from a .zargo file">
   </target>
 
-  <target name="generate-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
+  <target name="generate-model-from-zargo"
+          depends="unpack-xmi-model, generate-xmi-model, copy-keydefs, generate-torque"
           description="Generate a InterMine xml model from a .zargo file">
   </target>
 
-  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-model-java, copy-keydefs"
+  <target name="build-model-from-xmi"
+          depends="generate-xmi-model, compile-model-java, copy-keydefs, generate-torque"
           description="Build a usable model from a .zargo file">
   </target>
 
-  <target name="generate-model-from-xmi" depends="copy-xmi, generate-xmi-model, copy-keydefs"
+  <target name="generate-model-from-xmi"
+          depends="copy-xmi, generate-xmi-model, copy-keydefs, generate-torque"
           description="Generate a InterMine xml model from a xmi file">
   </target>
   
-  <target name="generate-model-from-owl" depends="generate-owl-model, copy-keydefs"
+  <target name="generate-model-from-owl" 
+          depends="generate-owl-model, copy-keydefs, generate-torque"
           description="Generate a InterMine xml model from an OWL file">
   </target>
   
-  <target name="build-model-from-ace" depends="generate-acedb-model, compile-model-java, copy-keydefs"
+  <target name="build-model-from-ace" 
+          depends="generate-acedb-model, compile-model-java, copy-keydefs, generate-torque"
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
