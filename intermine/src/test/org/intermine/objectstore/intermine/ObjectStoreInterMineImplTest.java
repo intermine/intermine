@@ -325,29 +325,30 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
         Map bagTableNames = new HashMap();
 
-        ((ObjectStoreInterMineImpl) os).createTempBagTables(q, bagTableNames, 1);
-
-        assertEquals(1, bagTableNames.size());
-
-        String tableName = (String) bagTableNames.values().iterator().next();
-
         Connection con = null;
-
-        Set expected = new HashSet();
-
-        Iterator bagIter = ((BagConstraint) q.getConstraint()).getBag().iterator();
-
-        while (bagIter.hasNext()) {
-            Object thisObject = bagIter.next();
-
-            if (thisObject instanceof String) {
-                expected.add(thisObject);
-            }
-        }
 
         try {
             con = ((ObjectStoreInterMineImpl) os).getConnection();
             con.setAutoCommit(false);
+
+            ((ObjectStoreInterMineImpl) os).createTempBagTables(con, q, bagTableNames, 1);
+
+            assertEquals(1, bagTableNames.size());
+
+            String tableName = (String) bagTableNames.values().iterator().next();
+
+
+            Set expected = new HashSet();
+
+            Iterator bagIter = ((BagConstraint) q.getConstraint()).getBag().iterator();
+
+            while (bagIter.hasNext()) {
+                Object thisObject = bagIter.next();
+
+                if (thisObject instanceof String) {
+                    expected.add(thisObject);
+                }
+            }
 
             Statement s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT value FROM " + tableName);

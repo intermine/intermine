@@ -71,6 +71,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Map tableToFieldNameArray;
     protected Map tableToReferencesFrom;
     protected Map tableToCollections;
+    protected String connectionTakenBy = null;
 
     protected static final int SEQUENCE_MULTIPLE = 1000000;
 
@@ -184,11 +185,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public Connection getConnection() throws SQLException {
         synchronized (this) {
-            if (conn == null) {
-                throw new SQLException("This ObjectStoreWriter is closed");
-            }
             int loops = 0;
-            while (connInUse) {
+            while (connInUse || (conn == null)) {
+                if (conn == null) {
+                    throw new SQLException("This ObjectStoreWriter is closed");
+                }
                 /*Exception trace = new Exception();
                 trace.fillInStackTrace();
                 StringWriter message = new StringWriter();
@@ -196,13 +197,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 trace.printStackTrace(pw);
                 pw.flush();
                 LOG.debug("Connection in use - entering wait - " + message.toString());*/
-                if (loops > 1000) {
+                if (loops > 100) {
                     LOG.error("Waited for connection for 100 seconds - probably a deadlock"
                             + " - throwing exception");
+                    LOG.error("The connection was taken out by stack trace: " + connectionTakenBy);
                     throw new SQLException("This ObjectStoreWriter appears to be dead due to"
                             + " deadlock");
                 } else if (loops > 1) {
-                    LOG.info("Waited for connection for " + 2 + " seconds - perhaps there's"
+                    LOG.info("Waited for connection for " + loops + " seconds - perhaps there's"
                             + " a deadlock");
                 } else {
                     LOG.debug("Connection in use - entering wait");
@@ -215,14 +217,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 loops++;
             }
             connInUse = true;
-            /*
+            
             Exception trace = new Exception();
             trace.fillInStackTrace();
             StringWriter message = new StringWriter();
             PrintWriter pw = new PrintWriter(message);
             trace.printStackTrace(pw);
+            pw.println("In Thread " + Thread.currentThread().getName());
             pw.flush();
-            LOG.error("getConnection returning connection - " + message.toString());*/
+            connectionTakenBy = message.toString();
             //LOG.debug("getConnection returning connection");
             return conn;
         }
@@ -268,19 +271,51 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public void close() {
         LOG.info("Close called on ObjectStoreWriterInterMineImpl with sequence = " + sequence);
+        Connection c = null;
         try {
-            Connection c = getConnection();
-            if (isInTransactionWithConnection(c)) {
-                abortTransactionWithConnection(c);
-                LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
-                        + " - transaction aborted");
+            c = getConnection();
+            try {
+                if (isInTransactionWithConnection(c)) {
+                    abortTransactionWithConnection(c);
+                    LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
+                            + " - transaction aborted");
+                }
+            } catch (Exception e) {
+                StringWriter message = new StringWriter();
+                PrintWriter pw = new PrintWriter(message);
+                e.printStackTrace(pw);
+                pw.flush();
+                LOG.error("Exception caught when destroying transaction while closing"
+                        + " ObjectStoreWriter - " + message);
             }
-            batch.close(c);
-            synchronized (this) {
-                os.releaseConnection(c);
-                conn = null;
+            try {
+                batch.close(c);
+            } catch (Exception e) {
+                StringWriter message = new StringWriter();
+                PrintWriter pw = new PrintWriter(message);
+                e.printStackTrace(pw);
+                pw.flush();
+                LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter - "
+                        + message);
             }
         } catch (Exception e) {
+            StringWriter message = new StringWriter();
+            PrintWriter pw = new PrintWriter(message);
+            e.printStackTrace(pw);
+            pw.flush();
+            LOG.error("Exception caught when getting Connection while closing ObjectStoreWriter - "
+                    + message);
+        } finally {
+            synchronized (this) {
+                if (c != null) {
+                    try {
+                        os.releaseConnection(c);
+                    } catch (Exception f) {
+                    }
+                }
+                conn = null;
+                notifyAll();
+            }
         }
     }
 
