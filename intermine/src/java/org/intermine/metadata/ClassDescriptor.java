@@ -19,6 +19,8 @@ import org.flymine.util.StringUtil;
 
 public class ClassDescriptor
 {
+    //    protected static final org.apache.log4j.Logger LOG
+    //    = org.apache.log4j.Logger.getLogger(ClassDescriptor.class);
 
     private final String name;        // name of this class
     private final String superclassName;
@@ -64,6 +66,7 @@ public class ClassDescriptor
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
         this.name = name;
+        //LOG.warn("MODEL: cld: name = " + name);
         this.superclassName = superclassName;
         this.interfaces = interfaces;
 
@@ -86,7 +89,8 @@ public class ClassDescriptor
                 attDesc.setClassDescriptor(this);
             } catch (IllegalStateException e) {
                 throw new IllegalArgumentException("AttributeDescriptor: " + attDesc.getName()
-                                                   + "already has ClassDescriptor set.");
+                                                   + " already has ClassDescriptor ("
+                                                   + this.name + ") set.");
             }
             fieldDescriptors.put(attDesc.getName(), attDesc);
             if (attDesc.isPrimaryKey()) {
