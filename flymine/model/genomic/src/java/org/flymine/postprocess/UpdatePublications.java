@@ -10,6 +10,7 @@ package org.flymine.postprocess;
  *
  */
 
+import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Set;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -68,25 +70,41 @@ public class UpdatePublications
      * @throws Exception if an error occurs
      */
     public void execute() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Publication.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-
         Map publications = new HashMap();
-        for (Iterator i = ((List) osw.getObjectStore().execute(q)).iterator(); i.hasNext();) {
-            Publication publication = (Publication) ((List) i.next()).get(0);
+        for (Iterator i = getPublications().iterator(); i.hasNext();) {
+            Publication publication = (Publication) i.next();
             publications.put(publication.getPubMedId(), publication);
             if (publications.size() == BATCH_SIZE || !i.hasNext()) {
-                String ids = StringUtil.join(publications.keySet(), ",");
-                BufferedReader reader = 
-                    new BufferedReader(new InputStreamReader(new URL(ESUMMARY_URL
-                                                                     + ids).openStream()));
-                SAXParser.parse(new InputSource(reader), new Handler(publications));
+                SAXParser.parse(new InputSource(getReader(publications.keySet())),
+                                new Handler(publications));
                 storePublications(publications.values());
                 publications = new HashMap();
             }
         }
+    }
+
+    /**
+     * Retrieve the publications to be updated
+     * @return a List of publications
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected List getPublications() throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Publication.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        return osw.getObjectStore().execute(q);
+    }
+
+    /**
+     * Obtain the pubmed esummary information for the publications
+     * @param ids the pubMedIds of the publications
+     * @return a Reader for the information
+     * @throws Exception if an error occurs
+     */
+    protected Reader getReader(Set ids) throws Exception {
+        return new BufferedReader(new InputStreamReader(new URL(ESUMMARY_URL + StringUtil
+                                                                .join(ids, ",")).openStream()));
     }
 
     /**
@@ -107,7 +125,7 @@ public class UpdatePublications
     /**
      * Extension of DefaultHandler to handle an esummary for a publication
      */
-    class Handler extends DefaultHandler
+    static class Handler extends DefaultHandler
     {
         Map publications;
         Publication publication;
