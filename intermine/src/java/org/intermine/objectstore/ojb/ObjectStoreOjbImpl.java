@@ -15,9 +15,12 @@ import org.flymine.sql.query.ExplainResult;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.PropertiesUtil;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.MetaDataException;
 
 /**
  * Implementation of ObjectStore that uses OJB as its underlying store.
@@ -146,6 +149,32 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
         }
         pb.close();
         return res;
+    }
+
+    /**
+     * @see ObjectStore#getObjectByExample
+     */
+    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+        Model model;
+        try {
+            model = Model.getInstance();
+            if (model == null) {
+                throw new MetaDataException();
+            }
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
+        }
+        Results res = execute(QueryHelper.createQueryForExampleObject(obj, model));
+        
+        if (res.size() > 1) {
+            throw new IllegalArgumentException("More than one object in the database has "
+                                               + "this primary key");
+        }
+        if (res.size() == 1) {
+            Object ret = ((ResultsRow) res.get(0)).get(0);
+            return ret;
+        }
+        return null;
     }
 
     /**

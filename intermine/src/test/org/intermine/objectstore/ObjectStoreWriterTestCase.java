@@ -135,7 +135,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             assertTrue(address1.getId() != null);
 
             // Can we get it out again?
-            Object returned = writer.getObjectByExample(addressTemplate);
+            Object returned = os.getObjectByExample(addressTemplate);
 
             assertEquals(address1, returned);
         } finally {
@@ -162,7 +162,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(employee1);
 
             // Can we get it out again?
-            Object returned = writer.getObjectByExample(employeeTemplate);
+            Object returned = os.getObjectByExample(employeeTemplate);
             assertFalse(((Employee) returned).getFullTime());
 
         } finally {
@@ -184,7 +184,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             assertTrue(employee1.getId() != null);
 
             // Can we get it out again?
-            Object returned = writer.getObjectByExample(employeeTemplate);
+            Object returned = os.getObjectByExample(employeeTemplate);
 
             assertEquals(employee1, returned);
             assertEquals(address1, ((Employee) returned).getAddress());
@@ -210,7 +210,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(employee1);
 
             // Check that the department is referenced
-            Object returned = writer.getObjectByExample(employeeTemplate);
+            Object returned = os.getObjectByExample(employeeTemplate);
 
             assertEquals(employee1, returned);
             assertEquals(department1, ((Employee) returned).getDepartment());
@@ -225,7 +225,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(employee1);
 
             // Check that the new department is referenced
-            returned = writer.getObjectByExample(employeeTemplate);
+            returned = os.getObjectByExample(employeeTemplate);
 
             assertEquals(employee1, returned);
             assertEquals(department2, ((Employee) returned).getDepartment());
@@ -235,7 +235,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(employee1);
 
             // Check that the department is not referenced
-            returned = writer.getObjectByExample(employeeTemplate);
+            returned = os.getObjectByExample(employeeTemplate);
 
             assertEquals(employee1, returned);
             assertEquals(null, ((Employee) returned).getDepartment());
@@ -253,7 +253,7 @@ public class ObjectStoreWriterTestCase extends TestCase
 
             // Check that the department3 is referenced, even though it was not
             // previously in database
-            returned = writer.getObjectByExample(employeeTemplate);
+            returned = os.getObjectByExample(employeeTemplate);
 
             assertEquals(employee1, returned);
             assertEquals(department3, ((Employee) returned).getDepartment());
@@ -289,7 +289,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(company1);
             writer.store(department2);
 
-            Company returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            Company returnedCompany = (Company) os.getObjectByExample(companyTemplate);
 
             assertNotNull(returnedCompany);
             assertEquals(1, returnedCompany.getDepartments().size());
@@ -300,7 +300,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(company1);
             writer.store(department1);
 
-            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            returnedCompany = (Company) os.getObjectByExample(companyTemplate);
             assertEquals(2, returnedCompany.getDepartments().size());
             assertTrue(returnedCompany.getDepartments().contains(department1));
             assertTrue(returnedCompany.getDepartments().contains(department2));
@@ -311,7 +311,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(company1);
             writer.store(department1);
 
-            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            returnedCompany = (Company) os.getObjectByExample(companyTemplate);
             assertEquals(1, returnedCompany.getDepartments().size());
             assertTrue(returnedCompany.getDepartments().contains(department2));
 
@@ -322,7 +322,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(department2);
             writer.store(company1);
 
-            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            returnedCompany = (Company) os.getObjectByExample(companyTemplate);
             assertEquals(0, returnedCompany.getDepartments().size());
 
         } finally {
@@ -356,14 +356,14 @@ public class ObjectStoreWriterTestCase extends TestCase
 
             // Check we have collections filled on both sides
 
-            Company returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            Company returnedCompany = (Company) os.getObjectByExample(companyTemplate);
 
             assertNotNull(returnedCompany);
             assertEquals(2, returnedCompany.getContractors().size());
             assertTrue(returnedCompany.getContractors().contains(contractor1));
             assertTrue(returnedCompany.getContractors().contains(contractor2));
 
-            Contractor returnedContractor = (Contractor) writer.getObjectByExample(contractorTemplate);
+            Contractor returnedContractor = (Contractor) os.getObjectByExample(contractorTemplate);
 
             assertNotNull(returnedContractor);
             assertEquals(2, returnedContractor.getCompanys().size());
@@ -374,7 +374,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             company1.getContractors().add(contractor3);
             contractor3.getCompanys().add(company1);
             writer.store(company1);
-            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            returnedCompany = (Company) os.getObjectByExample(companyTemplate);
 
             assertNotNull(returnedCompany);
             assertEquals(3, returnedCompany.getContractors().size());
@@ -382,7 +382,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             assertTrue(returnedCompany.getContractors().contains(contractor2));
             assertTrue(returnedCompany.getContractors().contains(contractor3));
 
-            returnedContractor = (Contractor) writer.getObjectByExample(contractor3Template);
+            returnedContractor = (Contractor) os.getObjectByExample(contractor3Template);
 
             assertNotNull(returnedContractor);
             assertEquals(1, returnedContractor.getCompanys().size());
@@ -391,7 +391,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             // Delete a contractor from company1's collection
             company1.getContractors().remove(contractor2);
             writer.store(company1);
-            returnedCompany = (Company) writer.getObjectByExample(companyTemplate);
+            returnedCompany = (Company) os.getObjectByExample(companyTemplate);
 
             assertNotNull(returnedCompany);
             assertEquals(2, returnedCompany.getContractors().size());
@@ -497,12 +497,12 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(company1);
             writer.store(employee1);
 
-            Object returned = writer.getObjectByExample(employeeTemplate);
+            Object returned = os.getObjectByExample(employeeTemplate);
 
             assertTrue(returned instanceof CEO);
             assertEquals(employee1, returned);
 
-            returned = writer.getObjectByExample(companyTemplate);
+            returned = os.getObjectByExample(companyTemplate);
 
             assertTrue(returned instanceof Company);
             assertEquals(company1, returned);
@@ -515,7 +515,7 @@ public class ObjectStoreWriterTestCase extends TestCase
     }
 
     public void testGetByExampleNonExistentObject() throws Exception {
-        Object returned = writer.getObjectByExample(employeeTemplate);
+        Object returned = os.getObjectByExample(employeeTemplate);
         assertNull(returned);
     }
 
@@ -527,7 +527,7 @@ public class ObjectStoreWriterTestCase extends TestCase
         // Address not set
 
         try {
-            writer.getObjectByExample(employee);
+            os.getObjectByExample(employee);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -535,7 +535,7 @@ public class ObjectStoreWriterTestCase extends TestCase
 
     public void testGetByExampleNullObject() throws Exception {
         try {
-            writer.getObjectByExample(null);
+            os.getObjectByExample(null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }

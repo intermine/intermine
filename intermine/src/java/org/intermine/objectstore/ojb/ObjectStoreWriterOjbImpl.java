@@ -9,12 +9,6 @@ import org.apache.ojb.broker.TransactionAbortedException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryHelper;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.MetaDataException;
 import org.flymine.util.ModelUtil;
 
 /**
@@ -133,32 +127,5 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
             throw new ObjectStoreException("Cannot commit transaction: "
                                            + "there is no transaction is in progress");
         }
-    }
-
-    /**
-     * @see ObjectStoreWriter#getObjectByExample
-     */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        Model model;
-        try {
-            model = Model.getInstance();
-            if (model == null) {
-                throw new MetaDataException();
-            }
-        } catch (MetaDataException e) {
-            throw new ObjectStoreException(e);
-        }
-        Query q = QueryHelper.createQueryForExampleObject(obj, model);
-        Results res = os.execute(q);
-        
-        if (res.size() > 1) {
-            throw new IllegalArgumentException("More than one object in the database has "
-                                               + "this primary key");
-        }
-        if (res.size() == 1) {
-            Object ret = ((ResultsRow) res.get(0)).get(0);
-            return ret;
-        }
-        return null;
     }
 }

@@ -180,6 +180,13 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
         return row;
     }
 
+    /**
+     * @see ObjectStore#getObjectByExample
+     */
+    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+        throw new ObjectStoreException("getObjectByExample is not supported by "
+                                       + this.getClass().getName());
+    }
 
     /**
      * Returns an empty ExplainResult object

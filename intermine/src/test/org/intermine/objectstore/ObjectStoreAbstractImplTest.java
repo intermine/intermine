@@ -53,6 +53,10 @@ public class ObjectStoreAbstractImplTest extends TestCase
             return null;
         }
 
+        public Object getObjectByExample(Object obj) throws ObjectStoreException {
+            return null;
+        }
+
         public ExplainResult estimate(Query q) throws ObjectStoreException {
             return null;
         }

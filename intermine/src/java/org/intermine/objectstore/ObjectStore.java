@@ -14,7 +14,6 @@ import org.flymine.sql.query.ExplainResult;
  */
 public interface ObjectStore
 {
-
     /**
      * Execute a Query on this ObjectStore
      *
@@ -37,6 +36,16 @@ public interface ObjectStore
      */
     public List execute(Query q, int start, int limit) throws ObjectStoreException;
 
+    /**
+     * Get an object from the ObjectStore by giving an example. The returned object
+     * (if present) will have the same primary keys as the example object.
+     *
+     * @param obj an example object
+     * @return the equivalent object from the ObjectStore, or null if none exists
+     * @throws ObjectStoreException if an error occurs during retrieval of the object
+     * @throws IllegalArgumentException if obj does not have all its primary key fields set
+     */
+    public Object getObjectByExample(Object obj) throws ObjectStoreException ;
 
     /**
      * Runs an EXPLAIN on the query without ant LIMIT or OFFSET.
@@ -66,5 +75,4 @@ public interface ObjectStore
      * @return the number of row to be produced by query
      */
     public int count(Query q);
-
 }
