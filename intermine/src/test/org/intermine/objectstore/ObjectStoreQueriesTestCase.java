@@ -22,8 +22,6 @@ import org.exolab.castor.xml.*;
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.*;
-import org.flymine.util.ModelUtil;
-import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.testing.OneTimeTestCase;
 

@@ -15,8 +15,6 @@ import java.lang.reflect.*;
 import java.beans.*;
 import java.math.BigDecimal;
 
-import org.flymine.util.ModelUtil;
-import org.flymine.util.TypeUtil;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.ExplainResult;

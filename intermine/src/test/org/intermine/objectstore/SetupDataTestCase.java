@@ -28,7 +28,6 @@ import org.flymine.objectstore.query.QueryClass;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
 import org.flymine.testing.OneTimeTestCase;
-import org.flymine.util.ModelUtil;
 import org.flymine.util.TypeUtil;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
