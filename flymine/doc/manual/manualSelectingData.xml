@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+<section>
+       <heading>Selecting data from classes</heading>
+         <item>You can think of the classes as boxes containing lots of individual items (objects).  To create a query you want certain items from certain boxes.  You therefore have to select the boxes that require the items you want and constrain the boxes so that you only select the subset of items in the boxes that you require.  To query FlyMine you therefore select the classes that hold the objects you require.  Constraints can be applied to the objects contained in a class, so that only a certain subset of those objects which have the required characteristics are selected.  For example the gene class contains a large number of genes (gene objects) from all the organisms represented in FlyMine.  However you may only be interested in data related to one specific gene.  You would therefore constrain the gene name field of the gene class to that of the required gene.  </item>  
+    </section>
+
+
+  
+	  <entry>
+	      <inlinegraphic fileref="constrainDiag2.gif" format="GIF"/>
+	  </entry>
+ 
+
+</index>
+
+</article>
+

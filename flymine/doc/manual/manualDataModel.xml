@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+
+   <section>
+       <heading>The FlyMine Data Model</heading>
+       <item>
+The FlyMine database is based upon an object model.  The object model
+has been created by merging existing ontologies and standards
+including the Sequence Ontology, MAGE, and PSI (blah blah). Additional
+FlyMine specific classes help link the ontologies and provide classes
+relating to the evidence for a particular piece of data (needs
+work!!).  To get the most out of querying FlyMine it is useful to
+understand a bit about the underlying data model.  First of all it is
+useful to understand the concepts of classes, objects and fields.
+</item>
+    </section>
+
+
+
+</index>
+
+</article>
+

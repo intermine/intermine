@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+
+    <sect1>
+       <title>Combining and constraining objects from 2 classes</title>
+
+
+       <para>This page will guide you through the query: Show all the genes for the organism Drosophila melanogaster.  The aim of this query tutorial is to show you how to combine and constrain objects from two different classes.  By constraining the objects from the organism class you will also constrain the objects returned from the Gene class. This query involves: 
+</para>
+
+    
+        <para>
+          <orderedlist>
+             <listitem>Selecting the Gene class</listitem>
+             <listitem>Constraining the Organism.name field from Gene class to Drosohpila melanogaster.</listitem>
+             <listitem>Selecting the Gene name field and organism name field to show in the output</listitem>
+          </orderedlist>
+        </para>
+
+
+    <para>
+         <orderedlist>
+            <listitem>Select the starting point for your query. In this case, Gene.</listitem>
+          
+	  <entry>
+	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	  </entry>
+
+
+           <listitem>The model browser will now be displaying the Gene class and it's fields.  Navigate to the Organism field and expand to show the fields of the organism class. The organism field is a reference to the Organism class.</listitem>  
+
+
+	  <entry>
+	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	  </entry>
+
+           <listitem>You now need to constrain the organsim name to Drosophila melanogaster.  Select the -> next to the name field of the organism class.  In the constraints list constrain to '= Drosophila melanogaster'.  Alternatively you can change the '=' to 'like' and write %melanogaster in the box.  % is just like a * wild card.  Press 'Add to query' to add this constraint to the constraints list.</listitem>  
+
+
+	  <entry>
+	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	  </entry>
+
+
+
+           <listitem>You now need to select the fields you wish to view in the results output.  In the Model browser select 'show' next to the Gene name field and the Organism name field.  These fields will be added to the Output fields list.  Note that you can change the order of the output fields using the arrows, and you can delete a field using the x.</listitem>  
+
+
+	  <entry>
+	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	  </entry>
+
+           <listitem>Press 'Show results' to view your results in the results page.</listitem>  
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	  </entry>
+
+  </orderedlist>
+  </para>
+</sect1>
+</article>
+
