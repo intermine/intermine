@@ -11,7 +11,7 @@
 <!-- resultsCell.jsp -->
 <c:choose>
   <%-- check whether we have a business object or a plain java object --%>
-  <c:when test="${clds != null}">
+  <c:when test="${!empty clds}">
     <table>
       <tr>
         <td align="left">
