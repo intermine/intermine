@@ -38,7 +38,7 @@
                     <c:if test="${!status.last}">
                       [
                       <html:link
-                         action="/viewChange?method=moveRight&index=${status.index}">
+                        action="/viewChange?method=moveRight&index=${status.index}">
                         &gt;
                       </html:link>
                       ]
@@ -55,9 +55,11 @@
           </tr>
         </table>
         <br/>
-        <html:link action="/viewChange?method=runQuery">
-          <fmt:message key="view.showresults"/>
-        </html:link>
+        <html:form action="/viewAction">
+          <html:submit property="action">
+            <fmt:message key="view.showresults"/>
+          </html:submit>
+        </html:form>
       </div>
     </div>
     <br/>

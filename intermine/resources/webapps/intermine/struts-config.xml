@@ -25,17 +25,9 @@
     <form-bean name="changeResultsForm"
                type="org.intermine.web.results.ChangeResultsForm"/>
 
-    <!-- run query has no properties, uses an DynaActionForm -->
+    <!-- run query has no properties, use an DynaActionForm -->
     <form-bean name="emptyForm"
                type="org.apache.struts.action.DynaActionForm"/>
-
-    <!-- restart query -->
-    <form-bean name="restartQueryForm"
-               type="org.apache.struts.action.DynaActionForm"/>
-
-    <!-- load query -->
-    <form-bean name="loadQueryForm"
-               type="org.intermine.web.LoadQueryForm"/>
 
     <!-- save query -->
     <form-bean name="saveQueryForm"
@@ -87,11 +79,16 @@
       <forward name="query" path="query.page"/>
     </action>
 
+    <action path="/viewAction"
+            type="org.intermine.web.ViewAction"
+            name="emptyForm">
+      <forward name="results" path="results.page"/>
+    </action>
+
     <action path="/viewChange"
             type="org.intermine.web.ViewChange"
             parameter="method">
       <forward name="query" path="query.page"/>
-      <forward name="results" path="results.page"/>
     </action>
 
     <action path="/exportAction"
