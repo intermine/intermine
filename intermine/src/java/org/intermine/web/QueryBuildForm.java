@@ -10,12 +10,10 @@ package org.flymine.web;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.HashMap;
 
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean to represent the inputs to a text-based query
@@ -121,13 +119,5 @@ public class QueryBuildForm extends ActionForm
      */
     public Object getFieldValue(String key) {
         return fieldValues.get(key);
-    }
-
-    /**
-     * @see ActionForm#reset
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        fieldValues.clear();
-        fieldOps.clear();
     }
 }
