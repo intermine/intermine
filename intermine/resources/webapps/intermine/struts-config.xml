@@ -154,6 +154,9 @@
     <action path="/initResultsCell" type="org.flymine.web.results.ResultsCellController">
     </action>
 
+    <!-- don't (re)move this - it's used for importing any model-specific actions -->
+    <!--@MODEL_INCLUDE@-->
+
   </action-mappings>
 
   <!-- ========== Controller Configuration ================================ -->
@@ -167,6 +170,9 @@
   <!-- ========== Message Resources Definitions =========================== -->
 
   <message-resources parameter="FlyMineWebApp"/>
+
+  <!-- model-specific resources -->
+  <message-resources parameter="model" key="model"/>
 
   <!-- ========== Plug Ins Configuration ================================== -->
 
@@ -182,7 +188,7 @@
     className="org.apache.struts.tiles.TilesPlugin">
     <set-property 
         property="definitions-config" 
-        value="/WEB-INF/tiles-defs.xml"/>
+        value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
   </plug-in>
 
 </struts-config>
