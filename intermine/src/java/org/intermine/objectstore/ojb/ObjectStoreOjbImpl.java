@@ -10,6 +10,7 @@ import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.ta.PersistenceBrokerFactoryFactory;
 
 import org.flymine.sql.Database;
+import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
@@ -27,18 +28,25 @@ import org.flymine.util.PropertiesUtil;
 public class ObjectStoreOjbImpl implements ObjectStore
 {
     protected static Map instances = new HashMap();
-    protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
     protected Database db;
+    protected String model;
     protected long maxTime;
     protected int maxRows;
     protected int maxLimit;
     protected int maxOffset;
+    protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
 
     /**
-     * No argument constructor for testing purposes
+     * No argument constructor
      *
      */
     protected ObjectStoreOjbImpl() {
+        Properties props = PropertiesUtil.getPropertiesStartingWith("os.query");
+        props = PropertiesUtil.stripStart("os.query", props);
+        maxRows = Integer.parseInt((String) props.get("max-rows"));
+        maxTime = Long.parseLong((String) props.get("max-time"));
+        maxLimit = Integer.parseInt((String) props.get("max-limit"));
+        maxOffset = Integer.parseInt((String) props.get("max-offset"));
     }
 
     /**
@@ -46,19 +54,16 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * NB There is one ObjectStore per Database, and it holds a PersistenceBrokerFactory
      *
      * @param db the database in which the model resides
+     * @param model the name of the model
      * @throws NullPointerException if repository is null
      * @throws IllegalArgumentException if repository is invalid
      */
-    protected ObjectStoreOjbImpl(Database db) {
+    protected ObjectStoreOjbImpl(Database db, String model) {
+        this();
         this.db = db;
+        this.model = model;
+        //should the factory be created for a given model?
         pbf = (PersistenceBrokerFactoryFlyMineImpl) PersistenceBrokerFactoryFactory.instance();
-
-        Properties props = PropertiesUtil.getPropertiesStartingWith("os.query");
-        props = PropertiesUtil.stripStart("os.query", props);
-        maxRows = Integer.parseInt((String) props.get("max-rows"));
-        maxTime = Long.parseLong((String) props.get("max-time"));
-        maxLimit = Integer.parseInt((String) props.get("max-limit"));
-        maxOffset = Integer.parseInt((String) props.get("max-offset"));
     }
 
     /**
@@ -70,24 +75,29 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @return the PersistenceBroker this object is using
      */
     public PersistenceBroker getPersistenceBroker() {
-        return pbf.createPersistenceBroker(db);
+        return pbf.createPersistenceBroker(db, model);
     }
 
     /**
      * Gets a ObjectStoreOjbImpl instance for the given underlying repository
      *
-     * @param db the database in which the model resides
+     * @param props The properties used to configure an OJB-based objectstore
      * @return the ObjectStoreOjbImpl for this repository
      * @throws IllegalArgumentException if repository is invalid
      * @throws ObjectStoreException if there is any problem with the underlying OJB instance
      */
-    public static ObjectStoreOjbImpl getInstance(Database db) throws ObjectStoreException {
+    public static ObjectStoreOjbImpl getInstance(Properties props) throws ObjectStoreException {
+        Database db;
+        try {
+            db = DatabaseFactory.getDatabase(props.getProperty("db"));
+        } catch (Exception e) {
+            throw new ObjectStoreException("Unable to get database: " + e);
+        }
         synchronized (instances) {
             if (!(instances.containsKey(db))) {
-                instances.put(db, new ObjectStoreOjbImpl(db));
+                instances.put(db, new ObjectStoreOjbImpl(db, props.getProperty("model")));
             }
         }
-
         return (ObjectStoreOjbImpl) instances.get(db);
     }
 
@@ -127,7 +137,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
                                             + maxLimit + ")"));
         }
 
-        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db);
+        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
         ExplainResult explain = pb.explain(q, start, limit);
 
         if (explain.getTime() > maxTime) {
@@ -176,7 +186,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
 
     private ExplainResult explain(Query q, int start, int end) throws ObjectStoreException {
         int limit = (end - start) + 1;
-        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db);
+        PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
         ExplainResult result = pb.explain(q, start, limit);
         pb.close();
         return result;
