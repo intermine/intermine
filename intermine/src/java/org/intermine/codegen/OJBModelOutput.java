@@ -35,8 +35,10 @@ import ru.novosoft.uml.foundation.extension_mechanisms.*;
 import java.io.File;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import org.xml.sax.InputSource;
 
 public class OJBModelOutput extends ModelOutput
@@ -108,12 +110,13 @@ public class OJBModelOutput extends ModelOutput
 
         MClassifier parent = null;
         String tableName = null;
-        Iterator parents = cls.getGeneralizations().iterator();
-        if (parents.hasNext()) {
-            parent = (MClassifier) ((MGeneralization) parents.next()).getParent();
-            tableName = parent.getName();
-        } else {
+        if (cls.getGeneralizations().size() == 0) {
             tableName = cls.getName();
+            parent = null;
+        } else {
+            List parents = getParents(cls);
+            parent = (MClassifier) parents.get(0);
+            tableName = ((MClassifier) parents.get(parents.size() - 1)).getName();
         }
             
         StringBuffer sb = new StringBuffer ();
@@ -170,8 +173,14 @@ public class OJBModelOutput extends ModelOutput
                 .append(" name=\"ojbConcreteClass\"")
                 .append(" column=\"CLASS\"")
                 .append(" jdbc-type=\"VARCHAR\" />\n");
-            if (parents.hasNext()) {
-                MClassifier parent = (MClassifier) ((MGeneralization) parents.next()).getParent();
+        }
+
+        if (parents.hasNext()) {
+            List parentList = getParents(cls);
+            Collections.reverse(parentList);
+            Iterator iter = parentList.iterator();
+            while (iter.hasNext()) {
+                MClassifier parent = (MClassifier) iter.next();
                 doAttributes(getAttributes(parent), sb);
                 doAssociations(parent.getAssociationEnds(), sb);
             }
