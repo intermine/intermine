@@ -71,14 +71,14 @@ while test $# -gt 0 ; do
 	shift
 done
 
-if test "True" = "$RES_SET" && ( test "True" = "$SZX_SET" || test "True" = "SZY_SET" ) ; then
-	echo "You can't mix resolution and size arguments" 1>&2
-	exit
-fi
-if test "True" = "$SZY_SET" && test "True" = "$SZX_SET" ; then
-	echo "You can't mix -x and -y arguments" 1>&2
-	exit
-fi
+#if test "True" = "$RES_SET" && ( test "True" = "$SZX_SET" || test "True" = "SZY_SET" ) ; then
+#	echo "You can't mix resolution and size arguments" 1>&2
+#	exit
+#fi
+#if test "True" = "$SZY_SET" && test "True" = "$SZX_SET" ; then
+#	echo "You can't mix -x and -y arguments" 1>&2
+#	exit
+#fi
 
 if test "$FILENAME" == "stdin" ; then
 	FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
@@ -93,24 +93,29 @@ HEIGHT=`echo $BBOX | sed -e "s/^[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\)$/\1/g"`
 LEFT=`echo $BBOX | sed -e "s/^\([^ ]\+\) [^ ]\+ [^ ]\+ [^ ]\+$/\1/g"`
 BOTTOM=`echo $BBOX | sed -e "s/^[^ ]\+ \([^ ]\+\) [^ ]\+ [^ ]\+$/\1/g"`
 
+USWIDTH=`echo "(($WIDTH * $RES) / 72) * $ANTIALIAS" | bc`
+USHEIGHT=`echo "(($HEIGHT * $RES) / 72) * $ANTIALIAS" | bc`
+USRES=`echo "$RES * $ANTIALIAS" | bc`
+USLEFT=`echo "(($LEFT * $RES) / 72) * $ANTIALIAS" | bc`
+USBOTTOM=`echo "$USHEIGHT - ((($BOTTOM * $RES) / 72) * $ANTIALIAS) - 1" | bc`
+
 if test "True" = "$SZX_SET" ; then
-	USWIDTH=`echo "$SZX * $ANTIALIAS" | bc`
-	USHEIGHT=`echo "(($SZX * $HEIGHT) / $WIDTH) * $ANTIALIAS" | bc`
-	USRES=`echo "(($SZX * 72) / $WIDTH) * $ANTIALIAS" | bc`
-	USLEFT=`echo "(($SZX * $LEFT) / $WIDTH) * $ANTIALIAS" | bc`
-	USBOTTOM=`echo "$USHEIGHT - ((($SZX * $BOTTOM) / $WIDTH) * $ANTIALIAS) - 1" | bc`
-elif test "True" = "$SZY_SET" ; then
-	USWIDTH=`echo "(($SZY * $WIDTH) / $HEIGHT) * $ANTIALIAS" | bc`
-	USHEIGHT=`echo "$SZY * $ANTIALIAS" | bc`
-	USRES=`echo "(($SZY * 72) / $HEIGHT) * $ANTIALIAS" | bc`
-	USLEFT=`echo "(($SZY * $LEFT) / $HEIGHT) * $ANTIALIAS" | bc`
-	USBOTTOM=`echo "$USHEIGHT - ((($SZY * $BOTTOM) / $HEIGHT) * $ANTIALIAS) - 1" | bc`
-else
-	USWIDTH=`echo "(($WIDTH * $RES) / 72) * $ANTIALIAS" | bc`
-	USHEIGHT=`echo "(($HEIGHT * $RES) / 72) * $ANTIALIAS" | bc`
-	USRES=`echo "$RES * $ANTIALIAS" | bc`
-	USLEFT=`echo "(($LEFT * $RES) / 72) * $ANTIALIAS" | bc`
-	USBOTTOM=`echo "$USHEIGHT - ((($BOTTOM * $RES) / 72) * $ANTIALIAS) - 1" | bc`
+	if test "False" = "$RES_SET" || test "$USWIDTH" -gt "`echo "${SZX} * $ANTIALIAS" | bc`" ; then
+		USWIDTH=`echo "$SZX * $ANTIALIAS" | bc`
+		USHEIGHT=`echo "(($SZX * $HEIGHT) / $WIDTH) * $ANTIALIAS" | bc`
+		USRES=`echo "(($SZX * 72) / $WIDTH) * $ANTIALIAS" | bc`
+		USLEFT=`echo "(($SZX * $LEFT) / $WIDTH) * $ANTIALIAS" | bc`
+		USBOTTOM=`echo "$USHEIGHT - ((($SZX * $BOTTOM) / $WIDTH) * $ANTIALIAS) - 1" | bc`
+	fi
+fi
+if test "True" = "$SZY_SET" ; then
+	if ( test "False" = "$RES_SET" && test "False" = "$SZX_SET" ) || test "$USHEIGHT" -gt "`echo "${SZY} * $ANTIALIAS" | bc`" ; then
+		USWIDTH=`echo "(($SZY * $WIDTH) / $HEIGHT) * $ANTIALIAS" | bc`
+		USHEIGHT=`echo "$SZY * $ANTIALIAS" | bc`
+		USRES=`echo "(($SZY * 72) / $HEIGHT) * $ANTIALIAS" | bc`
+		USLEFT=`echo "(($SZY * $LEFT) / $HEIGHT) * $ANTIALIAS" | bc`
+		USBOTTOM=`echo "$USHEIGHT - ((($SZY * $BOTTOM) / $HEIGHT) * $ANTIALIAS) - 1" | bc`
+	fi
 fi
 
 USBOTTOMPLUSONE=`echo "$USBOTTOM + 1" | bc`
