@@ -223,11 +223,15 @@ public class MergeOwlTest extends TestCase
         assertTrue(s.getPredicate().getURI().equals(OntologyUtil.OWL_NAMESPACE + "equivalentClass"));
         assertTrue(s.getResource().equals(subject));
 
+        // test that no statement is added if target and original in same namespace
+        statements = new ArrayList();
+        merger.addEquivalenceStatement(subject, object, subject, statements);
+        assertTrue(statements.size() == 0);
 
         // test equivalentProperty statement added
         subject = src1.getProperty(src1Namespace + "testProperty");
         target = merger.tgtModel.createProperty(tgtNamespace + "TestClass__testProperty");
-        object = src1.getResource(OntologyUtil.RDF_NAMESPACE + "Property");
+        object = src1.getResource(OntologyUtil.OWL_NAMESPACE + "DatatypeProperty");
         statements = new ArrayList();
 
         merger.addEquivalenceStatement(target, object, subject, statements);
@@ -238,7 +242,7 @@ public class MergeOwlTest extends TestCase
         assertTrue(s.getResource().equals(subject));
 
         // test sameAs statement added
-        subject = src1.getProperty(src1Namespace + "testIndicidual");
+        subject = src1.getProperty(src1Namespace + "testIndividual");
         target = merger.tgtModel.createProperty(tgtNamespace + "testIndividual");
         object = src1.getResource(OntologyUtil.OWL_NAMESPACE + "Individual");
         statements = new ArrayList();
@@ -249,6 +253,8 @@ public class MergeOwlTest extends TestCase
         assertTrue(s.getSubject().equals(target));
         assertTrue(s.getPredicate().getURI().equals(OntologyUtil.OWL_NAMESPACE + "sameAs"));
         assertTrue(s.getResource().equals(subject));
+
+
     }
 
 
