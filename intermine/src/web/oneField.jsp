@@ -22,8 +22,9 @@
           <c:if test="${fieldDescriptor.name != 'id'}">
             <div>
               <nobr>
+                <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
                 <c:out value="${fieldDescriptor.name}"/>:
-                <c:out value="${object[fieldDescriptor.name]}" default="null"/>
+                <c:out value="${object[fieldDescriptor.name]}" default="${nullFieldText}"/>
               </nobr>
             </div>
           </c:if>

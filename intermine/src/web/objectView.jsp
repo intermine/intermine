@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <tiles:importAttribute/>
 
@@ -8,7 +9,8 @@
 <div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
-      <c:out value="${object}" default="null"/>
+      <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
+      <c:out value="${object}" default="${nullFieldText}"/>
     </c:when>
     <c:otherwise>
       <nobr>
