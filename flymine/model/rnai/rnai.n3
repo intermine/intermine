@@ -12,7 +12,11 @@
         owl:maxCardinality "1";
         owl:onProperty :Gene__organism ].
 
-:Gene__identifier a owl:DatatypeProperty;
+:Gene__sequenceName a owl:DatatypeProperty;
+    rdfs:domain :Gene;
+    rdfs:range xsd:string.
+
+:Gene__commonName a owl:DatatypeProperty;
     rdfs:domain :Gene;
     rdfs:range xsd:string.
 
@@ -53,7 +57,7 @@
 
 #Phenotype
 
-:Phenotype a owl:Class.
+:Phenotype a owl:Class;
     rdfs:subClassOf
       [ a owl:Restriction;
         owl:maxCardinality "1";
@@ -68,7 +72,7 @@
 
 :Phenotype__evidence a owl:ObjectProperty;
     rdfs:domain :Phenotype;
-    rdfs:range :Evidence.
+    rdfs:range :RNAiExperiment.
 
 #RNAiExperiment
 
@@ -142,9 +146,25 @@
     rdfs:domain :Publication;
     rdfs:range xsd:string.
 
+#Author
+
+:Author a owl:Class.
+
+:Author__name a owl:DatatypeProperty;
+    rdfs:domain :Author;
+    rdfs:range xsd:string.
+
+:Author__publications a owl:ObjectProperty;
+    rdfs:domain :Author ;
+    rdfs:range :Publication .
+
 #Database
 
 :Database a owl:Class.
+
+:Database__title a owl:DatatypeProperty;
+    rdfs:domain :Database;
+    rdfs:range xsd:string.
 
 :Database__url a owl:DatatypeProperty;
     rdfs:domain :Database;
