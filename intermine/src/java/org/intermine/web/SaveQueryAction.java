@@ -22,10 +22,12 @@ import java.util.List;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionError;
+import org.apache.struts.Globals;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -109,5 +111,10 @@ public class SaveQueryAction extends Action
         
         session.setAttribute(Constants.QUERY, SaveQueryHelper.clone(qNodes, model));
         session.setAttribute(Constants.VIEW, new ArrayList(view));
+
+        ActionMessages messages = new ActionMessages();
+        ActionMessage message = new ActionMessage("saveQuery.message", queryName);
+        messages.add("saveQuery", message);
+        request.setAttribute(Globals.MESSAGE_KEY, messages);
     }
 }
