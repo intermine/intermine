@@ -13,7 +13,6 @@ package org.flymine.web.results;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
