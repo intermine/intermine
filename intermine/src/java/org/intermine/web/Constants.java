@@ -29,19 +29,6 @@ public interface Constants
     public static final String MODEL = "MODEL";
 
     /**
-     * The attribute name to use when storing the editingAlias in the ServletContext.  This is the
-     * alias of the QueryClass that is currently being editing.  It is used as a key to look up the
-     * QueryClass in the queryClasses Map.
-     */
-    public static final String EDITING_ALIAS = "EDITING_ALIAS";
-
-    /**
-     * The attribute name to use when storing the queryClasses Map in the ServletContext.
-     * queryClasses is a Map from aliases to DisplayQueryClass objects.
-     */
-    public static final String QUERY_CLASSES = "QUERY_CLASSES";
-
-    /**
      * The attribute name to use when storing the Map of saved bags in the ServletContext.  The Map
      * is from bag names to Collections of objects.
      */
@@ -85,11 +72,6 @@ public interface Constants
      * The attribute name to use when storing the results of a query in the ServletContext.
      */
     public static final String RESULTS_TABLE = "RESULTS_TABLE";
-
-    /**
-     * The name of the attribute that is used to indicate advanced mode.
-     */
-    public static final String ADVANCED_MODE = "ADVANCED_MODE";
 
     /**
      * The name of the attribute that is used to store the Properties from web.properties.

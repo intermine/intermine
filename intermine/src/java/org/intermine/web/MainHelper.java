@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -274,5 +275,20 @@ public class MainHelper
      */
     public static ClassDescriptor getClassDescriptor(String className, Model model) {
         return model.getClassDescriptorByName(getClass(className, model).getName());
+    }
+
+    /**
+     * Take a Collection of ConstraintOps and builds a map from ConstraintOp.getIndex() to
+     * ConstraintOp.toString() for each
+     * @param ops a Collection of ConstraintOps
+     * @return the Map from index to string
+     */
+    protected static Map mapOps(Collection ops) {
+        Map opString = new LinkedHashMap();
+        for (Iterator iter = ops.iterator(); iter.hasNext();) {
+            ConstraintOp op = (ConstraintOp) iter.next();
+            opString.put(op.getIndex(), op.toString());
+        }
+        return opString;
     }
 }

@@ -134,12 +134,10 @@ public class ViewChange extends DispatchAction
                                   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-
-        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
         ViewHelper.makeQuery(request);
 
@@ -166,12 +164,10 @@ public class ViewChange extends DispatchAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-
-        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
         ViewHelper.makeQuery(request);
 

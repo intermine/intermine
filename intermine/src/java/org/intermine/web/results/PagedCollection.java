@@ -48,7 +48,7 @@ public class PagedCollection implements PagedTable
         for (Iterator i = collection.iterator(); i.hasNext();) {
             ArrayList row = new ArrayList();
             row.add(i.next());
-            collectionAsList.add(rowList);
+            collectionAsList.add(row);
         }
 
         column.setVisible(true);

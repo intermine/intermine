@@ -33,13 +33,4 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
         assertEquals("org.intermine.model.testmodel.Company",
                      getRequest().getAttribute("class"));
     }
-
-    public void testSelectNullClassName() throws Exception {
-        setRequestPathInfo("/queryClassSelect");
-        getSession().setAttribute(Constants.QUERY_CLASSES, new HashMap());
-        actionPerform();
-
-        verifyForward("error");
-        assertEquals(0, ((Map) getSession().getAttribute(Constants.QUERY_CLASSES)).size());
-    }
 }
