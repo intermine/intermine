@@ -133,11 +133,11 @@
   </target>
 
   <!-- Targets that could be called from another build script -->
-  <target name="build-model-from-xml" depends="copy-xml-model, compile-java, generate-torque"
+  <target name="build-model-from-xml" depends="copy-xml-model, compile-java"
           description="Build a usable model from a FlyMine model XML file">
   </target>
 
-  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java, generate-torque"
+  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java"
           description="Build a usable model from a .zargo file">
   </target>
 
@@ -145,7 +145,7 @@
           description="Generate a FlyMine xml model from a .zargo file">
   </target>
 
-  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, generate-torque"
+  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java"
           description="Build a usable model from a .zargo file">
   </target>
 
@@ -154,11 +154,11 @@
   </target>
   
 
-  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, generate-torque"
+  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java"
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
-  <target name="jar" depends="compile-java, generate-torque"
+  <target name="jar" depends="compile-java"
           description="create a jar of a model">
     <jar destfile="${dist}/flymine-${model.name}.jar">
       <fileset dir="${build.model}/${model.name}" >
