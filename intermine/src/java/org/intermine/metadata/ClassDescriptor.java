@@ -78,9 +78,9 @@ public class ClassDescriptor
         }
 
         this.isInterface = isInterface;
-        this.attDescriptors = atts;
-        this.refDescriptors = refs;
-        this.colDescriptors = cols;
+        this.attDescriptors = new LinkedHashSet(atts);
+        this.refDescriptors = new LinkedHashSet(refs);
+        this.colDescriptors = new LinkedHashSet(cols);
 
         // build maps of names to FieldDescriptors and populate pkFields set
 
@@ -392,7 +392,7 @@ public class ClassDescriptor
             throw new IllegalStateException("subclasses have already been set for this "
                                             + "ClassDescriptor (" + this.name + ").");
         }
-        this.subclassDescriptors = sub;
+        this.subclassDescriptors = new LinkedHashSet(sub);
         subSet = true;
     }
 
