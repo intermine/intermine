@@ -254,6 +254,23 @@ public class DataTranslator
     }
 
     /**
+     * A-[B1,B2] + B1-[C1,C2] + B2-[C3] -> A-[C1, C2, C3]
+     * deals with from collection to collection
+     */
+    protected void promoteField(Item srcItem, String colName, String colFieldName, Item tgtItem, String fieldName)
+        throws ObjectStoreException {
+        ReferenceList refList = new ReferenceList();
+        refList.setName(fieldName);
+        for (Iterator i = srcItem.getCollection(colName).getRefIds().iterator(); i.hasNext(); ) {
+            Item colItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
+            for (Iterator j = colItem.getCollection(colFieldName).getRefIds().iterator(); j.hasNext(); ) {
+                refList.addRefId((String) j.next());
+            }
+        }
+        tgtItem.addCollection(refList);
+    }
+
+    /**
      * Move a property from one item to another
      * @param fromItem an item to move property from
      * @param toItem an item to move property to
