@@ -10,11 +10,6 @@
         <table>
           <tbody>
             <row>
-              <entry>28th February 2003</entry>
-              <entry>Richard</entry>
-              <entry>EJBs</entry>
-            </row>
-            <row>
               <entry>28th March 2003</entry>
               <entry>Matthew</entry>
               <entry></entry>
@@ -36,6 +31,11 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>28th February 2003</entry>
+              <entry>Richard</entry>
+              <entry><ulink url="EJBs.sxi">Enterprise Java Beans</ulink></entry>
+            </row>
             <row>
               <entry>31st January 2003</entry>
               <entry>Andy</entry>
