@@ -311,8 +311,6 @@ public class PostProcessUtil
         ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
 
-        res.setBatchSize(500);
-
         return res;
     }
 }
