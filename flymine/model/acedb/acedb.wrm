@@ -654,18 +654,18 @@
 	 Type UNIQUE Biological_process
                      Cellular_component
 		     Molecular_function
-	 //Child Instance ?GO_term XREF Instance_of
-               //Component ?GO_term XREF Component_of
-	 //Parent Instance_of ?GO_term XREF Instance
-                //Component_of ?GO_term XREF Component
+	 Child Instance ?GO_term XREF Instance_of
+               Component ?GO_term XREF Component_of
+	 Parent Instance_of ?GO_term XREF Instance
+                Component_of ?GO_term XREF Component
 	 Attributes_of Cell ?Cell XREF GO_term
 		       Reference ?Paper XREF GO_term
 		       Motif ?Motif XREF GO_term
 		       Sequence ?Sequence XREF GO_term   // added for Erich, [011210 krb]
 		       Transcript ?Transcript XREF GO_term // new for consistancy [030411 krb]
 		       Phenotype ?Phenotype XREF GO_term // added for Erich, [020128 dl]
-		       //Index Ancestor   ?GO_term XREF Descendent // added for Lincoln [020709 [krb]
-               	             //Descendent ?GO_term XREF Ancestor
+		       Index Ancestor   ?GO_term XREF Descendent // added for Lincoln [020709 [krb]
+               	             Descendent ?GO_term XREF Ancestor
 		       Locus ?Locus XREF GO_term // added by krb 020905
 
 
@@ -792,7 +792,7 @@
                         AC_number Text
 			Secondary_accession ?Accession_number XREF Sequence
                         NI_number UNIQUE Text
-			//Protein_id ?Sequence UNIQUE Text UNIQUE Int
+			Protein_id ?Sequence UNIQUE Text UNIQUE Int
 				   // modified to deal with multiple protein_ids [dl 1999-12-22]
 			DB_remark ?Text	#Evidence	// EMBL/Genbank
 			Keyword ?Keyword	// EMBL/Genbank
@@ -839,7 +839,7 @@
 			Provisional_description ?Text #Evidence			 // added for Erich [020322 krb]
 			Detailed_description ?Text #Evidence			 // added for Erich [020322 krb]
 			Concise_description ?Text #Evidence			 // added for Erich [020523 krb]
-			//Interacts_with_sequence ?Sequence XREF Interacts_with_sequence #Evidence // for future interaction data [020704 krb]
+			Interacts_with_sequence ?Sequence XREF Interacts_with_sequence #Evidence // for future interaction data [020704 krb]
 			Interacts_with_protein ?Protein XREF Interacts_with_sequence #Evidence // for future interaction data [020704 krb]
 		// tag2 system: names of all objects following next tag are shown in the 
 		//   general annotation display column as "tag:objname"
@@ -1094,7 +1094,7 @@
 			Reference ?Paper XREF Protein
 			Expr_pattern ?Expr_pattern XREF Protein
 			Interacts_with_sequence ?Sequence XREF Interacts_with_protein #Evidence // for future interaction data [020704 krb]
-			//Interacts_with_protein ?Protein XREF Interacts_with_protein #Evidence // for future interaction data [020704 krb]
+			Interacts_with_protein ?Protein XREF Interacts_with_protein #Evidence // for future interaction data [020704 krb]
 		// tag2 system.  For now I have not populated this column.  For C. elegans
 		// wormpep we want to get the information from the ?Corresponding_DNA 
 		// object.  Because those objects have long term continuity, while wormpep
@@ -1103,7 +1103,7 @@
 	  Swiss_feature	Text Int Int Text // feature name, start, stop, note
 	  Analysis_details Analysis_history ?Method DateType
 	  Homol	DNA_homol ?Sequence XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
-		//Pep_homol ?Protein XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
+		Pep_homol ?Protein XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
 		Motif_homol ?Motif XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
                 Align_homol ?Alignment XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
                 Homol_homol ?Homol_data XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
@@ -1292,8 +1292,8 @@
 		Remark	?Text #Evidence
 		Contains	Cell ?Cell XREF Cell_group
 				Nucleus ?Cell XREF Syncitial_cell //new for syncitia like hyp7
-				//Sub_group ?Cell_group XREF Contained_in
-		//Contained_in ?Cell_group XREF Sub_group
+				Sub_group ?Cell_group XREF Contained_in
+		Contained_in ?Cell_group XREF Sub_group
 		Type	UNIQUE  Tissue
 				Organ
 				Region
@@ -1308,10 +1308,10 @@
 
 ?Life_stage	Contains Cell ?Cell XREF Life_stage
 			 Cell_group ?Cell_group XREF Life_stage
-                         //Sub_stage ?Life_stage XREF Contained_in
-                //Contained_in ?Life_stage XREF Sub_stage            // changed for Wen 010516
-                //Preceded_by ?Life_stage XREF Followed_by
-		//Followed_by ?Life_stage XREF Preceded_by
+                         Sub_stage ?Life_stage XREF Contained_in
+                Contained_in ?Life_stage XREF Sub_stage            // changed for Wen 010516
+                Preceded_by ?Life_stage XREF Followed_by
+		Followed_by ?Life_stage XREF Preceded_by
 		Expr_pattern ?Expr_pattern XREF Life_stage
 		Remark	?Text #Evidence
 		Definition ?Text // added for Wen [020607 krb]
@@ -1392,7 +1392,7 @@
                                       Middle
                                       Bottom
                                       Unrooted  // Unrooted "star" tree
-	 //Embedded_Tree ?Tree			      
+	 Embedded_Tree ?Tree			      
 
 ?TreeNode       Label UNIQUE ?Text		// Tree vertex label, e.g. sequence name or taxon   
                 Id    UNIQUE Int		// Node numbering...
@@ -1513,8 +1513,8 @@
 ?Phenotype Description UNIQUE ?Text
            Assay UNIQUE ?Text
            Remark ?Text #Evidence
-           //Related_phenotypes Specialisation_of ?Phenotype XREF Generalisation_of
-                              //Generalisation_of ?Phenotype XREF Specialisation_of
+           Related_phenotypes Specialisation_of ?Phenotype XREF Generalisation_of
+                              Generalisation_of ?Phenotype XREF Specialisation_of
                               //Equivalent_to ?Phenotype XREF Equivalent_to
                               //Similar_to ?Phenotype XREF Similar_to
            Attribute_of       RNAi ?RNAi XREF Phenotype
@@ -1642,10 +1642,10 @@
            Temperature     Int
            Genotype        ?Text
            Other           ?Text
-           //Relationship    Contains        ?Condition XREF Contained_in
-                           //Contained_in    ?Condition XREF Contains
-                           //Precedes        ?Condition XREF Follows
-                           //Follows         ?Condition XREF Precedes
+           Relationship    Contains        ?Condition XREF Contained_in
+                           Contained_in    ?Condition XREF Contains
+                           Precedes        ?Condition XREF Follows
+                           Follows         ?Condition XREF Precedes
            Reference       ?Paper  //Defines the condition.
            Remark          ?Text #Evidence
 
@@ -1765,8 +1765,8 @@
                         Page  UNIQUE  Text UNIQUE Text
                         Volume UNIQUE Text Text
                         Year UNIQUE Int
-                        //In_book #Paper
-                        //Contained_in ?Paper XREF Contains       // old form
+                        In_book #Paper
+                        Contained_in ?Paper XREF Contains       // old form
                         Medline_acc UNIQUE Int
                         PMID UNIQUE Int                     
         Author ?Author XREF Paper #Affiliation        // replaced by:
@@ -1778,7 +1778,7 @@
         Type UNIQUE Text        //meaning review, article, chapter,
                                 //monograph, news, book,
                                 //meeting_abstract
-        //Contains ?Paper XREF Contained_in
+        Contains ?Paper XREF Contained_in
         Refers_to Locus ?Locus XREF Reference
                   Allele ?Allele XREF Reference
                   Rearrangement ?Rearrangement XREF Reference

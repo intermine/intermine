@@ -27,6 +27,9 @@
   <!-- resources directory -->
   <property name="resources" location="resources"/>
 
+  <!-- model directory -->
+  <property name="model" location="model"/>
+
   <!-- build directories -->
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
@@ -206,7 +209,7 @@
   <target name="unpack-testmodel">
     <ant antfile="build-model.xml" target="unpack-xmi-model">
       <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${src.java}/org/flymine/model/testmodel"/>
+      <property name="model.src" value="${model}/uml"/>
     </ant>
   </target>
 
@@ -337,7 +340,7 @@
 
   <!-- Acedb test build targets -->
   
-  <!-- generate acedb model from acemodel file -->
+  <!-- define model generation task with acedbtest class path -->
   <target name="prepare-generate-model-acedbtest" depends="compile-main" >
     <taskdef
       name="model-generation"
@@ -345,16 +348,17 @@
       <classpath refid="acedbtest.class.path"/>
     </taskdef>
   </target>
-  
+
+  <!-- generate acedb model from acemodel file -->  
   <target name="generate-model-acedbtest" depends="prepare-generate-model-acedbtest, prepare-acedbtest">
     <model-generation
       type="acedb"
       modelname="acedbtest"
-      source="${build.resources.testxml}/acedbtest.wrm"
+      source="${model}/acedb/acedbtest.wrm"
       destdir="${build.model}/acedbtest"/>     
   </target>
 
-  <!-- define task for model output -->
+  <!-- define model output task with acedbtest class path -->
   <target name="prepare-model-output-acedbtest" depends="compile-main, prepare-acedbtest">
     <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
       <classpath refid="acedbtest.class.path"/>
@@ -374,6 +378,12 @@
     </javac>
   </target>
 
+  <!-- copy original .wrm file to model directory for acedataloadertest -->
+  <target name="copy-model-acedbtest" depends="prepare-acedbtest">
+    <copy todir="${build.model}/acedbtest" file="${model}/acedb/acedbtest.wrm"/>
+  </target>
+
+
 
 
 
@@ -392,7 +402,7 @@
     <model-generation
       type="acedb"
       modelname="acedb"
-      source="${src.java}/org/flymine/model/acedb/acemodel.wrm"
+      source="${model}/acedb/acedb.wrm"
       destdir="${build.model}/acedb"
    />     
   </target> 
@@ -405,7 +415,7 @@
   </target>
 
   <!-- generate java source for acedb model -->
-  <target name="generate-java-acedb" depends="prepare-model-output-acedb, generate-model-acedb">
+  <target name="generate-java-acedb" depends="generate-model-acedb, prepare-model-output-acedb">
     <model-output type="java" model="acedb" destdir="${build.model}/acedb"/>
   </target>
 
@@ -418,7 +428,7 @@
   </target>
 
   <!-- generate repository descriptor for acedb model -->
-  <target name="generate-repository-acedb" depends="prepare-model-output-acedb, generate-model-acedb">
+  <target name="generate-repository-acedb" depends="generate-model-acedb, prepare-model-output-acedb">
     <model-output type="ojb" model="acedb" destdir="${build.model}/acedb"/>
 
     <!-- Copy the default repository files across -->
@@ -470,7 +480,7 @@
   </target>
 
   <!-- insert the ace data into the database -->
-   <target name="insert-data-acedb" depends="build-db-acedb, compile-java-acedb">
+   <target name="insert-data-acedb" depends="compile-java-acedb, build-db-acedb">
     <taskdef
           name="insert-ace-data"
           classname="org.flymine.task.InsertAceDataTask">
@@ -516,7 +526,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, generate-xmlmapping-testmodel"
+  <target name="test-main" depends="compile-test, build-db-testmodel, generate-xmlmapping-testmodel, copy-model-acedbtest"
           description="perform JUnit tests on main source code" >
 
     <!-- this will cause every test to be re-run if any java file changes -->
@@ -555,7 +565,6 @@
 
     <antcall target="test-report"/>
     <antcall target="remove-webapp"/>
-
   </target>
 
   <!-- force all the unit tests to be redone -->
