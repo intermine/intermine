@@ -1601,7 +1601,7 @@
   </target>
 
   <target name="test-models-full"
-          depends="create-production-model, compile-genomic-model, test-models-inc">
+          depends="compile-genomic-model, test-models-inc">
     <antcall target="test-report"/>
   </target>
 
@@ -1610,7 +1610,6 @@
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
   </target>
-
 
   <target name="test-report" depends="prepare"
           description="generate a test report for all the unit tests" >
