@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.lang.reflect.Field;
 
 import org.flymine.objectstore.ObjectStoreException;
@@ -246,7 +248,7 @@ public class ResultsTest extends TestCase
 
     }
 
-    public void testLazyCollectionPromotion() throws Exception {
+    public void testPromoteLazyCollection() throws Exception {
         // Create a Department object with a LazyCollection
         Department dept = getDeptExampleObject();
         assertTrue(dept.getEmployees() instanceof LazyCollection);
@@ -265,12 +267,36 @@ public class ResultsTest extends TestCase
 
         // Employees should now have become a Results object
         Collection col = resDept.getEmployees();
-        if (!(col instanceof Results)) {
+        if (!(col instanceof SingletonResults)) {
             fail("LazyCollection was not converted to a Results object");
         }
     }
 
-    public void testLazyReferencePromotion() throws Exception {
+    public void testPromoteLazyCollectionSet() throws Exception {
+        // Create a Department object with a LazyCollection
+        Example ex = getExampleObjectWithSet();
+        assertTrue(ex.getSet() instanceof LazyCollection);
+
+        // build a List of ResultsRows to simulate call to promoteProxies
+        ResultsRow rr = new ResultsRow();
+        rr.add(ex);
+        List list = new ArrayList(1);
+        list.add(rr);
+
+        Query q = new Query();
+        q.addFrom(new QueryClass(Example.class));
+        Results r = os.execute(q);
+        r.promoteProxies(list);
+        Example resEx = (Example) ((List)list.get(0)).get(0);
+
+        // Employees should now have become a Results object
+        Collection col = resEx.getSet();
+        if (!(col instanceof SingletonResults)) {
+            fail("LazyCollection was not converted to a Results object");
+        }
+    }
+
+    public void testPromoteLazyReference() throws Exception {
         // Create a Department object with a LazyCollection
         Department dept = getDeptExampleObject();
         assertTrue(dept.getCompany() instanceof LazyReference);
@@ -321,12 +347,42 @@ public class ResultsTest extends TestCase
         return dept;
     }
 
+    // set up an Example object with field of type Set that is actually a LazyCollection
+    private Example getExampleObjectWithSet() throws Exception {
+        Example ex = new Example();
+        Class exClass = ex.getClass();
+        //Field f = deptClass.getDeclaredField("id");
+        //f.setAccessible(true);
+        //f.set(dept, new Integer(1234));
+
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Example.class);
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+
+        LazyCollection lazyCol = new LazyCollection(q1);
+        ex.setSet((Set)lazyCol);
+
+        return ex;
+    }
+
+    // example class with a set, for testing promoteProxies()
+    private class Example {
+        Set set = new HashSet();
+        public void setSet(Set set) {
+            this.set = set;
+        }
+        public Set getSet() {
+            return this.set;
+        }
+    }
+
     public void testGarbageCollectionOnWeakHashMap() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(100000);
-        
+
         Results res = os2.execute(q);
         Object tempHold = null;;
         res.setBatchSize(200);
@@ -367,7 +423,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
-        
+
         Results res = os2.execute(q);
         res.setBatchSize(200);
         int count = 0;
@@ -385,7 +441,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
-        
+
         Results.LOG.info("testSizeUsesFewBatchFetches starting");
         Results res = os2.execute(q);
         res.setBatchSize(1);
@@ -399,7 +455,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
-        
+
         Results.LOG.info("testSizeUsesFewBatchFetches starting");
         Results res = os2.execute(q);
         res.setBatchSize(1);
@@ -419,7 +475,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
-        
+
         Results.LOG.info("testSizeUsesFewBatchFetches2 starting");
         Results res = os2.execute(q);
         res.setBatchSize(30);
@@ -443,7 +499,7 @@ public class ResultsTest extends TestCase
         os2.setPoisonRowNo(7);
         Results res = os2.execute(q);
         res.setBatchSize(1);
-        
+
         int count = 0;
         try {
             Iterator iter = res.iterator();
@@ -470,7 +526,7 @@ public class ResultsTest extends TestCase
         os2.setMaxOffset(6);
         Results res = os2.execute(q);
         res.setBatchSize(1);
-        
+
         int count = 0;
         try {
             Iterator iter = res.iterator();
@@ -491,7 +547,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(50);
-        
+
         Results res = os2.execute(q);
         res.setBatchSize(20);
         int count = 0;
