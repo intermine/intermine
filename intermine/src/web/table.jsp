@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute/>
 
@@ -230,7 +231,7 @@
       <br/><br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
         <div class="heading">
-          <fmt:message key="results.save"/>
+          <fmt:message key="results.save"/><im:helplink key="results.help.save"/>
         </div>
         <div class="body">
           <ul>

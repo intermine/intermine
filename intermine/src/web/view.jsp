@@ -3,12 +3,13 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute/>
 
 <!-- view.jsp -->
   <div class="heading">
-    <fmt:message key="view.notEmpty.description"/>
+    <fmt:message key="view.notEmpty.description"/><im:helplink key="view.help.output"/>
   </div>
   <c:choose>
   <c:when test="${empty QUERY.view}">
@@ -90,7 +91,7 @@
     </div>
     </div>
     <div class="heading">
-      <fmt:message key="view.actions"/>
+      <fmt:message key="view.actions"/><im:helplink key="view.help.actions"/>
     </div>
     <div class="body">
       <div style="width: 100%"> <%-- IE table width bug workaround --%>
