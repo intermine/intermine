@@ -1025,7 +1025,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         Connection con = null;
 
         try {
-            con = getDatabase().getConnection();
+            con = getConnection();
             try {
                 Statement s = con.createStatement();
                 ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
