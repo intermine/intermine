@@ -28,7 +28,16 @@ form {
 .messages {
   color: green;
 }
-
+table.templateBuilder td {
+  border-bottom: 1px solid #aaa;
+}
+table.templateBuilder th {
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  background: #eee;
+  border-top: 1px solid black;
+}
 table.query {
   border: none;
 }
@@ -112,36 +121,55 @@ table.box {
 }
 
 table.box th {
-    background: #eee;
-    border-bottom: 1px solid black;
-    color: #210075;
-    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  background: #eee;
+  border-bottom: 1px solid black;
+  color: #210075;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
 table.box td {
-    padding: 9px;
+  padding: 9px;
 }
 
 table.box th.help {
-    padding: 6px;
-    font-size: 10px;
-    font-weight: normal;
-    text-align: right;
+  padding: 6px;
+  font-size: 10px;
+  font-weight: normal;
+  text-align: right;
 }
 
 table.box th.title {
-    padding: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: left;
+  padding: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
 }
 
 .smallnote {
-    font-size: 11px;
-    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
+#tmplPreview {
+  margin: 15px;
+  padding: 14px;
+  background: #f5f5f5;
+  border: 2px solid #888;
+  text-align: left;
+}
 
+.previewTitle {
+  text-align: center;
+  text-decoration: underline;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+}
+
+.templateDesc {
+}
+
+.admin-msg {
+}
 
 /* override flymine2.css */
 #content
