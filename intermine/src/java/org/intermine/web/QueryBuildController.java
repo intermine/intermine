@@ -73,7 +73,11 @@ public class QueryBuildController extends TilesAction
             qbf.setNewClassName(editingAlias);
             DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
             QueryBuildHelper.populateForm(qbf, d);
-            
+        }
+
+        //editing is continuing
+        if (editingAlias != null) {
+            DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
             ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;
             request.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
