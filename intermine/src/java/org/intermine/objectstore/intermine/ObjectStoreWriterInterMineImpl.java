@@ -12,6 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -120,6 +121,24 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             } catch (SQLException e2) {
             }
         }
+    }
+
+    /**
+     * Returns the log used by this objctstore.
+     *
+     * @return the log
+     */
+    public Writer getLog() {
+        return os.getLog();
+    }
+
+    /**
+     * Not implemented.
+     *
+     * @param log ignored
+     */
+    public void setLog(Writer log) {
+        throw new UnsupportedOperationException("Cannot change the log on a writer");
     }
 
     /**
