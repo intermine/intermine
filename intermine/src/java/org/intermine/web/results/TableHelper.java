@@ -27,7 +27,7 @@ public abstract class TableHelper
     /**
      * Batch size for the underlying objectstore
      */
-    public static final int BATCH_SIZE = 100;
+    public static final int BATCH_SIZE = 500;
 
     /**
      * Make a results table from an objectstore and a query and call initTable.
