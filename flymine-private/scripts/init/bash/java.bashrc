@@ -18,6 +18,9 @@ addjarstopath () {
 prepend PATH $JDK/bin
 prepend MANPATH $JDK/man
 
+append CLASSPATH /software/noarch/junit/junit.jar
+
+
 
 # Jikes needs the main java runtime libraries in the CLASSPATH
 append JIKESPATH $JDK/jre/lib/rt.jar
