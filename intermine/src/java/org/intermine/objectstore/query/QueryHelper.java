@@ -2,9 +2,10 @@ package org.flymine.objectstore.query;
 
 import org.apache.log4j.Logger;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.flymine.util.ModelUtil;
@@ -25,32 +26,34 @@ public class QueryHelper
      * a set of example objects of the same class
      *
      * For example:
-     * Company (key = name)
+     * Company (key = name, type)
      * Department (key = company, name)
      * Group (key = departments)
-     *
-     * Query for department is:
-     *
-     * select department
-     * from company, department
-     * where company.department = department
-     * and (department = <example1>
-     *      or department = <example2> ...)
      *
      * Query for company is:
      *
      * select company
      * from company
-     * where (company.name = <example1.name>
-     *        or comapny.name = <example2.name> ...)
+     * where ((company.name = <company1.name> and company.type = <company1.type>)
+     *        or (company.name = <company2.name> and company.type = <company2.type))
      *
-     * Query for group is:
+     * Query for department is:
+     *
+     * select department
+     * from company, department
+     * where department.company CONTAINS company
+     * and ((department.name = <department1.name>
+     *       and company = <department1.company>)
+     *      or (department.name = <department2.name>
+     *          and company = <department2.company>)
+     *
+     * Query for group is: TODO: THIS IS WRONG
      *
      * select group
      * from group, departments
      * where group.departments CONTAINS department
-     * and (department = <example1>
-     *      or department = <example2> ...)
+     * and (department = <group1.department>
+     *      or department = <group2.department> ...)
      *
      * and combinations thereof, for keys containing a mixture of
      * attributes, references and collections
@@ -62,6 +65,7 @@ public class QueryHelper
     public static Query createQueryForExampleSet(Set orig) {
 
         Set collectionClasses = new HashSet();
+        Map referenceQueryClasses = new HashMap();
 
         if (orig.size() < 1) {
             return null;
@@ -69,7 +73,7 @@ public class QueryHelper
 
         // Find out what class we are dealing with
         Class clazz = TypeUtil.getElementType(orig);
-        Collection keys = ModelUtil.getKey(clazz);
+        Set keys = ModelUtil.getKey(clazz);
         QueryClass qc = new QueryClass(clazz);
 
         Query q = new Query();
@@ -113,35 +117,30 @@ public class QueryHelper
                         // Get the class that this reference refers to
                         Class otherClass = TypeUtil.getField(clazz, key).getType();
 
-                        // Add this to the from list of the query (if it is not already there)
-                        QueryClass otherQueryClass = new QueryClass(otherClass);
+                        QueryClass otherQueryClass;
                         QueryReference qr = new QueryObjectReference(qc, key);
-                        q.addFrom(new QueryClass(otherClass));
-                        // And add a ClassConstraint for it
-                        csCombining.addConstraint(new ContainsConstraint(qr,
-                                                    ContainsConstraint.CONTAINS, otherQueryClass));
-                        Constraint c = new ClassConstraint(otherQueryClass,
-                                                           ClassConstraint.EQUALS, obj);
-                        csThisObject.addConstraint(c);
-                    } else if (type == ModelUtil.COLLECTION) {
 
-                        // Get the class that this reference refers to
-                        Class otherClass = TypeUtil.getElementType(
-                                    (Collection) TypeUtil.getFieldValue(clazz, key));
+                        Object otherObject = TypeUtil.getFieldValue(obj, key);
 
                         // Add this to the from list of the query (if it is not already there)
-                        QueryClass otherQueryClass = new QueryClass(otherClass);
-                        QueryReference qr = new QueryCollectionReference(qc, key);
-                        if (!collectionClasses.contains(key)) {
-                            collectionClasses.add(key);
-                            q.addFrom(new QueryClass(otherClass));
+                        if (!referenceQueryClasses.containsKey(key)) {
+                            otherQueryClass = new QueryClass(otherClass);
+                            referenceQueryClasses.put(key, otherQueryClass);
+                            q.addFrom(otherQueryClass);
                             // And add a ClassConstraint for it
                             csCombining.addConstraint(new ContainsConstraint(qr,
                                     ContainsConstraint.CONTAINS, otherQueryClass));
+                        } else {
+                            otherQueryClass = (QueryClass) referenceQueryClasses.get(key);
                         }
+
+                        // Add the constraint for this object
                         Constraint c = new ClassConstraint(otherQueryClass,
-                                                           ClassConstraint.EQUALS, obj);
+                                                           ClassConstraint.EQUALS, otherObject);
                         csThisObject.addConstraint(c);
+                    } else if (type == ModelUtil.COLLECTION) {
+                        throw new UnsupportedOperationException("Collections are not "
+                                                                + "supported in primary keys");
                     }
                 } catch (NoSuchFieldException e) {
                     LOG.error("No such field " + key + " in class " + qc.getType().getName());
