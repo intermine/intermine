@@ -24,7 +24,6 @@ import java.lang.reflect.Field;
 import org.flymine.FlyMineException;
 import org.flymine.metadata.Model;
 import org.flymine.util.TypeUtil;
-import org.flymine.util.ModelUtil;
 
 /**
  * DataLoader for AceDB data
@@ -109,7 +108,7 @@ public class AceDataLoader extends AbstractDataLoader
         try {
             String clazzName = ((AceObject) aceObject).getClassName();
             if (model != null) {
-                clazzName = model.getModelName() + "." + clazzName;
+                clazzName = model.getName() + "." + clazzName;
             }
             currentObject = Class.forName(clazzName).newInstance();
             setField(currentObject, "identifier", AceUtils.decode(aceObject.getName()));
@@ -213,11 +212,14 @@ public class AceDataLoader extends AbstractDataLoader
     protected static void setField(Object target, String fieldName, Object fieldValue)
         throws FlyMineException {
         try {
-            int fieldType = ModelUtil.getFieldType(target.getClass(), fieldName);
-            if (fieldType == ModelUtil.COLLECTION) {
-                ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
-            } else if ((fieldType == ModelUtil.REFERENCE) || (fieldType == ModelUtil.ATTRIBUTE)) {
-                TypeUtil.setFieldValue(target, fieldName, fieldValue);
+            Field field = TypeUtil.getField(target.getClass(), fieldName);
+            if (field != null) {
+                Class fieldType = field.getType();
+                if (Collection.class.isAssignableFrom(fieldType)) {
+                    ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
+                } else {
+                    TypeUtil.setFieldValue(target, fieldName, fieldValue);
+                }
             }
             // else the field cannot be found -- do nothing
         } catch (IllegalAccessException e) {
