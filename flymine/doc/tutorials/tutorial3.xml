@@ -38,7 +38,7 @@
             <listitem>Select the starting point for your query. In this case, Orthologue.</listitem>
           
 	  <entry>
-	      <inlinegraphic fileref="classSelection2" format="PNG"/>
+	      <inlinegraphic fileref="classSelection2.png"/>
 	  </entry>
 
 
@@ -68,7 +68,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainRelation1" format="PNG"/>
+	      <inlinegraphic fileref="constrainRelation1.png"/>
 	  </entry>
 
 
@@ -83,7 +83,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="showFields2" format="PNG"/>
+	      <inlinegraphic fileref="showFields2.png"/>
 	  </entry>
 
 
@@ -97,14 +97,14 @@
          constraints list.</listitem> 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainEvidence2" format="PNG"/>
+	      <inlinegraphic fileref="constrainEvidence2.png"/>
 	  </entry>
 
 
 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainEvidence1" format="PNG"/>
+	      <inlinegraphic fileref="constrainEvidence1.png"/>
 	  </entry>
 
 
@@ -118,7 +118,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="showFields3" format="PNG"/>
+	      <inlinegraphic fileref="showFields3.png"/>
 	  </entry>
 
 
@@ -128,7 +128,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="resultsQuery4" format="PNG"/>
+	      <inlinegraphic fileref="resultsQuery4.png"/>
 	  </entry>
 
 

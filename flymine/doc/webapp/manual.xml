@@ -78,7 +78,7 @@ useful to understand the concepts of classes, objects and fields.
 
    
 	  <entry>
-	      <inlinegraphic fileref="classDiag2.gif" format="GIF"/>
+	      <inlinegraphic fileref="classDiag2.gif"/>
 	  </entry>
   
 
@@ -123,7 +123,7 @@ useful to understand the concepts of classes, objects and fields.
 
    
 	  <entry>
-	      <inlinegraphic fileref="constrainDiag1.gif" format="GIF"/>
+	      <inlinegraphic fileref="constrainDiag1.gif"/>
 	  </entry>
   
 
@@ -164,7 +164,7 @@ useful to understand the concepts of classes, objects and fields.
 
    
 	  <entry>
-	      <inlinegraphic fileref="classes.gif" format="GIF"/>
+	      <inlinegraphic fileref="classes.gif"/>
 	  </entry>
   
 
