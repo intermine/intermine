@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected Statement batch = null;
     protected int batchChars = 0;
     protected String createSituation;
-    protected CacheMap recentSequences = new CacheMap();
+    protected Map recentSequences;
 
     protected static final int SEQUENCE_MULTIPLE = 100;
     protected static final int MAX_BATCH_CHARS = 10000000;
@@ -91,6 +92,9 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         createSituation = message.toString();
         int index = createSituation.indexOf("at junit.framework.TestCase.runBare");
         createSituation = (index < 0 ? createSituation : createSituation.substring(0, index));
+        recentSequences = Collections.synchronizedMap(new CacheMap(getClass().getName()
+                    + " with sequence = " + sequence + ", model = \"" + model.getName()
+                    + "\" recentSequences cache"));
     }
     
     /**

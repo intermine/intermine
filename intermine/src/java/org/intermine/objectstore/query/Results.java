@@ -67,7 +67,7 @@ public class Results extends AbstractList
     protected static final Logger LOG = Logger.getLogger(Results.class);
 
     // A map of batch number against a List of ResultsRows
-    protected Map batches = Collections.synchronizedMap(new CacheMap());
+    protected Map batches = Collections.synchronizedMap(new CacheMap("Results batches"));
 
     /**
      * No argument constructor for testing purposes
@@ -286,9 +286,9 @@ public class Results extends AbstractList
                 // Set holders, so our data doesn't go away too quickly
                 if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD) {
                     if (batchNo == getBatchNoForRow(lastGet + 1)) {
-                        thisBatchHolder = new SoftReference(key);
+                        thisBatchHolder = new SoftReference(rows);
                     } else if (batchNo == getBatchNoForRow(lastGet + 1) + 1) {
-                        nextBatchHolder = new SoftReference(key);
+                        nextBatchHolder = new SoftReference(rows);
                     }
                 }
 

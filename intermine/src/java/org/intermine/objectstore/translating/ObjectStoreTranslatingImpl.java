@@ -187,16 +187,19 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      * @see ObjectStoreAbstractImpl#internalGetObjectById
      */
     public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        //Exception e = new Exception("internalGetObjectById called for id " + id);
+        FlyMineBusinessObject retval = super.internalGetObjectById(id);
+        //Exception e = new Exception("internalGetObjectById called for "
+        //        + retval.getClass().toString() + " with id " + id);
         //e.fillInStackTrace();
-        //StringWriter sw = new StringWriter();
-        //PrintWriter pw = new PrintWriter(sw);
+        //java.io.StringWriter sw = new java.io.StringWriter();
+        //java.io.PrintWriter pw = new java.io.PrintWriter(sw);
         //e.printStackTrace(pw);
         //pw.flush();
         //LOG.error(sw.toString());
-        FlyMineBusinessObject retval = super.internalGetObjectById(id);
-        //LOG.error("internalGetObjectById called for " + retval.getClass().toString() + " with id "
-        //        + id);
+        synchronized (cache) {
+            LOG.error("internalGetObjectById called for " + retval.getClass().toString()
+                    + " with id " + id + ", cache size = " + cache.size());
+        }
         internalGetObjectByIdCount++;
         if (internalGetObjectByIdCount % 1000 == 0) {
             LOG.error("internalGetObjectById run " + internalGetObjectByIdCount + " times");

@@ -98,7 +98,7 @@ public interface ObjectStore
      * @param id the ID of the object
      * @param obj a fully populated object, as loaded from the database, or null to negatively
      * cache
-     * @return an object which is the lookup key for the cache entry. This is useful to the caller
+     * @return an object which is softly-held part of the cache entry. This is useful to the caller
      * for the purpose of ensuring the entry does not expire from the cache. To endure this, the
      * caller merely needs to keep a strong reference to this returned value.
      */

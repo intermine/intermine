@@ -12,8 +12,9 @@ package org.flymine.objectstore;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Set;
 import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
@@ -36,11 +37,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
 {
     protected static final Logger LOG = Logger.getLogger(ObjectStoreAbstractImpl.class);
 
+    protected static Random rand = new Random(); 
+
     protected Model model;
     protected int maxOffset = Integer.MAX_VALUE;
     protected int maxLimit = Integer.MAX_VALUE;
     protected long maxTime = Long.MAX_VALUE;
-    protected CacheMap cache = new CacheMap();
+    protected CacheMap cache;
 
     protected int getObjectOps = 0;
     protected int getObjectHits = 0;
@@ -64,10 +67,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         maxLimit = Integer.parseInt((String) props.get("max-limit"));
         maxOffset = Integer.parseInt((String) props.get("max-offset"));
         maxTime = Long.parseLong((String) props.get("max-time"));
-        java.util.Random rand = new java.util.Random();
-        sequence = rand.nextInt();
+        synchronized (rand) {
+            sequence = rand.nextInt();
+        }
         LOG.error("Creating new " + getClass().getName() + " with sequence = " + sequence
                 + ", model = \"" + model.getName() + "\"");
+        cache = new CacheMap(getClass().getName() + " with sequence = " + sequence + ", model = \""
+                + model.getName() + "\" getObjectById cache");
     }
 
     /**
@@ -167,10 +173,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
         synchronized (cache) {
-            // Create new Integer for the key
-            cache.put(new Integer(id.intValue()), obj);
+            cache.put(id, obj);
         }
-        return id;
+        return obj;
     }
 
     /**

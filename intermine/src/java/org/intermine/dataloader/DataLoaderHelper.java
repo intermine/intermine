@@ -32,6 +32,7 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
+import org.flymine.objectstore.proxy.ProxyReference;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.ContainsConstraint;
@@ -291,7 +292,7 @@ public class DataLoaderHelper
                                         + " a primary key");
                             } else if (fd instanceof ReferenceDescriptor) {
                                 FlyMineBusinessObject refObj = (FlyMineBusinessObject)
-                                    TypeUtil.getFieldValue(obj, fieldName);
+                                    TypeUtil.getFieldProxy(obj, fieldName);
                                 if (refObj == null) {
                                     cs.addConstraint(new ContainsConstraint(
                                                 new QueryObjectReference(qc, fieldName),
@@ -302,6 +303,9 @@ public class DataLoaderHelper
                                         destId = idMap.get(refObj.getId());
                                     }
                                     if (destId == null) {
+                                        if (refObj instanceof ProxyReference) {
+                                            refObj = ((ProxyReference) refObj).getObject();
+                                        }
                                         QueryClass qc2 = new QueryClass(((ReferenceDescriptor) fd)
                                                 .getReferencedClassDescriptor().getType());
                                         subQ.addFrom(qc2);
