@@ -55,7 +55,7 @@ public class PropertiesUtil
             throw new NullPointerException("str cannot be null");
         }
         if (props == null) {
-            throw new NullPointerException("str cannot be null");
+            throw new NullPointerException("props cannot be null");
         }
 
         Properties subset = new Properties();
@@ -78,5 +78,35 @@ public class PropertiesUtil
     public static Properties getPropertiesStartingWith(String str) {
         return getPropertiesStartingWith(str, globalProperties);
     }
+
+    /**
+     * Strips the give string off the keys of the given
+     * Properties. For example, database.name=production =>
+     * name=production.
+     *
+     * @param str the String to strip off
+     * @param props the Properties object to change
+     * @return a Properties object containing the same properties with
+     * the initial string stripped off the keys
+     */
+    public static Properties stripStart(String str, Properties props) {
+        if (str == null) {
+            throw new NullPointerException("str cannot be null");
+        }
+        if (props == null) {
+            throw new NullPointerException("props cannot be null");
+        }
+        Properties ret = new Properties();
+        Enumeration enum = props.keys();
+        while (enum.hasMoreElements()) {
+            String propertyName = (String) enum.nextElement();
+            if (propertyName.startsWith(str + ".")) {
+                ret.put(propertyName.substring(str.length() + 1), props.get(propertyName));
+            }
+        }
+
+        return ret;
+    }
+
 
 }
