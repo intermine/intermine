@@ -87,9 +87,11 @@
 </c:choose>
 
 <%-- Paging controls --%>
-<html:link action="/changeResults?method=first">
-  <bean:message key="results.first"/>
-</html:link>
+<c:if test="${resultsTable.start > 0}">
+  <html:link action="/changeResults?method=first">
+    <bean:message key="results.first"/>
+  </html:link>
+</c:if>
 <c:if test="${resultsTable.previousButton}">
   <html:link action="/changeResults?method=previous">
     <bean:message key="results.previous"/>
@@ -100,6 +102,8 @@
     <bean:message key="results.next"/>
   </html:link>
 </c:if>
-<html:link action="/changeResults?method=last">
-  <bean:message key="results.last"/>
-</html:link>
+<c:if test="${resultsTable.sizeEstimate || (resultsTable.end != resultsTable.size - 1)}">
+  <html:link action="/changeResults?method=last">
+    <bean:message key="results.last"/>
+  </html:link>
+</c:if>
