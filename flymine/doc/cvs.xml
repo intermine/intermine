@@ -7,6 +7,11 @@
 <title>Obtaining FlyMine source code using CVS</title>
 </artheader>
 
+<para>Anonymous CVS access to the FlyMine source code is via our
+public CVS server, cvs.flymine.org. This server contains a read-only
+snapshot of the CVS source the software developers are using, updated
+every 10 minutes.</para>
+
 <sect1>
 <title>Instructions</title>
 
@@ -17,7 +22,7 @@ to check out the source.</listitem>
 
 <listitem>Issue the command <command>cvs -d
 :pserver:anonymous@cvs.flymine.org/cvs co
-flymine</command>.</listitem>
+flymine</command>. No password is needed.</listitem>
 
 </itemizedlist>
 
