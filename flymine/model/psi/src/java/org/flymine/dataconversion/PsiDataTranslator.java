@@ -50,7 +50,6 @@ public class PsiDataTranslator extends DataTranslator
     private Item db = null;
     private Item swissProt = null;
     private Map pubs = new HashMap();
-    private Set noPubs = new HashSet();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -64,7 +63,6 @@ public class PsiDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
-
         tgtItemWriter.store(ItemHelper.convert(getSwissProt()));
         super.translate(tgtItemWriter);
     }
@@ -74,7 +72,6 @@ public class PsiDataTranslator extends DataTranslator
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
-
         Collection result = new HashSet();
         String srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
         String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
@@ -85,7 +82,7 @@ public class PsiDataTranslator extends DataTranslator
                 Item tgtItem = (Item) i.next();
                 String tgtClassName =  XmlUtil.getFragmentFromURI(tgtItem.getClassName());
                 if ("ExperimentType".equals(className)) {
-                    Item pub = createPublication(srcItem);
+                    Item pub = getPub(srcItem);
                     if (pub != null) {
                         tgtItem.addReference(new Reference("publication", pub.getIdentifier()));
                         result.add(pub);
@@ -158,27 +155,12 @@ public class PsiDataTranslator extends DataTranslator
                     tgtItem.addAttribute(new Attribute("identifier",
                                                        dbXref.getAttribute("id").getValue()));
                 }
-                result.add(tgtItem);
+                if (storeTgtItem) {
+                    result.add(tgtItem);
+                }
             }
         }
         return result;
-    }
-
-    // create a publication given an ExperimentType item
-    private Item createPublication(Item exptType) throws ObjectStoreException {
-        Item bibrefType = ItemHelper.convert(srcItemReader
-                            .getItemById(exptType.getReference("bibref").getRefId()));
-        Item xrefType = ItemHelper.convert(srcItemReader
-                          .getItemById(bibrefType.getReference("xref").getRefId()));
-        Item dbrefType = ItemHelper.convert(srcItemReader
-                           .getItemById(xrefType.getReference("primaryRef").getRefId()));
-
-        Item pub = null;
-        if (dbrefType != null && dbrefType.getAttribute("db").getValue().equals("pubmed")) {
-            pub = getPub(exptType);
-            pub.addAttribute(new Attribute("pubMedId", dbrefType.getAttribute("id").getValue()));
-        }
-        return pub;
     }
 
     private Item createProteinInteraction(Item intElType, Item tgtItem)
@@ -221,17 +203,15 @@ public class PsiDataTranslator extends DataTranslator
         return seq;
     }
 
-    // find a publication for the experiment - if no experiment return null
+    // Return the publication for a given experiment, creating it if necessary
+    // Note that experiments known not to have a publication are stored in the map with a null pub
     private Item getPub(Item exptType) throws ObjectStoreException {
-        String experimentId = exptType.getIdentifier();
-
-        if (noPubs.contains(experimentId)) {
-            return null;
-        }
-
-        Item pub = (Item) pubs.get(experimentId);
-        if (pub == null) {
-            String pubmedId = null;
+        Item pub = null;
+        String exptId = exptType.getIdentifier();
+        if (pubs.containsKey(exptId)) {
+            pub = (Item) pubs.get(exptId);
+        } else {
+            Item pub = null;
             Item bibRefType = ItemHelper.convert(srcItemReader
                   .getItemById(exptType.getReference("bibref").getRefId()));
             if (bibRefType != null) {
@@ -242,22 +222,18 @@ public class PsiDataTranslator extends DataTranslator
                       .getItemById(xRefType.getReference("primaryRef").getRefId()));
                     if (dbReferenceType != null) {
                         Attribute dbAttr = dbReferenceType.getAttribute("db");
-                        if (dbAttr != null && dbAttr.getValue().equals("pubmed")) {
+                        if (dbAttr != null && dbAttr.getValue().equalsIgnoreCase("pubmed")) {
                             Attribute idAttr = dbReferenceType.getAttribute("id");
                             if (idAttr != null) {
-                                pubmedId = idAttr.getValue();
+                                pub = createItem(tgtNs + "Publication", "");
+                                String pubmedId = idAttr.getValue();
+                                pub.addAttribute(new Attribute("pubMedId", idAttr.getValue()));
                             }
                         }
                     }
                 }
             }
-            if (pubmedId != null) {
-                pub = createItem(tgtNs + "Publication", "");
-                pubs.put(experimentId, pub);
-            } else {
-                noPubs.add(experimentId);
-                return null;
-            }
+            pubs.put(exptId, pub);
         }
         return pub;
     }
