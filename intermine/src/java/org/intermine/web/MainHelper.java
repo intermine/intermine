@@ -39,6 +39,7 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -201,10 +202,13 @@ public class MainHelper
                     cs.addConstraint(new BagConstraint(qn,
                                                        c.getOp(),
                                                        (Collection) savedBags.get(c.getValue())));
-                } else { //assume, for now, that it's a SimpleConstraint
+                } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
                     cs.addConstraint(new SimpleConstraint((QueryField) qn,
                                                           c.getOp(),
                                                           new QueryValue(c.getValue())));
+                } else if (node.isReference()) {
+                    QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
+                    cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
                 }
             }
         }
