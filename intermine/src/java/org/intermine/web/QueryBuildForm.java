@@ -272,11 +272,9 @@ public class QueryBuildForm extends ActionForm
      * @return an ActionError describing a parse problem, or null if there are no problems
      */
     protected ActionError validateAttribute(AttributeDescriptor attributeDescriptor,
-                                          ConstraintOp op, String fieldName, Object fieldValue,
-                                          Locale locale, Map savedBags) {
+                                            ConstraintOp op, String fieldName, Object fieldValue,
+                                            Locale locale, Map savedBags) {
         Class fieldClass = TypeUtil.instantiate(attributeDescriptor.getType());
-
-        parsedFieldOps.put(fieldName, op);
 
         try {
             if (BagConstraint.VALID_OPS.contains(op)) {
