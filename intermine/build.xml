@@ -446,6 +446,30 @@
   </target>
 
 
+  <!-- Data Translation targets -->
+
+  <!-- Build Chado target items database -->
+  <target name="build-db-chado-target-items" depends="convert-chado">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.chado-tgt-items"/>
+    </ant>
+  </target>
+
+ <target name="translate-chado" depends="build-db-chado-target-items">
+    <java classname="org.flymine.dataconversion.DataTranslator" fork="true"
+      maxmemory="1200m" >
+      <classpath refid="test.class.path" />
+      <arg value="os.chado-src-items" />
+      <arg value="osw.chado-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+  </target>
+
+
   <!-- Acedb test build targets -->
   
   <!-- generate acedbtest model from .wrm file -->
@@ -725,7 +749,7 @@
       <arg value="N3" />
     </java> 
 
-    <!-- merge chado model with target genomic model --> 
+    <!-- merge chado model with target genomic model -->
     <java classname="org.flymine.ontology.MergeOwl" fork="true">
       <classpath refid="test.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
