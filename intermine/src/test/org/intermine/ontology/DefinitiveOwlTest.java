@@ -72,7 +72,7 @@ public class DefinitiveOwlTest extends XMLTestCase
 
     public void testMergeOwl() throws Exception {
         OntModel ont = runMergeOwl();
-        ont.write(new FileWriter(new File("targetModel")), "N3");
+        //ont.write(new FileWriter(new File("targetModel")), "N3");
 
         // target namespace should contain only these classes
         OntClass orgCls = ont.getOntClass(tgtNs + "Organisation");
