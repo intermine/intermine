@@ -77,6 +77,10 @@ public class MainHelper
             FieldDescriptor fd = (FieldDescriptor) i.next();
             String fieldName = fd.getName();
 
+            if (fieldName.equals("id")) {
+                return;
+            }
+
             String head, tail;
             if (path.indexOf(".") != -1) {
                 head = path.substring(0, path.indexOf("."));
