@@ -2,5 +2,5 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- queryErrorMessage.jsp -->
-<html:errors/>
+<div class="queryErrorMessage"><html:errors/></div>
 <!-- /queryErrorMessage.jsp -->
