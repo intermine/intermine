@@ -16,8 +16,6 @@ import org.flymine.metadata.*;
  */
 public class JavaModelOutput extends ModelOutput
 {
-    protected static final boolean OJB = true;
-
     /**
      * @see ModelOutput#Constructor
      */
@@ -88,7 +86,7 @@ public class JavaModelOutput extends ModelOutput
         sb.append(ENDL)
             .append("{" + ENDL);
 
-        if (OJB && !cld.isInterface()) {
+        if (!cld.isInterface()) {
             if (cld.getSuperclassDescriptor() == null) {
                 sb.append(INDENT + "protected Integer id;" + ENDL)
                     .append(INDENT + "public Integer getId() { return id; }" + ENDL + ENDL);
@@ -145,8 +143,7 @@ public class JavaModelOutput extends ModelOutput
      */
     protected String generate(ReferenceDescriptor ref) {
         StringBuffer sb = new StringBuffer();
-        sb.append(OJB ? INDENT + "protected Integer " + ref.getName() + "Id;" + ENDL : "")
-            .append(INDENT)
+        sb.append(INDENT)
             .append("protected ")
             .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getClassName()))
             .append(" ")
@@ -364,9 +361,7 @@ public class JavaModelOutput extends ModelOutput
                 .append("public String toString() { ")
                 .append("return \"")
                 .append(unqualifiedName)
-                .append(" [\"")
-                .append(OJB ? "+id" : "+get" + StringUtil.capitalise(unqualifiedName) + "Id()")
-                .append("+\"] \"+");
+                .append(" [\"+id+\"] \"+");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) iter.next();

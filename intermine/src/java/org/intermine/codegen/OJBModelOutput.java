@@ -160,7 +160,7 @@ public class OJBModelOutput extends ModelOutput
             .append(ref.getName())
             .append("Id\" column=\"")
             .append(ref.getName())
-            .append("Id\" jdbc-type=\"INTEGER\"/>" + ENDL);
+            .append("Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL);
         references.append(INDENT + INDENT)
             .append("<reference-descriptor name=\"")
             .append(ref.getName())

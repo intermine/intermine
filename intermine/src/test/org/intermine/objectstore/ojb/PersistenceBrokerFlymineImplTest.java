@@ -1,7 +1,6 @@
 package org.flymine.objectstore.ojb;
 
 import java.util.Collection;
-import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
 
@@ -14,18 +13,19 @@ import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.model.testmodel.*;
 
+import org.flymine.util.TypeUtil;
+
 public class PersistenceBrokerFlymineImplTest extends TestCase
 {
     PersistenceBrokerFlyMineImpl broker;
     DescriptorRepository dr;
-    ObjectStoreOjbImpl os;
 
     public PersistenceBrokerFlymineImplTest(String arg1) {
         super(arg1);
     }
 
     public void setUp() throws Exception {
-        os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBrokerFlyMine pb = (PersistenceBrokerFlyMine) os.getPersistenceBroker();
         if (pb instanceof PersistenceBrokerFlyMineImpl) {
             broker = (PersistenceBrokerFlyMineImpl) pb;
@@ -110,6 +110,7 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         ClassDescriptor cldDept = dr.getDescriptorFor(Department.class);
         ClassDescriptor cldCompany = dr.getDescriptorFor(Company.class);
         ObjectReferenceDescriptor ordCompany = cldDept.getObjectReferenceDescriptorByName("company");
+        ordCompany.getForeignKeyFieldDescriptors(cldDept)[0].getPersistentField().set(dept, new Integer(0));
 
         // override anything in mapping file
         ordCompany.setLazy(true);
@@ -117,7 +118,7 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         Object obj = broker.getReferencedObject(dept, ordCompany, cldDept);
 
         if (!(obj instanceof LazyReference))
-            fail("Expected Department.company to be a LazyReference");
+            fail("Expected Department.company to be a LazyReference but was " + obj);
     }
 
     public void testNotLazyReferenceField() throws Exception {
@@ -139,27 +140,14 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
     // set up a Department object with an id
     private Department getDeptExampleObject() throws Exception {
         Department dept = new Department();
-        Class deptClass = dept.getClass();
-        Field f = deptClass.getDeclaredField("id");
-        f.setAccessible(true);
-        f.set(dept, new Integer(1234));
-        dept.setName("DepartmentA1");
-        f = deptClass.getDeclaredField("companyId");
-        f.setAccessible(true);
-        f.set(dept, new Integer(101));
-
+        TypeUtil.setFieldValue(dept, "id", new Integer(1));
         return dept;
     }
 
     // set up a Company object with an id
     private Company getCompExampleObject() throws Exception {
         Company comp = new Company();
-        Class compClass = comp.getClass();
-        Field f = compClass.getDeclaredField("id");
-        f.setAccessible(true);
-        f.set(comp, new Integer(1234));
-        comp.setName("CompanyA1");
-
+        TypeUtil.setFieldValue(comp, "id", new Integer(2));
         return comp;
     }
 }

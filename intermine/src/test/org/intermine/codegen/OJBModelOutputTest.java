@@ -196,7 +196,7 @@ public class OJBModelOutputTest extends TestCase
         String expected = INDENT + "<class-descriptor class=\"Class1\" table=\"Class1\">" + ENDL
             + INDENT + INDENT + "<field-descriptor name=\"id\" column=\"ID\" jdbc-type=\"INTEGER\" primarykey=\"true\" autoincrement=\"true\"/>" + ENDL
             + INDENT + INDENT + "<field-descriptor name=\"name1\" column=\"name1\" jdbc-type=\"LONGVARCHAR\"/>" + ENDL
-            + INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" jdbc-type=\"INTEGER\"/>" + ENDL
+            + INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<reference-descriptor name=\"rfd1\" class-ref=\"Class2\" proxy=\"true\">" + ENDL
             + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"rfd1Id\"/>" + ENDL
             + INDENT + INDENT + "</reference-descriptor>" + ENDL
@@ -229,7 +229,7 @@ public class OJBModelOutputTest extends TestCase
             + INDENT + INDENT + "<field-descriptor name=\"id\" column=\"ID\" jdbc-type=\"INTEGER\" primarykey=\"true\" autoincrement=\"true\"/>" + ENDL
             + INDENT + INDENT + "<field-descriptor name=\"ojbConcreteClass\" column=\"CLASS\" jdbc-type=\"VARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<field-descriptor name=\"name1\" column=\"name1\" jdbc-type=\"LONGVARCHAR\"/>" + ENDL
-            + INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" jdbc-type=\"INTEGER\"/>" + ENDL
+            + INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<reference-descriptor name=\"rfd1\" class-ref=\"Class2\" proxy=\"true\">" + ENDL
             + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"rfd1Id\"/>" + ENDL
             + INDENT + INDENT + "</reference-descriptor>" + ENDL
@@ -267,8 +267,8 @@ public class OJBModelOutputTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
-        String expected = INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" jdbc-type=\"INTEGER\"/>" + ENDL
-            + INDENT + INDENT + "<field-descriptor name=\"rfd2Id\" column=\"rfd2Id\" jdbc-type=\"INTEGER\"/>" + ENDL;
+        String expected = INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL
+            + INDENT + INDENT + "<field-descriptor name=\"rfd2Id\" column=\"rfd2Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL;
         String references = INDENT + INDENT + "<reference-descriptor name=\"rfd1\" class-ref=\"Class2\" proxy=\"true\">" + ENDL
             + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"rfd1Id\"/>" + ENDL
             + INDENT + INDENT + "</reference-descriptor>" + ENDL
@@ -363,7 +363,7 @@ public class OJBModelOutputTest extends TestCase
 
 
         mo.references = new StringBuffer();
-        String expected = INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" jdbc-type=\"INTEGER\"/>" + ENDL;
+        String expected = INDENT + INDENT + "<field-descriptor name=\"rfd1Id\" column=\"rfd1Id\" access=\"anonymous\" jdbc-type=\"INTEGER\"/>" + ENDL;
         assertEquals(expected, mo.generate(rfd1));
 
         String references = INDENT + INDENT + "<reference-descriptor name=\"rfd1\" class-ref=\"Class2\" proxy=\"true\">"

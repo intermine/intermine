@@ -151,7 +151,6 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.String atd1;" + ENDL
             + INDENT + "public java.lang.String getAtd1() { return this.atd1; }" + ENDL
             + INDENT + "public void setAtd1(java.lang.String atd1) { this.atd1=atd1; }" + ENDL + ENDL
-            + INDENT + "protected Integer rfd1Id;" + ENDL
             + INDENT + "protected Class2 rfd1;" + ENDL
             + INDENT + "public package.name.Class2 getRfd1() { return this.rfd1; }" + ENDL
             + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1=rfd1; }" + ENDL + ENDL
@@ -183,8 +182,7 @@ public class JavaModelOutputTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
-        String expected = INDENT + "protected Integer rfd1Id;" + ENDL
-            + INDENT + "protected Class2 rfd1;" + ENDL
+        String expected = INDENT + "protected Class2 rfd1;" + ENDL
             + INDENT + "public Class2 getRfd1() { return this.rfd1; }" + ENDL
             + INDENT + "public void setRfd1(Class2 rfd1) { this.rfd1=rfd1; }" + ENDL + ENDL;
 
