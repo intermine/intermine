@@ -12,9 +12,13 @@ package org.flymine.xml.lite;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SimpleTimeZone;
 
 import org.flymine.util.TypeUtil;
 
@@ -44,28 +48,18 @@ public class LiteRenderer
     public static String render(Object obj) {
         StringBuffer sb = new StringBuffer();
 
-        try {
-            sb.append("<object id=\"")
-                .append(TypeUtil.getGetter(obj.getClass(), "id").invoke(obj, null))
-                .append("\" implements=\"")
-                .append(getImplements(obj))
-                .append("\">")
-                .append(getFields(obj))
-                .append("</object>");
-        } catch (InvocationTargetException e) {
-            LOG.error("Class " + obj.getClass().getName()
-                      + " does not have an id field");
-        } catch (IllegalAccessException e) {
-            LOG.error("Class " + obj.getClass().getName()
-                      + " does not have an accessible id field");
-        }
-
+        sb.append("<object class=\"")
+            .append(getClassName(obj))
+            .append("\" implements=\"")
+            .append(getImplements(obj))
+            .append("\">")
+            .append(getFields(obj))
+            .append("</object>");
         return sb.toString();
-
     }
 
     /**
-     * Get all classes and interfaces that an object extends/implements.
+     * Get all interfaces that an object implements.
      *
      * @param obj the object
      * @return space separated list of extended/implemented classes/interfaces
@@ -73,16 +67,27 @@ public class LiteRenderer
     protected static String getImplements(Object obj) {
         StringBuffer sb = new StringBuffer();
 
-        // This class - will need to be cleverer when dynamic classes introduced
-        sb.append(obj.getClass().getName())
-            .append(" ");
-
         Class [] interfaces = obj.getClass().getInterfaces();
 
         for (int i = 0; i < interfaces.length; i++) {
             sb.append(interfaces[i].getName())
                 .append(" ");
         }
+        return sb.toString().trim();
+    }
+
+    /**
+     * Get all interfaces that an object implements.
+     *
+     * @param obj the object
+     * @return space separated list of extended/implemented classes/interfaces
+     */
+    protected static String getClassName(Object obj) {
+        StringBuffer sb = new StringBuffer();
+
+        // This class - will need to be cleverer when dynamic classes introduced
+        sb.append(obj.getClass().getName())
+            .append(" ");
         return sb.toString().trim();
     }
 
@@ -130,9 +135,17 @@ public class LiteRenderer
                 }
                 sb.append((id == null ? "<field" : "<reference") + " name=\"")
                     .append(fieldname)
-                    .append("\" value=\"")
-                    .append(value)
-                    .append("\"/>");
+                    .append("\" value=\"");
+                    if (value instanceof Date) {
+                        // Dates need to be output in a standard timezone, otherwise
+                        // testing is very difficult
+                        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
+                        df.setTimeZone(new SimpleTimeZone(0, "GMT"));
+                        sb.append(df.format((Date) value));
+                    } else {
+                        sb.append(value);
+                    }
+                    sb.append("\"/>");
             }
         } catch (IllegalAccessException e) {
         }

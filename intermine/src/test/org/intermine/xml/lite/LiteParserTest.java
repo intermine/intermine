@@ -49,8 +49,8 @@ public class LiteParserTest extends TestCase
         assertEquals(new Double(2.3d), obj1.getDoubleObjType());
         assertEquals(new Integer(4), obj1.getIntObjType());
         assertEquals(Boolean.TRUE, obj1.getBooleanObjType());
-        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-        assertEquals(df.parse("Sat Aug 09 12:22:00 GMT 2003"), obj1.getDateObjType());
+        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
+        assertEquals(df.parse("Sat Aug 09 12:22:00 +0000 2003"), obj1.getDateObjType());
         assertEquals("A String", obj1.getStringObjType());
 
     }
