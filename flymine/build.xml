@@ -1897,28 +1897,6 @@
     <mappings alias="osw.production" type="update-publications" integrationWriter="integration.production"/>
   </target>
 
-  <property name="os.summary.properties.file" 
-            value="${model}/genomic/resources/objectstoresummary.config.properties" />
-  <property name="summarise.output.properties" 
-            value="${build.model}/genomic/objectstoresummary.properties"/>
-
-  <target name="check-production-objectstore-summary" depends="prepare">
-    <uptodate property="production-objectstore-is-summarised"
-              srcfile="${os.summary.properties.file}"
-              targetfile="${summarise.output.properties}"/>
-  </target>
-
-  <target name="summarise-production-objectstore" 
-          depends="check-production-objectstore-summary"
-          unless="production-objectstore-is-summarised">
-    <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <summarise-objectstore alias="os.production" 
-                           inputFile="${os.summary.properties.file}"
-                           outputFile="${summarise.output.properties}"/>
-  </target>
-
   <target name="post-process">
     <antcall target="calculate-locations"/>
     <antcall target="analyse-db-production"/>
@@ -2199,8 +2177,7 @@
 
   <!-- WEBAPP TARGETS -->
 
-  <target name="build-production-webapp" 
-          depends="summarise-production-objectstore">
+  <target name="build-production-webapp" depends="prepare-build-model">
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2211,6 +2188,7 @@
       <property name="war" value="${dist.webapp}/flymine.war"/>
       <property name="model.name" value="genomic"/>
       <property name="db.name" value="db.production"/>
+      <property name="objectstore.name" value="os.production"/>
       <reference torefid="class.path" refid="webapp.class.path"/>
     </ant>
 

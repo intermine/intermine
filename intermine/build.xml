@@ -951,12 +951,18 @@
   </target>
 
   <target name="build-testmodel-webapp" 
-          depends="build-webapp, insert-data-unittest, summarise-testmodel-objectstore"
+          depends="build-webapp, insert-data-unittest"
           description="Build webapp including the test model">
+    <!--<ant antfile="build-model.xml" target="summarise-objectstore" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>      
+    -->
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <property name="model.name" value="testmodel"/>
       <property name="db.name" value="db.unittest"/>
+      <property name="objectstore.name" value="os.unittest"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
     
@@ -1026,7 +1032,7 @@
   </target>
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
-
+<!--
   <property name="os.summary.properties.file" 
             value="${model}/testmodel/resources/objectstoresummary.config.properties" />
   <property name="summarise.output.properties" 
@@ -1051,10 +1057,11 @@
   <target name="summarise-testmodel-objectstore" 
           depends="check-testmodel-objectstore-summary"
           unless="testmodel-objectstore-is-summarised">
-    <!-- do the slow bit only if testmodel-objectstore-is-summarised is not set -->
+    
     <antcall target="summarise-testmodel-objectstore-slow"/>
   </target>
-
+  
+-->
   <!-- Model diagrams -->
   
   <target name="dot-main" depends="compile-main">
