@@ -11,8 +11,10 @@ then
 fi
 
 server=flymine@download.flymine.org
+apiserver=flymine@www.flymine.org
 tempdir=/tmp/flymine-release-$$
 
+apidir=/var/www/flymine/http/api
 destdirbase=/chroot/download
 
 if [ $1 == "nightly" ]
@@ -46,6 +48,24 @@ eval $command
 ## Create the tarred source files from the clean checkout
 tar czvf flymine-src-$version.tar.gz flymine-$version
 zip -r flymine-src-$version.zip flymine-$version
+
+### Release javadoc
+if [ $1 == "nightly" ]
+then
+    cd $tempdir/flymine-$version
+    ant dist-javadoc
+
+    command="ssh $apiserver \"rm -rf $apidir/*\""
+    eval $command
+
+    command="scp -r dist/api/* $apiserver:$apidir/"
+    eval $command
+
+    command="ssh $apiserver \"find $apidir -type f | xargs chmod a+r\""
+    eval $command
+    command="ssh $apiserver \"find $apidir -type d | xargs chmod a+rx\""
+    eval $command
+fi
 
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
