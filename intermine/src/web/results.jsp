@@ -9,7 +9,7 @@
 <html:form action="/changeResultsSize">
 
   <%-- The following should probably be turned into a tag at some stage --%>
-  <table border="1px" width="90%">
+  <table border="1px" width="100%">
     <%-- The headers --%>
     <tr>
       <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">
@@ -70,7 +70,7 @@
                 <c:choose>
                   <c:when test="${(status.count == 1) || (row[column.index] != prevrow[column.index])}">
                     <%-- the checkbox to select this object --%>
-                    <td align="center">
+                    <td align="center" width="1">
                       <html:multibox property="selectedObjects">
                         <c:out value="${column.index},${status.index}"/>
                       </html:multibox>

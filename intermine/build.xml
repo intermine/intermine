@@ -1417,6 +1417,7 @@
     </copy>
     <copy todir="${build.webapp}/flymine/images">
       <fileset dir="${resources}/webapps/flymine/images"/>
+      <fileset dir="${src.www}/images"/>
     </copy>
     <copy todir="${build.webapp}/flymine/WEB-INF">
       <fileset dir="${resources}/webapps/flymine" excludes="images/**, *.properties"/>
