@@ -164,6 +164,7 @@
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="11946273"/>
     <attribute name="startIsPartial" value="false"/>
+    <attribute name="strand" value="0"/>
     <reference name="object" ref_id="18_1"/>
     <reference name="subject" ref_id="19_160"/>
   </item>
@@ -380,6 +381,7 @@
     <attribute name="endIsPartial" value="false"/>
     <attribute name="start" value="1926335"/>
     <attribute name="startIsPartial" value="false"/>
+    <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="18_1"/>
     <reference name="subject" ref_id="-1_18"/>
   </item>
