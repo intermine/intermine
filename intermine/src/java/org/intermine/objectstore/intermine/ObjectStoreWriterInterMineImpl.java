@@ -566,7 +566,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         int batches = logBatch + (emptyBatch ? 0 : 1);
         if (batches > 0) {
             LOG.error(getModel().getName() + ": Performed " + logOps + " write statements in "
-                    + logBatch + " batches. Average batch size: " + (logOps / logBatch));
+                    + batches + " batches. Average batch size: " + (logOps / batches));
         }
     }
 
