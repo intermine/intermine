@@ -12,7 +12,7 @@
   <tr>
   
     <th class="title" align="left"><fmt:message key="begin.heading.build"/></th>
-    <th class="help" align="right" nowrap>
+    <th class="help" align="right" nowrap="nowrap">
       [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
         <fmt:message key="begin.link.help"/>
       </html:link>]
@@ -36,25 +36,20 @@
           <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
             <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
           </c:if>
-          <br/>
-          <span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/classChooser"><fmt:message key="begin.view.all.classes"/></html:link></span>
         </p>  
       </c:forEach>
       
     </td>
-    <td valign="bottom" align="right" nowrap>
+    <td valign="bottom" align="right" nowrap="nowrap">
     
-      <fmt:message key="begin.list.all.classes"/>
       <html:link action="/classChooser">
-        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+        <fmt:message key="begin.list.all.classes"/>
       </html:link><br/>
-      <fmt:message key="begin.browse.model"/>
       <html:link action="/tree">
-        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+        <fmt:message key="begin.browse.model"/>
       </html:link><br/>
-      <fmt:message key="begin.upload.identifiers"/>
       <html:link action="/bagBuild">
-        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+        <fmt:message key="begin.upload.identifiers"/>
       </html:link><br/>
     </td>
   </tr>
