@@ -118,8 +118,16 @@ public class TemplateController extends TilesAction
                           + node.getPath().substring(node.getPath().lastIndexOf(".") + 1));
 
                 if (populate) {
-                    tf.setAttributeValues ("" + (j + 1), "" + c.getDisplayValue(node));
-                    tf.setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
+                    String attributeKey = "" + (j + 1);
+                    tf.setAttributeValues (attributeKey, "" + c.getDisplayValue(node));
+                    tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
+                    if (c.getIdentifier() != null) {
+                        String paramName = c.getIdentifier() + "_value";
+                        String constraintValue = request.getParameter(paramName);
+                        if (constraintValue != null) {
+                            tf.setAttributeValues(attributeKey, constraintValue);
+                        }
+                    }
                 }
                 
                 j++;
