@@ -145,6 +145,7 @@
             type="org.intermine.web.ViewAction"
             name="emptyForm">
       <forward name="results" path="results.page"/>
+      <forward name="query" path="query.page"/>
     </action>
 
     <!-- Actions invoked using buttons - not validating form -->
