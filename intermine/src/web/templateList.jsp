@@ -9,6 +9,7 @@
 <tiles:importAttribute name="headingKey"/>
 <tiles:importAttribute name="templateType"/>
 <tiles:importAttribute name="showDelete" ignore="true"/>
+<tiles:importAttribute name="showEdit" ignore="true"/>
 
 <c:if test="${!empty templates}">
   <table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
@@ -43,6 +44,11 @@
             </jsp:useBean>
             <html:link action="/confirm" name="deleteParams" title="${linkTitle}">
               <img border="0" src="images/cross.png" alt="x"/>
+            </html:link>
+          </c:if>
+          <c:if test="${showEdit == 1}">
+            <html:link action="/editTemplate?name=${templateQuery.key}">
+              <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
             </html:link>
           </c:if>
           <br/>
