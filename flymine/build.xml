@@ -2344,8 +2344,19 @@
       <property name="db.name" value="db.userprofile"/>
       <property name="objectstore.name" value="os.userprofile"/>
     </ant>
+    <antcall target="load-default-templates"/>
   </target>
-
+  
+  <!-- load default global template queries -->
+  <target name="load-default-templates" depends="prepare-build-model">
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="insert-default-templates" classname="org.intermine.task.LoadDefaultTemplatesTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
+                              username="${webapp.superuser}"/>
+  </target>
+  
   <target name="build-production-webservice-client" depends="compile-genomic-model">
     <jar destfile="${dist}/flymine-webservice-client.jar">
       <zipfileset src="${webservice-client.jar.path}"/>
