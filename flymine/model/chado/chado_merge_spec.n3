@@ -275,6 +275,9 @@ null:pub__volumetitle a owl:DatatypeProperty ;
 null:pub__publisher a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__publisher .
 
+null:pub__uniquename a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__uniquename .
+
 null:pub__miniref a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__miniref .
 

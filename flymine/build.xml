@@ -231,10 +231,29 @@
   <!-- Chado model -->
   <target name="create-indexes-chado-test" depends="build-db-chado-test">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.chado-test"/>
+    </ant>
+  </target>
+
+  <!-- Chado src test -->
+  <target name="build-db-chado-src-test" depends="prepare-build-model, compile-chado-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="chado"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.chado-src-test"/>
+    </ant>
+  </target>
+
+  <!-- Chado model -->
+  <target name="create-indexes-chado-src-test" depends="build-db-chado-src-test">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="chado"/>
       <property name="model.src" value="${model}/chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.chado-test"/>
+      <property name="db.name" value="db.chado-src-test"/>
     </ant>
   </target>
 
@@ -443,7 +462,16 @@
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado"/>
   </target>
 
-  <!-- Load data from ensembl-anoph-tmp-items into production -->
+  <!-- Load data from chado-src-items into chado-src-test -->
+  <target name="load-chado-src-test" depends="prepare-build-model,build-db-chado-src-test,create-indexes-chado-src-test">
+    <taskdef name="load-chado-src-test" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-chado-src-test integrationWriter="integration.chado-src-test" source="os.chado-src-translated" sourceName="chado"/>
+  </target>
+
+  <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
   <target name="load-ensembl-anopheles" depends="prepare-build-model">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
