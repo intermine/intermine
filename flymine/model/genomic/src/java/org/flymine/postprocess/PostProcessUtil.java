@@ -24,6 +24,8 @@ import org.intermine.util.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.FieldDescriptor;
 
+import org.flymine.model.genomic.Location;
+
 /**
  * Common operations for post processing.
  *
@@ -177,5 +179,56 @@ public class PostProcessUtil
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         res.setBatchSize(10000);
         return res.iterator();
+    }
+
+    /**
+     * Query ObjectStore for all Location object between given object and
+     * subject classes.  Return an iterator over the results ordered by subject.
+     * @param os the ObjectStore to find the Locations in
+     * @param objectCls object type of the Location
+     * @param subjectCls subject type of the Location
+     * @param orderBySubject if true order the results using the subjectCls, otherwise order by
+     * objectCls
+     * @return an iterator over the results: object.id, location, subject
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Results findLocations(ObjectStore os, Class objectCls, Class subjectCls,
+                                        boolean orderBySubject)
+        throws ObjectStoreException {
+        // TODO check objectCls and subjectCls assignable to BioEntity
+
+        Query q = new Query();
+        q.setDistinct(true);
+        QueryClass qcObj = new QueryClass(objectCls);
+        QueryField qfObj = new QueryField(qcObj, "id");
+        q.addFrom(qcObj);
+        q.addToSelect(qfObj);
+        if (!orderBySubject) {
+            q.addToOrderBy(qfObj);
+        }
+        QueryClass qcSub = new QueryClass(subjectCls);
+        q.addFrom(qcSub);
+        q.addToSelect(qcSub);
+        if (orderBySubject) {
+            q.addToOrderBy(qcSub);
+        }
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+        q.addToSelect(qcLoc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
+        cs.addConstraint(cc1);
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
+        cs.addConstraint(cc2);
+        q.setConstraint(cs);
+// temporarily disabled - causes query failures because of missing precomputed tables
+//        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+
+        res.setBatchSize(5000);
+
+        return res;
     }
 }

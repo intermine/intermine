@@ -28,6 +28,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.dataloader.IntegrationWriterFactory;
@@ -269,8 +270,9 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosomeBand(), sc, 1, 201, 600, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator iter = CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
                                                              Supercontig.class, true);
+        Iterator iter = results.iterator();
         Location result = (Location) ((ResultsRow) iter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -297,8 +299,9 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosomeBand(), sc, -1, 201, 600, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator iter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
                                                              ChromosomeBand.class, Supercontig.class, true);
+        Iterator iter = results.iterator();
         Location result = (Location) ((ResultsRow) iter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -332,9 +335,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), c, 1, 1301, 1550, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrContigIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                      Chromosome.class,
-                                                                      Contig.class, true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                               Chromosome.class,
+                                                               Contig.class, true);
+        Iterator chrContigIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -344,9 +348,11 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), c, 1, 301, 550, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandContigIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
                                                  Contig.class, true);
+        Iterator chrBandContigIter = results.iterator();
+
         result = (Location) ((ResultsRow) chrBandContigIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -379,9 +385,9 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), c, 1, 1301, 1550, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrContigIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Chromosome.class,
-                                                 Contig.class, true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(), Chromosome.class,
+                                                        Contig.class, true);
+        Iterator chrContigIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -391,9 +397,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), c, 1, 301, 550, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandContigIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Contig.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Contig.class, true);
+        Iterator chrBandContigIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandContigIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -429,8 +435,9 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1351, 1450, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
                                                                     Chromosome.class, Exon.class, true);
+        Iterator chrExonIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -440,9 +447,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 151, 250, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class, 
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class, 
                                                  Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -452,9 +460,11 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 351, 450, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
                                                  Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
+
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -530,10 +540,11 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1541, 1610, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
                                                                     Chromosome.class, Exon.class,
                                                                     true);
 
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -548,9 +559,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 341, 410, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                       Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -567,9 +578,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 541, 610, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                       Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
+        
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -647,10 +659,11 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, -1, 1541, 1610, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                               Chromosome.class, Exon.class,
+                                                               true);
 
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -665,9 +678,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, -1, 341, 410, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                       Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -684,9 +697,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, -1, 541, 610, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                       Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -765,10 +778,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, -1, 1531, 1580, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                              Chromosome.class, Exon.class,
+                                                              true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -783,10 +796,11 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, -1, 331, 380, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
                                                  Exon.class, true);
-
+        Iterator supercontigExonIter = results.iterator();
+        
         assertTrue(supercontigExonIter.hasNext());
 
         rr = (ResultsRow) supercontigExonIter.next();
@@ -802,9 +816,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, -1, 531, 580, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                       Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -884,10 +898,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1531, 1580, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                               Chromosome.class, Exon.class,
+                                                               true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -902,9 +916,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 331, 380, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                       Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -921,9 +935,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 531, 580, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                       Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1002,10 +1016,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1491, 1580, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                               Chromosome.class, Exon.class,
+                                                               true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -1020,9 +1034,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 1491-1200, 1580-1200, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
                                                  Exon.class, true);
+Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1039,9 +1054,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 1491-1000, 1580-1000, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
                                                  Exon.class, true);
+Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1119,10 +1135,11 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1491, 1580, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class, true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                        Chromosome.class, Exon.class, true);
 
-
+        Iterator chrExonIter = results.iterator();
+        
         rr = (ResultsRow) chrExonIter.next();
 
         Location result = (Location) rr.get(2);
@@ -1136,9 +1153,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 1491-1200, 1580-1200, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
                                                  Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1155,9 +1173,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 1491-1000, 1580-1000, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
                                                  Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1236,10 +1255,11 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, -1, 1491, 1560, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                        Chromosome.class, Exon.class,
+                                                        true);
 
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -1254,9 +1274,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 341, 410, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
                                                  Exon.class, true);
+Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1273,9 +1294,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, -1, 1491-1000, 1560-1000, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+        results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
                                                  Exon.class, true);
+Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1353,10 +1375,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1491, 1560, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                        Chromosome.class, Exon.class,
+                                                        true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -1371,9 +1393,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, -1, 341, 410, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1390,9 +1412,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 1491-1000, 1560-1000, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1470,10 +1492,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1541, 1580, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                        Chromosome.class, Exon.class,
+                                                        true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -1488,9 +1510,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, -1, 321, 360, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1507,9 +1529,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 1541-1000, 1580-1000, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1588,10 +1610,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, -1, 1541, 1580 , Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                        Chromosome.class, Exon.class,
+                                                        true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -1606,9 +1628,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 321, 360, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1625,9 +1647,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, -1, 1541-1000, 1580-1000, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class, 
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class, 
+                                                        Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertFalse(chrBandExonIter.hasNext());
@@ -1712,10 +1734,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1351, 1560, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
-
+        Results results= PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                       Chromosome.class, Exon.class,
+                                                       true);
+        Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
 
@@ -1732,9 +1754,9 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         ((PartialLocation) expected).setEndIsPartial(Boolean.TRUE);
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
 
         assertTrue(supercontigExonIter.hasNext());
 
@@ -1768,9 +1790,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 351, 560, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         assertTrue(! (result instanceof PartialLocation));
@@ -1815,9 +1837,11 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, -1, 1451, 1480, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class,
-                                                                    true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                        Chromosome.class, Exon.class,
+                                                        true);
+        Iterator chrExonIter = results.iterator();
+        
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1827,9 +1851,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, -1, 251, 280, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1839,9 +1863,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, -1, 451, 480, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1882,7 +1906,9 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, 1, 1321, 1350, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(), Chromosome.class, Exon.class, true);
+        Results results =
+            PostProcessUtil.findLocations(osw.getObjectStore(), Chromosome.class, Exon.class, true);
+        Iterator chrExonIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1892,9 +1918,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, -1, 251, 280, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1904,9 +1930,9 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, 1, 321, 350, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1947,8 +1973,10 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosome(), e, -1, 1321, 1350, Location.class);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Iterator chrExonIter = CalculateLocationsUtil.findLocations(osw.getObjectStore(), Chromosome.class,
-                                                                    Exon.class, true);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(), Chromosome.class,
+                                                        Exon.class, true);
+        Iterator chrExonIter = results.iterator();
+        
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1958,9 +1986,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(sc, e, 1, 251, 280, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator supercontigExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), Supercontig.class,
+                                                Exon.class, true);
+        Iterator supercontigExonIter = results.iterator();
+        
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
@@ -1970,9 +1999,10 @@ public class CalculateLocationsTest extends TestCase {
         expected = createLocation(getChromosomeBand(), e, -1, 321, 350, Location.class);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        Iterator chrBandExonIter =
-            CalculateLocationsUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+        results = PostProcessUtil.findLocations(osw.getObjectStore(), ChromosomeBand.class,
+                                                Exon.class, true);
+        Iterator chrBandExonIter = results.iterator();
+        
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
