@@ -10,16 +10,15 @@ package org.intermine.web;
  *
  */
 
+import java.io.*;
+
+import servletunit.struts.MockStrutsTestCase;
+
 /**
  * Tests for the SavedQueryParser class
  *
  * @author Kim Rutherford
  */
-
-import java.io.*;
-
-import servletunit.struts.MockStrutsTestCase;
-
 public class SavedQueryParserTest extends MockStrutsTestCase
 {
     public SavedQueryParserTest(String arg) {
