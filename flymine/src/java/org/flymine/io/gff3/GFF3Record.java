@@ -222,12 +222,12 @@ public class GFF3Record
     }
 
     /**
-     * Return the first value of the Name field from the attributes of this record.
+     * Return the list of the Name field from the attributes of this record.
      * @return the Name from the attributes of this record or null of there isn't a value
      */
-    public String getName() {
+    public List getNames() {
         if (getAttributes().containsKey("Name")) {
-            return (String) ((List) getAttributes().get("Name")).get(0);
+            return (List) getAttributes().get("Name");
         } else {
             return null;
         }
@@ -246,7 +246,7 @@ public class GFF3Record
     }
 
     /**
-     * Return the first value of the Parent field from the attributes of this record.
+     * Return the list of the Parent field from the attributes of this record.
      * @return the Parent from the attributes of this record or null of there isn't a value
      */
     public List getParents () {

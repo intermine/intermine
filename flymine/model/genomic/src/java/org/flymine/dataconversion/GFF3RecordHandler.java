@@ -182,6 +182,22 @@ public class GFF3RecordHandler
     }
 
     /**
+     * Get the InfoSource item to use in this handler
+     * @param infoSource the infoSource item
+     */
+    public void setInfoSource(Item infoSource) {
+        items.put("_infoSource", infoSource);
+    }
+
+    /**
+     * Return the InfoSource Item set by setInfoSource()
+     * @return the infoSource Item
+     */
+    protected Item getInfoSource() {
+        return (Item) items.get("_infoSource");
+    }
+
+    /**
      * Set the ItemFactory to use in this handler.
      * @param itemFactory the ItemFactory
      */
