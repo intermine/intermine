@@ -70,8 +70,9 @@ Full details:<br/><br/>
   <div style="margin-left: 20px">
     <c:forEach items="${object.references}" var="entry">
       <c:set var="reference" value="${entry.value}"/>
+      <c:set var="verbose" value="${!empty object.verbosity[entry.key]}"/>
       <c:choose>
-        <c:when test="${reference.verbose}">
+        <c:when test="${verbose}">
           <html:link action="/modifyDetails?method=unverbosify&field=${entry.key}">
             <img border="0" src="images/minus.png" alt="-"/>
           </html:link>
@@ -88,7 +89,7 @@ Full details:<br/><br/>
         - <c:forEach items="${reference.clds}" var="cld">${cld.unqualifiedName} </c:forEach>
       </span>
       <br/>
-      <c:if test="${reference.verbose}">
+      <c:if test="${verbose}">
         <div style="margin-left: 20px">
           <c:forEach items="${reference.identifiers}" var="entry">
             <b>${entry.key}</b> ${entry.value}<br/>
@@ -104,8 +105,9 @@ Full details:<br/><br/>
   <div style="margin-left: 20px">
     <c:forEach items="${object.collections}" var="entry">
       <c:set var="collection" value="${entry.value}"/>
+      <c:set var="verbose" value="${!empty object.verbosity[entry.key]}"/>
       <c:choose>
-        <c:when test="${collection.verbose}">
+        <c:when test="${verbose}">
           <html:link action="/modifyDetails?method=unverbosify&field=${entry.key}">
             <img border="0" src="images/minus.png" alt="-"/>
           </html:link>
@@ -121,7 +123,7 @@ Full details:<br/><br/>
       </c:choose>
       <html:link action="/collectionDetails?id=${object.id}&field=${entry.key}"><b>${entry.key}</b></html:link>
       <span class="type">- ${collection.size} ${collection.cld.unqualifiedName} objects</span>
-      <c:if test="${collection.verbose}">
+      <c:if test="${verbose}">
         <table rules="all" style="margin-left: 20px" cellpadding="5">
           <thead style="text-align: center">
             <tr>

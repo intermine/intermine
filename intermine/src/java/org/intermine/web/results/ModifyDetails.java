@@ -53,7 +53,7 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
 
-        setVerbosity((DisplayObject) session.getAttribute("object"), fieldName, true);
+        ((DisplayObject) session.getAttribute("object")).setVerbosity(fieldName, true);
 
         return mapping.findForward("objectDetails");
     }
@@ -75,26 +75,9 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
 
-        setVerbosity((DisplayObject) session.getAttribute("object"), fieldName, false);
+        ((DisplayObject) session.getAttribute("object")).setVerbosity(fieldName, false);
 
         return mapping.findForward("objectDetails");
-    }
-
-    /**
-     * Set the verbosity level for display op a collection or reference of the current object
-     * @param object the currently displayed object
-     * @param fieldName the field for which to set the verbosity
-     * @param verbosity whether to use the verbose display
-     */
-    protected void setVerbosity(DisplayObject object, String fieldName, boolean verbosity) {
-        DisplayReference reference = (DisplayReference) object.getReferences().get(fieldName);
-        if (reference != null) {
-            reference.setVerbose(verbosity);
-        } else {
-            DisplayCollection collection =
-                (DisplayCollection) object.getCollections().get(fieldName);
-            collection.setVerbose(verbosity);
-        }
     }
 
     /**

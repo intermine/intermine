@@ -30,7 +30,6 @@ public class DisplayReference
     int id;
     Set clds;
     Map identifiers = new HashMap();
-    boolean verbose = false;
 
     /**
      * Constructor
@@ -73,21 +72,5 @@ public class DisplayReference
      */
     public Map getIdentifiers() {
         return identifiers;
-    }
-
-    /**
-     * Set the verbosity level for display of this reference
-     * @param verbose the verbosity level
-     */
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
-    /**
-     * Get the verbosity level for display of this reference
-     * @return the verbosity level
-     */
-    public boolean isVerbose() {
-        return verbose;
     }
 }
