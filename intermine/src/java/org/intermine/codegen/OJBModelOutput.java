@@ -52,7 +52,8 @@ public class OJBModelOutput extends ModelOutput
     protected String generate(Model model) {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENDL)
-            .append("<!DOCTYPE descriptor-repository SYSTEM \"repository.dtd\" [" + ENDL)
+            .append("<!DOCTYPE descriptor-repository SYSTEM")
+            .append(" \"http://db.apache.org/ojb/dtds/1.0/repository.dtd\" [" + ENDL)
             .append("<!ENTITY internal SYSTEM \"repository_internal.xml\">" + ENDL)
             .append("]>" + ENDL + ENDL)
             .append("<descriptor-repository version=\"1.0\"")

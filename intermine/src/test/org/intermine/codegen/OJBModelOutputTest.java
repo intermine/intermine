@@ -71,7 +71,7 @@ public class OJBModelOutputTest extends TestCase
             reader.read(text);
 
             String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENDL
-            + "<!DOCTYPE descriptor-repository SYSTEM \"repository.dtd\" [" + ENDL
+            + "<!DOCTYPE descriptor-repository SYSTEM \"http://db.apache.org/ojb/dtds/1.0/repository.dtd\" [" + ENDL
             + "<!ENTITY internal SYSTEM \"repository_internal.xml\">" + ENDL
             + "]>" + ENDL + ENDL + "<descriptor-repository version=\"1.0\" isolation-level=\"read-uncommitted\">" + ENDL
             + INDENT + "<class-descriptor class=\"Class1\" table=\"Class1\">" + ENDL
@@ -95,7 +95,7 @@ public class OJBModelOutputTest extends TestCase
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENDL
-            + "<!DOCTYPE descriptor-repository SYSTEM \"repository.dtd\" [" + ENDL
+            + "<!DOCTYPE descriptor-repository SYSTEM \"http://db.apache.org/ojb/dtds/1.0/repository.dtd\" [" + ENDL
             + "<!ENTITY internal SYSTEM \"repository_internal.xml\">" + ENDL
             + "]>" + ENDL + ENDL + "<descriptor-repository version=\"1.0\" isolation-level=\"read-uncommitted\">" + ENDL
             + INDENT + "<class-descriptor class=\"Class1\" table=\"Class1\">" + ENDL
