@@ -65,7 +65,8 @@ public class TransferSequences
     private Map transferToChromosome()
         throws IllegalSymbolException, IllegalAlphabetException, ObjectStoreException {
         ObjectStore os = osw.getObjectStore();
-        Iterator resIter = CalculateLocations.findLocations(os, Chromosome.class, Contig.class);
+        Iterator resIter =
+            CalculateLocationsUtil.findLocations(os, Chromosome.class, Contig.class, true);
 
         // keep the new Chromosome sequences in a char[] for speed - convert to String at the end
         // this is a Map from Chromosome to char[]
@@ -112,7 +113,8 @@ public class TransferSequences
         throws IllegalSymbolException, IllegalAlphabetException, ObjectStoreException {
         ObjectStore os = osw.getObjectStore();
         Iterator resIter =
-            CalculateLocations.findLocations(os, Chromosome.class, LocatedSequenceFeature.class);
+            CalculateLocationsUtil.findLocations(os, Chromosome.class,
+                                                 LocatedSequenceFeature.class, true);
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
