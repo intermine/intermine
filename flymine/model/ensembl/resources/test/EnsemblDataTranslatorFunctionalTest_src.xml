@@ -300,6 +300,26 @@
     <reference name="clone" ref_id="13_8848"/>
     <reference name="dna" ref_id="12_11169"/>
   </item>
+  <item id="0_101" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="nonUniqueId" value="0_3"/>
+    <attribute name="contig_end" value="25020"/>
+    <attribute name="contig_start" value="22021"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="1"/>
+    <reference name="contig" ref_id="1_11168"/>
+  </item>
+  <item id="0_102" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="nonUniqueId" value="0_3"/>
+    <attribute name="contig_end" value="7000"/>
+    <attribute name="contig_start" value="1"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="2"/>
+    <reference name="contig" ref_id="1_11169"/>
+  </item>
   <item id="25_259" class="http://www.flymine.org/model/ensembl#repeat_consensus">
     <attribute name="repeat_class" value="Low_complexity"/>
     <attribute name="repeat_consensus" value="N"/>

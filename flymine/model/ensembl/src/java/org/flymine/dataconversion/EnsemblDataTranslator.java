@@ -19,7 +19,9 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.ArrayList;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -52,6 +54,8 @@ public class EnsemblDataTranslator extends DataTranslator
     private Reference emblRef;
     private Map supercontigs = new HashMap();
     private Map scLocs = new HashMap();
+    private Map exonLocs = new LinkedHashMap();
+    private Map exons = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -71,6 +75,14 @@ public class EnsemblDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
+        i = exonLocs.values().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+        i = exons.values().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
     }
 
     /**
@@ -82,12 +94,18 @@ public class EnsemblDataTranslator extends DataTranslator
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
+                boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
                 if ("karyotype".equals(className)) {
                     result.add(createLocation(srcItem, tgtItem, "chromosome", "chr", true));
                 } else if ("exon".equals(className)) {
+                    storeTgtItem = false;
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
-                    result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
+                    Set locs = processExon(srcItem, tgtItem,
+                        createLocation(srcItem, tgtItem, "contig", "contig", true));
+                    if (!locs.isEmpty()) {
+                        result.addAll(locs);
+                    }
                 } else if ("simple_feature".equals(className)) {
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
@@ -133,7 +151,9 @@ public class EnsemblDataTranslator extends DataTranslator
                     synonym.addReference(getEmblRef());
                     result.add(synonym);
                 }
-                result.add(tgtItem);
+                if (storeTgtItem) {
+                    result.add(tgtItem);
+                }
             }
         // assembly maps to null but want to create location on a supercontig
         } else if ("assembly".equals(className)) {
@@ -164,6 +184,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
         moveField(srcItem, location, locPrefix + "_start", "start");
         moveField(srcItem, location, locPrefix + "_end", "end");
+        location.addAttribute(new Attribute("startIsPartial", "false"));
+        location.addAttribute(new Attribute("endIsPartial", "false"));
 
         if (srcItem.hasAttribute(locPrefix + "_strand")) {
             moveField(srcItem, location, locPrefix + "_strand", "strand");
@@ -172,7 +194,7 @@ public class EnsemblDataTranslator extends DataTranslator
             moveField(srcItem, location, "phase", "phase");
         }
         if (srcItem.hasAttribute("end_phase")) {
-            moveField(srcItem, location, "end_phase", "end_phase");
+            moveField(srcItem, location, "end_phase", "endPhase");
         }
         if (srcItem.hasAttribute(locPrefix + "_ori")) {
             moveField(srcItem, location, locPrefix + "_ori", "strand");
@@ -211,10 +233,13 @@ public class EnsemblDataTranslator extends DataTranslator
     private Item getSuperContig(String name, String chrId, int start, int end) {
         Item supercontig = (Item) supercontigs.get(name);
         if (supercontig == null) {
-            supercontig = createItem(tgtNs + "SuperContig", "");
+            supercontig = createItem(tgtNs + "SuperContig",
+                                     "http://www.flymine.org/model/genomic#BioEntity");
             Item chrLoc = createItem(tgtNs + "Location", "");
             chrLoc.addAttribute(new Attribute("start", "" + Integer.MAX_VALUE));
             chrLoc.addAttribute(new Attribute("end", "" + Integer.MIN_VALUE));
+            chrLoc.addAttribute(new Attribute("startIsPartial", "false"));
+            chrLoc.addAttribute(new Attribute("endIsPartial", "false"));
             chrLoc.addReference(new Reference("subject", supercontig.getIdentifier()));
             chrLoc.addReference(new Reference("object", chrId));
 
@@ -239,6 +264,85 @@ public class EnsemblDataTranslator extends DataTranslator
         return supercontig;
     }
 
+
+    private Set processExon(Item srcItem, Item exon, Item thisLoc) {
+        Set ret = new HashSet();
+
+        if (srcItem.hasAttribute("nonUniqueId")) {
+            String nonUniqueId = srcItem.getAttribute("nonUniqueId").getValue();
+
+            if (exonLocs.containsKey(nonUniqueId)) {
+                // already seen exon
+                // a) throw away second copy
+                // b) locations are partial
+                // c) make sure the exon is exons map has lowest identifier
+
+                Item chosenExon = null;
+                Item otherExon = null;
+                String oldIdentifier = ((Item) exons.get(nonUniqueId)).getIdentifier();
+                if (Integer.parseInt(oldIdentifier.substring(oldIdentifier.indexOf("_") + 1))
+                    > Integer.parseInt(exon.getIdentifier()
+                                     .substring(exon.getIdentifier().indexOf("_") + 1))) {
+                    // exon in map needs all parents in objects collection
+                    otherExon = (Item) exons.get(nonUniqueId);
+                    chosenExon = exon;
+                    exons.put(nonUniqueId, exon);
+                } else {
+                    chosenExon = (Item) exons.get(nonUniqueId);
+                    otherExon = exon;
+                }
+                Set objects = new HashSet();
+                objects.addAll(chosenExon.getCollection("objects").getRefIds());
+                objects.addAll(otherExon.getCollection("objects").getRefIds());
+                objects.add(thisLoc.getIdentifier());
+                chosenExon.addCollection(new ReferenceList("objects", new ArrayList(objects)));
+
+                Item prevLoc = (Item) exonLocs.get(nonUniqueId);
+                exonLocs.remove(nonUniqueId);
+                Item firstLoc = null;
+                Item secondLoc = null;
+                if (srcItem.getAttribute("sticky_rank").getValue().equals("1")) {
+                    firstLoc = thisLoc;
+                    secondLoc = prevLoc;
+                } else {
+                    firstLoc = prevLoc;
+                    secondLoc = thisLoc;
+                }
+
+                int lengthOnFirst = (Integer.parseInt(firstLoc.getAttribute("end").getValue())
+                                - Integer.parseInt(firstLoc.getAttribute("start").getValue())) + 1;
+                int lengthOnSecond = (Integer.parseInt(secondLoc.getAttribute("end").getValue())
+                                - Integer.parseInt(secondLoc.getAttribute("start").getValue())) + 1;
+
+                // add subjectStart and subjectEnd to firstLoc
+                firstLoc.setClassName(tgtNs + "PartialLocation");
+                firstLoc.addAttribute(new Attribute("subjectStart", "1"));
+                firstLoc.addAttribute(new Attribute("subjectEnd", "" + lengthOnFirst));
+                firstLoc.getAttribute("endIsPartial").setValue("true");
+                firstLoc.addReference(new Reference("subject", chosenExon.getIdentifier()));
+
+                // add subjectStart and subjectEnd to secondLoc
+                secondLoc.setClassName(tgtNs + "PartialLocation");
+                secondLoc.addAttribute(new Attribute("subjectStart", "" + (lengthOnFirst + 1)));
+                secondLoc.addAttribute(new Attribute("subjectEnd", "" + (lengthOnFirst
+                                                                         + lengthOnSecond)));
+                secondLoc.getAttribute("startIsPartial").setValue("true");
+                secondLoc.addReference(new Reference("subject", chosenExon.getIdentifier()));
+
+
+                ret.add(firstLoc);
+                ret.add(secondLoc);
+            } else {
+                // store this exon and keep Location
+                exonLocs.put(nonUniqueId, thisLoc);
+                exons.put(nonUniqueId, exon);
+            }
+        } else {
+            ret.add(thisLoc);
+            exons.put(exon.getIdentifier(), exon);
+        }
+        return ret;
+    }
 
     private Collection createSuperContigs() {
         Set results = new HashSet();
