@@ -239,7 +239,7 @@ public class MageDataTranslator extends DataTranslator
             }
 
             //FeatureInformationSources->FeatureInformation->Feature->FeatureLocation
-            //can't do prefetch from FeatureReporterMap to featureInformationSources
+            // prefetch done
             Item featureInfo = ItemHelper.convert(srcItemReader
                                                   .getItemById(getFirstId(featureInfos)));
 
@@ -296,7 +296,7 @@ public class MageDataTranslator extends DataTranslator
                 throw new IllegalArgumentException("PhysicalArrayDesign (" + srcItem.getIdentifier()
                         + ") does not have exactly one featureGroup");
             }
-            //ItemPrefetchDescriptor desc1
+            // prefetch done
             Item featureGroup = ItemHelper.convert(srcItemReader
                                                    .getItemById(getFirstId(featureGroups)));
             Iterator featureIter = featureGroup.getCollection("features").getRefIds().iterator();
@@ -455,7 +455,7 @@ public class MageDataTranslator extends DataTranslator
                     if (frm.hasCollection("featureInformationSources")) {
                         Iterator j = frm.getCollection("featureInformationSources").
                                    getRefIds().iterator();
-                        //can't prefetch from FeatureReporterMap get featureInformationSources
+                        // prefetch done
                         while (j.hasNext()) {
                             Item fis = ItemHelper.convert(srcItemReader.getItemById(
                                        (String) j.next()));
@@ -538,7 +538,7 @@ public class MageDataTranslator extends DataTranslator
         ReferenceList newRl = new ReferenceList();
         newRl.setName("assays");
 
-        //can't prefetch from Experiment to bioAssays
+        // prefetch done
         if (rl != null) {
             for (Iterator i = rl.getRefIds().iterator(); i.hasNext(); ) {
                 Item baItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
@@ -560,7 +560,7 @@ public class MageDataTranslator extends DataTranslator
         if (srcItem.hasAttribute("name")) {
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
         }
-        //can't prefetch from Experiment get descriptions
+        // prefetch done
         ReferenceList desRl = srcItem.getCollection("descriptions");
         boolean desFlag = false;
         boolean pubFlag = false;
@@ -609,7 +609,7 @@ public class MageDataTranslator extends DataTranslator
          ReferenceList dbad = srcItem.getCollection("derivedBioAssayData");
          if (dbad != null) {
              for (Iterator j = dbad.getRefIds().iterator(); j.hasNext(); ) {
-                 //can't prefetch from DerivedBioAssay get derivedBioAssayData
+                 // prefetch done
                  Item dbadItem = ItemHelper.convert(srcItemReader.getItemById((String) j.next()));
                  if (dbadItem.hasReference("bioDataValues")) {
                      Item bioDataTuples = ItemHelper.convert(srcItemReader.getItemById(
@@ -746,7 +746,7 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
-        //can't prefetch From BioSequence get sequenceDatabases
+        // prefetch done
         if (srcItem.hasCollection("sequenceDatabases")) {
             ReferenceList rl = srcItem.getCollection("sequenceDatabases");
             identifier = null;
@@ -852,12 +852,12 @@ public class MageDataTranslator extends DataTranslator
             throw new IllegalArgumentException("LabeledExtract (" + srcItem.getIdentifier()
                         + " does not have exactly one label");
         }
-        //can't prefetch labels from LabeledExtract
+        // prefetch done
         Item label = ItemHelper.convert(srcItemReader
                                         .getItemById(getFirstId(labels)));
         tgtItem.addAttribute(new Attribute("label", label.getAttribute("name").getValue()));
 
-        //can't prefetch treatments from LabeledExtract
+        // prefetch done
         ReferenceList treatments = srcItem.getCollection("treatments");
         List treatmentList = new ArrayList();
         ReferenceList tgtTreatments = new ReferenceList("treatments", treatmentList);
@@ -926,7 +926,7 @@ public class MageDataTranslator extends DataTranslator
         if (characteristics != null) {
             for (Iterator i = characteristics.getRefIds().iterator(); i.hasNext();) {
                 String id = (String) i.next();
-                //can't prefetch characteristics from BioSource
+                // prefetch done
                 Item charItem = ItemHelper.convert(srcItemReader.getItemById(id));
                 s = charItem.getAttribute("category").getValue();
                 if (s.equalsIgnoreCase("organism")) {
@@ -996,7 +996,7 @@ public class MageDataTranslator extends DataTranslator
             ReferenceList sourceRl1 = srcItem.getCollection("sourceBioMaterialMeasurements");
             for (Iterator l = sourceRl1.getRefIds().iterator(); l.hasNext(); ) {
                 // bioSampleItem, type extract
-                //can't prefetch sourceBioMaterialMeausrements from Treatment
+                // prefetch done (but limited)
                 Item bioSampleExItem = ItemHelper.convert(srcItemReader.getItemById(
                                       (String) l.next()));
 
@@ -1397,21 +1397,7 @@ public class MageDataTranslator extends DataTranslator
         paths.put("http://www.flymine.org/model/mage#FeatureGroup", Collections.singleton(desc1));
 
 
-        desc1 = new ItemPrefetchDescriptor(
-              "(Reporter <- FeatureReporterMap.reporter)");
-        desc1.addConstraint(new ItemPrefetchConstraintDynamic(
-                                       ObjectStoreItemPathFollowingImpl.IDENTIFIER, "reporter"));
-        desc1.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/mage#FeatureReporterMap", false));
-        paths.put("http://www.flymine.org/model/mage#Reporter", Collections.singleton(desc1));
-
-
-        desc1 = new ItemPrefetchDescriptor("PhysicalArrayDesign.surfaceType");
-        desc1.addConstraint(new ItemPrefetchConstraintDynamic("surfaceType",
-                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/mage#PhysicalArrayDesign",
-                   Collections.singleton(desc1));
-
+        // BioAssayDatum.quantitationType.scale
         desc1 = new ItemPrefetchDescriptor("BioAssayDatum.quantitationType");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("quantitationType",
                                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
@@ -1423,6 +1409,7 @@ public class MageDataTranslator extends DataTranslator
         desc1.addPath(desc2);
         descSet.add(desc1);
 
+        // BioAssayDatum.quantitationType.targetQuantitationType.scale
         ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
                   "(BioAssayDatum.quantitationType).targetQuantitationType");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic(
@@ -1438,29 +1425,251 @@ public class MageDataTranslator extends DataTranslator
         paths.put("http://www.flymine.org/model/mage#BioAssayDatum", descSet);
 
 
+        // BioSequence...
+        descSet = new HashSet();
+
+        // BioSequence.type
         desc1 = new ItemPrefetchDescriptor("BioSequence.type");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("type",
                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/mage#BioSequence",
-                   Collections.singleton(desc1));
+        descSet.add(desc1);
 
+        // BioSequence.sequenceDatabases.database
+        desc1 = new ItemPrefetchDescriptor("BioSequence.sequenceDatabases");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("sequenceDatabases",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor("(BioSequence.sequenceDatabases).database");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("database",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc1.addPath(desc2);
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#BioSequence", descSet);
+
+
+        // LabeledExtract...
+        descSet = new HashSet();
+
+        // LabeledExtract.materialType
         desc1 = new ItemPrefetchDescriptor("LabeledExtract.materialType");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("materialType",
                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/mage#LabeledExtract",
-                   Collections.singleton(desc1));
+        descSet.add(desc1);
 
+        // LabeledExtract.labels
+        desc1 = new ItemPrefetchDescriptor("LabeledExtract.labels");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("labels",
+                                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        // code descends through treatments in a loop - prefetch can't handle
+        // that so need to define cutoff (??)
+        // LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial.treatments
+        //       .sourceBioMaterialMeasurements.bioMaterial.treatments
+        desc1 = new ItemPrefetchDescriptor("LabeledExtract.treatments");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("treatments",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor(
+                 "(LabeledExtract.treatments).sourceBioMaterialMeasurements");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("bioMaterialMeasurements",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc3 = new ItemPrefetchDescriptor(
+                 "((LabeledExtract.treatments).sourceBioMaterialMeasurements).bioMaterial");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("bioMaterial",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc4 = new ItemPrefetchDescriptor(
+          "(((LabeledExtract.treatments).sourceBioMaterialMeasurements).bioMaterial).treatments");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("treatments",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+        ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
+            "(...).sourceBioMaterialMeasurements");
+        desc5.addConstraint(new ItemPrefetchConstraintDynamic("sorceBioMaterialMeasurements",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        ItemPrefetchDescriptor desc6 = new ItemPrefetchDescriptor(
+            "((...).sourceBioMaterialMeasurements).bioMaterial");
+        desc6.addConstraint(new ItemPrefetchConstraintDynamic("bioMaterial",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        ItemPrefetchDescriptor desc7 = new ItemPrefetchDescriptor(
+                 "(((...).sourceBioMaterialMeasurements).bioMaterial).treatments");
+        desc7.addConstraint(new ItemPrefetchConstraintDynamic("treatments",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc6.addPath(desc7);
+        desc5.addPath(desc6);
+        desc4.addPath(desc5);
+        desc3.addPath(desc4);
+        desc2.addPath(desc3);
+        desc1.addPath(desc2);
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#LabeledExtract", descSet);
+
+
+        // BioSource...
+        descSet = new HashSet();
+
+        // BioSource.materialType
         desc1 = new ItemPrefetchDescriptor("BioSource.materialType");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("materialType",
                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/mage#BioSource",
-                   Collections.singleton(desc1));
+        descSet.add(desc1);
 
+        // BioSource.characteristics
+        desc1 = new ItemPrefetchDescriptor("BioSource.characteristics");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("characteristics",
+                                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#BioSource", descSet);
+
+
+        // Treatment.action
         desc1 = new ItemPrefetchDescriptor("Treatment.action");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic(
                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER, "action"));
         paths.put("http://www.flymine.org/model/mage#Treatment",
                    Collections.singleton(desc1));
+
+
+        // new prefetch with collections
+
+        // FeatureReporterMap->featureInformationSources->feature->featureLocation
+        descSet = new HashSet();
+        desc1 = new ItemPrefetchDescriptor("FeatureReporterMap.featureInformaionSources");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("featureInformationSources",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor(
+                 "(FeatureReporterMap.featureInformaionSources).feature");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("feature",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc3 = new ItemPrefetchDescriptor(
+                 "((FeatureReporterMap.featureInformaionSources).feature).featureLocation");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("featureLocation",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+        desc1.addPath(desc2);
+        desc2.addPath(desc3);
+        //descSet.add(desc1); required?
+
+        // FeatureReporterMap->featureInformationSources->feature->zone
+        desc4 = new ItemPrefetchDescriptor(
+                 "((FeatureReporterMap.featureInformaionSources).feature).zone");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("zone",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2.addPath(desc4);
+        descSet.add(desc1);
+        paths.put("http://www.flymine.org/model/mage#FeatureReporterMap", descSet);
+
+
+        // PhysicalArrayDesign...
+        descSet = new HashSet();
+
+        // PhysicalArrayDesign->featureGroups
+        desc1 = new ItemPrefetchDescriptor("PhysicalArrayDesign.featureGroups");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("featureGroups",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        // PhysicalArrayDesign->surfaceType
+        desc1 = new ItemPrefetchDescriptor("PhysicalArrayDesign.surfaceType");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("surfaceType",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        // PhysicalArrayDesign->descriptions
+        desc1 = new ItemPrefetchDescriptor("PhysicalArrayDesign.descriptions");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("descripions",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#PhysicalArrayDesign", descSet);
+
+
+        // Reporter...
+        descSet = new HashSet();
+
+        // Reporter <- FeatureReporterMap.reporter
+        desc1 = new ItemPrefetchDescriptor("(Reporter <- FeatureReporterMap.reporter)");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic(
+                                       ObjectStoreItemPathFollowingImpl.IDENTIFIER, "reporter"));
+        desc1.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/mage#FeatureReporterMap", false));
+        descSet.add(desc1);
+
+        // Reporter->failTypes
+        desc1 = new ItemPrefetchDescriptor("Reporter.failTypes");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("failTypes",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+        // Reporter->controlType
+        desc1 = new ItemPrefetchDescriptor("Reporter.controlType");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("controlType",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        // Reporter->immobilizedCharacteristics->type
+        desc1 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("immobilizedCharacteristics",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor(
+                 "(Reporter.immobilizedCharacteristics).type");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("type",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc1.addPath(desc2);
+        descSet.add(desc1);
+
+        // Reporter->descriptions
+        desc1 = new ItemPrefetchDescriptor("Reporter.descriptions");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("descriptions",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        // Reporter->featureReporterMaps->featureInformationSources
+        desc1 = new ItemPrefetchDescriptor("Reporter.featureReporterMaps");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("featureReporterMaps",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor(
+                 "(Reporter.featureReporterMaps).featureInformationSources");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("featureInformationSources",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc1.addPath(desc2);
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#Reporter", descSet);
+
+
+        // Experiment...
+        descSet = new HashSet();
+
+        // Experiment->bioAssays
+        desc1 = new ItemPrefetchDescriptor("Experiment.bioAssays");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("bioAssays",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        // Experiment.descriptions
+        desc1 = new ItemPrefetchDescriptor("Experiment.descriptions");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("descriptions",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#Experiment", descSet);
+
+        // DerivedBioAssay.derivedBioAssayData.bioDataValues.
+        desc1 = new ItemPrefetchDescriptor("DerivedBioAssay.derivedBioAssayData");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("derivedBioAssayData",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor(
+                 "(DerivedBioAssay.derivedBioAssayData).bioDataValues");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("bioDataValues",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc1.addPath(desc2);
+        descSet.add(desc1);
+
+        paths.put("http://www.flymine.org/model/mage#DerivedBioAssay",
+                  Collections.singleton(desc1));
+
+
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
