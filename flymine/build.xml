@@ -1449,7 +1449,7 @@
                    infoSourceTitle="TilingPath"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TilingPathGFF3RecordHandler">
-      <fileset dir="/shared/data/tiling_path">
+      <fileset dir="/shared/data/tiling">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1792,6 +1792,13 @@
     <mappings operation="calculate-locations" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="create-chromosome-locations" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="create-chromosome-locations" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
@@ -1859,6 +1866,7 @@
   <target name="post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
+    <antcall target="create-chromosome-locations"/>
     <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
     <antcall target="analyse-db-production"/>
