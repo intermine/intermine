@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Collection;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.TreeSet;
@@ -22,6 +23,8 @@ import java.util.Iterator;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -48,6 +51,11 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.TemplateQueryBinding;
+import org.intermine.web.MainHelper;
+import org.intermine.web.PathNode;
 
 import org.apache.log4j.Logger;
 
@@ -199,6 +207,46 @@ public class PrecomputeTask extends Task
                 }
             }
         }
+        
+        iter = getPrecomputeTemplateQueries().entrySet().iterator();
+        
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            ArrayList indexes = new ArrayList();
+            HashMap pathToQueryNode = new HashMap();
+            TemplateQuery template = (TemplateQuery) entry.getValue();
+            Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
+            
+            Iterator niter = template.getNodes().iterator();
+            while (niter.hasNext()) {
+                PathNode node = (PathNode) niter.next();
+                List ecs = template.getConstraints(node);
+                if (ecs != null && ecs.size() > 0) {
+                    // node has editable constraints
+                    QueryNode qn = (QueryNode) pathToQueryNode.get(node.getPath());
+                    if (qn == null) {
+                        throw new BuildException("no QueryNode for path " + node.getPath());
+                    }
+                    indexes.add(qn);
+                    if (!query.getSelect().contains(qn)) {
+                        query.addToSelect(qn);
+                    }
+                }
+            }
+            
+            ResultsInfo resultsInfo;
+
+            try {
+                resultsInfo = os.estimate(query);
+            } catch (ObjectStoreException e) {
+                throw new BuildException("Exception while calling ObjectStore.estimate()", e);
+            }
+
+            if (resultsInfo.getRows() >= minRows) {
+                LOG.info("precomputing template " + entry.getKey());
+                precompute(os, query, indexes);
+            }
+        }
 
         if (testMode) {
             PrintStream outputStream = System.out;
@@ -218,6 +266,29 @@ public class PrecomputeTask extends Task
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
      * @param os the ObjectStore to call precompute() on
      * @param query the query to precompute
+     * @param indexes the index QueryNodes
+     * @throws BuildException if the query cannot be precomputed.
+     */
+    protected void precompute(ObjectStore os, Query query, Collection indexes)
+        throws BuildException {
+        long start = System.currentTimeMillis();
+
+        try {
+            ((ObjectStoreInterMineImpl) os).precompute(query, indexes);
+        } catch (ObjectStoreException e) {
+            throw new BuildException("Exception while precomputing query: " + query
+                    + " with indexes " + indexes, e);
+        }
+
+        LOG.info("precompute(indexes) of took "
+                 + (System.currentTimeMillis() - start) / 1000
+                 + " seconds for: " + query);
+    }
+    
+    /**
+     * Call ObjectStoreInterMineImpl.precompute() with the given Query.
+     * @param os the ObjectStore to call precompute() on
+     * @param query the query to precompute
      * @throws BuildException if the query cannot be precomputed.
      */
     protected void precompute(ObjectStore os, Query query) throws BuildException {
@@ -233,7 +304,20 @@ public class PrecomputeTask extends Task
                  + (System.currentTimeMillis() - start) / 1000
                  + " seconds for: " + query);
     }
-
+    
+    /**
+     * Get the built-in template queries.
+     * @return Map from template name to TemplateQuery
+     * @throws BuildException if an IO error occurs loading the template queries
+     */
+    protected Map getPrecomputeTemplateQueries() throws BuildException {
+        TemplateQueryBinding binding = new TemplateQueryBinding();
+        InputStream sin
+                = PrecomputeTask.class.getClassLoader().getResourceAsStream("template-queries.xml");
+        Map templates = binding.unmarshal(new InputStreamReader(sin));
+        return templates;
+    }
+    
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
      * @return a Map of keys to Query objects
