@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%--/**
      * Render a results cell
      */
@@ -11,6 +12,15 @@
   <c:when test="${cld != null}">
   <%-- Go through all the items in the WebConfig for this object --%>
   <table><tr>
+    <td align="left">
+      <html:link action="/changeResults?method=details&rowIndex=${rowIndex}&columnIndex=${columnIndex}">
+        <font class="resultsCellTitle">
+          <c:out value="${cld.unqualifiedName}"/>
+        </font>
+      </html:link>
+    </td>
+  </tr>
+  <tr>
     <c:if test="${empty webconfig.types[cld.name].shortDisplayers}">
       <td><tiles:insert name="/pkFields.jsp" /></td>
     </c:if>
