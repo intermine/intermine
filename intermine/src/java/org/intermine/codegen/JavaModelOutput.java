@@ -313,7 +313,8 @@ public class JavaModelOutput extends ModelOutput
 
         if (OJB && sClassifierKeyword.equals("class")) {
             if (baseClass.equals("")) {
-                sb.append(INDENT + "protected int id;\n");
+                sb.append(INDENT + "protected Integer id;\n")
+                    .append(INDENT + "public Integer getId() { return id; };\n");
             }
             String key = getKey(cls);
             if (key != null) {
@@ -360,11 +361,14 @@ public class JavaModelOutput extends ModelOutput
         
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public boolean equals(Object o) {\n")
+            sb.append(INDENT+"public boolean equals(Object o) {\n")
                 .append(INDENT+INDENT+"if (!(o instanceof " + cls.getName() + ")) return false;\n")
-                .append(INDENT+INDENT+"if (id!=0 && id==(("+cls.getName()+")o).id) return true;\n")
-                //.append(INDENT+INDENT+"return false");
-                .append(INDENT+INDENT+"return ");
+                .append(INDENT+INDENT+"return (id==null) ? equalsPK(o) : id.equals((("+cls.getName()+")o).getId());\n")
+                .append(INDENT+"}\n\n")
+                .append(INDENT+"public boolean equalsPK(Object o) {\n")
+                .append(INDENT+INDENT+"if (!(o instanceof " + cls.getName() + ")) return false;\n")
+                .append(INDENT+INDENT+cls.getName()+" obj = ("+cls.getName()+") o;\n")
+                .append(INDENT+INDENT+"return obj.getId()==null && ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
@@ -394,8 +398,7 @@ public class JavaModelOutput extends ModelOutput
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
             sb.append(INDENT + "public int hashCode() {\n")
-                //.append(INDENT + INDENT + "return id");
-                .append(INDENT+INDENT+"if (id!=0) return id;\n")
+                .append(INDENT+INDENT+"if (id!=null) return id.hashCode();\n")
                 .append(INDENT+INDENT+"return ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
