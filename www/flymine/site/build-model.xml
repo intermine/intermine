@@ -187,4 +187,34 @@
 
     <create-indexes database="${db.name}" model="${model.name}"/>
   </target>
+
+
+  <target name="add-model-to-webapp" depends="prepare"
+    description="Add a model to the webapp">
+
+    <!-- model-specific files -->
+    <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>
+    <replace file="${build.webapp}/flymine/WEB-INF/struts-config.xml" value="${model.struts.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    <copy todir="${build.webapp}/flymine/model">
+      <fileset dir="${model}/${model.name}/src/web"/>
+    </copy>
+
+    <copy todir="${build.webapp}/flymine/WEB-INF">
+       <fileset dir="${model}/${model.name}/resources/web"/>
+    </copy>
+
+    <copy todir="${build.webapp}/flymine/WEB-INF/classes">
+       <fileset dir="${model}/${model.name}/resources/web" includes="model*.properties"/>
+    </copy>
+
+    <copy todir="${build.webapp}/flymine/WEB-INF/lib">
+       <fileset dir="${dist}" includes="flymine-${model.name}.jar"/>
+    </copy>
+
+  </target>
+
 </project>
