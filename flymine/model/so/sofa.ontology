@@ -70,13 +70,6 @@ $Sequence_Ontology ; SO:0000000 ; SOFA:SOFA
      @is_a@primary_transcript ; SO:0000185 ; SOFA:SOFA ; synonym:precursor_RNA
       @is_a@antisense_primary_transcript ; SO:0000645 ; SOFA:SOFA
       @part_of@clip ; SO:0000303 ; SOFA:SOFA @is_a@ gene_part ; SO:0000050
-      @part_of@intron ; SO:0000188 ; SOFA:SOFA @is_a@ gene_part ; SO:0000050
-       @is_a@autocatalytically_spliced_intron ; SO:0000588 ; SOFA:SOFA @is_a@ ribozyme ; SO:0000374
-       @is_a@group_II_intron ; SO:0000603 ; SOFA:SOFA
-       @is_a@group_I_intron ; SO:0000587 ; SOFA:SOFA
-       @is_a@spliceosomal_intron ; SO:0000662 ; SOFA:SOFA
-        @part_of@branch_site ; SO:0000611 ; SOFA:SOFA ; synonym:branch_point @is_a@ gene_part ; SO:0000050
-        @part_of@polypyrimidine_tract ; SO:0000612 ; SOFA:SOFA @is_a@ gene_part ; SO:0000050
       @is_a@nc_primary_transcript ; SO:0000483 ; SOFA:SOFA ; synonym:noncoding_primary_transcript
       @derived_from@processed_transcript ; SO:0000233 ; SOFA:SOFA @is_a@ transcript ; SO:0000673
        @part_of@cap ; SO:0000581 ; SOFA:SOFA @part_of@ five_prime_UTR ; SO:0000204 @is_a@ gene_part ; SO:0000050
@@ -222,7 +215,7 @@ $Sequence_Ontology ; SO:0000000 ; SOFA:SOFA
     @is_a@clip ; SO:0000303 ; SOFA:SOFA @part_of@ primary_transcript ; SO:0000185
     @is_a@codon ; SO:0000360 ; SOFA:SOFA @part_of@ mRNA ; SO:0000234
     @is_a@exon ; SO:0000147 ; SOFA:SOFA @part_of@ transcript ; SO:0000673
-    @is_a@intron ; SO:0000188 ; SOFA:SOFA @part_of@ primary_transcript ; SO:0000185
+    @is_a@intron ; SO:0000188 ; SOFA:SOFA
      @is_a@autocatalytically_spliced_intron ; SO:0000588 ; SOFA:SOFA @is_a@ ribozyme ; SO:0000374
      @is_a@group_II_intron ; SO:0000603 ; SOFA:SOFA
      @is_a@group_I_intron ; SO:0000587 ; SOFA:SOFA
@@ -247,13 +240,6 @@ $Sequence_Ontology ; SO:0000000 ; SOFA:SOFA
      @is_a@primary_transcript ; SO:0000185 ; SOFA:SOFA ; synonym:precursor_RNA
       @is_a@antisense_primary_transcript ; SO:0000645 ; SOFA:SOFA
       @part_of@clip ; SO:0000303 ; SOFA:SOFA @is_a@ gene_part ; SO:0000050
-      @part_of@intron ; SO:0000188 ; SOFA:SOFA @is_a@ gene_part ; SO:0000050
-       @is_a@autocatalytically_spliced_intron ; SO:0000588 ; SOFA:SOFA @is_a@ ribozyme ; SO:0000374
-       @is_a@group_II_intron ; SO:0000603 ; SOFA:SOFA
-       @is_a@group_I_intron ; SO:0000587 ; SOFA:SOFA
-       @is_a@spliceosomal_intron ; SO:0000662 ; SOFA:SOFA
-        @part_of@branch_site ; SO:0000611 ; SOFA:SOFA ; synonym:branch_point @is_a@ gene_part ; SO:0000050
-        @part_of@polypyrimidine_tract ; SO:0000612 ; SOFA:SOFA @is_a@ gene_part ; SO:0000050
       @is_a@nc_primary_transcript ; SO:0000483 ; SOFA:SOFA ; synonym:noncoding_primary_transcript
       @derived_from@processed_transcript ; SO:0000233 ; SOFA:SOFA @is_a@ transcript ; SO:0000673
        @part_of@cap ; SO:0000581 ; SOFA:SOFA @part_of@ five_prime_UTR ; SO:0000204 @is_a@ gene_part ; SO:0000050
