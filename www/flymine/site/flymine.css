@@ -42,3 +42,18 @@ a:hover {color: #220077;
     font-size: normal;
     font-weight: bold;
 }
+.queryViewFromItemAlias {
+    color: #009900;
+}
+.queryViewConstraintLeft {
+    color: #000099;
+}
+.queryViewConstraintOp {
+    color: #990000;
+}
+.queryViewConstraintRight {
+    color: #000099;
+}
+.queryViewConstraintExtra {
+    color: #880088;
+}

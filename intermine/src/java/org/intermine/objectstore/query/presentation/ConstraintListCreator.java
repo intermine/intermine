@@ -34,7 +34,9 @@ public class ConstraintListCreator
      */
     public static List createList(Query query) {
         List retval = new ArrayList();
-        addToList(retval, query, query.getConstraint());
+        if (query != null) {
+            addToList(retval, query, query.getConstraint());
+        }
         return retval;
     }
 
