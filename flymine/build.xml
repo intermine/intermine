@@ -75,6 +75,7 @@
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
     <include name="postgresql*.jar" />
+    <include name="mysql*.jar" />
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
     <include name="jena*.jar" />
@@ -191,6 +192,7 @@
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
+    <pathelement location="${build.model}/ensembl"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -365,6 +367,15 @@
        <property name="db.name" value="db.unittest"/>
      </ant>
    </target>
+
+  <!-- Ensembl items -->
+    <target name="build-db-ensembl-items" depends="convert-ensembl">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.ensembl-items"/>
+    </ant>
+  </target>
 
   <!-- Chado items -->
   <target name="build-db-chado-items" depends="convert-chado">
@@ -562,6 +573,25 @@
     </taskdef>
 
     <load-chado integrationWriter="integration.chado-main" source="os.chado-translated" sourceName="chado"/>
+  </target>
+
+  <!-- convert ensembl zargo to FlyMine model -->
+  <target name="convert-ensembl" depends="compile-main">
+    <ant antfile="build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
+      <property name="model.src" value="${model}/ensembl"/>
+      <property name="model.name" value="ensembl"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <!-- test out creating java objects from ensembl model -->
+  <target name="retrieve-ensembl" depends="convert-ensembl, build-db-ensembl-items">
+    <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    
+    <retrieve-ensembl database="db.ensembl" model="ensembl" 
+                    osName="osw.ensembl-items"/>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
