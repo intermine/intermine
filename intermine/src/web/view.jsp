@@ -35,7 +35,9 @@
                           onmouseover="enterPath('${fn:replace(path,".","")}')"
                           onmouseout="exitPath('${fn:replace(path,".","")}')">
             <div>
-              ${fn:replace(path, ".", " > ")}
+              <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPaths[path]}&amp;path=">
+                ${fn:replace(path, ".", " > ")}
+              </html:link>
             </div>
             <div>
               <span class="type"><small>${viewPathTypes[path]}</small></span>
