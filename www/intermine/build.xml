@@ -96,4 +96,10 @@
 
     <ant dir="../../intermine-www" target="release-webapp" inheritRefs="true"/>
   </target>
+
+  <target name="release-demo-webservice">
+    <ant dir="../../intermine-www" target="distclean" inheritRefs="true"/>
+    <ant dir="../../intermine-www" target="build-testmodel-webservice" inheritRefs="true"/>
+    <ant dir="../../intermine-www" target="release-webservice" inheritRefs="true"/>
+  </target>
 </project>

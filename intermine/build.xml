@@ -751,10 +751,12 @@
   </target>
   
   <target name="build-testmodel-webservice" depends="build-webservice,jar-testmodel">
+    <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
+
     <war destfile="${dist.webapp}/webservice.war" update="true">
       <lib dir="${dist}" includes="intermine-testmodel.jar" />
       <classes file="${resources}/test/default.intermine.properties"/>
-      <classes file="${runtime.properties.local}"/>
+      <classes file="${build.tmp}/WEB-INF/intermine.properties"/>
     </war>
   </target>
   
