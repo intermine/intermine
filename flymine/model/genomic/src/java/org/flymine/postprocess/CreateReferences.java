@@ -18,12 +18,14 @@ import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.*;
 
 /**
  * Fill in additional references/collections in genomic model
  *
  * @author Richard Smith
+ * @author Kim Rutherford
  */
 public class CreateReferences
 {
@@ -42,33 +44,76 @@ public class CreateReferences
      * @throws Exception if anything goes wrong
      */
     public void insertReferences() throws Exception {
-        // Gene.transcripts
+        insertReferences(Chromosome.class, Transcript.class, Relation.class, "transcripts");
+        insertReferences(Chromosome.class, Exon.class, Relation.class, "exons");
+        insertReferences(Chromosome.class, Gene.class, Relation.class, "genes");
+        insertReferences(Chromosome.class, Contig.class, Relation.class, "contigs");
+        insertReferences(Chromosome.class, Supercontig.class, Relation.class, "supercontigs");
+        insertReferences(Chromosome.class, ChromosomeBand.class, Relation.class, "chromosomeBands");
+        
+        insertReferences(ChromosomeBand.class, Transcript.class, Relation.class, "transcripts");
+        insertReferences(ChromosomeBand.class, Exon.class, Relation.class, "exons");
+        insertReferences(ChromosomeBand.class, Gene.class, Relation.class, "genes");
+        insertReferences(ChromosomeBand.class, Contig.class, Relation.class, "contigs");
+        insertReferences(ChromosomeBand.class, Supercontig.class, Relation.class, "supercontigs");
+        
+        insertReferences(Supercontig.class, Transcript.class, Relation.class, "transcripts");
+        insertReferences(Supercontig.class, Exon.class, Relation.class, "exons");
+        insertReferences(Supercontig.class, Gene.class, Relation.class, "genes");
+        
+        insertReferences(Contig.class, Transcript.class, Relation.class, "transcripts");
+        insertReferences(Contig.class, Gene.class, Relation.class, "genes");
+        insertReferences(Contig.class, Exon.class, Relation.class, "exons");
+        
+        insertReferences(Gene.class, Exon.class, Relation.class, "exons");
+        insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
 
-        Gene newGene = null;
-        List transcripts = null;
-        Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), Gene.class,
-                                                         Transcript.class, SimpleRelation.class);
-        // select will be ordered by gene
+        insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
+    }
+
+    private void insertReferences(Class objectClass, Class subjectClass,
+                                  Class relationClass, String collectionFieldName)
+        throws Exception {
+
+        InterMineObject lastObject = null;
+        List newCollection = new ArrayList();
+        Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), objectClass,
+                                                         subjectClass, relationClass);
+        // results will be ordered by object
         osw.beginTransaction();
+
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            Gene tmpGene = (Gene) rr.get(0);
-            if (tmpGene.getId().equals(newGene.getId())) {
-                // add transcript to collection
-                transcripts.add((Transcript) rr.get(1));
-            } else {
-                // store previous gene with update collection
-                newGene.setTranscripts(transcripts);
-                osw.store(newGene);
+            InterMineObject thisObject = (InterMineObject) rr.get(0);
+            InterMineObject thisSubject = (InterMineObject) rr.get(1);
 
-                newGene = (Gene) PostProcessUtil.cloneInterMineObject((InterMineObject) rr.get(0));
-                transcripts = new ArrayList(newGene.getTranscripts());
+            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
+                if (lastObject != null) {
+                    // clone so we don't change the ObjectStore cache
+                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+
+                    TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+
+                    osw.store(tempObject);
+                }
+
+                newCollection = new ArrayList();
             }
+
+            newCollection.add(thisSubject);
+
+            lastObject = thisObject;
         }
-        osw.abortTransaction();
+        
+        if (lastObject != null) {
+            // clone so we don't change the ObjectStore cache
+            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
 
-        // Transcript.exons
+            TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
 
+            osw.store(tempObject);
+        }
+        osw.commitTransaction();
     }
 
 }
