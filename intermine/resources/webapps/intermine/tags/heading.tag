@@ -21,6 +21,8 @@
         <img border="0" src="images/disclosed.gif" alt="-"/>
       </c:otherwise>
     </c:choose>
+    </html:link>
+    <html:link action="/collapseElement" name="linkParams">
     <jsp:doBody/>
     </html:link>
   </c:if>
