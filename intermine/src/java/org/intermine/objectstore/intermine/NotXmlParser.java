@@ -117,6 +117,7 @@ public class NotXmlParser
                         ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS,
                                 retval);
                         q.setConstraint(cc);
+                        q.addToOrderBy(qor);
                         q.setDistinct(false);
                     } else {
                         QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
