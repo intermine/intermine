@@ -74,16 +74,16 @@ function setBorderStyle(path, style)
             <c:choose>
               <c:when test="${node.button == '+'}">
                 <html:link action="/mainChange?method=changePath&path=${node.path}">
-                  <img border="0" src="images/plus.png" alt="+"/>
+                  <img border="0" src="images/plus.gif" alt="+"/>
                 </html:link>
               </c:when>
               <c:when test="${node.button == '-'}">
                 <html:link action="/mainChange?method=changePath&path=${node.prefix}">
-                  <img border="0" src="images/minus.png" alt="-"/>
+                  <img border="0" src="images/minus.gif" alt="-"/>
                 </html:link>
               </c:when>
               <c:otherwise>
-                <img src="images/blank.png" alt=" "/>
+                <img src="images/blank.gif" alt=" "/>
               </c:otherwise>
             </c:choose>
             <%-- construct the real path for this node --%>
@@ -158,7 +158,7 @@ function setBorderStyle(path, style)
               </fmt:message>
               <html:link action="/mainChange?method=addPath&path=${node.path}"
                          title="${addConstraintToTitle}">
-                <img class="arrow" src="images/right-arrow.png" alt="->"/>
+                <img class="arrow" src="images/right-arrow.gif" alt="->"/>
               </html:link>
             </c:if>
           </nobr>
@@ -251,11 +251,11 @@ function setBorderStyle(path, style)
                     </fmt:message>
                     <html:link action="/mainChange?method=removeNode&path=${node.path}"
                                title="${removeNodeTitle}">
-                      <img border="0" src="images/cross.png" alt="x"/>
+                      <img border="0" src="images/cross.gif" alt="x"/>
                     </html:link>
                   </c:if>
                   <c:if test="${lockedPaths[node.path]}">
-                    <img border="0" src="images/discross.png" alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
+                    <img border="0" src="images/discross.gif" alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
                   </c:if>
                 </div>
                 <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
@@ -277,7 +277,7 @@ function setBorderStyle(path, style)
                     <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
                     <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}"
                                title="${removeConstraintTitle}">
-                      <img border="0" src="images/cross.png" alt="x"/>
+                      <img border="0" src="images/cross.gif" alt="x"/>
                     </html:link>
                   </div>
                 </c:forEach>

@@ -44,15 +44,15 @@
     
       <html:link action="/classChooser">
         <fmt:message key="begin.list.all.classes"/>
-        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+        <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
       </html:link><br/>
       <html:link action="/tree">
         <fmt:message key="begin.browse.model"/>
-        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+        <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
       </html:link><br/>
       <html:link action="/bagBuild">
         <fmt:message key="begin.upload.identifiers"/>
-        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+        <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
       </html:link><br/>
     </td>
   </tr>

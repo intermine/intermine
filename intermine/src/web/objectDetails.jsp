@@ -57,7 +57,7 @@ Summary for selected
     <c:forEach items="${object.attributes}" var="entry">
       <tr>
         <td>
-          <img border="0" src="images/blank.png" alt=" "/>
+          <img border="0" src="images/blank.gif" alt=" "/>
           <span class="attributeField">${entry.key}</span>
         </td>
         <td>
@@ -119,13 +119,13 @@ Summary for selected
             <c:choose>
               <c:when test="${verbose}">
                 <html:link action="/modifyDetails?method=unverbosify&field=${entry.key}">
-                  <img border="0" src="images/minus.png" alt="-"/>
+                  <img border="0" src="images/minus.gif" alt="-"/>
                   <span class="referenceField">${entry.key}</span>
                 </html:link>
               </c:when>
               <c:otherwise>
                 <html:link action="/modifyDetails?method=verbosify&field=${entry.key}">
-                  <img border="0" src="images/plus.png" alt="+"/>
+                  <img border="0" src="images/plus.gif" alt="+"/>
                   <span class="referenceField">${entry.key}</span>
                 </html:link>
               </c:otherwise>
@@ -202,18 +202,18 @@ Summary for selected
             <c:choose>
               <c:when test="${verbose}">
                 <html:link action="/modifyDetails?method=unverbosify&field=${entry.key}">
-                  <img border="0" src="images/minus.png" alt="-"/>
+                  <img border="0" src="images/minus.gif" alt="-"/>
                   <span class="collectionField">${entry.key}</span>
                 </html:link>
               </c:when>
               <c:when test="${collection.size > 0}">
                 <html:link action="/modifyDetails?method=verbosify&field=${entry.key}">
-                  <img border="0" src="images/plus.png" alt="+"/>
+                  <img border="0" src="images/plus.gif" alt="+"/>
                   <span class="collectionField">${entry.key}</span>
                 </html:link>
               </c:when>
               <c:otherwise>
-                <img border="0" src="images/blank.png" alt=" "/>
+                <img border="0" src="images/blank.gif" alt=" "/>
               </c:otherwise>
             </c:choose>
           </nobr>
