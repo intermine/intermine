@@ -289,10 +289,16 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select name
+      from Company
+      where not (name LIKE "company"
+      and vatNumber > 2000)
+    */
     public Query whereNotSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryValue v2 = new QueryValue(new Integer(5));
+        QueryValue v1 = new QueryValue("company");
+        QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
@@ -308,27 +314,38 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select department
+      from Department
+      where (select name from Department) contains department.name
+    */
     public Query whereSubQueryField() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
+        QueryClass c1 = new QueryClass(Department.class);
         QueryField f1 = new QueryField(c1, "name");
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f1);
-        QueryClass c2 = new QueryClass(Department.class);
-        QueryField f2 = new QueryField(c2, "name");
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, f2);
+        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, f1);
         Query q2 = new Query();
-        q2.addFrom(c2);
-        q2.addToSelect(c2);
+        q2.addFrom(c1);
+        q2.addToSelect(c1);
         q2.setConstraint(sqc1);
         return q2;
     }
 
+    /*
+      select department
+      from Department
+      where (select company from Company where name = "companyA") contains department
+    */
     public Query whereSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("companyA");
+        q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
         QueryClass c2 = new QueryClass(Department.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
         Query q2 = new Query();
@@ -338,11 +355,19 @@ public abstract class QueryTestCase extends TestCase
         return q2;
     }
 
+    /*
+      select department
+      from Department
+      where (select company from Company where name = "companyA") !contains department
+    */
     public Query whereNotSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("companyA");
+        q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
         QueryClass c2 = new QueryClass(Department.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.DOES_NOT_CONTAIN, c2);
         Query q2 = new Query();
@@ -352,11 +377,19 @@ public abstract class QueryTestCase extends TestCase
         return q2;
     }
 
+    /*
+      select department
+      from Department
+      where not (select company from Company where name = "companyA") contains department
+    */
     public Query whereNegSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("companyA");
+        q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
         QueryClass c2 = new QueryClass(Department.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
         sqc1.setNegated(true);
