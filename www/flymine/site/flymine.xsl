@@ -21,7 +21,7 @@ version="1.0">
 <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics" />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
-<body>
+<body bgcolor="#f4eeff">
 
 <table align="center" width="100%" border="0" cellpadding="10">
     <tr>
