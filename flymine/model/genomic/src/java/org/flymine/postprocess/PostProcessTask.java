@@ -56,14 +56,18 @@ public class PostProcessTask extends Task
         ObjectStoreWriter osw = null;
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(alias);
-            if ("mappings".equals(type)) {
+            if ("calculate-locations".equals(type)) {
                 CalculateLocations cl = new CalculateLocations(osw);
                 cl.fixPartials();
                 cl.createLocations();
+            } else if ("create-references".equals(type)) {
                 CreateReferences cr = new CreateReferences(osw);
                 cr.insertReferences();
-//                TransferSequences ts = new TransferSequences(osw);
-//                ts.transferSequences();
+            } else if ("transfer-sequences".equals(type)) {
+                TransferSequences ts = new TransferSequences(osw);
+                ts.transferSequences();
+            } else {
+                throw new BuildException("unknown type: " + type);
             }
             osw.close();
         } catch (Exception e) {
