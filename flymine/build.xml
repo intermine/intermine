@@ -74,6 +74,11 @@
   <!-- deafult setting for create-indexes in build-model.xml -->
   <property name="create.attribute.indexes" value="false"/>
 
+  <!-- file data sources -->
+  <property name="flybase.chado" location="/shared/data/flybase/release_4_0"/>
+  <property name="flybase.chado.fasta" location="${flybase.chado}/fasta"/>
+  <property name="flybase.chado.gff" location="${flybase.chado}/gff"/>
+
   <!-- set up library filesets -->
 
   <!-- Ant tasks and unit testing stuff -->
@@ -1998,6 +2003,22 @@
       </fileset>
       <report format="frames" todir="${results.junit}"/>
     </junitreport>
+  </target>
+
+  <!-- create Sequence objects for BioEntitys from a FASTA file -->
+
+
+  <target name="read-flybase-chromosome-fasta" 
+          depends="compile-genomic-java, compile-flymine-java">
+    <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
+      <fileset dir="${flybase.chado.fasta}">
+        <include name="dmel-all-chromosome-*.fasta"/>
+      </fileset>
+    </read-fasta>
   </target>
 
   <!-- Java checkstyle targets -->
