@@ -3,14 +3,17 @@ package org.flymine.sql.precompute;
 import junit.framework.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.HashSet;
 import org.flymine.sql.query.*;
 import org.flymine.util.StringUtil;
+import org.flymine.util.ConsistentSet;
 
 public class QueryOptimiserTest extends TestCase
 {
@@ -30,137 +33,6 @@ public class QueryOptimiserTest extends TestCase
         twoSameTableQuery = new Query("SELECT table1.b, table2.a FROM mytable table1, mytable table2 WHERE table1.a = 1 AND table2.b < 3 AND table1.a = table2.join");
     }
 
-    /*
-    public void testMergeNullPrecomputed() throws Exception {
-        try {
-            QueryOptimiser.merge(null, new Query());
-            fail("Expected: NullPointerException");
-        } catch (NullPointerException e) {
-        }
-    }
-
-    public void testMergeNullQuery() throws Exception {
-        try {
-            QueryOptimiser.merge(new PrecomputedTable(new Query(), "precomp"), null);
-            fail("Expected: NullPointerException");
-        } catch (NullPointerException e) {
-        }
-    }
-
-    public void testMergeExactMatch() throws Exception {
-
-        PrecomputedTable pt = new PrecomputedTable(singleTableQuery, "precomp1");
-
-        Query q = new Query();
-        Table t = new Table("precomp1");
-        Field f = new Field("a", t);
-        SelectValue sv = new SelectValue(f, null);
-        q.addFrom(t);
-        q.addSelect(sv);
-
-        Set results = QueryOptimiser.merge(pt, singleTableQuery);
-
-        assertEquals(1, results.size());
-        assertEquals(q, (Query) (results.iterator().next()));
-    }
-
-    public void testMergeFieldNamesDifferentInPrecomputed() throws Exception {
-        PrecomputedTable pt = new PrecomputedTable(singleTableQuery, "precomp1");
-
-        Query q = new Query();
-        Table t = new Table("precomp1");
-        Field f = new Field("f_alias", t);
-        SelectValue sv = new SelectValue(f, "a");
-        q.addFrom(t);
-        q.addSelect(sv);
-
-        Set results = QueryOptimiser.merge(pt, singleTableQueryWithFieldAlias);
-
-        assertEquals(1, results.size());
-        assertEquals(q, (Query) (results.iterator().next()));
-    }
-
-    public void testMergeConstraintStillNeeded() throws Exception {
-        PrecomputedTable pt = new PrecomputedTable(singleTableQueryNoConstraints, "precomp1");
-
-        Query q = new Query();
-        Table t = new Table("precomp1");
-        Constant c = new Constant("1");
-        Field f = new Field("a", t);
-        SelectValue sv = new SelectValue(f, "a");
-        q.addFrom(t);
-        q.addSelect(sv);
-        q.addWhere(new Constraint(f, Constraint.EQ, c));
-
-        Set results = QueryOptimiser.merge(pt, singleTableQuery);
-
-        assertEquals(1, results.size());
-        assertEquals(q, (Query) (results.iterator().next()));
-    }
-
-    public void testMergeTwoSameTablesInPrecomputed() throws Exception {
-        PrecomputedTable pt = new PrecomputedTable(singleTableQueryNoConstraints, "precomp1");
-
-        Query q1 = new Query();
-        Table t1 = new Table("precomp1");
-        Table t2 = new Table("mytable");
-        Constant c = new Constant("1");
-        Field f1 = new Field("a", t1);
-        Field f2 = new Field("b", t2);
-        Field f3 = new Field("join", t2);
-        SelectValue sv1 = new SelectValue(f1, "a");
-        SelectValue sv2 = new SelectValue(f2, null);
-        q1.addFrom(t1);
-        q1.addFrom(t2);
-        q1.addSelect(sv1);
-        q1.addSelect(sv2);
-        q1.addWhere(new Constraint(f1, Constraint.EQ, c));
-        q1.addWhere(new Constraint(f2, Constraint.LT, c));
-        q1.addWhere(new Constraint(f1, Constraint.EQ, f3));
-
-        Query q2 = new Query();
-        t1 = new Table("mytable");
-        t2 = new Table("precomp1");
-        c = new Constant("1");
-        f1 = new Field("a", t1);
-        f2 = new Field("b", t2);
-        f3 = new Field("join", t2);
-        sv1 = new SelectValue(f1, null);
-        sv2 = new SelectValue(f2, "b");
-        q2.addFrom(t1);
-        q2.addFrom(t2);
-        q2.addSelect(sv1);
-        q2.addSelect(sv2);
-        q2.addWhere(new Constraint(f1, Constraint.EQ, c));
-        q2.addWhere(new Constraint(f2, Constraint.LT, c));
-        q2.addWhere(new Constraint(f1, Constraint.EQ, f3));
-
-        // We are expecting 2 results here:
-        // 1: t1 replaced with precomp1
-        // 2: t2 replaced with precomp1
-
-        Set results = QueryOptimiser.merge(pt, singleTableQuery);
-        assertEquals(2, results.size());
-
-        Query first = (Query) (results.iterator().next());
-        Query second = (Query) (results.iterator().next());
-
-        assertTrue(!(first.equals(second)));
-        assertTrue(q1.equals(first) || q2.equals(first));
-        assertTrue(q1.equals(second) || q2.equals(second));
-    }
-
-    public void testMergeTwoDifferentTablesInPrecomputed() throws Exception {
-    }
-
-    public void testMergeDoesntFit() throws Exception {
-        PrecomputedTable pt = new PrecomputedTable(new Query(), "precomp1");
-
-        Set results = QueryOptimiser.merge(pt, singleTableQuery);
-        assertNull(results);
-
-    }
-    */
     public void testRemapAliases() throws Exception {
         AbstractTable t1 = new Table("table1", "alias1");
         AbstractTable t2 = new Table("table2", "alias2");
@@ -175,7 +47,7 @@ public class QueryOptimiserTest extends TestCase
         map.put(t2, t5);
         map.put(t3, t6);
 
-        Set tables = new HashSet();
+        Set tables = new ConsistentSet();
         tables.add(t4);
         tables.add(t5);
         tables.add(t6);
@@ -503,7 +375,7 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
         Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT P42_.sahjg AS t1_a, P42_.aytq AS t1_b, P42_.hksf AS stuff from precomp1 AS P42_ WHERE P42_.fdjsa = 'five' ORDER BY P42_.sahjg LIMIT 100 OFFSET 0");
+        Query eq1 = new Query("SELECT P42.sahjg AS t1_a, P42.aytq AS t1_b, P42.hksf AS stuff from precomp1 AS P42 WHERE P42.fdjsa = 'five' ORDER BY P42.sahjg LIMIT 100 OFFSET 0");
         Set eSet = new HashSet();
         eSet.add(eq1);
 
@@ -583,7 +455,7 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
         Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d HAVING table3.d = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT P42_.sahjg AS t1_a, P42_.aytq AS t1_b, P42_.hksf AS stuff from precomp1 AS P42_ ORDER BY P42_.sahjg LIMIT 100 OFFSET 0");
+        Query eq1 = new Query("SELECT P42.sahjg AS t1_a, P42.aytq AS t1_b, P42.hksf AS stuff from precomp1 AS P42 ORDER BY P42.sahjg LIMIT 100 OFFSET 0");
         Set eSet = new HashSet();
         eSet.add(eq1);
 
@@ -614,7 +486,7 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
         Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_");
+        Query eq1 = new Query("SELECT P42.kjfd AS t1_a, P42.ddfw AS t1_b FROM precomp1 AS P42");
 
         Set eSet = new HashSet();
         eSet.add(eq1);
@@ -629,7 +501,7 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT DISTINCT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
         Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT DISTINCT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_");
+        Query eq1 = new Query("SELECT DISTINCT P42.kjfd AS t1_a, P42.ddfw AS t1_b FROM precomp1 AS P42");
 
         Set eSet = new HashSet();
         eSet.add(eq1);
@@ -644,7 +516,7 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT DISTINCT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
         Query pq1 = new Query("SELECT DISTINCT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT DISTINCT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_");
+        Query eq1 = new Query("SELECT DISTINCT P42.kjfd AS t1_a, P42.ddfw AS t1_b FROM precomp1 AS P42");
 
         Set eSet = new HashSet();
         eSet.add(eq1);
@@ -695,7 +567,7 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five' GROUP BY table1.a, table1.b HAVING table1.a = 'six'");
         Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_ GROUP BY P42_.kjfd, P42_.ddfw HAVING P42_.kjfd = 'six'");
+        Query eq1 = new Query("SELECT P42.kjfd AS t1_a, P42.ddfw AS t1_b FROM precomp1 AS P42 GROUP BY P42.kjfd, P42.ddfw HAVING P42.kjfd = 'six'");
 
         Set eSet = new HashSet();
         eSet.add(eq1);
@@ -710,9 +582,9 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b from table as table1, table as table2 WHERE table1.c = 'five' AND table2.c = 'five'");
         Query pq1 = new Query("SELECT table3.a AS kjfd, table3.b AS ddfw FROM table as table3 WHERE table3.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT P44_.kjfd AS t1_a, P44_.ddfw AS t1_b, P46_.kjfd AS t2_a, P46_.ddfw AS t2_b FROM precomp1 AS P44_, precomp1 AS P46_");
-        Query eq2 = new Query("SELECT P49_.a AS t1_a, P49_.b AS t1_b, P50_.kjfd AS t2_a, P50_.ddfw AS t2_b FROM table AS P49_, precomp1 AS P50_ WHERE P49_.c = 'five'");
-        Query eq3 = new Query("SELECT P48_.kjfd AS t1_a, P48_.ddfw AS t1_b, table3.a AS t2_a, table3.b AS t2_b FROM precomp1 AS P48_, table AS table3 WHERE table3.c = 'five'");
+        Query eq1 = new Query("SELECT P44.kjfd AS t1_a, P44.ddfw AS t1_b, P46.kjfd AS t2_a, P46.ddfw AS t2_b FROM precomp1 AS P44, precomp1 AS P46");
+        Query eq2 = new Query("SELECT P49.a AS t1_a, P49.b AS t1_b, P50.kjfd AS t2_a, P50.ddfw AS t2_b FROM table AS P49, precomp1 AS P50 WHERE P49.c = 'five'");
+        Query eq3 = new Query("SELECT P48.kjfd AS t1_a, P48.ddfw AS t1_b, table3.a AS t2_a, table3.b AS t2_b FROM precomp1 AS P48, table AS table3 WHERE table3.c = 'five'");
 
         Set eSet = new HashSet();
         eSet.add(eq1);
@@ -748,8 +620,8 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b, table4.a AS t4_a from table as table1, table as table2, anothertable AS table4 WHERE table1.c = 'five' AND table2.c = 'five' AND table4.a = table1.a AND table4.a = table2.a");
         Query pq1 = new Query("SELECT table3.a AS kjfd, table3.b AS ddfw, table5.a AS fhds FROM table as table3, anothertable AS table5 WHERE table3.c = 'five' AND table3.a = table5.a");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
-        Query eq1 = new Query("SELECT P46_.kjfd AS t1_a, P46_.ddfw AS t1_b, P45_.a AS t2_a, P45_.b AS t2_b, P46_.fhds AS t4_a FROM precomp1 AS P46_, table AS P45_ WHERE P45_.a = P46_.fhds AND P45_.c = 'five'");
-        Query eq2 = new Query("SELECT table3.a AS t1_a, table3.b AS t1_b, P44_.kjfd AS t2_a, P44_.ddfw AS t2_b, P44_.fhds AS t4_a FROM table AS table3, precomp1 AS P44_ WHERE table3.a = P44_.fhds AND table3.c = 'five'");
+        Query eq1 = new Query("SELECT P46.kjfd AS t1_a, P46.ddfw AS t1_b, P45.a AS t2_a, P45.b AS t2_b, P46.fhds AS t4_a FROM precomp1 AS P46, table AS P45 WHERE P45.a = P46.fhds AND P45.c = 'five'");
+        Query eq2 = new Query("SELECT table3.a AS t1_a, table3.b AS t1_b, P44.kjfd AS t2_a, P44.ddfw AS t2_b, P44.fhds AS t4_a FROM table AS table3, precomp1 AS P44 WHERE table3.a = P44.fhds AND table3.c = 'five'");
 
         Set eSet = new HashSet();
         eSet.add(eq1);
@@ -781,5 +653,108 @@ public class QueryOptimiserTest extends TestCase
         System.out.println(got);
 
         assertEquals(eSet, newSet);
+    }
+   /* 
+    public void testMergeClashingAliases() throws Exception {
+        Query q1 = new Query("SELECT P42.a AS t1_a, P42.b AS t1_b, table1.a AS t2_a from tab as P42, table as table1 WHERE table1.c = 'five'");
+        Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P42.a AS t1_a, P42.b AS t1_b, P42.kjfd AS t2_a FROM precomp1 AS P42, tab AS P42");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+*/
+
+    public void testMergeMultiple() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM table1, table2 WHERE table1.c = 'five' AND table2.c = 'six'");
+        Query pq1 = new Query("SELECT table1.a AS fhjs, table1.b AS sjhf FROM table1 WHERE table1.c = 'five'");
+        Query pq2 = new Query("SELECT table2.a AS kjsd, table2.b AS hjas FROM table2 WHERE table2.c = 'six'");
+        Query pq3 = new Query("SELECT table2.a AS kjsd, table2.b AS hjas FROM table2 WHERE table2.c = 'seven'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, "precomp2");
+        PrecomputedTable pt3 = new PrecomputedTable(pq3, "precomp3");
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+        precomps.add(pt2);
+        precomps.add(pt3);
+        
+        Query eq1 = new Query("SELECT P42.fhjs AS t1_a, P42.sjhf AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM precomp1 AS P42, table2 WHERE table2.c = 'six'");
+        Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five'");
+        Map eMap = new HashMap();
+        eMap.put(pt1, Collections.singleton(eq1));
+        eMap.put(pt2, Collections.singleton(eq2));
+
+        StringUtil.setNextUniqueNumber(42);
+        SortedMap newMap = QueryOptimiser.mergeMultiple(precomps, q1, q1);
+
+        assertEquals(eMap, newMap);
+    }
+
+    public void testRecursiveOptimise1() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM table1, table2 WHERE table1.c = 'five' AND table2.c = 'six'");
+        Query pq1 = new Query("SELECT table1.a AS fhjs, table1.b AS sjhf FROM table1 WHERE table1.c = 'five'");
+        Query pq2 = new Query("SELECT table2.a AS kjsd, table2.b AS hjas FROM table2 WHERE table2.c = 'six'");
+        Query pq3 = new Query("SELECT table2.a AS kjsd, table2.b AS hjas FROM table2 WHERE table2.c = 'seven'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, "precomp2");
+        PrecomputedTable pt3 = new PrecomputedTable(pq3, "precomp3");
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+        precomps.add(pt2);
+        precomps.add(pt3);
+        
+        Query eq1 = new Query("SELECT P42.fhjs AS t1_a, P42.sjhf AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM precomp1 AS P42, table2 WHERE table2.c = 'six'");
+        Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five'");
+        Query eq3 = new Query("SELECT P44.fhjs AS t1_a, P44.sjhf AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM precomp1 AS P44, precomp2 AS P43");
+        Set eSet = new ConsistentSet();
+        eSet.add(q1);
+        eSet.add(eq1);
+        eSet.add(eq2);
+        eSet.add(eq3);
+
+        StringUtil.setNextUniqueNumber(42);
+        BestQueryStorer bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+
+        assertEquals(eSet, bestQuery.getQueries());
+    }
+
+    public void testRecursiveOptimise2() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM table AS table1, table AS table2 WHERE table1.c = 'five' AND table2.c = 'five'");
+        Query pq1 = new Query("SELECT table1.a AS fhjs, table1.b AS sjhf FROM table AS table1 WHERE table1.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+        
+        Query eq1 = new Query("SELECT P51.fhjs AS t1_a, P51.sjhf AS t1_b, P50.a AS t2_a, P50.b AS t2_b FROM precomp1 AS P51, table AS P50 WHERE P50.c = 'five'");
+        Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P49.fhjs AS t2_a, P49.sjhf AS t2_b FROM table AS table1, precomp1 AS P49 WHERE table1.c = 'five'");
+        Query eq3 = new Query("SELECT P47.fhjs AS t1_a, P47.sjhf AS t1_b, P45.fhjs AS t2_a, P45.sjhf AS t2_b FROM precomp1 AS P47, precomp1 AS P45");
+        Set eSet = new ConsistentSet();
+        eSet.add(q1);
+        eSet.add(eq1);
+        eSet.add(eq2);
+        eSet.add(eq3);
+
+        StringUtil.setNextUniqueNumber(42);
+        BestQueryStorer bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+
+        assertEquals(eSet, bestQuery.getQueries());
+    }
+
+    public void testRemapAliasesToAvoidPrecomputePrefix() throws Exception {
+        Query q1 = new Query("SELECT table1.a, Putty.b FROM table1, table AS Putty");
+        Query eq1 = new Query("SELECT table1.a, P42.b FROM table1, table AS P42");
+
+        StringUtil.setNextUniqueNumber(42);
+        QueryOptimiser.remapAliasesToAvoidPrecomputePrefix(q1);
+
+        assertEquals(eq1, q1);
     }
 }
