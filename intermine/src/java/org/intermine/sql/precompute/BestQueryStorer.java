@@ -2,8 +2,8 @@ package org.flymine.sql.precompute;
 
 import org.flymine.sql.query.Query;
 import java.util.Collection;
-import java.util.HashSet;
 import java.sql.SQLException;
+import org.flymine.util.ConsistentSet;
 
 /**
  * Stores each query added.
@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 public class BestQueryStorer extends BestQuery
 {
-    protected Collection queries = new HashSet();
+    protected Collection queries = new ConsistentSet();
 
     /**
      * Constructs a BestQueryStorer
