@@ -5,9 +5,8 @@
 <c:if test="${query != null}">
   <html:form action="/restartQuery">
 
-    <font size="-1">Abandon this query</font><br/>
     <html:submit property="action">
-        <bean:message key="button.restart"/>
+        <bean:message key="query.abandon"/>
     </html:submit>
   </html:form>
 </c:if>

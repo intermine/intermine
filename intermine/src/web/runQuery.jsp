@@ -5,9 +5,8 @@
 <c:if test="${query != null}">
   <html:form action="/runQuery">
 
-    <font size="-1">Run this query</font><br/>
     <html:submit property="action">
-        <bean:message key="button.run"/>
+        <bean:message key="query.run"/>
     </html:submit>
   </html:form>
 </c:if>
