@@ -79,7 +79,7 @@ public class FlyMineExceptionHandler extends ExceptionHandler
         request.setAttribute("stacktrace", sw.toString());
 
         // Put the original exception on the request
-        request.setAttribute(Globals.EXCEPTION_KEY, ex);
+        request.setAttribute("exception", ex);
 
         do {
             // Figure out the error
