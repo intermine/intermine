@@ -77,6 +77,56 @@ public class ModelTest extends TestCase
         }
     }
 
+    public void testGetSubs() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        Set hasAddressCds =
+            model.getClassDescriptorsForClass(org.intermine.model.testmodel.HasAddress.class);
+        assertEquals(2, hasAddressCds.size());
+        
+        ClassDescriptor addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
+
+        if (addressCld.getName() == "org.intermine.model.InterMineObject") {
+            // we want org.intermine.model.testmodel.HasAddress
+            addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
+        }
+
+        Set resultCds = model.getSubs(addressCld);
+        Set expectedCdNames = new HashSet();
+        expectedCdNames.add("org.intermine.model.testmodel.Employee");
+        expectedCdNames.add("org.intermine.model.testmodel.Company");
+        Set resultCdNames = new HashSet();
+        for (Iterator iter = resultCds.iterator(); iter.hasNext(); ) {
+            resultCdNames.add(((ClassDescriptor) iter.next()).getName());
+        }
+        assertEquals(expectedCdNames, resultCdNames);
+    }
+
+    public void testGetAllSubs() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        Set hasAddressCds =
+            model.getClassDescriptorsForClass(org.intermine.model.testmodel.HasAddress.class);
+        assertEquals(2, hasAddressCds.size());
+
+        ClassDescriptor addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
+
+        if (addressCld.getName() == "org.intermine.model.InterMineObject") {
+            // we want org.intermine.model.testmodel.HasAddress
+            addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
+        }
+
+        Set resultCds = model.getAllSubs(addressCld);
+        Set expectedCdNames = new HashSet(); 
+        expectedCdNames.add("org.intermine.model.testmodel.Company");
+        expectedCdNames.add("org.intermine.model.testmodel.Employee");
+        expectedCdNames.add("org.intermine.model.testmodel.Manager");
+        expectedCdNames.add("org.intermine.model.testmodel.CEO");
+        Set resultCdNames = new HashSet();
+        for (Iterator iter = resultCds.iterator(); iter.hasNext(); ) {
+            resultCdNames.add(((ClassDescriptor) iter.next()).getName());
+        }
+        assertEquals(expectedCdNames, resultCdNames);
+    }
+
     public void testGetClassDescriptorByName() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
