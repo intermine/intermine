@@ -145,8 +145,13 @@ public class InlineResultsTable
                 Map.Entry entry = (Map.Entry) j.next();
                 Object ref = TypeUtil.getFieldValue(o, ((ReferenceDescriptor) entry
                                                         .getKey()).getName());
-                if (ref != null) {
-                    row.addAll(getFieldValues(ref, (List) entry.getValue()));
+                List fieldDescriptors = (List) entry.getValue();
+                if (ref == null) {
+                    for (int k = 0; k < fieldsDescriptors.size(); k++) {
+                        row.add(null);
+                    }
+                } else {
+                    row.addAll(getFieldValues(ref, fieldDescriptors));
                 }
             }
             rows.add(row);
