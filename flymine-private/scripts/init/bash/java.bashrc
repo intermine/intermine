@@ -4,20 +4,20 @@ fi
 
 JAVA_HOME=$JDK; export JAVA_HOME
 
-#if [ "${JDBC_HOME:-unset}" = "unset" ]; then
-#    JDBC_HOME=/software/noarch/jConnect; export JDBC_HOME
-#fi
+if [ "${JDBC_HOME:-unset}" = "unset" ]; then
+    JDBC_HOME=/software/noarch/mm.mysql; export JDBC_HOME
+fi
 
 prepend PATH $JDK/bin
 prepend MANPATH $JDK/man
 
-#append CLASSPATH $JDBC_HOME/classes/jconn2.jar
+append CLASSPATH $JDBC_HOME/mm.mysql.jar
 #append CLASSPATH /software/noarch/ecs/ecs.jar
 #append CLASSPATH /software/noarch/local/lib/java
 append CLASSPATH /software/noarch/biojava/biojava.jar
 append CLASSPATH /software/noarch/jaxb/lib/jaxb-rt-1.0-ea.jar
 append CLASSPATH /software/noarch/mage/MAGE-2002-02-22.jar
-append CLASSPATH /software/noarch/ojb/ojb-0.8.400.jar
+append CLASSPATH /software/noarch/ojb/ojb.jar
 append CLASSPATH .
 
 append JIKESPATH $JDK/jre/lib/rt.jar
