@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,8 @@ import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.precompute.PrecomputedTable;
+import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.query.ExplainResult;
 import org.intermine.util.ShutdownHook;
@@ -476,6 +479,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 writer.flushObjectById();
             }
         }
+        try {
+            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+            ptm.dropEverything();
+        } catch (SQLException e) {
+            throw new Error("Problem with precomputed tables");
+        }
     }
 
     /**
@@ -549,5 +558,61 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      */
     public boolean isMultiConnection() {
         return true;
+    }
+
+    /**
+     * Creates a precomputed table for the given query.
+     *
+     * @param q the Query for which to create the precomputed table
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public void precompute(Query q) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            precomputeWithConnection(c, q);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Creates a precomputed table with the given query and connection.
+     *
+     * @param c the Connection
+     * @param q the Query
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public void precomputeWithConnection(Connection c, Query q) throws ObjectStoreException {
+        try {
+            int tableNumber = -1;
+            try {
+                Statement s = c.createStatement();
+                ResultSet r = s.executeQuery("SELECT nextval('precomputedtablenumber')");
+                if (!r.next()) {
+                    throw new ObjectStoreException("No result while attempting to get a unique"
+                            + " precomputed table name");
+                }
+                tableNumber = r.getInt(1);
+            } catch (SQLException e) {
+                Statement s = c.createStatement();
+                s.execute("CREATE SEQUENCE precomputedtablenumber");
+                ResultSet r = s.executeQuery("SELECT nextval('precomputedtablenumber')");
+                if (!r.next()) {
+                    throw new ObjectStoreException("No result while attempting to get a unique"
+                            + " precomputed table name");
+                }
+                tableNumber = r.getInt(1);
+            }
+            String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
+            PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
+                    "pt_" + tableNumber);
+            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+            ptm.add(pt);
+        } catch (SQLException e) {
+            throw new ObjectStoreException(e);
+        }
     }
 }

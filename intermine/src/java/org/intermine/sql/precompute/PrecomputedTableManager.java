@@ -12,6 +12,7 @@ package org.intermine.sql.precompute;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -128,6 +129,19 @@ public class PrecomputedTableManager
         precomputedTables.add(pt);
     }
 
+    /**
+     * Deletes every single precomputed table. Use this when you have made a change to the database.
+     *
+     * @throws SQLException if something goes wrong
+     */
+    public void dropEverything() throws SQLException {
+        Iterator iter = precomputedTables.iterator();
+        while (iter.hasNext()) {
+            PrecomputedTable pt = (PrecomputedTable) iter.next();
+            deleteTableFromDatabase(pt.getName());
+            iter.remove();
+        }
+    }
 
     /**
      * Delete a precomputed table from the underlying database.
