@@ -36,6 +36,9 @@
       <tiles:get name="errorMessages"/>
       
       <fmt:message key="${pageName}.help" var="help"/>
+      <c:if test="${empty help}">
+        &nbsp;
+      </c:if>
       <c:if test="${!empty help}">
         <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"/>
       </c:if>
