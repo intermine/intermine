@@ -709,10 +709,7 @@
   </target>
 
   <!-- create java objects for the genomic model -->
-  <target name="compile-genomic-model" depends="create-production-model, compile-production-model"/>
-
-  <!-- badly named target to compile a partially built genomic model -->
-  <target name="compile-production-model" depends="create-genomic-model">
+  <target name="compile-genomic-model" depends="create-production-model">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1904,7 +1901,7 @@
     </ant>
   </target>
 
-  <target name="protein_structure-test" depends="prepare-test, merge-protein_structure-model, compile-production-model, build-db-fulldatatest">
+  <target name="protein_structure-test" depends="prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="protein_structure"/>
       <reference torefid="class.path" refid="test.class.path"/>
