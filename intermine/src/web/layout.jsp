@@ -3,11 +3,13 @@
 
 <!-- layout.jsp -->
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <html:html locale="true" xhtml="true">
   <%-- from the tiles config file for description.jsp --%>
-  <tiles:importAttribute name="pageDescription"/>
+  <tiles:importAttribute name="pageName"/>
 
   <head>
     <html:base/>
@@ -15,9 +17,13 @@
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
-    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" name="description"/>
+    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
+          name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
-    <title><tiles:getAsString name="title"/></title>
+    <title>
+      <fmt:message key="${pageName}.title" var="pageTitle"/>
+      <c:out value="${WEB_PROPERTIES['project.title']} - ${pageTitle}" escapeXml="false"/>
+    </title>
   </head>
   
   <body>
@@ -27,7 +33,7 @@
       <br/>
       <tiles:get name="errorMessages"/>
       <tiles:insert attribute="description">
-        <tiles:put name="pageDescription" beanName="pageDescription" beanScope="tile"/>
+        <tiles:put name="pageName" beanName="pageName" beanScope="tile"/>
       </tiles:insert>
       <tiles:get name="body"/>
       <br/>
