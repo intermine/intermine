@@ -1,61 +1,210 @@
-<?xml version="1.0" encoding="utf-8"?>
-<index>
-    <section>
-        <heading>System information</heading>
-        <item><ulink url="http://www.flymine.org/usage">Web server usage</ulink></item>
-        <item><ulink url="http://flyweb.flymine.org/away/">FlyMine holiday planner</ulink></item>
-        <item><ulink url="http://flyweb.flymine.org/wiki/">FlyMine Wiki</ulink></item>
-        <item><ulink url="http://www.flymine.org/autobuild">Automated build daemon</ulink></item>
-    </section>
-    <section>
-        <heading>Query Interfaces</heading>
-        <item><ulink url="http://www.flymine.org/query">Production</ulink></item>
-        <item><ulink url="http://www1.flymine.org:8080/query-ensembl-anoph">Ensembl Anopheles</ulink></item>
-        <item><ulink url="http://www1.flymine.org:8080/query-ensembl-dros">Ensembl Drosophila</ulink></item>
-        <item><ulink url="http://www1.flymine.org:8080/query-chado">Chado</ulink></item>
-    </section>
-    <section>
-        <heading>Documentation</heading>
-        <item><ulink url="sysadmin/">Le coin du sysadmin</ulink></item>
-        <item><ulink url="dba/">DBA</ulink></item>
-        <item><ulink url="/project/faq">FAQ</ulink></item>
-    </section>
-    <section>
-        <heading>Presentations</heading>
-        <item><ulink url="techtalks/">Technology talks</ulink></item>
-        <item><ulink url="presentations/">Group talks</ulink></item>
-    </section>
-    <section>
-        <heading>Design documents</heading>
-        <item><ulink url="design/dataflow.dia">Data flow</ulink></item>
-        <item><ulink url="design/initial_thoughts">Initial thoughts</ulink></item>
-        <item><ulink url="design/design_issues">Design issues</ulink></item>
-        <item><ulink url="design/usage_scenarios">Usage scenarios</ulink></item>
-        <item><ulink url="design/functional_requirements">Functional requirements</ulink></item>
-        <item><ulink url="design/architecture">Architecture</ulink></item>
-        <item><ulink url="design/link-ins">Link ins</ulink></item>
-        <item><ulink url="design/scope">Scope</ulink></item>
-        <item><ulink url="design/ontologies">Ontologies</ulink></item>
-        <item><ulink url="design/other_projects">Other projects</ulink></item>
-    </section>
-    <section>
-        <heading>Reports</heading>
-        <item><ulink url="reports/ismb2002">ISMB 2002</ulink></item>
-        <item><ulink url="reports/ismb2003">ISMB 2003</ulink></item>
-        <item><ulink url="reports/ismb2004">ISMB 2004</ulink></item>
-        <item><ulink url="reports/css2003/css2003_mark.sxi">CSS 2003 (Mark)</ulink></item>
-        <item><ulink url="reports/css2003/css2003_matthew.sxi">CSS 2003 (Matthew)</ulink></item>
-    </section>
-    <section>
-        <heading>Prototype</heading>
-        <item><ulink url="prototype/building">How to build</ulink></item>
-        <item><ulink url="prototype/overview.sxi">Overview</ulink></item>
-        <item><ulink url="prototype/data_model.sxi">Data model</ulink></item>
-        <item><ulink url="prototype/objectstore_interface.sxi">ObjectStore interface</ulink></item>
-        <item><ulink url="prototype/objectstore_impl.sxi">ObjectStore implementation</ulink></item>
-        <item><ulink url="prototype/sql_optimisation.sxi">SQL Optimisation</ulink></item>
-        <item><ulink url="prototype/xml_binding.sxi">Loading XML data</ulink></item>
-        <item><ulink url="prototype/flychip_data.sxi">Loading FlyChip data</ulink></item>
-    </section>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>System information</title>
 
-</index>
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="http://www.flymine.org/usage">Web server
+        usage</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://flyweb.flymine.org/away/">FlyMine holiday
+        planner</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://flyweb.flymine.org/wiki/">FlyMine
+        Wiki</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://www.flymine.org/autobuild">Automated build
+        daemon</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Query Interfaces</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink
+        url="http://www.flymine.org/query">Production</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www1.flymine.org:8080/query-ensembl-anoph">Ensembl
+        Anopheles</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www1.flymine.org:8080/query-ensembl-dros">Ensembl
+        Drosophila</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www1.flymine.org:8080/query-chado">Chado</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Documentation</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="sysadmin/">Le coin du sysadmin</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="dba/">DBA</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="/project/faq">FAQ</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Presentations</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="techtalks/">Technology talks</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="presentations/">Group talks</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Design documents</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="design/dataflow.dia">Data flow</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/initial_thoughts">Initial
+        thoughts</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/design_issues">Design issues</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/usage_scenarios">Usage
+        scenarios</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/functional_requirements">Functional
+        requirements</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/architecture">Architecture</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/link-ins">Link ins</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/scope">Scope</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/ontologies">Ontologies</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="design/other_projects">Other projects</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Reports</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="reports/ismb2002">ISMB 2002</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="reports/ismb2003">ISMB 2003</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="reports/ismb2004">ISMB 2004</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="reports/css2003/css2003_mark.sxi">CSS 2003
+        (Mark)</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="reports/css2003/css2003_matthew.sxi">CSS 2003
+        (Matthew)</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Prototype</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="prototype/building">How to build</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/overview.sxi">Overview</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/data_model.sxi">Data model</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/objectstore_interface.sxi">ObjectStore
+        interface</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/objectstore_impl.sxi">ObjectStore
+        implementation</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/sql_optimisation.sxi">SQL
+        Optimisation</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/xml_binding.sxi">Loading XML
+        data</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="prototype/flychip_data.sxi">Loading FlyChip
+        data</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>
