@@ -32,7 +32,6 @@ import org.intermine.util.TypeUtil;
 public class DisplayObject
 {
     InterMineObject object;
-    int id;
     Set clds;
     Map keyAttributes = new HashMap();
     Map keyReferences = new HashMap();
@@ -48,10 +47,8 @@ public class DisplayObject
      */
     public DisplayObject(InterMineObject object, Model model) throws Exception {
         this.object = object;
-        id = object.getId().intValue();
         clds = ObjectViewController.getLeafClds(object.getClass(), model);
 
-        Map referenceKeys = new HashMap();
         for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
              i.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
@@ -104,7 +101,7 @@ public class DisplayObject
      * @return the id
      */
     public int getId() {
-        return id;
+        return object.getId().intValue();
     }
     
     /**
