@@ -350,15 +350,15 @@
     </ant>
   </target>
 
-<!--
-  <target name="rnai-test" depends="build-rnai">
+
+  <target name="rnai-test" depends="prepare-build-model, convert-rnai">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
       <property name="model.src" value="${model}/rnai"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
--->
+
   <target name="orthologue-test" depends ="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
@@ -394,12 +394,12 @@
   </target>
 
   <target name="test-models-inc"
-          depends="chado-test, mage-test, ensembl-test">
+          depends="chado-test, mage-test, ensembl-test, rnai-test">
     <antcall target="test-report"/>
   </target>
 
   <target name="test-models-full"
-          depends="compile-genomic-model, chado-test, mage-test, ensembl-test">
+          depends="compile-genomic-model, chado-test, mage-test, ensembl-test, rnai-test">
     <antcall target="test-report"/>
   </target>
 
@@ -601,6 +601,14 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.orthologue-tgt-items"/>
+    </ant>
+  </target>
+
+  <!-- convert RNAi OWL to FlyMine model -->
+  <target name="convert-rnai" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-owl" inheritRefs="true">
+      <property name="model.name" value="rnai"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
