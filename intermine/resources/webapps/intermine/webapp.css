@@ -111,7 +111,8 @@ table.box th.title {
 }
 
 .smallnote {
-    font-size: 12px;
+    font-size: 11px;
+    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
 
