@@ -66,7 +66,7 @@ public class QueryBuildController extends TilesAction
         
         //there's a query on the session but it hasn't been rendered yet
         if (q != null) {
-            queryClasses = new HashMap();
+            queryClasses = new LinkedHashMap();
             for (Iterator i = q.getFrom().iterator(); i.hasNext();) {
                 FromElement fe = (FromElement) i.next();
                 if (!(fe instanceof QueryClass)) {
