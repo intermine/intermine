@@ -35,12 +35,7 @@
                           onmouseover="enterPath('${fn:replace(path,".","")}')"
                           onmouseout="exitPath('${fn:replace(path,".","")}')">
             <div style="white-space:nowrap">
-              <c:if test="${not fn:contains(path, '.')}">
-                ${path}
-              </c:if>
-              <c:if test="${fn:contains(path, '.')}">
-                ${fn:substringBefore(path, ".")}.${fn:substringAfter(path, ".")}
-              </c:if>
+              ${fn:replace(path, ".", " > ")}
             </div>
             <div>
               <span class="type"><small>${viewPathTypes[path]}</small></span>
