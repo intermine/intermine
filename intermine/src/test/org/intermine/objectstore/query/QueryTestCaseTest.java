@@ -134,12 +134,15 @@ public class QueryTestCaseTest extends QueryTestCase
     }
 
     public void testQueriesClassConstraint() throws Exception {
+        Department dept = new Department();
+        dept.setId(new Integer(14));
+
         Query q1 = new Query();
         QueryClass qc1 = new QueryClass(Department.class);
         q1.addToSelect(qc1);
         q1.addFrom(qc1);
 
-        Constraint c1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, new Department());
+        Constraint c1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, dept);
         q1.setConstraint(c1);
 
         Query q2 = new Query();
@@ -147,12 +150,12 @@ public class QueryTestCaseTest extends QueryTestCase
         q2.addToSelect(qc2);
         q2.addFrom(qc2);
 
-        Constraint c2 = new ClassConstraint(qc2, ConstraintOp.EQUALS, new Department());
+        Constraint c2 = new ClassConstraint(qc2, ConstraintOp.EQUALS, dept);
         q2.setConstraint(c2);
 
         assertEquals(q1, q2);
         Department d1 = new Department();
-        d1.setName("Department1");
+        d1.setId(new Integer(25));
         c2 = new ClassConstraint(qc2, ConstraintOp.EQUALS, d1);
         q2.setConstraint(c2);
 

@@ -29,17 +29,16 @@ public class CollectionDescriptor extends ReferenceDescriptor
     /**
      * Construct a CollectionDescriptor.  name and referencedType may not be null.
      * @param name name of this field in parent class
-     * @param primaryKey is this field part of the primary key
      * @param referencedType the fully qualified name of the business object type in this collection
      * @param reverseRefName name of field in the referenced class that points back to this class
      *                       (may be null)
      * @param ordered true if the collection ordered
      * @throws IllegalArgumentException if arguments are null
      */
-    public CollectionDescriptor(String name, boolean primaryKey, String referencedType,
+    public CollectionDescriptor(String name, String referencedType,
                                    String reverseRefName, boolean ordered) {
         // should define type of collection properly somehow
-        super(name, primaryKey, referencedType, reverseRefName);
+        super(name, referencedType, reverseRefName);
         this.ordered = ordered;
         if (ordered) {
             collectionClass = java.util.ArrayList.class;
@@ -105,7 +104,6 @@ public class CollectionDescriptor extends ReferenceDescriptor
             CollectionDescriptor ref = (CollectionDescriptor) obj;
             return (cld == null || cld.getName().equals(ref.cld.getName()))
                 && name.equals(ref.name)
-                && primaryKey == ref.primaryKey
                 && referencedType.equals(ref.referencedType)
                 && Util.equals(reverseRefName, ref.reverseRefName)
                 && ordered == ref.ordered;
@@ -119,7 +117,6 @@ public class CollectionDescriptor extends ReferenceDescriptor
     public int hashCode() {
         return 2 * (cld == null ? 0 : cld.getName().hashCode())
             + 3 * name.hashCode()
-            + 5 * (primaryKey ? 1 : 0)
             + 7 * referencedType.hashCode()
             + 11 * Util.hashCode(reverseRefName)
             + 13 * (ordered ? 1 : 0);
@@ -133,7 +130,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
         sb.append("<collection name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
             .append(" ordered=\"" + ordered + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
-            .append(" primary-key=\"" + primaryKey + "\"/>");
+            .append("/>");
         return sb.toString();
     }
 }

@@ -10,7 +10,6 @@ package org.flymine.modelproduction.acedb;
  *
  */
 
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.InputStreamReader;
 
@@ -53,19 +52,19 @@ public class AceModelParserFunctionalTest extends TestCase
 
     private Model createModel() throws Exception {
         Set atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        atts.add(new AttributeDescriptor("intValue", false, "java.lang.Integer"));
-        atts.add(new AttributeDescriptor("stringValue", false, "java.lang.String"));
-        atts.add(new AttributeDescriptor("stringValue_2", false, "java.lang.String"));
-        atts.add(new AttributeDescriptor("onOrOff", false, "boolean"));
-        atts.add(new AttributeDescriptor("dateValue", false, "java.util.Date"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
+        atts.add(new AttributeDescriptor("intValue", "java.lang.Integer"));
+        atts.add(new AttributeDescriptor("stringValue", "java.lang.String"));
+        atts.add(new AttributeDescriptor("stringValue_2", "java.lang.String"));
+        atts.add(new AttributeDescriptor("onOrOff", "boolean"));
+        atts.add(new AttributeDescriptor("dateValue", "java.util.Date"));
         Set refs = new LinkedHashSet();
-        refs.add(new ReferenceDescriptor("reference", false, PKG + "AceTestObject", null));
-        refs.add(new ReferenceDescriptor("hashValue", false, PKG + "AceTestObject", null));
+        refs.add(new ReferenceDescriptor("reference", PKG + "AceTestObject", null));
+        refs.add(new ReferenceDescriptor("hashValue", PKG + "AceTestObject", null));
         Set cols = new LinkedHashSet();
-        cols.add(new CollectionDescriptor("stringValues", false, PKG + "Text", null, false));
-        cols.add(new CollectionDescriptor("references", false, PKG + "AceTestObject", null, false));
-        cols.add(new CollectionDescriptor("hashValues", false, PKG + "AceTestObject", null, false));
+        cols.add(new CollectionDescriptor("stringValues", PKG + "Text", null, false));
+        cols.add(new CollectionDescriptor("references", PKG + "AceTestObject", null, false));
+        cols.add(new CollectionDescriptor("hashValues", PKG + "AceTestObject", null, false));
         Set clds = new LinkedHashSet();
         ((AceModelParser) parser).addBuiltinClasses(clds);
         clds.add(new ClassDescriptor(PKG + "AceTestObject", null, false, atts, refs, cols));

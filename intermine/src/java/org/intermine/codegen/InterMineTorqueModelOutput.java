@@ -85,9 +85,9 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         columns = new HashSet();
         className = DatabaseUtil.getTableName(cld);
 
-        // Every class and interface has a seperate table
+        // Every class and interface has a separate table
         sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL)
-            .append(generateColumn("OBJECT", "java.lang.String", false))
+            .append(generateColumn("OBJECT", "java.lang.String"))
             .append(generateSuperclasses(cld))
             .append(indices)
             .append(INDENT + "</table>" + ENDL);
@@ -133,16 +133,13 @@ public class FlyMineTorqueModelOutput extends ModelOutput
                     : "int";
                 String colName = DatabaseUtil.getColumnName(fd);
                 if (!columns.contains(colName)) {
-                    sb.append(generateColumn(colName, type, false));
+                    sb.append(generateColumn(colName, type));
                     columns.add(colName);
-                    if (fd.isPrimaryKey()) {
-                        indices.append(generateIndex(className,
-                                                     colName));
-                    }
+                    // note that primary key indices are built automatically by postgres
                 }
             }
         }
-        // All interfaces and classes recursively to top of inheritence tree
+        // All interfaces and classes recursively to top of inheritance tree
         Iterator interfaceIter = cld.getSuperDescriptors().iterator();
         while  (interfaceIter.hasNext()) {
             sb.append(generateSuperclasses((ClassDescriptor) interfaceIter.next()));
@@ -150,15 +147,14 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         return sb.toString();
     }
 
-    private String generateColumn(String name, String type, boolean isPrimaryKey) {
+    private String generateColumn(String name, String type) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT + INDENT + "<column name=\"")
             .append(name)
             .append("\" type=\"")
             .append(generateJdbcType(type))
             .append("\"")
-            .append((isPrimaryKey
-                     || ("id".equals(name))) ? " required=\"true\" primaryKey=\"true\"" : "")
+            .append("id".equals(name) ? " required=\"true\" primaryKey=\"true\"" : "")
             .append("/>" + ENDL);
         return sb.toString();
     }
@@ -177,15 +173,22 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         sb.append(INDENT + "<table name=\"")
             .append(table)
             .append("\">" + ENDL)
-            .append(generateColumn(column1, "int", false))
-            .append(generateColumn(column2, "int", false))
+            .append(generateColumn(column1, "int"))
+            .append(generateColumn(column2, "int"))
             .append(generateIndex(table, column1))
             .append(generateIndex(table, column2))
             .append(INDENT + "</table>" + ENDL);
         return sb.toString();
     }
 
-    private String generateIndex(String table, String column) {
+    /**
+     * Generate an index for a specifed column of a table
+     *
+     * @param table the name of the table
+     * @param column the name of the column
+     * @return the index XML fragment
+     */
+    protected String generateIndex(String table, String column) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT + INDENT + "<index name=\"")
             .append(table)

@@ -44,23 +44,20 @@ public abstract class FieldDescriptor
     public static final int M_N_RELATION = 4;
 
     protected final String name; // name of field
-    protected final boolean primaryKey;
     protected ClassDescriptor cld; // parent class of this field
     private boolean cldSet = false;
 
     /**
      * Construct, name of field must not be null
      * @param name name of field in class
-     * @param primaryKey true if part of the class' primary key
      * @throws IllegalArgumentException if name argument is null
      */
-    public FieldDescriptor(String name, boolean primaryKey)
+    public FieldDescriptor(String name)
         throws IllegalArgumentException {
         if (name == null || name.equals("")) {
             throw new IllegalArgumentException("name cannot be null or empty");
         }
         this.name = name;
-        this.primaryKey = primaryKey;
     }
 
     /**
@@ -77,14 +74,6 @@ public abstract class FieldDescriptor
      */
     public String getName() {
         return this.name;
-    }
-
-    /**
-     * Returns true if this fields makes up part of the Class' primary key
-     * @return true if part of primary key
-     */
-    public boolean isPrimaryKey() {
-        return this.primaryKey;
     }
 
     /**

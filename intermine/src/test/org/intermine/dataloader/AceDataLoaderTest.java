@@ -14,6 +14,9 @@ import junit.framework.TestCase;
 
 import java.util.Date;
 import java.io.InputStreamReader;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.acedb.*;
 import org.acedb.staticobj.*;
@@ -115,16 +118,10 @@ public class AceDataLoaderTest extends TestCase
         StaticStringValue value1 = new StaticStringValue("A string", node1);
         node1.addNode(value1);
 
-        AceTestObject testObj = new AceTestObject();
-        testObj.setIdentifier("AceTestObject1");
-        Text text = new Text();
-        text.setIdentifier("A string");
-        testObj.getStringValues().add(text);
-
         AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
-        assertEquals(testObj.getIdentifier(), ret.getIdentifier());
-        assertEquals(testObj.getStringValues(), ret.getStringValues());
+        assertEquals("AceTestObject1", ret.getIdentifier());
+        assertEquals("A string", ((Text) ret.getStringValues().iterator().next()).getIdentifier());
     }
 
     public void testTwoValuesForCollection() throws Exception {
@@ -133,23 +130,21 @@ public class AceDataLoaderTest extends TestCase
         obj.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
         node1.addNode(value1);
-
         StaticStringValue value2 = new StaticStringValue("A second string", node1);
         node1.addNode(value2);
 
-        AceTestObject testObj = new AceTestObject();
-        testObj.setIdentifier("AceTestObject1");
-        Text text1 = new Text();
-        text1.setIdentifier("A string");
-        testObj.getStringValues().add(text1);
-        Text text2 = new Text();
-        text2.setIdentifier("A second string");
-        testObj.getStringValues().add(text2);
-
         AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
 
-        assertEquals(testObj.getIdentifier(), ret.getIdentifier());
-        assertEquals(testObj.getStringValues(), ret.getStringValues());
+        assertEquals("AceTestObject1", ret.getIdentifier());
+
+        Set expected = new HashSet();
+        expected.add("A string");
+        expected.add("A second string");
+        Set retrieved = new HashSet();
+        Iterator iter = ret.getStringValues().iterator();
+        retrieved.add(((Text) iter.next()).getIdentifier());
+        retrieved.add(((Text) iter.next()).getIdentifier());
+        assertEquals(expected, retrieved);
     }
 
     public void testBooleanTag() throws Exception {

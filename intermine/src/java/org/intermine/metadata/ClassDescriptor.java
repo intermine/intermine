@@ -43,7 +43,6 @@ public class ClassDescriptor
     private final Set refDescriptors;
     private final Set colDescriptors;
     private final Map fieldDescriptors = new HashMap();
-    private final Set pkFields = new LinkedHashSet();
     private LinkedHashSet allFieldDescriptors;
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
@@ -88,7 +87,7 @@ public class ClassDescriptor
         refDescriptors = new LinkedHashSet(refs);
         colDescriptors = new LinkedHashSet(cols);
 
-        // build maps of names to FieldDescriptors and populate pkFields set
+        // build maps of names to FieldDescriptors
 
         Set fieldDescriptorSet = new LinkedHashSet();
         fieldDescriptorSet.addAll(atts);
@@ -105,9 +104,6 @@ public class ClassDescriptor
                                                    + "' has already had ClassDescriptor set");
             }
             fieldDescriptors.put(fieldDescriptor.getName(), fieldDescriptor);
-            if (fieldDescriptor.isPrimaryKey()) {
-                pkFields.add(fieldDescriptor);
-            }
         }
     }
 
@@ -137,24 +133,6 @@ public class ClassDescriptor
      */
     public String getUnqualifiedName() {
         return TypeUtil.unqualifiedName(name);
-    }
-
-
-    /**
-     * Get a set of primary key FieldDescriptors for this Class and all its superclasses and
-     * interfaces. Could be a combination of attributes and references (and collections).
-     *
-     * @return set of primary key fields
-     * @throws IllegalStateException if model has not been set
-     */
-    public Set getPkFieldDescriptors() {
-        checkModel();
-        Set allPkFields = new LinkedHashSet(pkFields);
-        Iterator superIter = superDescriptors.iterator();
-        while (superIter.hasNext()) {
-            allPkFields.addAll(((ClassDescriptor) superIter.next()).getPkFieldDescriptors());
-        }
-        return allPkFields;
     }
 
     /**

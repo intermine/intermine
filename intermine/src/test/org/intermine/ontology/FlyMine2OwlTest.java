@@ -16,24 +16,15 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.File;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Restriction;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import org.flymine.metadata.*;
-
 
 public class FlyMine2OwlTest extends TestCase
 {
@@ -85,8 +76,8 @@ public class FlyMine2OwlTest extends TestCase
     }
 
     public void testProcessAttributes() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", false, "java.lang.String");
-        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", false, "java.lang.Integer");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "java.lang.Integer");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(Arrays.asList(new Object[] {atd1, atd2})), new HashSet(), new HashSet());
         Model model = new Model("model", ns, Collections.singleton(cld1));
 
@@ -115,9 +106,9 @@ public class FlyMine2OwlTest extends TestCase
 
 
     public void testProcessReferences() throws Exception {
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class1", null);
-        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", false, "Class3", "rfd3");
-        ReferenceDescriptor rfd3 = new ReferenceDescriptor("rfd3", false, "Class2", "rfd2");
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class1", null);
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "Class3", "rfd3");
+        ReferenceDescriptor rfd3 = new ReferenceDescriptor("rfd3", "Class2", "rfd2");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), Collections.singleton(rfd1), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), Collections.singleton(rfd2), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("Class3", null, false, new HashSet(), Collections.singleton(rfd3), new HashSet());
@@ -157,9 +148,9 @@ public class FlyMine2OwlTest extends TestCase
     }
 
     public void testProcessCollections() throws Exception {
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class1", null, false);
-        CollectionDescriptor cod2 = new CollectionDescriptor("cod2", false, "Class3", "cod3", false);
-        CollectionDescriptor cod3 = new CollectionDescriptor("cod3", false, "Class2", "cod2", true);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class1", null, false);
+        CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "Class3", "cod3", false);
+        CollectionDescriptor cod3 = new CollectionDescriptor("cod3", "Class2", "cod2", true);
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), Collections.singleton(cod1), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), Collections.singleton(cod2), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("Class3", null, false, new HashSet(), Collections.singleton(cod3), new HashSet());
@@ -211,7 +202,7 @@ public class FlyMine2OwlTest extends TestCase
 
     public void testGetObjectProperty() throws Exception {
         OntModel ont = ModelFactory.createOntologyModel();
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class1", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class1", null);
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), Collections.singleton(rfd1), new HashSet());
         Model model = new Model("model", ns, Collections.singleton(cld1));
         ObjectProperty prop1 = convertor.getObjectProperty(rfd1, ont);

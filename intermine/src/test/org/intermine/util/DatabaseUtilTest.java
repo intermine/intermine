@@ -95,17 +95,17 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetColumnName() throws Exception {
-        FieldDescriptor attr = new AttributeDescriptor("attr1", false, "int");
+        FieldDescriptor attr = new AttributeDescriptor("attr1", "int");
 
         assertEquals(DatabaseUtil.generateSqlCompatibleName("attr1"), DatabaseUtil.getColumnName(attr));
     }
 
     public void testGetIndirectionTableNameRef() throws Exception {
-        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", "ref1", false);
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", "Class2", "ref1", false);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
 
-        ReferenceDescriptor ref1 = new ReferenceDescriptor("ref1", false, "Class1", null);
+        ReferenceDescriptor ref1 = new ReferenceDescriptor("ref1", "Class1", null);
         Set refs = new HashSet(Arrays.asList(new Object[] {ref1}));
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), refs, new HashSet());
 
@@ -120,7 +120,7 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetIndirectionTableNameNull() throws Exception {
-        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", null, false);
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", "Class2", null, false);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
 
@@ -135,11 +135,11 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetIndirectionTableNameCol() throws Exception {
-        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", "col2", false);
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", "Class2", "col2", false);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
 
-        CollectionDescriptor col2 = new CollectionDescriptor("col2", false, "Class1", "col1", false);
+        CollectionDescriptor col2 = new CollectionDescriptor("col2", "Class1", "col1", false);
         cols = new HashSet(Arrays.asList(new Object[] {col2}));
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), cols);
 

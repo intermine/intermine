@@ -87,41 +87,41 @@ public class AceModelParser implements ModelParser
         Set atts = new LinkedHashSet();
         Set refs = Collections.EMPTY_SET;
         Set cols = Collections.EMPTY_SET;
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         l.add(new ClassDescriptor(pkgName + "Colour", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        atts.add(new AttributeDescriptor("sequence", false, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
+        atts.add(new AttributeDescriptor("sequence", "java.lang.String"));
         l.add(new ClassDescriptor(pkgName + "DNA", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.util.Date"));
+        atts.add(new AttributeDescriptor("identifier", "java.util.Date"));
         l.add(new ClassDescriptor(pkgName + "DateType", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.Float"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.Float"));
         l.add(new ClassDescriptor(pkgName + "Float", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.Integer"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.Integer"));
         l.add(new ClassDescriptor(pkgName + "Int", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         refs = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         //refs.add(new ReferenceDescriptor("Quoted_in", false, "org.flymine.model.acedb.Paper",
         //            null));
         l.add(new ClassDescriptor(pkgName + "Keyword", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         refs = Collections.EMPTY_SET;
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        atts.add(new AttributeDescriptor("text", false, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
+        atts.add(new AttributeDescriptor("text", "java.lang.String"));
         l.add(new ClassDescriptor(pkgName + "LongText", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        atts.add(new AttributeDescriptor("peptide", false, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
+        atts.add(new AttributeDescriptor("peptide", "java.lang.String"));
         l.add(new ClassDescriptor(pkgName + "Peptide", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         l.add(new ClassDescriptor(pkgName + "Text", null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+        atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         l.add(new ClassDescriptor(pkgName + "Comment", null, false, atts, refs, cols));
     }
 
@@ -254,7 +254,7 @@ public class AceModelParser implements ModelParser
             Set atts = new LinkedHashSet();
             Set refs = new LinkedHashSet();
             Set cols = new LinkedHashSet();
-            atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
+            atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
             nodeToSets(node.getChild(), "value", true, atts, refs, cols);
             return new ClassDescriptor(pkgName + formatAceName(node.getName().substring(1)),
                                        null, false, atts, refs, cols);
@@ -280,7 +280,7 @@ public class AceModelParser implements ModelParser
             if (node.getChild() != null) {
                 nodeToSets(node.getChild(), node.getName(), true, atts, refs, cols);
             } else {
-                atts.add(new AttributeDescriptor(formatAceName(node.getName()), false, "boolean"));
+                atts.add(new AttributeDescriptor(formatAceName(node.getName()), "boolean"));
             }
             if (node.getSibling() != null) {
                 nodeToSets(node.getSibling(), parent, collection, atts, refs, cols);
@@ -339,18 +339,18 @@ public class AceModelParser implements ModelParser
             type = type.substring(1);
         }
         if (collection) {
-            cols.add(new CollectionDescriptor(fieldName, false, pkgName + formatAceName(type),
+            cols.add(new CollectionDescriptor(fieldName, pkgName + formatAceName(type),
                                               formatAceName(xref), false));
         } else if ("Text".equals(type)) {
-            atts.add(new AttributeDescriptor(fieldName, false, "java.lang.String"));
+            atts.add(new AttributeDescriptor(fieldName, "java.lang.String"));
         } else if ("Float".equals(type)) {
-            atts.add(new AttributeDescriptor(fieldName, false, "java.lang.Float"));
+            atts.add(new AttributeDescriptor(fieldName, "java.lang.Float"));
         } else if ("Int".equals(type)) {
-            atts.add(new AttributeDescriptor(fieldName, false, "java.lang.Integer"));
+            atts.add(new AttributeDescriptor(fieldName, "java.lang.Integer"));
         } else if ("DateType".equals(type)) {
-            atts.add(new AttributeDescriptor(fieldName, false, "java.util.Date"));
+            atts.add(new AttributeDescriptor(fieldName, "java.util.Date"));
         } else {
-            refs.add(new ReferenceDescriptor(fieldName, false, pkgName + formatAceName(type),
+            refs.add(new ReferenceDescriptor(fieldName, pkgName + formatAceName(type),
                                              formatAceName(xref)));
         }
         if (nextNode != null) {

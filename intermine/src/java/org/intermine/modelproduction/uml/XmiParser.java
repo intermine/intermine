@@ -40,7 +40,6 @@ import ru.novosoft.uml.xmi.XMIReader;
 import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
 import ru.novosoft.uml.model_management.MPackage;
-import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -66,10 +65,8 @@ public class XmiParser implements ModelParser
 
     protected String modelName;
 
-    private Collection keys;
     private Set attributes, references, collections;
     private Set classes = new LinkedHashSet();
-
 
     /**
      * Constructor that takes the modelName
@@ -101,16 +98,15 @@ public class XmiParser implements ModelParser
         String name = attr.getName();
         //String type = qualify(attr.getType().getName());
         String type = attr.getType().getName();
-        boolean primaryKey = keys.contains(attr.getName());
         if (type.indexOf("[") > 0) {
             int index = type.indexOf("[");
-            collections.add(new CollectionDescriptor(name, primaryKey,
+            collections.add(new CollectionDescriptor(name,
                                                      qualify(type.substring(0, index)),
                                                      null, true));
         } else if (type.startsWith("any")) {
-            references.add(new ReferenceDescriptor(name, primaryKey, qualify(type), null));
+            references.add(new ReferenceDescriptor(name, qualify(type), null));
         } else {
-            attributes.add(new AttributeDescriptor(name, primaryKey, qualify(type)));
+            attributes.add(new AttributeDescriptor(name, qualify(type)));
         }
     }
 
@@ -130,8 +126,6 @@ public class XmiParser implements ModelParser
             isInterface = true;
             implement = null;
         }
-
-        keys = getKeys(cls);
 
         references = new LinkedHashSet();
         collections = new LinkedHashSet();
@@ -162,15 +156,14 @@ public class XmiParser implements ModelParser
             String referencedType = qualified(ae.getType());
             MAssociationEnd ae2 = ae.getOppositeEnd();
             String reverseReference = ae2.isNavigable() ? nameEnd(ae2) : null;
-            boolean primaryKey = keys.contains(name);
             MMultiplicity m = ae.getMultiplicity();
             if (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m)) {
-                references.add(new ReferenceDescriptor(name, primaryKey, referencedType,
+                references.add(new ReferenceDescriptor(name, referencedType,
                                                        reverseReference));
             } else {
                 boolean ordered = ae.getOrdering() != null
                     && !ae.getOrdering().getName().equals("unordered");
-                collections.add(new CollectionDescriptor(name, primaryKey, referencedType,
+                collections.add(new CollectionDescriptor(name, referencedType,
                                                          reverseReference, ordered));
             }
         }
@@ -295,25 +288,6 @@ public class XmiParser implements ModelParser
             parent = parent.getNamespace();
         }
         return packagePath;
-    }
-
-    private Collection getKeys(MClassifier cls) {
-        Set keyFields = new LinkedHashSet();
-        Collection tvs = cls.getTaggedValues();
-        if (tvs != null && tvs.size() > 0) {
-            Iterator iter = tvs.iterator();
-            while (iter.hasNext()) {
-                MTaggedValue tv = (MTaggedValue) iter.next();
-                if (tv.getTag().equals("key")) {
-                    keyFields.addAll(StringUtil.tokenize(tv.getValue()));
-                }
-            }
-        }
-        Iterator parents = cls.getGeneralizations().iterator();
-        if (parents.hasNext()) {
-            keyFields.addAll(getKeys((MClassifier) ((MGeneralization) parents.next()).getParent()));
-        }
-        return keyFields;
     }
 
     private String nameEnd(MAssociationEnd ae) {

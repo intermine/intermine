@@ -32,15 +32,14 @@ public class ReferenceDescriptor extends FieldDescriptor
      * the field in the referenced class that refers back to this (will be null in
      * a unidirectional relationship).
      * @param name name of the field
-     * @param primaryKey true if field is part of the class' primary key
      * @param referencedType fully qualfied class name of another business object
      * @param reverseRefName name of the field in remote object that refers back to this one
      * @throws IllegalArgumentException if fields are null
      */
-    public ReferenceDescriptor(String name, boolean primaryKey, String referencedType,
+    public ReferenceDescriptor(String name, String referencedType,
                                String reverseRefName)
         throws IllegalArgumentException {
-        super(name, primaryKey);
+        super(name);
         if (referencedType == null || referencedType == "") {
             throw new IllegalArgumentException("A value must be provided for "
                                                + "the referenced type");
@@ -126,7 +125,6 @@ public class ReferenceDescriptor extends FieldDescriptor
         if (obj instanceof ReferenceDescriptor) {
             ReferenceDescriptor ref = (ReferenceDescriptor) obj;
             return name.equals(ref.name)
-                && primaryKey == ref.primaryKey
                 && referencedType.equals(ref.referencedType)
                 && Util.equals(reverseRefName, ref.reverseRefName);
         }
@@ -138,7 +136,6 @@ public class ReferenceDescriptor extends FieldDescriptor
      */
     public int hashCode() {
         return 3 * name.hashCode()
-            + 5 * (primaryKey ? 1 : 0)
             + 7 * referencedType.hashCode()
             + 11 * Util.hashCode(reverseRefName);
     }
@@ -150,7 +147,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         StringBuffer sb = new StringBuffer();
         sb.append("<reference name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
-            .append(" primary-key=\"" + primaryKey + "\"/>");
+            .append("/>");
         return sb.toString();
     }
 }

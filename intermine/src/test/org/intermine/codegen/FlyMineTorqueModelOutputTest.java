@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Collections;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
@@ -147,14 +146,14 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorFields() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("name1", true, "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("name1", "java.lang.String");
         Set atts = new LinkedHashSet(Collections.singleton(atd1));
 
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
         Set refs = new LinkedHashSet(Collections.singleton(rfd1));
 
         // only need simple unidirectionals cods
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null, true);
         Set cols = new LinkedHashSet(Collections.singleton(cod1));
 
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, refs, cols);
@@ -166,9 +165,6 @@ public class FlyMineTorqueModelOutputTest extends TestCase
             + INDENT + INDENT + "<column name=\"rfd1Id\" type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"name1\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
-            + INDENT + INDENT + "<index name=\"Class1_name1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<index-column name=\"name1\"/>" + ENDL
-            + INDENT + INDENT + "</index>" + ENDL
             + INDENT + "</table>" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
@@ -190,9 +186,9 @@ public class FlyMineTorqueModelOutputTest extends TestCase
 
     // a ref and attribute descriptor in the superclass
     public void testGenerateClassDescriptorSuperFields() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("name1", true, "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("name1", "java.lang.String");
         Set atts1 = new LinkedHashSet(Collections.singleton(atd1));
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
         Set refs1 = new LinkedHashSet(Collections.singleton(rfd1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts1, refs1, new HashSet());
 
@@ -206,9 +202,6 @@ public class FlyMineTorqueModelOutputTest extends TestCase
             + INDENT + INDENT + "<column name=\"rfd1Id\" type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"name1\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
-            + INDENT + INDENT + "<index name=\"Class2_name1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<index-column name=\"name1\"/>" + ENDL
-            + INDENT + INDENT + "</index>" + ENDL
             + INDENT + "</table>" + ENDL;
 
         assertEquals(expected, mo.generate(cld2));

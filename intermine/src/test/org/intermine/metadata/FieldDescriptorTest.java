@@ -25,7 +25,7 @@ public class FieldDescriptorTest extends TestCase
 
     public void testConstructorNullName() throws Exception {
         try {
-            new TestFieldDescriptor(null, false);
+            new TestFieldDescriptor(null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -33,14 +33,14 @@ public class FieldDescriptorTest extends TestCase
 
     public void testConstructorEmptylName() throws Exception {
         try {
-            new TestFieldDescriptor("", false);
+            new TestFieldDescriptor("");
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testSetClassDescriptorNull() throws Exception {
-        FieldDescriptor fd = new TestFieldDescriptor("name", false);
+        FieldDescriptor fd = new TestFieldDescriptor("name");
         try {
             fd.setClassDescriptor(null);
             fail("Expected NullPointerException");
@@ -49,7 +49,7 @@ public class FieldDescriptorTest extends TestCase
     }
 
     public void testSetClassDescriptorValid() throws Exception {
-        FieldDescriptor fd = new TestFieldDescriptor("name", false);
+        FieldDescriptor fd = new TestFieldDescriptor("name");
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   EMPTY_SET, EMPTY_SET, EMPTY_SET);
         try {
@@ -60,7 +60,7 @@ public class FieldDescriptorTest extends TestCase
     }
 
     public void testSetClassDescriptorTwice() throws Exception {
-        FieldDescriptor fd = new TestFieldDescriptor("name", false);
+        FieldDescriptor fd = new TestFieldDescriptor("name");
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   EMPTY_SET, EMPTY_SET, EMPTY_SET);
         fd.setClassDescriptor(cld);
@@ -72,8 +72,8 @@ public class FieldDescriptorTest extends TestCase
     }
 
     private class TestFieldDescriptor extends FieldDescriptor {
-        public TestFieldDescriptor(String name, boolean primaryKey) {
-            super(name, primaryKey);
+        public TestFieldDescriptor(String name) {
+            super(name);
         }
 
         public int relationType() {

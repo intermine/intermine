@@ -10,17 +10,19 @@ package org.flymine.web.results;
  *
  */
 
-import servletunit.struts.MockStrutsTestCase;
-import org.apache.struts.tiles.ComponentContext;
+import java.util.Collections;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
+import servletunit.struts.MockStrutsTestCase;
+
+import org.flymine.model.testmodel.Company;
+import org.flymine.model.testmodel.Department;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.util.DynamicUtil;
 
 public class ChangeResultsActionTest extends MockStrutsTestCase
 {
@@ -35,12 +37,18 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         super.setUp();
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Department d = new Department();
+        d.setId(new Integer(21));
+        ResultsRow row = new ResultsRow();
+        row.add(c);
+        row.add(d);
+        os.addRow(row);
         FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d order by c", "org.flymine.model.testmodel");
         results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(10);
     }
-
 
     public void testNext() throws Exception {
         setRequestPathInfo("/changeResults");
@@ -217,5 +225,4 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         verifyForward("details");
         verifyNoActionErrors();
     }
-
 }

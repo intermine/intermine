@@ -197,7 +197,6 @@ public class Owl2FlyMine
             }
             AttributeDescriptor atd
                 = new AttributeDescriptor(OntologyUtil.generateFieldName(prop, domain),
-                                          false,   // primary key
                                           javaType);
             HashSet atds = getFieldSetForClass(attributes, domain.getLocalName());
             atds.add(atd);
@@ -208,7 +207,6 @@ public class Owl2FlyMine
             if (OntologyUtil.hasMaxCardinalityOne(ontModel, prop, domain)) {
                 ReferenceDescriptor rfd
                     = new ReferenceDescriptor(OntologyUtil.generateFieldName(prop, domain),
-                                              false,
                                               referencedType,
                                               reverseRef);
                 HashSet rfds = getFieldSetForClass(references, domain.getLocalName());
@@ -217,7 +215,6 @@ public class Owl2FlyMine
                 // TODO collection - cannot handle ordered
                 CollectionDescriptor cod
                     = new CollectionDescriptor(OntologyUtil.generateFieldName(prop, domain),
-                                               false,
                                                referencedType,
                                                reverseRef,
                                                false);

@@ -113,7 +113,7 @@ public class PrintableConstraintTest extends TestCase
         assertEquals("\'Company1\'", pc1.getRight());
         assertEquals("department2.name", pc2.getRight());
         assertEquals("department2", pc3.getRight());
-        assertEquals("\"Department [null] null, null\"", pc4.getRight());
+        assertEquals("\"Department [null] null\"", pc4.getRight());
         assertEquals("department1", pc5.getRight());
         assertEquals("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Department AS a1_", pc6.getRight());
         assertEquals("SUBSTR(department1.name, 1, 1)", pc7.getRight());

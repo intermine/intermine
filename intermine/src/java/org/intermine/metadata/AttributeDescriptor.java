@@ -24,13 +24,12 @@ public class AttributeDescriptor extends FieldDescriptor
     /**
      * Construct, name and type cannot be null.
      * @param name name of field in the class
-     * @param primaryKey true if part of the primary key
      * @param type name of primitive or a fully qualified class name
      * @throws IllegalArgumentException if arguments are null
      */
-    public AttributeDescriptor(String name, boolean primaryKey, String type)
+    public AttributeDescriptor(String name, String type)
         throws IllegalArgumentException {
-        super(name, primaryKey);
+        super(name);
         if (type == null || type == "") {
             throw new IllegalArgumentException("name cannot be null or empty");
         }
@@ -60,7 +59,6 @@ public class AttributeDescriptor extends FieldDescriptor
         if (obj instanceof AttributeDescriptor) {
             AttributeDescriptor attr = (AttributeDescriptor) obj;
             return name.equals(attr.name) 
-                && primaryKey == attr.primaryKey
                 && type.equals(attr.type);
         }
         return false;
@@ -71,7 +69,6 @@ public class AttributeDescriptor extends FieldDescriptor
      */
     public int hashCode() {
         return 3 * name.hashCode()
-            + 5 * (primaryKey ? 1 : 0)
             + 7 * type.hashCode();
     }
 
@@ -79,7 +76,6 @@ public class AttributeDescriptor extends FieldDescriptor
      * @see Object#toString
      */
     public String toString() {
-        return "<attribute name=\"" + name + "\" type=\"" + type + "\" primary-key=\""
-            + primaryKey + "\"/>";
+        return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
     }
 }

@@ -25,10 +25,6 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Restriction;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
@@ -42,12 +38,11 @@ public class OntologyUtilTest extends TestCase
     private final String ENDL = "\n";
 
     public void testGeneratePropertyName() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", false, "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, Collections.singleton(atd1), new HashSet(), new HashSet());
         Model model = new Model("model", ns, Collections.singleton(cld1));
         assertEquals(ns + "Class1__atd1", OntologyUtil.generatePropertyName(atd1));
     }
-
 
     public void testGenerateFieldName() throws Exception {
         OntModel ont = ModelFactory.createOntologyModel();
@@ -57,7 +52,6 @@ public class OntologyUtilTest extends TestCase
 
         assertEquals("name", OntologyUtil.generateFieldName(prop1, cls));
         assertEquals("address", OntologyUtil.generateFieldName(prop2, cls));
-
     }
 
     public void testXmlToJava() throws Exception {

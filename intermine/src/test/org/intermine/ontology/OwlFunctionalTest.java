@@ -10,25 +10,19 @@ package org.flymine.ontology;
  *
  */
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
-import java.io.FileReader;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
-
 
 import org.flymine.metadata.*;
 import org.flymine.util.TypeUtil;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntClass;
-
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class OwlFunctionalTest extends TestCase
 {
-
     public void testRoundTrip() throws Exception {
         Model original = Model.getInstanceByName("testmodel");
         FlyMine2Owl f2o = new FlyMine2Owl();
@@ -37,7 +31,6 @@ public class OwlFunctionalTest extends TestCase
         Owl2FlyMine o2f = new Owl2FlyMine(original.getName(), original.getPackageName());
         assertEquals(newModel, o2f.process(ont, original.getNameSpace().toString()));
     }
-
 
     /**
      * converts primitives to corresponding java.lang objects
@@ -59,7 +52,6 @@ public class OwlFunctionalTest extends TestCase
                 AttributeDescriptor atd = (AttributeDescriptor) j.next();
 
                 AttributeDescriptor newAtd = new AttributeDescriptor(atd.getName(),
-                                                                     false,
                                                                      TypeUtil.instantiate(atd.getType()).getName());
                 atds.add(newAtd);
             }
@@ -72,7 +64,6 @@ public class OwlFunctionalTest extends TestCase
                     reverseRef = rfd.getReverseReferenceDescriptor().getName();
                 }
                 ReferenceDescriptor newRfd = new ReferenceDescriptor(rfd.getName(),
-                                                                     false,
                                                                      rfd.getReferencedClassDescriptor().getName(),
                                                                      reverseRef);
                 rfds.add(newRfd);
@@ -86,7 +77,6 @@ public class OwlFunctionalTest extends TestCase
                     reverseRef = cod.getReverseReferenceDescriptor().getName();
                 }
                 CollectionDescriptor newCod = new CollectionDescriptor(cod.getName(),
-                                                                       false,
                                                                        cod.getReferencedClassDescriptor().getName(),
                                                                        reverseRef,
                                                                        false);

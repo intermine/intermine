@@ -111,7 +111,7 @@ public class Model
 
         ClassDescriptor flymineBusinessObject = new ClassDescriptor(
                 "org.flymine.model.FlyMineBusinessObject", null, true,
-                Collections.singleton(new AttributeDescriptor("id", false, "java.lang.Integer")),
+                Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
         orderedClds.add(flymineBusinessObject);
 

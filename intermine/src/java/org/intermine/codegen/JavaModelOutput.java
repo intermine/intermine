@@ -11,7 +11,6 @@ package org.flymine.codegen;
  */
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -111,14 +110,13 @@ public class JavaModelOutput extends ModelOutput
         if (cld.isInterface()) {
             sb.append(generateFieldDescriptors(cld, false));
         } else {
-            sb.append(generateFieldDescriptors(cld, true));
-            sb.append(generateEquals(cld))
-                .append(generateEqualsPK(cld))
+            sb.append(generateFieldDescriptors(cld, true))
+                .append(generateEquals(cld))
                 .append(generateHashCode(cld))
                 .append(generateToString(cld));
         }
 
-        sb.append("}");
+        sb.append("}" + ENDL);
         return sb.toString();
     }
 
@@ -326,91 +324,23 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
-
     /**
      * Generate a .equals() method for the given class.
      * @param cld descriptor for class in question
      * @return generated java code as string
      */
     protected String generateEquals(ClassDescriptor cld) {
-        StringBuffer sb = new StringBuffer();
-
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
-        Collection keyFields = cld.getPkFieldDescriptors();
-        if (keyFields.size() > 0) {
-            sb.append(INDENT)
-                .append("public boolean equals(Object o) {" + ENDL)
-                .append(INDENT + INDENT)
-                .append("if (!(o instanceof ")
-                .append(unqualifiedName)
-                .append(")) return false;" + ENDL)
-                .append(INDENT + INDENT)
-                .append("return (id == null) ? equalsPK(o) : id.equals(((")
-                .append(unqualifiedName)
-                .append(")o).getId());" + ENDL)
-                .append(INDENT)
-                .append("}" + ENDL + ENDL);
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * Generate a .equals() method based on the object's primary keys.
-     * @param cld descriptor for class in question
-     * @return generated java code as string
-     */
-    protected String generateEqualsPK(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
-
-        String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
-
-        Collection keyFields = cld.getPkFieldDescriptors();
-        if (keyFields.size() > 0) {
-            sb.append(INDENT)
-                .append("public boolean equalsPK(Object o) {" + ENDL)
-                .append(INDENT + INDENT)
-                .append("if (!(o instanceof ")
-                .append(unqualifiedName)
-                .append(")) return false;" + ENDL)
-                .append(INDENT + INDENT)
-                .append(unqualifiedName)
-                .append(" obj = (")
-                .append(unqualifiedName)
-                .append(") o;" + ENDL)
-                .append(INDENT + INDENT)
-                .append("return obj.getId() == null && ");
-            Iterator iter = keyFields.iterator();
-            while (iter.hasNext()) {
-                FieldDescriptor field = (FieldDescriptor) iter.next();
-                if (cld.getAllAttributeDescriptors().contains(field)
-                    && isPrimitive(((AttributeDescriptor) field).getType())) {
-                    sb.append("obj.get")
-                        .append(StringUtil.capitalise(field.getName()))
-                        .append("() == ")
-                        .append(field.getName());
-                } else {
-                    String thatField = "obj.get" + StringUtil.capitalise(field.getName()) + "()";
-                    sb.append("(" + thatField + " == null ? (" + field.getName() + " == null) : "
-                              + thatField + ".equals(" + field.getName() + "))");
-//                     sb.append(field.getName())
-//                         .append(".equals(obj.get")
-//                         .append(StringUtil.capitalise(field.getName()))
-//                         .append("())");
-                }
-                if (iter.hasNext()) {
-                    sb.append(" && ");
-                }
-            }
-            sb.append(";" + ENDL)
-                .append(INDENT)
-                .append("}" + ENDL + ENDL);
-        }
-
+        sb.append(INDENT)
+            .append("public boolean equals(Object o) { return (o instanceof ")
+            .append(unqualifiedName)
+            .append(" && id != null) ? id.equals(((")
+            .append(unqualifiedName)
+            .append(")o).getId()) : false; }" + ENDL);
         return sb.toString();
     }
-
 
     /**
      * Generate a .hashCode() method for the given class.
@@ -419,38 +349,10 @@ public class JavaModelOutput extends ModelOutput
      */
     protected String generateHashCode(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
-
-        Collection keyFields = cld.getPkFieldDescriptors();
-        if (keyFields.size() > 0) {
-            sb.append(INDENT)
-                .append("public int hashCode() {" + ENDL)
-                .append(INDENT + INDENT)
-                .append("if (id != null) return id.hashCode();" + ENDL)
-                .append(INDENT + INDENT)
-                .append("return ");
-            Iterator iter = keyFields.iterator();
-            while (iter.hasNext()) {
-                FieldDescriptor field = (FieldDescriptor) iter.next();
-                if (cld.getAllAttributeDescriptors().contains(field)
-                    && isPrimitive(((AttributeDescriptor) field).getType())) {
-                    if (((AttributeDescriptor) field).getType().equals("boolean")) {
-                        sb.append("(" + field.getName() + " ? 0 : 1)");
-                    } else {
-                        sb.append("((int) " + field.getName() + ")");
-                    }
-                } else {
-                    // sb.append(field.getName() + ".hashCode()");
-                    sb.append("(" + field.getName() + " == null ? 0 : " + field.getName()
-                              + ".hashCode())");
-                }
-                if (iter.hasNext()) {
-                    sb.append(" ^ ");
-                }
-            }
-            sb.append(";" + ENDL)
-                .append(INDENT)
-                .append("}" + ENDL + ENDL);
-        }
+        sb.append(INDENT)
+            .append("public int hashCode() { ")
+            .append("return (id != null) ? id.hashCode() : super.hashCode(); ")
+            .append("}" + ENDL);
         return sb.toString();
     }
 
@@ -460,23 +362,28 @@ public class JavaModelOutput extends ModelOutput
      * @return generated java code as a string
      */
     protected String generateToString(ClassDescriptor cld) {
-        StringBuffer sb = new StringBuffer();
-
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
-        Set keyFields = cld.getPkFieldDescriptors();
+        StringBuffer sb = new StringBuffer();
+        Set keyFields = cld.getAllAttributeDescriptors();
         if (keyFields.size() > 0) {
             sb.append(INDENT)
                 .append("public String toString() { ")
                 .append("return \"")
                 .append(unqualifiedName)
-                .append(" [\"+id+\"] \"+");
+                .append(" [\"+id+\"] \"");
             Iterator iter = keyFields.iterator();
+            boolean isFirst = true;
             while (iter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) iter.next();
-                sb.append("get" + StringUtil.capitalise(field.getName()) + "()");
-                if (iter.hasNext()) {
-                    sb.append(" + \", \" + ");
+                if (!"id".equals(field.getName())) {
+                    if (isFirst) {
+                        sb.append(" + ");
+                        isFirst = false;
+                    } else {
+                        sb.append(" + \", \" + ");
+                    }
+                    sb.append("get" + StringUtil.capitalise(field.getName()) + "()");
                 }
             }
             sb.append("; }" + ENDL);

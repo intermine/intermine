@@ -69,22 +69,19 @@ public class FlyMineModelParser implements ModelParser
             } else if (qName.equals("attribute")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
-                boolean primaryKey = new Boolean(attrs.getValue("primary-key")).booleanValue();
-                cls.attributes.add(new AttributeDescriptor(name, primaryKey, type));
+                cls.attributes.add(new AttributeDescriptor(name, type));
             } else if (qName.equals("reference")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("referenced-type");
                 String reverseReference = attrs.getValue("reverse-reference");
-                boolean primaryKey = new Boolean(attrs.getValue("primary-key")).booleanValue();
-                cls.references.add(new ReferenceDescriptor(name, primaryKey, type,
+                cls.references.add(new ReferenceDescriptor(name, type,
                                                            reverseReference));
             } else if (qName.equals("collection")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("referenced-type");
                 boolean ordered = new Boolean(attrs.getValue("ordered")).booleanValue();
                 String reverseReference = attrs.getValue("reverse-reference");
-                boolean primaryKey = new Boolean(attrs.getValue("primary-key")).booleanValue();
-                cls.collections.add(new CollectionDescriptor(name, primaryKey, type,
+                cls.collections.add(new CollectionDescriptor(name, type,
                                                              reverseReference, ordered));
             }
         }
