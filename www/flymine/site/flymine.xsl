@@ -18,47 +18,60 @@ version="1.0">
 </head>
 <body>
 
-<table border="0" cellspacing="5" cellpadding="5" align="center" width="90%">
-<tr>
-<!-- <td align="center" valign="top">
-<a href="index.html"><img src="logo.jpg" alt="FlyMine" border="0"></a>
-</td> -->
-<td align="left" valign="bottom" width="90%">
-<font size="+2" color="green"><b>FlyMine</b></font>
-
-<br /><font size="+1">An integrated database for <i>Drosophila</i> and <i>Anopheles</i> genomics</font>
-<br /><hr width="100%" align="center" />
-</td>
-</tr>
-</table>
-
-<table border="0" cellspacing="5" cellpadding="5" align="center" width="90%">
-<tr>
-<td valign="top" colspan="2">
-
 <table align="center" width="100%" border="0" cellpadding="10">
-<tr>
-<td align="left" valign="top">
+    <tr>
+        <td colspan="2" align="left" valign="bottom">
+            <font class="title">FlyMine</font>
+            <br /><font class="subtitle">An integrated database for <i>Drosophila</i> and <i>Anopheles</i> genomics</font>
+            <br /><hr width="100%" align="center" />
+        </td>
+    </tr>
 
-<xsl:apply-templates/>
+    <tr>
+        <td class="sidebar" height="10%" width="15%" align="left" valign="top" vspace="0" hspace="0">
+            <xsl:apply-templates select="document('sidebar.xml')/*" />
+        </td>
+        <td class="main" align="left" valign="top" rowspan="2">
+            <xsl:apply-templates/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+    </tr>
 
-</td>
-</tr>
-</table>
-</td>
-</tr>
-
-<tr><td align="center"><a href="http://www.wellcome.ac.uk"><img src="wellcome.gif" align="center" border="0" hspace="10" /></a>FlyMine is funded by The Wellcome Trust (Grant no. 067205)</td></tr>
-
-</table>
-
-<table border="1" cellspacing="0" cellpadding="5" align="center" width="90%">
-  <tr>
-    <td colspan="2" bgcolor="#ccffcc" align="center">
-      FlyMine, Department of Genetics, Downing Street, Cambridge, CB2 3EH, UK
-      <br />Tel: +44 (0)1223 333965.  Fax: +44 (0)1223 333992.  <a href="mailto:info[at]flymine.org">info[at]flymine.org</a>
-    </td>
-  </tr>
+    <tr vspace="0" hspace="0">
+        <td class="footer" align="center" colspan="2" border="0" hspace="0" vspace="0">
+	    <table class="footer">
+                <tr>
+                    <td align="left" width="10%">
+                        <table class="footer">
+                            <tr>
+                                <td>
+                                    <a href="http://www.wellcome.ac.uk"><img src="wellcome.gif" align="center" border="0" hspace="10" /></a>
+                                </td>
+                                <td>
+                                    FlyMine is funded by<br/>The Wellcome Trust<br/>(Grant no. 067205)
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="right" width="10%">
+                        <table class="footer" cellpadding="10">
+                            <tr>
+                                <td>
+                                    FlyMine<br/>Department of Genetics<br/>Downing Street<br/>Cambridge, CB2 3EH, UK
+                                </td>
+                                <td>
+                                    Tel: +44 (0)1223 333965<br/>Fax: +44 (0)1223 333992<br/><a href="mailto:info[at]flymine.org">info[at]flymine.org</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                 </tr>
+            </table>
+        </td>
+    </tr>
 </table>
 
 </body>
@@ -152,6 +165,18 @@ version="1.0">
 </xsl:template>
 
 <xsl:template match="abstract | date | keywords | copyright"/>
+
+<xsl:template match="menu/section">
+<p><xsl:apply-templates/></p>
+</xsl:template>
+
+<xsl:template match="menu/section/heading">
+<div><font class="menu-heading"><xsl:apply-templates/></font></div>
+</xsl:template>
+
+<xsl:template match="menu/section/item">
+<font class="menu-item"><xsl:apply-templates/></font><br/>
+</xsl:template>
 
 </xsl:stylesheet>
 
