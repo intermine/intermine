@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -48,6 +50,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     protected static final String ENDL = System.getProperty("line.separator");
     protected String dataLocation;
     protected Item db;
+    protected Map proteinSequenceFamilies = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -134,9 +137,13 @@ public class ProteinStructureDataTranslator extends DataTranslator
 
             // sequenceFamily -> proteinSequenceFamily
             Item sequenceFamily = getReferencedItem(srcItem, "sequence_family");
-            Item proteinSequenceFamily = createItem(tgtNs + "ProteinSequenceFamily", "");
-            proteinSequenceFamily.addAttribute(new Attribute("name", sequenceFamily
-                                                             .getAttribute("pfam_id").getValue()));
+            String name = sequenceFamily.getAttribute("pfam_id").getValue();
+            Item proteinSequenceFamily = (Item) proteinSequenceFamilies.get(name);
+            if (proteinSequenceFamily == null) {
+                proteinSequenceFamily = createItem(tgtNs + "ProteinSequenceFamily", "");
+                proteinSequenceFamily.addAttribute(new Attribute("name", name));
+                proteinSequenceFamilies.put(name, proteinSequenceFamily);
+            }
 
             // link proteinRegion and proteinSequenceFamily using annotation, and add shortcut
             Item annotation2 = createItem(tgtNs + "Annotation", "");
