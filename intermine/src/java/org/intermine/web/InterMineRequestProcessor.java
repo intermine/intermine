@@ -26,6 +26,14 @@ import org.apache.struts.Globals;
 public class InterMineRequestProcessor extends TilesRequestProcessor
 {
     private static final String LOGON_PATH = "/begin";
+    private static final String LOGON_INIT_PATH = "/initBegin";
+
+    /**
+     * Paths that can be used as initial pages ie. when there is no session.
+     */
+    public static final String [] START_PATHS = {
+        LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild", "/examples", "/iqlQuery"
+    };
 
     /**
      * @see TilesRequestProcessor#processPreprocess
@@ -33,15 +41,24 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         if (!request.isRequestedSessionIdValid()) {
             if (request.getAttribute(Globals.MESSAGE_KEY) == null) {
-                ActionErrors messages = new ActionErrors();
-                ActionError error = new ActionError("errors.session.nosession");
-                messages.add(ActionErrors.GLOBAL_ERROR, error);
-                request.setAttribute(Globals.ERROR_KEY, messages);
                 try {
-                    if (!processPath(request, response).equals(LOGON_PATH)) {
-                        processActionForward(request, response, new ActionForward("/begin.do"));
-                    } else {
-                        // don't go into a loop if something very bad happens
+                    boolean doForward = true;
+                    
+                    for (int i = 0; i < START_PATHS.length; i++) {
+                        if (processPath(request, response).equals(START_PATHS[i])) {
+                            doForward = false;
+                            break;
+                        }
+                    }
+
+                    if (doForward) {
+                        ActionErrors messages = new ActionErrors();
+                        ActionError error = new ActionError("errors.session.nosession");
+                        messages.add(ActionErrors.GLOBAL_ERROR, error);
+                        request.setAttribute(Globals.ERROR_KEY, messages);
+
+                        processActionForward(request, response,
+                                             new ActionForward(LOGON_PATH + ".do"));
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
