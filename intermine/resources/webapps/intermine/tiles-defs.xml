@@ -35,14 +35,12 @@
   </definition>
   
   <definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
+    <put name="savedBagView" value="savedBagView.jsp"/>
+    <put name="savedQueryView" value="savedQueryView.jsp"/>
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
-    <put name="querySelectBuild" value="querySelectBuild.tile"/>
-    <put name="loadQuery" value="loadQuery.jsp"/>
-  </definition>
-  
-  <definition name="querySelectBuild.tile" path="querySelectBuild.jsp">
     <put name="queryBuild" value="queryBuild.tile"/>
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
+    <put name="querySelectBuild" value="querySelectBuild.tile"/>
   </definition>
   
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
@@ -51,7 +49,8 @@
   
   <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
   
-  <definition name="aliasChange.tile" path="/queryAliasChange.jsp" controllerUrl="/initQueryView.do"/>
+  <definition name="aliasChange.tile" path="/queryAliasChange.jsp" 
+              controllerUrl="/initQueryView.do"/>
   
   <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
   
