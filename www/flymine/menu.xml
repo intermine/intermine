@@ -4,10 +4,10 @@
   <item url="/query/begin.do" title="Start a query"/>
   
   <item url="/doc/index.xml" title="Documentation">
-    <item url="/manual/manualQuickstart.xml" title="Quick start guide"/>
-    <item url="/tutorials/tutorialIndex.xml" title="Tutorials"/>
+    <item url="/doc/manual/manualQuickstart.xml" title="Quick start guide"/>
+    <item url="/doc/tutorials/index.xml" title="Tutorials"/>
     <item url="/query/examples.do" title="Query examples"/>
-    <item url="/manual/manualIndex.xml" title="User Manual"/>
+    <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
     <item url="/doc/usage_scenarios/index.xml" title="Usage scenarios"/>
     <item url="/doc/ontology_merging/index.xml" title="Ontology Merging"/>
