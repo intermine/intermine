@@ -1,3 +1,5 @@
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-
-Some example queries ...
+<!-- templates.jsp -->
+<div class="templates">
+  Some example queries ...
+</div>
+<!-- /templates.jsp -->
