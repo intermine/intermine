@@ -11,15 +11,16 @@
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
 
 <target name="prepare">
-    <copy todir="${build.www}">
-        <fileset dir="${src.www}">
+    <!-- This one has to be before the "main" copy as we want
+         the doc/index.xml file to be overwritten -->
+    <copy todir="${build.www}/doc">
+        <fileset dir="${src.doc}">
             <include name="**/*"/>
         </fileset>
     </copy>
 
-    <copy todir="${build.www}/doc">
-        <fileset dir="${src.doc}">
-            <exclude name="/index.xml"/>
+    <copy todir="${build.www}">
+        <fileset dir="${src.www}">
             <include name="**/*"/>
         </fileset>
     </copy>
@@ -41,6 +42,16 @@
            <include name="*"/>
         </fileset>
     </copy>
+
+    <copy todir="${dist.www}/internal/">
+        <fileset dir="${build.www}/internal/">
+            <include name="**/*.pdf"/>
+            <include name="**/*.sxi"/>
+            <include name="**/*.png"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.zargo"/>
+        </fileset>
+     </copy>
 
     <copy todir="${dist.www}/doc/">
         <fileset dir="${build.www}/doc/">
