@@ -1,52 +1,35 @@
 package org.flymine.objectstore.ojb;
 
-import junit.framework.*;
-import java.util.*;
+import java.util.Date;
+
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
+
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
+import org.flymine.objectstore.ObjectStoreQueriesTestCase;
+import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryExpression;
 import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.SubqueryConstraint;
-import org.flymine.objectstore.query.ClassConstraint;
-import org.flymine.objectstore.query.QueryObjectReference;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
-import org.apache.ojb.broker.metadata.DescriptorRepository;
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.metadata.ClassDescriptor;
-import org.apache.ojb.broker.metadata.FieldDescriptor;
-import org.apache.ojb.broker.metadata.CollectionDescriptor;
+import org.flymine.util.TypeUtil;
 
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Employee;
-import org.flymine.model.testmodel.Employable;
-import org.flymine.model.testmodel.Manager;
-import org.flymine.model.testmodel.Contractor;
-import org.flymine.model.testmodel.CEO;
-import org.flymine.model.testmodel.RandomInterface;
-import org.flymine.model.testmodel.ImportantPerson;
+import org.flymine.model.testmodel.*;
 
 public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
 {
+    protected DescriptorRepository dr;
+
     public FlymineSqlSelectStatementTest(String arg1) {
         super(arg1);
     }
 
-    protected DescriptorRepository dr;
-
     public void setUp() throws Exception {
-        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        PersistenceBrokerFlyMineImpl pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
-        dr = pb.getDescriptorRepository();
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
+        dr = ((PersistenceBrokerFlyMineImpl) pb).getDescriptorRepository();
         super.setUp();
     }
 
@@ -67,10 +50,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         results.put("WhereClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE (a1_.ID = a2_.ID) ORDER BY a1_.ID, a2_.ID");
         results.put("WhereNotClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID");
         results.put("WhereNegClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID");
-        Object obj = data.get("CompanyA");
-        ClassDescriptor cld = dr.getDescriptorFor(obj.getClass());
-        FieldDescriptor fld = cld.getFieldDescriptorByName("id");
-        int id = ((Integer) fld.getPersistentField().get(obj)).intValue();
+        Integer id = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
         results.put("WhereClassObject", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = " + id + ") ORDER BY a1_.ID");
         results.put("Contains11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.CEO' OR a2_.CLASS = 'org.flymine.model.testmodel.Manager') AND ((a1_.managerId = a2_.ID) AND a1_.name = 'DepartmentA1') ORDER BY a1_.ID, a2_.ID");
         results.put("ContainsNot11", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.CLASS AS a2_CLASS, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.title AS a2_title FROM Department AS a1_, Employee AS a2_ WHERE (a2_.CLASS = 'org.flymine.model.testmodel.CEO' OR a2_.CLASS = 'org.flymine.model.testmodel.Manager') AND (( NOT (a1_.managerId = a2_.ID)) AND a1_.name = 'DepartmentA1') ORDER BY a1_.ID, a2_.ID");
@@ -91,7 +71,6 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement((Query) queries.get(type), dr);
         assertEquals(type + " has failed", results.get(type), s1.getStatement());
     }
-
 
     public void testSelectQueryValue() throws Exception {
         QueryValue v1 = new QueryValue(new Integer(5));

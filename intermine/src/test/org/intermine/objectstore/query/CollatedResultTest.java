@@ -4,17 +4,19 @@ import junit.framework.TestCase;
 
 import java.util.List;
 
-import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.model.testmodel.*;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
+import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
-import org.apache.ojb.broker.metadata.DescriptorRepository;
-import org.apache.ojb.broker.PersistenceBroker;
+import org.flymine.util.TypeUtil;
+
+import org.flymine.model.testmodel.*;
 
 /**
  * For simplicity we use FlyMineSqlSelectStatement for comparison of
@@ -131,6 +133,7 @@ public class CollatedResultTest extends TestCase
         q1.addToGroupBy(qc1);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -181,6 +184,7 @@ public class CollatedResultTest extends TestCase
         q1.addToGroupBy(qfield1);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -231,6 +235,7 @@ public class CollatedResultTest extends TestCase
         q1.addToGroupBy(qc1);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -285,6 +290,7 @@ public class CollatedResultTest extends TestCase
         q1.addToGroupBy(qc1);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -365,9 +371,11 @@ public class CollatedResultTest extends TestCase
         q1.addToGroupBy(qc2);
 
         Company company = new Company();
+        TypeUtil.setFieldValue(company, "id", new Integer(42));
         company.setName("Acme");
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(43));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -424,6 +432,7 @@ public class CollatedResultTest extends TestCase
         q1.setDistinct(true);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -473,6 +482,7 @@ public class CollatedResultTest extends TestCase
         q1.setDistinct(true);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
 
         ResultsRow row1 = new ResultsRow();
@@ -523,8 +533,10 @@ public class CollatedResultTest extends TestCase
         q1.setDistinct(true);
 
         Department dept = new Department();
+        TypeUtil.setFieldValue(dept, "id", new Integer(42));
         dept.setName("Purchasing");
         Employee employee = new Employee();
+        TypeUtil.setFieldValue(employee, "id", new Integer(43));
         employee.setName("Employee");
 
         ResultsRow row1 = new ResultsRow();

@@ -515,6 +515,8 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     public Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         Object obj = data.get("CompanyA");
+        //obj hasn't actually been stored, so set id manually
+        TypeUtil.setFieldValue(obj, "id", new Integer(42));
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
         Query q1 = new Query();
         q1.addFrom(qc1);
