@@ -60,12 +60,9 @@ public class ModelParser
      */
     class ModelHandler extends DefaultHandler
     {
-        List attributes = new ArrayList();
-        List references = new ArrayList();
-        List collections = new ArrayList();
+        String modelName;
         List classes = new ArrayList();
-        Attributes classAttrs;
-        String modelName; //any more of these and we'll have to build a DOM instead
+        SkeletonClass cls;
    
         /**
          * @see DefaultHandler#startElement
@@ -74,26 +71,32 @@ public class ModelParser
             if (qName.equals("model")) {
                 modelName = attrs.getValue("name");
             } else if (qName.equals("class")) {
-                classAttrs = attrs;
+                String name = attrs.getValue("name");
+                String extend = attrs.getValue("extends");
+                String implement = attrs.getValue("implements");
+                boolean isInterface = new Boolean(attrs.getValue("is-interface"))
+                    .booleanValue();
+                cls = new SkeletonClass(name, extend, implement, isInterface);
             } else if (qName.equals("attribute")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
                 boolean primaryKey = new Boolean(attrs.getValue("primary-key")).booleanValue();
-                attributes.add(new AttributeDescriptor(name, primaryKey, type));
+                cls.attributes.add(new AttributeDescriptor(name, primaryKey, type));
             } else if (qName.equals("reference")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("referenced-type");
                 String reverseReference = attrs.getValue("reverse-reference");
                 boolean primaryKey = new Boolean(attrs.getValue("primary-key")).booleanValue();
-                references.add(new ReferenceDescriptor(name, primaryKey, type, reverseReference));
+                cls.references.add(new ReferenceDescriptor(name, primaryKey, type,
+                                                           reverseReference));
             } else if (qName.equals("collection")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("referenced-type");
                 boolean ordered = new Boolean(attrs.getValue("ordered")).booleanValue();
                 String reverseReference = attrs.getValue("reverse-reference");
                 boolean primaryKey = new Boolean(attrs.getValue("primary-key")).booleanValue();
-                collections.add(new CollectionDescriptor(name, primaryKey, type, reverseReference, 
-                                                         ordered));
+                cls.collections.add(new CollectionDescriptor(name, primaryKey, type,
+                                                             reverseReference, ordered));
             }
         }
     
@@ -102,14 +105,35 @@ public class ModelParser
          */
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("class")) {
-                String name = classAttrs.getValue("name");
-                String extend = classAttrs.getValue("extends");
-                String implement = classAttrs.getValue("implements");
-                boolean isInterface = new Boolean(classAttrs.getValue("is-interface"))
-                    .booleanValue();
-                classes.add(new ClassDescriptor(name, extend, implement, isInterface, attributes, 
-                                                references, collections));
+                classes.add(new ClassDescriptor(cls.name, cls.extend, cls.implement,
+                                                cls.isInterface, cls.attributes, cls.references,
+                                                cls.collections));
             }
+        }
+    }
+    
+    /**
+     * Semi-constructed ClassDescriptor
+     */
+    class SkeletonClass
+    {
+        String name, extend, implement;
+        boolean isInterface;
+        List attributes = new ArrayList();
+        List references = new ArrayList();
+        List collections = new ArrayList();
+        /**
+         * Constructor
+         * @param name the fully qualified name of the described class
+         * @param extend the fully qualified super class name if one exists
+         * @param implement a space string of fully qualified interface names
+         * @param isInterface true if describing an interface
+         */
+        SkeletonClass(String name, String extend, String implement, boolean isInterface) {
+            this.name = name;
+            this.extend = extend;
+            this.implement = implement;
+            this.isInterface = isInterface;
         }
     }
 }
