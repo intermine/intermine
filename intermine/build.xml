@@ -81,7 +81,6 @@
     <include name="mysql*.jar" />
     <include name="p6spy.jar"/>
     <include name="postgresql*.jar" />
-    <include name="pg*.jar" />
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
     <include name="xerces*.jar"/>
@@ -111,14 +110,6 @@
   <patternset id="lib.acedb">
     <include name="acedb*.jar" />
     <include name="biojava*.jar" />
-  </patternset>
-
-  <!-- Libraries relevant to testing webapps -->
-  <patternset id="lib.webapptest">
-    <include name="cactus*.jar" />
-    <include name="commons-httpclient*.jar" />
-    <include name="httpunit*.jar" />
-    <include name="struts-test*.jar" />
   </patternset>
 
   <!-- Antlr library -->
@@ -220,14 +211,6 @@
       <include name="intermine.war"/>
     </fileset>
   </path>
-
-  <path id="webservice.class.path">
-    <path refid="project.class.path"/>
-    <fileset dir="${lib}">
-      <patternset refid="lib.webapp.webservice"/>
-    </fileset>
-  </path>
-
 
   <!-- Initialisation targets -->
 
@@ -527,16 +510,15 @@
 
   <target name="compile-webapp-tests" depends="compile-webapp, prepare-test">
     <javac destdir="${build.test}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
-      <classpath refid="test.class.path"/>
+      <classpath refid="webapptest.class.path"/>
       <src path="${build.src.test}" />
       <include name="org/intermine/web/**"/>
     </javac>
   </target>
 
   <target name="test-webapp"
-          depends="build-db-userprofile, compile-webapp-tests, build-testable-webapp"
+          depends="build-db-userprofile, build-testable-webapp, compile-webapp-tests"
           description="perform JUnit tests on web application" >
-
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
       <formatter type="xml" />
@@ -549,7 +531,6 @@
         </fileset>
       </batchtest>
     </junit>
-
     <antcall target="test-report"/>
   </target>
 
@@ -567,7 +548,6 @@
         </fileset>
       </batchtest>
     </junit>
-
     <antcall target="remove-webservice"/>
     <antcall target="test-report"/>
   </target>
@@ -694,9 +674,6 @@
   
   <target name="build-testable-webservice" depends="build-testmodel-webservice">
     <war destfile="${dist.webapp}/webservice.war" update="true">
-      <lib dir="${lib}">
-        <patternset refid="lib.webapptest"/>
-      </lib>
       <lib dir="${dist}" includes="intermine-testmodel.jar" />
       <classes file="${resources}/test/default.intermine.properties"/>
     </war>
@@ -944,11 +921,6 @@
 
   <target name="build-testable-webapp" depends="build-testmodel-webapp"
           description="Build webapp including the test model and test libraries">
-    <!--ant antfile="build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
-      <property name="war" value="${dist.webapp}/intermine.war"/>       
-      <reference torefid="file.names" refid="lib.webapptest"/>
-      <property name="file.dir" value="${lib}"/>
-    </ant-->
     <patternset id="webapp-properties">
       <include name="InterMineWebApp*.properties"/>
     </patternset>

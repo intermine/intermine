@@ -28,6 +28,11 @@ public interface Constants
     public static final String EXAMPLE_QUERIES = "EXAMPLE_QUERIES";
 
     /**
+     * ServletContext attribute used to store the template queries
+     */
+    public static final String TEMPLATE_QUERIES = "TEMPLATE_QUERIES";
+
+    /**
      * ServletContext attribute used to store the Map of class names to Displayer objects and
      * className+"."+fieldName to Displayer objects.
      */

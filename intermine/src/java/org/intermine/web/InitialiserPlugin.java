@@ -68,6 +68,7 @@ public class InitialiserPlugin implements PlugIn
         loadClassDescriptions(servletContext);
         loadWebProperties(servletContext);
         loadExampleQueries(servletContext);
+        loadTemplateQueries(servletContext);
         loadWebConfig(servletContext);
 
         ObjectStore os = null;
@@ -183,6 +184,41 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Unable to parse example-queries.xml", e);
         }
         servletContext.setAttribute(Constants.EXAMPLE_QUERIES, exampleQueries);
+    }
+
+    /**
+     * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
+     */
+    private void loadTemplateQueries(ServletContext servletContext) throws ServletException {
+        InputStream templateQueriesStream =
+            servletContext.getResourceAsStream("/WEB-INF/template-queries.xml");
+        if (templateQueriesStream == null) {
+            return;
+        }
+        Reader templateQueriesReader = new InputStreamReader(templateQueriesStream);
+        Map templateQueries = null;
+        try {
+            templateQueries = new PathQueryBinding().unmarshal(templateQueriesReader);
+        } catch (Exception e) {
+            throw new ServletException("Unable to parse template-queries.xml", e);
+        }
+        Properties modelProperties = new Properties();
+        InputStream modelPropertiesStream =
+            servletContext.getResourceAsStream("/WEB-INF/classes/model.properties");
+        try {
+            modelProperties.load(modelPropertiesStream);
+        } catch (Exception e) {
+            throw new ServletException("Unable to find model.properties", e);
+        }
+
+        for (Iterator i = templateQueries.keySet().iterator(); i.hasNext();) {
+            String queryName = (String) i.next();
+            String msgKey = "templateQuery." + queryName + ".description";
+            PathQuery query = (PathQuery) templateQueries.get(queryName);
+            templateQueries.put(queryName, new TemplateQuery((String) modelProperties.get(msgKey),
+                                                             query));
+        }
+        servletContext.setAttribute(Constants.TEMPLATE_QUERIES, templateQueries);
     }
 
     /**
