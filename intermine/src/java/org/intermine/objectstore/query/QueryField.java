@@ -12,7 +12,7 @@ import org.flymine.util.TypeUtil;
  */
 public class QueryField implements QueryNode, QueryEvaluable
 {
-    private QueryClass qc;
+    private FromElement qc;
     private String fieldName;
     private Class type;
     
@@ -44,11 +44,60 @@ public class QueryField implements QueryNode, QueryEvaluable
     }
     
     /**
+     * Constructs a QueryField representing the specified field of the specified QueryClass, as seen
+     * outside the specified subquery.
+     *
+     * @param q the Query object that is the subquery
+     * @param qc the QueryClass that the field is a member of
+     * @param fieldName the name of the relevant field
+     * @throws NullPointerException if the field name is null
+     * @throws NoSuchFieldException if the field does not exist
+     * @throws IllegalArgumentException if the field is a collection
+     */
+    public QueryField(Query q, QueryClass qc, String fieldName)
+        throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
+        if (q == null) {
+            throw new NullPointerException("Subquery parameter is null");
+        }
+        Field field = TypeUtil.getField(qc.getType(), fieldName);
+        if (field == null) {
+            throw new NoSuchFieldException("Field " + fieldName + " not found in class "
+                                           + qc.getType());
+        }
+        if (java.util.Collection.class.isAssignableFrom(field.getType())) {
+            throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
+        }
+        this.fieldName = ((String) q.getAliases().get(qc)) + fieldName;
+        this.qc = q;
+        this.type = TypeUtil.toContainerType(field.getType());
+    }
+
+    /**
+     * Constructs a QueryField representing the specified entry from the SELECT list of the
+     * specified subquery.
+     *
+     * @param q the Query object that is the subquery
+     * @param v the entry of the SELECT list
+     * @throws NullPointerException if the field name is null
+     * @throws NoSuchFieldException if the field does not exist
+     * @throws IllegalArgumentException if the field is a collection
+     */
+    public QueryField(Query q, QueryEvaluable v)
+        throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
+        if (q == null) {
+            throw new NullPointerException("Subquery parameter is null");
+        }
+        this.fieldName = (String) q.getAliases().get(v);
+        this.qc = q;
+        this.type = v.getType();
+    }
+
+    /**
      * Gets the QueryClass of which the field is a member
      *
      * @return the QueryClass
      */    
-    public QueryClass getQueryClass() {
+    public FromElement getFromElement() {
         return qc;
     }
 

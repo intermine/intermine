@@ -61,6 +61,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.text.SimpleDateFormat;
+import java.util.TreeSet;
+import java.util.Set;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
@@ -70,6 +72,7 @@ import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryExpression;
 import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.FromElement;
 
 import org.apache.ojb.broker.accesslayer.sql.SqlStatement;
 import org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion;
@@ -148,14 +151,19 @@ public class FlymineSqlSelectStatement implements SqlStatement
         }
         // Now cld is the ClassDescriptor of the node, and alias is the alias
         FieldDescriptor fields[] = cld.getFieldDescriptions();
+        TreeSet fieldnames = new TreeSet();
         for (int i = 0; i < fields.length; i++) {
             FieldDescriptor field = fields[i];
+            fieldnames.add(field.getColumnName());
+        }
+        Iterator fieldnameIter = fieldnames.iterator();
+        while (fieldnameIter.hasNext()) {
+            String fieldname = (String) fieldnameIter.next();
             if (needComma) {
                 retval += ", ";
             }
             needComma = true;
-            retval += alias + "." + field.getColumnName() + " AS " + alias
-                + field.getColumnName();
+            retval += alias + "." + fieldname + " AS " + alias + fieldname;
         }
         return retval;
     }
@@ -171,7 +179,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
             // It's a field - find its FieldDescriptor by looking at its QueryClass, then its
             // ClassDescriptor.
             QueryField nodeF = (QueryField) node;
-            QueryClass nodeClass = nodeF.getQueryClass();
+            FromElement nodeClass = nodeF.getFromElement();
             String classAlias = (String) query.getAliases().get(nodeClass);
             //boolean done = false;
             //ClassDescriptor cld = null;
@@ -268,7 +276,27 @@ public class FlymineSqlSelectStatement implements SqlStatement
     protected String buildFromComponent() {
         String retval = "";
         boolean needComma = false;
-        return "nothing";
+        Set fromElements = query.getFrom();
+        Iterator fromIter = fromElements.iterator();
+        while (fromIter.hasNext()) {
+            if (needComma) {
+                retval += ", ";
+            }
+            needComma = true;
+            Object fromElement = fromIter.next();
+            if (fromElement instanceof QueryClass) {
+                QueryClass qc = (QueryClass) fromElement;
+                ClassDescriptor cld = dr.getDescriptorFor(qc.getType());
+                String alias = (String) query.getAliases().get(qc);
+                retval += cld.getFullTableName() + " AS " + alias;
+            } else {
+                Query q = (Query) fromElement;
+                String alias = (String) query.getAliases().get(q);
+                retval += "(" + (new FlymineSqlSelectStatement(q, dr)).getStatement() + ") AS "
+                    + alias;
+            }
+        }
+        return retval;
     }
 
     /**

@@ -8,7 +8,7 @@ import java.util.Date;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class QueryValue implements QueryEvaluable
+public class QueryValue implements QueryEvaluable, QueryNode
 {
     private Object value;
 
