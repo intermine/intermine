@@ -50,6 +50,7 @@ form {
 .box .body {
   padding: 4px;
   margin: 3px;
+  margin-bottom: 10px;
 }
 
 table.templateForm td {
