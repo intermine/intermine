@@ -22,16 +22,30 @@
   Synonyms:
   <c:forEach items="${object.synonyms}" var="thisSynonym">
     <c:if test="${thisSynonym.source.title == 'ensembl'}">
-      <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
-                 title="Ensembl: ${thisSynonym.synonym}"
-                 target="view_window">
-        <html:img src="model/ensembl_logo_small.png"/>
-      </html:link>
-      <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
-                 title="Ensembl: ${thisSynonym.synonym}"
-                 target="view_window">
-        <c:out value="${thisSynonym.synonym}"/>
-      </html:link>
+      <c:if test="${object.organism.name == 'Drosophila Melanogaster'}">
+        <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
+                   title="Ensembl: ${thisSynonym.synonym}"
+                   target="view_window">
+          <html:img src="model/ensembl_logo_small.png"/>
+        </html:link>
+        <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
+                   title="Ensembl: ${thisSynonym.synonym}"
+                   target="view_window">
+          <c:out value="${thisSynonym.synonym}"/>
+        </html:link>
+      </c:if>
+      <c:if test="${object.organism.name != 'Drosophila Melanogaster'}">
+        <html:link href="http://www.ensembl.org/Anopheles_gambiae/geneview?db=core&gene=${thisSynonym.synonym}"
+                   title="Ensembl: ${thisSynonym.synonym}"
+                   target="view_window">
+          <html:img src="model/ensembl_logo_small.png"/>
+        </html:link>
+        <html:link href="http://www.ensembl.org/Anopheles_gambiae/geneview?db=core&gene=${thisSynonym.synonym}"
+                   title="Ensembl: ${thisSynonym.synonym}"
+                   target="view_window">
+          <c:out value="${thisSynonym.synonym}"/>
+        </html:link>
+      </c:if>
     </c:if>
     <c:if test="${thisSynonym.source.title == 'flybase'}">
       <html:link href="http://www.flybase.org/.bin/fbidq.html?${thisSynonym.synonym}"
