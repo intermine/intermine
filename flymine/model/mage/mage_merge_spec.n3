@@ -1,0 +1,393 @@
+# Base: 
+@prefix :        <http://www.flymine.org/model/genomic#> .
+@prefix mage:       <http://www.flymine.org/model/mage#> .
+@prefix null:    <http://www.flymine.org/model/null#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+# a micro array experiment - can have multiple assays
+:MicroArrayExperiment a owl:Class;
+    rdfs:subClassOf :Experiment;
+    owl:equivalentClass mage:Experiment.
+
+:MicroArrayExpermiment__assays a owl:ObjectProperty;
+    rdfs:domain :MicroArrayExperiment;
+    rdfs:range :MicroArrayAssay;
+    owl:equivalentProperty mage:Experiment__bioAssays.
+
+
+
+# an assay between one slide and one or more SampleTissues
+# will need a link to some condition information
+:MicroArrayAssay a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArrayAssay__slide ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArrayAssay__experiment ] ;
+    owl:equivalentClass mage:MeasuredBioAssay.
+
+:MicroArrayAssay__experiment a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayExperiment__assays.
+
+:MicroArrayAssay__slide a owl:ObjectProperty;
+    rdfs:domain :MicroArrayAssay;
+    rdfs:range :MicroArraySlide.
+
+:MicroArrayAssay__results a owl:ObjectProperty;
+    rdfs:domain :MicroArrayAssay;
+    rdfs:range :MicroArrayExperimentalResult;
+    owl:equivalentProperty mage:MeasuredBioAssay__measuredBioAssayData.
+
+:MicroArrayAssay__tissue a owl:ObjectProperty;
+    rdfs:domain :MicroArrayAssay;
+    rdfs:range :SampleTissue.
+
+
+
+
+# values resulting from a MicroaArrayAssay
+:MicroArrayExperimentalResult a owl:Class;
+    rdfs:subClassOf :ExperimentalResult;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArrayExperimentalResult__reporter ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArrayExperimentalResult__tissue ] ;
+    owl:equivalentClass mage:MeasuredBioAssayData.
+
+:MicroArrayExperimentalResult__assays a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayAssay__results.
+
+:MicroArrayExperimentalResult__reporter a owl:ObjectProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range :Reporter.
+
+:MicroArrayExperimentalResult__material a owl:ObjectProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range :BioEntity.
+
+:MicroArrayExperimentalResult__tissue a owl:ObjectProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range :SampleTissue.
+
+:MicroArrayExperimentalResult__type a owl:DatatypeProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range xsd:string.
+
+:MicroArrayExperimentalResult__value a owl:DatatypeProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range xsd:float.
+
+:MicroArrayExperimentalResult__flag a owl:DatatypeProperty;
+    rdfs:domain :MicroArrayExperimentalResult;
+    rdfs:range xsd:string.
+
+
+
+
+# layout of bioentities on a slide
+:MicroArraySlideDesign a owl:Class;
+    owl:equivalentClass mage:ArrayDesign.
+
+:MicroArraySlideDesign__slides a owl:ObjectProperty;
+    rdfs:domain :MicroArraySlideDesign;
+    rdfs:range :MicroArraySlide.
+
+:MicroArraySlideDesign__locations a owl:ObjectProperty;
+    rdfs:domain :MicroArraySlideDesign;
+    rdfs:range :ReporterLocation.
+
+null:ReporterLocation__version a owl:DatatypeProperty;
+    owl:equivalentProperty mage:ReporterLocation__version.
+
+null:ReporterLocation__numberOfFeatures a owl:DatatypeProperty;
+    owl:equivalentProperty mage:ArrayDesign__numberOfFeatures.
+
+
+
+# an instance of a microarray slide
+:MicroArraySlide a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArraySlide__design ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :MicroArraySlide__assay ] .
+
+:MicroArraySlide__assay a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayAssay__slide.
+
+:MicroArraySlide__design a owl:ObjectProperty;
+    owl:inverseOf :MicroArraySlideDesign__slides.
+
+
+
+
+:ReporterLocation a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :ReporterLocation__design ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :ReporterLocation__reporter ] ;
+    owl:equivalentClass mage:FeatureReporterMap.
+
+:ReporterLocation__design a owl:ObjectProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range :MicroArraySlideDesign.
+
+:ReporterLocation__reporter a owl:ObjectProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range :BioEntity.
+
+:ReporterLocation__zoneX a owl:DatatypeProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range xsd:integer.
+
+:ReporterLocation__zoneY a owl:DatatypeProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range xsd:integer.
+
+:ReporterLocation__localX a owl:DatatypeProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range xsd:integer.
+
+:ReporterLocation__localY a owl:DatatypeProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range xsd:integer.
+
+
+
+:Reporter a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Reporter__location ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Reporter__material ];
+    owl:equivalentClass mage:Reporter.
+
+:Reporter__location a owl:ObjectProperty;
+    owl:inversOf :ReporterLocation__reporter.
+
+:Reporter__material a owl:ObjectProperty;
+     rdfs:domain :Reporter;
+     rdfs:range :BioEntity;
+     owl:equivalentProperty mage:Reporter__immobilizedCharacteristics.
+
+:Reporter__type a owl:DatatypeProperty;
+     rdfs:domain :Reporter;
+     rdfs:range xsd:string.
+
+
+
+
+:SampleTissue a owl:Class;
+    rdfs:subClassOf :BioEntity;
+    owl:equivalentClass mage:LabeledExtract.
+
+# type of sample material e.g. mRNA, genomic_DNA
+:SampleTissue__type a owl:DatatypeProperty;
+    rdfs:domain :SampleTissue;
+    rdfs:range xsd:string.
+
+
+
+# easier just to sort this in MageTranslator?
+:BioEntity a owl:Class;
+    owl:equivalentClass mage:BioSequence.
+
+:BioEntity__residues a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__sequence.
+
+
+null:BioSequence__length a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__length.
+
+null:BioSequence__isApproximateLength a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__isApproximateLength.
+
+null:BioSequence__isCircular a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__isCircular.
+
+null:BioSequence__polymerType a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__polymerType.
+
+null:BioSequence__type a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__type.
+
+null:BioSequence__species a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__species.
+
+null:BioSequence__seqFeatures a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BioSequence__seqFeatures.
+
+null:BioSequence__sequenceDatabases a owl:DatatypeProperty;
+    owl:equivalentClass mage:BioSequence__sequenceDatabases.
+
+null:BioSequence__ontologyEntries a owl:DatatypeProperty;
+    owl:equivalentClass mage:BioSequence__ontologyEntries.
+
+
+
+:Synonym a owl:Class;
+    owl:equivalentClass mage:DatabaseEntry.
+
+:Synonym__name a owl:DatatypeProperty;
+    owl:equivalentProperty mage:DatabaseEntry__accession.
+
+:Database__title a owl:DatatypeProperty;
+    owl:equivalentProperty mage:Database__name.
+
+:Publication a owl:Class;
+    owl:equivalentClass mage:BibliographicReference.
+
+:DAGTerm a owl:Class;
+    owl:equivalentClass mage:OntologyEntry.
+
+null:BibliographicReference__authors a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BibliographicReference__authors.
+
+
+
+
+
+null:PhysicalArrayDesign a owl:Class; owl:equivalentClass mage:PhysicalArrayDesign.
+null:ZoneLayout a owl:Class; owl:equivalentClass mage:ZoneLayout.
+null:ZoneGroup a owl:Class; owl:equivalentClass mage:ZoneGroup.
+null:Zone a owl:Class; owl:equivalentClass mage:Zone.
+null:ReporterGroup a owl:Class; owl:equivalentClass mage:ReporterGroup.
+null:FeatureGroup a owl:Class; owl:equivalentClass mage:FeatureGroup.
+null:DesignElementGroup a owl:Class; owl:equivalentClass mage:DesignElementGroup.
+null:CompositeGroup a owl:Class; owl:equivalentClass mage:CompositeGroup.
+null:Array a owl:Class; owl:equivalentClass mage:Array.
+null:FeatureDefect a owl:Class; owl:equivalentClass mage:FeatureDefect.
+null:ArrayGroup a owl:Class; owl:equivalentClass mage:ArrayGroup.
+null:ArrayManufacture a owl:Class; owl:equivalentClass mage:ArrayManufacture.
+null:ArrayManufactureDeviation a owl:Class; owl:equivalentClass mage:ArrayManufactureDeviation.
+null:Fiducial a owl:Class; owl:equivalentClass mage:Fiducial.
+null:ManufactureLIMS a owl:Class; owl:equivalentClass mage:ManufactureLIMS.
+null:ManufactureLIMSBiomaterial a owl:Class; owl:equivalentClass mage:ManufactureLIMSBiomaterial.
+null:PositionDelta a owl:Class; owl:equivalentClass mage:PositionDelta.
+null:ZoneDefect a owl:Class; owl:equivalentClass mage:ZoneDefect.
+null:BioSource a owl:Class; owl:equivalentClass mage:BioSource.
+null:BioMaterial a owl:Class; owl:equivalentClass mage:BioMaterial.
+null:BioSample a owl:Class; owl:equivalentClass mage:BioSample.
+null:Compound a owl:Class; owl:equivalentClass mage:Compound.
+null:CompoundMeasurement a owl:Class; owl:equivalentClass mage:CompoundMeasurement.
+null:BioMaterialMeasurement a owl:Class; owl:equivalentClass mage:BioMaterialMeasurement.
+null:Treatment a owl:Class; owl:equivalentClass mage:Treatment.
+null:BioAssayDataCluster a owl:Class; owl:equivalentClass mage:BioAssayDataCluster.
+null:Node a owl:Class; owl:equivalentClass mage:Node.
+null:NodeContents a owl:Class; owl:equivalentClass mage:NodeContents.
+null:NodeValue a owl:Class; owl:equivalentClass mage:NodeValue.
+null:PhysicalBioAssay a owl:Class; owl:equivalentClass mage:PhysicalBioAssay.
+null:DerivedBioAssay a owl:Class; owl:equivalentClass mage:DerivedBioAssay.
+null:Image a owl:Class; owl:equivalentClass mage:Image.
+null:BioAssay a owl:Class; owl:equivalentClass mage:BioAssay.
+null:Channel a owl:Class; owl:equivalentClass mage:Channel.
+null:BioAssayCreation a owl:Class; owl:equivalentClass mage:BioAssayCreation.
+null:FeatureExtraction a owl:Class; owl:equivalentClass mage:FeatureExtraction.
+null:Hybridization a owl:Class; owl:equivalentClass mage:Hybridization.
+null:ImageAcquisition a owl:Class; owl:equivalentClass mage:ImageAcquisition.
+null:BioAssayTreatment a owl:Class; owl:equivalentClass mage:BioAssayTreatment.
+null:Person a owl:Class; owl:equivalentClass mage:Person.
+null:Security a owl:Class; owl:equivalentClass mage:Security.
+null:Audit a owl:Class; owl:equivalentClass mage:Audit.
+null:Organization a owl:Class; owl:equivalentClass mage:Organization.
+null:SecurityGroup a owl:Class; owl:equivalentClass mage:SecurityGroup.
+null:Contact a owl:Class; owl:equivalentClass mage:Contact.
+null:BioAssayData a owl:Class; owl:equivalentClass mage:BioAssayData.
+null:QuantitationTypeDimension a owl:Class; owl:equivalentClass mage:QuantitationTypeDimension.
+null:BioAssayMapping a owl:Class; owl:equivalentClass mage:BioAssayMapping.
+null:DesignElementDimension a owl:Class; owl:equivalentClass mage:DesignElementDimension.
+null:BioAssayDatum a owl:Class; owl:equivalentClass mage:BioAssayDatum.
+null:DerivedBioAssayData a owl:Class; owl:equivalentClass mage:DerivedBioAssayData.
+null:QuantitationTypeMapping a owl:Class; owl:equivalentClass mage:QuantitationTypeMapping.
+null:DesignElementMapping a owl:Class; owl:equivalentClass mage:DesignElementMapping.
+null:BioDataCube a owl:Class; owl:equivalentClass mage:BioDataCube.
+null:BioDataValues a owl:Class; owl:equivalentClass mage:BioDataValues.
+null:BioDataTuples a owl:Class; owl:equivalentClass mage:BioDataTuples.
+null:BioAssayDimension a owl:Class; owl:equivalentClass mage:BioAssayDimension.
+null:QuantitationTypeMap a owl:Class; owl:equivalentClass mage:QuantitationTypeMap.
+null:Transformation a owl:Class; owl:equivalentClass mage:Transformation.
+null:DesignElementMap a owl:Class; owl:equivalentClass mage:DesignElementMap.
+null:BioAssayMap a owl:Class; owl:equivalentClass mage:BioAssayMap.
+null:CompositeSequenceDimension a owl:Class; owl:equivalentClass mage:CompositeSequenceDimension.
+null:ReporterDimension a owl:Class; owl:equivalentClass mage:ReporterDimension.
+null:FeatureDimension a owl:Class; owl:equivalentClass mage:FeatureDimension.
+null:ExperimentDesign a owl:Class; owl:equivalentClass mage:ExperimentDesign.
+null:ExperimentalFactor a owl:Class; owl:equivalentClass mage:ExperimentalFactor.
+null:FactorValue a owl:Class; owl:equivalentClass mage:FactorValue.
+null:Protocol a owl:Class; owl:equivalentClass mage:Protocol.
+null:Parameter a owl:Class; owl:equivalentClass mage:Parameter.
+null:ParameterValue a owl:Class; owl:equivalentClass mage:ParameterValue.
+null:ProtocolApplication a owl:Class; owl:equivalentClass mage:ProtocolApplication.
+null:Software a owl:Class; owl:equivalentClass mage:Software.
+null:Hardware a owl:Class; owl:equivalentClass mage:Hardware.
+null:HardwareApplication a owl:Class; owl:equivalentClass mage:HardwareApplication.
+null:SoftwareApplication a owl:Class; owl:equivalentClass mage:SoftwareApplication.
+null:Parameterizable a owl:Class; owl:equivalentClass mage:Parameterizable.
+null:ParameterizableApplication a owl:Class; owl:equivalentClass mage:ParameterizableApplication.
+null:Description a owl:Class; owl:equivalentClass mage:Description.
+null:Database a owl:Class; owl:equivalentClass mage:Database.
+null:ExternalReference a owl:Class; owl:equivalentClass mage:ExternalReference.
+null:Measurement a owl:Class; owl:equivalentClass mage:Measurement.
+null:Unit a owl:Class; owl:equivalentClass mage:Unit.
+null:TimeUnit a owl:Class; owl:equivalentClass mage:TimeUnit.
+null:DistanceUnit a owl:Class; owl:equivalentClass mage:DistanceUnit.
+null:TemperatureUnit a owl:Class; owl:equivalentClass mage:TemperatureUnit.
+null:QuantityUnit a owl:Class; owl:equivalentClass mage:QuantityUnit.
+null:MassUnit a owl:Class; owl:equivalentClass mage:MassUnit.
+null:VolumeUnit a owl:Class; owl:equivalentClass mage:VolumeUnit.
+null:ConcentrationUnit a owl:Class; owl:equivalentClass mage:ConcentrationUnit.
+null:BioEvent a owl:Class; owl:equivalentClass mage:BioEvent.
+null:Map a owl:Class; owl:equivalentClass mage:Map.
+null:SeqFeature a owl:Class; owl:equivalentClass mage:SeqFeature.
+null:SeqFeatureLocation a owl:Class; owl:equivalentClass mage:SeqFeatureLocation.
+null:SequencePosition a owl:Class; owl:equivalentClass mage:SequencePosition.
+null:StandardQuantitationType a owl:Class; owl:equivalentClass mage:StandardQuantitationType.
+null:QuantitationType a owl:Class; owl:equivalentClass mage:QuantitationType.
+null:SpecializedQuantitationType a owl:Class; owl:equivalentClass mage:SpecializedQuantitationType.
+null:DerivedSignal a owl:Class; owl:equivalentClass mage:DerivedSignal.
+null:MeasuredSignal a owl:Class; owl:equivalentClass mage:MeasuredSignal.
+null:Error a owl:Class; owl:equivalentClass mage:Error.
+null:PValue a owl:Class; owl:equivalentClass mage:PValue.
+null:ExpectedValue a owl:Class; owl:equivalentClass mage:ExpectedValue.
+null:Ratio a owl:Class; owl:equivalentClass mage:Ratio.
+null:ConfidenceIndicator a owl:Class; owl:equivalentClass mage:ConfidenceIndicator.
+null:PresentAbsent a owl:Class; owl:equivalentClass mage:PresentAbsent.
+null:Failed a owl:Class; owl:equivalentClass mage:Failed.
+null:DesignElement a owl:Class; owl:equivalentClass mage:DesignElement.
+null:Position a owl:Class; owl:equivalentClass mage:Position.
+null:ReporterPosition a owl:Class; owl:equivalentClass mage:ReporterPosition.
+null:CompositePosition a owl:Class; owl:equivalentClass mage:CompositePosition.
+null:CompositeSequence a owl:Class; owl:equivalentClass mage:CompositeSequence.
+null:Feature a owl:Class; owl:equivalentClass mage:Feature.
+null:MismatchInformation a owl:Class; owl:equivalentClass mage:MismatchInformation.
+null:FeatureInformation a owl:Class; owl:equivalentClass mage:FeatureInformation.
+null:CompositeCompositeMap a owl:Class; owl:equivalentClass mage:CompositeCompositeMap.
+null:ReporterCompositeMap a owl:Class; owl:equivalentClass mage:ReporterCompositeMap.
+null:FeatureLocation a owl:Class; owl:equivalentClass mage:FeatureLocation.
+null:Describable a owl:Class; owl:equivalentClass mage:Describable.
+null:Identifiable a owl:Class; owl:equivalentClass mage:Identifiable.
+null:Extendable a owl:Class; owl:equivalentClass mage:Extendable.
+null:NameValueType a owl:Class; owl:equivalentClass mage:NameValueType.
+
+
