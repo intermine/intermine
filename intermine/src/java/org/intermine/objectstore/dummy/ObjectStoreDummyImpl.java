@@ -94,6 +94,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @param start the start row
      * @param limit the maximum numberof rows to be returned
      * @param optimise true if the query should be optimised
+     * @param sequence an integer that is ignored
      * @return a list of ResultsRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
@@ -234,6 +235,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * return the resultsSize parameter that simulates number of rows returned from query
      *
      * @param q Flymine Query on which to run COUNT(*)
+     * @param sequence an integer that is ignored
      * @return the number of rows to be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
      */
