@@ -21,6 +21,9 @@ public class Table extends AbstractTable
             throw (new NullPointerException("Table names cannot be null"));
         }
         this.name = name;
+        if (alias == null) {
+            alias = name;
+        }
         this.alias = alias;
     }
 
