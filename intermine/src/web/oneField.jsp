@@ -23,7 +23,7 @@
             <div>
               <nobr>
                 <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
-                <c:out value="${fieldDescriptor.name}"/>:
+                <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
                 <c:out value="${object[fieldDescriptor.name]}" default="${nullFieldText}"/>
               </nobr>
             </div>
@@ -34,7 +34,7 @@
           <c:if test="${object[fieldDescriptor.name] != null}">
             <div>
               <nobr>
-                <c:out value="${fieldDescriptor.name}"/>:
+                <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
                 <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
                   <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}"/>
                 </html:link>
@@ -48,7 +48,7 @@
           <c:if test="${listSize > 0}">
             <div>
               <nobr>
-                <c:out value="${fieldDescriptor.name}"/>:
+                <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
                 <html:link action="/collectionDetails?id=${object.id}&field=${fieldDescriptor.name}">
                   <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
                 </html:link>
