@@ -127,4 +127,34 @@ public class ContainsConstraint implements Constraint
     public boolean isNotContains() {
         return (type == CONTAINS ? negated : !negated);
     }
+
+    /**
+     * Test whether two ContainsConstraints are equal, overrides Object.equals()
+     *
+     * @param obj the object to compare with
+     * @return true if objects are equal
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ContainsConstraint) {
+            ContainsConstraint cc = (ContainsConstraint) obj;
+            return (ref.equals(cc.ref)
+                    && (type == cc.type)
+                    && (negated == cc.negated)
+                    && cls.equals(cc.cls));
+        }
+        return false;
+    }
+
+
+    /**
+     * Get the hashCode for this object, overrides Object.hashCode()
+     *
+     * @return the hashCode
+     */
+    public int hashCode() {
+        return ref.hashCode() + (3 * type) + ((negated) ? 29 : 0)
+            + (5 * cls.hashCode());
+    }
+
+
 }
