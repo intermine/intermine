@@ -75,7 +75,7 @@ public class ObjectViewController extends TilesAction
                 String field = request.getParameter("field");
                 o = os.getObjectById(id);
 
-                if (field != null) {
+                if (o != null && field != null) {
                     o = TypeUtil.getFieldValue(o, field);
                 }
                 context.putAttribute("object", o);
