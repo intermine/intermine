@@ -66,23 +66,27 @@ public class CreateReferences
         insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
 
         LOG.info("insertReferences stage 3");
-        insertReferences(Chromosome.class, "subjects", Location.class, "subject",
+        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
                          Exon.class, "chromosome");
         LOG.info("insertReferences stage 4");
-        insertReferences(Chromosome.class, "subjects", Location.class, "subject",
+        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
                          ChromosomeBand.class, "chromosome");
         LOG.info("insertReferences stage 5");
-        insertReferences(Gene.class, "subjects", SimpleRelation.class, "subject",
+        insertReferenceField(Gene.class, "subjects", SimpleRelation.class, "subject",
                          Transcript.class, "gene");
         LOG.info("insertReferences stage 6");
-        insertReferences(Gene.class, "transcripts", Transcript.class, "exons",
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
                          Exon.class, "gene");
         LOG.info("insertReferences stage 7");
-        insertReferences(Chromosome.class, "exons", Exon.class, "gene",
-                         Gene.class, "chromosome");
+        insertReferenceField(Chromosome.class, "exons", Exon.class, "gene",
+                             Gene.class, "chromosome");
         LOG.info("insertReferences stage 8");
-        insertReferences(Chromosome.class, "exons", Exon.class, "transcripts",
-                         Transcript.class, "chromosome");
+        insertReferenceField(Chromosome.class, "exons", Exon.class, "transcripts",
+                             Transcript.class, "chromosome");
+
+        LOG.info("insertReferences stage 9");
+        insertCollectionField(Gene.class, "transcripts", Transcript.class, "protein",
+                              Protein.class, "genes", false);
 
         ObjectStore os = osw.getObjectStore();
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -90,29 +94,29 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 9");
-        insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
         LOG.info("insertReferences stage 10");
-        insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
+        insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
         LOG.info("insertReferences stage 11");
+        insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
+        LOG.info("insertReferences stage 12");
         insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
 
-        if (os instanceof ObjectStoreInterMineImpl) {
+       if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 12");
+        LOG.info("insertReferences stage 13");
         insertGeneAnnotationReferences();
 
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-        LOG.info("insertReferences stage 13");
+        LOG.info("insertReferences stage 14");
 
         insertReferences(Gene.class, GOTerm.class, "GOTerms");
-        LOG.info("insertReferences stage 14");
+        LOG.info("insertReferences stage 15");
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -201,12 +205,14 @@ public class CreateReferences
     }
 
     /**
-     * Add a collection of objects of type X to objects of type Y by using a connecting class.
-     * Eg. Add a collection of Exon objects to Gene by examining the Transcript objects in the
+     * Add a reference to and object of type X in objects of type Y by using a connecting class.
+     * Eg. Add a reference to Gene objects in Exon by examining the Transcript objects in the
      * transcripts collection of the Gene, which would use a query like:
-     *   SELECT DISTINCT gene, exon FROM Gene AS gene, Transcript AS transcript, Exon AS exon WHERE
+     *   SELECT DISTINCT gene FROM Gene AS gene, Transcript AS transcript, Exon AS exon WHERE
      *   (gene.transcripts CONTAINS transcript AND transcript.exons CONTAINS exon) ORDER BY gene
      * and then set exon.gene
+     *
+     * in overview we are doing:
      * BioEntity1 -> BioEntity2 -> BioEntity3   ==>   BioEntitiy1 -> BioEntity3
      * @param sourceClass the first class in the query
      * @param sourceClassFieldName the field in the sourceClass which should contain the
@@ -216,16 +222,15 @@ public class CreateReferences
      * destinationClass
      * @param destinationClass the class referred to by
      * connectingClass.connectingClassFieldName
-     * @param destinationFieldName the collection field in the destinationClass - the
+     * @param createFieldName the reference field in the destinationClass - the
      * collection to create/set
      * @throws Exception if anything goes wrong
      */
-    protected void insertReferences(Class sourceClass, String sourceClassFieldName,
-                                    Class connectingClass, String connectingClassFieldName,
-                                    Class destinationClass, String destinationFieldName)
+    protected void insertReferenceField(Class sourceClass, String sourceClassFieldName,
+                                        Class connectingClass, String connectingClassFieldName,
+                                        Class destinationClass, String createFieldName)
         throws Exception {
         InterMineObject lastObject = null;
-        List newCollection = new ArrayList();
 
         LOG.info("Beginning insertReferences("
                  + sourceClass.getName() + ", "
@@ -233,13 +238,13 @@ public class CreateReferences
                  + connectingClass.getName() + ", "
                  + connectingClassFieldName + ","
                  + destinationClass.getName() + ", "
-                 + destinationFieldName + ")");
+                 + createFieldName + ")");
 
         Iterator resIter =
             PostProcessUtil.findRelations(osw.getObjectStore(),
                                           sourceClass, sourceClassFieldName,
                                           connectingClass, connectingClassFieldName,
-                                          destinationClass);
+                                          destinationClass, true);
 
         // results will be sourceClass ; destClass (ordered by sourceClass)
         osw.beginTransaction();
@@ -254,12 +259,12 @@ public class CreateReferences
             try {
                 // clone so we don't change the ObjectStore cache
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisDestObject);
-                TypeUtil.setFieldValue(tempObject, destinationFieldName, thisSourceObject);
+                TypeUtil.setFieldValue(tempObject, createFieldName, thisSourceObject);
                 count++;
                 osw.store(tempObject);
             } catch (IllegalAccessException e) {
                 LOG.error("Object with ID: " + thisDestObject.getId()
-                          + " has no " + destinationFieldName + " field");
+                          + " has no " + createFieldName + " field");
             }
         }
 
@@ -276,9 +281,122 @@ public class CreateReferences
     }
 
 
+    /**
+     * Add a collection of objects of type X to objects of type Y by using a connecting class.
+     * Eg. Add a collection of Protein objects to Gene by examining the Transcript objects in the
+     * transcripts collection of the Gene, which would use a query like:
+     *   SELECT DISTINCT gene FROM Gene AS gene, Transcript AS transcript, Protein AS protein WHERE
+     *   (gene.transcripts CONTAINS transcript AND transcript.protein CONTAINS protein)
+     *   ORDER BY gene
+     * and then set protected gene.protein (if created
+     * BioEntity1 -> BioEntity2 -> BioEntity3   ==>   BioEntity1 -> BioEntity3
+     * @param firstClass the first class in the query
+     * @param firstClassFieldName the field in the firstClass which should contain the
+     * connectingClass
+     * @param connectingClass the class referred to by firstClass.sourceFieldName
+     * @param connectingClassFieldName the field in connectingClass which should contain
+     * secondClass
+     * @param secondClass the class referred to by
+     * connectingClass.connectingClassFieldName
+     * @param createFieldName the collection field in the secondClass - the
+     * collection to create/set
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertCollectionField(Class firstClass, String firstClassFieldName,
+                                         Class connectingClass, String connectingClassFieldName,
+                                         Class secondClass, String createFieldName,
+                                         boolean createInFirstClass)
+        throws Exception {
+        InterMineObject lastDestObject = null;
+        List newCollection = new ArrayList();
+
+        LOG.info("Beginning insertReferences("
+                 + firstClass.getName() + ", "
+                 + firstClassFieldName + ", "
+                 + connectingClass.getName() + ", "
+                 + connectingClassFieldName + ","
+                 + secondClass.getName() + ", "
+                 + createFieldName + ", "
+                 + createInFirstClass + ")");
+
+        Iterator resIter =
+            PostProcessUtil.findRelations(osw.getObjectStore(),
+                                          firstClass, firstClassFieldName,
+                                          connectingClass, connectingClassFieldName,
+                                          secondClass, createInFirstClass);
+
+        // results will be firstClass ; destClass (ordered by firstClass)
+        osw.beginTransaction();
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            InterMineObject thisSourceObject;
+            InterMineObject thisDestObject;
+
+            if (createInFirstClass) {
+                thisDestObject = (InterMineObject) rr.get(0);
+                thisSourceObject = (InterMineObject) rr.get(1);
+            } else {
+                thisDestObject = (InterMineObject) rr.get(1);
+                thisSourceObject = (InterMineObject) rr.get(0);;
+            }
+
+            if (lastDestObject == null
+                || !thisDestObject.getId().equals(lastDestObject.getId())) {
+
+                if (lastDestObject != null) {
+                    try {
+                        InterMineObject tempObject =
+                            PostProcessUtil.cloneInterMineObject(lastDestObject);
+                        List oldCollection =
+                            (List) TypeUtil.getFieldValue(tempObject, createFieldName);
+                        newCollection.addAll(oldCollection);
+                        TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
+                        count += newCollection.size();
+                        osw.store(tempObject);
+                   } catch (IllegalAccessException e) {
+                        LOG.error("Object with ID: " + thisDestObject.getId()
+                                  + " has no " + createFieldName + " field");
+                    }
+                }
+
+                newCollection = new ArrayList();
+            }
+
+            newCollection.add(thisSourceObject);
+
+            lastDestObject = thisDestObject;
+        }
+
+        if (lastDestObject != null) {
+            // clone so we don't change the ObjectStore cache
+            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastDestObject);
+            try {
+                TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
+                count += newCollection.size();
+                osw.store(tempObject);
+            } catch (IllegalAccessException e) {
+                LOG.error("Object with ID: " + tempObject.getId()
+                          + " has no " + createFieldName + " field");
+            }
+        }
+
+        LOG.info("Created " + count + " references in " + secondClass.getName() + " to "
+                 + firstClass.getName() + " via " + connectingClass.getName());
+        osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(secondClass.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
 
     /**
-     * Create specific named collection of a particulay Relation type.
+     * Create specific named collection of a particular Relation type.
      * For example Gene.subjects contains Orthologues and other Relations, create collection
      * called Gene.orthologues with just Orthologues in (but remain duplicated in Gene.subjects.
      * BioEntity.collection1 -> Relation   ==>   BioEntity.collection2 -> subclass of Relation
@@ -406,7 +524,6 @@ public class CreateReferences
                 }
 
                 newCollection = new ArrayList();
-                LOG.info("newCollection: " + newCollection);
             }
 
             newCollection.add(thisProperty);
@@ -515,7 +632,7 @@ public class CreateReferences
         ContainsConstraint protAnnConstraint =
             new ContainsConstraint(protAnnRef, ConstraintOp.CONTAINS, qcAnnotation);
         cs.addConstraint(protAnnConstraint);
-        
+
         QueryObjectReference annPropertyRef =
             new QueryObjectReference(qcAnnotation, "property");
         ContainsConstraint annPropertyConstraint =
