@@ -592,11 +592,10 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
-       merge-phenotype-model, merge-go-model, merge-so-model">
+       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, merge-phenotype-model, merge-go-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
-
+ 
   <!-- create genomic InterMine model from currently merged OWL ontologies -->
   <target name="create-genomic-model" depends="prepare-genomic-model, prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-owl" inheritRefs="true">
@@ -1212,11 +1211,11 @@
     </path>
 
 
-  <target name="retrieve-mage" depends="prepare-test, compile-mage-java, convert-mage">
+  <target name="retrieve-mage" depends="prepare, prepare-build-model, compile-mage-java, convert-mage">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <fileset dir="/shared/data/mage/"/>
+       <fileset dir="/shared/data/mage/"/>
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
