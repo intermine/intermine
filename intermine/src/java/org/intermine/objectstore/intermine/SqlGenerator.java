@@ -1090,17 +1090,45 @@ public class SqlGenerator
                         .append(".")
                         .append(DatabaseUtil.getColumnName(refDesc));
                     retval.append(buffer.toString());
-                    buffer.append(" AS ")
-                        .append(state.getOrderByAlias());
-                    state.addToOrderBy(buffer.toString());
+                    if (q.isDistinct()) {
+                        if (q.getSelect().contains(ref.getQueryClass())) {
+                            // This means that the field's QueryClass is present in the SELECT list,
+                            // so adding the field artificially will not alter the number of rows
+                            // of a DISTINCT query.
+                            buffer.append(" AS ")
+                                .append(state.getOrderByAlias());
+                            state.addToOrderBy(buffer.toString());
+                        } else {
+                            throw new ObjectStoreException("Reference " + buffer.toString()
+                                    + " in the ORDER BY list must be in the SELECT list, or the"
+                                    + " whole QueryClass must be in the SELECT list, or the"
+                                    + " query made non-distinct");
+                        }
+                    }
                 } else {
                     queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
-                    if (!q.getSelect().contains(node)) {
+                    if ((!q.getSelect().contains(node)) && q.isDistinct()
+                            && (node instanceof QueryField)) {
+                        FromElement fe = ((QueryField) node).getFromElement();
                         StringBuffer buffer = new StringBuffer();
                         queryEvaluableToString(buffer, (QueryEvaluable) node, q, state);
-                        buffer.append(" AS ")
-                            .append(state.getOrderByAlias());
-                        state.addToOrderBy(buffer.toString());
+                        if (q.getSelect().contains(fe)) {
+                            // This means that this field is not in the SELECT list, but its
+                            // FromElement is, therefore adding it artificially to the SELECT
+                            // list will not alter the number of rows of a DISTINCT query.
+                            buffer.append(" AS ")
+                                .append(state.getOrderByAlias());
+                            state.addToOrderBy(buffer.toString());
+                        } else if (fe instanceof QueryClass) {
+                            throw new ObjectStoreException("Field " + buffer.toString()
+                                    + " in the ORDER BY list must be in the SELECT list, or the"
+                                    + " whole QueryClass " + fe.toString() + " must be in the"
+                                    + " SELECT list, or the query made non-distinct");
+                        } else {
+                            throw new ObjectStoreException("Field " + buffer.toString()
+                                    + " in the ORDER BY list must be in the SELECT list, or the"
+                                    + " query made non-distinct");
+                        }
                     }
                 }
             }

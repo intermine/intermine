@@ -21,10 +21,12 @@ import org.gnu.readline.ReadlineCompleter;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryHelper;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -169,6 +171,11 @@ public class IqlShell
         Query q = iq.toQuery();
 
         out.println("Query to run: " + q.toString());
+        if (os instanceof ObjectStoreInterMineImpl) {
+            out.println("SQL: " + SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
+                        ((ObjectStoreInterMineImpl) os).getSchema(),
+                        ((ObjectStoreInterMineImpl) os).getDatabase()));
+        }
 
         Results res = os.execute(q);
         res.setBatchSize(5000);
