@@ -130,7 +130,7 @@ public class DataTranslatorTask extends Task
             if (is != null) {
                 mappingProps.load(is);
             } else {
-                System .out.println("WARNING: did not find any mappings, serached for: "
+                System .out.println("WARNING: did not find any mappings, searched for: "
                                    + srcModel + "_mappings");
             }
             Model src = Model.getInstanceByName(srcModel);
