@@ -11,6 +11,7 @@
   build.model: the location of the model build directory
   build.tmp: the location to store temporary files
   resources: the location of any static resource files
+  namespace: the namespace to use when processing XML model files
   -->
 
   <property name="build.model.dir" location="${build.model}/${model.name}"/>
@@ -87,9 +88,7 @@
   <!-- copy test resources -->
   <target name="copy-test-resources" depends="prepare">
     <copy todir="${build.model.dir.resources}">
-      <fileset dir="${model}/${model.name}/resources">
-        <include name="*.properties"/>
-      </fileset>
+      <fileset dir="${model}/${model.name}/resources"/>
     </copy>
   </target>
 
@@ -105,10 +104,11 @@
 
 
     <model-generation
-      type="xmi"
-      modelname="${model.name}"
-      source="${build.model.dir.tmp}/${model.name}_.xmi"
-      destdir="${build.model.dir}" />   
+       type="xmi"
+       namespace="${namespace}"
+       modelname="${model.name}"
+       source="${build.model.dir.tmp}/${model.name}_.xmi"
+       destdir="${build.model.dir}" />   
   </target>
 
 
@@ -122,7 +122,7 @@
       <arg value="${build.model.dir}/${model.name}_model.xml" />
       <arg value="genomic" />
       <arg value="org.intermine.model.${model.name}" />
-      <arg value="http://www.intermine.org/model/${model.name}#" />
+      <arg value="${namespace}/${model.name}#" />
     </java>
 
   </target>
@@ -178,7 +178,7 @@
     </javac>
   </target>
 
-  <target name="compile-test" depends="compile-java">
+  <target name="compile-test" depends="compile-java, copy-test-resources">
     <javac destdir="${build.model.dir.tmp}/" listfiles="yes">
       <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/test"/>
