@@ -109,8 +109,9 @@ public class ObjectStoreServer
 
     /**
      * Execute a registered query.
-     * In this implementation we actually return rows from the registered Results object. This allows
-     * us to change the batch size.
+     * In this implementation we actually return rows from the
+     * registered Results object. This allows us to change the batch
+     * size.
      *
      * @param queryId the id of the query
      * @param start the start row
