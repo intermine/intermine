@@ -271,6 +271,10 @@ version="1.0">
 <code><xsl:apply-templates/></code>
 </xsl:template>
 
+<xsl:template match="programlisting">
+<blockquote><pre><code><xsl:apply-templates/></code></pre></blockquote>
+</xsl:template>
+
 <xsl:template match="synopsis">
 <code><xsl:apply-templates/></code>
 </xsl:template>
