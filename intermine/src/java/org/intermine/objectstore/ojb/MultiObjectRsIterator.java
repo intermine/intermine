@@ -54,6 +54,8 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
+import org.apache.ojb.broker.accesslayer.*;
+
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
 import org.apache.ojb.broker.util.SqlHelper;
@@ -65,7 +67,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.ojb.broker.accesslayer.*;
 import org.flymine.objectstore.query.Query;
 
 /**
@@ -88,19 +89,15 @@ public class MultiObjectRsIterator extends RsIterator
 
     /**
      * MultiObjectRsIterator constructor
-     * @param query the SELECT producing the underlying resultset
-     * @param mif Array of ClassDescriptors of the result-classes
+     * @param queryPackage the QueryPackage (objectstore query + class descriptors) we should use
      * @param broker the broker we should use.
      */
-    public MultiObjectRsIterator(Query query, ClassDescriptor[] mif, PersistenceBrokerImpl broker) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("MultiObjectRsIterator(" + query + ", " + mif + ")");
-        }
-        //m_rsAndStmt = broker.serviceJdbcAccess().executeQuery(query, mif);
+    public MultiObjectRsIterator(QueryPackage queryPackage, PersistenceBrokerImpl broker) {
+        //m_rsAndStmt = broker.serviceJdbcAccess().executeQuery(queryPackage);
         m_row = new HashMap();
-        this.query = query;
+        query = queryPackage.getQuery();
         m_broker = broker;
-        clds = mif;
+        clds = queryPackage.getDescriptors();
         //prefetchRelationships(query);
     }
 
