@@ -77,6 +77,16 @@
     <reference name="gene" ref_id="4_949"/>
   </item>
 
+  <item id="11_4" class="http://www.flymine.org/model/ensembl-human#analysis">
+    <attribute name="logic_name" value="tRNAscan"/>
+    <attribute name="db_version" value="1"/>
+    <attribute name="created" value="1052125456000"/>
+    <attribute name="gff_feature" value="gene"/>
+    <attribute name="gff_source" value="ensembl"/>
+    <attribute name="module" value="Gene_Builder"/>
+    <attribute name="program" value="ensembl"/>
+    <attribute name="program_version" value="1"/>
+  </item>
   <item id="11_70" class="http://www.flymine.org/model/ensembl-human#analysis">
     <attribute name="logic_name" value="ensembl"/>
     <attribute name="db_version" value="1"/>
@@ -87,6 +97,7 @@
     <attribute name="program" value="ensembl"/>
     <attribute name="program_version" value="1"/>
   </item>
+
   <item id="10_798907" class="http://www.flymine.org/model/ensembl-human#protein_feature">
     <attribute name="evalue" value="0.0"/>
     <attribute name="hit_id" value="Seg"/>
@@ -356,7 +367,16 @@
     <attribute name="length" value="105311216"/>
     <reference name="coord_system" ref_id="30_1"/>
  </item>
-
+<item id="1_965892" class="http://www.flymine.org/model/ensembl-human#seq_region">
+    <attribute name="name" value="1"/>
+    <attribute name="length" value="245522847"/>
+    <reference name="coord_system" ref_id="30_1"/>
+ </item>
+<item id="1_786484" class="http://www.flymine.org/model/ensembl-human#seq_region">
+    <attribute name="name" value="AL365274.17.1.171941"/>
+    <attribute name="length" value="171941"/>
+    <reference name="coord_system" ref_id="30_4"/>
+ </item>
  <item id="30_1" class="http://www.flymine.org/model/ensembl-human#coord_system">
     <attribute name="name" value="chromosome"/>
     <attribute name="version" value="NCBI34"/>
@@ -404,6 +424,37 @@
     <attribute name="value" value="1"/>
     <reference name="seq_region" ref_id="1_966021"/>   
     <reference name="attrib_type" ref_id="32_3"/>    
+ </item>
+ <item id="14_31" class="http://www.flymine.org/model/ensembl-human#marker">
+    <attribute name="left_primer" value="CACACAGGCTCACATGCC"/>
+    <attribute name="right_primer" value="GCTCCAGCGTCATGGACT"/> 
+    <attribute name="min_primer_dist" value="142"/>
+    <attribute name="max_primer_dist" value="170"/>
+    <attribute name="priority" value="170"/>
+    <reference name="display_marker_synonym" ref_id = "18_3"/>
+ </item>
+
+ <item id="13_433858" class="http://www.flymine.org/model/ensembl-human#marker_feature">
+    <attribute name="seq_region_start" value="11391868"/>
+    <attribute name="seq_region_end" value="11391868"/>
+    <attribute name="map_weight" value="11391868"/>
+    <reference name="seq_region" ref_id = "1_965892"/>
+    <reference name="marker" ref_id = "14_31"/>
+    <reference name="analysis" ref_id = "11_29"/>
+ </item>
+
+<item id="13_543893" class="http://www.flymine.org/model/ensembl-human#marker_feature">
+    <attribute name="seq_region_start" value="43252"/>
+    <attribute name="seq_region_end" value="43563"/>
+    <attribute name="map_weight" value="3"/>
+    <reference name="seq_region" ref_id = "1_786484"/>
+    <reference name="marker" ref_id = "14_31"/>
+    <reference name="analysis" ref_id = "11_101"/>
+ </item>
+
+ <item id="18_3" class="http://www.flymine.org/model/ensembl-human#marker_synonym">
+    <attribute name="name" value="D1S243"/>
+    <reference name="marker" ref_id = "14_1"/>    
  </item>
 
 </items>
