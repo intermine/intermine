@@ -155,6 +155,10 @@
     <pathelement location="${build.model}/ensembl"/>
     <pathelement location="${build.model}/ensembl-human"/>
     <pathelement location="${build.model}/rnai"/>
+    <pathelement location="${build.model}/long_oligo"/>
+    <pathelement location="${build.model}/tiling_path"/>
+    <pathelement location="${build.model}/flyreg"/>
+    <pathelement location="${build.model}/drosdel"/>
     <pathelement location="${build.model}/orthologue"/>
     <pathelement location="${build.model}/phenotype"/>
     <pathelement location="${build.model}/fulldata"/>
@@ -1338,7 +1342,8 @@
   <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation"/>
 
   <!--load GFF3 data for flyreg -->
-  <target name="retrieve-flyreg" depends="prepare-build-model, compile-genomic-java">
+  <target name="retrieve-flyreg" 
+          depends="prepare-build-model, compile-flyreg-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1885,6 +1890,14 @@
   <target name="compile-psi-java" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="psi"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-flyreg-java" 
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="flyreg"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
