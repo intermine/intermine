@@ -53,10 +53,13 @@ public class XmlDataLoader extends DataLoader
 
             List objects = (List) binding.unmarshal(is);
 
+            iw.beginTransaction();
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                iw.store((InterMineObject) iter.next());
+                iw.store((InterMineObject) iter.next(), source, skelSource);
             }
+            iw.commitTransaction();
+            iw.close();
         } catch (ObjectStoreException e) {
             throw new InterMineException("Problem with store method", e);
         }
