@@ -35,47 +35,8 @@ table td {
 .contextHelp {
 }
 
-.box .heading {
-  border: 1px solid #888;
-  background-color: #f5f5f5;
-  padding: 1px;
-  padding-left: 3px;
-  margin: 3px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-  font-size: 13px;
-  color: black;
-  white-space: nowrap;
-}
-
 .heading a {
   color: black;
-}
-
-.box .body {
-  padding: 4px;
-  margin: 3px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-  font-size: 12px;
-}
-
-.boxbody {
-  background-color: white;
-}
-
-.box .buildmenu .body {
-  /*padding: 4px;
-  margin: 3px;*/
-  border: 1px solid #999;
-  height: 10;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-  font-size: 12px;
-}
-
-.body .collapsed {
-  font-size: 11px;
-  font-style: italic;
-  text-align: center;
-  color: #888;
 }
 
 table.templateForm td {
@@ -235,38 +196,6 @@ span.collectionDescription {
 }
 
 /* classes relating to the begin page */
-
-table.box {
-  border: 1px solid black;
-}
-
-table.box th {
-  background: #eee;
-  border-bottom: 1px solid black;
-}
-
-table.box > tbody > tr > td {
-  padding: 5px;
-  background: white;
-  font-size: 90%;
-}
-
-table.box th.help {
-  padding: 5px;
-  text-align: right;
-  font-size: 11px;
-  font-weight: normal;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-}
-
-table.box th.title {
-  padding: 5px;
-  text-align: left;
-  font-weight: normal;
-  font-size: 14px;
-  font-weight: bold;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-}
 
 .smallnote {
   font-size: 11px;
