@@ -95,7 +95,7 @@
 
             <mediaobject>
               <imageobject>
-                <imagedata fileref="classSelection2.png" />
+                <imagedata fileref="classSelection1.png" />
               </imageobject>
             </mediaobject>
 
@@ -119,14 +119,14 @@
   
           <mediaobject>
             <imageobject>
-              <imagedata fileref="../tutorials/classSelection1.png" />
+              <imagedata fileref="classSelectionAll1.png" />
             </imageobject>
           </mediaobject>
 
         <itemizedlist>
          <listitem>
             <para>The browse model button (accessed from the initial class
-            selection point)allows you to browse the complete FlyMine
+            selection page) allows you to browse the complete FlyMine
             object model. This shows all the classes in FlyMine, some
             of which do not yet have data associated with them.</para>
           </listitem>
@@ -141,6 +141,17 @@
             the FlyMine query builder page.</para>
           </listitem>
         </itemizedlist>
+
+         <mediaobject>
+            <imageobject>
+              <imagedata fileref="browsingModel1.png" />
+            </imageobject>
+          </mediaobject>
+
+
+
+
+
      </section>
 
    <section>
@@ -327,7 +338,7 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="../tutorials/resultsQuery1.png" />
+            <imagedata fileref="tableResults1.png" />
           </imageobject>
         </mediaobject>
  
