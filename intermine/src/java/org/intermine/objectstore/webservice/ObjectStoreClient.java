@@ -21,7 +21,6 @@ import java.util.Properties;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
 
@@ -45,6 +44,10 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
 
     /**
      * Construct an ObjectStoreClient pointing at an ObjectStore service on a remote URL
+     *
+     * @param url the URL of the remote ObjectStore
+     * @param model the model used by this ObjectStore
+     * @throws ObjectStoreException if any error with the remote service
      */
     protected ObjectStoreClient(URL url, Model model) throws ObjectStoreException {
         super(model);
@@ -139,12 +142,13 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit, boolean optimise) throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException {
         int queryId = getQueryId(q);
-        return (List) remoteMethod("execute", new Object [] { new Integer(queryId),
-                                                              new Integer(start),
-                                                              new Integer(limit),
-                                                              new Boolean(optimise)});
+        return (List) remoteMethod("execute", new Object [] {new Integer(queryId),
+                                                             new Integer(start),
+                                                             new Integer(limit),
+                                                             new Boolean(optimise)});
     }
 
     /**
@@ -158,12 +162,13 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q, int start, int limit, boolean optimise) throws ObjectStoreException {
+    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException {
         int queryId = getQueryId(q);
-        return (ExplainResult) remoteMethod("estimate", new Object [] { new Integer(queryId),
-                                                                        new Integer(start),
-                                                                        new Integer(limit),
-                                                                        new Boolean(optimise)});
+        return (ExplainResult) remoteMethod("estimate", new Object [] {new Integer(queryId),
+                                                                       new Integer(start),
+                                                                       new Integer(limit),
+                                                                       new Boolean(optimise)});
     }
 
     /**
@@ -171,6 +176,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      *
      * @param q Flymine Query on which to count rows
      * @return the number of rows that will be produced by query
+     * @throws ObjectStoreException if an error occurs with the remote ObjectStore
      */
     public int count(Query q) throws ObjectStoreException {
         int queryId = getQueryId(q);
