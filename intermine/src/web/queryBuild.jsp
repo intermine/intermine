@@ -27,11 +27,7 @@
       </c:otherwise>
     </c:choose>
     <font class="queryViewFromItemTitle">
-      <c:forTokens items="${queryClass.type}" delims="." var="token" varStatus="status">
-        <c:if test="${status.last}">
-          [<c:out value="${token}"/>]
-        </c:if>
-      </c:forTokens>
+      [<c:out value="${queryClass.unqualifiedType}"/>]
     </font>
     <c:if test="${EDITING_ALIAS == null}">
       <html:submit property="buttons(editClass${alias})">

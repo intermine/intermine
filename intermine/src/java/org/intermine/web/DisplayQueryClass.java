@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.flymine.util.TypeUtil;
+
 /**
  * Bean to represent a QueryClass during Query construction in the webapp
  * @author Mark Woodbridge
@@ -39,10 +41,19 @@ public class DisplayQueryClass
     /**
      * Sets the value of type
      *
-     * @param argType Value to assign to this.type
+     * @param type Value to assign to this.type
      */
-    public void setType(String argType) {
-        this.type = argType;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * Gets the unqualified type
+     * 
+     * @return the unqualified type
+     */
+    public String getUnqualifiedType() {
+        return TypeUtil.unqualifiedName(type);
     }
 
     /**
