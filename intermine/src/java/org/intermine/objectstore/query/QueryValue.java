@@ -44,4 +44,39 @@ public class QueryValue implements QueryEvaluable
     public Object getValue() {
         return value;
     }
+
+    /**
+     * Overrides Object.
+     *
+     * @param obj object to compare to
+     * @return true if obj is a QueryValue with the same encapsulated object
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof QueryValue) {
+            Object objValue = ((QueryValue) obj).getValue();
+            if ((value instanceof Number) && (objValue instanceof Number)) {
+                if ((value instanceof Float) || (value instanceof Double)
+                        || (objValue instanceof Float) || (objValue instanceof Double)) {
+                    return ((Number) value).doubleValue() == ((Number) objValue).doubleValue();
+                } else {
+                    return ((Number) value).longValue() == ((Number) objValue).longValue();
+                }
+            } else {
+                return value.equals(objValue);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Overrides Object.
+     *
+     * @return an integer based on the contents of this object
+     */
+    public int hashCode() {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        return value.hashCode();
+    }
 }
