@@ -335,6 +335,10 @@ public class GFF3Record
             + strand + " phase: " + phase + " attributes: " + attributes + ">";
     }
 
+    /**
+     * Return this record in GFF format.  The String is suitable for output to a GFF file.
+     * @return a GFF line
+     */
     public String toGFF3() {
         return sequenceID + "\t" + ((source == null) ? "." : source) + "\t"
             + type + "\t" + start + "\t" + end + "\t"
