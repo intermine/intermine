@@ -73,7 +73,7 @@ public class AceDataLoader extends AbstractDataLoader
      * Process a set of Ace objects
      *
      * @param set the set of Ace objects to process
-     * @param the model they belong to
+     * @param model the model they belong to
      * @return a set of Java objects
      *
      * @throws AceException if an error occurs with the Ace data
@@ -278,19 +278,25 @@ public class AceDataLoader extends AbstractDataLoader
      * @throws Exception if an error occurs
      */
     public static void main(String [] args) throws Exception {
-        if (args.length != 4) {
-            throw new RuntimeException("AceDataLoader hostname port username password");
+        if (args.length != 5) {
+            throw new RuntimeException("AceDataLoader hostname port username password classname");
         }
 
         String host = args[0];
         String port = args[1];
         String user = args[2];
         String passwd = args[3];
+        String clazzName = args[4];
 
         // URL _dbURL = new URL("acedb://" + host + ":" + port);
         // AceURL dbURL = new AceURL(_dbURL, user, passwd, null);
         AceURL dbURL = new AceURL("acedb://" + user + ':' + passwd + '@' + host + ':' + port);
-        Model model = new Model(null, null);
-        processAce(model, null, dbURL);
+
+        Ace.registerDriver(new org.acedb.socket.SocketDriver());
+        AceURL objURL = dbURL.relativeURL(clazzName);
+        AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
+
+        Collection col = processAceObjects(fetchedAceObjects, null);
+
     }
 }
