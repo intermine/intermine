@@ -21,7 +21,7 @@
     <reference name="subject" ref_id="0_32"/>
   </item>
   <item id="0_32" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="swissProtId" value="Q9VI89"/>
+    <attribute name="primaryAccession" value="Q9VI89"/>
     <reference name="organism" ref_id="0_36"/>
     <collection name="synonyms">
       <reference ref_id="-1_3"/>
@@ -31,7 +31,7 @@
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="0_26" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="swissProtId" value="P14734"/>
+    <attribute name="primaryAccession" value="P14734"/>
     <reference name="organism" ref_id="0_30"/>
     <collection name="synonyms">
       <reference ref_id="-1_4"/>

@@ -274,20 +274,13 @@ null:transcript__display_xref a owl:ObjectProperty ;
 :Protein__endExon a owl:ObjectProperty ;
     owl:equivalentProperty e:translation__end_exon .
    
-# main identifier for protein is chosen from other ids in order:
-# 1) SWISSPROT, 2) trEmbl id, 3) EMBL id
+# Protein inherits 'identifier' from BioEntity and has additional
+# primaryAccession attribute
 
-:Protein__swissProtId a owl:DataTypeProperty;
+:Protein__primaryAccession a owl:DatatypeProperty;
     rdfs:domain :Protein;
     rdfs:range xsd:string.
 
-:Protein__spTREMBLId a owl:DataTypeProperty;
-    rdfs:domain :Protein;
-    rdfs:range xsd:string.
-
-:Protein__emblId a owl:DataTypeProperty;
-    rdfs:domain :Protein;
-    rdfs:range xsd:string.
 
 # ----------- simple_feature maps to TRNA or CpGIsland --------- #
 

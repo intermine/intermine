@@ -83,7 +83,7 @@ public class GoConverter extends FileConverter
     }
 
     /**
-     * Create a new annotation item linking a product with a term, with evidence code, database and 
+     * Create a new annotation item linking a product with a term, with evidence code, database and
      * publication
      * @param qualifier qualifier (eg NOT) or null
      * @param database the database
@@ -130,10 +130,10 @@ public class GoConverter extends FileConverter
             }
             type = "Gene";
             idField = "organismDbId";
-            
+
         } else if ("protein".equals(type)) {
             type = "Protein";
-            idField = "swissProtId";
+            idField = "primaryAccession";
         } else {
             throw new IllegalArgumentException("Unrecognised product type '" + type + "'");
         }
@@ -151,7 +151,7 @@ public class GoConverter extends FileConverter
         }
         return item;
     }
-     
+
     /**
      * Create a new go term
      * @param identifier the identifier
@@ -163,7 +163,7 @@ public class GoConverter extends FileConverter
             item = newItem("GOTerm");
             item.addAttribute(new Attribute("identifier", identifier));
             goTerms.put(identifier, item);
-        }        
+        }
         return item;
     }
 
@@ -195,7 +195,7 @@ public class GoConverter extends FileConverter
             }
             item.addAttribute(new Attribute("title", title));
             databases.put(code, item);
-        }        
+        }
         return item;
     }
 
@@ -210,7 +210,7 @@ public class GoConverter extends FileConverter
             item = newItem("GOEvidence");
             item.addAttribute(new Attribute("code", code));
             evidenceCodes.put(code, item);
-        }        
+        }
         return item;
     }
 
@@ -233,7 +233,7 @@ public class GoConverter extends FileConverter
                 }
                 break;
             }
-        }        
+        }
         return item;
     }
 
@@ -252,7 +252,7 @@ public class GoConverter extends FileConverter
             item = newItem("Organism");
             item.addAttribute(new Attribute("taxonId", taxonId));
             organisms.put(taxonId, item);
-        }        
+        }
         return item;
     }
 

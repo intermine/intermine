@@ -127,8 +127,7 @@ public class PsiDataTranslator extends DataTranslator
                                     .getItemById(xref.getReference("primaryRef").getRefId()));
                     if (dbXref.getAttribute("db").getValue().equals("uniprot")) {
                         String value = dbXref.getAttribute("id").getValue();
-                        tgtItem.addAttribute(new Attribute("swissProtId", value));
-                        //tgtItem.addAttribute(new Attribute("identifer", value));
+                        tgtItem.addAttribute(new Attribute("primaryAccession", value));
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(synonym, getSwissProt(), "source", false, "", false);
                         synonym.addAttribute(new Attribute("value", value));

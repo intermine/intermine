@@ -7,7 +7,7 @@
 :Protein a owl:Class;
     rdfs:subClassOf :BioEntity.
 
-:Protein__swissProtId a owl:DatatypeProperty;
+:Protein__primaryAccession a owl:DatatypeProperty;
     rdfs:domain :Protein;
     rdfs:range xsd:string.
 
