@@ -12,6 +12,15 @@
 #                      Sequence Ontology Elements                              #
 # ---------------------------------------------------------------------------- #
 
+
+# temporarily define a residues field in so:LocatedSequenceFeature
+# this should normally com from chado
+:LocatedSequenceFeature a owl:Class.
+
+:LocatedSequenceFeature__residues a owl:DatatypeProperty;
+    rdfs:domain :LocatedSequenceFeature;
+    rdfs:range xsd:string.
+
 :Exon a owl:Class ;
     rdfs:subClassOf :BioEntity ;
     owl:equivalentClass e:exon .

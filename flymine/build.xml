@@ -675,7 +675,7 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
-       merge-phenotype-model, merge-so-model, merge-chado-model">
+       merge-phenotype-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1374,7 +1374,7 @@
   </target>
 
   <target name="test-models-inc"
-          depends="chado-test, mage-test, ensembl-test, rnai-test">
+          depends="mage-test, ensembl-test, rnai-test, psi-test, orthologue-test">
     <antcall target="test-report"/>
   </target>
 
