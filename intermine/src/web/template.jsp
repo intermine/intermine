@@ -96,7 +96,7 @@
                 </c:forEach>
               </html:select>
             </td>
-            <td valign="top" align="center">
+            <td valign="top" align="left">
               <span id="operandEditSpan${index-1}">
                <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
