@@ -187,6 +187,7 @@
   <!-- ========== Plug Ins Configuration ================================== -->
 
   <plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
+  <plug-in className="org.flymine.web.InitialiserPlugin"/>
 
   <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
     <set-property property="pathnames"
