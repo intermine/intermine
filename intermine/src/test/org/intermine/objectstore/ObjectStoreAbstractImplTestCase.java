@@ -76,7 +76,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         long before = os.maxTime;
         os.maxTime = 0;
         try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 0, 10, true);
+            os.execute((Query) queries.get("SelectSimpleObject"), 0, 1, true);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         } finally {
