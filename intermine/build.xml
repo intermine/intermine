@@ -138,6 +138,10 @@
         outputdirectory="${build.src.java}/org/flymine/sql/query">
       <classpath refid="project.class.path"/>
     </antlr>
+    <antlr target="${src.java}/org/flymine/objectstore/query/flymine_fql.g"
+        outputdirectory="${build.src.java}/org/flymine/objectstore/query">
+      <classpath refid="project.class.path"/>
+    </antlr>
     <javac destdir="${build.java}" listfiles="yes">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}" />
