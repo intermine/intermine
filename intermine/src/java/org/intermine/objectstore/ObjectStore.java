@@ -58,4 +58,13 @@ public interface ObjectStore
      * @throws ObjectStoreException if an error occurs explining the query
      */
     public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException;
+
+    /**
+     * Execute a COUNT(*) on a query, returns the number of row the query will produce
+     *
+     * @param q Flymine Query on which to run COUNT(*)
+     * @return the number of row to be produced by query
+     */
+    public int count(Query q);
+
 }
