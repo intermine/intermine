@@ -64,6 +64,8 @@ public class DataTranslator
     protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
     protected Map impMap;         // map class URI -> implementation string
     protected String tgtNs;
+    protected int newItemId = -1;
+
 
     protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
     /**
@@ -93,12 +95,25 @@ public class DataTranslator
 
 
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
+        long count = 0;
+        long start = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
             Collection translated = translateItem(srcItem);
             if (translated != null) {
                 for (Iterator j = translated.iterator(); j.hasNext();) {
-                    tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
+                    if (count % 1000 == 0) {
+                        LOG.error("processed " + count + " objects at "
+                                  + ((60000L * count) / ((System.currentTimeMillis() - start) + 1))
+                                  + " per min - current: "
+                                  + 60000000L / ((System.currentTimeMillis() - time) + 1)
+                                  + " (" + srcItem.getClassName() + ")");
+                        time = System.currentTimeMillis();
+                    }
+                    Object obj = j.next();
+                    tgtItemWriter.store(ItemHelper.convert((Item) obj));
+                    count++;
                 }
             }
         }
@@ -134,10 +149,6 @@ public class DataTranslator
             }
         }
 
-        if (tgtClsName.equals(tgtNs + "Chromosome")) {
-            return null;
-        }
-
         // if class is not in target namespace then don't bother translating it
         if (!OntologyUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
             return null;
@@ -153,6 +164,10 @@ public class DataTranslator
             Attribute att = (Attribute) i.next();
             String attSrcURI = srcItem.getClassName() + "__" + att.getName();
             String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
+            if (attTgtURI == null) {
+                throw new FlyMineException("no target attribute found for " + attSrcURI
+                                           + " in class " + tgtClsName);
+            }
             if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
                 Attribute newAtt = new Attribute();
                 newAtt.setName(attTgtURI.split("__")[1]);
@@ -166,6 +181,10 @@ public class DataTranslator
             Reference ref = (Reference) i.next();
             String refSrcURI = srcItem.getClassName() + "__" + ref.getName();
             String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
+            if (refTgtURI == null) {
+                throw new FlyMineException("no target reference found for " + refSrcURI
+                                           + " in class " + tgtClsName);
+            }
             if (OntologyUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
                 Reference newRef = new Reference();
                 newRef.setName(refTgtURI.split("__")[1]);
@@ -179,6 +198,10 @@ public class DataTranslator
             ReferenceList col = (ReferenceList) i.next();
             String colSrcURI = srcItem.getClassName() + "__" + col.getName();
             String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
+            if (colTgtURI == null) {
+                throw new FlyMineException("no target collection found for " + colSrcURI
+                                           + " in class " + tgtClsName);
+            }
             if (OntologyUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
                 ReferenceList newCol = new ReferenceList();
                 newCol.setName(colTgtURI.split("__")[1]);
@@ -189,6 +212,112 @@ public class DataTranslator
         return Collections.singleton(tgtItem);
     }
 
+
+    /**
+     * Set an item property to value from within a referenced item.
+     * @param tgtItem a target item to set property in
+     * @param srcItem a source item to get reference from
+     * @param fieldName name of field to set in tgtItem
+     * @param refName name of the reference in srcItem to other item
+     * @param refFieldName name of field within referenced item to get value from
+     * @throws ObjectStoreException if error retrieving referenced item
+     */
+    protected void promoteField(Item tgtItem, Item srcItem, String fieldName, String refName,
+                                String refFieldName)
+        throws ObjectStoreException {
+        if (srcItem.getReference(refName) != null) {
+            Item refItem = ItemHelper.convert(srcItemReader
+                                       .getItemById(srcItem.getReference(refName).getRefId()));
+            moveField(refItem, tgtItem, refFieldName, fieldName);
+        }
+    }
+
+    /**
+     * Move a property from one item to another
+     * @param fromItem an item to move property from
+     * @param toItem an item to move property to
+     * @param oldFieldName name of field in fromItem
+     * @param newFieldName desired name of field in target item
+     */
+    protected void moveField(Item fromItem, Item toItem, String oldFieldName, String newFieldName) {
+        if (fromItem.hasAttribute(oldFieldName)) {
+            Attribute att = new Attribute();
+            att.setName(newFieldName);
+            att.setValue(fromItem.getAttribute(oldFieldName).getValue());
+            toItem.addAttribute(att);
+        } else if (fromItem.hasReference(oldFieldName)) {
+            Reference ref = new Reference();
+            ref.setName(newFieldName);
+            ref.setRefId(fromItem.getReference(oldFieldName).getRefId());
+            toItem.addReference(ref);
+        } else if (fromItem.hasCollection(oldFieldName)) {
+            ReferenceList col = new ReferenceList();
+            col.setName(newFieldName);
+            col.setRefIds(fromItem.getCollection(oldFieldName).getRefIds());
+            toItem.addCollection(col);
+        }
+    }
+
+
+
+    /**
+     * Add a reference from tgtItem to a newItem and set reverse reference in newItem as
+     * appropriate.
+     * @param tgtItem item to reference newItem
+     * @param newItem newly created item to be referenced from tgtItem
+     * @param fwdRefName name of reference in tgtItem that points to newItem
+     * @param fwdIsMany true if fwdRef is a collection
+     * @param revRefName name of field in newItem that points back to tgtItem (may be null)
+     * @param revIsMany true if reference from newItem to tgtItem is a collection
+     */
+    protected void addReferencedItem(Item tgtItem, Item newItem, String fwdRefName,
+                                     boolean fwdIsMany, String revRefName, boolean revIsMany) {
+        if (fwdIsMany) {
+            ReferenceList col = tgtItem.getCollection(fwdRefName);
+            if (col != null) {
+                col.addRefId(newItem.getIdentifier());
+            } else {
+                col = new ReferenceList(fwdRefName,
+                                        Collections.singletonList(newItem.getIdentifier()));
+                tgtItem.addCollection(col);
+            }
+        } else {
+            Reference fwdRef = new Reference(fwdRefName, newItem.getIdentifier());
+            tgtItem.addReference(fwdRef);
+        }
+
+        // if a reverse reference supplied add to newItem
+        if (!revRefName.equals("")) {
+            if (revIsMany) {
+                ReferenceList col = newItem.getCollection(revRefName);
+                if (col != null) {
+                    col.addRefId(tgtItem.getIdentifier());
+                } else {
+                    col = new ReferenceList(revRefName,
+                                            Collections.singletonList(tgtItem.getIdentifier()));
+                    newItem.addCollection(col);
+                }
+            } else {
+                Reference revRef = new Reference(revRefName, tgtItem.getIdentifier());
+                newItem.addReference(revRef);
+            }
+        }
+    }
+
+
+    /**
+     * Create a new item and assign it an id.
+     * @param className class name of new item
+     * @param implementations implementations string for new item
+     * @return the new item
+     */
+    protected Item createItem(String className, String implementations) {
+        Item item = new Item();
+        item.setIdentifier("" + (newItemId--));
+        item.setClassName(className);
+        item.setImplementations(implementations);
+        return item;
+    }
 
     /**
      * Given an item in src format and a template (a list of path expressions) create
@@ -387,5 +516,6 @@ public class DataTranslator
         DataTranslator dt = new DataTranslator(srcItemReader, model, namespace);
         model = null;
         dt.translate(tgtItemWriter);
+        tgtItemWriter.close();
     }
 }

@@ -667,6 +667,87 @@ public class DataTranslatorTest extends TestCase
     }
 
 
+    public void testPromoteField() throws Exception {
+        Item src1 = new Item("1", srcNs + "src1", "");
+
+        Item src2 = new Item("2", srcNs + "src2", "");
+
+        Attribute a1 = new Attribute("a1", "attribute a1");
+        src2.addAttribute(a1);
+
+        Reference r1 = new Reference("r1", "3");
+        src2.addReference(r1);
+
+        ReferenceList c1 = new ReferenceList("c1", Collections.singletonList("3"));
+        src2.addCollection(c1);
+
+        Reference toSrc2 = new Reference("toSrc2", "2");
+        src1.addReference(toSrc2);
+
+        Item exp1 = new Item("1", srcNs + "src1", "");
+        exp1.addReference(toSrc2);
+        exp1.addAttribute(a1);
+
+        Item tgt = new Item("1", srcNs + "src1", "");
+        tgt.addReference(toSrc2);
+
+        ItemWriter itemWriter = new MockItemWriter(itemMap);
+        itemWriter.store(ItemHelper.convert(src1));
+        itemWriter.store(ItemHelper.convert(src2));
+        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        translator.promoteField(tgt, src1, "a1", "toSrc2", "a1");
+        assertEquals(exp1, tgt);
+
+        exp1.addReference(r1);
+        translator.promoteField(tgt, src1, "r1", "toSrc2", "r1");
+        assertEquals(exp1, tgt);
+
+        exp1.addCollection(c1);
+        translator.promoteField(tgt, src1, "c1", "toSrc2", "c1");
+        assertEquals(exp1, tgt);
+    }
+
+
+    public void testMoveField() throws Exception {
+        Item src1 = new Item("2", srcNs + "src1", "");
+
+        Attribute a1 = new Attribute("a1", "attribute a1");
+        src1.addAttribute(a1);
+
+        Reference r1 = new Reference("r1", "3");
+        src1.addReference(r1);
+
+        ReferenceList c1 = new ReferenceList("c1", Collections.singletonList("3"));
+        src1.addCollection(c1);
+
+        ItemWriter itemWriter = new MockItemWriter(itemMap);
+        itemWriter.store(ItemHelper.convert(src1));
+        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+
+
+        Item exp1 = new Item("1", srcNs + "src1", "");
+        exp1.addAttribute(new Attribute("new_a1", "attribute a1"));
+
+        Item tgt = new Item("1", srcNs + "src1", "");
+
+        translator.moveField(src1, tgt, "a1", "new_a1");
+        assertEquals(exp1, tgt);
+
+        // test with field name that does not exist
+        translator.moveField(src1, tgt, "not_a_field", "not_a_field");
+        assertEquals(exp1, tgt);
+
+        exp1.addReference(new Reference("new_r1", "3"));
+        translator.moveField(src1, tgt, "r1", "new_r1");
+        assertEquals(exp1, tgt);
+
+        exp1.addCollection(new ReferenceList("new_c1", Collections.singletonList("3")));
+        translator.moveField(src1, tgt, "c1", "new_c1");
+        assertEquals(exp1, tgt);
+    }
+
+
+
     public Map getSrcItems() {
         Item src1 = new Item();
         src1.setIdentifier("1");
