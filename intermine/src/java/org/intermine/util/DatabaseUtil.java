@@ -592,7 +592,6 @@ public class DatabaseUtil
      */
     public static String generateSqlCompatibleName(String n) {
         String upper = n.toUpperCase();
-        org.intermine.web.LogMe.log("dbutil", "got: " + n);
         if (upper.startsWith("INTERMINE_") || reservedWords.contains(upper)) {
             return "intermine_" + n;
         } else {
