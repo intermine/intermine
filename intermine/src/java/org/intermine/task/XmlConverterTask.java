@@ -21,7 +21,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.metadata.Model;
 
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
@@ -30,29 +29,12 @@ import org.apache.tools.ant.types.FileSet;
  * Task in invoke XML conversion
  * @author Andrew Varley
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
-public class XmlConverterTask extends Task
+public class XmlConverterTask extends ConverterTask
 {
     protected FileSet fileSet;
     protected File schema;
-    protected String model;
-    protected String osName;
-
-    /**
-     * Set the objectstore name
-     * @param osName the model name
-     */
-    public void setOsName(String osName) {
-        this.osName = osName;
-    }
-
-    /**
-     * Set the model name
-     * @param model the model name
-     */
-    public void setModel(String model) {
-        this.model = model;
-    }
 
     /**
      * Set the xsd schema file
@@ -97,10 +79,12 @@ public class XmlConverterTask extends Task
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
-                converter.process(new BufferedReader(new FileReader(new File(ds.getBasedir(),
-                                                                             files[i]))));
+                File toRead = new File(ds.getBasedir(), files[i]);
+                System.err .println("Processing file " + toRead.toString());
+                converter.process(new BufferedReader(new FileReader(toRead)));
             }
             writer.close();
+            doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
         }

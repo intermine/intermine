@@ -21,7 +21,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.FileConverter;
 
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
@@ -34,14 +33,14 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
-public class FileConverterTask extends Task
+public class FileConverterTask extends ConverterTask
 {
     protected static final Logger LOG = Logger.getLogger(FileConverterTask.class);
 
     protected FileSet fileSet;
     protected String clsName;
-    protected String osName;
     protected String param1 = null;
     protected String param2 = null;
 
@@ -59,14 +58,6 @@ public class FileConverterTask extends Task
      */
     public void addFileSet(FileSet fileSet) {
         this.fileSet = fileSet;
-    }
-
-    /**
-     * Set the objectstore name
-     * @param osName the model name
-     */
-    public void setOsName(String osName) {
-        this.osName = osName;
     }
 
     /**
@@ -99,6 +90,9 @@ public class FileConverterTask extends Task
         if (osName == null) {
             throw new BuildException("osName attribute is not set");
         }
+        if (model == null) {
+            throw new BuildException("model attribute is not set");
+        }
 
         try {
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
@@ -122,11 +116,12 @@ public class FileConverterTask extends Task
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
-                LOG.error("Processing file: " + f.getName());
+                System.err .println("Processing file: " + f.getName());
                 converter.process(new BufferedReader(new FileReader(f)));
             }
             converter.close();
             writer.close();
+            doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
         }

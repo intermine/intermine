@@ -10,18 +10,13 @@ package org.intermine.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.Statement;
-
-import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.task.ConverterTask;
 
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -29,12 +24,11 @@ import org.apache.tools.ant.BuildException;
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
-public class DBRetrieverTask extends Task
+public class DBRetrieverTask extends ConverterTask
 {
     protected String database;
-    protected String model;
-    protected String osName;
 
     /**
      * Set the database name
@@ -42,22 +36,6 @@ public class DBRetrieverTask extends Task
      */
     public void setDatabase(String database) {
         this.database = database;
-    }
-
-    /**
-     * Set the model name
-     * @param model the model name
-     */
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    /**
-     * Set the objectstore name
-     * @param osName the model name
-     */
-    public void setOsName(String osName) {
-        this.osName = osName;
     }
 
     /**
@@ -77,21 +55,10 @@ public class DBRetrieverTask extends Task
             Model m = Model.getInstanceByName(model);
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             DBReader reader = new ReadAheadDBReader(db, m);
+            System.err .println("Processing data from DB " + db.getURL());
             new DBConverter(m, db, reader, new ObjectStoreItemWriter(osw)).process();
             reader.close();
-            ObjectStore os = osw.getObjectStore();
-            if (os instanceof ObjectStoreInterMineImpl) {
-                Connection c = null;
-                try {
-                    c = ((ObjectStoreInterMineImpl) os).getConnection();
-                    Statement s = c.createStatement();
-                    s.execute("CREATE INDEX reference__refid ON reference (refid)");
-                    s.execute("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
-                    s.execute("ANALYSE");
-                } finally {
-                    ((ObjectStoreInterMineImpl) os).releaseConnection(c);
-                }
-            }
+            doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
         }
