@@ -388,11 +388,8 @@ public class CalculateLocations
             //   --------------    child
             PartialLocation pl = (PartialLocation)
                 DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
-            pl.setSubjectStart(new Integer((parentOnChr.getStart() - childOnChr.getStart()) + 1));
-            // ? +1
-            //            pl.setSubjectEnd(new Integer((childLength
-            //                             - (childOnChr.getEnd() - parentOnChr.getEnd())) + 1));
-            pl.setSubjectEnd(new Integer((parentOnChr.getEnd() - childOnChr.getEnd()) + 1));
+            pl.setSubjectStart(new Integer(parentOnChr.getStart() - childOnChr.getStart() + 1));
+            pl.setSubjectEnd(new Integer(parentOnChr.getEnd() - childOnChr.getStart() + 1));
             childOnParent = pl;
         } else if (startIsPartial) {
             //       --------------  parent
@@ -400,7 +397,7 @@ public class CalculateLocations
             //   ----------          child
             PartialLocation pl = (PartialLocation)
                 DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
-            pl.setSubjectStart(new Integer((parentOnChr.getStart() - childOnChr.getStart()) + 1));
+            pl.setSubjectStart(new Integer(parentOnChr.getStart() - childOnChr.getStart() + 1));
             pl.setSubjectEnd(new Integer(childLength));
             childOnParent = pl;
         } else if (endIsPartial) {
@@ -410,8 +407,7 @@ public class CalculateLocations
             PartialLocation pl = (PartialLocation)
                 DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
             pl.setSubjectStart(new Integer(1));
-            pl.setSubjectEnd(new Integer((childLength
-                                         - (childOnChr.getEnd() - parentOnChr.getEnd())) + 1));
+            pl.setSubjectEnd(new Integer(parentOnChr.getEnd() - childOnChr.getStart() + 1));
             childOnParent = pl;
         } else {
             //  ------------------  parent
@@ -425,12 +421,14 @@ public class CalculateLocations
         childOnParent.setStartIsPartial(startIsPartial ? Boolean.TRUE : Boolean.FALSE);
         childOnParent.setEndIsPartial(endIsPartial ? Boolean.TRUE : Boolean.FALSE);
         childOnParent.setStart(new Integer(startIsPartial ? 1
-                                    : ((childOnChr.getStart() - parentOnChr.getStart()) + 1)));
+                                           : (childOnChr.getStart() - parentOnChr.getStart() + 1)));
         childOnParent.setEnd(new Integer(endIsPartial ? parentLength
-                                    : ((childOnChr.getEnd() - parentOnChr.getStart()) + 1)));
+                                         : (childOnChr.getEnd() - parentOnChr.getStart() + 1)));
         childOnParent.setStrand(new Integer(childOnChr.getStrand()));
         // TODO evidence?
 
+        LOG.info("Created Location " + childOnParent + " for parent: " + parent + " and child: "
+                 + child);
         return childOnParent;
     }
 
@@ -448,8 +446,8 @@ public class CalculateLocations
                                               Chromosome chr, BioEntity child) {
         Location childOnChr =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        childOnChr.setStart(new Integer(parentOnChr.getStart() + childOnParent.getStart()));
-        childOnChr.setEnd(new Integer(parentOnChr.getStart() + childOnParent.getEnd()));
+        childOnChr.setStart(new Integer(parentOnChr.getStart() + childOnParent.getStart() - 1));
+        childOnChr.setEnd(new Integer(parentOnChr.getStart() + childOnParent.getEnd() - 1));
         childOnChr.setStrand(new Integer(0));
         childOnChr.setStartIsPartial(Boolean.FALSE);
         childOnChr.setEndIsPartial(Boolean.FALSE);
