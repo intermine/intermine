@@ -4,15 +4,15 @@
 
 <artheader>
 <date>2003-1-8</date>
-<title>Obtaining write access to FlyMine source code</title>
+<title>Obtaining write access to InterMine source code</title>
 </artheader>
 
 <sect1>
 <title>Introduction</title>
 
-<para>This document details how active developers can obtain FlyMine
+<para>This document details how active developers can obtain InterMine
 source code from the main CVS server. If you are looking for read-only
-access to the FlyMine public CVS server, instructions are <ulink
+access to the InterMine public CVS server, instructions are <ulink
 url="cvs-user">here</ulink>.</para>
 
 </sect1>
@@ -21,7 +21,7 @@ url="cvs-user">here</ulink>.</para>
 <title>Instructions</title>
 
 <sect2>
-<title>From inside flymine.org domain</title>
+<title>From inside intermine.org domain</title>
 
 <itemizedlist>
 
@@ -29,9 +29,9 @@ url="cvs-user">here</ulink>.</para>
 to check out the source.</listitem>
 
 <listitem>Issue the command <command>cvs
--d :ext:cvs-internal.flymine.org/cvs co flymine</command>.</listitem>
+-d :ext:cvs-internal.flymine.org/cvs co intermine</command>.</listitem>
 
-<listitem><command>cd flymine</command>.</listitem>
+<listitem><command>cd intermine</command>.</listitem>
 
 <listitem><command>ant -projecthelp</command> gives a list of all the
 possible build targets.</listitem>
@@ -42,12 +42,12 @@ possible build targets.</listitem>
 
 <sect2>
 
-<title>From outside flymine.org domain</title>
+<title>From outside intermine.org domain</title>
 
-<para>The FlyMine main CVS server is on a machine inside the firewall
+<para>The InterMine main CVS server is on a machine inside the firewall
 and does not have an external IP address. However, a port on the
 firewall is set up to forward ssh packets to the cvs server. You will
-require ssh access to the FlyMine system in order to use this
+require ssh access to the Intermine system in order to use this
 machine.</para>
 
 <itemizedlist>

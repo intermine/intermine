@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-09-15</date>
-		<title>Flymine - Characteristics of the Safe ObjectStore Implementation</title>
+		<title>Intermine - Characteristics of the Safe ObjectStore Implementation</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -15,7 +15,7 @@
 
 	<sect1>
 		<title>Introduction</title>
-		<para>This document details the characteristics of the Safe ObjectStore Implementation, org.flymine.objectstore.safe.ObjectStoreSafeImpl.
+		<para>This document details the characteristics of the Safe ObjectStore Implementation, org.intermine.objectstore.safe.ObjectStoreSafeImpl.
 			It describes how the implementation works, what characteristics this provides, how to use it for optimimum performance, and when to use it.</para>
 	</sect1>
 
@@ -26,7 +26,7 @@
 			Therefore, whenever a Query object is passed by the user to the implementation, a clone is made that can be treated independently of the user's Query (which may well be subsequently altered).</para>
 		<graphic fileref="results" align="Right"/>
 		<para>Obviously, it would be a very significant performance problem if every call to the database was made using a fresh clone of the Query.
-			Apart from the overhead used to clone the Query objects, some ObjectStore implementations (such as org.flymine.objectstore.webservice.ObjectStoreClientImpl) cache Query objects, and give a significant performance difference between using a new Query on every operation and using the same Query every time.
+			Apart from the overhead used to clone the Query objects, some ObjectStore implementations (such as org.intermine.objectstore.webservice.ObjectStoreClientImpl) cache Query objects, and give a significant performance difference between using a new Query on every operation and using the same Query every time.
 			Therefore, it is recommended that the only method of the ObjectStoreSafeImpl that is called is ObjectStore.execute(Query), which returns a Results object.
 			A Results object holds (among other things) a reference to an ObjectStore, and a reference to a Query object.
 			The Results object returned by this implementation holds a reference to the underlying non-safe ObjectStore, with a reference to the clone of the original Query.
@@ -59,11 +59,11 @@
 		<para>Generally, we recommend that you wrap any ObjectStore (except ObjectStoreSafeImpl) in an ObjectStoreSafeImpl.
 			No functionality is lost, and a lot of confusion can be averted in one simple stroke.
 			You should only not do this if you know for sure that the safety is not required.</para>
-		<para>If you are a remote user of a database service such as the Flymine database, then your underlying ObjectStore will be the org.flymine.objectstore.webservice.ObjectStoreClientImpl, which makes a connection to a server over a network connection.
+		<para>If you are a remote user of a database service such as the InterMine database, then your underlying ObjectStore will be the org.intermine.objectstore.webservice.ObjectStoreClientImpl, which makes a connection to a server over a network connection.
 			This implementation is particularly vulnerable to safety problems, so it is highly recommended that you wrap it in an ObjectStoreSafeImpl.
 			However, it is then very vulnerable to performance problems if the end user calls ObjectStore.count() and ObjectStore.estimate(), or ObjectStore.execute() multiple times.
 			Therefore, make sure you write your software to follow the guidelines above if it may use the ObjectStoreClientImpl.</para>
-		<para>If you are writing software that generates Query objects from FQL (like our org.flymine.objectstore.webservice.ObjectStoreServerImpl - which is not an ObjectStore, but the server that ObjectStoreClientImpl uses), then it is likely that it does not need the ObjectStoreSafeImpl.</para>
+		<para>If you are writing software that generates Query objects from FQL (like our org.intermine.objectstore.webservice.ObjectStoreServerImpl - which is not an ObjectStore, but the server that ObjectStoreClientImpl uses), then it is likely that it does not need the ObjectStoreSafeImpl.</para>
 		<para>If your software only runs a single Query, or if it is guaranteed to never modify a Query object once it has been handed to the ObjectStore, then it does not need the ObjectStoreSafeImpl.</para>
 	</sect1>
 </article>

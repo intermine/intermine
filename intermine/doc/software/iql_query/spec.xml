@@ -3,7 +3,7 @@
 <article>
 	<artheader>
 		<date>2003-05-19</date>
-		<title>Flymine - FQL text-based query specification</title>
+		<title>InterMine - IQL text-based query specification</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -14,17 +14,17 @@
 
 	<sect1>
 		<title>Introduction</title>
-		<para>This document is a specification for the text-based version of the Flymine Query, named FQL (Flymine Query Language) after SQL and OQL.
+		<para>This document is a specification for the text-based version of the InterMine Query, named IQL (InterMine Query Language) after SQL and OQL.
 			The language has similar syntax to SQL and OQL, with a few subtle differences.
-			The language maps directly onto the Flymine Query Java structure - indeed it was constructed specifically so.
+			The language maps directly onto the InterMine Query Java structure - indeed it was constructed specifically so.
 			This is the reason for the syntax being as it is.</para>
 	</sect1>
 
 	<sect1>
 		<title>General syntax</title>
-		<para>An FQL statement follows the following form:</para>
+		<para>An IQL statement follows the following form:</para>
 		<para>SELECT <emphasis>&lt;list of QueryNode objects&gt;</emphasis> FROM <emphasis>&lt;list of FromElements (QueryClass objects, or subqueries)&gt;</emphasis> [ WHERE <emphasis>&lt;a constraint&gt;</emphasis> ] [ GROUP BY <emphasis>&lt;list of QueryNode objects&gt;</emphasis> ] [ ORDER BY <emphasis>&lt;list of QueryNode objects&gt;</emphasis> ]</para>
-		<para>As one can see, an FQL statement is simpler than an SQL statement (which has HAVING, LIMIT, and OFFSET clauses).
+		<para>As one can see, an IQL statement is simpler than an SQL statement (which has HAVING, LIMIT, and OFFSET clauses).
 			There are no UNIONs or anything else particularly fishy.</para>
 	</sect1>
 
@@ -36,8 +36,8 @@
 			There must be no more than one instance of each alias in the FROM clause.</para>
 		<itemizedlist>
 			<listitem><highlights>QueryClass objects</highlights>. The textual representation of a QueryClass is merely the name of the java class, without the common prefix, which should be supplied along with the query.
-				For instance, if one wishes to create a QueryClass for a Class of org.flymine.model.testmodel.Manager, and one had a prefix of "org.flymine.model.testmodel", one would write "Manager" as the text for the required QueryClass.</listitem>
-			<listitem><highlights>Subqueries</highlights>. The textual representation of a subquery is (like SQL) the entire text of the subquery as an FQL query, enclosed inside parentheses.
+				For instance, if one wishes to create a QueryClass for a Class of org.intermine.model.testmodel.Manager, and one had a prefix of "org.intermine.model.testmodel", one would write "Manager" as the text for the required QueryClass.</listitem>
+			<listitem><highlights>Subqueries</highlights>. The textual representation of a subquery is (like SQL) the entire text of the subquery as an IQL query, enclosed inside parentheses.
 				Note that this <emphasis>must</emphasis> be followed by an alias.</listitem>
 		</itemizedlist>
 	</sect1>
@@ -109,15 +109,15 @@
 				The textual representation is the first QueryClass, followed by "=" or "!=", followed by the second QueryClass.</listitem>
 			<listitem><highlights>ContainsConstraint</highlights> - This is a comparison between a reference type member of a QueryClass, and a QueryClass that the reference may contain.
 				There are two types of reference which can be present in an object - an object reference (which references a single object), and a collection reference (which is represented in the object as a Collection containing multiple objects).
-				Nevertheless, both types of reference are treated exactly the same in FQL - the only noticeable difference between them being that collections are often named with a plural-like name (for instance "departments").
+				Nevertheless, both types of reference are treated exactly the same in IQL - the only noticeable difference between them being that collections are often named with a plural-like name (for instance "departments").
 				So, even though you may wish to write "<emphasis>Department.company = Company</emphasis>", the correct syntax is "<emphasis>Department.company CONTAINS Company</emphasis>".
 				The textual representation is a reference type (represented as the QueryClass followed by a dot, followed by the name of the reference), followed by "CONTAINS" or "DOES NOT CONTAIN", followed by the QueryClass being referred to.
 				For example - "<emphasis>Company.departments CONTAINS Department</emphasis>".</listitem>
 			<listitem><highlights>SubqueryConstraint</highlights> - This is a comparison between the results of a subquery, and a QueryClass or a QueryEvaluable.
 				The constraint will return true if the value of the QueryClass or QueryEvaluable is present (or not present) in one of the rows of the results of the subquery.
-				The textual representation is the QueryClass or QueryEvaluable, followed by "IN" or "NOT IN", followed by an FQL query statement with only one element in the SELECT list, enclosed in parentheses.
+				The textual representation is the QueryClass or QueryEvaluable, followed by "IN" or "NOT IN", followed by an IQL query statement with only one element in the SELECT list, enclosed in parentheses.
 				For example "<emphasis>Company.name IN (SELECT Company.name AS name FROM Company)</emphasis>".</listitem>
-			<listitem><highlights>NotConstraint</highlights> - This isn't actually a Flymine Query Java object - but it is a textual representation of reversing the <emphasis>negated</emphasis> flag on any Constraint.
+			<listitem><highlights>NotConstraint</highlights> - This isn't actually a InterMine Query Java object - but it is a textual representation of reversing the <emphasis>negated</emphasis> flag on any Constraint.
 				The textual representation is "NOT", followed by the Constraint to reverse.
 				If In Doubt, Use Brackets.
 				For example "<emphasis>NOT Company.name = Department.name</emphasis>".</listitem>

@@ -4,7 +4,7 @@
 
 <artheader>
 	<date>2002-11-13</date>
-	<title>Flymine - Graphical Query Specification</title>
+	<title>InterMine - Graphical Query Specification</title>
 	<authorgroup>
 		<author>
 			<firstname>Matthew</firstname>
@@ -16,7 +16,7 @@
 <sect1>
 <title>Introduction</title>
 <para>
-	This document is an attempt to create a consistent specification of the Flymine query, specifically its graphical representation.
+	This document is an attempt to create a consistent specification of the InterMine query, specifically its graphical representation.
 </para>
 </sect1>
 
