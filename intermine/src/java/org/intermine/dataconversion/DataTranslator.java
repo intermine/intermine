@@ -383,6 +383,28 @@ public class DataTranslator
     }
 
     /**
+     * Check if a ReferenceList contains exactly one element.
+     * @param col a ReferenceList
+     * @return true if contains exactly one element
+     */
+    protected boolean isSingleElementCollection(ReferenceList col) {
+        return (col.getRefIds().size() == 1);
+    }
+
+    /**
+     * Return the first identifier in a collection or null if empty.
+     * @param col a ReferenceList
+     * @return first identifier in collection or null if empty
+     */
+    protected String getFirstId(ReferenceList col) {
+        if (col.getRefIds().size() > 0) {
+            return (String) col.getRefIds().get(0);
+        }
+        return null;
+    }
+
+
+    /**
      * Given an item in src format and a template (a list of path expressions) create
      * a SubclassRestriction object with attribute values filled in if present.
      * If any attribute has a null value or a reference is not present return null.
