@@ -134,4 +134,44 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         verifyNoActionErrors();
     }
 
+    /**
+     * No need to test every single thing about moving columns up or
+     * down - that is done in DisplayableResultsTest. Here we just do
+     * a quick check to see if a couple of operations work, and that
+     * we are forwarded to the correct page
+     */
+    public void testMoveColumnUp() throws Exception {
+        setRequestPathInfo("/changeResults");
+        addRequestParameter("method", "moveColumnUp");
+        addRequestParameter("columnAlias", "d");
+
+        getSession().setAttribute("results", results);
+        getSession().setAttribute("resultsTable", dr);
+
+        assertEquals(dr.getColumn("c"), dr.getColumns().get(0));
+
+        actionPerform();
+
+        assertEquals(dr.getColumn("d"), dr.getColumns().get(0));
+        verifyForward("results");
+        verifyNoActionErrors();
+    }
+
+    public void testMoveColumnDown() throws Exception {
+        setRequestPathInfo("/changeResults");
+        addRequestParameter("method", "moveColumnDown");
+        addRequestParameter("columnAlias", "c");
+
+        getSession().setAttribute("results", results);
+        getSession().setAttribute("resultsTable", dr);
+
+        assertEquals(dr.getColumn("c"), dr.getColumns().get(0));
+
+        actionPerform();
+
+        assertEquals(dr.getColumn("d"), dr.getColumns().get(0));
+        verifyForward("results");
+        verifyNoActionErrors();
+    }
+
 }
