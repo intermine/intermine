@@ -19,8 +19,8 @@
 <td align="left" valign="bottom" width="90%">
 <font size="+2" color="green"><b>FlyMine</b></font>
 
-<br><font size="+1">An integrated database for <i>Drosophila</i> and <i>Anopheles</i> genomics</font>
-<br><hr width="100%" align="center">
+<br /><font size="+1">An integrated database for <i>Drosophila</i> and <i>Anopheles</i> genomics</font>
+<br /><hr width="100%" align="center" />
 </td>
 </tr>
 </table>
@@ -33,13 +33,12 @@
 <tr>
 <td align="left" valign="top">
 
-The FlyMine project is building an integrated database of genomic,
+<p>The FlyMine project is building an integrated database of genomic,
 expression and protein data for <i>Drosophila</i> and <i>Anopheles</i>
 and making this available to the worldwide research community via web
 and bioinformatics interfaces. The FlyMine project is based at the <a
 href="http://www.gen.cam.ac.uk">Department of Genetics</a>, <a
-href="http://www.cam.ac.uk">University of Cambridge</a>.
-<p>
+href="http://www.cam.ac.uk">University of Cambridge</a>.</p>
 
 
 <h2>Aims</h2>
@@ -76,7 +75,7 @@ database and data by the community.</li>
 
 </ul>
 
- <br>
+<br />
 
 <h2>Personnel</h2>
 
@@ -84,9 +83,9 @@ database and data by the community.</li>
 <tr><td>Gos Micklem</td><td>Project Leader</td><td><a href="mailto:gos[at]flymine.org">gos[at]flymine.org</a></td></tr>
 <tr><td>Francois Guillier</td><td>System Administrator</td><td><a href="mailto:francois[at]flymine.org">francois[at]flymine.org</a></td></tr>
 <tr><td>Andrew Varley</td><td>Senior Developer</td><td><a href="mailto:andy[at]flymine.org">andy[at]flymine.org</a></td></tr>
-<tr><td>Hiring soon</td><td>Developer</td><td></td></tr>
-<tr><td>Hiring soon</td><td>Developer</td><td></td></tr>
-<tr><td>Hiring soon</td><td>Developer</td><td></td></tr>
+<tr><td><a href="jobs.html#javadev">Hiring now - see advert</a></td><td>Developer</td><td></td></tr>
+<tr><td><a href="jobs.html#javadev">Hiring now - see advert</a></td><td>Developer</td><td></td></tr>
+<tr><td><a href="jobs.html#javadev">Hiring now - see advert</a></td><td>Developer</td><td></td></tr>
 <tr><td><a href="jobs.html#dba">Hiring now - see advert</a></td><td>Production DBA</td><td></td></tr>
 <tr><td><a href="jobs.html#analysis">Hiring now - see advert</a></td><td>Analysis/User support</td><td></td></tr>
 
@@ -106,7 +105,7 @@ database and data by the community.</li>
   <tr>
     <td colspan="2" bgcolor="#ccffcc" align="center">
       FlyMine, Department of Genetics, Downing Street, Cambridge, CB2 3EH, UK
-      <br>Tel: +44 (0)1223 333999.  Fax: +44 (0)1223 333992.  <a href="mailto:info[at]flymine.org">info[at]flymine.org</a>
+      <br />Tel: +44 (0)1223 333999.  Fax: +44 (0)1223 333992.  <a href="mailto:info[at]flymine.org">info[at]flymine.org</a>
     </td>
   </tr>
 </table>
