@@ -173,6 +173,7 @@
     <fileset dir="${lib}">
       <patternset refid="lib.antlr"/>
     </fileset>
+    <pathelement location="${build.model}/datatracking"/>
   </path>
 
   <path id="checkstyle.class.path">
@@ -300,8 +301,7 @@
   <!-- Compilation targets -->
 
   <!-- main java source -->
-  <target name="compile-main" depends="prepare"
-          description="compile the java source" >
+  <target name="precompile-main" depends="prepare">
     <copy todir="${build.src.java}">
       <fileset dir="${src.java}">
         <include name="**/*.java"/>
@@ -318,17 +318,36 @@
     </antlr>
     <javac destdir="${build.java}" listfiles="yes">
       <classpath refid="project.class.path"/>
-      <src path="${build.src.java}" />
+      <src path="${build.src.java}"/>
+      <include name="org/flymine/codegen/**"/>
+      <include name="org/flymine/metadata/**"/>
+      <include name="org/flymine/util/**"/>
+      <include name="org/flymine/model/**"/>
+      <include name="org/flymine/task/**"/>
     </javac>
   </target>
 
+  <target name="compile-datatracking" depends="precompile-main">
+    <ant antfile="build-model.xml" target="build-model-from-xml">
+      <property name="model.name" value="datatracking"/>
+      <property name="model.src" value="${model}/datatracking"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>
+  </target>
 
+  <target name="compile-main" depends="compile-datatracking"
+    description="compile the java source">
+    <javac destdir="${build.java}" listfiles="yes">
+      <classpath refid="project.class.path"/>
+      <src path="${build.src.java}"/>
+    </javac>
+  </target>
 
 
   <!-- Models to build -->
 
   <!-- Testmodel -->
-  <target name="build-testmodel" depends="compile-main, copy-model-testmodel" >
+  <target name="build-testmodel" depends="compile-main" >
     <ant antfile="build-model.xml" target="build-model-from-xml">
       <property name="model.name" value="testmodel"/>
       <property name="model.src" value="${model}/testmodel"/>
@@ -348,7 +367,7 @@
   <target name="insert-data-testmodel" depends="build-db-testmodel">
     <taskdef
       name="insert-xml-data"
-      classname="org.flymine.task.InsertXmlDataTask">
+      classname="org.flymine.dataloader.InsertXmlDataTask">
       <classpath refid="project.class.path"/>
     </taskdef>
 
@@ -372,11 +391,6 @@
   <!-- copy original .wrm file to model directory for acedataloadertest -->
   <target name="copy-model-acedbtest" depends="build-acedbtest">
     <copy todir="${build.model}/acedbtest" file="${model}/acedb/acedbtest.wrm"/>
-  </target>
-
-  <!-- copy original flymine model file to model directory for testmodel -->
-  <target name="copy-model-testmodel">
-    <copy todir="${build.model}/testmodel" file="${model}/testmodel/testmodel_model.xml"/>
   </target>
 
   <!-- copy original .xmi file to model directory for XmiParserFunctionalTest -->
@@ -410,7 +424,7 @@
    <target name="insert-data-acedb" depends="build-db-acedb">
     <taskdef
           name="insert-ace-data"
-          classname="org.flymine.task.InsertAceDataTask">
+          classname="org.flymine.dataloader.InsertAceDataTask">
       <classpath refid="acedb.class.path"/>
     </taskdef>
 
@@ -423,7 +437,7 @@
   <target name="insert-only-acedb-data">
     <taskdef
           name="insert-ace-data"
-          classname="org.flymine.task.InsertAceDataTask">
+          classname="org.flymine.dataloader.InsertAceDataTask">
       <classpath refid="acedb.class.path"/>
     </taskdef>
 
@@ -462,7 +476,7 @@
    <target name="insert-data-productionmodel" depends="build-db-productionmodel">
     <taskdef
       name="insert-xml-data"
-      classname="org.flymine.task.InsertXmlDataTask">
+      classname="org.flymine.dataloader.InsertXmlDataTask">
       <classpath refid="project.class.path"/>
     </taskdef>
 
@@ -487,7 +501,7 @@
 
   <!-- test out creating java objects from chado model -->
   <target name="retrieve-chado" depends="convert-chado">
-    <taskdef name="retrieve-chado" classname="org.flymine.task.ChadoRetrieverTask">
+    <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.ChadoRetrieverTask">
       <classpath refid="test.class.path"/>
     </taskdef>
     
@@ -1073,7 +1087,8 @@
       path="${webservice.path}"
       war="file://${dist.webapp}/webservice.war"/> 
     
-    <taskdef name="generate-wsdd" classname="org.flymine.task.GenerateWSDDTask">
+    <taskdef name="generate-wsdd"
+      classname="org.flymine.objectstore.webservice.ser.GenerateWSDDTask">
       <classpath refid="project.class.path" />
     </taskdef>
 
