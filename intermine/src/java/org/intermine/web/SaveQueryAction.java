@@ -24,9 +24,13 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionError;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -61,8 +65,19 @@ public class SaveQueryAction extends Action
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         List view = (List) session.getAttribute(Constants.VIEW);
         String queryName = ((SaveQueryForm) form).getQueryName();
-        ResultsInfo resultsInfo = ViewHelper.makeEstimate(request);
-        saveQuery(request, queryName, qNodes, view, resultsInfo);
+
+        try {
+            ResultsInfo resultsInfo = ViewHelper.makeEstimate(request);
+            saveQuery(request, queryName, qNodes, view, resultsInfo);
+        } catch (ObjectStoreException e) {
+            ActionMessages actionMessages = new ActionMessages();
+            String key = (e instanceof ObjectStoreQueryDurationException)
+                ? "errors.query.estimatetimetoolong"
+                : "errors.query.objectstoreerror";
+            ActionError error = new ActionError(key);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, error);
+            saveMessages(request, actionMessages);
+        }
 
         return mapping.findForward("query");
     }

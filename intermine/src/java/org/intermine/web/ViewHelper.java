@@ -23,7 +23,6 @@ import org.apache.struts.action.ActionError;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.results.TableHelper;
@@ -41,38 +40,14 @@ public abstract class ViewHelper
      *
      * @param request The HTTP request we are currently processing
      * @return the errors that occured during processing or null if there are no errors
+     * @throws ObjectStoreException if an error occurs accessing the ObjectStore
      */
-    public static ResultsInfo makeEstimate(HttpServletRequest request) {
+    public static ResultsInfo makeEstimate(HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-        ResultsInfo resultsInfo = null;
-
-        try {
-            resultsInfo = os.estimate(makeQuery(request));
-        } catch (ObjectStoreException e) {
-            ActionMessages actionMessages = new ActionMessages();
-            ActionError error = new ActionError("errors.query.objectstoreerror");
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, error);
-        } catch (RuntimeException e) {
-            if (e.getCause() != null && e.getCause() instanceof ObjectStoreException) {
-                ActionMessages actionMessages = new ActionMessages();
-                ActionError error;
-
-                if (e.getCause() instanceof ObjectStoreQueryDurationException) {
-                    error = new ActionError("errors.query.estimatetimetoolong");
-                } else {
-                    error = new ActionError("errors.query.objectstoreerror");
-                }
-
-                actionMessages.add(ActionMessages.GLOBAL_MESSAGE, error);
-            } else {
-                throw e;
-            }
-        }
-
-        return resultsInfo;
+        
+        return os.estimate(makeQuery(request));
     }
 
     /**
