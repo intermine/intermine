@@ -104,12 +104,11 @@
     <put name="body" value="tree.tile"/>
     <put name="pageName" value="tree"/>
   </definition>
-  <definition name="classDescription.page" extends="layout.template">
-    <put name="body" value="classDescription.tile"/>
-    <put name="pageName" value="classDescription"/>
+  <definition name="contextHelp.page" extends="layout.template">
+    <put name="body" value="empty.jsp"/>
+    <put name="pageName" value="contextHelp"/>
   </definition>
   <!--tiles-->
-  <definition name="classDescription.tile" path="/classDescription.jsp" controllerUrl="/initClassDescription.do"/>
   <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">

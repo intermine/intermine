@@ -139,6 +139,9 @@
     
     <action path="/feedback"
             forward="feedback.page"/>
+            
+    <action path="/contextHelp"
+            forward="contextHelp.page"/>
     
     <!-- Actions that provide downloads -->
 
@@ -391,9 +394,6 @@
 
     <action path="/initExport"
             type="org.intermine.web.ExportController"/>
-
-    <action path="/initClassDescription"
-            type="org.intermine.web.ClassDescriptionController"/>
 
     <action path="/initBagBuild"
             type="org.intermine.web.BuildBagController"
