@@ -322,7 +322,7 @@ public class MainForm extends ActionForm
      * @return      path to display to user
      */
     public static String dotPathToNicePath(String path) {
-        return path.replaceAll("\\.", " > ");
+        return path;//.replaceAll("\\.", " > ");
     }
 
     /**
