@@ -32,20 +32,11 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.Model;
 
 public class QueryBuildActionTest extends MockStrutsTestCase
 {
-    protected ClassDescriptor cld;
-
     public QueryBuildActionTest(String testName) {
         super(testName);
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-        cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
     public void testEditFql() throws Exception {

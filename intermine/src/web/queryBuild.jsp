@@ -23,9 +23,16 @@
         </c:if>
       </c:forTokens>
     </font>
-    <font class="queryViewFromItemAlias">
-      <c:out value="${alias}"/>
-    </font>
+    <c:choose>
+      <c:when test="${alias == EDITING_ALIAS}">
+        <html:text property="newClassName"/>
+      </c:when>
+      <c:otherwise>
+        <font class="queryViewFromItemAlias">
+          <c:out value="${alias}"/>
+        </font>
+      </c:otherwise>
+    </c:choose>
     <c:if test="${EDITING_ALIAS == null}">
       <html:submit property="buttons(editClass${alias})">
         <fmt:message key="button.edit"/>

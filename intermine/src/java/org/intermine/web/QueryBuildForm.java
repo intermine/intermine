@@ -35,7 +35,6 @@ import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
 
@@ -46,6 +45,8 @@ import org.flymine.metadata.presentation.DisplayModel;
  */
 public class QueryBuildForm extends ActionForm
 {
+    // new alias of class (eg. Department_0)
+    protected String newClassName = null;
     // field to which a constraint is to be added - used when the user adds a constraint
     protected String newFieldName = null;
     // map from constraint name to constaintOp index
@@ -56,6 +57,22 @@ public class QueryBuildForm extends ActionForm
     protected Map buttons = new HashMap();
     // the names of the selected constraints
     protected String[] selectedConstraints;
+
+    /**
+     * Set the new class name
+     * @param newClassName the new class name
+     */
+    public void setNewClassName(String newClassName) {
+        this.newClassName = newClassName;
+    }
+
+    /**
+     * Get newClassName
+     * @return the new class name
+     */
+    public String getNewClassName() {
+        return newClassName;
+    }
 
     /**
      * Set newFieldName
@@ -206,6 +223,18 @@ public class QueryBuildForm extends ActionForm
     }
 
     /**
+     * Return the name of the last button pressed
+     * @return the button name
+     */
+    public String getButton() {
+        if (buttons.size() == 0) {
+            return "";
+        } else {
+            return (String) buttons.keySet().iterator().next();
+        }
+    }
+
+    /**
      * Return a Map of field names to ConstraintOp objects.  The ConstraintOp objects are created
      * by validate().
      *
@@ -251,43 +280,43 @@ public class QueryBuildForm extends ActionForm
         if (!buttons.containsKey("updateClass")) {
             return null;
         }
-        
+
+        //get relevant stuff off session
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
+        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        
+        DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
 
+        //initialise values to be returned/updated
+        ActionErrors errors = new ActionErrors();
         parsedFieldValues = new HashMap();
         parsedFieldOps = new HashMap();
 
-        DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
-        ActionErrors errors = new ActionErrors();
-        ServletContext servletContext = session.getServletContext();
-        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
-
-        ClassDescriptor cd = model.getClassDescriptorByName(d.getType());
-        Class selectClass = cd.getType();
-
-        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-
+        //first validate constraints
         for (Iterator i = new ArrayList(d.getConstraintNames()).iterator(); i.hasNext();) {
             String constraintName = (String) i.next();
             String fieldName = (String) d.getFieldNames().get(constraintName);
             String fieldValue = (String) getFieldValue(constraintName);
             String fieldOp = (String) getFieldOp(constraintName);
 
-            Integer opCode = Integer.valueOf(fieldOp);
-            ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
+            ConstraintOp op = ConstraintOp.getOpForIndex(Integer.valueOf(fieldOp));
 
-            Map fieldDescriptors = model.getFieldDescriptorsForClass(selectClass);
+            Map fieldDescriptors = model.
+                getFieldDescriptorsForClass(TypeUtil.instantiate(d.getType()));
             FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(fieldName);
 
-            ActionError actionError = null;
             if (fd.isAttribute()) {
-                actionError = validateAttribute((AttributeDescriptor) fd, op, constraintName,
-                                                fieldValue, locale, savedBags);
-                if (actionError == null) {
+                ActionError error = validateAttribute((AttributeDescriptor) fd, op, constraintName,
+                                                      fieldValue, locale, savedBags);
+                if (error == null) {
                     parsedFieldOps.put(constraintName, op);
+                } else {
+                    errors.add(constraintName, error);
                 }
             } else if (fd.isReference() || fd.isCollection()) {
                 //it's possible we presented the user with a blank drop-down
@@ -295,15 +324,21 @@ public class QueryBuildForm extends ActionForm
                     d.getConstraintNames().remove(constraintName);
                     d.getFieldNames().remove(constraintName);
                 } else {
+                    //don't need to check this - we constructed the drop-down
                     parsedFieldOps.put(constraintName, op);
                     parsedFieldValues.put(constraintName, fieldValue);
                 }
             }
+        }
 
-            if (actionError != null) {
-                errors.add(constraintName, actionError);
-            } 
-
+        //then class alias
+        if (newClassName != null) {
+            if (newClassName.equals("")) {
+                errors.add(newClassName, new ActionError("errors.invalidname"));
+            }
+            if (!newClassName.equals(editingAlias) && queryClasses.containsKey(newClassName)) {
+                errors.add(newClassName, new ActionError("errors.duplicatename", newClassName));
+            }
         }
 
         return errors;

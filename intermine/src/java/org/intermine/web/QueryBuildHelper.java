@@ -361,12 +361,45 @@ public class QueryBuildHelper
                 ConstraintOp op = (ConstraintOp) d.getFieldOps().get(constraintName);
                 if ((op == ConstraintOp.CONTAINS || op == ConstraintOp.DOES_NOT_CONTAIN)
                     && d.getFieldValues().get(constraintName).equals(alias)) {
-                     d.getFieldNames().remove(constraintName);
-                     d.getFieldOps().remove(constraintName);
-                     d.getFieldValues().remove(constraintName);
-                     d.getConstraintNames().remove(constraintName);
+                    removeConstraint(d, constraintName);
                 }
             }
         }
+    }
+
+    /**
+     * Remove a constraint from a DisplayQueryClass
+     * @param d the query class
+     * @param constraintName the name of the constraint
+     */
+    public static void removeConstraint(DisplayQueryClass d, String constraintName) {
+        d.getFieldNames().remove(constraintName);
+        d.getFieldOps().remove(constraintName);
+        d.getFieldValues().remove(constraintName);
+        d.getConstraintNames().remove(constraintName);
+    }
+
+    /**
+     * Rename a class by changing its alias and updating all the constraints that point to it
+     * @param queryClasses the current queryClass Map
+     * @param oldName the old name of the query class
+     * @param newName the new name of the query class
+     */
+    public static void renameClass(Map queryClasses, String oldName, String newName) {
+        //firstly fix all the contains constraints that point to this alias
+        for (Iterator i = queryClasses.values().iterator(); i.hasNext();) {
+            DisplayQueryClass d = (DisplayQueryClass) i.next();
+            for (Iterator j = d.getConstraintNames().iterator(); j.hasNext();) {
+                String constraintName = (String) j.next();
+                ConstraintOp op = (ConstraintOp) d.getFieldOps().get(constraintName);
+                if ((op == ConstraintOp.CONTAINS || op == ConstraintOp.DOES_NOT_CONTAIN)
+                    && d.getFieldValues().get(constraintName).equals(oldName)) {
+                    d.getFieldValues().put(constraintName, newName);
+                }
+            }
+        }
+        //then actually rename the class
+        DisplayQueryClass d = (DisplayQueryClass) queryClasses.remove(oldName);
+        queryClasses.put(newName, d);
     }
 }

@@ -63,24 +63,24 @@ public class QueryBuildController extends TilesAction
             session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
             session.setAttribute(Constants.QUERY, null);
         }
-    
-        //we are editing a QueryClass - render it as a form
-        if (editingAlias != null) {
+
+        QueryBuildForm qbf = (QueryBuildForm) form;
+        //someone has started editing a class - populate the form
+        if (qbf.getButton().startsWith("editClass")) {
+            qbf.setNewClassName(editingAlias);
             DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
-            QueryBuildForm qbf = (QueryBuildForm) form;
-
             QueryBuildHelper.populateForm(qbf, d);
-
+            
             ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;
             session.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
-
+            
             session.setAttribute("allFieldNames", QueryBuildHelper.getAllFieldNames(cld));
-
+            
             session.setAttribute("validAliases",
                                  QueryBuildHelper.getValidAliases(cld, queryClasses));
         }
-
+        
         return null;
     }
 }

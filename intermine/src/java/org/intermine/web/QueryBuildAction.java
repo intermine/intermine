@@ -49,11 +49,10 @@ public class QueryBuildAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        QueryBuildForm qbf = (QueryBuildForm) form;
-        
         ActionForward forward = null;
-        Map buttons = qbf.getButtons();
-        String button = (String) buttons.keySet().iterator().next();
+
+        QueryBuildForm qbf = (QueryBuildForm) form;
+        String button = qbf.getButton();        
 
         if ("editFql".equals(button)) {
             forward = editFql(mapping, form, request, response);
@@ -70,7 +69,7 @@ public class QueryBuildAction extends Action
         } else if ("runQuery".equals(button)) {
             forward = runQuery(mapping, form, request, response);
         }
-        
+
         return forward;
     }
 
@@ -184,6 +183,10 @@ public class QueryBuildAction extends Action
         DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
         d.setFieldOps(qbf.getParsedFieldOps());
         d.setFieldValues(qbf.getParsedFieldValues());
+
+        if (!editingAlias.equals(qbf.getNewClassName())) {
+            QueryBuildHelper.renameClass(queryClasses, editingAlias, qbf.getNewClassName());
+        }
         
         session.removeAttribute(Constants.EDITING_ALIAS);
 
@@ -210,15 +213,10 @@ public class QueryBuildAction extends Action
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         QueryBuildForm qbf = (QueryBuildForm) form;
-        String[] selectedConstraints = qbf.getSelectedConstraints();
-
         DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
+        String[] selectedConstraints = qbf.getSelectedConstraints();
         for (int i = 0; i < selectedConstraints.length; i++) {
-            String constraintName = selectedConstraints[i];
-            d.getConstraintNames().remove(constraintName);
-            d.getFieldNames().remove(constraintName);
-            d.getFieldOps().remove(constraintName);
-            d.getFieldValues().remove(constraintName);
+            QueryBuildHelper.removeConstraint(d, selectedConstraints[i]);
         }
 
         return mapping.findForward("buildquery");
@@ -243,8 +241,7 @@ public class QueryBuildAction extends Action
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
 
         QueryBuildForm qbf = (QueryBuildForm) form;
-        String button = (String) qbf.getButtons().keySet().iterator().next();
-        String alias = button.substring("removeClass".length());
+        String alias = qbf.getButton().substring("removeClass".length());
 
         queryClasses.remove(alias);
         QueryBuildHelper.removeContainsConstraints(queryClasses, alias);
@@ -269,8 +266,7 @@ public class QueryBuildAction extends Action
         HttpSession session = request.getSession();
 
         QueryBuildForm qbf = (QueryBuildForm) form;
-        String button = (String) qbf.getButtons().keySet().iterator().next();
-        String alias = button.substring("editClass".length());
+        String alias = qbf.getButton().substring("editClass".length());
 
         session.setAttribute(Constants.EDITING_ALIAS, alias);
 
