@@ -7,8 +7,15 @@
     <para>
 The FlyMine database is currently in the late stages of Beta release.  We
 believe that it contains an accurate representation of the source databases,
-but for some source we are still working to complete the integration and add
+but for some sources we are still working to complete the integration and add
 value.
+    </para>
+    <para>
+We are planning to extend the FlyMine web site to include viewing and
+analysis tools, including genome annotation brower (perhaps <ulink
+url="http://www.gmod.org/ggb/gbrowse.shtml">GBrowse</ulink>), microarray
+analysis tools and a 3D structure viewer (such as <ulink
+url="http://kinemage.biochem.duke.edu/javamage/java.html">Java Mage</ulink>).
     </para>
     <sect2>
       <title>Current Data Sources</title>
@@ -17,32 +24,32 @@ value.
       </para>
       <itemizedlist>
         <listitem>
-          Genome Annotation for D. melanogaster and A. gambiae from Ensembl
-          (<ulink url="http://www.ensembl.org"></ulink>)
+          Genome Annotation for D. melanogaster and A. gambiae from
+          <ulink url="http://www.ensembl.org">Ensembl</ulink>
         </listitem>
         <listitem>
-          Orthologues between D. melanogaster and A. gambiae from Ensembl
-          (<ulink url="http://www.ensembl.org"></ulink>)
+          Orthologues between D. melanogaster and A. gambiae from
+          <ulink url="http://www.ensembl.org">Ensembl</ulink>
         </listitem>
         <listitem>
           Orthologues and Paralogues between D. melanogaster and C. elegans from
-          inParanoid (<ulink url="http://inparanoid.cgb.ki.se/index.html"></ulink>)
+          <ulink url="http://inparanoid.cgb.ki.se/index.html">inParanoid</ulink>
         </listitem>
         <listitem>
           2-hybrid protein-protein interactions for D. melanogaster: Curagen set
-          (Giot et al (2003) Science 302 1727-1736) and Hybrigenics set
-          (<ulink url="http://pim.hybrigenics.com/pimrider/nologin/prhome.html"></ulink>)
+          (Giot et al (2003) Science 302 1727-1736) and
+          <ulink url="http://pim.hybrigenics.com/pimrider/nologin/prhome.html">Hybrigenics set</ulink>
         </listitem>
         <listitem>
           2-hybrid protein-protein interactions for C. elegans: (Li et al (2004)
           Science 303 540-543)
         </listitem>
         <listitem>
-          RNAi phenotypes for C. elegans from WormBase (<ulink
-          url="http://www.wormbase.org"></ulink>)
+          RNAi phenotypes for C. elegans from <ulink
+          url="http://www.wormbase.org">WormBase</ulink>
         </listitem>
         <listitem>
-          GO Ontology (<ulink url="http://www.geneontology.org">www.geneontology.org</ulink>)
+          <ulink url="http://www.geneontology.org">Gene Ontology</ulink>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -55,6 +62,17 @@ value.
         <listitem>
           Drosophila microarray data via <ulink
           url="http://www.ebi.ac.uk/arrayexpress">ArrayExpress</ulink>
+        </listitem>
+        <listitem>
+          3-D structural predictions for protein domains from <ulink
+          url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Dr Kenji
+          MIZUGUCHI</ulink>.
+        </listitem>
+        <listitem>
+          Go annotation (from the <ulink
+          url="http://www.geneontology.org">Gene Ontology Consortium</ulink>)
+          together with orthologue/paralogue predictions for several model
+          organisms (from <ulink url="http://inparanoid.cgb.ki.se/">inParanoid</ulink>).
         </listitem>
       </itemizedlist>
     </sect2>
