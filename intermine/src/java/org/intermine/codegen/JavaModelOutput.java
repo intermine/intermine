@@ -3,7 +3,6 @@ package org.flymine.codegen;
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
@@ -89,10 +88,6 @@ public class JavaModelOutput extends ModelOutput
             .append("{" + ENDL);
         
         if (OJB && !cld.isInterface()) {
-            String key = getKey(cld);
-            if (!key.equals("")) {
-                sb.append("protected static String key = \"" + getKey(cld) + "\";" + ENDL);
-            }
             if (cld.getSuperclassDescriptor() == null) {
                 sb.append(INDENT + "protected Integer id;" + ENDL)
                     .append(INDENT + "public Integer getId() { return id; };" + ENDL + ENDL);
@@ -371,32 +366,5 @@ public class JavaModelOutput extends ModelOutput
             type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getClassName();
         }
         return type;
-    }
-
-    private String getKey(ClassDescriptor cld) {
-        StringBuffer sb = new StringBuffer();
-        List keys = cld.getPkFieldDescriptors();
-        toStrings(keys);
-        ClassDescriptor superCld = cld.getSuperclassDescriptor();
-        while (superCld != null) {
-            List moreKeys = superCld.getPkFieldDescriptors();
-            toStrings(moreKeys);
-            keys.removeAll(moreKeys);
-            superCld = superCld.getSuperclassDescriptor();
-        }
-        Iterator iter = keys.iterator();
-        while (iter.hasNext()) {
-            sb.append((String) iter.next());
-            if (iter.hasNext()) {
-                sb.append(" ");
-            }
-        }
-        return sb.toString();
-    }
-
-    private void toStrings(List l) {
-        for (int i = 0; i < l.size(); i++) {
-            l.set(i, ((FieldDescriptor) l.get(i)).getName());
-        }
     }
 }
