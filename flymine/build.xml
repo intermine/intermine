@@ -585,18 +585,6 @@
 
   <!-- PSI MODEL GENERATION -->
 
-  <!-- convert PSI-MI ontology to OWL -->
-  <target name="psi-dag-to-owl" depends="prepare-build-model">
-    <mkdir dir="${build.model}/psi" />
-    <copy file="${model}/psi/psi-mi.dag" todir="${build.model}/psi/"/>
-    <java classname="org.intermine.ontology.Dag2Owl" fork="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/psi/psi-mi.dag" />
-      <arg value="${build.model}/psi/psi-mi.n3" />
-      <arg value="http://www.flymine.org/model/psi-mi#" />
-    </java>
-  </target>
-
   <!-- convert PSI-DEV XML-Schema to OWL -->
   <target name="psi-to-owl" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-model-from-xmlschema" inheritRefs="true">
@@ -616,7 +604,7 @@
   </target>
 
   <!-- merge psi model with current genomic model owl -->
-  <target name="merge-psi-model" depends="prepare-genomic-model, psi-to-owl, psi-dag-to-owl">
+  <target name="merge-psi-model" depends="prepare-genomic-model, psi-to-owl">
     <copy file="${model}/psi/psi_merge_spec.n3" todir="${build.model}/psi/"/>
 
     <!-- combine the psi merge_spec with current genomic model -->
@@ -643,17 +631,6 @@
       <arg value="y" />
     </java>
 
-    <!-- merge psi dag with target model -->
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/psi/psi-mi.n3" />
-      <arg value="http://www.flymine.org/model/psi-mi#" />
-      <arg value="N3" />
-      <arg value="n" />
-    </java>
   </target>
  
 
@@ -1115,6 +1092,40 @@
   </target>
 
   <target name="build-phenotype-production" depends="retrieve-phenotype, load-phenotype"/>
+
+  <!-- PSI PIPELINE -->
+
+  <!-- load psi dag data -->
+  <target name="retrieve-psi-dag" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.psi-dag-tgt-items-std"/>
+    </ant>
+    <taskdef name="retrieve-psi-dag" classname="org.intermine.task.DagConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-psi-dag file="${model}/psi/psi-mi.dag" osName="osw.psi-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#ProteinInteractionTerm" relationClass="http://www.flymine.org/model/genomic#DagRelation"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+  </target>
+
+
+  <target name="load-psi-dag">
+    <taskdef name="load-psi-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-psi-dag integrationWriter="integration.production" source="os.phenotype-translated" sourceName="psi"/>
+  </target>
+
+  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag"/>
 
 
   <!-- LOAD STATIC DATA -->
