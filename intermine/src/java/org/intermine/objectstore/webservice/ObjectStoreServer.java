@@ -41,6 +41,7 @@ public class ObjectStoreServer
      * Construct an ObjectStoreServer that communicates with an ObjectStore
      * given by the objectstoreserver.os property
      *
+     * @throws Exception if the property 'objectstoreserver.os' is missing or invalid
      */
     public ObjectStoreServer() throws Exception {
         // Configure from properties:
