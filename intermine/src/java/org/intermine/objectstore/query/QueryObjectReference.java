@@ -29,17 +29,15 @@ public class QueryObjectReference extends QueryReference
      * @param qc the QueryClass
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
-     * @throws NoSuchFieldException if the field does not exist
-     * @throws IllegalArgumentException if the field is a collection
+     * @throws IllegalArgumentException if the field is not a reference, or does not exist
      */    
-    public QueryObjectReference(QueryClass qc, String fieldName) 
-        throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
+    public QueryObjectReference(QueryClass qc, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
         Method field = TypeUtil.getGetter(qc.getType(), fieldName);
         if (field == null) {
-            throw new NoSuchFieldException("Field " + fieldName + " not found in "
+            throw new IllegalArgumentException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
         if (java.util.Collection.class.isAssignableFrom(field.getReturnType())) {

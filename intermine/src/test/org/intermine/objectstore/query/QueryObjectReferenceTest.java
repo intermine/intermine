@@ -29,16 +29,16 @@ public class QueryObjectReferenceTest extends TestCase
     public void testMissingField() {
         try {
             new QueryObjectReference(qc, "secretarys");
-            fail("A NoSuchFieldException should have been thrown");
-        } catch (NoSuchFieldException e) {
+            fail("A IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
     
     public void testEmptyField() {
         try {
             new QueryObjectReference(qc, "");
-            fail("A NoSuchFieldException should have been thrown");
-        } catch (NoSuchFieldException e) {
+            fail("A IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
     

@@ -53,7 +53,6 @@ public class QueryExpressionTest extends TestCase
             new QueryExpression(field, v1, v2);
             fail("A IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
-        } catch (NoSuchFieldException e) {
         }
     }
 
@@ -65,7 +64,6 @@ public class QueryExpressionTest extends TestCase
             new QueryExpression(field, v1, v2);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
-        } catch (NoSuchFieldException e) {
         }
     }
 

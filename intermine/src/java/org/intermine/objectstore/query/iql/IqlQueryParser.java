@@ -378,13 +378,7 @@ public class FqlQueryParser
             } else {
                 AST thirdAst = secondAst.getNextSibling();
                 if (thirdAst == null) {
-                    try {
-                        return new QueryField((QueryClass) obj, secondAst.getText());
-                    } catch (NoSuchFieldException e) {
-                        IllegalArgumentException e2 = new IllegalArgumentException(e.toString());
-                        e2.initCause(e);
-                        throw e2;
-                    }
+                    return new QueryField((QueryClass) obj, secondAst.getText());
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."
                             + secondAst.getText() + "." + thirdAst.getText() + " extends beyond a "
@@ -410,12 +404,8 @@ public class FqlQueryParser
                         AST fourthAst = thirdAst.getNextSibling();
                         if (fourthAst == null) {
                             if (q2.getSelect().contains(secondObj)) {
-                                try {
-                                    return new QueryField(q2, (QueryClass) secondObj,
-                                            thirdAst.getText());
-                                } catch (NoSuchFieldException e) {
-                                    throw new IllegalArgumentException(e.toString());
-                                }
+                                return new QueryField(q2, (QueryClass) secondObj,
+                                                      thirdAst.getText());
                             } else {
                                 throw new IllegalArgumentException(ast.getText() + "."
                                         + secondAst.getText() + "." + thirdAst.getText()
@@ -721,11 +711,9 @@ public class FqlQueryParser
                                         secondString);
                             }
                         } catch (IllegalArgumentException e) {
-                            throw new IllegalArgumentException("Object " + firstString + "."
-                                    + secondString + " is not a collection or object reference");
-                        } catch (NoSuchFieldException e) {
-                            throw new IllegalArgumentException("No such object " + firstString + "."
-                                    + secondString);
+                            throw new IllegalArgumentException("Object "
+                                            + firstString + "." + secondString + " does not exist"
+                                            + ", or is not a collection or object reference");
                         }
                         // Now we have a collection or object reference. Now we need a class.
                         QueryNode qc = processNewQueryNode(subAST.getNextSibling(), q);

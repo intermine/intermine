@@ -48,12 +48,8 @@ public class QueryCreator
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        try {
-            q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
-                        new QueryValue(id)));
-        } catch (NoSuchFieldException e) {
-            LOG.error("FlyMineBusinessObject.id does not exist!");
-        }
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
+                                             new QueryValue(id)));
         return q;
     }
     
@@ -198,12 +194,9 @@ public class QueryCreator
                 // Add the keys of the other object
                 addKeysToQuery(q, otherQueryClass, otherObject, model);
             }
-        } catch (NoSuchFieldException e) {
-            LOG.error("No such field " + field + " in class " + qc.getType().getName());
         } catch (IllegalAccessException e) {
             LOG.error("Cannot access field " + field + " in object " + obj.toString());
          }
-
     }
 
     /**
@@ -247,16 +240,8 @@ public class QueryCreator
         } else if (qn instanceof QueryField) {
             QueryField qf = (QueryField) qn;
             String origAlias = (String) q.getAliases().get(qf.getFromElement());
-            try {
-                qnNew = new QueryField((QueryClass) ret.getReverseAliases().get(origAlias),
-                                       qf.getFieldName());
-            } catch (NoSuchFieldException e) {
-                // We are using another QueryNode so this this should
-                // be OK, but throw IllegalArgumentException anyway
-                IllegalArgumentException ex = new IllegalArgumentException();
-                ex.initCause(e);
-                throw ex;
-            }
+            qnNew = new QueryField((QueryClass) ret.getReverseAliases().get(origAlias),
+                                   qf.getFieldName());
         } else {
             throw new IllegalArgumentException("Method can only deal with QueryClass "
                                                + "and QueryField");

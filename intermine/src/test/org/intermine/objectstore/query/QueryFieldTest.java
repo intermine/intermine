@@ -26,23 +26,23 @@ public class QueryFieldTest extends TestCase
         qc = new QueryClass(Department.class);
     }
 
-    public void testMissingField() {
+    public void testMissingField() throws Exception {
         try {
             new QueryField(qc, "genes");
-            fail("A NoSuchFieldException should have been thrown");
-        } catch (NoSuchFieldException e) {
+            fail("An IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
     
-    public void testEmptyField() {
+    public void testEmptyField() throws Exception {
         try {
             new QueryField(qc, "");
-            fail("A NoSuchFieldException should have been thrown");
-        } catch (NoSuchFieldException e) {
+            fail("A IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
     
-    public void testNullField() throws NoSuchFieldException {
+    public void testNullField() throws Exception {
         try {
             new QueryField(qc, (String)null);
             fail("A NullPointerException should have been thrown");
@@ -50,7 +50,7 @@ public class QueryFieldTest extends TestCase
         }
     }
 
-    public void testInvalidField() throws NoSuchFieldException {
+    public void testInvalidField() throws Exception {
         try {
             new QueryField(qc, "employees");
             fail("An IllegalArgumentException should have been thrown");

@@ -179,10 +179,6 @@ public class LiteParser
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
             throw e2;
-        } catch (NoSuchFieldException e) {
-            IllegalArgumentException e2 = new IllegalArgumentException();
-            e2.initCause(e);
-            throw e2;
         }
 
         return obj;

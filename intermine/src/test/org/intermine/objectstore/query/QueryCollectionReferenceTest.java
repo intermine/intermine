@@ -29,23 +29,23 @@ public class QueryCollectionReferenceTest extends TestCase
     public void testMissingField() {
         try {
             new QueryCollectionReference(qc, "secretarys");
-            fail("A NoSuchFieldException should have been thrown");
-        } catch (NoSuchFieldException e) {
+            fail("An IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
     
     public void testEmptyField() {
         try {
             new QueryCollectionReference(qc, "");
-            fail("A NoSuchFieldException should have been thrown");
-        } catch (NoSuchFieldException e) {
+            fail("An IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
     
     public void testNullField() throws Exception {
         try {
             new QueryCollectionReference(qc, (String)null);
-            fail("A NoSuchFieldException should have been thrown");
+            fail("A NullPointerException should have been thrown");
         } catch (NullPointerException e) {
         }
     }

@@ -37,18 +37,16 @@ public class QueryField implements QueryEvaluable
      * @param qc the QueryClass
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
-     * @throws NoSuchFieldException if the field does not exist
-     * @throws IllegalArgumentException if the field is a collection
+     * @throws IllegalArgumentException if the field is a reference, a collection or does not exist
      */
-    public QueryField(QueryClass qc, String fieldName)
-        throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
+    public QueryField(QueryClass qc, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
         Method field = TypeUtil.getGetter(qc.getType(), fieldName);
         if (field == null) {
-            throw new NoSuchFieldException("Field " + fieldName + " not found in "
-                                           + qc.getType());
+            throw new IllegalArgumentException("Field " + fieldName
+                                                             + " not found in " + qc.getType());
         }
         if (Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
@@ -75,17 +73,15 @@ public class QueryField implements QueryEvaluable
      * @param qc the QueryClass that the field is a member of
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
-     * @throws NoSuchFieldException if the field does not exist
-     * @throws IllegalArgumentException if the field is a collection
+     * @throws IllegalArgumentException if the field is a collection or does not exist
      */
-    public QueryField(Query q, QueryClass qc, String fieldName)
-        throws NullPointerException, NoSuchFieldException, IllegalArgumentException {
+    public QueryField(Query q, QueryClass qc, String fieldName) {
         if (q == null) {
             throw new NullPointerException("Subquery parameter is null");
         }
         Method field = TypeUtil.getGetter(qc.getType(), fieldName);
         if (field == null) {
-            throw new NoSuchFieldException("Field " + fieldName + " not found in "
+            throw new IllegalArgumentException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
         if (java.util.Collection.class.isAssignableFrom(field.getReturnType())) {

@@ -95,7 +95,7 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select Company.nonExistentField from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because that field does not exist in a Company object");
         } catch (IllegalArgumentException e) {
-            assertEquals("java.lang.NoSuchFieldException: Field nonExistentField not found in interface org.flymine.model.testmodel.Company", e.getMessage());
+            assertEquals("Field nonExistentField not found in interface org.flymine.model.testmodel.Company", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select Company.name.something from Company", "org.flymine.model.testmodel"));
@@ -119,7 +119,7 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select c.Company.nonExistentField from (select Company from Company) as c", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because that field does not exist in a Company object");
         } catch (IllegalArgumentException e) {
-            assertEquals("java.lang.NoSuchFieldException: Field nonExistentField not found in interface org.flymine.model.testmodel.Company", e.getMessage());
+            assertEquals("Field nonExistentField not found in interface org.flymine.model.testmodel.Company", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select c.Company.name.something from (select Company from Company) as c", "org.flymine.model.testmodel"));
@@ -274,13 +274,13 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select Company, Department from Company, Department where Company.name contains Department", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because Company.name is not a collection or object reference");
         } catch (IllegalArgumentException e) {
-            assertEquals("Object Company.name is not a collection or object reference", e.getMessage());
+            assertEquals("Object Company.name does not exist, or is not a collection or object reference", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select Company, Department from Company, Department where Company.jhsfd contains Department", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because jhsfd does not exist");
         } catch (IllegalArgumentException e) {
-            assertEquals("No such object Company.jhsfd", e.getMessage());
+            assertEquals("Object Company.jhsfd does not exist, or is not a collection or object reference", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select Company, Department from Company, Department where Company.departments contains Department.name", "org.flymine.model.testmodel"));

@@ -24,43 +24,38 @@ public class QueryTest extends TestCase
         super(arg);
     }
 
-    public final void setUp() {
+    public final void setUp() throws Exception {
         query = new Query();
         assertNotNull("Problem creating Query instance", query);
 
         // set up three queries for testing .equals() and .hashCode()
-        try {
-            QueryClass qc1 = new QueryClass(Company.class);
-            QueryField qf1 = new QueryField(qc1, "name");
-            QueryField qf2 = new QueryField(qc1, "vatNumber");
-            QueryFunction f1 = new QueryFunction();  // count(*)
-            QueryValue qv1 = new QueryValue("CompanyA");
-            SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.NOT_EQUALS, qv1);
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryField qf1 = new QueryField(qc1, "name");
+        QueryField qf2 = new QueryField(qc1, "vatNumber");
+        QueryFunction f1 = new QueryFunction();  // count(*)
+        QueryValue qv1 = new QueryValue("CompanyA");
+        SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.NOT_EQUALS, qv1);
 
-            q1 = new Query();
-            q1.addToSelect(qc1);
-            q1.addToSelect(f1);
-            q1.setConstraint(sc1);
-            q1.addToGroupBy(qc1);
-            q1.addToOrderBy(qf1);
+        q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(f1);
+        q1.setConstraint(sc1);
+        q1.addToGroupBy(qc1);
+        q1.addToOrderBy(qf1);
 
-            q2 = new Query();
-            q2.addToSelect(qc1);
-            q2.addToSelect(f1);
-            q2.setConstraint(sc1);
-            q2.addToGroupBy(qc1);
-            q2.addToOrderBy(qf1);
+        q2 = new Query();
+        q2.addToSelect(qc1);
+        q2.addToSelect(f1);
+        q2.setConstraint(sc1);
+        q2.addToGroupBy(qc1);
+        q2.addToOrderBy(qf1);
 
-            q3 = new Query();
-            q3.addToSelect(qc1);
-            q3.addToSelect(qc1);
-            q3.setConstraint(sc1);
-            q3.addToGroupBy(qc1);
-            q3.addToOrderBy(qf1);
-        }
-        catch (NoSuchFieldException e) {
-            fail("Problem occurred in setup: " + e.getMessage());
-        }
+        q3 = new Query();
+        q3.addToSelect(qc1);
+        q3.addToSelect(qc1);
+        q3.setConstraint(sc1);
+        q3.addToGroupBy(qc1);
+        q3.addToOrderBy(qf1);
     }
 
     public  void testAddClass() {
