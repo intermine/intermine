@@ -76,5 +76,24 @@ public class AbstractConstraintTest extends TestCase
                 AbstractConstraint.alterComparisonAnd(AbstractConstraint.IMPLIES,
                     AbstractConstraint.IMPLIED_BY));
     }
+
+    public void testCheckComparisonImplies() throws Exception {
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.IMPLIES));
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.EQUAL));
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.BOTH_TRUE));
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.BOTH_FALSE));
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.LEFT_FALSE_RIGHT_TRUE));
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.LEFT_FALSE));
+        assertTrue(AbstractConstraint.checkComparisonImplies(AbstractConstraint.RIGHT_TRUE));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.LEFT_TRUE));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.RIGHT_FALSE));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.OPPOSITE));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.OR));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.IMPLIED_BY));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.INDEPENDENT));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.LEFT_TRUE_RIGHT_FALSE));
+        assertTrue(!AbstractConstraint.checkComparisonImplies(AbstractConstraint.EXCLUDES));
+    }
+        
 }
 

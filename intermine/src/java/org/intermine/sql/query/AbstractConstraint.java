@@ -65,6 +65,32 @@ public abstract class AbstractConstraint implements SQLStringable
      * This is a subset of EQUAL.
      */
     public static final int BOTH_FALSE = 1;
+    /**
+     * Describes two constraints, where the left is always true, and the right is always false.
+     * This is the opposite of IMPLIES.
+     */
+    public static final int LEFT_TRUE_RIGHT_FALSE = 4;
+    /**
+     * Describes two constraints, where the left is always false, and the right is always true.
+     * This is the opposite of IMPLIED_BY.
+     */
+    public static final int LEFT_FALSE_RIGHT_TRUE = 2;
+    /**
+     * Describes two constraints, where the left is always true.
+     */
+    public static final int LEFT_TRUE = 12;
+    /**
+     * Describes two constraints, where the left is always false.
+     */
+    public static final int LEFT_FALSE = 3;
+    /**
+     * Describes two constraints, where the right is always true.
+     */
+    public static final int RIGHT_TRUE = 10;
+    /**
+     * Describes two constraints, where the right is always false.
+     */
+    public static final int RIGHT_FALSE = 5;
     
     /**
      * Returns a String representation of this AbstractConstraint object, suitable for forming
@@ -207,5 +233,17 @@ public abstract class AbstractConstraint implements SQLStringable
 
         return (nThisNA && nThisNB ? 1 : 0) + (nThisA && nThisB ? 2 : 0) 
             + (thisNA && thisNB ? 4 : 0) + (thisA && thisB ? 8 : 0);
+    }
+
+    /**
+     * Take an integer as if it was created by compare, and return true if this implies that the
+     * left constraint IMPLIES the right constraint, in a loose sense.
+     * For example, a EQUALS b implies that a IMPLIES b.
+     *
+     * @param comparison the comparison to test
+     * @return true if this is a subset of IMPLIES
+     */
+    public static boolean checkComparisonImplies(int comparison) {
+        return ((comparison & LEFT_TRUE_RIGHT_FALSE) == 0);
     }
 }
