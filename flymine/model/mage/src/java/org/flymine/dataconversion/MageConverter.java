@@ -30,9 +30,10 @@ import java.io.Reader;
 import org.biomage.tools.xmlutils.MAGEReader;
 import org.biomage.QuantitationType.QuantitationType;
 import org.biomage.DesignElement.Feature;
-import org.biomage.BioAssayData.MeasuredBioAssayData;
+import org.biomage.BioAssayData.BioAssayData;
 import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.FeatureDimension;
+import org.biomage.ArrayDesign.PhysicalArrayDesign;
 
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
@@ -54,10 +55,11 @@ public class MageConverter extends FileConverter
 {
     private static final Logger LOG = Logger.getLogger(MageConverter.class);
 
-    protected static final String MAGE_NS = "http://www.biomage.org#";
+    protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
 
     protected HashMap seenMap;
     protected HashSet dataItems;
+    protected HashMap padIdentifiers = new HashMap();
     protected int id = 0;
 
     /**
@@ -90,7 +92,9 @@ public class MageConverter extends FileConverter
         }
         writer.storeAll(seenMap.values());
         writer.storeAll(dataItems);
+        writer.storeAll(padIdentifiers.values());
     }
+
 
     /**
      * Create an item and associated fields, references and collections
@@ -107,13 +111,17 @@ public class MageConverter extends FileConverter
         Class cls = obj.getClass();
         String className = TypeUtil.unqualifiedName(cls.getName());
 
+
         Item item = new Item();
         item.setClassName(MAGE_NS + className);
         item.setImplementations("");
 
-        if (!cls.getName().equals("org.biomage.Common.MAGEJava")) {
-            item.setIdentifier(alias(className) + "_" + (id++));
-            seenMap.put(obj, item);
+        if (!cls.getName().equals("org.biomage.Common.MAGEJava")
+            && !className.endsWith("_package")) {
+            if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")) {
+                item.setIdentifier(alias(className) + "_" + (id++));
+                seenMap.put(obj, item);
+            }
         }
 
         for (Iterator i = TypeUtil.getFieldInfos(cls).values().iterator(); i.hasNext();) {
@@ -155,7 +163,7 @@ public class MageConverter extends FileConverter
                             ref.setRefId(createItem(value).getIdentifier());
                             item.addReferences(ref);
                         }
-                    } else {
+                    } else if (!info.getName().equals("identifier")) {
                         // attribute
                         Attribute attr = new Attribute();
                         attr.setName(info.getName());
@@ -168,12 +176,17 @@ public class MageConverter extends FileConverter
         }
 
 
-        if (className.equals("MeasuredBioAssayData")) {
-            MeasuredBioAssayData mbad = (MeasuredBioAssayData) obj;
-            String fileName = ((BioDataCube) mbad.getBioDataValues()).getDataExternal()
+        if (className.equals("MeasuredBioAssayData")
+            || className.equals("DerivedBioAssayData")) {
+            boolean normalised = false;
+            if (className.equals("DerivedBioAssayData")) {
+                normalised = true;
+            }
+            BioAssayData bad = (BioAssayData) obj;
+            String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                 .getFilenameURI();
-            List colTypes = mbad.getQuantitationTypeDimension().getQuantitationTypes();
-            List rowNames = ((FeatureDimension) mbad.getDesignElementDimension())
+            List colTypes = bad.getQuantitationTypeDimension().getQuantitationTypes();
+            List rowNames = ((FeatureDimension) bad.getDesignElementDimension())
                 .getContainedFeatures();
             BufferedReader br = new BufferedReader(new
                 InputStreamReader(getClass().getClassLoader().getResourceAsStream(fileName)));
@@ -215,6 +228,14 @@ public class MageConverter extends FileConverter
                     attr.setValue(value);
                     data.addAttributes(attr);
 
+                    // add normalised attribute - not actually in MAGE model,
+                    // will be removed by MageDataTranslator before validating
+                    // against model
+                    Attribute norm = new Attribute();
+                    norm.setName("normalised");
+                    norm.setValue(normalised ? "true" : "false");
+                    data.addAttributes(norm);
+
                     //should create reference for bioAssay
                     //ref = new Reference();
                     //ref.setName("bioAssay");
@@ -242,9 +263,29 @@ public class MageConverter extends FileConverter
             }
             newRefs.add(bdtRef);
             item.setReferences(newRefs);
+        } else if (className.equals("PhysicalArrayDesign")) {
+            // if item does not have name set it is a placeholder
+            // do not want to store
+            PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
+            String padId = pad.getIdentifier();
+            Item padItem = (Item) padIdentifiers.get(padId);
+
+            if (padItem == null) {
+                item.setIdentifier(alias(className) + "_" + (id++));
+                padIdentifiers.put(padId, item);
+            } else if (pad.getName() != null) {
+                item.setIdentifier(padItem.getIdentifier());
+                padIdentifiers.put(padId, item);
+            } else {
+                item = padItem;
+            }
+
         }
         return item;
     }
+
+
+
 
     /**
      * escape quotes
