@@ -77,6 +77,9 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.apache.ojb.broker.accesslayer.sql.SqlStatement;
+import org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion;
+
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryNode;
@@ -95,18 +98,18 @@ import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryCollectionReference;
+import org.flymine.util.TypeUtil;
 
-
-import org.apache.ojb.broker.accesslayer.sql.SqlStatement;
-import org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.metadata.CollectionDescriptor;
 import org.apache.ojb.broker.metadata.ObjectReferenceDescriptor;
 
+import org.apache.log4j.Logger;
+
 /**
- * Code to generate and sql statement...
+ * Code to generate an sql statement...
  *
  * @author Richard Smith
  * @author Matthew Wakeling
@@ -115,6 +118,8 @@ import org.apache.ojb.broker.metadata.ObjectReferenceDescriptor;
 
 public class FlyMineSqlSelectStatement implements SqlStatement
 {
+    protected static final Logger LOG = Logger.getLogger(FlyMineSqlSelectStatement.class);
+
     private Query query;
     private DescriptorRepository dr;
     private boolean isSubQuery;
@@ -228,7 +233,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         ClassDescriptor cld = dr.getDescriptorFor(node.getType());
         if (cld == null) {
             throw (new IllegalArgumentException("Couldn't find class descriptor for "
-                        + node.getType()));
+                                                + node.getType()));
         }
         // Now cld is the ClassDescriptor of the node, and alias is the alias
         TreeSet fieldnames;
@@ -236,7 +241,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             FieldDescriptor fields[] = cld.getPkFields();
             if (fields == null) {
                 throw (new IllegalArgumentException("Array of field descriptors for "
-                            + node.getType() + " is null"));
+                                                    + node.getType() + " is null"));
             }
             fieldnames = new TreeSet();
             for (int i = 0; i < fields.length; i++) {
@@ -287,47 +292,47 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 QueryEvaluable arg2 = nodeE.getArg2();
                 String op = null;
                 switch (nodeE.getOperation()) {
-                    case QueryExpression.ADD:
-                        op = " + ";
-                        break;
-                    case QueryExpression.SUBTRACT:
-                        op = " - ";
-                        break;
-                    case QueryExpression.MULTIPLY:
-                        op = " * ";
-                        break;
-                    case QueryExpression.DIVIDE:
-                        op = " / ";
-                        break;
-                    default:
-                        throw (new IllegalArgumentException("Invalid QueryExpression operation: "
-                                    + nodeE.getOperation()));
+                case QueryExpression.ADD:
+                    op = " + ";
+                    break;
+                case QueryExpression.SUBTRACT:
+                    op = " - ";
+                    break;
+                case QueryExpression.MULTIPLY:
+                    op = " * ";
+                    break;
+                case QueryExpression.DIVIDE:
+                    op = " / ";
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Invalid QueryExpression operation: "
+                                                        + nodeE.getOperation()));
                 }
                 return "(" + queryEvaluableToString(arg1) + op + queryEvaluableToString(arg2) + ")";
             }
         } else if (node instanceof QueryFunction) {
             QueryFunction nodeF = (QueryFunction) node;
             switch (nodeF.getOperation()) {
-                case QueryFunction.COUNT:
-                    return "COUNT(*)";
-                case QueryFunction.SUM:
-                    return "SUM(" + queryEvaluableToString(nodeF.getParam()) + ")";
-                case QueryFunction.AVERAGE:
-                    return "AVG(" + queryEvaluableToString(nodeF.getParam()) + ")";
-                case QueryFunction.MIN:
-                    return "MIN(" + queryEvaluableToString(nodeF.getParam()) + ")";
-                case QueryFunction.MAX:
-                    return "MAX(" + queryEvaluableToString(nodeF.getParam()) + ")";
-                default:
-                    throw (new IllegalArgumentException("Invalid QueryFunction operation: "
-                                + nodeF.getOperation()));
+            case QueryFunction.COUNT:
+                return "COUNT(*)";
+            case QueryFunction.SUM:
+                return "SUM(" + queryEvaluableToString(nodeF.getParam()) + ")";
+            case QueryFunction.AVERAGE:
+                return "AVG(" + queryEvaluableToString(nodeF.getParam()) + ")";
+            case QueryFunction.MIN:
+                return "MIN(" + queryEvaluableToString(nodeF.getParam()) + ")";
+            case QueryFunction.MAX:
+                return "MAX(" + queryEvaluableToString(nodeF.getParam()) + ")";
+            default:
+                throw (new IllegalArgumentException("Invalid QueryFunction operation: "
+                                                    + nodeF.getOperation()));
             }
         } else if (node instanceof QueryValue) {
             QueryValue nodeV = (QueryValue) node;
             Object value = nodeV.getValue();
             return objectToString(value);
         } else {
-            throw (new IllegalArgumentException("Invalid QueryEvaluable: " + node.toString()));
+            throw (new IllegalArgumentException("Invalid QueryEvaluable: " + node));
         }
     }
 
@@ -349,7 +354,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             return (new Boolean2IntFieldConversion()).javaToSql(value).toString();
         }
         throw (new IllegalArgumentException("Invalid Object in QueryValue: "
-                    + value.toString()));
+                                            + value));
     }
 
     /**
@@ -387,9 +392,9 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                             tableNameToColumns.put(tableName, new HashSet());
                         }
                         Set tableColumns = (Set) tableNameToColumns.get(tableName);
-                        FieldDescriptor fields[] = (topLevel
-                                ? subclassDesc.getFieldDescriptorsInHeirarchy()
-                                : subclassDesc.getFieldDescriptions());
+                        FieldDescriptor fields[] = topLevel
+                            ? subclassDesc.getFieldDescriptorsInHeirarchy()
+                            : subclassDesc.getFieldDescriptions();
                         topLevel = false;
                         for (int i = 0; i < fields.length; i++) {
                             String columnName = fields[i].getColumnName();
@@ -565,7 +570,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
      */
     protected String simpleConstraintToString(SimpleConstraint sc) {
         if ((sc.getType() == SimpleConstraint.IS_NULL)
-                || (sc.getType() == SimpleConstraint.IS_NOT_NULL)) {
+            || (sc.getType() == SimpleConstraint.IS_NOT_NULL)) {
             return queryEvaluableToString(sc.getArg1()) + sc.getOpString();
         }
         return queryEvaluableToString(sc.getArg1()) + sc.getOpString()
@@ -608,7 +613,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         ClassDescriptor cld = dr.getDescriptorFor(arg1.getType());
         if (cld == null) {
             throw (new IllegalArgumentException("Couldn't find class descriptor for "
-                        + arg1.getType()));
+                                                + arg1.getType().getName()));
         }
         FieldDescriptor fields[] = cld.getPkFields();
         String retval = (cc.isNotEqual() ? "( NOT (" : "(");
@@ -623,8 +628,13 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             if (arg2QC != null) {
                 retval += alias1 + columnname + " = " + alias2 + columnname;
             } else {
-                retval += alias1 + columnname + " = "
-                    + objectToString(field.getPersistentField().get(arg2O));
+                try {
+                    retval += alias1 + columnname + " = "
+                        + objectToString(TypeUtil.getFieldValue(arg2O, field.getPersistentField()
+                                                                .getName()));
+                } catch (Exception e) {
+                    LOG.error(e);
+                }
             }
         }
         return retval + (cc.isNotEqual() ? "))" : ")");
@@ -642,12 +652,12 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         ClassDescriptor arg1Class = dr.getDescriptorFor(arg1.getQueryClass().getType());
         if (arg1Class == null) {
             throw (new IllegalArgumentException("Couldn't find class descriptor for "
-                        + arg1.getQueryClass().getType()));
+                                                + arg1.getQueryClass().getType()));
         }
         ClassDescriptor arg2Class = dr.getDescriptorFor(arg2.getType());
         if (arg2Class == null) {
             throw (new IllegalArgumentException("Couldn't find class descriptor for "
-                        + arg2.getType()));
+                                                + arg2.getType()));
         }
         String thisAlias = ((String) query.getAliases().get(arg1.getQueryClass()));
         String thatAlias = ((String) query.getAliases().get(arg2));
@@ -659,12 +669,12 @@ public class FlyMineSqlSelectStatement implements SqlStatement
         String retval = (cc.isNotContains() ? "( NOT (" : "(");
         boolean needComma = false;
         if (arg1 instanceof QueryCollectionReference) {
-            CollectionDescriptor arg1Desc = arg1Class.getCollectionDescriptorByName(
-                    arg1.getFieldName());
+            CollectionDescriptor arg1Desc =
+                arg1Class.getCollectionDescriptorByName(arg1.getFieldName());
             if (arg1Desc == null) {
                 throw (new IllegalArgumentException("Couldn't find CollectionDescriptor for "
-                            + arg1.getQueryClass().getType().getName() + "."
-                            + arg1.getFieldName()));
+                                                    + arg1.getQueryClass().getType().getName() + "."
+                                                    + arg1.getFieldName()));
             }
             // Now arg1Desc is the CollectionDescriptor for arg1 (the QueryReference).
             if (arg1Desc.isMtoNRelation()) {
@@ -672,22 +682,22 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 FieldDescriptor thisFields[] = arg1Class.getPkFields();
                 if (thisFields == null) {
                     throw (new IllegalArgumentException("Couldn't find primary key array for "
-                                + arg1.getQueryClass().getType().toString()));
+                                                        + arg1.getQueryClass().getType()));
                 }
                 String thisIntermediateFields[] = arg1Desc.getFksToThisClass();
                 if (thisFields.length != thisIntermediateFields.length) {
                     throw (new IllegalArgumentException("Field arrays for foreign and primary "
-                                + "keys do not have equal length"));
+                                                        + "keys do not have equal length"));
                 }
                 String thatIntermediateFields[] = arg1Desc.getFksToItemClass();
                 FieldDescriptor thatFields[] = arg2Class.getPkFields();
                 if (thatFields == null) {
                     throw (new IllegalArgumentException("Couldn't find primary key array for "
-                                + arg1.getQueryClass().getType().toString()));
+                                                        + arg1.getQueryClass().getType()));
                 }
                 if (thatFields.length != thatIntermediateFields.length) {
                     throw (new IllegalArgumentException("Field arrays for foreign and primary "
-                                + "keys do not have equal length"));
+                                                        + "keys do not have equal length"));
                 }
                 String indirectionTable = arg1Desc.getIndirectionTable();
                 // Now, thisFields is an array of fields in the arg1Class that should match
@@ -720,22 +730,22 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 FieldDescriptor thisFields[] = arg1Class.getPkFields();
                 if (thisFields == null) {
                     throw (new IllegalArgumentException("Couldn't find primary key array for "
-                                + arg1.getQueryClass().getType().toString()));
+                                                        + arg1.getQueryClass().getType()));
                 }
                 FieldDescriptor thatFields[] =
                     arg1Desc.getForeignKeyFieldDescriptors(arg2Class);
                 if (thatFields == null) {
                     throw (new IllegalArgumentException("Couldn't find foreign key array for "
-                                + arg1.getQueryClass().getType().getName() + "."
-                                + arg1.getFieldName()));
+                                                        + arg1.getQueryClass().getType().getName()
+                                                        + "." + arg1.getFieldName()));
                 }
                 if (thisFields.length != thatFields.length) {
                     throw (new IllegalArgumentException("Field arrays for foreign and primary "
-                                + "keys do not have equal length"));
+                                                        + "keys do not have equal length"));
                 }
                 // Now, thisFields is an array of fields in the arg1Class that should match
                 // against the fields in thatFields (which are fields of arg2Class).
-               for (int i = 0; i < thisFields.length; i++) {
+                for (int i = 0; i < thisFields.length; i++) {
                     FieldDescriptor thisField = thisFields[i];
                     FieldDescriptor thatField = thatFields[i];
                     if (needComma) {
@@ -747,27 +757,27 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 }
             }
         } else if (arg1 instanceof QueryObjectReference) {
-            ObjectReferenceDescriptor arg1Desc = arg1Class.getObjectReferenceDescriptorByName(
-                    arg1.getFieldName());
+            ObjectReferenceDescriptor arg1Desc =
+                arg1Class.getObjectReferenceDescriptorByName(arg1.getFieldName());
             if (arg1Desc == null) {
                 throw (new IllegalArgumentException("Couldn't find object descriptor for "
-                            + arg1.getQueryClass().getType().getName() + "."
-                            + arg1.getFieldName()));
+                                                    + arg1.getQueryClass().getType().getName() + "."
+                                                    + arg1.getFieldName()));
             }
             FieldDescriptor thisFields[] = arg1Desc.getForeignKeyFieldDescriptors(arg1Class);
             if (thisFields == null) {
                 throw (new IllegalArgumentException("Couldn't find foreign key array for "
-                            + arg1.getQueryClass().getType().getName() + "."
-                            + arg1.getFieldName()));
+                                                    + arg1.getQueryClass().getType().getName() + "."
+                                                    + arg1.getFieldName()));
             }
             FieldDescriptor thatFields[] = arg2Class.getPkFields();
             if (thatFields == null) {
                 throw (new IllegalArgumentException("Couldn't find primary key array for "
-                            + arg2.getType()));
+                                                    + arg2.getType()));
             }
             if (thisFields.length != thatFields.length) {
                 throw (new IllegalArgumentException("Field arrays for foreign and primary keys "
-                            + "do not have equal length"));
+                                                    + "do not have equal length"));
             }
             // Now, thisFields is an array of fields in the arg1Class that should match against
             // the fields in thatFields (which are fields of arg2Class).
@@ -867,7 +877,7 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 // need to perform a COUNT(*) with this entire query as a subquery
                 String temp = "SELECT COUNT(*) AS count_ FROM (SELECT "
                     + (query.isDistinct() ? "DISTINCT " + buildSelectComponent() + " FROM "
-                            : "1 AS flibble FROM ") + fromText + whereText + buildGroupBy()
+                       : "1 AS flibble FROM ") + fromText + whereText + buildGroupBy()
                     + ") AS fake_table";
                 return temp;
             } else {
@@ -876,9 +886,8 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             }
         } else {
             return "SELECT " + (query.isDistinct() ? "DISTINCT " : "") + buildSelectComponent()
-            + " FROM " + fromText + whereText + buildGroupBy()
-            + (isSubQuery ? "" : buildOrderBy());
+                + " FROM " + fromText + whereText + buildGroupBy()
+                + (isSubQuery ? "" : buildOrderBy());
         }
     }
-
 }
