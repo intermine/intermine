@@ -41,7 +41,6 @@ public class ObjectTrailController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(ObjectTrailController.class);
     
-    
     /**
      * Looks at the "trail" request parameter and extracts the object ids from it, then
      * looks up the actual objects and creates a list of TrailItems.
@@ -66,13 +65,20 @@ public class ObjectTrailController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         String trail = request.getParameter("trail");
-        String ids[] = (trail != null) ? StringUtils.split(trail.substring(1), '_') : new String[0];
+        String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '_')
+                : new String[0];
         ArrayList elements = new ArrayList();
         String elementTrail = "";
         
         for (int i = 0; i < ids.length; i++) {
             elementTrail += "_" + ids[i];
-            InterMineObject o = os.getObjectById(new Integer(ids[i]));
+            InterMineObject o = null;
+            try {
+                o = os.getObjectById(new Integer(ids[i]));
+            } catch (NumberFormatException err) {
+                LOG.warn("bad object id " + ids[i]);
+                continue;
+            }
             if (o == null) {
                 LOG.warn("failed to getObjectById " + ids[i]);
                 continue;
