@@ -10,6 +10,7 @@
   </c:forEach>
 </font>
 <br/>
+<br/>
 <c:forEach var="cld" items="${leafClds}">
   <c:choose>
     <c:when test="${!empty webconfig.types[cld.name].longDisplayers}">
