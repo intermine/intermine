@@ -130,9 +130,6 @@
     <ant dir="../../flymine-www" target="distclean" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine-www/dist"/>
     </ant>
-    <ant dir="../../flymine-www" target="compile-genomic-model" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
-    </ant>
     <ant dir="../../flymine-www" target="build-production-webapp" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine-www/dist"/>
     </ant>
