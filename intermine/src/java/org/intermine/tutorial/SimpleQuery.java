@@ -33,18 +33,42 @@ public class SimpleQuery
      * @throws Exception if an error occurs
      */
     public static void main(String[] args) throws Exception {
+        SimpleQuery sq = new SimpleQuery();
+        System.out.println(sq.exampleQuery());
+    }
 
+    public String exampleQuery() throws Exception {
+
+        // Get an ObjectStore from the ObjectStoreFactory
+        // The alias "os.tutorial" should be set up in the flymine.properties
+        // file
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.tutorial");
 
+        // Set up an FQL query. "org.flymine.model.tutorial" is used
+        // to qualify unqualified classes in the query
         FqlQuery q = new FqlQuery("select c from Company as c", "org.flymine.model.tutorial");
 
-        Results r = os.execute(q.toQuery());
-        Iterator rrIter = r.iterator();
+        // Execute the query (note we have to convert to a Query object first)
+        Results results = os.execute(q.toQuery());
+
+        // Set up the String that is going to be returned
+        String ret = null;
+
+        // Iterate throught the results of the query
+        Iterator rrIter = results.iterator();
         while (rrIter.hasNext()) {
+            // Each item in a Results object is a ResultsRow
             ResultsRow rr = (ResultsRow) rrIter.next();
+
+            // First item of a ResultsRow is a Company for this query
             Company c = (Company) rr.get(0);
-            System
-                .out.println(c.getName() + " has " + c.getDepartments().size() + " departments");
+
+            // We can get attributes of the Company object (eg. getName()) and traverse to
+            // related objects (eg. getDepartments().size())
+            ret += c.getName() + " has "
+                + c.getDepartments().size() + " departments"
+                + System.getProperty("line.separator");
         }
+        return ret;
     }
 }
