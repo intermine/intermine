@@ -129,17 +129,22 @@ function setBorderStyle(path, style)
                 <fmt:message key="query.showNode"/>
               </html:link>
             </c:if>
-            <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-              <fmt:param value="${node.fieldName}"/>
-            </fmt:message>
-            <html:link action="/mainChange?method=addPath&path=${node.path}"
-                       title="${addConstraintToTitle}">
-              <img class="arrow" src="images/right-arrow.png" alt="->"/>
-            </html:link>
+            <c:if test="${QUERY.nodes[fullpath] == null}">
+              <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+                <fmt:param value="${node.fieldName}"/>
+              </fmt:message>
+              <html:link action="/mainChange?method=addPath&path=${node.path}"
+                         title="${addConstraintToTitle}">
+                <img class="arrow" src="images/right-arrow.png" alt="->"/>
+              </html:link>
+            </c:if>
           </nobr>
         </div>
       </c:forEach>
     </td>
+    
+    <%-- Query paths --%>
+    
     <td valign="top">
       <fmt:message key="query.currentquery"/><br/>
       <c:choose>
@@ -246,7 +251,7 @@ function setBorderStyle(path, style)
   </tr>
 
   
-  
+  <%-- Constraint editor --%>
   
 
   <c:if test="${editingNode != null}">
