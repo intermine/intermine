@@ -20,6 +20,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.rmi.RemoteException;
 
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import javax.xml.namespace.QName;
+
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.webservice.ser.SerializationUtil;
@@ -29,12 +34,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
-
-import org.apache.axis.AxisFault;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.TypeMapping;
-import javax.xml.namespace.QName;
+import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
 
 /**
  * ObjectStore implementation that accesses a remote ObjectStore via JAX-RPC.
@@ -63,14 +63,11 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
         }
         // Set up the service and call objects so that the session can be maintained
         try {
-            Service service = new Service();
-            call = (Call) service.createCall();
+            call = (Call) new Service().createCall();
             call.setMaintainSession(true);
             call.setTargetEndpointAddress(url);
 
-            TypeMapping tm = call.getTypeMapping();
-            SerializationUtil.registerDefaultMappings(tm);
-            SerializationUtil.registerMappings(tm, model);
+            SerializationUtil.registerDefaultMappings(call.getTypeMapping());
         } catch (Exception e) {
             throw new ObjectStoreException("Calling remote service failed", e);
         }
@@ -163,8 +160,8 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
                                                                      new Integer(start),
                                                                      new Integer(limit)});
         for (int i = 0; i < results.size(); i++) {
-            ResultsRow row = new ResultsRow((List) results.get(i));
-            results.set(i, row);
+            results.set(i,
+               new ResultsRow(SerializationUtil.collectionToObjects((List) results.get(i), this)));
         }
         return results;
     }
@@ -187,9 +184,9 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      * @see ObjectStore#getObjectById
      */
     public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        FlyMineBusinessObject object = (FlyMineBusinessObject)
-            remoteMethod("getObjectByExample", new Object[] {id});
-        return object;
+        return SerializationUtil.stringToObject((FlyMineBusinessString)
+                                                remoteMethod("getObjectById", new Object[] {id}),
+                                                this);
     }
 
     /**
@@ -201,8 +198,10 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      */
     protected Integer getQueryId(Query q) throws ObjectStoreException {
         if (!queryIds.containsKey(q)) {
+            FqlQuery fq = new FqlQuery(q);
+            fq.setParameters(SerializationUtil.collectionToStrings(fq.getParameters(), model));
             queryIds.put(q,
-                         (Integer) remoteMethod("registerQuery", new Object[] {new FqlQuery(q)}));
+                         (Integer) remoteMethod("registerQuery", new Object[] {fq}));
         }
         return (Integer) queryIds.get(q);
     }

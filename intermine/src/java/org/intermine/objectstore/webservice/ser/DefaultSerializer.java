@@ -11,11 +11,7 @@ package org.flymine.objectstore.webservice.ser;
  */
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
@@ -25,9 +21,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.wsdl.fromJava.Types;
 
-import org.flymine.objectstore.proxy.ProxyReference;
-import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -49,42 +43,21 @@ public class DefaultSerializer implements Serializer
 
         context.startElement(name, attributes);
 
-        //fqlquery, explainresult, proxybean, businessobject
-        Iterator entryIter = SerializationUtil.fieldValues(value).entrySet().iterator();
-        while (entryIter.hasNext()) {
-            Map.Entry entry = (Map.Entry) entryIter.next();
-            Field field = (Field) entry.getKey();
-            Object fieldValue = entry.getValue();
-
-            //lazyreference
-            if (fieldValue instanceof ProxyReference) {
-                ProxyReference ref = (ProxyReference) fieldValue;
-                /* TODO: 
-                if (!ref.isMaterialised()) {
-                    fieldValue = new ProxyBean(null,
-                            null, 
-                            ref.getId());
-                }
-                */
+        //fqlquery, resultsinfo, businessobject (list and model have their own serializers)
+        for (Iterator fieldInfos = TypeUtil.getFieldInfos(value.getClass()).values().iterator();
+             fieldInfos.hasNext();) {
+            TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldInfos.next();
+            try {
+                Class fieldType = fieldInfo.getGetter().getReturnType();
+                Object fieldValue = fieldInfo.getGetter().invoke(value, new Object[0]);
+                QName qname = new QName(name.getNamespaceURI(), fieldInfo.getName());
+                QName xmlType = context.getQNameForClass(fieldType);
+                context.serialize(qname, null, fieldValue, xmlType, true, null);
+            } catch (Exception e) {
+                LOG.warn("Unable to serialize field \"" + fieldInfo.getName() + "\" in \""
+                         + value.getClass() + "\" due to error: " + e);
             }
-            
-            //singletonresults
-            if (fieldValue instanceof SingletonResults) {
-                SingletonResults res = (SingletonResults) fieldValue;
-                fieldValue = new ProxyBean(fieldValue.getClass().getName(),
-                                                             new FqlQuery(res.getQuery()),
-                                                             new Integer(-1));
-            }
-
-            if (fieldValue instanceof List) {
-                fieldValue = new ArrayList((List) fieldValue);
-            }
-
-            QName qname = new QName(name.getNamespaceURI(), field.getName());
-            QName xmlType = context.getQNameForClass(field.getType());
-            context.serialize(qname, null, fieldValue, xmlType, true, null);
         }
-        
         context.endElement();
     }
 

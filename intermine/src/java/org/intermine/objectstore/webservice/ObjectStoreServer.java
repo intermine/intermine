@@ -10,24 +10,22 @@ package org.flymine.objectstore.webservice;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.flymine.FlyMineException;
 import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
+import org.flymine.objectstore.webservice.ser.SerializationUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * The server side of an ObjectStore webservice. This should be run in
@@ -37,9 +35,11 @@ import org.flymine.objectstore.query.fql.FqlQuery;
  */
 public class ObjectStoreServer
 {
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreServer.class);
+
     private int nextQueryId = 0;
-    private Map registeredResults = new HashMap();
     private ObjectStore os;
+    private Map registeredResults = new HashMap();
 
     /**
      * Construct an ObjectStoreServer that communicates with an ObjectStore
@@ -48,16 +48,7 @@ public class ObjectStoreServer
      * @throws Exception if the property 'os.default' is missing or invalid
      */
     public ObjectStoreServer() throws Exception {
-        this(ObjectStoreFactory.getObjectStore());
-    }
-
-    /**
-     * Construct an ObjectStoreServer that communicates with the given ObjectStore
-     *
-     * @param os the ObjectStore to pass calls to
-     */
-    public ObjectStoreServer(ObjectStore os) {
-        this.os = os;
+        this.os = ObjectStoreFactory.getObjectStore();
     }
 
     /**
@@ -75,41 +66,9 @@ public class ObjectStoreServer
         if (query == null) {
             throw new NullPointerException("query should not be null");
         }
-
-        try {
-            Query q = query.toQuery();
-            synchronized (registeredResults) {
-                registeredResults.put(new Integer(++nextQueryId), os.execute(q));
-            }
-        } catch (ObjectStoreException e) {
-            StringWriter message = new StringWriter();
-            PrintWriter pMessage = new PrintWriter(message);
-            e.printStackTrace(pMessage);
-            ObjectStoreException toThrow = new ObjectStoreException(message.toString());
-            throw toThrow;
-        } catch (RuntimeException e) {
-            StringWriter message = new StringWriter();
-            PrintWriter pMessage = new PrintWriter(message);
-            e.printStackTrace(pMessage);
-            try {
-                Class c = e.getClass();
-                Constructor cons = c.getConstructor(new Class[] {String.class});
-                RuntimeException toThrow = (RuntimeException) cons.newInstance(
-                        new Object[] {message.toString()});
-                throw toThrow;
-            } catch (NoSuchMethodException e2) {
-                throw new RuntimeException("NoSuchMethodException thrown while handling "
-                        + message.toString());
-            } catch (InstantiationException e2) {
-                throw new RuntimeException("InstantiationException thrown while handling "
-                        + message.toString());
-            } catch (IllegalAccessException e2) {
-                throw new RuntimeException("IllegalAccessException thrown while handling "
-                        + message.toString());
-            } catch (InvocationTargetException e2) {
-                throw new RuntimeException("InvocationTargetException thrown while handling "
-                        + message.toString());
-            }
+        query.setParameters(SerializationUtil.collectionToObjects(query.getParameters(), os));
+        synchronized (registeredResults) {
+            registeredResults.put(new Integer(++nextQueryId), os.execute(query.toQuery()));
         }
         return nextQueryId;
     }
@@ -151,46 +110,29 @@ public class ObjectStoreServer
         Results results = lookupResults(queryId);
         List rows = null;
         try {
-            try {
-                rows = results.subList(start, start + limit);
-            } catch (IndexOutOfBoundsException e) {
-                //assume start + limit > size and try again (may still fail)
-                rows = results.subList(start, results.size());
-            }
-        } catch (RuntimeException e) {
-            try {
-                StringWriter message = new StringWriter();
-                PrintWriter pMessage = new PrintWriter(message);
-                e.printStackTrace(pMessage);
-                Class c = e.getClass();
-                Constructor cons = c.getConstructor(new Class[] {String.class});
-                RuntimeException toThrow = (RuntimeException) cons.newInstance(
-                        new Object[] {message.toString()});
-                throw toThrow;
-            } catch (NoSuchMethodException e2) {
-                throw e;
-            } catch (InstantiationException e2) {
-                throw e;
-            } catch (IllegalAccessException e2) {
-                throw e;
-            } catch (InvocationTargetException e2) {
-                throw e;
-            }
+            rows = results.subList(start, start + limit);
+        } catch (IndexOutOfBoundsException e) {
+            //assume start + limit > size and try again (may still fail)
+            rows = results.subList(start, results.size());
+        }
+        // note that serialization will reconstruct resultsrows as plain lists
+        for (int i = 0; i < rows.size(); i++) {
+            rows.set(i, SerializationUtil.collectionToStrings((List) rows.get(i), getModel()));
         }
         return rows;
     }
-
+    
     /**
      * Returns the number of row the query will produce
      *
      * @param queryId the id of the query on which to count rows
      * @return the number of rows to be produced by query
-     * @throws ObjectStoreException if an error occurs
+     * @throws ObjectStoreException if an error occurs performing the count
      */
     public int count(int queryId) throws ObjectStoreException {
         return lookupResults(queryId).size();
     }
-
+    
     /**
      * Explain a Query (give estimate for execution time and number of rows).
      *
@@ -199,28 +141,7 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(int queryId) throws ObjectStoreException {
-        try {
-            return lookupResults(queryId).getInfo();
-        } catch (RuntimeException e) {
-            try {
-                StringWriter message = new StringWriter();
-                PrintWriter pMessage = new PrintWriter(message);
-                e.printStackTrace(pMessage);
-                Class c = e.getClass();
-                Constructor cons = c.getConstructor(new Class[] {String.class});
-                RuntimeException toThrow = (RuntimeException) cons.newInstance(
-                        new Object[] {message.toString()});
-                throw toThrow;
-            } catch (NoSuchMethodException e2) {
-                throw e;
-            } catch (InstantiationException e2) {
-                throw e;
-            } catch (IllegalAccessException e2) {
-                throw e;
-            } catch (InvocationTargetException e2) {
-                throw e;
-            }
-        }
+        return lookupResults(queryId).getInfo();
     }
 
     /**
@@ -230,8 +151,8 @@ public class ObjectStoreServer
      * @return the object from the ObjectStore, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
-    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
-        return os.getObjectById(id);
+    public FlyMineBusinessString getObjectById(Integer id) throws ObjectStoreException {
+        return SerializationUtil.objectToString(os.getObjectById(id), getModel());
     }
 
     /**

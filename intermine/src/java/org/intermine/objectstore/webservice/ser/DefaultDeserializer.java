@@ -24,8 +24,8 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import org.flymine.util.TypeUtil;
-//import org.flymine.objectstore.proxy.LazyCollection;
-//import org.flymine.objectstore.proxy.LazyInitializer;
+
+import org.apache.log4j.Logger;
 
 /**
  * Deserializer for (bean-like) objects sent via SOAP (i.e.everything except Lists and Models)
@@ -34,6 +34,8 @@ import org.flymine.util.TypeUtil;
  */
 public class DefaultDeserializer extends DeserializerImpl
 {
+    protected static final Logger LOG = Logger.getLogger(DefaultDeserializer.class);
+
     protected QName xmlType;
     protected Class javaType;
 
@@ -49,7 +51,7 @@ public class DefaultDeserializer extends DeserializerImpl
         try {
             value = javaType.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("error creating instance: " + e);
         }
     }
 
@@ -118,17 +120,6 @@ public class DefaultDeserializer extends DeserializerImpl
     public void setChildValue(Object value, Object hint) throws SAXException {
         try {
             String fieldName = (String) hint;
-            if (value instanceof ProxyBean) {
-                ProxyBean pb = (ProxyBean) value;
-                Class cls = Class.forName(pb.getType());
-                //TODO:
-                //if (List.class.isAssignableFrom(cls)) {
-                    //value = new LazyCollection(pb.getFqlQuery().toQuery());
-                //} else {
-                    //value = LazyInitializer.getDynamicProxy(cls, pb.getFqlQuery().toQuery(),
-                    //                                        pb.getId());
-                //}
-            }
             TypeUtil.setFieldValue(this.value, fieldName, value);
         } catch (Exception e) {
             throw new SAXException(e);
