@@ -28,7 +28,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Company;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 import org.apache.log4j.Logger;
 
@@ -72,7 +72,7 @@ public class QueryHelperTest extends TestCase
 
     public void testAddSubqueryConstraint() throws Exception {
         Query q = new Query();
-        Query subQuery = new FqlQuery("SELECT a1 from Employee as a1",
+        Query subQuery = new IqlQuery("SELECT a1 from Employee as a1",
                                       "org.intermine.model.testmodel").toQuery();
 
         QueryClass qc = new QueryClass(Employee.class);

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 /**
  * This class provides an implementation-independent abstract representation of a query
@@ -289,7 +289,7 @@ public class Query implements FromElement
      * @return a String representation
      */
     public String toString() {
-        FqlQuery fq = new FqlQuery(this);
+        IqlQuery fq = new IqlQuery(this);
         return fq.toString();
     }
 

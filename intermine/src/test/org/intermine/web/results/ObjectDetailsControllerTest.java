@@ -16,7 +16,7 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -36,7 +36,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectDetails");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore();
-        Results r = os.execute(new FqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
+        Results r = os.execute(new IqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
         System.out.println(d);
 
@@ -54,7 +54,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectDetails");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore();
-        Results r = os.execute(new FqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
+        Results r = os.execute(new IqlQuery("select Department from Department", "org.intermine.model.testmodel").toQuery());
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
         System.out.println(d);
 

@@ -2,10 +2,10 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
-<!-- fqlquery.jsp -->
-<div class="fqlQueryForm">
-  <html:form action="/fqlquery" focus="querystring" onsubmit="return validateFqlQueryForm(this);">
-    <fmt:message key="fqlquery.prompt"/>:
+<!-- iqlQuery.jsp -->
+<div class="iqlQueryForm">
+  <html:form action="/iqlquery" focus="querystring" onsubmit="return validateIqlQueryForm(this);">
+    <fmt:message key="iqlquery.prompt"/>:
     <br/>
     <html:textarea property="querystring" rows="10" cols="80"/>
     <br/>
@@ -20,4 +20,4 @@
     </html:reset>
   </html:form>
 </div>
-<!-- /fqlquery.jsp -->
+<!-- /iqlQuery.jsp -->

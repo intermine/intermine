@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Collection;
 
-import org.intermine.objectstore.query.fql.FqlQuery;
-import org.intermine.objectstore.query.fql.FqlQueryParser;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.objectstore.query.iql.IqlQueryParser;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.CEO;
@@ -116,8 +116,8 @@ public class ConstraintHelperTest extends TestCase
 
 
     public void testCreateListNoConstraints() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a", "org.intermine.model.testmodel");
-        Query q = FqlQueryParser.parse(fq);
+        IqlQuery fq = new IqlQuery("select a from Company as a", "org.intermine.model.testmodel");
+        Query q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         List got = ConstraintHelper.createList(q);
 
@@ -125,8 +125,8 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testCreateListSingleConstraint() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5", "org.intermine.model.testmodel");
-        Query q = FqlQueryParser.parse(fq);
+        IqlQuery fq = new IqlQuery("select a from Company as a where a.vatNumber = 5", "org.intermine.model.testmodel");
+        Query q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(q.getConstraint());
         List got = ConstraintHelper.createList(q);
@@ -135,8 +135,8 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testCreateListAnd() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 and a.name = 'hello'", "org.intermine.model.testmodel");
-        Query q = FqlQueryParser.parse(fq);
+        IqlQuery fq = new IqlQuery("select a from Company as a where a.vatNumber = 5 and a.name = 'hello'", "org.intermine.model.testmodel");
+        Query q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         Iterator conIter = ((ConstraintSet) q.getConstraint()).getConstraints().iterator();
         while (conIter.hasNext()) {
@@ -148,8 +148,8 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testCreateListOr() throws Exception {
-        FqlQuery fq = new FqlQuery("select a from Company as a where a.vatNumber = 5 or a.name = 'hello'", "org.intermine.model.testmodel");
-        Query q = FqlQueryParser.parse(fq);
+        IqlQuery fq = new IqlQuery("select a from Company as a where a.vatNumber = 5 or a.name = 'hello'", "org.intermine.model.testmodel");
+        Query q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(q.getConstraint());
         List got = ConstraintHelper.createList(q);

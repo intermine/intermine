@@ -18,7 +18,7 @@ import java.util.Date;
 
 /**
  * Represents a value with an unknown type. The value is stored as a String representation - the
- * representation used in FQL. It is presumed that these unknown type values are converted into
+ * representation used in IQL. It is presumed that these unknown type values are converted into
  * typed values before the Query is finished constructing. Therefore, these objects are merely a
  * temporary placeholder for values before their type is inferred.
  *

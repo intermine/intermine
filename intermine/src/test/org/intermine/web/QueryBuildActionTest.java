@@ -39,10 +39,10 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         super(testName);
     }
 
-    public void testEditFql() throws Exception {
+    public void testEditIql() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("buttons(editFql)", "");
+        addRequestParameter("buttons(editIql)", "");
 
         String anAlias = "ClassAlias_0";
         Map queryClasses = new HashMap();
@@ -56,7 +56,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         actionPerform();
         
         verifyNoActionErrors();
-        verifyForward("buildfqlquery");
+        verifyForward("buildiqlquery");
         assertNull(session.getAttribute(Constants.QUERY_CLASSES));
         assertNull(session.getAttribute(Constants.EDITING_ALIAS));
         assertNotNull(session.getAttribute(Constants.QUERY));

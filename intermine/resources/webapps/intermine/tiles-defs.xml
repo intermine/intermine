@@ -18,8 +18,8 @@
   <definition name="query.page" extends="layout.template">
     <put name="body" value="queryMain.tile"/>
   </definition>
-  <definition name="fqlquery.page" extends="layout.template">
-    <put name="body" value="fqlQueryMain.tile"/>
+  <definition name="iqlquery.page" extends="layout.template">
+    <put name="body" value="iqlQueryMain.tile"/>
   </definition>
   <definition name="results.page" extends="layout.template">
     <put name="body" value="resultsView.tile"/>
@@ -46,12 +46,12 @@
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
   </definition>
 
-  <definition name="fqlQueryMain.tile" path="/fqlQueryMain.jsp">
+  <definition name="iqlQueryMain.tile" path="/iqlQueryMain.jsp">
     <put name="savedBagView" value="savedBagView.jsp"/>
     <put name="savedQueryView" value="savedQueryView.jsp"/>
     <put name="restartQuery" value="restartQuery.jsp"/>
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
-    <put name="fqlQuery" value="fqlQuery.tile"/>
+    <put name="iqlQuery" value="iqlQuery.tile"/>
   </definition>
 
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
@@ -60,7 +60,7 @@
 
   <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
 
-  <definition name="fqlQuery.tile" path="/fqlquery.jsp" controllerUrl="/initFqlQuery.do"/>
+  <definition name="iqlQuery.tile" path="/iqlquery.jsp" controllerUrl="/initIqlQuery.do"/>
 
   <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
 

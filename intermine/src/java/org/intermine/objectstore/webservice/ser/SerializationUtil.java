@@ -54,7 +54,7 @@ public class SerializationUtil
                     new ListSerializerFactory(),
                     new ListDeserializerFactory());
         registerMapping(tm, org.intermine.objectstore.webservice.ser.InterMineString.class);
-        registerMapping(tm, org.intermine.objectstore.query.fql.FqlQuery.class);
+        registerMapping(tm, org.intermine.objectstore.query.iql.IqlQuery.class);
         registerMapping(tm, org.intermine.objectstore.query.ResultsInfo.class);
     }
 

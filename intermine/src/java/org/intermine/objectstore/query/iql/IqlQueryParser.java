@@ -1,4 +1,4 @@
-package org.intermine.objectstore.query.fql;
+package org.intermine.objectstore.query.iql;
 
 /*
  * Copyright (C) 2002-2004 FlyMine
@@ -26,48 +26,48 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.*;
 
 /**
- * Parser for the InterMine dialect of OQL (FQL)
+ * Parser for the InterMine dialect of OQL (IQL)
  *
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class FqlQueryParser
+public class IqlQueryParser
 {
     /**
      * All methods are static - don't allow instance to be constructed
      */
-    private FqlQueryParser() {
+    private IqlQueryParser() {
     }
 
     /**
      * Construct a new query by parsing a String.
      *
-     * @param fq an FqlQuery object to parse
-     * @return the Query representing the FqlQuery
+     * @param iq an IqlQuery object to parse
+     * @return the Query representing the IqlQuery
      * @throws IllegalArgumentException if the OQLQuery contains an invalid query String
      */
-    public static Query parse(FqlQuery fq) {
+    public static Query parse(IqlQuery iq) {
         Query q = new Query();
         q.setDistinct(false);
-        String modelPackage = fq.getPackageName();
-        String fql = fq.getQueryString();
-        Iterator iterator = fq.getParameters().iterator();
+        String modelPackage = iq.getPackageName();
+        String iql = iq.getQueryString();
+        Iterator iterator = iq.getParameters().iterator();
         AST ast = null;
 
         try {
-            InputStream is = new ByteArrayInputStream(fql.getBytes());
+            InputStream is = new ByteArrayInputStream(iql.getBytes());
 
-            FqlLexer lexer = new FqlLexer(is);
-            FqlParser parser = new FqlParser(lexer);
+            IqlLexer lexer = new IqlLexer(is);
+            IqlParser parser = new IqlParser(lexer);
             parser.start_rule();
 
             ast = parser.getAST();
 
             if (ast == null) {
-                throw new IllegalArgumentException("Invalid FQL string " + fql);
+                throw new IllegalArgumentException("Invalid IQL string " + iql);
             }
 
-            processFqlStatementAST(ast, q, modelPackage, iterator);
+            processIqlStatementAST(ast, q, modelPackage, iterator);
 
             return q;
         } catch (antlr.RecognitionException e) {
@@ -96,49 +96,49 @@ public class FqlQueryParser
     }
 
     /**
-     * Processes an FQL_STATEMENT AST node produced by antlr.
+     * Processes an IQL_STATEMENT AST node produced by antlr.
      *
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
-     * @param iterator an iterator through the list of parameters of the FqlQuery
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      */
-    private static void processFqlStatementAST(AST ast, Query q, String modelPackage,
+    private static void processIqlStatementAST(AST ast, Query q, String modelPackage,
                                                Iterator iterator) {
-        if (ast.getType() != FqlTokenTypes.FQL_STATEMENT) {
-            throw new IllegalArgumentException("Expected: an FQL SELECT statement");
+        if (ast.getType() != IqlTokenTypes.IQL_STATEMENT) {
+            throw new IllegalArgumentException("Expected: an IQL SELECT statement");
         }
         processAST(ast.getFirstChild(), q, modelPackage, iterator);
     }
 
     /**
-     * Processes an AST node produced by antlr, at the top level of the FQL query.
+     * Processes an AST node produced by antlr, at the top level of the IQL query.
      *
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
-     * @param iterator an iterator through the list of parameters of the FqlQuery
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      */
     private static void processAST(AST ast, Query q, String modelPackage, Iterator iterator) {
         boolean processSelect = false;
         switch (ast.getType()) {
-            case FqlTokenTypes.LITERAL_distinct:
+            case IqlTokenTypes.LITERAL_distinct:
                 q.setDistinct(true);
                 break;
-            case FqlTokenTypes.SELECT_LIST:
+            case IqlTokenTypes.SELECT_LIST:
                 // Always do the select list last.
                 processSelect = true;
                 break;
-            case FqlTokenTypes.FROM_LIST:
+            case IqlTokenTypes.FROM_LIST:
                 processFromList(ast.getFirstChild(), q, modelPackage, iterator);
                 break;
-            case FqlTokenTypes.WHERE_CLAUSE:
+            case IqlTokenTypes.WHERE_CLAUSE:
                 q.setConstraint(processConstraint(ast.getFirstChild(), q, modelPackage, iterator));
                 break;
-            case FqlTokenTypes.GROUP_CLAUSE:
+            case IqlTokenTypes.GROUP_CLAUSE:
                 processGroupClause(ast.getFirstChild(), q);
                 break;
-            case FqlTokenTypes.ORDER_CLAUSE:
+            case IqlTokenTypes.ORDER_CLAUSE:
                 processOrderClause(ast.getFirstChild(), q);
                 break;
             default:
@@ -159,15 +159,15 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
-     * @param iterator an iterator through the list of parameters of the FqlQuery
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      */
     private static void processFromList(AST ast, Query q, String modelPackage, Iterator iterator) {
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.TABLE:
+                case IqlTokenTypes.TABLE:
                     processNewTable(ast.getFirstChild(), q, modelPackage);
                     break;
-                case FqlTokenTypes.SUBQUERY:
+                case IqlTokenTypes.SUBQUERY:
                     processNewSubQuery(ast.getFirstChild(), q, modelPackage, iterator);
                     break;
                 default:
@@ -191,7 +191,7 @@ public class FqlQueryParser
         Set classes = new HashSet();
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.TABLE_NAME:
+                case IqlTokenTypes.TABLE_NAME:
                     tableName = null;
                     AST tableNameAst = ast.getFirstChild();
                     do {
@@ -216,7 +216,7 @@ public class FqlQueryParser
                     }
                     classes.add(c);
                     break;
-                case FqlTokenTypes.TABLE_ALIAS:
+                case IqlTokenTypes.TABLE_ALIAS:
                     tableAlias = ast.getFirstChild().getText();
                     break;
                 default:
@@ -243,7 +243,7 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
-     * @param iterator an iterator through the list of parameters of the FqlQuery
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      */
     private static void processNewSubQuery(AST ast, Query q,
                                            String modelPackage, Iterator iterator) {
@@ -251,12 +251,12 @@ public class FqlQueryParser
         String tableAlias = null;
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.FQL_STATEMENT:
+                case IqlTokenTypes.IQL_STATEMENT:
                     if (subquery == null) {
                         subquery = ast;
                     }
                     break;
-                case FqlTokenTypes.TABLE_ALIAS:
+                case IqlTokenTypes.TABLE_ALIAS:
                     tableAlias = ast.getFirstChild().getText();
                     break;
                 default:
@@ -268,7 +268,7 @@ public class FqlQueryParser
 
         Query sq = new Query();
         sq.setDistinct(false);
-        processFqlStatementAST(subquery, sq, modelPackage, iterator);
+        processIqlStatementAST(subquery, sq, modelPackage, iterator);
         if (tableAlias == null) {
             throw new IllegalArgumentException("No alias for subquery");
         }
@@ -285,7 +285,7 @@ public class FqlQueryParser
     private static void processSelectList(AST ast, Query q, String modelPackage) {
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.SELECT_VALUE:
+                case IqlTokenTypes.SELECT_VALUE:
                     processNewSelect(ast.getFirstChild(), q, modelPackage);
                     break;
                 default:
@@ -308,14 +308,14 @@ public class FqlQueryParser
         String nodeAlias = null;
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.FIELD_ALIAS:
+                case IqlTokenTypes.FIELD_ALIAS:
                     nodeAlias = ast.getFirstChild().getText();
                     break;
-                case FqlTokenTypes.FIELD:
-                case FqlTokenTypes.CONSTANT:
-                case FqlTokenTypes.UNSAFE_FUNCTION:
-                case FqlTokenTypes.SAFE_FUNCTION:
-                case FqlTokenTypes.TYPECAST:
+                case IqlTokenTypes.FIELD:
+                case IqlTokenTypes.CONSTANT:
+                case IqlTokenTypes.UNSAFE_FUNCTION:
+                case IqlTokenTypes.SAFE_FUNCTION:
+                case IqlTokenTypes.TYPECAST:
                     node = processNewQueryNode(ast, q);
                     break;
                 default:
@@ -351,16 +351,16 @@ public class FqlQueryParser
 
     private static Object processNewQueryNodeOrReference(AST ast, Query q) {
         switch (ast.getType()) {
-            case FqlTokenTypes.FIELD:
+            case IqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild(), q);
-            case FqlTokenTypes.CONSTANT:
+            case IqlTokenTypes.CONSTANT:
                 String value = ast.getFirstChild().getText();
                 return new QueryValue(new UnknownTypeValue(value));
-            case FqlTokenTypes.UNSAFE_FUNCTION:
+            case IqlTokenTypes.UNSAFE_FUNCTION:
                 return processNewUnsafeFunction(ast.getFirstChild(), q);
-            case FqlTokenTypes.SAFE_FUNCTION:
+            case IqlTokenTypes.SAFE_FUNCTION:
                 return processNewSafeFunction(ast.getFirstChild(), q);
-            case FqlTokenTypes.TYPECAST:
+            case IqlTokenTypes.TYPECAST:
                 return processNewTypeCast(ast.getFirstChild(), q);
             default:
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -382,7 +382,7 @@ public class FqlQueryParser
      * @return a QueryNode object corresponding to the input
      */
     private static Object processNewField(AST ast, Query q) {
-        if (ast.getType() != FqlTokenTypes.IDENTIFIER) {
+        if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                         + ast.getType() + "]");
         }
@@ -474,11 +474,11 @@ public class FqlQueryParser
         int type = -1;
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.FIELD:
-                case FqlTokenTypes.CONSTANT:
-                case FqlTokenTypes.UNSAFE_FUNCTION:
-                case FqlTokenTypes.SAFE_FUNCTION:
-                case FqlTokenTypes.TYPECAST:
+                case IqlTokenTypes.FIELD:
+                case IqlTokenTypes.CONSTANT:
+                case IqlTokenTypes.UNSAFE_FUNCTION:
+                case IqlTokenTypes.SAFE_FUNCTION:
+                case IqlTokenTypes.TYPECAST:
                     try {
                         if (firstObj == null) {
                             firstObj = (QueryEvaluable) processNewQueryNode(ast, q);
@@ -493,16 +493,16 @@ public class FqlQueryParser
                                 + "arguments");
                     }
                     break;
-                case FqlTokenTypes.PLUS:
+                case IqlTokenTypes.PLUS:
                     type = QueryExpression.ADD;
                     break;
-                case FqlTokenTypes.MINUS:
+                case IqlTokenTypes.MINUS:
                     type = QueryExpression.SUBTRACT;
                     break;
-                case FqlTokenTypes.ASTERISK:
+                case IqlTokenTypes.ASTERISK:
                     type = QueryExpression.MULTIPLY;
                     break;
-                case FqlTokenTypes.DIVIDE:
+                case IqlTokenTypes.DIVIDE:
                     type = QueryExpression.DIVIDE;
                     break;
                 default:
@@ -528,11 +528,11 @@ public class FqlQueryParser
         int type = -1;
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.FIELD:
-                case FqlTokenTypes.CONSTANT:
-                case FqlTokenTypes.UNSAFE_FUNCTION:
-                case FqlTokenTypes.SAFE_FUNCTION:
-                case FqlTokenTypes.TYPECAST:
+                case IqlTokenTypes.FIELD:
+                case IqlTokenTypes.CONSTANT:
+                case IqlTokenTypes.UNSAFE_FUNCTION:
+                case IqlTokenTypes.SAFE_FUNCTION:
+                case IqlTokenTypes.TYPECAST:
                     try {
                         if (type == QueryFunction.COUNT) {
                             throw new IllegalArgumentException("Count() does not take an argument");
@@ -553,25 +553,25 @@ public class FqlQueryParser
                                 + "arguments");
                     }
                     break;
-                case FqlTokenTypes.LITERAL_count:
+                case IqlTokenTypes.LITERAL_count:
                     type = QueryFunction.COUNT;
                     break;
-                case FqlTokenTypes.LITERAL_sum:
+                case IqlTokenTypes.LITERAL_sum:
                     type = QueryFunction.SUM;
                     break;
-                case FqlTokenTypes.LITERAL_avg:
+                case IqlTokenTypes.LITERAL_avg:
                     type = QueryFunction.AVERAGE;
                     break;
-                case FqlTokenTypes.LITERAL_min:
+                case IqlTokenTypes.LITERAL_min:
                     type = QueryFunction.MIN;
                     break;
-                case FqlTokenTypes.LITERAL_max:
+                case IqlTokenTypes.LITERAL_max:
                     type = QueryFunction.MAX;
                     break;
-                case FqlTokenTypes.LITERAL_substr:
+                case IqlTokenTypes.LITERAL_substr:
                     type = -2;
                     break;
-                case FqlTokenTypes.LITERAL_indexof:
+                case IqlTokenTypes.LITERAL_indexof:
                     type = -3;
                     break;
                 default:
@@ -626,11 +626,11 @@ public class FqlQueryParser
         String type = null;
         do {
             switch (ast.getType()) {
-                case FqlTokenTypes.FIELD:
-                case FqlTokenTypes.CONSTANT:
-                case FqlTokenTypes.UNSAFE_FUNCTION:
-                case FqlTokenTypes.SAFE_FUNCTION:
-                case FqlTokenTypes.TYPECAST:
+                case IqlTokenTypes.FIELD:
+                case IqlTokenTypes.CONSTANT:
+                case IqlTokenTypes.UNSAFE_FUNCTION:
+                case IqlTokenTypes.SAFE_FUNCTION:
+                case IqlTokenTypes.TYPECAST:
                     try {
                         value = (QueryEvaluable) processNewQueryNode(ast, q);
                     } catch (ClassCastException e) {
@@ -638,7 +638,7 @@ public class FqlQueryParser
                                 + " arguments");
                     }
                     break;
-                case FqlTokenTypes.IDENTIFIER:
+                case IqlTokenTypes.IDENTIFIER:
                     type = ast.getText();
                     break;
                 default:
@@ -706,7 +706,7 @@ public class FqlQueryParser
      * @param op AND, OR, NAND, or NOR
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
-     * @param iterator an iterator through the list of parameters of the FqlQuery
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      * @return a Constraint corresponding to the input
      */
     private static Constraint processConstraintSet(AST ast, ConstraintOp op,
@@ -738,35 +738,35 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
-     * @param iterator an iterator through the list of parameters of the FqlQuery
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      * @return a Constraint corresponding to the input
      */
     private static Constraint processConstraint(AST ast, Query q,
                                                 String modelPackage, Iterator iterator) {
         AST subAST;
         switch (ast.getType()) {
-            case FqlTokenTypes.AND_CONSTRAINT_SET:
+            case IqlTokenTypes.AND_CONSTRAINT_SET:
                 return processConstraintSet(ast.getFirstChild(), ConstraintOp.AND,
                                             q, modelPackage, iterator);
-            case FqlTokenTypes.OR_CONSTRAINT_SET:
+            case IqlTokenTypes.OR_CONSTRAINT_SET:
                 return processConstraintSet(ast.getFirstChild(), ConstraintOp.OR,
                                             q, modelPackage, iterator);
-            case FqlTokenTypes.LITERAL_true:
+            case IqlTokenTypes.LITERAL_true:
                 return new ConstraintSet(ConstraintOp.AND);
-            case FqlTokenTypes.LITERAL_false:
+            case IqlTokenTypes.LITERAL_false:
                 return new ConstraintSet(ConstraintOp.OR);
-            case FqlTokenTypes.CONSTRAINT:
+            case IqlTokenTypes.CONSTRAINT:
                 return processSimpleConstraint(ast, q, iterator);
-            case FqlTokenTypes.SUBQUERY_CONSTRAINT:
+            case IqlTokenTypes.SUBQUERY_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 QueryNode leftb = processNewQueryNode(subAST, q);
                 subAST = subAST.getNextSibling();
-                if (subAST.getType() != FqlTokenTypes.FQL_STATEMENT) {
-                    throw new IllegalArgumentException("Expected: a FQL SELECT statement");
+                if (subAST.getType() != IqlTokenTypes.IQL_STATEMENT) {
+                    throw new IllegalArgumentException("Expected: a IQL SELECT statement");
                 }
                 Query rightb = new Query();
                 rightb.setDistinct(false);
-                processFqlStatementAST(subAST, rightb, modelPackage, iterator);
+                processIqlStatementAST(subAST, rightb, modelPackage, iterator);
                 if (leftb instanceof QueryClass) {
                     return new SubqueryConstraint((QueryClass) leftb, ConstraintOp.IN,
                             rightb);
@@ -774,9 +774,9 @@ public class FqlQueryParser
                     return new SubqueryConstraint((QueryEvaluable) leftb, ConstraintOp.IN,
                             rightb);
                 }
-            case FqlTokenTypes.CONTAINS_CONSTRAINT:
+            case IqlTokenTypes.CONTAINS_CONSTRAINT:
                 subAST = ast.getFirstChild();
-                if (subAST.getType() != FqlTokenTypes.FIELD) {
+                if (subAST.getType() != IqlTokenTypes.FIELD) {
                     throw new IllegalArgumentException("Expected a Collection or Object Reference "
                             + "as the first argument of the ContainsConstraint");
                 }
@@ -811,7 +811,7 @@ public class FqlQueryParser
                         }
                         // Now we have a collection or object reference. Now we need a class or
                         // object.
-                        if (subAST.getNextSibling().getType() == FqlTokenTypes.QUESTION_MARK) {
+                        if (subAST.getNextSibling().getType() == IqlTokenTypes.QUESTION_MARK) {
                             return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
                                     (InterMineObject) iterator.next());
                         } else {
@@ -836,9 +836,9 @@ public class FqlQueryParser
                     throw new IllegalArgumentException("No such object " + firstString + " while "
                             + "looking for a collection or object reference");
                 }
-            case FqlTokenTypes.BAG_CONSTRAINT:
+            case IqlTokenTypes.BAG_CONSTRAINT:
                 subAST = ast.getFirstChild();
-                if (subAST.getType() != FqlTokenTypes.FIELD) {
+                if (subAST.getType() != IqlTokenTypes.FIELD) {
                     throw new IllegalArgumentException("Expected a QueryEvaluable or QueryClass "
                             + "as the first argument of a BagConstraint");
                 }
@@ -852,7 +852,7 @@ public class FqlQueryParser
                     throw new ClassCastException("Parameter " + nextParam + " not a Collection");
                 }
                 return new BagConstraint(leftd, ConstraintOp.IN, (Collection) nextParam);
-            case FqlTokenTypes.NOT_CONSTRAINT:
+            case IqlTokenTypes.NOT_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 Constraint retval = processConstraint(subAST, q, modelPackage, iterator);
                 retval.negate();
@@ -869,34 +869,34 @@ public class FqlQueryParser
         subAST = subAST.getNextSibling();
         ConstraintOp op = null;
         switch (subAST.getType()) {
-            case FqlTokenTypes.EQ:
+            case IqlTokenTypes.EQ:
                 op = ConstraintOp.EQUALS;
                 break;
-            case FqlTokenTypes.NOT_EQ:
+            case IqlTokenTypes.NOT_EQ:
                 op = ConstraintOp.NOT_EQUALS;
                 break;
-            case FqlTokenTypes.LT:
+            case IqlTokenTypes.LT:
                 op = ConstraintOp.LESS_THAN;
                 break;
-            case FqlTokenTypes.LE:
+            case IqlTokenTypes.LE:
                 op = ConstraintOp.LESS_THAN_EQUALS;
                 break;
-            case FqlTokenTypes.GT:
+            case IqlTokenTypes.GT:
                 op = ConstraintOp.GREATER_THAN;
                 break;
-            case FqlTokenTypes.GE:
+            case IqlTokenTypes.GE:
                 op = ConstraintOp.GREATER_THAN_EQUALS;
                 break;
-            case FqlTokenTypes.LITERAL_like:
+            case IqlTokenTypes.LITERAL_like:
                 op = ConstraintOp.MATCHES;
                 break;
-            case FqlTokenTypes.NOTLIKE:
+            case IqlTokenTypes.NOTLIKE:
                 op = ConstraintOp.DOES_NOT_MATCH;
                 break;
-            case FqlTokenTypes.ISNULL:
+            case IqlTokenTypes.ISNULL:
                 op = ConstraintOp.IS_NULL;
                 break;
-            case FqlTokenTypes.ISNOTNULL:
+            case IqlTokenTypes.ISNOTNULL:
                 op = ConstraintOp.IS_NOT_NULL;
                 break;
             default:
@@ -919,7 +919,7 @@ public class FqlQueryParser
                 throw new IllegalArgumentException("Most simple constraints require two "
                         + "arguments");
             } else {
-                if (FqlTokenTypes.QUESTION_MARK == subAST.getType()) {
+                if (IqlTokenTypes.QUESTION_MARK == subAST.getType()) {
                     if (left instanceof QueryClass) {
                         try {
                             if (op == ConstraintOp.EQUALS) {
@@ -937,7 +937,7 @@ public class FqlQueryParser
                             }
                         } catch (NoSuchElementException e) {
                             throw new IllegalArgumentException("Not enough parameters in "
-                                                               + "FqlQuery object");
+                                                               + "IqlQuery object");
                         }
                     } else {
                         throw new IllegalArgumentException("Cannot compare a field to an object");

@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionForm;
  *
  * @author Andrew Varley
  */
-public class FqlQueryForm extends ActionForm
+public class IqlQueryForm extends ActionForm
 {
 
     protected String querystring;

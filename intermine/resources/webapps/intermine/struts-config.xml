@@ -14,9 +14,9 @@
     <form-bean name="queryBuildForm"
                type="org.intermine.web.QueryBuildForm"/>
 
-    <!-- FQL Query form bean -->
-    <form-bean name="fqlQueryForm"
-               type="org.intermine.web.FqlQueryForm"/>
+    <!-- IQL Query form bean -->
+    <form-bean name="iqlQueryForm"
+               type="org.intermine.web.IqlQueryForm"/>
 
     <!-- QueryClassSelect form bean -->
     <form-bean name="queryClassSelectForm"
@@ -67,8 +67,8 @@
     <action path="/buildquery"
             forward="query.page"/>
 
-    <action path="/buildfqlquery"
-            forward="fqlquery.page"/>
+    <action path="/buildiqlquery"
+            forward="iqlquery.page"/>
 
     <action path="/query"
             input="buildquery"
@@ -77,18 +77,18 @@
             parameter="action">
       <forward name="runquery" path="/runQuery.do"/>
       <forward name="buildquery" path="query.page"/>
-      <forward name="buildfqlquery" path="fqlquery.page"/>
+      <forward name="buildiqlquery" path="iqlquery.page"/>
     </action>
 
-    <!-- Input an fql query -->
-    <action path="/fqlquery"
-            type="org.intermine.web.FqlQueryAction"
-            name="fqlQueryForm"
-            input="buildfqlquery"
+    <!-- Input an iql query -->
+    <action path="/iqlquery"
+            type="org.intermine.web.IqlQueryAction"
+            name="iqlQueryForm"
+            input="buildiqlquery"
             parameter="action">
       <forward name="runquery" path="/runQuery.do"/>
       <forward name="buildquery" path="query.page"/>
-      <forward name="buildfqlquery" path="fqlquery.page"/>
+      <forward name="buildiqlquery" path="iqlquery.page"/>
     </action>
 
     <!-- Select a QueryClass -->
@@ -168,9 +168,9 @@
             type="org.intermine.web.QueryBuildController"
             name="queryBuildForm"/>
 
-    <action path="/initFqlQuery"
-            type="org.intermine.web.FqlQueryController"
-            name="fqlQueryForm"/>
+    <action path="/initIqlQuery"
+            type="org.intermine.web.IqlQueryController"
+            name="iqlQueryForm"/>
 
     <action path="/initQueryView"
             type="org.intermine.web.QueryViewController"/>

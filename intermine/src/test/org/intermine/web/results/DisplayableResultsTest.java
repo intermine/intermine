@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import junit.framework.TestCase;
 
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
 
 public class DisplayableResultsTest extends TestCase
@@ -26,12 +26,12 @@ public class DisplayableResultsTest extends TestCase
     }
 
     private ObjectStoreDummyImpl os;
-    private FqlQuery fq;
+    private IqlQuery fq;
 
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        fq = new FqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.intermine.model.testmodel");
+        fq = new IqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.intermine.model.testmodel");
     }
 
     private DisplayableResults getEmptyResults() throws Exception {
@@ -472,7 +472,7 @@ public class DisplayableResultsTest extends TestCase
         dr1.getColumn("d2").setVisible(false);
 
         // Now update from another that contains some columns we don't have
-        FqlQuery fq1 = new FqlQuery("select c1, d1 from Company as c1, Department as d1", "org.intermine.model.testmodel");
+        IqlQuery fq1 = new IqlQuery("select c1, d1 from Company as c1, Department as d1", "org.intermine.model.testmodel");
         DisplayableResults dr2 = new DisplayableResults(os.execute(fq1.toQuery()));
 
         dr2.setStart(5);
@@ -504,7 +504,7 @@ public class DisplayableResultsTest extends TestCase
         dr1.getColumn("d2").setVisible(false);
 
         // Now update from another that contains some columns we don't have
-        FqlQuery fq2 = new FqlQuery("select c1, c2, c3, d1, d2, d3 from Company as c1, Company as c2, Company as c3, Department as d1, Department as d2, Department as d3", "org.intermine.model.testmodel");
+        IqlQuery fq2 = new IqlQuery("select c1, c2, c3, d1, d2, d3 from Company as c1, Company as c2, Company as c3, Department as d1, Department as d2, Department as d3", "org.intermine.model.testmodel");
         DisplayableResults dr2 = new DisplayableResults(os.execute(fq2.toQuery()));
 
         dr2.setStart(5);

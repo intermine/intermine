@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -52,9 +52,9 @@ public class SimpleQuery
         // file
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.tutorial");
 
-        // Set up an FQL query. "org.intermine.model.tutorial" is used
+        // Set up an IQL query. "org.intermine.model.tutorial" is used
         // to qualify unqualified classes in the query
-        FqlQuery q = new FqlQuery("select c from Company as c", "org.intermine.model.tutorial");
+        IqlQuery q = new IqlQuery("select c from Company as c", "org.intermine.model.tutorial");
 
         // Execute the query (note we have to convert to a Query object first)
         Results results = os.execute(q.toQuery());

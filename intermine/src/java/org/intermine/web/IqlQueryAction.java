@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.util.MessageResources;
 
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 
 /**
@@ -34,7 +34,7 @@ import org.intermine.objectstore.query.Query;
  * @author Andrew Varley
  */
 
-public class FqlQueryAction extends LookupDispatchAction
+public class IqlQueryAction extends LookupDispatchAction
 {
 
     /**
@@ -63,20 +63,20 @@ public class FqlQueryAction extends LookupDispatchAction
         MessageResources messages = getResources(request);
         HttpSession session = request.getSession();
 
-        FqlQueryForm queryform = (FqlQueryForm) form;
+        IqlQueryForm queryform = (IqlQueryForm) form;
 
         try {
-            Query q = new FqlQuery(queryform.getQuerystring(),
+            Query q = new IqlQuery(queryform.getQuerystring(),
                                    "org.intermine.model.testmodel").toQuery();
             session.setAttribute(Constants.QUERY, q);
 
             return mapping.findForward("runquery");
         } catch (java.lang.IllegalArgumentException e) {
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("errors.fqlquery.illegalargument", e.getMessage());
-            errors.add("fqlquery", error);
+            ActionError error = new ActionError("errors.iqlquery.illegalargument", e.getMessage());
+            errors.add("iqlquery", error);
             saveErrors(request, errors);
-            return mapping.findForward("buildfqlquery");
+            return mapping.findForward("buildiqlquery");
         }
     }
 
@@ -106,7 +106,7 @@ public class FqlQueryAction extends LookupDispatchAction
         MessageResources messages = getResources(request);
         HttpSession session = request.getSession();
 
-        FqlQueryForm queryform = (FqlQueryForm) form;
+        IqlQueryForm queryform = (IqlQueryForm) form;
 
         String queryString = queryform.getQuerystring();
 
@@ -114,17 +114,17 @@ public class FqlQueryAction extends LookupDispatchAction
             if (queryString == null || queryString.length() == 0) {
                 session.setAttribute(Constants.QUERY, null);
             } else {
-                Query q = new FqlQuery(queryString, "org.intermine.model.testmodel").toQuery();
+                Query q = new IqlQuery(queryString, "org.intermine.model.testmodel").toQuery();
                 session.setAttribute(Constants.QUERY, q);
             }
 
             return mapping.findForward("buildquery");
         } catch (java.lang.IllegalArgumentException e) {
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("errors.fqlquery.illegalargument", e.getMessage());
-            errors.add("fqlquery", error);
+            ActionError error = new ActionError("errors.iqlquery.illegalargument", e.getMessage());
+            errors.add("iqlquery", error);
             saveErrors(request, errors);
-            return mapping.findForward("buildfqlquery");
+            return mapping.findForward("buildiqlquery");
         }
     }
 

@@ -21,7 +21,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
 import org.intermine.util.Util;
@@ -59,13 +59,13 @@ public class ObjectStoreServer
      * size, rather than passing execute requests straight on the the
      * underlying ObjectStore.
      *
-     * @param query the FqlQuery to register - NOTE: this FqlQuery should not be a normal FqlQuery.
-     * Instead, it should be a mangled invalid FqlQuery as produced by ObjectStoreClient for
+     * @param query the IqlQuery to register - NOTE: this IqlQuery should not be a normal IqlQuery.
+     * Instead, it should be a mangled invalid IqlQuery as produced by ObjectStoreClient for
      * the purposes of sending over the network.
      * @return an id representing the query
      * @throws ObjectStoreException if an error occurs with the underlying ObjectStore
      */
-    public int registerQuery(FqlQuery query) throws ObjectStoreException {
+    public int registerQuery(IqlQuery query) throws ObjectStoreException {
         if (query == null) {
             throw new NullPointerException("query should not be null");
         }

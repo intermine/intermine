@@ -31,8 +31,8 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.fql.FqlQuery;
-import org.intermine.objectstore.query.fql.FqlQueryParser;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.objectstore.query.iql.IqlQueryParser;
 
 import org.intermine.model.testmodel.*;
 
@@ -511,7 +511,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     }
 
     public void testGetObjectMultipleTimes() throws Exception {
-        Query q = FqlQueryParser.parse(new FqlQuery("select Secretary from Secretary where Secretary.name = 'Secretary1'", "org.intermine.model.testmodel"));
+        Query q = IqlQueryParser.parse(new IqlQuery("select Secretary from Secretary where Secretary.name = 'Secretary1'", "org.intermine.model.testmodel"));
         Secretary a = (Secretary) ((List) os.execute(q).get(0)).get(0);
 
         Secretary b = (Secretary) os.getObjectById(a.getId());

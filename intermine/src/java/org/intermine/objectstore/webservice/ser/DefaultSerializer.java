@@ -43,7 +43,7 @@ public class DefaultSerializer implements Serializer
 
         context.startElement(name, attributes);
 
-        //fqlquery, resultsinfo, businessobject (list and model have their own serializers)
+        //iqlquery, resultsinfo, businessobject (list and model have their own serializers)
         for (Iterator fieldInfos = TypeUtil.getFieldInfos(value.getClass()).values().iterator();
              fieldInfos.hasNext();) {
             TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldInfos.next();

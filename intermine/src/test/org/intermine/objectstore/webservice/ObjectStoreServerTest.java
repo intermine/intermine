@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 public class ObjectStoreServerTest extends TestCase
 {
@@ -30,14 +30,14 @@ public class ObjectStoreServerTest extends TestCase
     }
 
     public void testRegisterQueryObject() throws Exception {
-        FqlQuery q = new FqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel");
+        IqlQuery q = new IqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel");
 
         assertEquals(1, server.registerQuery(q));
         assertEquals(2, server.registerQuery(q));
     }
 
     public void testRegisterNullQueryObject() throws Exception {
-        FqlQuery q = null;
+        IqlQuery q = null;
 
         try {
             server.registerQuery(q);
@@ -47,7 +47,7 @@ public class ObjectStoreServerTest extends TestCase
     }
 
     public void testValidLookup() throws Exception {
-        FqlQuery query = new FqlQuery("SELECT a1_ FROM Company AS a1_", "org.intermine.model.testmodel");
+        IqlQuery query = new IqlQuery("SELECT a1_ FROM Company AS a1_", "org.intermine.model.testmodel");
         int queryId = server.registerQuery(query);
         Query ret = server.lookupResults(queryId).getQuery();
         assertEquals("SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_", ret.toString());

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.testing.OneTimeTestCase;
 
 public class QueryTestCase extends OneTimeTestCase
@@ -233,8 +233,8 @@ public class QueryTestCase extends OneTimeTestCase
     }
 
     protected void checkToString(String msg, Query q1, Query q2) {
-        FqlQuery fq1 = new FqlQuery(q1);
-        FqlQuery fq2 = new FqlQuery(q2);
+        IqlQuery fq1 = new IqlQuery(q1);
+        IqlQuery fq2 = new IqlQuery(q2);
         assertEquals(msg, fq1.getQueryString(), fq2.getQueryString());
         assertEquals(msg, fq1.getParameters(), fq2.getParameters());
     }

@@ -23,7 +23,7 @@ import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -47,7 +47,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         super.setUp();
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d", "org.intermine.model.testmodel");
+        IqlQuery fq = new IqlQuery("select c, d from Company as c, Department as d", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(5);

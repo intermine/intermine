@@ -53,8 +53,8 @@ public class QueryBuildAction extends Action
         QueryBuildForm qbf = (QueryBuildForm) form;
         String button = qbf.getButton();        
 
-        if ("editFql".equals(button)) {
-            forward = editFql(mapping, form, request, response);
+        if ("editIql".equals(button)) {
+            forward = editIql(mapping, form, request, response);
         } else if ("addConstraint".equals(button)) {
             forward = addConstraint(mapping, form, request, response);
         } else if ("updateClass".equals(button)) {
@@ -73,7 +73,7 @@ public class QueryBuildAction extends Action
     }
 
     /**
-     * Save the Query on the and go to the FQL edit page.
+     * Save the Query on the and go to the IQL edit page.
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -82,7 +82,7 @@ public class QueryBuildAction extends Action
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward editFql(ActionMapping mapping,
+    public ActionForward editIql(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -103,7 +103,7 @@ public class QueryBuildAction extends Action
         session.removeAttribute(Constants.QUERY_CLASSES);
         session.removeAttribute(Constants.EDITING_ALIAS);
 
-        return mapping.findForward("buildfqlquery");
+        return mapping.findForward("buildiqlquery");
     }
 
     /**

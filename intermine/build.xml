@@ -303,8 +303,8 @@
         outputdirectory="${build.src.java}/org/intermine/sql/query">
       <classpath refid="project.class.path"/>
     </antlr>
-    <antlr target="${src.java}/org/intermine/objectstore/query/fql/intermine_fql.g"
-        outputdirectory="${build.src.java}/org/intermine/objectstore/query/fql">
+    <antlr target="${src.java}/org/intermine/objectstore/query/iql/intermine_iql.g"
+        outputdirectory="${build.src.java}/org/intermine/objectstore/query/iql">
       <classpath refid="project.class.path"/>
     </antlr>
     <depend srcdir="${build.src.java}" destdir="${build.java}" closure="yes" dump="yes"/>

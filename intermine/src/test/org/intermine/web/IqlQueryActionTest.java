@@ -14,9 +14,9 @@ import org.intermine.objectstore.query.Query;
 
 import servletunit.struts.MockStrutsTestCase;
 
-public class FqlQueryActionTest extends MockStrutsTestCase {
+public class IqlQueryActionTest extends MockStrutsTestCase {
 
-    public FqlQueryActionTest(String testName) {
+    public IqlQueryActionTest(String testName) {
         super(testName);
     }
 
@@ -29,7 +29,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testSubmitSuccessfulQuery() {
-        setRequestPathInfo("/fqlquery");
+        setRequestPathInfo("/iqlquery");
         addRequestParameter("querystring","select a1_ from Company as a1_");
         addRequestParameter("action", "Run query");
         actionPerform();
@@ -39,7 +39,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testSubmitEmptyQuery() {
-        setRequestPathInfo("/fqlquery");
+        setRequestPathInfo("/iqlquery");
         addRequestParameter("querystring","");
         addRequestParameter("action", "Run query");
         actionPerform();
@@ -48,7 +48,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testSubmitRubbishQuery() {
-        setRequestPathInfo("/fqlquery");
+        setRequestPathInfo("/iqlquery");
         addRequestParameter("querystring","some rubbish");
         addRequestParameter("action", "Run query");
         actionPerform();
@@ -57,7 +57,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testViewSuccessfulQuery() {
-        setRequestPathInfo("/fqlquery");
+        setRequestPathInfo("/iqlquery");
         addRequestParameter("querystring","select a1_ from Company as a1_");
         addRequestParameter("action", "Query composer");
         actionPerform();
@@ -68,7 +68,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testViewEmptyQuery() {
-        setRequestPathInfo("/fqlquery");
+        setRequestPathInfo("/iqlquery");
         addRequestParameter("querystring","");
         addRequestParameter("action", "Query composer");
         actionPerform();
@@ -77,7 +77,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testViewRubbishQuery() {
-        setRequestPathInfo("/fqlquery");
+        setRequestPathInfo("/iqlquery");
         addRequestParameter("querystring","some rubbish");
         addRequestParameter("action", "Query composer");
         actionPerform();

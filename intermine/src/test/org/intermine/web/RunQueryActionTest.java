@@ -12,7 +12,7 @@ package org.intermine.web;
 
 import servletunit.struts.MockStrutsTestCase;
 
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 public class RunQueryActionTest extends MockStrutsTestCase
 {
@@ -22,7 +22,7 @@ public class RunQueryActionTest extends MockStrutsTestCase
 
     public void testRunValidQuery() {
         setRequestPathInfo("/runQuery");
-        getSession().setAttribute(Constants.QUERY, new FqlQuery("select c from Company as c", "org.intermine.model.testmodel").toQuery());
+        getSession().setAttribute(Constants.QUERY, new IqlQuery("select c from Company as c", "org.intermine.model.testmodel").toQuery());
         actionPerform();
         verifyForward("results");
         assertNotNull(getSession().getAttribute("results"));

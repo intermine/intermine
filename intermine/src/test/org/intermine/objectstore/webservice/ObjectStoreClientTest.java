@@ -16,7 +16,7 @@ import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.safe.ObjectStoreSafeImpl;
 
 public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
@@ -36,8 +36,8 @@ public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
     }
 
     public void testQueryId() throws Exception {
-        Query q1 = new FqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();
-        Query q2 = new FqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();
+        Query q1 = new IqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();
+        Query q2 = new IqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();
 
         assertEquals(((ObjectStoreClient) osai).getQueryId(q1), ((ObjectStoreClient) osai).getQueryId(q1));
         assertEquals(((ObjectStoreClient) osai).getQueryId(q2), ((ObjectStoreClient) osai).getQueryId(q2));

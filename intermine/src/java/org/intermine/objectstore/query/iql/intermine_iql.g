@@ -1,20 +1,20 @@
-// Flymine OQL-like grammar
+// InterMine OQL-like grammar
 
 header {
-package org.intermine.objectstore.query.fql;
+package org.intermine.objectstore.query.iql;
 }
 
-class FqlParser extends Parser;
+class IqlParser extends Parser;
 
 options {
-    exportVocab = Fql;
+    exportVocab = Iql;
     k = 6;
     buildAST = true;
     defaultErrorHandler=false;
 }
 
 tokens {
-    FQL_STATEMENT;
+    IQL_STATEMENT;
     SELECT_LIST;
     FROM_LIST;
     WHERE_CLAUSE;
@@ -43,10 +43,10 @@ tokens {
 }
 
 
-start_rule: fql_statement;
+start_rule: iql_statement;
 
-fql_statement: select_command
-        { #fql_statement = #([FQL_STATEMENT, "FQL_STATEMENT"], #fql_statement); }
+iql_statement: select_command
+        { #iql_statement = #([IQL_STATEMENT, "IQL_STATEMENT"], #iql_statement); }
     ;
 
 select_command:
@@ -137,7 +137,7 @@ table_name:
     ;
 
 subquery:
-        OPEN_PAREN! fql_statement CLOSE_PAREN! ( "as"! )? table_alias
+        OPEN_PAREN! iql_statement CLOSE_PAREN! ( "as"! )? table_alias
         { #subquery = #([SUBQUERY, "SUBQUERY"], #subquery); }
     ;
 
@@ -222,10 +222,10 @@ and_constraint_set:
         { #and_constraint_set = #([AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"], #and_constraint_set); }
     ;
 
-subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! fql_statement CLOSE_PAREN!
+subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! iql_statement CLOSE_PAREN!
         { #subquery_constraint = #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"],
                 #subquery_constraint); }
-        | abstract_value "not"! "in"! OPEN_PAREN! fql_statement CLOSE_PAREN!
+        | abstract_value "not"! "in"! OPEN_PAREN! iql_statement CLOSE_PAREN!
         { #subquery_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"], #subquery_constraint)); }
     ;
 
@@ -253,10 +253,10 @@ comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like" | "not" "like" { #compar
 
 
 
-class FqlLexer extends Lexer;
+class IqlLexer extends Lexer;
 
 options {
-    exportVocab = Fql;
+    exportVocab = Iql;
     testLiterals = false;
     k = 5;
     caseSensitive = false;

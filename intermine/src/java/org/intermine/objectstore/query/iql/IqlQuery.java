@@ -1,4 +1,4 @@
-package org.intermine.objectstore.query.fql;
+package org.intermine.objectstore.query.iql;
 
 /*
  * Copyright (C) 2002-2004 FlyMine
@@ -24,7 +24,7 @@ import org.intermine.objectstore.query.*;
  *
  * @author Andrew Varley
  */
-public class FqlQuery
+public class IqlQuery
 {
     private String queryString;
     private String packageName;
@@ -33,11 +33,11 @@ public class FqlQuery
     /**
      * No-arg constructor (for deserialization)
      */
-    public FqlQuery() {
+    public IqlQuery() {
     }
 
     /**
-     * Construct an FQL query from a String.
+     * Construct an IQL query from a String.
      * NOTE: The query string is not validated on construction
      *
      * @param queryString the string-based query
@@ -45,7 +45,7 @@ public class FqlQuery
      * this can be null if every class name is fully qualified
      * @throws NullPointerException if queryString is null
      */
-    public FqlQuery(String queryString, String packageName) {
+    public IqlQuery(String queryString, String packageName) {
         if (queryString == null) {
             throw new NullPointerException("queryString should not be null");
         }
@@ -61,12 +61,12 @@ public class FqlQuery
 
 
     /**
-     * Construct an FQL query from a Query object.
+     * Construct an IQL query from a Query object.
      *
      * @param q the Query object
      * @throws NullPointerException if query is null
      */
-    public FqlQuery(Query q) {
+    public IqlQuery(Query q) {
         if (q == null) {
             throw new NullPointerException("query should not be null");
         }
@@ -248,7 +248,7 @@ public class FqlQuery
             }
         } else if (cc instanceof SubqueryConstraint) {
             SubqueryConstraint c = (SubqueryConstraint) cc;
-            FqlQuery subquery = new FqlQuery(c.getQuery());
+            IqlQuery subquery = new IqlQuery(c.getQuery());
             // Add the parameters of the subquery to this query
             parameters.addAll(subquery.getParameters());
             return (c.getQueryEvaluable() == null ? nodeToString(q, c.getQueryClass())
@@ -317,7 +317,7 @@ public class FqlQuery
      * @return the InterMine Query object
      */
     public Query toQuery() {
-        return FqlQueryParser.parse(this);
+        return IqlQueryParser.parse(this);
     }
 
     /**
@@ -378,7 +378,7 @@ public class FqlQuery
     }
 
     /**
-     * Return a string version of the FqlQuery
+     * Return a string version of the IqlQuery
      *
      * @return a String version of the query
      */
@@ -400,10 +400,10 @@ public class FqlQuery
      * @see Object#equals
      */
     public boolean equals(Object o) {
-        if (!(o instanceof FqlQuery)) {
+        if (!(o instanceof IqlQuery)) {
             return false;
         }
-        FqlQuery f = (FqlQuery) o;
+        IqlQuery f = (IqlQuery) o;
         return f.queryString.equals(queryString)
             && Util.equals(f.packageName, packageName)
             && Util.equals(f.parameters, parameters);

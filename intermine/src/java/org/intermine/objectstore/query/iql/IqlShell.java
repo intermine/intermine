@@ -1,4 +1,4 @@
-package org.intermine.objectstore.query.fql;
+package org.intermine.objectstore.query.iql;
 
 /*
  * Copyright (C) 2002-2004 FlyMine
@@ -27,12 +27,12 @@ import org.gnu.readline.ReadlineCompleter;
 import java.io.File;
 
 /**
- * Shell for doing FQL queries
+ * Shell for doing IQL queries
  *
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class FqlShell
+public class IqlShell
 {
     /**
      * A testing method - converts the argument into a Query object, and then converts it back to
@@ -47,7 +47,7 @@ public class FqlShell
             out.println("Usage: java org.intermine.objectstore.query.Query "
                         + "<objectstore alias> - to enter shell-mode");
             out.println("       java org.intermine.objectstore.query.Query "
-                        + "<objectstore alias> \"<FQL Query>\" - to run");
+                        + "<objectstore alias> \"<IQL Query>\" - to run");
             out.println("                      a one-off query");
         } else {
             try {
@@ -89,10 +89,10 @@ public class FqlShell
                 }
             }
         }
-        Readline.initReadline("FQLShell");
+        Readline.initReadline("IQLShell");
         try {
             Readline.readHistoryFile(System.getProperty("user.home") + File.separator
-                    + ".fqlshell_history");
+                    + ".iqlshell_history");
         } catch (RuntimeException e) {
             // Doesn't matter.
         }
@@ -105,7 +105,7 @@ public class FqlShell
             public void run() {
                 try {
                     Readline.writeHistoryFile(System.getProperty("user.home") + File.separator
-                        + ".fqlshell_history");
+                        + ".iqlshell_history");
                 } catch (Exception e) {
                     // Don't mind
                 }
@@ -115,7 +115,7 @@ public class FqlShell
             }
         });
 
-        out.println("\nInterMine Query shell. Type in an FQL query, or \"quit;\" to exit.");
+        out.println("\nInterMine Query shell. Type in an IQL query, or \"quit;\" to exit.");
         out.println("End your query with \";\" then a newline. Other newlines are ignored");
         out.flush();
         String currentQuery = "";
@@ -151,10 +151,10 @@ public class FqlShell
     /**
      * Run a query against a given ObjectStore
      *
-     * @param fql the FQL query string to run
+     * @param iql the IQL query string to run
      * @param os the ObjectStore to run it against
      */
-    private static void runQuery(String fql, ObjectStore os)
+    private static void runQuery(String iql, ObjectStore os)
             throws Exception {
         java.util.Date startTime = new java.util.Date();
         PrintStream out = System.out;
@@ -167,12 +167,12 @@ public class FqlShell
         
         boolean doDots = false;
 
-        if (fql.toUpperCase().startsWith("DOT ")) {
-            fql = fql.substring(4);
+        if (iql.toUpperCase().startsWith("DOT ")) {
+            iql = iql.substring(4);
             doDots = true;
         }
-        FqlQuery fq = new FqlQuery(fql, modelPackage);
-        Query q = fq.toQuery();
+        IqlQuery iq = new IqlQuery(iql, modelPackage);
+        Query q = iq.toQuery();
 
         out.println("Query to run: " + q.toString());
 

@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.intermine.util.TypeUtil;
 
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.model.testmodel.Address;
@@ -103,7 +103,7 @@ public class SerializationFunctionalTest extends TestCase
         TypeUtil.setFieldValue(ri, "max", new Integer(5));
         args.add(ri);
 
-        FqlQuery q = new FqlQuery("select c from Company as c", null);
+        IqlQuery q = new IqlQuery("select c from Company as c", null);
         q.setParameters(l);
         args.add(q);
 

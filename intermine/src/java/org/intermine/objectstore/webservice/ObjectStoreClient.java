@@ -32,7 +32,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
 
@@ -200,7 +200,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      */
     protected Integer getQueryId(Query q) throws ObjectStoreException {
         if (!queryIds.containsKey(q)) {
-            FqlQuery fq = new FqlQuery(q);
+            IqlQuery fq = new IqlQuery(q);
             fq.setParameters(SerializationUtil.collectionToStrings(fq.getParameters(), model));
             queryIds.put(q,
                          (Integer) remoteMethod("registerQuery", new Object[] {fq}));

@@ -22,12 +22,12 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.objectstore.query.Query;
 
 /**
- * Perform the initialisation for the FqlQueryAction.
+ * Perform the initialisation for the IqlQueryAction.
  *
  * @author Kim Rutherford
  */
 
-public class FqlQueryController extends TilesAction
+public class IqlQueryController extends TilesAction
 {
     /**
      * @see TilesAction#execute
@@ -40,14 +40,14 @@ public class FqlQueryController extends TilesAction
 
         HttpSession session = request.getSession();
 
-        FqlQueryForm fqlQueryForm = (FqlQueryForm) form;
+        IqlQueryForm iqlQueryForm = (IqlQueryForm) form;
 
         Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (q == null || q.getFrom().size () == 0) {
-             fqlQueryForm.setQuerystring("");
+            iqlQueryForm.setQuerystring("");
         } else {
-            fqlQueryForm.setQuerystring(q.toString());
+            iqlQueryForm.setQuerystring(q.toString());
         }
 
         return null;

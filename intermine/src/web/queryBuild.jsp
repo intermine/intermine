@@ -145,8 +145,8 @@
       </html:submit>
     </c:if>
     <c:if test="${ADVANCED_MODE}">
-      <html:submit property="buttons(editFql)">
-        <fmt:message key="query.editfql"/>
+      <html:submit property="buttons(editIql)">
+        <fmt:message key="query.editiql"/>
       </html:submit>
     </c:if>
   </c:if>

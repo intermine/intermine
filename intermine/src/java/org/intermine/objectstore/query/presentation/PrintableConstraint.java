@@ -11,7 +11,7 @@ package org.intermine.objectstore.query.presentation;
  */
 
 import org.intermine.objectstore.query.*;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 import java.util.ArrayList;
 
@@ -69,7 +69,7 @@ public class PrintableConstraint
             return qf.getFieldName() + (qf.getSecondFieldName() == null ? "" : "."
                                         + qf.getSecondFieldName());
         } else if (left instanceof QueryNode) {
-            return FqlQuery.nodeToString(query, (QueryNode) left);
+            return IqlQuery.nodeToString(query, (QueryNode) left);
         } else if (left instanceof QueryReference) {
             return ((QueryReference) left).getFieldName();
         }
@@ -104,7 +104,7 @@ public class PrintableConstraint
             return qf.getFieldName() + (qf.getSecondFieldName() == null ? "" : "."
                                         + qf.getSecondFieldName());
         } else*/ if (right instanceof QueryNode) {
-            return FqlQuery.nodeToString(query, (QueryNode) right);
+            return IqlQuery.nodeToString(query, (QueryNode) right);
         } else if (right instanceof Query) {
             return ((Query) right).toString();
         } else if (right instanceof Object) { // should check this is a business object
@@ -120,7 +120,7 @@ public class PrintableConstraint
      * @return a String
      */
     public String toString() {
-        return FqlQuery.constraintToString(query, constraint, new ArrayList());
+        return IqlQuery.constraintToString(query, constraint, new ArrayList());
     }
 
     /**

@@ -19,7 +19,7 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.fql.FqlQuery;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
@@ -45,7 +45,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         row.add(c);
         row.add(d);
         os.addRow(row);
-        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d order by c", "org.intermine.model.testmodel");
+        IqlQuery fq = new IqlQuery("select c, d from Company as c, Department as d order by c", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(10);

@@ -89,7 +89,7 @@
 
         </form>
 
-        <form name="fqlQueryForm">
+        <form name="iqlQueryForm">
 
             <field property="querystring"
                     depends="required,email">

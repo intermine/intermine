@@ -32,8 +32,8 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.fql.FqlQuery;
-import org.intermine.objectstore.query.fql.FqlQueryParser;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.objectstore.query.iql.IqlQueryParser;
 import org.intermine.objectstore.query.presentation.PrintableConstraint;
 
 public class QueryViewControllerTest extends MockStrutsTestCase
@@ -83,7 +83,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initQueryView");
-        Query q = FqlQueryParser.parse(new FqlQuery("select a from Company as a", "org.intermine.model.testmodel"));
+        Query q = IqlQueryParser.parse(new IqlQuery("select a from Company as a", "org.intermine.model.testmodel"));
         getRequest().getSession().setAttribute(Constants.QUERY, q);
         actionPerform();
         FromElement from1 = (FromElement) q.getFrom().iterator().next();
@@ -130,7 +130,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         c.addConstraint(c4);
         c.addConstraint(c5);
         q.setConstraint(c);
-        //Query q = FqlQueryParser.parse(new FqlQuery("select a from Company a, Department b, (select Company from Company) as c where a.vatNumber = 5 and a.departments CONTAINS b and c.Company.name = a.name and (a.vatNumber = c.Company.vatNumber OR c.Company.vatNumber = 3) and b.name = 'hello'", "org.intermine.model.testmodel"));
+        //Query q = IqlQueryParser.parse(new IqlQuery("select a from Company a, Department b, (select Company from Company) as c where a.vatNumber = 5 and a.departments CONTAINS b and c.Company.name = a.name and (a.vatNumber = c.Company.vatNumber OR c.Company.vatNumber = 3) and b.name = 'hello'", "org.intermine.model.testmodel"));
         getRequest().getSession().setAttribute(Constants.QUERY, q);
         actionPerform();
         Map expected1 = new HashMap();
