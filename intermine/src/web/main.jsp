@@ -55,8 +55,8 @@
             <html:link action="/mainChange?method=addToView&path=${node.path}">
               <fmt:message key="query.selectNode"/>
             </html:link>
-            <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle"/>
             <c:if test="${node.indentation > 0}">
+            <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle"/>
               <html:link action="/mainChange?method=addPath&path=${node.path}"
                          title="${addConstraintToTitle} ${node.fieldName}">
                 <img class="arrow" src="images/right-arrow.png" alt="->"/>
@@ -156,7 +156,9 @@
                 </c:forEach>
               </html:select>
               <html:text property="attributeValue"/>
-              <html:submit property="attribute"/>
+              <html:submit property="attribute">
+                <fmt:message key="query.submitConstraint"/>
+              </html:submit>
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0}">
@@ -168,7 +170,9 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-              <html:submit property="subclass"/>
+              <html:submit property="subclass">
+                <fmt:message key="query.submitConstraint"/>
+              </html:submit>
               </c:if>
             </c:otherwise>
           </c:choose>
@@ -189,7 +193,9 @@
                 </html:option>
               </c:forEach>
             </html:select>
-            <html:submit property="bag"/>
+            <html:submit property="bag">
+              <fmt:message key="query.submitConstraint"/>
+            </html:submit>
           </c:if>
         </html:form>
       </td>
