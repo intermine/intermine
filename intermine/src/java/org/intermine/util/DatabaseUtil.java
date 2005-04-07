@@ -322,7 +322,6 @@ public class DatabaseUtil
         "PROCEDURE",
         "PUBLIC",
         "RANGE",
-        "RANK",
         "READ",
         "READS",
         "REAL",
