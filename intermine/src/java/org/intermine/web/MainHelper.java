@@ -487,7 +487,8 @@ public class MainHelper
         for (int i = startIndex; i < bits.length; i++) {
             FieldDescriptor fd = cld.getFieldDescriptorByName(bits[i]);
             if (fd == null) {
-                throw new IllegalArgumentException("could not find descriptor for: " + bits[i]);
+                throw new IllegalArgumentException("could not find descriptor for: " + bits[i]
+                                                   + " in " + cld.getName());
             }
             if (fd.isAttribute()) {
                 return ((AttributeDescriptor) fd).getType();
