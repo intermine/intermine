@@ -278,13 +278,22 @@
                           </table>
                         </td></tr>
                       </table>
-                      <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-                        <div class="refSummary">
-                          [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
-                            <fmt:message key="results.showall"/>
-                          </html:link>]
-                        </div>
-                      </c:if>
+                      <c:choose>
+                        <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
+                          <div class="refSummary">
+                            [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+                              <fmt:message key="results.showallintable"/>
+                            </html:link>]
+                          </div>
+                        </c:when>
+                        <c:otherwise>
+                          <div class="refSummary">
+                            [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+                              <fmt:message key="results.showintable"/>
+                            </html:link>]
+                          </div>
+                        </c:otherwise>
+                      </c:choose>                          
                     </td>
                   </tr>
                 </c:if>
