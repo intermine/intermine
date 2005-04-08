@@ -8,11 +8,11 @@
 <!-- tablePageLinks -->
   <span class="tablePageLinks">
     <c:choose>
-      <c:when test="${!RESULTS_TABLE.firstPage}">
-        <html:link action="/results?page=0&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
+      <c:when test="${!resultsTable.firstPage}">
+        <html:link action="/results?table=${param.table}&amp;page=0&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           <fmt:message key="results.first"/>
         </html:link>
-        <html:link action="/results?page=${RESULTS_TABLE.page-1}&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
+        <html:link action="/results?table=${param.table}&amp;page=${resultsTable.page-1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           <fmt:message key="results.previous"/>
         </html:link>
       </c:when>
@@ -22,8 +22,8 @@
       </c:otherwise>
     </c:choose>
     <c:choose>
-      <c:when test="${!RESULTS_TABLE.lastPage}">
-        <html:link action="/results?page=${RESULTS_TABLE.page+1}&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
+      <c:when test="${!resultsTable.lastPage}">
+        <html:link action="/results?table=${param.table}&amp;page=${resultsTable.page+1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           <fmt:message key="results.next"/>
         </html:link>
       </c:when>
@@ -32,8 +32,8 @@
       </c:otherwise>
     </c:choose>
     <c:choose>
-      <c:when test="${!RESULTS_TABLE.lastPage && RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
-        <html:link action="/changeResults?method=last&amp;trail=${param.trail}">
+      <c:when test="${!resultsTable.lastPage && resultsTable.maxRetrievableIndex > resultsTable.size}">
+        <html:link action="/changeResults?table=${param.table}&amp;method=last&amp;trail=${param.trail}">
           <fmt:message key="results.last"/>
         </html:link>
       </c:when>

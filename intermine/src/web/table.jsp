@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <tiles:importAttribute/>
 
@@ -30,8 +30,8 @@
     function changePageSize() {
       var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
       var pagesize = document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value;
-      var page = ${RESULTS_TABLE.startRow}/pagesize;
-      url += 'page=' + Math.floor(page) + '&size=' + pagesize;
+      var page = ${resultsTable.startRow}/pagesize;
+      url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
       if ('${param.trail}' != '')
       {
       	url += '&trail=${param.trail}';
@@ -42,7 +42,7 @@
 </script>
 
 <c:choose>
-  <c:when test="${RESULTS_TABLE.size == 0}">
+  <c:when test="${resultsTable.size == 0}">
     <div class="body">
       <fmt:message key="results.pageinfo.empty"/><br/>
     </div>
@@ -59,14 +59,19 @@
           <html:option value="50">50</html:option>
           <html:option value="100">100</html:option>
         </html:select>
+        <input type="hidden" name="table" value="${param.table}"/>
+        <input type="hidden" name="trail" value="${param.trail}"/>
         <noscript>
           <html:submit>
             <fmt:message key="button.change"/>
           </html:submit>
         </noscript>
-        &nbsp;<tiles:insert page="/tablePageLinks.jsp"/>
       </div>
     </html:form>
+    
+    <div class="body">
+      <p><tiles:insert page="/tablePageLinks.jsp"/></p>
+    </div>
     
     <html:form action="/saveBag">
     <div class="body">
@@ -75,7 +80,7 @@
         
         <%-- The headers --%>
         <tr>
-          <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">
+          <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
             <th align="center">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                              onclick="selectColumnCheckboxes(${status.index})">
@@ -115,7 +120,7 @@
                 <%-- show/hide --%>
                 <c:choose>
                   <c:when test="${column.visible}">
-                    <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
+                    <c:if test="${resultsTable.visibleColumnCount > 1}">
                       <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
                         <fmt:param value="${column.name}"/>
                       </fmt:message>
@@ -147,8 +152,8 @@
         <%-- The data --%>
 
         <%-- Row --%>
-        <c:if test="${RESULTS_TABLE.size > 0}">
-          <c:forEach var="row" items="${RESULTS_TABLE.rows}" varStatus="status">
+        <c:if test="${resultsTable.size > 0}">
+          <c:forEach var="row" items="${resultsTable.rows}" varStatus="status">
 
             <c:set var="rowClass">
               <c:choose>
@@ -158,7 +163,7 @@
             </c:set>
 
             <tr class="<c:out value="${rowClass}"/>">
-              <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status2">
+              <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
                 <c:choose>
                   <c:when test="${column.visible}">
                     <%-- the checkbox to select this object --%>
@@ -172,7 +177,7 @@
                     <td>
                       <c:set var="object" value="${row[column.index]}" scope="request"/>
                       <c:choose>
-                        <c:when test="${RESULTS_TABLE.summary}">
+                        <c:when test="${resultsTable.summary}">
                           <c:set var="viewType" value="summary" scope="request"/>
                         </c:when>
                         <c:otherwise>
@@ -193,23 +198,23 @@
         </c:if>
       </table>
 
-      <c:if test="${RESULTS_TABLE.size > 1}">
+      <c:if test="${resultsTable.size > 1}">
         <%-- "Displaying xxx to xxx of xxx rows" messages --%>
         <br/>
         <c:choose>
-          <c:when test="${RESULTS_TABLE.sizeEstimate}">
+          <c:when test="${resultsTable.sizeEstimate}">
             <fmt:message key="results.pageinfo.estimate">
-              <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
-              <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
-              <fmt:param value="${RESULTS_TABLE.size}"/>
+              <fmt:param value="${resultsTable.startRow+1}"/>
+              <fmt:param value="${resultsTable.endRow+1}"/>
+              <fmt:param value="${resultsTable.size}"/>
             </fmt:message>
             <im:helplink key="results.help.estimate"/>
           </c:when>
           <c:otherwise>
             <fmt:message key="results.pageinfo.exact">
-              <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
-              <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
-              <fmt:param value="${RESULTS_TABLE.size}"/>
+              <fmt:param value="${resultsTable.startRow+1}"/>
+              <fmt:param value="${resultsTable.endRow+1}"/>
+              <fmt:param value="${resultsTable.size}"/>
             </fmt:message>
           </c:otherwise>
         </c:choose>
@@ -219,17 +224,18 @@
       </c:if>
 
       <%-- Return to main results link --%>
-      <c:if test="${RESULTS_TABLE.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null && empty bagName}">
-        <br/>
-        <html:link action="/changeResults?method=reset">
-          <fmt:message key="results.return"/>
-        </html:link>
+      <c:if test="${resultsTable.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
+        <p>
+          <html:link action="/results?table=results">
+            <fmt:message key="results.return"/>
+          </html:link>
+        </p>
       </c:if>
 
       </div> <%-- end of main results table body div --%>
    
       <%-- Save bag controls --%>
-      <c:if test="${RESULTS_TABLE.size > 0}">
+      <c:if test="${resultsTable.size > 0}">
         <div class="heading">
           <fmt:message key="results.save"/><im:helplink key="results.help.save"/>
         </div>
@@ -238,6 +244,8 @@
             <li>
               <fmt:message key="bag.new"/>
               <html:text property="newBagName"/>
+              <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+              <input type="hidden" name="table" value="${param.table}"/>
               <html:submit property="saveNewBag">
                 <fmt:message key="button.save"/>
               </html:submit>

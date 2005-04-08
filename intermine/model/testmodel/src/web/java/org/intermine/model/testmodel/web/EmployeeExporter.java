@@ -10,48 +10,27 @@ package org.intermine.model.testmodel.web;
  *
  */
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-
 import java.io.PrintStream;
+import java.util.List;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ExceptionHandler;
-import org.apache.struts.config.ExceptionConfig;
-
-import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionError;
-
-import org.apache.poi.hssf.usermodel.*;
-
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.util.TextFileUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
-import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
-import org.intermine.web.results.PagedTable;
+import org.intermine.web.SessionMethods;
 
 /**
  * An implementation of TableExporter that exports Employee objects.
@@ -84,7 +63,8 @@ public class EmployeeExporter implements TableExporter
 
         PrintStream printStream = new PrintStream(response.getOutputStream());
 
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt
+            = (PagedTable) SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         try {
             List columns = pt.getColumns();

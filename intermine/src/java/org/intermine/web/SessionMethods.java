@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.results.DisplayObjectFactory;
 import org.intermine.web.results.PagedResults;
+import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
 
 import org.intermine.util.CacheMap;
@@ -180,7 +181,6 @@ public class SessionMethods
         
         PagedResults pr = runnable.getPagedResults();
         session.setAttribute(Constants.QUERY_RESULTS, pr);
-        session.setAttribute(Constants.RESULTS_TABLE, pr);
 
         if (saveQuery) {
             String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
@@ -424,5 +424,40 @@ public class SessionMethods
             QueryMonitor controller = (QueryMonitor) queries.get(qid);
             return controller;
         }
+    }
+
+    /**
+     * 
+     * 
+     * @param session the current session
+     * @param identifier table identifier
+     * @return PagedTable identified by identifier
+     */
+    public static PagedTable getResultsTable(HttpSession session, String identifier) {
+        if ("results".equals(identifier)) {
+            return (PagedTable) session.getAttribute(Constants.QUERY_RESULTS);
+        }
+        Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
+        if (tables != null) {
+            return (PagedTable) tables.get(identifier);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * @param session the current session
+     * @param identifier table identifier
+     * @param table table to register
+     */
+    public static void setResultsTable(HttpSession session, String identifier, PagedTable table) {
+        Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
+        if (tables == null) {
+            tables = Collections.synchronizedMap(new CacheMap());
+            session.setAttribute(Constants.TABLE_MAP, tables);
+        }
+        tables.put(identifier, table);
     }
 }

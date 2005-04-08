@@ -6,7 +6,5 @@
 <tiles:importAttribute scope="request"/>
 
 <!-- bagDetailsPage.jsp -->
-<div class="body">
 <tiles:insert name="table"/>
-</div>
 <!-- /bagDetailsPage.jsp -->

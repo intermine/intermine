@@ -109,7 +109,7 @@ public class ExportAction extends InterMineAction
         response.setContentType("Application/vnd.ms-excel");
         response.setHeader("Content-Disposition ", "inline; filename=results-table.xsl");
 
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         int defaultMax = 10000;
 
@@ -213,7 +213,7 @@ public class ExportAction extends InterMineAction
         response.setContentType("text/comma-separated-values");
         response.setHeader("Content-Disposition ", "inline; filename=results-table.csv");
 
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
 
         TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
@@ -243,7 +243,7 @@ public class ExportAction extends InterMineAction
         response.setContentType("text/tab-separated-values");
         response.setHeader("Content-Disposition ", "inline; filename=results-table.txt");
 
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getAllRows(),
                                             getOrder(pt), getVisible(pt),

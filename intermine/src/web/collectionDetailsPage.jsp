@@ -6,5 +6,6 @@
 <tiles:importAttribute scope="request"/>
 
 <!-- collectionDetailsPage.jsp -->
+<tiles:get name="objectTrail.tile"/>
 <tiles:get name="table"/>
 <!-- /collectionDetailsPage.jsp -->

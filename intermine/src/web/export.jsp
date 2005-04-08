@@ -12,18 +12,18 @@
 <div class="body">
   <ul>
     <li>
-      <html:link action="/exportAction?type=csv">
+      <html:link action="/exportAction?table=${param.table}&amp;type=csv">
         <fmt:message key="export.csv"/>
       </html:link>
     </li>
     <li>
-      <html:link action="/exportAction?type=tab">
+      <html:link action="/exportAction?table=${param.table}&amp;type=tab">
         <fmt:message key="export.tabdelimited"/>
       </html:link>
     </li>
     <c:if test="${RESULTS_TABLE.size <= WEB_PROPERTIES['max.excel.export.size']}">
       <li>
-        <html:link action="/exportAction?type=excel">
+        <html:link action="/exportAction?table=${param.table}&amp;type=excel">
           <fmt:message key="export.excel">
             <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
           </fmt:message>
@@ -35,7 +35,7 @@
 
     <c:forEach var="entry" items="${exporters}" varStatus="status">
       <li>
-        <html:link action="${entry.value.actionPath}">
+        <html:link action="${entry.value.actionPath}&amp;table=${param.table}">
           <fmt:message key="exporter.${entry.key}.description"/>
         </html:link>
       </li>

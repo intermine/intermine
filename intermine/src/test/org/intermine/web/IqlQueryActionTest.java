@@ -35,7 +35,7 @@ public class IqlQueryActionTest extends MockStrutsTestCase {
         actionPerform();
         verifyNoActionErrors();
         verifyForward("results");
-        assertNotNull(getSession().getAttribute(Constants.RESULTS_TABLE));
+        assertNotNull(getSession().getAttribute(Constants.QUERY_RESULTS));
         verifyNoActionErrors();
     }
 
@@ -46,7 +46,7 @@ public class IqlQueryActionTest extends MockStrutsTestCase {
         actionPerform();
         verifyActionErrors(new String[] {"errors.iqlquery.illegalargument"});
         verifyForward("iqlQuery");
-        assertNull(getSession().getAttribute(Constants.RESULTS_TABLE));
+        assertNull(getSession().getAttribute(Constants.QUERY_RESULTS));
     }
 
     public void testSubmitRubbishQuery() {
@@ -56,6 +56,6 @@ public class IqlQueryActionTest extends MockStrutsTestCase {
         actionPerform();
         verifyActionErrors(new String[] {"errors.iqlquery.illegalargument"});
         verifyForward("iqlQuery");
-        assertNull(getSession().getAttribute(Constants.RESULTS_TABLE));
+        assertNull(getSession().getAttribute(Constants.QUERY_RESULTS));
     }
 }

@@ -11,6 +11,11 @@
     </html:link>
   </span>
   <span class="menu-item">
+    <html:link action="/begin.do">
+      <fmt:message key="menu.newquery"/>
+    </html:link>
+  </span>
+  <span class="menu-item">
     <c:choose>
       <c:when test="${!empty QUERY}">
         <html:link action="/query.do">
@@ -21,11 +26,6 @@
         <fmt:message key="menu.currentquery"/>
       </c:otherwise>
     </c:choose>
-  </span>
-  <span class="menu-item">
-    <html:link action="/begin.do">
-      <fmt:message key="menu.newquery"/>
-    </html:link>
   </span>
   <span class="menu-item">
   <c:choose>

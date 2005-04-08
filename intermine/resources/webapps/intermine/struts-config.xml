@@ -88,9 +88,6 @@
     <!-- Actions that just forward elsewhere - only used by jsps -->
     <action path="/query"
             forward="query.page"/>
-
-    <action path="/results"
-            forward="results.page"/>
     
     <action path="/iqlQuery"
             forward="iqlQuery.page"/>
@@ -122,12 +119,6 @@
     <action path="/help"
             forward="help.page"/>
 
-    <action path="/bagDetails"
-            forward="bagDetails.page"/>
-
-    <action path="/collectionDetails"
-            forward="collectionDetails.page"/>
-
     <action path="/objectDetails"
             forward="objectDetails.page"/>
 
@@ -149,6 +140,9 @@
     <action path="/templateProblems"
             forward="templateProblems.page"/>
     
+    <action path="/results"
+            forward="results.page"/>
+    
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
@@ -158,6 +152,7 @@
             type="org.intermine.web.TemplatesExportAction"/>
             
     <!-- Actions invoked using links -->
+    
     <action path="/modifyQueryChange"
             type="org.intermine.web.ModifyQueryChangeAction"
             parameter="method">
@@ -173,6 +168,16 @@
     <action path="/confirm"
             type="org.intermine.web.ConfirmAction">
       <forward name="confirm" path="confirm.page"/>
+    </action>
+
+    <action path="/collectionDetails"
+            type="org.intermine.web.results.CollectionDetailsAction">
+      <forward name="results" path="/results.do" redirect="true"/>
+    </action>
+
+    <action path="/bagDetails"
+            type="org.intermine.web.results.BagDetailsAction">
+      <forward name="results" path="/results.do" redirect="true"/>
     </action>
 
     <action path="/userTemplateAction"
@@ -239,7 +244,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/query.do" redirect="true"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="results" path="/results.do?table=results" redirect="true"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
@@ -255,7 +260,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/query.do" redirect="true"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="results" path="/results.do?table=results" redirect="true"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
@@ -271,7 +276,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/begin.do" redirect="true"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="results" path="/results.do?table=results" redirect="true"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
@@ -280,8 +285,6 @@
     <action path="/viewAction"
             type="org.intermine.web.ViewAction"
             name="emptyForm">
-      <forward name="results" path="/results.do" redirect="true" />
-      <forward name="query" path="/query.do" redirect="true" />
       <forward name="waiting" path="/pollQuery.do" redirect="true" />
     </action>
 
@@ -455,9 +458,8 @@
     <action path="/initObjectTrail"
             type="org.intermine.web.results.ObjectTrailController"/>
 
-    <action path="/initCollectionDetails"
-            type="org.intermine.web.results.CollectionDetailsController"
-            name="changeResultsSizeForm"/>
+    <action path="/initResults"
+            type="org.intermine.web.results.ResultsController"/>
 
     <action path="/initTable"
             type="org.intermine.web.results.TableController"

@@ -51,7 +51,7 @@ public class ExportController extends TilesAction
 
         WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         Map allExporters = wc.getExporters();
         Map usableExporters = new HashMap();
