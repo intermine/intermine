@@ -74,7 +74,7 @@ public class ObjectDetailsController extends InterMineAction
                 dobj = makeDisplayObject(session, object);
                 displayObjects.put(key, dobj);
             }
-            session.setAttribute("object", dobj);
+            request.setAttribute("object", dobj);
 
             if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
                 session.removeAttribute(Constants.PORTAL_QUERY_FLAG);
