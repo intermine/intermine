@@ -1009,7 +1009,7 @@
   </target>
 
   <target name="build-testmodel-webapp" 
-          depends="build-webapp, insert-data-unittest"
+          depends="build-webapp"
           description="Build webapp including the test model">
     <!--<ant antfile="build-model.xml" target="summarise-objectstore" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
