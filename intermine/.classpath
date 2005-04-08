@@ -49,5 +49,6 @@
 	<classpathentry kind="lib" path="lib/lucene-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry kind="lib" path="lib/snowball-1.1-dev.jar"/>
 	<classpathentry kind="output" path="build/eclipse"/>
 </classpath>
