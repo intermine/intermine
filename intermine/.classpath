@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="org/intermine/tutorial/*" kind="src" path="src/java"/>
+	<classpathentry kind="src" path="model/testmodel/src/web/java"/>
 	<classpathentry kind="src" path="build/model/testmodel"/>
 	<classpathentry excluding="org/intermine/dataloader/AceDataLoaderTest.java" kind="src" path="src/test"/>
 	<classpathentry kind="src" path="build/model/datatracking"/>
