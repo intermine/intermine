@@ -40,17 +40,22 @@ import org.intermine.util.TypeUtil;
 public class DisplayObject
 {
     InterMineObject object;
+    WebConfig webConfig;
+    Map webProperties;
+    Model model;
+
     Set clds;
 
-    Map attributes = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-    Map references = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-    Map collections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-    Map refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-    List keyAttributes = new ArrayList();
-    List keyReferences = new ArrayList();
-    List fieldExprs = new ArrayList();
+    Map attributes = null;
+    Map references = null;
+    Map collections = null;
+    Map refsAndCollections = null;
+    List keyAttributes = null;
+    List keyReferences = null;
+    List fieldExprs = null;
+
     Map verbosity = new HashMap();
-    
+
     /**
      * Create a new DisplayObject.
      * @param object the object to display
@@ -62,69 +67,13 @@ public class DisplayObject
     public DisplayObject(InterMineObject object, Model model,
                          WebConfig webConfig, Map webProperties) throws Exception {
         this.object = object;
+        this.model = model;
+        this.webConfig = webConfig;
+        this.webProperties = webProperties;
+
         clds = ObjectViewController.getLeafClds(object.getClass(), model);
-
-        for (Iterator i = clds.iterator(); i.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) i.next();
-            for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
-                FieldDescriptor fd = (FieldDescriptor) j.next();
-
-                if (fd.isAttribute() && !fd.getName().equals("id")) {
-                    Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
-                    if (fieldValue != null) {
-                        attributes.put(fd.getName(), fieldValue);
-                    }
-                } else if (fd.isReference()) {
-                    ReferenceDescriptor ref = (ReferenceDescriptor) fd;
-                    //check whether reference is null without dereferencing
-                    ProxyReference proxy = (ProxyReference) TypeUtil.getFieldProxy(object,
-                                                                                   ref.getName());
-                    if (proxy != null) {
-                        DisplayReference newReference = 
-                            new DisplayReference(proxy, ref.getReferencedClassDescriptor(),
-                                                 webConfig, webProperties);
-                        references.put(fd.getName(), newReference);
-                    }
-                } else if (fd.isCollection()) {
-                    Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
-                    ClassDescriptor refCld =
-                        ((CollectionDescriptor) fd).getReferencedClassDescriptor();
-                    DisplayCollection newCollection =
-                        new DisplayCollection((List) fieldValue, refCld, webConfig, webProperties);
-                    if (newCollection.getSize() > 0) {
-                        collections.put(fd.getName(), newCollection);
-                    }
-                }
-            }
-
-            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-
-            Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
-
-            while (cldFieldConfigIter.hasNext()) {
-                FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-
-                fieldExprs.add(fc.getFieldExpr());
-            }
-        }
-
-        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
-             i.hasNext();) {
-            FieldDescriptor fd = (FieldDescriptor) i.next();
-            if (TypeUtil.getFieldValue(object, fd.getName()) != null) {
-                if (fd.isAttribute() && !fd.getName().equals("id")) {
-                    keyAttributes.add(fd.getName());
-                } else if (fd.isReference()) {
-                    keyReferences.add(fd.getName());
-                }
-            }
-        }
-
-        // make a combined Map
-        refsAndCollections.putAll(references);
-        refsAndCollections.putAll(collections);
     }
-    
+
     /**
      * Get the real business object
      * @return the object
@@ -132,7 +81,7 @@ public class DisplayObject
     public InterMineObject getObject() {
         return object;
     }
-    
+
     /**
      * Get the id of this object
      * @return the id
@@ -140,7 +89,7 @@ public class DisplayObject
     public int getId() {
         return object.getId().intValue();
     }
-    
+
     /**
      * Get the class descriptors for this object
      * @return the class descriptors
@@ -154,6 +103,9 @@ public class DisplayObject
      * @return the key attributes
      */
     public List getKeyAttributes() {
+        if (keyAttributes == null) {
+            initialise();
+        }
         return keyAttributes;
     }
 
@@ -162,6 +114,9 @@ public class DisplayObject
      * @return the key references
      */
     public List getKeyReferences() {
+        if (keyReferences == null) {
+            initialise();
+        }
         return keyReferences;
     }
 
@@ -170,6 +125,9 @@ public class DisplayObject
      * @return the attributes
      */
     public Map getAttributes() {
+        if (attributes == null) {
+            initialise();
+        }
         return attributes;
     }
 
@@ -178,6 +136,9 @@ public class DisplayObject
      * @return the references
      */
     public Map getReferences() {
+        if (references == null) {
+            initialise();
+        }
         return references;
     }
 
@@ -186,6 +147,9 @@ public class DisplayObject
      * @return the collections
      */
     public Map getCollections() {
+        if (collections == null) {
+            initialise();
+        }
         return collections;
     }
 
@@ -194,6 +158,9 @@ public class DisplayObject
      * @return the collections
      */
     public Map getRefsAndCollections() {
+        if (refsAndCollections == null) {
+            initialise();
+        }
         return refsAndCollections;
     }
 
@@ -203,6 +170,21 @@ public class DisplayObject
      * @return the expressions
      */
     public List getFieldExprs() {
+        if (fieldExprs == null) {
+            fieldExprs = new ArrayList();
+
+            for (Iterator i = clds.iterator(); i.hasNext();) {
+                ClassDescriptor cld = (ClassDescriptor) i.next();
+                List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+                Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
+
+                while (cldFieldConfigIter.hasNext()) {
+                    FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+
+                    fieldExprs.add(fc.getFieldExpr());
+                }
+            }
+        }
         return fieldExprs;
     }
 
@@ -221,5 +203,73 @@ public class DisplayObject
      */
     public void setVerbosity(String fieldName, boolean verbose) {
         verbosity.put(fieldName, verbose ? fieldName : null);
+    }
+
+    /**
+     * Create the Maps and Lists returned by the getters in this class.
+     */
+    private void initialise() {
+        attributes = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+        references = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+        collections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+        refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+        keyAttributes = new ArrayList();
+        keyReferences = new ArrayList();
+
+        try {
+            for (Iterator i = clds.iterator(); i.hasNext();) {
+                ClassDescriptor cld = (ClassDescriptor) i.next();
+                for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
+                    FieldDescriptor fd = (FieldDescriptor) j.next();
+
+                    if (fd.isAttribute() && !fd.getName().equals("id")) {
+                        Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
+                        if (fieldValue != null) {
+                            attributes.put(fd.getName(), fieldValue);
+                        }
+                    } else if (fd.isReference()) {
+                        ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+                        //check whether reference is null without dereferencing
+                        ProxyReference proxy =
+                            (ProxyReference) TypeUtil.getFieldProxy(object, ref.getName());
+                        if (proxy != null) {
+                            DisplayReference newReference =
+                                new DisplayReference(proxy, ref.getReferencedClassDescriptor(),
+                                                     webConfig, webProperties);
+                            references.put(fd.getName(), newReference);
+                        }
+                    } else if (fd.isCollection()) {
+                        Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
+                        ClassDescriptor refCld =
+                            ((CollectionDescriptor) fd).getReferencedClassDescriptor();
+                        DisplayCollection newCollection =
+                            new DisplayCollection((List) fieldValue, refCld,
+                                                  webConfig, webProperties);
+                        if (newCollection.getSize() > 0) {
+                            collections.put(fd.getName(), newCollection);
+                        }
+                    }
+                }
+            }
+
+            Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
+
+            while (i.hasNext()) {
+                FieldDescriptor fd = (FieldDescriptor) i.next();
+                if (TypeUtil.getFieldValue(object, fd.getName()) != null) {
+                    if (fd.isAttribute() && !fd.getName().equals("id")) {
+                        keyAttributes.add(fd.getName());
+                    } else if (fd.isReference()) {
+                        keyReferences.add(fd.getName());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while creating a DisplayObject", e);
+        }
+
+        // make a combined Map
+        refsAndCollections.putAll(references);
+        refsAndCollections.putAll(collections);
     }
 }
