@@ -24,13 +24,14 @@ import org.apache.struts.tiles.ComponentContext;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.ArrayList;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -71,24 +72,32 @@ public class CollectionDetailsController extends TilesAction
 
         Set cds = model.getClassDescriptorsForClass(o.getClass());
 
-        CollectionDescriptor colDesc = null;
+        ReferenceDescriptor refDesc = null;
         
         Iterator iter = cds.iterator();
 
         while (iter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) iter.next();
 
-            colDesc = (CollectionDescriptor) cd.getFieldDescriptorByName(field);
+            refDesc = (ReferenceDescriptor) cd.getFieldDescriptorByName(field);
 
-            if (colDesc != null) {
+            if (refDesc != null) {
                 break;
             }
         }
 
-        ClassDescriptor collectionClass = colDesc.getReferencedClassDescriptor();
+        ClassDescriptor refClass = refDesc.getReferencedClassDescriptor();
+        Collection c;
+        Object fieldValue = TypeUtil.getFieldValue(o, field);
 
-        Collection c = (Collection) TypeUtil.getFieldValue(o, field);
-        PagedCollection pc = new PagedCollection(field, c, collectionClass);
+        if (fieldValue instanceof Collection) {
+            c = (Collection) fieldValue;
+        } else {
+            c = new ArrayList();
+            c.add(o);
+        }
+
+        PagedCollection pc = new PagedCollection(field, c, refClass);
         if (pageSize != null) {
             try {
                 int pageSizeInt = Integer.parseInt(pageSize);
