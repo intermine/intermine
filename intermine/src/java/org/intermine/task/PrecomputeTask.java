@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -52,10 +51,7 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 
-import org.intermine.web.TemplateQuery;
 import org.intermine.web.TemplateQueryBinding;
-import org.intermine.web.MainHelper;
-import org.intermine.web.PathNode;
 
 import org.apache.log4j.Logger;
 
