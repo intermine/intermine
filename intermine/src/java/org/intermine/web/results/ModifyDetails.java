@@ -13,10 +13,7 @@ package org.intermine.web.results;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.ArrayList;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +24,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.*;
-import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 
 /**
@@ -88,67 +83,6 @@ public class ModifyDetails extends DispatchAction
 
         return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
     }
-    
-    /**
-     * Filter a collection by selecting only the elements of certain types
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-     public ActionForward filter(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-         throws Exception {
-         HttpSession session = request.getSession();
-         ServletContext servletContext = session.getServletContext();
-         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-         String fieldName = request.getParameter("field");
-         int index = new Integer(request.getParameter("index")).intValue();
-
-         DisplayObject object = (DisplayObject) session.getAttribute("object");
-         DisplayCollection collection = (DisplayCollection) object.getCollections().get(fieldName);
-
-         //e.g. all the broke departments in the "departments" field of a company
-         //select a from (Department, Broke) as a, Company
-         //where Company.departments contains a and Company.id=24000006;
-         //i.e. select qc1 from qc1, qc2 where cc and sc
-         Set clds = (Set) new ArrayList(collection.getClasses().keySet()).get(index);
-         Set collectionTypes = new HashSet();
-         for (Iterator i = clds.iterator(); i.hasNext();) {
-             collectionTypes.add(((ClassDescriptor) i.next()).getType());
-         }
-         QueryClass qc1 = new QueryClass(collectionTypes);
-
-         ClassDescriptor cld = cldContainingField(object.getClds(), fieldName);
-         QueryClass qc2 = new QueryClass(cld.getType());
-
-         ContainsConstraint cc = 
-             new ContainsConstraint(new QueryCollectionReference(qc2, fieldName),
-                                    ConstraintOp.CONTAINS,
-                                    qc1);
-         SimpleConstraint sc = new SimpleConstraint(new QueryField(qc2, "id"),
-                                                    ConstraintOp.EQUALS,
-                                                    new QueryValue(new Integer(object.getId())));
-
-         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-         cs.addConstraint(cc);
-         cs.addConstraint(sc);
-
-         Query q = new Query();
-         q.addToSelect(qc1);
-         q.addFrom(qc1);
-         q.addFrom(qc2);
-         q.setConstraint(cs);
-
-         session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
-         
-         return mapping.findForward("results");
-     }
     
     /**
      * For a dynamic class, find the class descriptor from which a field is derived
