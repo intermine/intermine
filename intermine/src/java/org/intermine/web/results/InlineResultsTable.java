@@ -20,7 +20,6 @@ import java.util.Collections;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
@@ -46,8 +45,9 @@ public class InlineResultsTable
     // a list of list of values for the table
     protected List tableRows = null;
     protected Model model;
-    protected int size = 30;
+    protected int size = -1;
     protected WebConfig webConfig;
+    protected Map webProperties;
 
     /**
      * Construct a new InlineResultsTable object
@@ -55,35 +55,15 @@ public class InlineResultsTable
      * @param cld the type of this collection field
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
-     * @throws ObjectStoreException if an error occurs
      */
     public InlineResultsTable(List results, ClassDescriptor cld,
-                              WebConfig webConfig, Map webProperties)
-        throws ObjectStoreException {
+                              WebConfig webConfig, Map webProperties) {
         this.results = results;
         this.cld = cld;
         this.webConfig = webConfig;
+        this.webProperties = webProperties;
+
         this.model = cld.getModel();
-
-        // default
-        int maxInlineTableSize = 30;
-
-        String maxInlineTableSizeString = (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
-
-        try {
-            maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
-        } catch (NumberFormatException e) {
-            LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
-                     + maxInlineTableSizeString);
-        }
-
-        size = maxInlineTableSize;
-
-        try {
-            results.get(size);
-        } catch (IndexOutOfBoundsException e) {
-            size = results.size();
-        }
     }
 
     /**
@@ -124,7 +104,7 @@ public class InlineResultsTable
      */
     public List getTypes() {
         List types = new ArrayList();
-        for (Iterator i = results.subList(0, size).iterator(); i.hasNext();) {
+        for (Iterator i = results.subList(0, getSize()).iterator(); i.hasNext();) {
             Object o = i.next();
             if (o instanceof ProxyReference) {
                 // special case for ProxyReference from DisplayReference objects
@@ -134,14 +114,14 @@ public class InlineResultsTable
         }
         return types;
     }
-
+    
     /**
      * Get the ids of the objects in the rows
      * @return a List of ids, one per row
      */
     public List getIds() {
         List ids = new ArrayList();
-        for (Iterator i = results.subList(0, size).iterator(); i.hasNext();) {
+        for (Iterator i = results.subList(0, getSize()).iterator(); i.hasNext();) {
             ids.add(((InterMineObject) i.next()).getId());
         }
         return ids;
@@ -170,7 +150,7 @@ public class InlineResultsTable
         columns = new ArrayList();
         subList = new ArrayList();
 
-        Iterator resultsIter = results.subList(0, size).iterator();
+        Iterator resultsIter = results.subList(0, getSize()).iterator();
 
         while (resultsIter.hasNext()) {
             Object o = resultsIter.next();
@@ -253,5 +233,32 @@ public class InlineResultsTable
      */
     protected List getClassFieldConfigs(ClassDescriptor cd) {
         return FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
+    }
+
+    /**
+     * Return the number of table rows or the INLINE_TABLE_SIZE whichever is smaller.
+     */
+    private int getSize() {
+        // default
+        int maxInlineTableSize = 30;
+
+        String maxInlineTableSizeString = (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
+
+        try {
+            maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
+        } catch (NumberFormatException e) {
+            LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
+                     + maxInlineTableSizeString);
+        }
+
+        size = maxInlineTableSize;
+
+        try {
+            results.get(size);
+        } catch (IndexOutOfBoundsException e) {
+            size = results.size();
+        }
+
+        return size;
     }
 }
