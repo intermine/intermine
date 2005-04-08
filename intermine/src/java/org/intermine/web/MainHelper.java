@@ -37,6 +37,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
@@ -227,9 +228,19 @@ public class MainHelper
                         cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn,
                                                               c.getOp()));
                     } else {
-                        cs.addConstraint(new SimpleConstraint((QueryField) qn,
-                                                              c.getOp(),
-                                                              new QueryValue(c.getValue())));
+                        if (qn.getType().equals(String.class)) {
+                            // do a case-insensitive search
+                            QueryFunction qf = new QueryFunction((QueryField) qn,
+                                                                 QueryFunction.LOWER);
+                            String lowerCaseValue = ((String) c.getValue()).toLowerCase();
+                            cs.addConstraint(new SimpleConstraint(qf,
+                                                                  c.getOp(),
+                                                                  new QueryValue(lowerCaseValue)));
+                        } else {
+                            cs.addConstraint(new SimpleConstraint((QueryField) qn,
+                                                                  c.getOp(),
+                                                                  new QueryValue(c.getValue())));
+                        }
                     }
                 } else if (node.isReference()) {
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL

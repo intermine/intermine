@@ -244,6 +244,10 @@ public class CreateIndexesTask extends Task
 
             String fieldName = DatabaseUtil.getColumnName(att);
 
+            if (!att.getType().equals("java.lang.String")) {
+                // if the attribute is the first column of a primary key, don't bother creating
+                // another index for it - unless it's a String attribute in which case we want to
+                // create a LOWER() index
             for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
                  primaryKeyIter.hasNext();) {
                 Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
@@ -256,16 +260,30 @@ public class CreateIndexesTask extends Task
                     continue ATTRIBUTE;
                 }
             }
+            }
 
             String indexName = tableName + "__"  + att.getName();
             LOG.info("creating index: " + indexName);
             dropIndex(indexName);
-            createIndex(indexName, tableName, fieldName + ", id");
-
+            if (att.getType().equals("java.lang.String")) {
+                try {
+                    createIndex(indexName, tableName, "lower(" + fieldName + ")");
+                } catch (SQLException e) {
+                    if (e.getMessage().matches("ERROR: index row requires \\d+ bytes, "
+                                               + "maximum size is 8191")) {
+                        // ignore - we just don't create this index
+                        LOG.error("failed to create index for "
+                                  + tableName + "(" + fieldName + ")");
+                    } else {
+                        throw e;
+                    }
+                }
+            } else {
+                createIndex(indexName, tableName, fieldName);
+            }
             if (!att.isPrimitive()) {
                 dropIndex(indexName + "__nulls");
-                createIndex(indexName + "__nulls", tableName, "("
-                            + att.getName() + " IS NULL)");
+                createIndex(indexName + "__nulls", tableName, "(" + fieldName + " IS NULL)");
             }
         }
     }
@@ -278,6 +296,7 @@ public class CreateIndexesTask extends Task
         try {
             execute("drop index " + indexName);
         } catch (SQLException e) {
+            // ignore because the exception is probably because the index doesn't exist
         }
     }
 
@@ -286,14 +305,11 @@ public class CreateIndexesTask extends Task
      * @param indexName the index name
      * @param tableName the table name
      * @param columnNames the column names
+     * @throws SQLException if an error occurs
      */
-    protected void createIndex(String indexName, String tableName, String columnNames) {
-        try {
+    protected void createIndex(String indexName, String tableName, String columnNames)
+        throws SQLException {
             execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
-        } catch (SQLException e) {
-            System.
-                err.println("Failed to create index: " + e);
-        }
     }
 
     /**
