@@ -75,7 +75,16 @@ public class DisplayField
         if (size == -1) {
             if (collection instanceof LazyCollection) {
                 try {
-                    size = ((LazyCollection) collection).getInfo().getRows();
+                    LazyCollection lazyCollection = (LazyCollection) collection;
+                    try {
+                        // get the first batch to make sure that small collections have an accurate
+                        // size
+                        // see also ticket #267
+                        lazyCollection.get(0);
+                        size = lazyCollection.getInfo().getRows();
+                    } catch (IndexOutOfBoundsException _) {
+                        size = 0;
+                    }
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("unable to find the size of a collection", e);
                 }
