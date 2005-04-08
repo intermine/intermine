@@ -176,6 +176,7 @@
 <reference ref_id="1_14"/>
 </collection>
 <collection name="factors">
+<reference ref_id="1_5"/>
 <reference ref_id="1_16"/>
 </collection>
 </item>

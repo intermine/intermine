@@ -97,6 +97,7 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
                 if (!idAcc.equals("N")) {
                     if (proteinMap.containsKey(idAcc)) {
                         protein = (Item) proteinMap.get(idAcc);
+
                     } else {
                         protein = getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
                                   + "Protein");
@@ -105,8 +106,6 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
                         protein.setReference("organism", getOtherOrganism(idOrg).getIdentifier());
                         protein.addCollection(getUniprotRefList());
                         addItem(protein);
-
-                        factors.add(protein.getIdentifier());
 
                         synonym = getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
                                   + "Synonym");
@@ -117,12 +116,15 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
                         synonym.addReference(getUniprotRef());
                         addItem(synonym);
                     }
-
+                    if ( !factors.contains(protein.getIdentifier())) {
+                        factors.add(protein.getIdentifier());
+                    }
                     feature.addCollection(new ReferenceList("factors", factors));
                 }
             }
         }
     }
+
 
     /**
      * @return organism item, abbreviation is HS for homo_sapiens, rn for rat, mm for mouse
