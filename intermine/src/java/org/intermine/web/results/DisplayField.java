@@ -12,11 +12,11 @@ package org.intermine.web.results;
 
 import java.util.Map;
 import java.util.List;
-import java.util.LinkedHashMap;
 
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.web.config.WebConfig;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Class to represent a field of an object for the webapp
@@ -26,9 +26,11 @@ import org.intermine.web.config.WebConfig;
 public class DisplayField
 {
     ClassDescriptor cld;
-    int size;
-    Map classes = new LinkedHashMap();
-    InlineResultsTable table;
+    int size = -1;
+    InlineResultsTable table = null;
+    List collection = null;
+    WebConfig webConfig = null;
+    Map webProperties = null;
 
     /**
      * Create a new DisplayField object.
@@ -40,13 +42,10 @@ public class DisplayField
      */
     public DisplayField(List collection, ClassDescriptor cld,
                         WebConfig webConfig, Map webProperties) throws Exception {
+        this.collection = collection;
         this.cld = cld;
-        table = new InlineResultsTable(collection, cld, webConfig, webProperties);
-        if (collection instanceof LazyCollection) {
-            size = ((LazyCollection) collection).getInfo().getRows();
-        } else {
-            size = collection.size();
-        }
+        this.webConfig = webConfig;
+        this.webProperties = webProperties;
     }
 
     /**
@@ -54,6 +53,9 @@ public class DisplayField
      * @return the results table
      */
     public InlineResultsTable getTable() {
+        if (table == null) {
+            table = new InlineResultsTable(collection, cld, webConfig, webProperties);
+        }
         return table;
     }
     
@@ -70,14 +72,17 @@ public class DisplayField
      * @return the size
      */
     public int getSize() {
+        if (size == -1) {
+            if (collection instanceof LazyCollection) {
+                try {
+                    size = ((LazyCollection) collection).getInfo().getRows();
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("unable to find the size of a collection", e);
+                }
+            } else {
+                size = collection.size();
+            }
+        }
         return size;
-    }
-
-    /**
-     * Get the map of type of objects in this collection
-     * @return the classes
-     */
-    public Map getClasses() {
-        return classes;
     }
 }
