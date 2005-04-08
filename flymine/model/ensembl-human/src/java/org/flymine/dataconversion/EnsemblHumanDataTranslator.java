@@ -272,7 +272,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
          //simple_feature map to null, become TRNA/CpGIsland depending on analysis_id(logic_name)
          } else if ("simple_feature".equals(className)) {
              Item simpleFeature = createSimpleFeature(srcItem);
-             if (simpleFeature.getIdentifier() != null && simpleFeature.getIdentifier() !="" ) {
+             if (simpleFeature.getIdentifier() != null && simpleFeature.getIdentifier() != "") {
                  result.add(simpleFeature);
                  result.add(createLocation(srcItem, simpleFeature, true));
                  result.add(createAnalysisResult(srcItem, simpleFeature));
