@@ -10,42 +10,43 @@ package org.intermine.web.results;
  *
  */
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
-import org.apache.struts.tiles.ComponentContext;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.Constants;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.ArrayList;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
+import org.intermine.web.SessionMethods;
 
 /**
- * Implementation of <strong>TilesAction</strong>. Assembles data for
- * a Collection details view.
+ * Action that creates a table of collection elements for display.
  *
  * @author Kim Rutherford
+ * @author Thomas Riley
  */
-
-public class CollectionDetailsController extends TilesAction
+public class CollectionDetailsAction extends Action
 {
+    private static int index = 0;
+    
     /**
-     * Set up session attributes for the Collection view page.
+     * Create PagedTable for this collection, register it with an identifier and
+     * redirect to results.do?table=identifier
      *
-     * @param context The Tiles ComponentContext
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -54,8 +55,7 @@ public class CollectionDetailsController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -72,43 +72,29 @@ public class CollectionDetailsController extends TilesAction
 
         Set cds = model.getClassDescriptorsForClass(o.getClass());
 
-        ReferenceDescriptor refDesc = null;
+        CollectionDescriptor colDesc = null;
         
         Iterator iter = cds.iterator();
 
         while (iter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) iter.next();
 
-            refDesc = (ReferenceDescriptor) cd.getFieldDescriptorByName(field);
+            colDesc = (CollectionDescriptor) cd.getFieldDescriptorByName(field);
 
-            if (refDesc != null) {
+            if (colDesc != null) {
                 break;
             }
         }
 
-        ClassDescriptor refClass = refDesc.getReferencedClassDescriptor();
-        Collection c;
-        Object fieldValue = TypeUtil.getFieldValue(o, field);
+        ClassDescriptor collectionClass = colDesc.getReferencedClassDescriptor();
 
-        if (fieldValue instanceof Collection) {
-            c = (Collection) fieldValue;
-        } else {
-            c = new ArrayList();
-            c.add(o);
-        }
-
-        PagedCollection pc = new PagedCollection(field, c, refClass);
-        if (pageSize != null) {
-            try {
-                int pageSizeInt = Integer.parseInt(pageSize);
-                ((ChangeResultsSizeForm) form).setPageSize(pageSize);
-                pc.setPageSize(pageSizeInt);
-            } catch (NumberFormatException e) {
-                // ignore badly formatted numbers
-            }
-        }
-        session.setAttribute(Constants.RESULTS_TABLE, pc);
-
-        return null;
+        Collection c = (Collection) TypeUtil.getFieldValue(o, field);
+        PagedCollection pc = new PagedCollection(field, c, collectionClass);
+        String identifier = "col" + index++;
+        SessionMethods.setResultsTable(session, identifier, pc);
+        
+        return new ForwardParameters(mapping.findForward("results"))
+                        .addParameter("table", identifier)
+                        .addParameter("size", pageSize).forward();
     }
 }

@@ -11,10 +11,12 @@ package org.intermine.web.results;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.Constants;
+import org.intermine.web.SessionMethods;
 
 /**
  * Form bean for changing the page size.
@@ -67,7 +69,9 @@ public class ChangeResultsSizeForm extends ActionForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
-        PagedTable pr = (PagedTable) request.getSession().getAttribute(Constants.RESULTS_TABLE);
+        HttpSession session = request.getSession();
+        //PagedTable pr = (PagedTable) request.getSession().getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pr = SessionMethods.getResultsTable(session, request.getParameter("table"));
         if (pr != null) {
             pageSize = "" + pr.getPageSize();
         }

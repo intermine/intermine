@@ -102,6 +102,16 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     SessionMethods.recordMessage(msg, request.getSession());
                 }
             }
+            String params = request.getParameter("__intermine_forward_params__");
+            if (params != null) {
+                String path = forward.getPath();
+                if (path.indexOf('?') != -1) {
+                    path += "&" + params;
+                } else {
+                    path += "?" + params;
+                }
+                forward = new ForwardConfig("dummy", path, true);
+            }
         }
         
         super.processForwardConfig(request, response, forward);

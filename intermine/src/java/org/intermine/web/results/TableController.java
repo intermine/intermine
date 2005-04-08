@@ -15,12 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.Constants;
+import org.intermine.web.SessionMethods;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Sets up PagedTable
@@ -28,9 +30,10 @@ import org.intermine.web.Constants;
  *
  * @author Thomas Riley
  */
-
 public class TableController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(TableController.class);
+    
     /**
      * Set up table tile.
      *
@@ -53,7 +56,13 @@ public class TableController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        if (pt == null) {
+            LOG.error("PagedTable is null");
+            return null;
+        }
+        request.setAttribute("resultsTable", pt);
         
         int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
         int size = (sizeStr == null ? pt.getPageSize() : Integer.parseInt(sizeStr));

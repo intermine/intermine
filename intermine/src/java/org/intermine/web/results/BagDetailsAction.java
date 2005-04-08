@@ -10,32 +10,31 @@ package org.intermine.web.results;
  *
  */
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
-import org.apache.struts.tiles.ComponentContext;
-
 import org.intermine.web.Constants;
-import org.intermine.web.Profile;
+import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineBag;
+import org.intermine.web.Profile;
+import org.intermine.web.SessionMethods;
 
 /**
- * Implementation of <strong>TilesAction</strong>. Assembles data for
- * viewing a bag.
+ * Action that builds a PagedCollection to view a bag. Redirects to results.do
  *
  * @author Kim Rutherford
+ * @author Thomas Riley
  */
-public class BagDetailsController extends TilesAction
+public class BagDetailsAction extends Action
 {
     /**
      * Set up session attributes for the bag details page.
      *
-     * @param context The Tiles ComponentContext
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -44,8 +43,7 @@ public class BagDetailsController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -59,11 +57,16 @@ public class BagDetailsController extends TilesAction
         if (bag == null) {
             bag = new InterMineBag();
         }
-
-        request.setAttribute("bagName", bagName);
-        session.setAttribute(Constants.RESULTS_TABLE,
-                             new PagedCollection(bagName, bag, Object.class));
-
-        return null;
+        
+        String identifier = "bag." + bagName;
+        PagedCollection pc = (PagedCollection) SessionMethods.getResultsTable(session, identifier);
+        if (pc == null) {
+            pc = new PagedCollection(bagName, bag, Object.class);
+            SessionMethods.setResultsTable(session, identifier, pc);
+        }
+        
+        return new ForwardParameters(mapping.findForward("results"))
+                        .addParameter("table", identifier)
+                        .addParameter("size", "25").forward();
     }
 }

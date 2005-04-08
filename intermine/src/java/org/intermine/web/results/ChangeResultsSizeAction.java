@@ -20,7 +20,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineAction;
+import org.intermine.web.SessionMethods;
 
 /**
  * Changes the size of the results displayed.
@@ -45,10 +47,14 @@ public class ChangeResultsSizeAction extends InterMineAction
                                  HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         
         pt.setPageSize(Integer.parseInt(request.getParameter("pageSize")));
 
-        return mapping.findForward("results");
+        return new ForwardParameters(mapping.findForward("results"))
+                .addParameter("table", request.getParameter("table"))
+                .addParameter("page", "" + pt.getPage())
+                .addParameter("size", "" + pt.getPageSize())
+                .addParameter("trail", request.getParameter("trail")).forward();
     }
 }

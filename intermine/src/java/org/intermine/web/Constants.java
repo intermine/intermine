@@ -113,11 +113,6 @@ public interface Constants
      * Session attribute used to store the results of running the current query
      */
     public static final String QUERY_RESULTS = "QUERY_RESULTS";
-
-    /**
-     * Session attribute used to store the active results table (which may be QUERY_RESULTS)
-     */
-    public static final String RESULTS_TABLE = "RESULTS_TABLE";
     
     /**
      * Session attribute storing a bean exposing the user's trail through the object details
@@ -188,4 +183,9 @@ public interface Constants
      * The session attribute that holds the DisplayObjectCache object for the session.
      */
     public static final String DISPLAY_OBJECT_CACHE = "DISPLAY_OBJECT_CACHE";
+
+    /**
+     * Session attribute that holds cache of table identifiers to PagedTable objects.
+     */
+    public static final String TABLE_MAP = "TABLE_MAP";
 }

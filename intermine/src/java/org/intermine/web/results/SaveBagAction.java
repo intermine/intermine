@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
 import org.intermine.web.Constants;
+import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
 import org.intermine.web.InterMineBag;
 import org.intermine.web.Profile;
@@ -87,7 +88,8 @@ public class SaveBagAction extends InterMineAction
         throws ServletException {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm crf = (SaveBagForm) form;
 
         InterMineBag bag = new InterMineBag();

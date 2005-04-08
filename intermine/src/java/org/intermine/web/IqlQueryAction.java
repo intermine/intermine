@@ -32,6 +32,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
+import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
 
 /**
@@ -74,7 +75,9 @@ public class IqlQueryAction extends InterMineLookupDispatchAction
         try {
             Query q = new IqlQuery(queryform.getQuerystring(),
                                    ((Model) os.getModel()).getPackageName()).toQuery();
-            session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
+            PagedTable table = TableHelper.makeTable(os, q);
+            //SessionMethods session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
+            // TODO tom fix this
             return mapping.findForward("results");
         } catch (java.lang.IllegalArgumentException e) {
             recordError(new ActionMessage("errors.iqlquery.illegalargument",
