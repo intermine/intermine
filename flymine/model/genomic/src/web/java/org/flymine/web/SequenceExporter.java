@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.util.StringUtil;
 import org.intermine.web.Constants;
+import org.intermine.web.SessionMethods;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
@@ -76,7 +77,7 @@ public class SequenceExporter implements TableExporter
 
         OutputStream outputStream = null;
 
-        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         List columns = pt.getColumns();
 
