@@ -89,7 +89,7 @@
             </th>
 
             <th align="center">
-              <div style="white-space:nowrap">
+              <div>
                 <c:out value="${fn:replace(column.name, '.', ' > ')}"/>
               </div>
               <div style="white-space:nowrap">
