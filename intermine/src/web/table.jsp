@@ -99,7 +99,7 @@
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
                   [
-                  <html:link action="/changeResults?method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
+                  <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${moveLeftTitle}">
                     <fmt:message key="view.moveLeftSymbol"/>
                   </html:link>
@@ -110,7 +110,7 @@
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
                   [
-                  <html:link action="/changeResults?method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+                  <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${moveRightTitle}">
                     <fmt:message key="view.moveRightSymbol"/>
                   </html:link>
@@ -125,7 +125,7 @@
                         <fmt:param value="${column.name}"/>
                       </fmt:message>
                       [
-                      <html:link action="/changeResults?method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+                      <html:link action="/changeResults?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                  title="${hideColumnTitle}">
                         <fmt:message key="results.hideColumn"/>
                       </html:link>
@@ -137,7 +137,7 @@
                       <fmt:param value="${column.name}"/>
                     </fmt:message>
                     [
-                    <html:link action="/changeResults?method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+                    <html:link action="/changeResults?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${showColumnTitle}">
                       <fmt:message key="results.showColumn"/>
                     </html:link>
