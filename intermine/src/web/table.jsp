@@ -5,9 +5,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<tiles:importAttribute/>
-
 <!-- table.jsp -->
+
+<tiles:importAttribute/>
 
 <html:xhtml/>
 
