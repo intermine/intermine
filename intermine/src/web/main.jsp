@@ -101,28 +101,31 @@
                 <fmt:message key="query.collection"/>
               </c:if>
               </span>
-              <c:choose>
-                <c:when test="${node.indentation > 0}">
-                  <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
-                    <fmt:param value="${node.fieldName}"/>
-                  </fmt:message>
-                </c:when>
-                <c:otherwise>
-                  <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
-                    <fmt:param value="${node.type}"/>
-                  </fmt:message>
-                </c:otherwise>
-              </c:choose>
             </im:viewable>
+            <c:choose>
+              <c:when test="${node.indentation > 0}">
+                <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
+                  <fmt:param value="${node.fieldName}"/>
+                </fmt:message>
+                <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+                  <fmt:param value="${node.fieldName}"/>
+                </fmt:message>
+              </c:when>
+              <c:otherwise>
+                <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
+                  <fmt:param value="${node.type}"/>
+                </fmt:message>
+                <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+                  <fmt:param value="${node.type}"/>
+                </fmt:message>
+              </c:otherwise>
+            </c:choose>
             <c:if test="${viewPaths[fullpath] == null}">
               <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
                          title="${selectNodeTitle}">
                 <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
               </html:link>
             </c:if>
-            <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-              <fmt:param value="${node.fieldName}"/>
-            </fmt:message>
             <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
                        title="${addConstraintToTitle}">
               <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
