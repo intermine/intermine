@@ -16,7 +16,7 @@
       <Foundation.Core.GeneralizableElement.isAbstract xmi.value="false"/>
       <Foundation.Core.Namespace.ownedElement>
         <Model_Management.Package xmi.id="xmi.2" xmi.uuid="-64--88--128-105-c3e967:f333e4ad20:-7fff">
-          <Foundation.Core.ModelElement.name>testmodel</Foundation.Core.ModelElement.name>
+          <Foundation.Core.ModelElement.name>xmitest</Foundation.Core.ModelElement.name>
           <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isRoot xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isLeaf xmi.value="false"/>
