@@ -36,7 +36,7 @@
       <div style="margin-left: 8px">
         <c:forEach items="${DISPLAY_OBJECT_CACHE[object].fieldExprs}" var="expr">
           <im:eval evalExpression="object.${expr}" evalVariable="outVal"/>
-          <div>
+          <div style="white-space:nowrap">
             <span class="attributeField">${expr}</span>
             <span>${outVal}</span>
           </div>
