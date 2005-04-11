@@ -81,7 +81,9 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         ContainsConstraint cc = new ContainsConstraint(deptRef, ConstraintOp.CONTAINS, qcDept);
         cs.addConstraint(cc);
         QueryField qfName = new QueryField(qcDept, "name");
-        SimpleConstraint sc = new SimpleConstraint(qfName, ConstraintOp.EQUALS, new QueryValue("DepartmentA"));
+        QueryFunction qf = new QueryFunction(qfName, QueryFunction.LOWER);
+        SimpleConstraint sc =
+            new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("departmenta"));
         cs.addConstraint(sc);
         q.addToSelect(qcEmp);
         q.addToSelect(qfAge);
