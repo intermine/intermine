@@ -603,7 +603,7 @@
   </target>
 
   <target name="test-webapp"
-          depends="compile-webapp, build-db-userprofile, build-testable-webapp, compile-webapp-tests"
+          depends="compile-webapp, build-testable-webapp, build-db-userprofile, compile-webapp-tests"
           description="perform JUnit tests on web application" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
@@ -647,7 +647,7 @@
   </target>
   
   <target name="inctest" 
-          depends="prepare,compile-userprofile,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
+          depends="prepare,compile-userprofile,test-main,test-webapp,test-webservice,test-tutorial"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate InterMine coding standards" if="checkstyle.failure"/>
