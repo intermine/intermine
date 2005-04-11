@@ -20,7 +20,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
@@ -69,7 +70,8 @@ public class TemplateSearchAction extends InterMineAction
             Directory dir = (Directory) context.getAttribute(Constants.TEMPLATE_INDEX_DIR);
             IndexSearcher is = new IndexSearcher(dir);
     
-            Query query = QueryParser.parse(queryString, "description", new StandardAnalyzer());
+            Query query = QueryParser.parse(queryString, "description",
+                    new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS));
             Hits hits = is.search(query);
             
             time = System.currentTimeMillis() - time;

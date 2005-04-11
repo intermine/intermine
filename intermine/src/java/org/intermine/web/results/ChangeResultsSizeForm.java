@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.Constants;
 import org.intermine.web.SessionMethods;
 
 /**
