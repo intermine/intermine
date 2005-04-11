@@ -76,7 +76,8 @@ public class IqlQueryAction extends InterMineLookupDispatchAction
             Query q = new IqlQuery(queryform.getQuerystring(),
                                    ((Model) os.getModel()).getPackageName()).toQuery();
             PagedTable table = TableHelper.makeTable(os, q);
-            //SessionMethods session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
+            //SessionMethods session.setAttribute(Constants.RESULTS_TABLE,
+            //      TableHelper.makeTable(os, q));
             // TODO tom fix this
             return mapping.findForward("results");
         } catch (java.lang.IllegalArgumentException e) {

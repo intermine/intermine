@@ -140,6 +140,7 @@
     <include name="commons-collections*.jar"/>
     <include name="commons-beanutils*.jar"/>
     <include name="lucene*.jar"/>
+    <include name="snowball*.jar"/>
   </patternset>
 
   <!-- Libraries that the webapp uses -->

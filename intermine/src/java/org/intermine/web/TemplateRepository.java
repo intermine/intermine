@@ -24,7 +24,8 @@ import java.util.TreeMap;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
@@ -243,7 +244,8 @@ public class TemplateRepository
         RAMDirectory ram = new RAMDirectory();
         IndexWriter writer;
         try {
-            writer = new IndexWriter(ram, new StandardAnalyzer(), true);
+            writer = new IndexWriter(ram,
+                    new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS), true);
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
