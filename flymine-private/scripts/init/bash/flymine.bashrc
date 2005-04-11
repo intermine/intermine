@@ -59,27 +59,27 @@ if [ "${HOME:+set}" = "set" ]; then
     alias rmallbak="find $HOME/. \( -name .snapshot -prune \) -o \( -name '*~' -o -name '.*~' -o -name '*#' \) -print -exec rm {} \;"
 fi
 
-if [ "${CVSTREE:-unset}" = "unset" ]; then
-    if [ "${HOME:+set}" = "set" ] && [ -d $HOME/cvs ]; then
-	CVSTREE=$HOME/cvs; export CVSTREE
+if [ "${SVNTREE:-unset}" = "unset" ]; then
+    if [ "${HOME:+set}" = "set" ] && [ -d $HOME/svn/dev ]; then
+	SVNTREE=$HOME/svn/dev; export SVNTREE
     fi
 fi
 
 if [ "${INTERMINE:-unset}" = "unset" ]; then
-    if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/intermine ]; then
-	INTERMINE=$CVSTREE/intermine; export INTERMINE
+    if [ "${SVNTREE:+set}" = "set" ] && [ -d $SVNTREE/intermine ]; then
+	INTERMINE=$SVNTREE/intermine; export INTERMINE
     fi
 fi
 
 if [ "${FLYMINE:-unset}" = "unset" ]; then
-    if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/flymine ]; then
-	FLYMINE=$CVSTREE/flymine; export FLYMINE
+    if [ "${SVNTREE:+set}" = "set" ] && [ -d $SVNTREE/flymine ]; then
+	FLYMINE=$SVNTREE/flymine; export FLYMINE
     fi
 fi
 
 if [ "${FLYMINE_PRIVATE:-unset}" = "unset" ]; then
-    if [ "${CVSTREE:+set}" = "set" ] && [ -d $CVSTREE/flymine-private ]; then
-	FLYMINE_PRIVATE=$CVSTREE/flymine-private; export FLYMINE_PRIVATE
+    if [ "${SVNTREE:+set}" = "set" ] && [ -d $SVNTREE/flymine-private ]; then
+	FLYMINE_PRIVATE=$SVNTREE/flymine-private; export FLYMINE_PRIVATE
     fi
 fi
 
