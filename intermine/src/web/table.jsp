@@ -81,40 +81,36 @@
         <%-- The headers --%>
         <tr>
           <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-            <th align="center">
+            <th align="center" rowspan="2">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                              onclick="selectColumnCheckboxes(${status.index})">
                 <c:out value="${status.index}"/>
               </html:multibox>
             </th>
 
-            <th align="center">
+            <th align="center" valign="top" style="border-bottom: none">
               <div>
                 <c:out value="${fn:replace(column.name, '.', ' > ')}"/>
               </div>
+            </th>
+          </c:forEach>
+        </tr>
+
+        <tr>
+          <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
+            <th align="center">
               <div style="white-space:nowrap">
                 <%-- right/left --%>
                 <c:if test="${not status.first}">
                   <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
-                  [
+                  <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
                   <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${moveLeftTitle}">
-                    <fmt:message key="view.moveLeftSymbol"/>
+                    <img style="margin-right: 5px" border="0" align="middle" 
+                         src="images/left-arrow-square.gif" alt="${moveRightString}"/>
                   </html:link>
-                  ]
-                </c:if>
-                <c:if test="${not status.last}">
-                  <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-                    <fmt:param value="${column.name}"/>
-                  </fmt:message>
-                  [
-                  <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
-                             title="${moveRightTitle}">
-                    <fmt:message key="view.moveRightSymbol"/>
-                  </html:link>
-                  ]
                 </c:if>
 
                 <%-- show/hide --%>
@@ -124,26 +120,34 @@
                       <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
                         <fmt:param value="${column.name}"/>
                       </fmt:message>
-                      [
                       <html:link action="/changeResults?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                  title="${hideColumnTitle}">
                         <fmt:message key="results.hideColumn"/>
                       </html:link>
-                      ]
                     </c:if>
                   </c:when>
                   <c:otherwise>
                     <fmt:message key="results.showColumnHelp" var="showColumnTitle">
                       <fmt:param value="${column.name}"/>
                     </fmt:message>
-                    [
                     <html:link action="/changeResults?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${showColumnTitle}">
                       <fmt:message key="results.showColumn"/>
                     </html:link>
-                    ]
                   </c:otherwise>
                 </c:choose>
+
+                <c:if test="${not status.last}">
+                  <fmt:message key="results.moveRightHelp" var="moveRightTitle">
+                    <fmt:param value="${column.name}"/>
+                  </fmt:message>
+                  <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
+                  <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+                             title="${moveRightTitle}">
+                    <img style="margin-left: 5px" border="0" align="middle"
+                         src="images/right-arrow-square.gif" alt="${moveRightString}"/>
+                  </html:link>
+                </c:if>
               </div>
             </th>
           </c:forEach>
