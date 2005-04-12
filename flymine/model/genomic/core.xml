@@ -2,6 +2,7 @@
 <model name="genomic" namespace="http://www.flymine.org/model/genomic#">
   <class name="org.flymine.model.genomic.Database" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Ontology" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
