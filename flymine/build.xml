@@ -1670,6 +1670,18 @@
     </ant>
   </target>
 
+  <!-- NOTE - following target updates model and other metadata in production database.  If the model has
+       changed then this can be really bad.  Should be used with extreme caution if
+       absolutely confident that changes will not put model/details out of sync with schema. -->
+
+  <target name="update-metadata-production" depends="copy-genomic-config, compile-genomic-model">
+    <taskdef name="db-insert-model"
+             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <db-insert-model database="db.production" modelName="genomic"/>
+  </target>
+
   <!-- Build genomic model database to hold production data -->
   <target name="build-db-production" depends="compile-genomic-model, copy-genomic-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
