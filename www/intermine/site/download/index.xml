@@ -23,15 +23,15 @@
   </section>
 
   <section>
-    <title>CVS access</title>
+    <title>Subversion access</title>
 
     <itemizedlist>
       <listitem>
-        <para><ulink url="http://cvs.flymine.org">Browse CVS</ulink></para>
+        <para><ulink url="http://subversion.flymine.org">Browse source</ulink></para>
       </listitem>
 
       <listitem>
-        <para>Download via CVS:</para>
+        <para>Download via SVN (read-only):</para>
 
         <itemizedlist>
           <listitem>
@@ -40,16 +40,9 @@
           </listitem>
 
           <listitem>
-            <para>Issue the command <command>cvs -d
-            :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No
-            password is needed.</para>
+            <para>Issue the command <command>svn co svn://subversion.flymine.org/trunk/intermine</command></para>
           </listitem>
 
-          <listitem>
-            <para>Then type <command>cvs -d
-            :pserver:anonymous@cvs.flymine.org:/cvs co
-            intermine</command>.</para>
-          </listitem>
         </itemizedlist>
       </listitem>
     </itemizedlist>
