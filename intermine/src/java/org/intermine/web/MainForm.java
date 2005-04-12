@@ -283,7 +283,7 @@ public class MainForm extends ActionForm
                 if (value instanceof String) {
                     value = ((String) value).trim();
                 }
-                parsedValue = wildcardUserToSql(value);
+                parsedValue = WebUtil.wildcardUserToSql(value);
             }
         } else {
             try {
@@ -300,47 +300,6 @@ public class MainForm extends ActionForm
         return parsedValue;
     }
     
-    /**
-     * Convert an SQL LIKE/NOT LIKE expression to a * wildcard expression.
-     *
-     * @param exp  the wildcard expression
-     * @return     the SQL LIKE parameter
-     */
-    public static String wildcardSqlToUser(String exp) {
-        if (exp.charAt(0) == '%' && exp.charAt(exp.length() - 1) == '%') {
-            return exp.substring(1, exp.length() - 1);
-        } else if (exp.charAt(0) == '%') {
-            return "*" + exp.substring(1);
-        } else if (exp.charAt(exp.length() - 1) == '%') {
-            return exp.substring(0, exp.length() - 1) + "*";
-        } else {
-            return exp;
-        }
-    }
-    
-    /**
-     * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
-     * expression with %'s.
-     *
-     * @param exp  the SQL LIKE parameter
-     * @return     the equivalent wildcard expression
-     */
-    public static String wildcardUserToSql(String exp) {
-        if (exp.length() == 0) {
-            throw new IllegalArgumentException(exp);
-        }
-        if (exp.charAt(0) == '*') {
-            exp = '%' + exp.substring(1);
-        }
-        if (exp.charAt(exp.length() - 1) == '*') {
-            exp = exp.substring(0, exp.length() - 1) + '%';
-        }
-        if (exp.charAt(0) != '%' && exp.charAt(exp.length() - 1) != '%') {
-            exp = '%' + exp + '%';
-        }
-        return exp;
-    }
-
     /**
      * @see ActionForm#reset
      */
