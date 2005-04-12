@@ -107,7 +107,7 @@ public class Constraint
      */
     public String getDisplayValue(PathNode node) {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
-            return MainForm.wildcardSqlToUser(getValue().toString());
+            return WebUtil.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";
         } else {

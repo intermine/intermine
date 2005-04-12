@@ -11,6 +11,8 @@ package org.intermine.web;
  */
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
 
@@ -48,5 +50,104 @@ public abstract class WebUtil
         }
 
         return intVal;
+    }
+
+    /**
+     * Convert an SQL LIKE/NOT LIKE expression to a * wildcard expression.
+     *
+     * @param exp  the wildcard expression
+     * @return     the SQL LIKE parameter
+     */
+    public static String wildcardSqlToUser(String exp) {
+        StringBuffer sb = new StringBuffer();
+
+        Pattern pattern = Pattern.compile("(%|\\\\%|_|\\\\_|\\|\\*|\\?|.)");
+        Matcher matcher = pattern.matcher(exp);
+        
+        while (matcher.find()) {
+            String group = matcher.group();
+
+            if (group.equals("%")) {
+                sb.append("*");
+            } else {
+                if (group.equals("_")) {
+                    sb.append("?");
+                } else {
+                    if (group.equals("\\%")) {
+                        sb.append("%");
+                    } else {
+                        if (group.equals("\\_")) {
+                            sb.append("_");
+                        } else {
+                            if (group.equals("*")) {
+                                sb.append("\\*");
+                            } else {
+                                if (group.equals("?")) {
+                                    sb.append("\\?");
+                                } else {
+                                    if (group.equals("\\")) {
+                                        sb.append("\\\\");
+                                    } else {
+                                        sb.append(group);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return sb.toString();
+    }
+    
+    /**
+     * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
+     * expression with %'s.
+     *
+     * @param exp  the SQL LIKE parameter
+     * @return     the equivalent wildcard expression
+     */
+    public static String wildcardUserToSql(String exp) {
+        StringBuffer sb = new StringBuffer();
+
+        Pattern pattern = Pattern.compile("(\\*|\\\\\\*|\\?|\\\\\\?|\\|%|_|.)");
+        Matcher matcher = pattern.matcher(exp);
+        
+        while (matcher.find()) {
+            String group = matcher.group();
+
+            if (group.equals("*")) {
+                sb.append("%");
+            } else {
+                if (group.equals("?")) {
+                    sb.append("_");
+                } else {
+                    if (group.equals("\\*")) {
+                        sb.append("*");
+                    } else {
+                        if (group.equals("\\?")) {
+                            sb.append("?");
+                        } else {
+                            if (group.equals("%")) {
+                                sb.append("\\%");
+                            } else {
+                                if (group.equals("_")) {
+                                    sb.append("\\_");
+                                } else {
+                                    if (group.equals("\\")) {
+                                        sb.append("\\\\");
+                                    } else {
+                                        sb.append(group);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return sb.toString();
     }
 }

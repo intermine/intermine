@@ -32,83 +32,70 @@ public class MainFormTest extends TestCase
     public MainFormTest(String arg) {
         super(arg);
     }
-    
+
     public void testEmptyValues() throws Exception {
         ActionErrors errors = new ActionErrors ();
         MainForm.parseValue("", Integer.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
         assertTrue(errors.size() > 0);
-        
+
         errors = new ActionErrors ();
         MainForm.parseValue("", Float.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
         assertTrue(errors.size() > 0);
     }
-    
+
     public void testFloats() throws Exception {
         ActionErrors errors = new ActionErrors ();
         MainForm.parseValue("1.1.1", Float.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
         assertTrue("no error on bad float format", errors.size() > 0);
-        
+
         errors = new ActionErrors ();
         Object value = MainForm.parseValue("1.1", Float.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
         assertNotNull(value);
         assertEquals(Float.class, value.getClass());
         assertTrue(1.1f == ((Float)value).floatValue());
     }
-    
+
     public void testDateUK() throws Exception {
         ActionErrors errors = new ActionErrors ();
         Object value = MainForm.parseValue("25/09/04", Date.class, ConstraintOp.EQUALS, Locale.UK, errors);
         assertNotNull("good UK date didn't parse", value);
-        
+
         Calendar calendar = new GregorianCalendar(2004,8,25);
         assertEquals(calendar.getTime(), value);
     }
-    
+
     public void testBadDateUK() throws Exception {
         ActionErrors errors = new ActionErrors ();
         Object value = MainForm.parseValue("asdfsdfsdf", Date.class, ConstraintOp.EQUALS, Locale.UK, errors);
         assertNull("baddly formatted date parsed to non-null value", value);
         assertTrue("bad date format should give error", errors.size() > 0);
     }
-    
+
     public void testWildcards() throws Exception {
         ActionErrors errors = new ActionErrors ();
         // empty like/not-like value
         Object value = MainForm.parseValue("", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
         assertTrue("empty string in like/not-like should give error", errors.size() > 0);
-        
+
         errors = new ActionErrors ();
         value = MainForm.parseValue("a", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
         assertTrue(errors.isEmpty());
-        assertEquals("%a%", value);
-        
+        assertEquals("a", value);
+
         errors = new ActionErrors ();
         value = MainForm.parseValue("a*", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
         assertTrue(errors.isEmpty());
         assertEquals("a%", value);
-        
+
         errors = new ActionErrors ();
         value = MainForm.parseValue("*a", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
         assertTrue(errors.isEmpty());
         assertEquals("%a", value);
-        
+
         errors = new ActionErrors ();
         value = MainForm.parseValue("*a*", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
         assertTrue(errors.isEmpty());
         assertEquals("%a%", value);
     }
-    
-    public void testWildcardConversion() throws Exception {
-        String value = MainForm.wildcardSqlToUser("%a%");
-        assertEquals("wildcardSqlToUser(%a%)", "a", value);
-        
-        value = MainForm.wildcardSqlToUser("a");
-        assertEquals("wildcardSqlToUser(a)", "a", value);
-        
-        value = MainForm.wildcardSqlToUser("a%");
-        assertEquals("wildcardSqlToUser(a%)", "a*", value);
-        
-        value = MainForm.wildcardSqlToUser("%a");
-        assertEquals("wildcardSqlToUser(%a)", "*a", value);
-    }
+
 }
