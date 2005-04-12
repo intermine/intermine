@@ -13,8 +13,8 @@
     <item title="Download software">
         <item url="http://download.flymine.org/releases/" title="Latest release"/>
         <item url="http://download.flymine.org/nightly/" title="Nightly build"/>
-        <item url="http://cvs.flymine.org/" title="Browse CVS"/>
-        <item url="/download/index.xml" title="CVS checkout"/>
+        <item url="http://subversion.flymine.org/" title="Browse source"/>
+        <item url="/download/index.xml" title="SVN checkout"/>
     </item>
 </menu>
 
