@@ -43,10 +43,17 @@ public class FlushJobPostgresCopyImpl implements FlushJob
      * @see FlushJob#flush
      */
     public void flush() throws SQLException {
-        copyManager.copyInQuery(sql, new ByteArrayInputStream(data));
-        copyManager = null;
-        sql = null;
-        data = null;
+        try {
+            copyManager.copyInQuery(sql, new ByteArrayInputStream(data));
+            copyManager = null;
+            sql = null;
+            data = null;
+        } catch (SQLException e) {
+            SQLException e2 = new SQLException("Error writing to database, running statement "
+                    + sql);
+            e2.initCause(e);
+            throw e2;
+        }
     }
 }
 
