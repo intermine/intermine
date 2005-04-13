@@ -3,7 +3,7 @@
 <class name="org.flymine.model.genomic.TFBindingSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="name" type="java.lang.String"/>
   <attribute name="accession" type="java.lang.String"/>
-  <collection name="factors" referenced-type="org.flymine.model.genomic.Protein"/>
+  <collection name="factors" referenced-type="org.flymine.model.genomic.Protein" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Promoter" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="name" type="java.lang.String"/>
