@@ -95,7 +95,14 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();
         if (equivalentIter.hasNext()) {
-            newId = ((InterMineObject) equivalentIter.next()).getId();
+            try {
+                newId = ((InterMineObject) equivalentIter.next()).getId();
+            } catch (NullPointerException e) {
+                NullPointerException e2 = new NullPointerException("equivalentObjects.size: "
+                        + equivalentObjects.size() + ", equivalentObjects: " + equivalentObjects);
+                e2.initCause(e);
+                throw e2;
+            }
         }
         Set classes = new HashSet();
         classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
