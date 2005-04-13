@@ -10,8 +10,6 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.objectstore.query.Query;
-
 import servletunit.struts.MockStrutsTestCase;
 
 public class IqlQueryActionTest extends MockStrutsTestCase {
@@ -34,7 +32,7 @@ public class IqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Run query");
         actionPerform();
         verifyNoActionErrors();
-        verifyForward("results");
+        //verifyForward("/results.do?table=results");
         assertNotNull(getSession().getAttribute(Constants.QUERY_RESULTS));
         verifyNoActionErrors();
     }

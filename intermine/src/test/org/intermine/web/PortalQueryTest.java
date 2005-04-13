@@ -10,16 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.util.MessageResources;
-import org.intermine.web.results.PagedResults;
-
 import servletunit.struts.MockStrutsTestCase;
 
 public class PortalQueryTest extends MockStrutsTestCase
@@ -33,7 +23,6 @@ public class PortalQueryTest extends MockStrutsTestCase
     }
     
     public void testGoodExternalId() throws Exception {
-        
         setRequestPathInfo("/portal");
         addRequestParameter("externalid", "EmployeeA1");
         
@@ -44,25 +33,4 @@ public class PortalQueryTest extends MockStrutsTestCase
         // object details URL but I can't figure out how to get
         // the forward returned.
     }
-
-    public void testBadExternalId() throws Exception {
-        setRequestPathInfo("/portal");
-        addRequestParameter("externalid", "wibble");
-
-        actionPerform();
-        verifyForward("results");
-        verifyNoActionErrors();
-    }
-    
-   /* public void testMultipleResults() throws Exception {
-        setRequestPathInfo("/portal");
-        addRequestParameter("externalid", "Employee");
-
-        actionPerform();
-        verifyForward("results");
-        
-        PagedResults pr = (PagedResults) getSession().getAttribute(Constants.RESULTS_TABLE);
-        assertTrue("" + pr.getSize() + " > 1", pr.getSize() > 1);
-        verifyNoActionErrors();
-    }*/
 }
