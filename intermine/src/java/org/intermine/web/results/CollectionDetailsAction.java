@@ -10,6 +10,7 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.Collections;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,6 +27,7 @@ import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
@@ -42,7 +44,7 @@ import org.intermine.web.SessionMethods;
 public class CollectionDetailsAction extends Action
 {
     private static int index = 0;
-    
+
     /**
      * Create PagedTable for this collection, register it with an identifier and
      * redirect to results.do?table=identifier
@@ -72,27 +74,34 @@ public class CollectionDetailsAction extends Action
 
         Set cds = model.getClassDescriptorsForClass(o.getClass());
 
-        CollectionDescriptor colDesc = null;
-        
+        ReferenceDescriptor refDesc = null;
+
         Iterator iter = cds.iterator();
 
         while (iter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) iter.next();
 
-            colDesc = (CollectionDescriptor) cd.getFieldDescriptorByName(field);
+            refDesc = (ReferenceDescriptor) cd.getFieldDescriptorByName(field);
 
-            if (colDesc != null) {
+            if (refDesc != null) {
                 break;
             }
         }
 
-        ClassDescriptor collectionClass = colDesc.getReferencedClassDescriptor();
+        ClassDescriptor refClass = refDesc.getReferencedClassDescriptor();
 
-        Collection c = (Collection) TypeUtil.getFieldValue(o, field);
-        PagedCollection pc = new PagedCollection(field, c, collectionClass);
+        Collection c;
+
+        if (refDesc instanceof CollectionDescriptor) {
+            c = (Collection) TypeUtil.getFieldValue(o, field);
+        } else {
+            c = Collections.singletonList(TypeUtil.getFieldValue(o, field));
+        }
+
+        PagedCollection pc = new PagedCollection(field, c, refClass);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
-        
+
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
                         .addParameter("size", pageSize)
