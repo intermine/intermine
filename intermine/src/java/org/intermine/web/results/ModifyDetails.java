@@ -14,17 +14,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
+import org.apache.struts.actions.DispatchAction;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.query.*;
 import org.intermine.web.ForwardParameters;
 
 /**
