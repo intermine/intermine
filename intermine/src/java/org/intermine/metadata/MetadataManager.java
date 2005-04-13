@@ -64,6 +64,8 @@ public class MetadataManager
         boolean autoCommit = connection.getAutoCommit();
         try {
             connection.setAutoCommit(true);
+            connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
+                                                 + key + "'");
             connection.createStatement().execute("INSERT INTO " + METADATA_TABLE + " (key, value) "
                                                  + "VALUES('" + key + "', '"
                                                  + StringUtil.duplicateQuotes(value) + "')");
