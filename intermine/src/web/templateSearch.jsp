@@ -48,6 +48,10 @@ window.onload = function() { document.getElementById("queryString").focus(); }
     </p>
   </c:if>
   
+  <p>
+    <html:link action="/templates"><fmt:message key="templateSearch.viewall"/></html:link>
+  </p>
+  
 </div>
 
 
