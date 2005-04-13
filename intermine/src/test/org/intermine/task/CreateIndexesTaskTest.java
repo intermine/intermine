@@ -95,23 +95,23 @@ public class CreateIndexesTaskTest extends TestCase
     public void testCreateAttributeIndexes() throws Exception {
         List expected = new ArrayList();
         expected.add("drop index CEO__salary");
-        expected.add("create index CEO__salary on CEO(salary, id)");
+        expected.add("create index CEO__salary on CEO(salary)");
         expected.add("drop index CEO__title");
-        expected.add("create index CEO__title on CEO(title, id)");
+        expected.add("create index CEO__title on CEO(lower(title))");
         expected.add("drop index CEO__title__nulls");
         expected.add("create index CEO__title__nulls on CEO((title IS NULL))");
         expected.add("drop index CEO__age");
-        expected.add("create index CEO__age on CEO(age, id)");
+        expected.add("create index CEO__age on CEO(age)");
         expected.add("drop index CEO__end");
-        expected.add("create index CEO__end on CEO(intermine_end, id)");
+        expected.add("create index CEO__end on CEO(intermine_end)");
         expected.add("drop index CEO__fullTime");
-        expected.add("create index CEO__fullTime on CEO(fullTime, id)");
+        expected.add("create index CEO__fullTime on CEO(fullTime)");
         expected.add("drop index CEO__name");
-        expected.add("create index CEO__name on CEO(name, id)");
+        expected.add("create index CEO__name on CEO(lower(name))");
         expected.add("drop index CEO__name__nulls");
         expected.add("create index CEO__name__nulls on CEO((name IS NULL))");
         expected.add("drop index CEO__seniority");
-        expected.add("create index CEO__seniority on CEO(seniority, id)");
+        expected.add("create index CEO__seniority on CEO(seniority)");
         expected.add("drop index CEO__seniority__nulls");
         expected.add("create index CEO__seniority__nulls on CEO((seniority IS NULL))");
 
