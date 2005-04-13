@@ -8,8 +8,11 @@
 <!-- table.jsp -->
 
 <tiles:importAttribute/>
-
 <html:xhtml/>
+
+<c:if test="${!empty param.trail}">
+  <tiles:get name="objectTrail.tile"/><im:vspacer height="3"/>
+</c:if>
 
 <script type="text/javascript">
   <!--//<![CDATA[

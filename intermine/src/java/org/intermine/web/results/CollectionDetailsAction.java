@@ -95,6 +95,7 @@ public class CollectionDetailsAction extends Action
         
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
-                        .addParameter("size", pageSize).forward();
+                        .addParameter("size", pageSize)
+                        .addParameter("trail", request.getParameter("trail")).forward();
     }
 }
