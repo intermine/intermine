@@ -422,6 +422,7 @@
     <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
+    <delete file="${build.model}/testmodel/objectstoresummary.properties"
     <insert-xml-data integrationWriter="integration.unittestsingle"
                      xmlFile="${build.resources.test}/testmodel_data.xml"
                      sourceName="testsource"/>
@@ -554,7 +555,7 @@
 
   <!-- run the tests -->
   <target name="test-main" 
-          depends="compile-test, insert-data-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+          depends="compile-test, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
