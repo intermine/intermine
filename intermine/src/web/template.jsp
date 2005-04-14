@@ -135,7 +135,8 @@
               </c:if>
               <c:if test="${!empty PROFILE.savedBags}">
                 <br/>
-                <b>or</b> <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})"/> constrain to be
+                <b><fmt:message key="template.OR"/></b> <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})"/>
+                <fmt:message key="template.constraintobe"/>
                 <html:select property="bagOp(${index})" disabled="true">
                   <c:forEach items="${bagOps}" var="bagOp">
                     <html:option value="${bagOp.key}">
@@ -143,7 +144,7 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                bag
+                <fmt:message key="template.bag"/>
                 <html:select property="bag(${index})" disabled="true">
                   <c:forEach items="${PROFILE.savedBags}" var="bag">
                     <html:option value="${bag.key}">
