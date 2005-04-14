@@ -669,8 +669,14 @@ public class PrecomputeTask extends Task
                     QueryClass queryClass = (QueryClass) selectNode;
                     queryClone.addToOrderBy(queryClass);
                 } else {
-                    QueryEvaluable queryEvaluable = (QueryEvaluable) selectNode;
-                    queryClone.addToOrderBy(queryEvaluable);
+                    // for now, don't order by all possible fields, just order by classes on the
+                    // select list
+                    // when the webapp allows ordering by any field, add this again
+                    // 
+                    //     QueryEvaluable queryEvaluable = (QueryEvaluable) selectNode;
+                    //     queryClone.addToOrderBy(queryEvaluable);
+                    //
+                    continue;
                 }
                 queryList.add(queryClone);
             }
