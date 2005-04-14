@@ -27,6 +27,8 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.MetadataManager;
 import org.intermine.objectstore.ObjectStoreException;
 
+import org.intermine.model.InterMineObject;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -145,8 +147,10 @@ public class TorqueModelOutput
         className = DatabaseUtil.getTableName(cld);
 
         // Every class and interface has a separate table
-        sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL)
-            .append(generateColumn("OBJECT", "java.lang.String"));
+        sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL);
+        if ((!schema.isMissingNotXml()) || InterMineObject.class.equals(cld.getType())) {
+            sb.append(generateColumn("OBJECT", "java.lang.String"));
+        }
         DatabaseSchema.Fields fields = schema.getTableFields(cld);
         Iterator fieldIter = fields.getAttributes().iterator();
         while (fieldIter.hasNext()) {

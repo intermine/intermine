@@ -409,7 +409,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     }
                 }
             }
-            String xml = NotXmlRenderer.render(o);
+            String xml = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
             Iterator cldIter = classDescriptors.iterator();
@@ -434,19 +434,27 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 if (colNames == null) {
                     LOG.info("Generating cached metadata for table " + tableName);
                     DatabaseSchema.Fields allColumns = schema.getTableFields(tableMaster);
-                    int colCount = 1 + allColumns.getAttributes().size()
+                    int colCount = 0 + allColumns.getAttributes().size()
                         + allColumns.getReferences().size();
                     boolean isTruncated = schema.isTruncated(tableMaster);
+                    boolean hasObject = "InterMineObject".equals(tableName)
+                        || (!schema.isMissingNotXml());
                     if (isTruncated) {
+                        colCount++;
+                    }
+                    if (hasObject) {
                         colCount++;
                     }
                     colNames = new String[colCount];
                     fieldNames = new String[colCount];
-                    colNames[0] = "OBJECT";
-                    int colNo = 1;
+                    int colNo = 0;
+                    if (hasObject) {
+                        colNames[colNo] = "OBJECT";
+                        colNo++;
+                    }
                     if (isTruncated) {
-                        colNo = 2;
-                        colNames[1] = "class";
+                        colNames[colNo] = "class";
+                        colNo++;
                     }
                     fieldIter = allColumns.getAttributes().iterator();
                     while (fieldIter.hasNext()) {
@@ -484,12 +492,16 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
 
                 if (!os.missingTables.contains(tableName)) {
                     Object values[] = new Object[colNames.length];
-                    values[0] = xml;
                     Set validFieldNames = TypeUtil.getFieldInfos(o.getClass()).keySet();
-                    for (int colNo = 1; colNo < colNames.length; colNo++) {
+                    for (int colNo = 0; colNo < colNames.length; colNo++) {
                         Object value = null;
                         if ("class".equals(colNames[colNo])) {
                             value = cld.getName();
+                        } else if ("OBJECT".equals(colNames[colNo])) {
+                            if (xml == null) {
+                                xml = NotXmlRenderer.render(o);
+                            }
+                            value = xml;
                         } else if (validFieldNames.contains(fieldNames[colNo])) {
                             value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
                             if (value instanceof Date) {

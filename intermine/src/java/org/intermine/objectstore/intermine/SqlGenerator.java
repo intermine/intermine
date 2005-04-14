@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -96,11 +97,17 @@ public class SqlGenerator
      */
     public static String generateQueryForId(Integer id, Class clazz,
             DatabaseSchema schema) throws ObjectStoreException {
-        ClassDescriptor cld = schema.getModel().getClassDescriptorByName(clazz.getName());
-        if (cld == null) {
-            throw new ObjectStoreException(clazz.toString() + " is not in the model");
+        ClassDescriptor tableMaster;
+        if (schema.isMissingNotXml()) {
+            tableMaster = schema.getModel()
+                .getClassDescriptorByName(InterMineObject.class.getName());
+        } else {
+            ClassDescriptor cld = schema.getModel().getClassDescriptorByName(clazz.getName());
+            if (cld == null) {
+                throw new ObjectStoreException(clazz.toString() + " is not in the model");
+            }
+            tableMaster = schema.getTableMaster(cld);
         }
-        ClassDescriptor tableMaster = schema.getTableMaster(cld);
         if (schema.isTruncated(tableMaster)) {
             return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
@@ -470,6 +477,10 @@ public class SqlGenerator
                 findTableNames(tablenames, subQ, schema);
             }
         }
+        if (schema.isMissingNotXml()) {
+            tablenames.add(DatabaseUtil.getTableName(schema.getModel().getClassDescriptorByName(
+                            InterMineObject.class.getName())));
+        }
     }
 
     /**
@@ -523,8 +534,10 @@ public class SqlGenerator
             FromElement fromElement = (FromElement) fromIter.next();
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
+                String baseAlias = DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
+                        .get(qc));
                 Set classes = DynamicUtil.decomposeClass(qc.getType());
-                Map aliases = new HashMap();
+                Map aliases = new LinkedHashMap();
                 int sequence = 0;
                 String lastAlias = "";
                 Iterator classIter = classes.iterator();
@@ -534,8 +547,6 @@ public class SqlGenerator
                     if (cld == null) {
                         throw new ObjectStoreException(cls.toString() + " is not in the model");
                     }
-                    String baseAlias = DatabaseUtil.generateSqlCompatibleName((String) q
-                            .getAliases().get(qc));
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     if (sequence == 0) {
                         aliases.put(cld, baseAlias);
@@ -578,8 +589,26 @@ public class SqlGenerator
                         String alias = (String) aliasEntry.getValue();
                         if (cld.getAllFieldDescriptors().contains(field)) {
                             fieldToAlias.put(name, alias);
+                            break;
                         }
                     }
+                }
+                // Deal with OBJECT column
+                if (schema.isMissingNotXml()) {
+                    String name = "OBJECT";
+                    Iterator aliasIter = aliases.entrySet().iterator();
+                    while (aliasIter.hasNext()) {
+                        Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
+                        ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
+                        String alias = (String) aliasEntry.getValue();
+                        ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                        if (InterMineObject.class.equals(tableMaster.getType())) {
+                            fieldToAlias.put("OBJECT", alias);
+                            break;
+                        }
+                    }
+                } else {
+                    fieldToAlias.put("OBJECT", baseAlias);
                 }
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema,
@@ -941,17 +970,22 @@ public class SqlGenerator
             buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
                 .append(".id");
         } else {
-            buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
-                .append(".OBJECT");
-            if (kind == QUERY_NORMAL) {
-                buffer.append(" AS ")
-                    .append(alias.equals(alias.toLowerCase())
-                            ? DatabaseUtil.generateSqlCompatibleName(alias)
-                            : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\"");
-            }
-            if (kind == QUERY_SUBQUERY_FROM) {
-                buffer.append(" AS ")
-                    .append(DatabaseUtil.generateSqlCompatibleName(alias));
+            boolean needComma = false;
+            String objectAlias = (String) state.getFieldToAlias(qc).get("OBJECT");
+            if (objectAlias != null) {
+                buffer.append(objectAlias)
+                    .append(".OBJECT");
+                if (kind == QUERY_NORMAL) {
+                    buffer.append(" AS ")
+                        .append(alias.equals(alias.toLowerCase())
+                                ? DatabaseUtil.generateSqlCompatibleName(alias)
+                                : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\"");
+                }
+                if (kind == QUERY_SUBQUERY_FROM) {
+                    buffer.append(" AS ")
+                        .append(DatabaseUtil.generateSqlCompatibleName(alias));
+                }
+                needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)) {
                 Set fields = schema.getModel().getClassDescriptorByName(qc.getType().getName())
@@ -971,8 +1005,11 @@ public class SqlGenerator
                     FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
                     String columnName = DatabaseUtil.getColumnName(field);
 
-                    buffer.append(", ")
-                        .append((String) state.getFieldToAlias(qc).get(field.getName()))
+                    if (needComma) {
+                        buffer.append(", ");
+                    }
+                    needComma = true;
+                    buffer.append((String) state.getFieldToAlias(qc).get(field.getName()))
                         .append(".")
                         .append(columnName);
                     if (kind == QUERY_SUBQUERY_FROM) {
@@ -985,8 +1022,10 @@ public class SqlGenerator
                     }
                 }
             } else {
-                buffer.append(", ")
-                    .append(DatabaseUtil.generateSqlCompatibleName(alias))
+                if (needComma) {
+                    buffer.append(", ");
+                }
+                buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
                     .append(".id AS ")
                     .append(alias.equals(alias.toLowerCase())
                             ? DatabaseUtil.generateSqlCompatibleName(alias) + "id"

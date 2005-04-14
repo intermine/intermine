@@ -10,18 +10,24 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DatabaseUtil;
@@ -49,16 +55,19 @@ public class ResultsConverter
      *
      * @param sqlResults the ResultSet
      * @param q the Query
-     * @param os the ObjectStore with which to associate any new lazy objects
+     * @param os the ObjectStoreInterMineImpl with which to associate any new lazy objects
+     * @param c a Connection with which to make extra requests
      * @return a List of ResultsRow objects
      * @throws ObjectStoreException if the ResultSet does not match the Query in any way, or if a
      * SQL exception occurs
      */
-    public static List convert(ResultSet sqlResults, Query q, ObjectStore os)
-            throws ObjectStoreException {
+    public static List convert(ResultSet sqlResults, Query q, ObjectStoreInterMineImpl os,
+            Connection c) throws ObjectStoreException {
         Object currentColumn = null;
+        HashSet noObjectColumns = new HashSet();
         try {
             ArrayList retval = new ArrayList();
+            HashSet idsToFetch = new HashSet();
             while (sqlResults.next()) {
                 ResultsRow row = new ResultsRow();
                 Iterator selectIter = q.getSelect().iterator();
@@ -70,17 +79,33 @@ public class ResultsConverter
                         Integer idField = new Integer(sqlResults.getInt(alias + "id"));
                         InterMineObject obj = os.pilferObjectById(idField);
                         if (obj == null) {
-                            String objectField = sqlResults.getString(alias);
-                            currentColumn = objectField;
-                            obj = NotXmlParser.parse(objectField, os);
-                            //if (objectField.length() < ObjectStoreInterMineImpl
-                            //        .CACHE_LARGEST_OBJECT) {
-                                os.cacheObjectById(obj.getId(), obj);
-                            //} else {
-                            //    LOG.debug("Not cacheing large object " + obj.getId()
-                            //            + " on read"
-                            //            + " (size = " + (objectField.length() / 512) + " kB)");
-                            //}
+                            String objectField = null;
+                            if (!noObjectColumns.contains(node)) {
+                                try {
+                                    objectField = sqlResults.getString(alias);
+                                } catch (SQLException e) {
+                                    // Do nothing - it's just a notxml missing. However, to avoid an
+                                    // Exception-storm, we should probably stop trying this on
+                                    // future rows.
+                                    noObjectColumns.add(node);
+                                }
+                                if (objectField != null) {
+                                    currentColumn = objectField;
+                                    obj = NotXmlParser.parse(objectField, os);
+                                    //if (objectField.length() < ObjectStoreInterMineImpl
+                                    //        .CACHE_LARGEST_OBJECT) {
+                                        os.cacheObjectById(obj.getId(), obj);
+                                    //} else {
+                                    //    LOG.debug("Not cacheing large object " + obj.getId()
+                                    //            + " on read" + " (size = "
+                                    //            + (objectField.length() / 512) + " kB)");
+                                    //}
+                                }
+                            }
+                        }
+                        if (obj == null) {
+                            obj = new ProxyReference(os, idField, InterMineObject.class);
+                            idsToFetch.add(idField);
                         }
                         row.add(obj);
                     } else {
@@ -92,6 +117,39 @@ public class ResultsConverter
                     }
                 }
                 retval.add(row);
+            }
+            if (!idsToFetch.isEmpty()) {
+                Query q2 = new Query();
+                QueryClass qc = new QueryClass(InterMineObject.class);
+                q2.addFrom(qc);
+                q2.addToSelect(qc);
+                q2.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
+                            idsToFetch));
+                q2.setDistinct(false);
+                Iterator iter = os.executeWithConnection(c, q2, 0, Integer.MAX_VALUE, false, false,
+                        os.getSequence()).iterator();
+                HashMap fetched = new HashMap();
+                while (iter.hasNext()) {
+                    ResultsRow fetchedObjectRow = (ResultsRow) iter.next();
+                    InterMineObject fetchedObject = (InterMineObject) fetchedObjectRow.get(0);
+                    fetched.put(fetchedObject.getId(), fetchedObject);
+                }
+                iter = retval.iterator();
+                while (iter.hasNext()) {
+                    ResultsRow row = (ResultsRow) iter.next();
+                    for (int i = 0; i < row.size(); i++) {
+                        Object obj = row.get(i);
+                        if (obj instanceof ProxyReference) {
+                            Integer id = ((ProxyReference) obj).getId();
+                            obj = fetched.get(id);
+                            if (obj == null) {
+                                throw new ObjectStoreException("Error - could not fetch object"
+                                        + " with ID of " + id);
+                            }
+                            row.set(i, obj);
+                        }
+                    }
+                }
             }
             return retval;
         } catch (SQLException e) {
