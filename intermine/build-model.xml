@@ -357,9 +357,7 @@
     <taskdef name="precompute-templates" classname="org.intermine.web.task.PrecomputeTemplatesTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-templates alias="${objectstore.name}"
-                          summaryPropertiesFile="${summarise.output.properties.filename}"
-                          minRows="${precompute.minRows}"/>
+    <precompute-templates alias="${objectstore.name}" minRows="${precompute.minRows}"/>
   </target>
 
   <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"
