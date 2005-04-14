@@ -185,7 +185,7 @@ public class PrecomputeTask extends Task
                 }
 
                 if (resultsInfo.getRows() >= minRows) {
-                    LOG.info("precomputing " + key);
+                    LOG.info("precomputing " + key + " - " + query);
                     precompute(os, query);
 
                     if (testMode) {
@@ -710,6 +710,9 @@ public class PrecomputeTask extends Task
 
         while (fieldNameIter.hasNext()) {
             String fieldName = (String) fieldNameIter.next();
+            if (fieldName.equals("id")) {
+                continue;
+            }
             QueryField qf = new QueryField(qc, fieldName);
             q.addToSelect(qf);
         }
