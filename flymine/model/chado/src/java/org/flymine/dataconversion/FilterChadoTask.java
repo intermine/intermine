@@ -29,8 +29,8 @@ import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
 
 /**
- * Read a set of Uniprot XML files and write out only those elements for an organism in
- * the given set of names.
+ * Read Chado GFF3 files are write out only those lines whose types are supported by the FlyMine
+ * genomic model.
  *
  * @author Richard Smith
  */
@@ -107,7 +107,9 @@ public class FilterChadoTask extends Task
         if (type.startsWith("match") || type.equals("aberration_junction")
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
             || type.equals("scaffold") || type.equals("chromosome_arm")
-            || type.equals("chromosome") || type.equals("mature_peptide")) {
+            || type.equals("chromosome") || type.equals("mature_peptide")
+//            || type.equals("orthologous_region") || type.equals("syntenic_region")
+            ) {
             return false;
         }
         return true;
