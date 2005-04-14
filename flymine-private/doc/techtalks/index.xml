@@ -10,42 +10,32 @@
         <table>
           <tbody>
             <row>
-              <entry>23rd Novemebr 2004</entry>
-              <entry>Matthew/Richard</entry>
-              <entry>Software summit feedback</entry>
-            </row>
-            <row>
-              <entry>1st December 2004</entry>
+              <entry>20th April 2005</entry>
               <entry>Matthew</entry>
               <entry>An Overview of Java 5.0</entry>
             </row>
             <row>
-              <entry>12th January 2005</entry>
+              <entry>18th May 2005</entry>
               <entry>Richard</entry>
-              <entry>TBA</entry>
+              <entry>Extreme Programming</entry>
             </row>
             <row>
-              <entry>9th February 2005</entry>
-              <entry>Mark</entry>
-              <entry>TBA</entry>
-            </row>
-            <row>
-              <entry>9th March 2005</entry>
+              <entry>15th June 2005</entry>
               <entry>Kim</entry>
-              <entry>TBA</entry>
+              <entry>SWT</entry>
             </row>
             <row>
-              <entry>6th April 2005</entry>
-              <entry>Wenyan</entry>
-              <entry>TBA</entry>
-            </row>
-            <row>
-              <entry>4th May 2005</entry>
+              <entry>13th July 2005</entry>
               <entry>Tom</entry>
               <entry>TBA</entry>
             </row>
             <row>
-              <entry>1st June 2005</entry>
+              <entry>10th August 2005</entry>
+              <entry>Wenyan</entry>
+              <entry>TBA</entry>
+            </row>
+            <row>
+              <entry>7th September 2005</entry>
               <entry>Francois?</entry>
               <entry>TBA</entry>
             </row>
@@ -56,6 +46,11 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>23rd Novemebr 2004</entry>
+              <entry>Software Summit overview</entry>
+              <entry><ulink url="CSS2004_matt.sxi">Matthew</ulink> <ulink url="CSS2004_richard.sxi">Richard</ulink></entry>
+            </row>
             <row>
               <entry>8th October 2003</entry>
               <entry>Richard</entry>
