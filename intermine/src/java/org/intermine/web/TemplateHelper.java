@@ -88,16 +88,26 @@ public class TemplateHelper
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
-                
-                // Parse user input
-                String op = (String) tf.getAttributeOps("" + (j + 1));
-                ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
-                Object constraintValue = tf.getParsedAttributeValues("" + (j + 1));
-                
-                // In query copy, replace old constraint with new one
+                String key = "" + (j + 1);
                 PathNode nodeCopy = (PathNode) queryCopy.getNodes().get(node.getPath());
-                nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                                              new Constraint(constraintOp, constraintValue));
+                
+                if (tf.getUseBagConstraint(key)) {
+                    // Replace constraint with bag constraint
+                    ConstraintOp constraintOp = ConstraintOp.
+                    getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
+                    Object constraintValue = tf.getBag(key);
+                    nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
+                                                new Constraint(constraintOp, constraintValue));
+                } else {
+                    // Parse user input
+                    String op = (String) tf.getAttributeOps(key);
+                    ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
+                    Object constraintValue = tf.getParsedAttributeValues(key);
+                    
+                    // In query copy, replace old constraint with new one
+                    nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
+                                                  new Constraint(constraintOp, constraintValue));
+                }
                 j++;
             }
         }
@@ -106,7 +116,7 @@ public class TemplateHelper
     }
     
     /**
-     * Create a TemplateQuery with input submited by user contained within
+     * Create a TemplateQuery with input submitted by user contained within
      * a BuildTemplateForm.
      *
      * @param tf     the BuildTemplateForm bean

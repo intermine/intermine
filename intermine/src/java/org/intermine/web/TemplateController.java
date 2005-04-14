@@ -26,6 +26,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.BagConstraint;
 
 /**
  * Controller for the template tile. This tile can be used for real template
@@ -67,6 +68,7 @@ public class TemplateController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
@@ -146,6 +148,10 @@ public class TemplateController extends TilesAction
         request.setAttribute("constraints", constraints);
         request.setAttribute("displayConstraints", displayConstraints);
 
+        if (profile.getSavedBags().size() > 0) {
+            request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
+        }
+        
         return null;
     }
 }

@@ -90,6 +90,7 @@ public class TemplateAction extends InterMineAction
                 = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages, saveQuery);
+        Thread.sleep(200);
         return new ForwardParameters(mapping.findForward("waiting"))
                             .addParameter("qid", qid).forward();
     }
