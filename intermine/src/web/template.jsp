@@ -37,6 +37,19 @@
 
     document.getElementById("operandEditSpan" + index).style.display = "";
   }
+  
+  /***********************************************************
+   * Use bag checkbox has been clicked.
+   **********************************************************/
+  function clickUseBag(index)
+  {
+    var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
+    document.templateForm["attributeOps("+index+")"].disabled=useBag;
+    document.templateForm["attributeOptions("+index+")"].disabled=useBag;
+    document.templateForm["attributeValues("+index+")"].disabled=useBag;
+    document.templateForm["bag("+index+")"].disabled=!useBag;
+    document.templateForm["bagOp("+index+")"].disabled=!useBag;
+  }
 
   /***********************************************************
    * Init attribute value with selected item and hide input box if
@@ -72,7 +85,7 @@
               <td align="right" valign="top" rowspan="2">
                 <c:out value="[${index}]"/>
               </td>
-              <td colspan="3">
+              <td colspan="2">
                 <i><c:out value="${con.description}"/></i>
               </td>
             </tr>
@@ -93,8 +106,8 @@
                 <c:out value="[${index}]"/>
               </td>
             </c:if>
-            <td>
-              <c:out value="${names[con]}"/>
+            <td valign="top">
+              <c:out value="${names[con]}"/>:
             </td>
             <td valign="top">
               <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
@@ -104,15 +117,11 @@
                   </html:option>
                 </c:forEach>
               </html:select>
-            </td>
-            <td valign="top" align="left" nowrap="nowrap">
               <span id="operandEditSpan${index-1}">
                <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
-                  <im:hspacer width="3"/>
                   <img src="images/left-arrow.gif" alt="&lt;-" border="0" height="13" width="13"/>
-                  <im:hspacer width="3"/>
                 </c:if>
               </span>
               <c:if test="${!empty options}">
@@ -123,6 +132,25 @@
                   </option>
                 </c:forEach>
                 </select>
+              </c:if>
+              <c:if test="${!empty PROFILE.savedBags}">
+                <br/>
+                <b>or</b> <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})"/> constrain to be
+                <html:select property="bagOp(${index})" disabled="true">
+                  <c:forEach items="${bagOps}" var="bagOp">
+                    <html:option value="${bagOp.key}">
+                      <c:out value="${bagOp.value}"/>
+                    </html:option>
+                  </c:forEach>
+                </html:select>
+                bag
+                <html:select property="bag(${index})" disabled="true">
+                  <c:forEach items="${PROFILE.savedBags}" var="bag">
+                    <html:option value="${bag.key}">
+                      <c:out value="${bag.key}"/>
+                    </html:option>
+                  </c:forEach>
+                </html:select>
               </c:if>
               <script type="text/javascript">
                 <!--
@@ -145,7 +173,9 @@
                   {
                     document.templateForm["attributeValues(${index})"].value = select.value;
                   }
-                  updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"], document.templateForm["attributeOptions(${index})"], document.templateForm["attributeValues(${index})"]);
+                  updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"],
+                                       document.templateForm["attributeOptions(${index})"],
+                                       document.templateForm["attributeValues(${index})"]);
                 }
                 //-->
               </script>

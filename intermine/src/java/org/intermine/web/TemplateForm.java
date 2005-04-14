@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -32,8 +33,12 @@ import org.intermine.objectstore.query.ConstraintOp;
  */
 public class TemplateForm extends ActionForm
 {
-    protected Map attributeOps, attributeValues, parsedAttributeValues;
-
+    private static final Logger LOG = Logger.getLogger(TemplateForm.class);
+    
+    /** Maps containing form state for each constraint. */
+    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
+    protected Map selectedBags, bagOps;
+    
     /**
      * Constructor
      */
@@ -111,6 +116,60 @@ public class TemplateForm extends ActionForm
     }
 
     /**
+     * Set value of useBagConstraint for given constraint key.
+     * @param key the key
+     * @param value the value
+     */
+    public void setUseBagConstraint(String key, boolean value) {
+        useBagConstraint.put(key, value ? Boolean.TRUE : Boolean.FALSE);
+    }
+    
+    /**
+     * Get the value of useBagConstraint for given constraint key.
+     * @param key the key
+     * @return the value
+     */
+    public boolean getUseBagConstraint(String key) {
+        return Boolean.TRUE.equals(useBagConstraint.get(key));
+    }
+    
+    /**
+     * Set the bag name.
+     * @param key the key
+     * @param bag bag name
+     */
+    public void setBag(String key, Object bag) {
+        selectedBags.put(key, bag);
+    }
+    
+    /**
+     * Get the bag name selected.
+     * @param key the key
+     * @return the bag selected
+     */
+    public Object getBag(String key) {
+        return selectedBags.get(key);
+    }
+    
+    /**
+     * Get the bag operation selected.
+     * @param key the key
+     * @return the bag operation selected
+     */
+    public String getBagOp(String key) {
+        return (String) bagOps.get(key);
+    }
+    
+    /**
+     * Set bag operation.
+     * @param bagOp the bag operation selected
+     * @param key the key
+     */
+    public void setBagOp(String key, String bagOp) {
+        bagOps.put(key, bagOp);
+    }
+    
+    /**
      * Get a parsed attribute value
      * @param key the key
      * @return the value
@@ -137,11 +196,8 @@ public class TemplateForm extends ActionForm
         }
         
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
-        
         ActionErrors errors = new ActionErrors();
-        
         parseAttributeValues(template, session, errors);
-
         return errors;
     }
     
@@ -164,11 +220,16 @@ public class TemplateForm extends ActionForm
                 
                 String key = "" + (j + 1);
                 Class fieldClass = MainHelper.getClass(node.getType());
-                Integer opIndex = Integer.valueOf((String) getAttributeOps(key));
-                ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
-                Object parseVal = MainForm.parseValue((String) attributeValues.get(key),
-                                                    fieldClass, constraintOp, locale, errors);
-                parsedAttributeValues.put(key, parseVal);
+                
+                if (getUseBagConstraint(key)) {
+                    // validate choice of bag in some way?
+                } else {
+                    Integer opIndex = Integer.valueOf((String) getAttributeOps(key));
+                    ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
+                    Object parseVal = MainForm.parseValue((String) attributeValues.get(key),
+                                                        fieldClass, constraintOp, locale, errors);
+                    parsedAttributeValues.put(key, parseVal);
+                }
                 j++;
             }
         }
@@ -188,5 +249,8 @@ public class TemplateForm extends ActionForm
         attributeOps = new HashMap();
         attributeValues = new HashMap();
         parsedAttributeValues = new HashMap();
+        useBagConstraint = new HashMap();
+        selectedBags = new HashMap();
+        bagOps = new HashMap();
     }
 }
