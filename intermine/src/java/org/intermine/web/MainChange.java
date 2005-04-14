@@ -212,7 +212,10 @@ public class MainChange extends DispatchAction
 
         path = toPath(prefix, path);
         
-        Node node = query.addNode(path);
+        Node node = (Node) query.getNodes().get(path);
+        if (node == null) {
+            node = query.addNode(path);
+        }
         //automatically start editing node
         session.setAttribute("editingNode", node);
         //and change metadata view if relevant
