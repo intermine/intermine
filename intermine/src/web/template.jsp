@@ -45,7 +45,8 @@
   {
     var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
     document.templateForm["attributeOps("+index+")"].disabled=useBag;
-    document.templateForm["attributeOptions("+index+")"].disabled=useBag;
+    if (document.templateForm["attributeOptions("+index+")"])
+      document.templateForm["attributeOptions("+index+")"].disabled=useBag;
     document.templateForm["attributeValues("+index+")"].disabled=useBag;
     document.templateForm["bag("+index+")"].disabled=!useBag;
     document.templateForm["bagOp("+index+")"].disabled=!useBag;
