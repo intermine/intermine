@@ -116,7 +116,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected ObjectStoreInterMineImpl(Database db, Model model) {
         super(model);
         this.db = db;
-        schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
+        schema = new DatabaseSchema(model, Collections.EMPTY_LIST, false);
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
@@ -218,6 +218,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String truncatedClassesString = props.getProperty("truncatedClasses");
         String logTable = props.getProperty("logTable");
         String minBagTableSizeString = props.getProperty("minBagTableSize");
+        String noNotXmlString = props.getProperty("noNotXml");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -235,8 +236,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 } catch (MetaDataException e) {
                     throw new ObjectStoreException("Cannot load model", e);
                 }
+                List truncatedClasses = new ArrayList();
                 if (truncatedClassesString != null) {
-                    List truncatedClasses = new ArrayList();
                     String classes[] = truncatedClassesString.split(",");
                     for (int i = 0; i < classes.length; i++) {
                         ClassDescriptor truncatedClassDescriptor =
@@ -247,11 +248,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         }
                         truncatedClasses.add(truncatedClassDescriptor);
                     }
-                    DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses);
-                    os = new ObjectStoreInterMineImpl(database, databaseSchema);
-                } else {
-                    os = new ObjectStoreInterMineImpl(database, osModel);
                 }
+                boolean noNotXml = false;
+                if ("true".equals(noNotXmlString) || (noNotXmlString == null)) {
+                    noNotXml = true;
+                } else if ("false".equals(noNotXmlString)) {
+                    noNotXml = false;
+                } else {
+                    throw new ObjectStoreException("Invalid value for property noNotXml: "
+                            + noNotXmlString);
+                }
+                DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses,
+                        noNotXml);
+                os = new ObjectStoreInterMineImpl(database, databaseSchema);
                 if (missingTablesString != null) {
                     String tables[] = missingTablesString.split(",");
                     for (int i = 0; i < tables.length; i++) {
@@ -625,7 +634,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected List executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, int sequence) throws ObjectStoreException {
-        checkStartLimit(start, limit, q);
+        if (explain) {
+            checkStartLimit(start, limit, q);
+        }
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
         String sql = generateSql(c, q, start, limit);
@@ -670,7 +681,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 deregisterStatement(s);
             }
             long postExecute = System.currentTimeMillis();
-            List objResults = ResultsConverter.convert(sqlResults, q, this);
+            List objResults = ResultsConverter.convert(sqlResults, q, this, c);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) - 100 + start + (150 * q.getFrom().size())
                     + (sql.length() / 20);

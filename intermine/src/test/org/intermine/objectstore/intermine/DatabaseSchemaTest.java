@@ -33,7 +33,7 @@ public class DatabaseSchemaTest extends TestCase
         truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"));
         truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"));
         try {
-            new DatabaseSchema(model, truncated);
+            new DatabaseSchema(model, truncated, false);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -47,7 +47,7 @@ public class DatabaseSchemaTest extends TestCase
         ClassDescriptor company = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         truncated.add(manager);
         truncated.add(employee);
-        DatabaseSchema schema = new DatabaseSchema(model, truncated);
+        DatabaseSchema schema = new DatabaseSchema(model, truncated, false);
 
         assertTrue(schema.isTruncated(manager));
         assertTrue(schema.isTruncated(employee));

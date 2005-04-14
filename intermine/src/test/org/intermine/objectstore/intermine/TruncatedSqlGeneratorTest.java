@@ -36,7 +36,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     public static void oneTimeSetUp() throws Exception {
         SqlGeneratorTest.oneTimeSetUp();
         setUpResults();
-        db = DatabaseFactory.getDatabase("db.unittest");
+        db = DatabaseFactory.getDatabase("db.truncunittest");
     }
 
     public static void setUpResults() throws Exception {
@@ -215,7 +215,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() {
-        return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")));
+        return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")), true);
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id";

@@ -38,6 +38,7 @@ public class DatabaseSchema
 
     private Model model;
     private List truncated;
+    private boolean noNotXml;
     
     private Set truncatedSet;
     private Map tableMasterToFieldDescriptors = new HashMap();
@@ -49,11 +50,14 @@ public class DatabaseSchema
      * @param model a Model
      * @param truncated a List of ClassDescriptors representing the truncated classes, in order of
      * decreasing priority.
+     * @param noNotXml true if NotXML data should be omitted from every table except InterMineObject
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
-    public DatabaseSchema(Model model, List truncated) throws IllegalArgumentException {
+    public DatabaseSchema(Model model, List truncated,
+            boolean noNotXml) throws IllegalArgumentException {
         this.model = model;
         this.truncated = truncated;
+        this.noNotXml = noNotXml;
         for (int i = 0; i < truncated.size(); i++) {
             Class cA = ((ClassDescriptor) truncated.get(i)).getType();
             for (int o = 0; o < i; o++) {
@@ -110,6 +114,15 @@ public class DatabaseSchema
      */
     public Model getModel() {
         return model;
+    }
+
+    /**
+     * Returns true if NotXML should be omitted from all tables except the InterMineObject table.
+     *
+     * @return a boolean
+     */
+    public boolean isMissingNotXml() {
+        return noNotXml;
     }
 
     /**

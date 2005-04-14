@@ -570,8 +570,10 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         } catch (RuntimeException e) {
             assertEquals("ObjectStore error has occured (in get)", e.getMessage());
             Throwable t = e.getCause();
-            t = t.getCause();
-            assertEquals("ERROR: canceling query due to user request", t.getMessage());
+            if (!"Request id flibble8 is cancelled".equals(t.getMessage())) {
+                t = t.getCause();
+                assertEquals("ERROR: canceling query due to user request", t.getMessage());
+            }
         } finally {
             ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
         }
