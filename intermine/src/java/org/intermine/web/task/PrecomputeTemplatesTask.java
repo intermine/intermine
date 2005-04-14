@@ -33,6 +33,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.web.MainHelper;
 import org.intermine.web.PathNode;
 import org.intermine.web.TemplateQuery;
@@ -112,6 +113,24 @@ public class PrecomputeTemplatesTask extends Task
             TemplateQuery template = (TemplateQuery) entry.getValue();
 
             QueryAndIndexes qai = processTemplate(template);
+
+            Query q = qai.getQuery();
+
+            if (q.getConstraint() == null) {
+                // see ticket #255
+                LOG.warn("ignoring template \"" + template.getName()
+                          + "\" because it is unconstrained");
+                continue;
+            }
+
+            if (q.getConstraint() instanceof ConstraintSet) {
+                if (((ConstraintSet) q.getConstraint()).getConstraints().size() == 0) {
+                    // see ticket #255
+                    LOG.warn("ignoring template \"" + template.getName()
+                             + "\" because it is unconstrained");
+                    continue;
+                }
+            }
 
             ResultsInfo resultsInfo;
             try {
