@@ -134,11 +134,14 @@
                 </c:forEach>
                 </select>
               </c:if>
-              <c:if test="${!empty PROFILE.savedBags}">
+              
                 <br/>
-                <b><fmt:message key="template.OR"/></b> <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})"/>
+                
+                <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty PROFILE.savedBags?'true':'false'}"/>
+                
+                <fmt:message key="template.or"/>
                 <fmt:message key="template.constraintobe"/>
-                <html:select property="bagOp(${index})" disabled="true">
+                <html:select property="bagOp(${index})">
                   <c:forEach items="${bagOps}" var="bagOp">
                     <html:option value="${bagOp.key}">
                       <c:out value="${bagOp.value}"/>
@@ -146,14 +149,26 @@
                   </c:forEach>
                 </html:select>
                 <fmt:message key="template.bag"/>
-                <html:select property="bag(${index})" disabled="true">
+                <html:select property="bag(${index})">
                   <c:forEach items="${PROFILE.savedBags}" var="bag">
                     <html:option value="${bag.key}">
                       <c:out value="${bag.key}"/>
                     </html:option>
                   </c:forEach>
                 </html:select>
-              </c:if>
+                
+                <c:if test="${empty PROFILE.savedBags}">
+                  <div class="noBagsMessage">
+                    <fmt:message key="template.nobags"/>
+                  </div>
+                </c:if>
+                
+                <script type="text/javascript">
+                <!--
+                  clickUseBag(${index});
+                //-->
+                </script>
+                
               <script type="text/javascript">
                 <!--
                 /* setting options popup value to correct initial state. */
