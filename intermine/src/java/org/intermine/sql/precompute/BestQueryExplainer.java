@@ -44,6 +44,7 @@ public class BestQueryExplainer extends BestQuery
      */
     public BestQueryExplainer() {
         super();
+        timeLimit = -1;
     }
 
     /**
