@@ -103,18 +103,26 @@
           <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
             <th align="center">
               <div style="white-space:nowrap">
-                <%-- right/left --%>
-                <c:if test="${not status.first}">
-                  <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
-                    <fmt:param value="${column.name}"/>
-                  </fmt:message>
-                  <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
-                  <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
-                             title="${moveLeftTitle}">
+
+                <%-- left --%>
+                <c:choose>
+                  <c:when test="${status.first}">
                     <img style="margin-right: 5px" border="0" align="middle" 
-                         src="images/left-arrow-square.gif" alt="${moveRightString}"/>
-                  </html:link>
-                </c:if>
+                         src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
+                      <fmt:param value="${column.name}"/>
+                    </fmt:message>
+                    <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
+                    <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
+                               title="${moveLeftTitle}">
+                      <img style="margin-right: 5px" border="0" align="middle"
+                           width="13" height="13" src="images/left-arrow-square.gif" 
+                           alt="${moveRightString}"/>
+                    </html:link>
+                  </c:otherwise>
+                </c:choose>
 
                 <%-- show/hide --%>
                 <c:choose>
@@ -140,17 +148,25 @@
                   </c:otherwise>
                 </c:choose>
 
-                <c:if test="${not status.last}">
-                  <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-                    <fmt:param value="${column.name}"/>
-                  </fmt:message>
-                  <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
-                  <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
-                             title="${moveRightTitle}">
-                    <img style="margin-left: 5px" border="0" align="middle"
-                         src="images/right-arrow-square.gif" alt="${moveRightString}"/>
-                  </html:link>
-                </c:if>
+                <%-- right --%>
+                <c:choose>
+                  <c:when test="${status.last}">
+                    <img style="margin-left: 5px" border="0" align="middle" 
+                         src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="results.moveRightHelp" var="moveRightTitle">
+                      <fmt:param value="${column.name}"/>
+                    </fmt:message>
+                    <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
+                    <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+                               title="${moveRightTitle}">
+                      <img style="margin-left: 5px" border="0" align="middle" 
+                           width="13" height="13"
+                           src="images/right-arrow-square.gif" alt="${moveRightString}"/>
+                    </html:link>
+                  </c:otherwise>
+                </c:choose>
               </div>
             </th>
           </c:forEach>

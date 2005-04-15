@@ -43,37 +43,54 @@
               <span class="type"><small>${viewPathTypes[path]}</small></span>
             </div>
             <div style="white-space:nowrap">
-              <c:if test="${!status.first}">
-                <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
-                  <fmt:param value="${path}"/>
-                </fmt:message>
-                [
-                <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
-                  title="${moveLeftTitle}">
-                  <fmt:message key="view.moveLeftSymbol"/>
-                </html:link>
-                ]
-              </c:if>
-              <c:if test="${!status.last}">
-                <fmt:message key="view.moveRightHelp" var="moveRightTitle">
-                  <fmt:param value="${path}"/>
-                </fmt:message>
-                [
-                <html:link action="/viewChange?method=moveRight&amp;index=${status.index}"
-                  title="${moveRightTitle}">
-                  <fmt:message key="view.moveRightSymbol"/>
-                </html:link>
-                ]
-              </c:if>
+              <c:choose>
+                <c:when test="${status.first}">
+                  <img style="margin-right: 5px" border="0" align="middle" 
+                       src="images/blank13x13.gif" alt=" " width="13" height="13" />
+                </c:when>
+                <c:otherwise>
+                  <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
+                    <fmt:param value="${path}"/>
+                  </fmt:message>
+                  <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
+                  <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
+                             title="${moveLeftTitle}">
+                    <img style="margin-right: 5px" border="0" align="middle" 
+                         src="images/left-arrow-square.gif" width="13" height="13" 
+                         alt="${moveRightString}"/>
+                  </html:link>
+                </c:otherwise>
+              </c:choose>                
+
               <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
                 <fmt:param value="${path}"/>
               </fmt:message>
-              [
+              <fmt:message key="view.removeFromViewSymbol" var="removeFromViewString"/>
               <html:link action="/viewChange?method=removeFromView&amp;path=${path}"
-                title="${removeFromViewTitle}">
-                <fmt:message key="view.removeFromViewSymbol"/>
+                         title="${removeFromViewTitle}">
+                <img border="0" align="middle" 
+                     src="images/cross.gif" width="13" height="13" 
+                     alt="${removeFromViewString}"/>
               </html:link>
-              ]
+              
+              <c:choose>
+                <c:when test="${status.last}">
+                  <img style="margin-left: 5px" border="0" align="middle" 
+                       src="images/blank13x13.gif" alt=" " width="13" height="13" />
+                </c:when>
+                <c:otherwise>
+                  <fmt:message key="view.moveRightHelp" var="moveRightTitle">
+                    <fmt:param value="${path}"/>
+                  </fmt:message>
+                  <fmt:message key="view.moveRightSymbol" var="moveRightString"/>
+                  <html:link action="/viewChange?method=moveRight&amp;index=${status.index}"
+                             title="${moveRightTitle}">
+                    <img style="margin-left: 5px" border="0" align="middle"
+                         src="images/right-arrow-square.gif" width="13" height="13" 
+                         alt="${moveRightString}"/>
+                  </html:link>
+                </c:otherwise>
+              </c:choose>
             </div>
           </div>
         </c:forEach>
