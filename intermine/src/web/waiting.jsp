@@ -13,6 +13,9 @@
     <link rel="stylesheet" type="text/css" 
           href="${WEB_PROPERTIES["project.sitePrefix"]}/style/branding.css"/>
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
+    <noscript>
+      <meta http-equiv="Refresh" content="${POLL_REFRESH_SECONDS}; URL=sdfsdf<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}"/>">
+    </noscript>
 </head>
 <body>
   <tiles:insert page="/header.jsp"/>
