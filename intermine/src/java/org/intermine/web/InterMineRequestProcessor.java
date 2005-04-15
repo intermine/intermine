@@ -42,7 +42,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                           LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild",
                           "/objectDetails", "/initObjectDetails", "/examples", "/initObjectTrail",
                           "/collectionDetails", "/iqlQuery", "/login", "/feedback", "/portal",
-                          "/templates", "/templateSearch"
+                          "/templates", "/templateSearch", "/template"
                       });
     
     /**
