@@ -8,7 +8,7 @@
   <!--templates-->
   <definition name="layout.template" path="/layout.jsp">
     <put name="pageName" value=""/>
-    <put name="title" value="InterMine" />
+    <put name="title" value="/title.jsp" />
     <put name="header" value="/header.jsp"/>
     <put name="menu" value="/menu.jsp"/>
     <put name="errorMessages" value="/errorMessages.jsp"/>
@@ -76,6 +76,7 @@
   <definition name="results.page" extends="layout.template">
     <put name="body" value="table.tile"/>
     <put name="pageName" value="results"/>
+    <put name="title" value="/resultsTitle.jsp"/>
   </definition>
   <definition name="error.page" extends="layout.template">
     <put name="body" value="error.jsp"/>
