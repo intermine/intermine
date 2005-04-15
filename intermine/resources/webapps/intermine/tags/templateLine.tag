@@ -2,6 +2,8 @@
 
 <%@ attribute name="type" required="true" %>
 <%@ attribute name="templateQuery" required="true" type="org.intermine.web.TemplateQuery" %>
+<%@ attribute name="className" required="false" type="java.lang.String" %>
+<%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
 
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
