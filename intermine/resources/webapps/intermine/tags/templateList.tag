@@ -25,7 +25,8 @@
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
   <%-- filter unimportant templates if necessary --%>
   <c:if test="${!important || templateQuery.important}">
-    <im:templateLine type="${type}" templateQuery="${templateQuery}"/>
+    <im:templateLine type="${type}" templateQuery="${templateQuery}" className="${className}"
+                     interMineObject="${interMineObject}"/>
     <c:if test="${!status.last}">
       <hr class="tmplSeperator"/>
     </c:if>
