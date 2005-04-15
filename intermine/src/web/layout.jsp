@@ -11,7 +11,8 @@
 <html:xhtml/>
 <html:html locale="true" xhtml="true">
   <%-- from the tiles config file for description.jsp --%>
-  <tiles:importAttribute name="pageName"/>
+  <tiles:importAttribute name="pageName" scope="request"/>
+  <tiles:importAttribute name="title"/>
 
   <head>
     <html:base/>
@@ -26,8 +27,7 @@
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
     <title>
-      <fmt:message key="${pageName}.title" var="pageTitle"/>
-      <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
+      <tiles:get name="title"/>
     </title>
     
     <script type="text/javascript">
