@@ -48,16 +48,16 @@
             <c:choose>
               <c:when test="${node.button == '+'}">
                 <html:link action="/mainChange?method=changePath&amp;path=${node.path}">
-                  <img border="0" src="images/plus.gif" alt="+"/>
+                  <img border="0" src="images/plus.gif" width="11" height="11" alt="+"/>
                 </html:link>
               </c:when>
               <c:when test="${node.button == '-'}">
                 <html:link action="/mainChange?method=changePath&amp;path=${node.prefix}">
-                  <img border="0" src="images/minus.gif" alt="-"/>
+                  <img border="0" src="images/minus.gif" width="11" height="11" alt="-"/>
                 </html:link>
               </c:when>
               <c:otherwise>
-                <img src="images/blank.gif" alt=" "/>
+                <img src="images/blank.gif" width="11" height="11" alt=" "/>
               </c:otherwise>
             </c:choose>
             <%-- construct the real path for this node --%>
@@ -210,11 +210,12 @@
                     </fmt:message>
                     <html:link action="/mainChange?method=removeNode&amp;path=${node.path}"
                                title="${removeNodeTitle}">
-                      <img border="0" src="images/cross.gif" alt="x"/>
+                      <img border="0" src="images/cross.gif" width="13" height="13" alt="x"/>
                     </html:link>
                   </c:if>
                   <c:if test="${lockedPaths[node.path]}">
-                    <img border="0" src="images/discross.gif" alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
+                    <img border="0" src="images/discross.gif" width="13" height="13" 
+                         alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
                   </c:if>
                 </div>
                 <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
@@ -239,7 +240,7 @@
                     <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
                     <html:link action="/mainChange?method=removeConstraint&amp;path=${node.path}&amp;index=${status.index}"
                                title="${removeConstraintTitle}">
-                      <img border="0" src="images/cross.gif" alt="x"/>
+                      <img border="0" src="images/cross.gif" width="13" height="13" alt="x"/>
                     </html:link>
                   </div>
                 </c:forEach>

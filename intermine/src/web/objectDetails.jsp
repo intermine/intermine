@@ -190,18 +190,18 @@
                       <c:choose>
                         <c:when test="${verbose}">
                           <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
-                            <img border="0" src="images/minus.gif" alt="-"/>
+                            <img border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
                         </c:when>
                         <c:when test="${collection.size > 0}">
                           <html:link action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
-                            <img border="0" src="images/plus.gif" alt="+"/>
+                            <img border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
                         </c:when>
                         <c:otherwise>
-                          <img border="0" src="images/blank.gif" alt=" "/>
+                          <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
                         </c:otherwise>
                       </c:choose>
                     </div>
@@ -222,7 +222,10 @@
                     <td colspan="2">
                       <table border="0" cellspacing="0" cellpadding="0" width="100%">
                         <tr>
-                          <td width="15"> <img border="0" src="images/blank.gif" alt="" width="15"/></td><td>
+                          <td width="15"> 
+                            <img border="0" src="images/blank.gif" alt="" width="15" height="11"/>
+                          </td>
+                          <td>
                           <table border="0" cellspacing="0" class="refSummary" align="right">
                             <thead style="text-align: center">
                               <tr>
