@@ -39,7 +39,7 @@
     <tr>
       <td valign="top" width="30%">
 
-        <im:heading id="summary">
+        <im:heading id="primary">
           Primary keys for selected
           <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
