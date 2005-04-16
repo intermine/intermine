@@ -33,7 +33,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryCollectionReference;
