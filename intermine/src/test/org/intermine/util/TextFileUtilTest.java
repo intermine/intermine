@@ -27,6 +27,135 @@ public class TextFileUtilTest extends TestCase
         super(arg);
     }
 
+    private List getTestRows() {
+        List rows = new ArrayList();
+        rows.add(Arrays.asList(new Object [] {
+                                   new Integer(101), new Integer(102),
+                                   "string 103", "string 104, with comma"
+                               }));
+        rows.add(Arrays.asList(new Object [] {
+                                   new Integer(201), new Integer(202),
+                                   "string 203", "string 204\t with tab"
+                               }));
+        return rows;
+    }
+
+    public void testWriteTabDelimitedTable() throws Exception {
+        ByteArrayOutputStream baos;
+        String expected;
+        String results;
+
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {0, 1, 2, 3},
+                                            new boolean[] {true, true, true, true},
+                                            100);
+        expected = "101\t102\t\"string 103\"\t\"string 104, with comma\"\n"
+            + "201\t202\t\"string 203\"\t\"string 204\t with tab\"\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {0, 1, 2, 3},
+                                            new boolean[] {false, true, true, true},
+                                            100);
+        expected = "102\t\"string 103\"\t\"string 104, with comma\"\n"
+            + "202\t\"string 203\"\t\"string 204\t with tab\"\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {3, 1, 2, 0},
+                                            new boolean[] {true, true, true, true},
+                                            100);
+        expected = "\"string 104, with comma\"\t102\t\"string 103\"\t101\n"
+            + "\"string 204\t with tab\"\t202\t\"string 203\"\t201\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+        
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {3, 2, 1, 0},
+                                            new boolean[] {false, true, true, false},
+                                            100);
+        expected = "\"string 103\"\t102\n\"string 203\"\t202\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+        
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {3, 2, 1, 0},
+                                            new boolean[] {false, false, true, false},
+                                            100);
+        expected = "102\n202\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+    }
+
+    public void testWriteCommaDelimitedTable() throws Exception {
+        ByteArrayOutputStream baos;
+        String expected;
+        String results;
+
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeCSVTable(baos, getTestRows(),
+                                   new int[] {0, 1, 2, 3},
+                                   new boolean[] {true, true, true, true},
+                                   100);
+        expected = "101,102,\"string 103\",\"string 104, with comma\"\n"
+            + "201,202,\"string 203\",\"string 204\t with tab\"\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeCSVTable(baos, getTestRows(),
+                                   new int[] {0, 1, 2, 3},
+                                   new boolean[] {false, true, true, true},
+                                   100);
+        expected = "102,\"string 103\",\"string 104, with comma\"\n"
+            + "202,\"string 203\",\"string 204\t with tab\"\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeCSVTable(baos, getTestRows(),
+                                   new int[] {3, 1, 2, 0},
+                                   new boolean[] {true, true, true, true},
+                                   100);
+        expected = "\"string 104, with comma\",102,\"string 103\",101\n"
+            + "\"string 204\t with tab\",202,\"string 203\",201\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+        
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeCSVTable(baos, getTestRows(),
+                                   new int[] {3, 2, 1, 0},
+                                   new boolean[] {false, true, true, false},
+                                   100);
+        expected = "\"string 103\",102\n\"string 203\",202\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+        
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeCSVTable(baos, getTestRows(),
+                                   new int[] {3, 2, 1, 0},
+                                   new boolean[] {false, false, true, false},
+                                   100);
+        expected = "102\n202\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+    }
+
     /**
      * Test quoting a string with a quote in.
      */

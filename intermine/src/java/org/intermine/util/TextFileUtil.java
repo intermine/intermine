@@ -13,6 +13,7 @@ package org.intermine.util;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -93,6 +94,8 @@ public abstract class TextFileUtil
             }
 
             List row = (List) rowIterator.next();
+
+            List realRow = new ArrayList();
             
             for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 int realColumnIndex = columnOrder[columnIndex];
@@ -103,17 +106,25 @@ public abstract class TextFileUtil
                     continue;
                 }
 
+                realRow.add(o);
+                
+                
+            }
+            
+            for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
+                Object o = realRow.get(columnIndex);
+
                 if (o instanceof Number) {
                     writeUnQuoted(printStream, o);
                 } else {
                     writeQuoted(printStream, o);
                 }
 
-                if (columnIndex < row.size () - 1 - invisibleColumns) {
+                if (columnIndex < realRow.size() - 1) {
                     printStream.print(delimiter);
                 }
-                
             }
+            int realRowSize = row.size () - 1 - invisibleColumns;
 
             printStream.println();
 
