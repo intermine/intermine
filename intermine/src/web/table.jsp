@@ -107,8 +107,14 @@
                 <%-- left --%>
                 <c:choose>
                   <c:when test="${status.first}">
-                    <img style="margin-right: 5px" border="0" align="middle" 
-                         src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+                    <%-- since this blank GIF is displayed only to balance
+                         the right arrow at the other end of the div, it's
+                         not needed if there is no arrow --%>
+                    <c:if test="${not status.last}">
+                      <img style="margin-right: 5px" border="0" align="middle" 
+                           src="images/blank13x13.gif" alt=" " width="13"
+                           height="13"/>
+                    </c:if>
                   </c:when>
                   <c:otherwise>
                     <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
@@ -151,8 +157,13 @@
                 <%-- right --%>
                 <c:choose>
                   <c:when test="${status.last}">
-                    <img style="margin-left: 5px" border="0" align="middle" 
-                         src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+                    <%-- since this blank GIF is displayed only to balance
+                         the left arrow at the other end of the div, it's
+                         not needed if there is no arrow --%>
+                    <c:if test="${not status.last}">
+                      <img style="margin-left: 5px" border="0" align="middle" 
+                           src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+                    </c:if>
                   </c:when>
                   <c:otherwise>
                     <fmt:message key="results.moveRightHelp" var="moveRightTitle">
