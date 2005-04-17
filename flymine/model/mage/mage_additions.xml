@@ -14,9 +14,6 @@
   <attribute name="name" type="java.lang.String"/>
   <collection name="assays" referenced-type="org.flymine.model.genomic.MicroArrayAssay" ordered="true" reverse-reference="experiment"/>
 </class>
-<class name="org.flymine.model.genomic.Publication" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
-  <attribute name="title" type="java.lang.String"/>
-</class>
 <class name="org.flymine.model.genomic.MicroArraySlide" is-interface="true">
   <reference name="design" referenced-type="org.flymine.model.genomic.MicroArraySlideDesign" reverse-reference="slides"/>
   <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="slide"/>
@@ -64,7 +61,6 @@
   <collection name="treatments" referenced-type="org.flymine.model.genomic.Treatment" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.NuclearDNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
-<class name="org.flymine.model.genomic.MeasuredBioAssayData" is-interface="true"/>
 <class name="org.flymine.model.genomic.MicroArrayExperimentalResult" extends="org.flymine.model.genomic.ExperimentalResult" is-interface="true">
   <attribute name="scale" type="java.lang.String"/>
   <attribute name="isBackground" type="java.lang.Boolean"/>
@@ -79,7 +75,6 @@
   <collection name="tissues" referenced-type="org.flymine.model.genomic.LabeledExtract" ordered="true" reverse-reference="results"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <attribute name="organismDbId" type="java.lang.String"/>
   <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayExperimentalResult" ordered="true" reverse-reference="genes"/>
 </class>
 </classes>
