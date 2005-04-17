@@ -1,6 +1,5 @@
 BioEntity = BioSequence
 LabeledExtract = LabeledExtract
-MeasuredBioAssayData = MeasuredBioAssayData
 MicroArrayAssay = DerivedBioAssay
 MicroArrayExperiment = Experiment
 MicroArrayExperimentalResult = BioAssayDatum
