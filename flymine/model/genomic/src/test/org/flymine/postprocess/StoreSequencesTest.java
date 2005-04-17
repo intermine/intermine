@@ -5,6 +5,8 @@ import junit.framework.TestCase;
 import java.sql.*;
 import java.util.Iterator;
 import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -17,6 +19,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.DynamicUtil;
+import org.intermine.sql.Database;
 import org.intermine.model.InterMineObject;
 
 import org.flymine.model.genomic.*;
@@ -26,6 +29,7 @@ public class StoreSequencesTest extends TestCase {
 
     private ObjectStoreWriter osw;
     private String ensemblDb = "db.ensembl-human";
+    private Database db = null;
 
     private static final Logger LOG = Logger.getLogger(StoreSequencesTest.class);
 
@@ -54,17 +58,20 @@ public class StoreSequencesTest extends TestCase {
         osw.close();
     }
 
-    public void testGetSequence() throws Exception{
-        StoreSequences ss = new StoreSequences(osw, ensemblDb);
-        String seq = ss.getSequence("CR381709.1.2001.2054");
-        String expectedSequence = "TTCCTAGGAGGTTCTAATCAATGCAACTATAGGTATTTTCTGCCAAGGTCTAGC";
-        assertEquals(expectedSequence, seq);
-
-    }
+    // Changed test to use MockStoreSequences test to avoid requiring remote
+    // database.  Uncomment this test and set objectstore properties for db.ensembl-human
+    // to check getSequence().
+//     public void testGetSequence() throws Exception{
+//         Database db = DatabaseFactory.getDatabase(ensemblDb);
+//         StoreSequences ss = new StoreSequences(osw, db);
+//         String seq = ss.getSequence("CR381709.1.2001.2054");
+//         String expectedSequence = "TTCCTAGGAGGTTCTAATCAATGCAACTATAGGTATTTTCTGCCAAGGTCTAGC";
+//         assertEquals(expectedSequence, seq);
+//     }
 
     public void testStoreContigSequences() throws Exception {
         storeContigs();
-        StoreSequences ss = new StoreSequences(osw, ensemblDb);
+        StoreSequences ss = new MockStoreSequences(osw, db);
         ss.storeContigSequences();
 
         Query q1 = new Query();
@@ -106,5 +113,25 @@ public class StoreSequencesTest extends TestCase {
         osw.store(contig2);
         osw.commitTransaction();
     }
+
+    // MockStoreSequences subclasses store sequences and overrides getSequence()
+    // method to return desired sequence for given contig id
+    private class MockStoreSequences extends StoreSequences {
+        Map seqs = new HashMap();
+
+        MockStoreSequences(ObjectStoreWriter osw, Database db) throws SQLException,
+        ClassNotFoundException {
+            super(osw, db);
+            seqs.put("CR381709.1.2001.2054", "TTCCTAGGAGGTTCTAATCAATGCAACTATAGGTATTTTCTGCCAAGGTCTAGC");
+            seqs.put("AADD01209098.1.15791.15883", "TAAGTCTCTCAAAAACCCCTGGAAGACTGTATCAAGGGGTTGTTGTTGGTGGCACTGGTGTGATAATGGATCTGATATTCATTGTGATAGCAG");
+        }
+
+        protected String getSequence(String contigId) throws SQLException {
+            return (String) seqs.get(contigId);
+        }
+    }
+
+
+
 }
 
