@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Collections;
 
 import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
@@ -44,14 +43,14 @@ public class StoreSequences
     /**
      * Create a new StoreSequences object from the given ObjectStoreWriter
      * @param osw writer on genomic ObjectStore
-     * @param dbAlias database
+     * @param db database
      * @throws SQLException if there are any problems with getting db
      * @throws ClassNotFoundException if no db class be found
      */
-    public StoreSequences (ObjectStoreWriter osw, String dbAlias)
+    public StoreSequences (ObjectStoreWriter osw, Database db)
           throws SQLException, ClassNotFoundException {
           this.osw = osw;
-          db = DatabaseFactory.getDatabase(dbAlias);
+          this.db = db;
     }
 
 

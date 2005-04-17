@@ -21,6 +21,8 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Transcript;
@@ -40,7 +42,7 @@ public class PostProcessTask extends Task
     protected String operation, objectStore, objectStoreWriter, ensemblDb;
     protected File outputFile;
     protected ObjectStoreWriter osw;
-    
+
     /**
      * Sets the value of operation
      *
@@ -122,7 +124,8 @@ public class PostProcessTask extends Task
                 if (ensemblDb == null) {
                     throw new BuildException("ensemblDb attribute is not set");
                 }
-                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), ensemblDb);
+                Database db = DatabaseFactory.getDatabase(ensemblDb);
+                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
                 LOG.info("Starting StoreSequences.storeContigSequences()");
                 ss.storeContigSequences();
             } else if ("transfer-sequences-chromosome".equals(operation)) {
