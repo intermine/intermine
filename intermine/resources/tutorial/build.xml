@@ -21,11 +21,12 @@
   <property name="src" location="src"/>
   <property name="src.java" location="${src}/java"/>
   <property name="dist" location="dist"/>
+  <property name="dist.webapp"  location="${dist}/webapp"/>
   <property name="build.webapp" location="${build}/webapp"/>
 
   <!-- runtime settings -->
   <property name="runtime.properties" value="intermine.properties" />
-  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
+  <property name="runtime.properties.local" value="intermine.properties" />
   <property name="namespace" value="http://www.intermine.org/model"/>
   <!-- classpaths -->
   <path id="project.class.path">
@@ -41,9 +42,15 @@
     <pathelement location="${build.model}/tutorial"/>
   </path>
 
+  <path id="userprofile.class.path">
+    <path refid="project.class.path"/>
+    <pathelement location="${build.model}/userprofile"/>
+  </path>
+
   <!-- initialisation -->
   <target name="prepare">  
     <mkdir dir="${dist}"/>
+    <mkdir dir="${dist.webapp}"/>
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.tmp}"/>
@@ -58,6 +65,7 @@
     <copy todir="${build.resources}">
       <fileset dir="${resources}"/>
     </copy>
+    <copy file="${resources}/objectstoresummary.config.properties" todir="${build.model}/tutorial/"/>
   </target>
 
   <!-- help -->
@@ -108,6 +116,19 @@
     </ant>
   </target>
   
+  <target name="build-db-userprofile" depends="build-model">
+    <!--copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/-->
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="userprofile"/>
+      <reference torefid="class.path" refid="userprofile.class.path"/>
+      <property name="db.name" value="db.userprofile"/>
+      <property name="objectstore.name" value="os.userprofile"/>
+    </ant>
+    <!--antcall target="load-default-templates"/-->
+  </target>
+
   <!-- insert data into the database -->
   <target name="insert-data" depends="build-db" 
        description="insert xml data to the tutorial">
@@ -151,23 +172,51 @@
 
  <target name="build-webapp" depends="jar-model" 
       description="build webapp with the tutorial model">
-   <ant antfile="build-webapp.xml" target="add-model-to-webapp" inheritRefs="true">
+   <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${build.webapp}/intermine.war"/>
       <property name="model.name" value="tutorial"/>
-      <reference torefid="class.path" refid="tutorial.class.path"/>
       <property name="model.src" value="${model}/tutorial"/>
+      <property name="db.name" value="db.tutorial"/>
+      <property name="objectstore.name" value="os.tutorial"/>
+      <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>        
+
     <patternset id="intermine-properties">
       <include name="intermine.properties"/>
     </patternset>
+
     <ant antfile="build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
       <property name="war" value="${build.webapp}/intermine.war"/>
       <property name="file.dir" value="."/>
       <reference torefid="file.names" refid="intermine-properties"/>
     </ant>
+
+    <copy todir="${build.tmp}" file="${build.model}/tutorial/objectstoresummary.properties"/>
+
+    <filter token="SITE_PREFIX" value="${www.location}"/>
+    <filter token="HELP_LOCATION" value="${www.help.location}"/>
+    <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
+    <copy todir="${build.tmp}" filtering="true"
+          file="${resources}/webapps/intermine/global.web.properties"
+          overwrite="true" verbose="true"/>
+    <concat destfile="${build.tmp}/web.properties">
+      <fileset file="${model}/tutorial/resources/web/web.properties" />
+      <fileset file="${build.properties.local}" />
+    </concat>
+    <patternset id="objectstore-summary-properties">
+      <include name="global.web.properties"/>
+      <include name="web.properties"/>
+      <include name="objectstoresummary.properties"/>
+    </patternset>
+    <ant antfile="build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
+      <property name="war" value="${build.webapp}/intermine.war"/>
+      <property name="file.dir" value="${build.tmp}"/>
+      <reference torefid="file.names" refid="objectstore-summary-properties"/>
+    </ant>
+
   </target>
 
-  <target name="release-webapp" depends="build-webapp, insert-data"
+  <target name="release-webapp" depends="build-db-userprofile, build-webapp, insert-data"
     description="release the tutorial web application to the server">
    <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${build.webapp}/intermine.war"/>
@@ -175,11 +224,10 @@
     </ant>    
    </target>
 
- <target name="remove-webapp"
-    description="remove the web application from the server">
-     <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
-      <property name="war" value="${build.webapp}/intermine.war"/>
-      <reference torefid="class.path" refid="tutorial.class.path"/>
+  <target name="remove-webapp"
+          description="remove the webapp from the server">
+    <ant antfile="build-webapp.xml" target="remove-webapp" inheritRefs="true">
+      <reference torefid="class.path" refid="project.class.path"/>
     </ant>    
   </target>
 
