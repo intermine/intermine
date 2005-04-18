@@ -116,9 +116,11 @@
                     <c:set var="maxLength" value="60"/>
                     <c:choose>
                       <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
-                        <span style="white-space:nowrap">
-                          <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
-                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">...</html:link>
+                        <span class="value">${fn:substring(entry.value, 0, maxLength/2)}<br/>
+                        <span class="value" style="white-space:nowrap">${fn:substring(entry.value, maxLength/2, maxLength)}
+                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                            <fmt:message key="objectDetails.viewall"/>	
+                          </html:link>
                         </span>
                       </c:when>
                       <c:otherwise>
