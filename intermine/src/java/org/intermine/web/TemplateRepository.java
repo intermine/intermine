@@ -117,15 +117,15 @@ public class TemplateRepository
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         
-        if (superuser != null && pm.hasProfile(superuser)) {
-            Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
-            if (profile != null) {
+        if (superuser != null) {
+            if (pm.hasProfile(superuser)) {
+                Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
                 templateMap = Collections.synchronizedMap(new TreeMap(profile.getSavedTemplates()));
             } else {
-                LOG.warn("failed to getch profile for superuser " + superuser);
+                LOG.warn("failed to get profile for superuser " + superuser);
             }
         } else {
-            throw new IllegalStateException("superuser.account not specified");
+            LOG.error("superuser.account not specified");
         }
         servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_QUERIES, templateMap);
         
@@ -150,7 +150,6 @@ public class TemplateRepository
 
             Object osObject = servletContext.getAttribute(Constants.OBJECTSTORE);
             ObjectStore os = (ObjectStore) osObject;
-
             
             setClassesForTemplate(os, template, classCategoryTemplates, classTemplateExprs);
         }
