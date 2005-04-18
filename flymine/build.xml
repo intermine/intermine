@@ -775,12 +775,12 @@
   </target>
 
   <target name="build-flybase-production" 
-          depends="compile-genomic-java, filter-chado, retrieve-chado, load-chado"/>
+          depends="compile-genomic-java-from-db, filter-chado, retrieve-chado, load-chado"/>
 
   
   <!-- build a production DB from Chado chromosome 4 - for testing -->
   <target name="build-flybase-production-small" 
-          depends="compile-genomic-java, filter-chado-small, retrieve-chado, load-chado"/>
+          depends="compile-genomic-java-from-db, filter-chado-small, retrieve-chado, load-chado"/>
 
 
   <!-- ENSEMBL ORTHOLOGUES PIPELINE -->
@@ -1396,7 +1396,7 @@
     </taskdef>
 
     <load-flyreg integrationWriter="integration.production"
-                 source="os.flyreg-translated-std"
+                 source="os.flyreg-translated"
                  sourceName="flyreg"
                  ignoreDuplicates="false"/>
   </target>
@@ -1449,7 +1449,7 @@
     </taskdef>
 
     <load-long_oligo integrationWriter="integration.production"
-                 source="os.long_oligo-translated-std"
+                 source="os.long_oligo-translated"
                  sourceName="long_oligo"
                  ignoreDuplicates="false"/>
   </target>
@@ -1502,7 +1502,7 @@
     </taskdef>
 
     <load-tiling_path integrationWriter="integration.production"
-                 source="os.tiling_path-translated-std"
+                 source="os.tiling_path-translated"
                  sourceName="tiling_path"
                  ignoreDuplicates="false"/>
   </target>
@@ -1556,7 +1556,7 @@
     </taskdef>
 
     <load-gff3 integrationWriter="integration.genomic-test"
-               source="os.gff3-translated-std"
+               source="os.gff3-translated"
                sourceName="ucsc"
                ignoreDuplicates="false"/>
   </target>
@@ -3022,7 +3022,7 @@
     </taskdef>
 
     <load-gff3 integrationWriter="integration.production"
-               source="os.gff3-translated-std"
+               source="os.gff3-translated"
                sourceName="tfbs"
                ignoreDuplicates="false"/>
   </target>
@@ -3095,7 +3095,7 @@
     </taskdef>
 
     <load-gff3 integrationWriter="integration.production"
-               source="os.gff3-translated-std"
+               source="os.gff3-translated"
                sourceName="firstef"
                ignoreDuplicates="false"/>
   </target>
@@ -3168,7 +3168,7 @@
     </taskdef>
 
     <load-gff3 integrationWriter="integration.production"
-               source="os.gff3-translated-std"
+               source="os.gff3-translated"
                sourceName="region"
                ignoreDuplicates="false"/>
   </target>
@@ -3241,7 +3241,7 @@
     </taskdef>
 
     <load-gff3 integrationWriter="integration.production"
-               source="os.gff3-translated-std"
+               source="os.gff3-translated"
                sourceName="diseaseregion"
                ignoreDuplicates="false"/>
   </target>
