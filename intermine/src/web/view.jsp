@@ -31,9 +31,7 @@
       
       <div>
         <c:forEach var="path" items="${QUERY.view}" varStatus="status">
-          <div class="viewpath" id="showing${fn:replace(path,".","")}"
-                          onmouseover="enterPath('${fn:replace(path,".","")}')"
-                          onmouseout="exitPath('${fn:replace(path,".","")}')">
+          <im:viewableDiv path="${path}" viewPaths="${viewPaths}" idPrefix="showing">
             <div>
               <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[path]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[path]]}">
                 ${fn:replace(path, ".", " > ")}
@@ -92,7 +90,7 @@
                 </c:otherwise>
               </c:choose>
             </div>
-          </div>
+          </im:viewableDiv>
         </c:forEach>
       </div>
       <div style="clear:left">
