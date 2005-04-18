@@ -41,7 +41,7 @@ mkdir $tempdir
 cd $tempdir
 now=`date +"%d %b %Y %H:%M"`
 echo "Date is $now"
-command="cvs export -D \"$now\" -d flymine-$version flymine"
+command="svn export svn://svn.flymine.org/flymine/trunk/flymine flymine-$version"
 eval $command
 
 
