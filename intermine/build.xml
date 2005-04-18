@@ -921,13 +921,17 @@
         <patternset refid="lib.uml"/>
       </fileset>
       <fileset dir="${dist}" includes="intermine.jar"/>
+      <fileset dir="${dist}" includes="intermine-webapp.jar"/>
       <fileset dir="${dist.webapp}" includes="intermine.war"/>
     </copy>
 
     <!-- model dir -->
     <copy todir="${tutorial}/model/tutorial" file="${resources}/tutorial/tutorial.zargo"/>
     <copy todir="${tutorial}/model/tutorial/resources" file="${resources}/tutorial/tutorial_keyDefs.properties"/>
+    <copy todir="${tutorial}/model/tutorial/resources/" file="${resources}/tutorial/template-queries.xml"/>
     <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorialsource_keys.properties"/>  
+    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_classDescs.properties"/>  
+    <copy todir="${tutorial}/resources" file="${resources}/tutorial/objectstoresummary.config.properties"/>  
 
     <mkdir dir= "${tutorial}/model/tutorial/resources/web/" />
     <copy todir="${tutorial}/model/tutorial/resources/web" file="${resources}/tutorial/webconfig-model.xml" />
@@ -937,12 +941,22 @@
     <touch file="${tutorial}/model/tutorial/resources/web/model.properties" />
     <touch file="${tutorial}/model/tutorial/resources/web/web.properties" />
 
+    <!-- resources/webapps/intermine/ has config that is needed in intermine.war -->
+    <mkdir dir= "${tutorial}/resources/webapps/intermine/" />
+    <copy todir="${tutorial}/resources/webapps/intermine/" file="${resources}/webapps/intermine/global.web.properties"/>
+    <copy todir="${tutorial}/resources/webapps/intermine/" file="${resources}/webapps/intermine/web.xml"/>
+
+
     <!-- resources dir -->
     <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_data.xml"/>
     <!-- src dir -->
     <copy todir="${tutorial}/src/java/org/intermine/tutorial">
       <fileset dir="${src.java}/org/intermine/tutorial"/>
     </copy>
+
+    <!-- empty src directories -->
+    <mkdir dir= "${tutorial}/model/tutorial/src/java" />
+    <mkdir dir= "${tutorial}/model/tutorial/src/web/java" />
   </target>
 
   <target name="test-tutorial" depends="build-tutorial">
