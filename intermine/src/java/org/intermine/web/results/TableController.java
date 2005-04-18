@@ -56,6 +56,11 @@ public class TableController extends TilesAction
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         
+        SaveBagForm bagForm = (SaveBagForm) session.getAttribute("saveBagForm");
+        if (bagForm != null) {
+            bagForm.reset(mapping, request);
+        }
+        
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         if (pt == null) {
             LOG.error("PagedTable is null");
