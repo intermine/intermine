@@ -26,12 +26,12 @@
           <fmt:message key="query.changePath" var="changePathTitle">
             <fmt:param value="${entry.key}"/>
           </fmt:message>
-          <im:viewable path="${entry.value}" viewPaths="${viewPaths}" idPrefix="nav">
+          <im:viewableSpan path="${entry.value}" viewPaths="${viewPaths}" idPrefix="nav">
             <html:link action="/mainChange?method=changePath&amp;prefix=${entry.value}&amp;path=${navigationPaths[entry.key]}"
                        title="${changePathTitle}">
               <c:out value="${entry.key}"/>
             </html:link>
-          </im:viewable>
+          </im:viewableSpan>
           <c:if test="${!status.last}">&gt;</c:if>
         </c:forEach>
         <br/><br/>
@@ -72,7 +72,7 @@
                 <c:set var="fullpath" value="${prefix}.${fn:substringAfter(node.path,'.')}"/>
               </c:otherwise>
             </c:choose>
-            <im:viewable path="${fullpath}" viewPaths="${viewPaths}" idPrefix="browser">
+            <im:viewableSpan path="${fullpath}" viewPaths="${viewPaths}" idPrefix="browser">
               <c:if test="${node.indentation > 0}">
                 <c:choose>
                   <c:when test="${node.collection}">
@@ -101,7 +101,7 @@
                 <fmt:message key="query.collection"/>
               </c:if>
               </span>
-            </im:viewable>
+            </im:viewableSpan>
             <c:choose>
               <c:when test="${node.indentation > 0}">
                 <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
@@ -162,9 +162,9 @@
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </c:forEach>
                   </c:if>
-                  <im:viewable path="${node.path}" viewPaths="${viewPaths}" test="${!empty node.fieldName}" idPrefix="query">
+                  <im:viewableSpan path="${node.path}" viewPaths="${viewPaths}" test="${!empty node.fieldName}" idPrefix="query">
                     <span class="attributeField"><c:out value="${node.fieldName}"/></span>
-                  </im:viewable>
+                  </im:viewableSpan>
                   <span class="type">
                     <c:choose>
                       <c:when test="${node.attribute}">
@@ -176,9 +176,9 @@
                         </fmt:message>
                         <html:link action="/mainChange?method=changePath&amp;prefix=${node.path}&amp;path=${node.type}"
                                    title="${changePathTitle}">
-                          <im:viewable path="${node.path}" viewPaths="${viewPaths}" test="${empty node.fieldName}" idPrefix="query">
+                          <im:viewableSpan path="${node.path}" viewPaths="${viewPaths}" test="${empty node.fieldName}" idPrefix="query">
                             <span class="type"><c:out value="${node.type}"/></span>
-                          </im:viewable>
+                          </im:viewableSpan>
                         </html:link>
                         <c:if test="${node.collection}">
                           <fmt:message key="query.collection"/>
