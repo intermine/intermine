@@ -47,7 +47,6 @@ public class SaveBagForm extends ActionForm
      * Initialiser
      */
     public void initialise() {
-        existingBagName = null;
         newBagName = null;
         selectedObjects = new String[0];
     }

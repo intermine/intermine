@@ -355,7 +355,6 @@
     <action path="/saveBag"
             type="org.intermine.web.results.SaveBagAction"
             name="saveBagForm"
-            scope="request"
             input="results">
       <forward name="results" path="/results.do" redirect="true"/>
     </action>
