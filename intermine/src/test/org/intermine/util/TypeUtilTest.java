@@ -10,20 +10,18 @@ package org.intermine.util;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Date;
 
-import org.intermine.model.testmodel.*;
+import junit.framework.TestCase;
+
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Manager;
 
 public class TypeUtilTest extends TestCase
 {

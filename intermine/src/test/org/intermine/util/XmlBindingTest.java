@@ -10,24 +10,18 @@ package org.intermine.util;
  *
  */
 
-import java.io.File;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.intermine.model.testmodel.*;
-import org.intermine.metadata.Model;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.intermine.metadata.Model;
 
 
 public class XmlBindingTest extends XMLTestCase {

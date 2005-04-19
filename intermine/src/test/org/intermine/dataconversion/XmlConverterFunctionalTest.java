@@ -13,15 +13,15 @@ package org.intermine.dataconversion;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
+import junit.framework.TestCase;
+
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-
-import junit.framework.TestCase;
 
 public class XmlConverterFunctionalTest extends TestCase {
 

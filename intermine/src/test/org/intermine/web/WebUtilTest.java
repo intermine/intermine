@@ -12,11 +12,6 @@ package org.intermine.web;
 
 import junit.framework.TestCase;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Date;
-
 /**
  * Tests for the WebUtil class.
  *

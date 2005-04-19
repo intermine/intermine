@@ -10,25 +10,27 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Collections;
-import junit.framework.Test;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
+import junit.framework.Test;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
-import org.intermine.testing.OneTimeTestCase;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.CEO;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.StoreDataTestCase;
-import org.intermine.model.testmodel.*;
+import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
 {

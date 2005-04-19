@@ -10,20 +10,17 @@ package org.intermine.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.model.fulldata.Attribute;
+import junit.framework.TestCase;
+
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;

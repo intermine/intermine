@@ -10,32 +10,29 @@ package org.intermine.dataloader;
  *
  */
 
-import junit.framework.TestCase;
-
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+
+import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.XmlBinding;
-import org.intermine.model.testmodel.*;
 
 public class XmlDataLoaderTest extends TestCase
 {

@@ -11,13 +11,11 @@ package org.intermine.web;
  */
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import junit.framework.TestCase;
-
-import java.util.Locale;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+import junit.framework.TestCase;
 
 import org.apache.struts.action.ActionErrors;
 import org.intermine.objectstore.query.ConstraintOp;

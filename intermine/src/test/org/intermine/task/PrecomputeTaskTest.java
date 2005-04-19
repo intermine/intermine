@@ -10,29 +10,18 @@ package org.intermine.task;
  *
  */
 
-import org.intermine.metadata.Model;
-
-import junit.framework.*;
-
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Properties;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.*;
-import org.intermine.objectstore.StoreDataTestCase;
+import junit.framework.Test;
+
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.TemplateQuery;
-import org.intermine.web.MainHelper;
-
-import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.query.Query;
 
 /**
  * Tests for PrecomputeTask.

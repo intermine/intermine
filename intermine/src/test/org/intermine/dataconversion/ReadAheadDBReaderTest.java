@@ -10,14 +10,7 @@ package org.intermine.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.intermine.metadata.Model;
-import org.intermine.sql.DatabaseFactory;
 
 public class ReadAheadDBReaderTest extends DBReaderTestCase
 {

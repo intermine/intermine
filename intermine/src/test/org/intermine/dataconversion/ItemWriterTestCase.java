@@ -10,15 +10,13 @@ package org.intermine.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+
+import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;

@@ -10,28 +10,19 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.ResultSetMetaData;
-import java.util.*;
-
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.ontology.DagTerm;
-import org.intermine.sql.DatabaseFactory;
-import org.intermine.sql.Database;
-import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemFactory;
 
 public class DagConverterTest extends TestCase {
     String NAMESPACE = "http://www.flymine.org/model/genomic#";

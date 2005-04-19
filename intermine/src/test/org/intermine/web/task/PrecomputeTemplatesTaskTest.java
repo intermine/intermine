@@ -10,29 +10,29 @@ package org.intermine.web.task;
  *
  */
 
-import org.intermine.metadata.Model;
-
-import junit.framework.*;
-
-import java.sql.SQLException;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.io.InputStream;
+import java.util.Map;
 
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.*;
-import org.intermine.objectstore.StoreDataTestCase;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.TemplateQuery;
-import org.intermine.web.MainHelper;
+import junit.framework.Test;
 
-import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.web.MainHelper;
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.task.PrecomputeTemplatesTask.QueryAndIndexes;
 
 /**
  * Tests for PrecomputeTemplatesTask.

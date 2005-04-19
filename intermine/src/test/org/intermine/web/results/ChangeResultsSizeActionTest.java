@@ -10,27 +10,21 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.action.ActionMapping;
-
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.InterMineBag;
-import org.intermine.metadata.Model;
+
+import servletunit.struts.MockStrutsTestCase;
 
 public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 {
