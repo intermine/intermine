@@ -33,7 +33,8 @@ public class ProfileTest extends TestCase
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         bag = new InterMineBag();
         template = new TemplateQuery("template", "tdesc", "tcat",
-                                     new PathQuery(Model.getInstanceByName("testmodel")), false);
+                                     new PathQuery(Model.getInstanceByName("testmodel")), false,
+                                     "");
     }
 
     public void testModifySavedMaps() throws Exception {

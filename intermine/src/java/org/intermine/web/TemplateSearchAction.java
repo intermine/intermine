@@ -83,7 +83,7 @@ public class TemplateSearchAction extends InterMineAction
             }
             MultiSearcher searcher = new MultiSearcher(searchables);
             
-            Query query = QueryParser.parse(queryString, "description",
+            Query query = QueryParser.parse(queryString, "content",
                     new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS));
             Hits hits = searcher.search(query);
             

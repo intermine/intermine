@@ -149,7 +149,8 @@ public class TemplateHelper
         
         TemplateQuery template = new TemplateQuery(tf.getShortName(),
                                                    tf.getDescription(),
-                                                   tf.getCategory(), query, tf.isImportant());
+                                                   tf.getCategory(), query, tf.isImportant(),
+                                                   tf.getKeywords());
         return template;
     }
     

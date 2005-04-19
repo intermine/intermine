@@ -44,6 +44,8 @@ public class BuildTemplateForm extends ValidatorForm
     protected String shortName = "";
     /** Is the template 'important'? (Shown early on portal entry page) */
     protected boolean important = false;
+    /** Search keywords - comma seperated. */
+    protected String keywords = "";
     
     /**
      * Construct instance of BuildTemplateForm.
@@ -187,6 +189,25 @@ public class BuildTemplateForm extends ValidatorForm
     }
     
     /**
+     * Get the keywords.
+     * 
+     * @return the keywords of this template
+     */
+    public String getKeywords() {
+        return keywords;
+    }
+    
+    /**
+     * Set the keywords.
+     * 
+     * @param keywords keywords for this template
+     */
+    
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+    
+    /**
      * Fail validation if user template exists with specified name or no
      * constraints have been made editable.
      *
@@ -233,6 +254,7 @@ public class BuildTemplateForm extends ValidatorForm
         templateDescription = "";
         shortName = "";
         category = "";
+        keywords = "";
         important = false;
     }
     
@@ -247,6 +269,7 @@ public class BuildTemplateForm extends ValidatorForm
         setCategory(template.getCategory());
         setDescription(template.getDescription());
         setImportant(template.isImportant());
+        setKeywords(template.getKeywords());
         
         int j = 0;
         Iterator niter = template.getQuery().getNodes().entrySet().iterator();

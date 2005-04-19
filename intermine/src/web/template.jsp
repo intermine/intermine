@@ -103,7 +103,7 @@
             </script>
           
             <c:if test="${empty con.description}">
-              <td align="right">
+              <td valign="top" align="right">
                 <c:out value="[${index}]"/>
               </td>
             </c:if>

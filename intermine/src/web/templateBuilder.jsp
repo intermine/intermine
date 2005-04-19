@@ -19,11 +19,15 @@
   <html:form action="/buildTemplate">
     <p style="text-align:center">
       <fmt:message key="templateBuilder.shortName"/>
-      <html:text property="shortName" size="55"/>
+      <html:text property="shortName" size="32"/>
     </p>
     <p style="text-align:center">
       <fmt:message key="templateBuilder.templateDescription"/>
       <html:text property="description" size="55"/>
+    </p>
+    <p style="text-align:center">
+      <fmt:message key="templateBuilder.keywords"/>
+      <html:text property="keywords" size="55"/>
     </p>
     <p style="text-align:center">
       <fmt:message key="templateBuilder.category"/>
