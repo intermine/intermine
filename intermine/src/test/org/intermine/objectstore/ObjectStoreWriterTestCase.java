@@ -573,4 +573,22 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             writer.delete(address1);
         }
     }
+
+    public void testWriteBatchingAndGetObject() throws Exception {
+        Address address1 = new Address();
+        address1.setAddress("Address 1");
+
+        writer.flushObjectById();
+        realOs.flushObjectById();
+
+        try {
+            writer.beginTransaction();
+            writer.store(address1);
+            assertNotNull(writer.getObjectById(address1.getId(), Address.class));
+        } finally {
+            if (writer.isInTransaction()) {
+                writer.abortTransaction();
+            }
+        }
+    }
 }
