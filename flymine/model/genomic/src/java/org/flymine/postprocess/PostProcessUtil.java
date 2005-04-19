@@ -298,7 +298,7 @@ public class PostProcessUtil
      * @param subjectCls subject type of the Location
      * @param orderBySubject if true order the results using the subjectCls, otherwise order by
      * objectCls
-     * @return an iterator over the results: object.id, location, subject
+     * @return a Results object: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     public static Results findLocations(ObjectStore os, Class objectCls, Class subjectCls,
@@ -331,6 +331,68 @@ public class PostProcessUtil
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
+
+        q.setConstraint(cs);
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+
+        return res;
+    }
+
+    /**
+     * Query ObjectStore for all Location object that conect the given BioEntity classes.
+     * (eg. Contig->Supercontig->Chromosome)
+     * @param os the ObjectStore to find the Locations in
+     * @param firstClass the first BioEntity of the three (eg. Contig)
+     * @param secondClass the second BioEntity (eg. Supercontig)
+     * @param thirdClass the third BioEntity (eg. Chromosome)
+     * @return a Results object with rows: firstObject, locationFirstToSecond, secondObject,
+     * locationSecondToThird, thirdObject
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Results findLocationsToTransform(ObjectStore os, Class firstClass,
+                                                   Class secondClass, Class thirdClass)
+        throws ObjectStoreException {
+        Query q = new Query();
+        q.setDistinct(false);
+
+        QueryClass qcFirst = new QueryClass(firstClass);
+        q.addFrom(qcFirst);
+        q.addToSelect(qcFirst);
+        
+        QueryClass qcFirstLoc = new QueryClass(Location.class);
+        q.addFrom(qcFirstLoc);
+        q.addToSelect(qcFirstLoc);
+
+        QueryClass qcSecond = new QueryClass(secondClass);
+        q.addFrom(qcSecond);
+        q.addToSelect(qcSecond);
+
+        QueryClass qcSecondLoc = new QueryClass(Location.class);
+        q.addFrom(qcSecondLoc);
+        q.addToSelect(qcSecondLoc);
+
+        QueryClass qcThird = new QueryClass(thirdClass);
+        q.addFrom(qcThird);
+        q.addToSelect(qcThird);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryObjectReference ref1 = new QueryObjectReference(qcFirstLoc, "subject");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcFirst);
+        cs.addConstraint(cc1);
+
+        QueryObjectReference ref2 = new QueryObjectReference(qcFirstLoc, "object");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSecond);
+        cs.addConstraint(cc2);
+
+        QueryObjectReference ref3 = new QueryObjectReference(qcSecondLoc, "subject");
+        ContainsConstraint cc3 = new ContainsConstraint(ref3, ConstraintOp.CONTAINS, qcSecond);
+        cs.addConstraint(cc3);
+
+        QueryObjectReference ref4 = new QueryObjectReference(qcSecondLoc, "object");
+        ContainsConstraint cc4 = new ContainsConstraint(ref4, ConstraintOp.CONTAINS, qcThird);
+        cs.addConstraint(cc4);
 
         q.setConstraint(cs);
         ((ObjectStoreInterMineImpl) os).precompute(q);

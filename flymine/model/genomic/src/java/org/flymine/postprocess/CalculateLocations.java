@@ -257,7 +257,7 @@ public class CalculateLocations
      *
      * @throws Exception if anything goes wrong
      */
-    public void createLocations() throws Exception  {
+    public void createLocations() throws Exception {
         osw.beginTransaction();
 
         // 0. Hold Chromosomes in map by id
@@ -324,7 +324,7 @@ public class CalculateLocations
             Chromosome chr = (Chromosome)
                 chrById.get(new Integer(contigOnChr.getParentId()));
             Location bioOnChrLoc =
-                createChromosomeLocation(contigOnChr, bioOnContig, chr, bio);
+                createTransformedLocation(contigOnChr, bioOnContig, chr, bio);
 
             if (locBioOnContig instanceof PartialLocation) {
                 addToMapOfLists(partialsOnChromosomes, bio, bioOnChrLoc);
@@ -403,6 +403,15 @@ public class CalculateLocations
         LOG.info("Stored " + i + " Locations between features and Chromosome.");
         LOG.info("Stored " + j + " Locations between features and Supercontig.");
         LOG.info("Stored " + k + " Locations between features and ChromosomeBand.");
+    }
+
+    /**
+     * Use the MicroarrayOligo->Transcript and Transcript->Chromosome Locations to create
+     * MicroarrayOligo->Chromosome Locations.
+     * @throws Exception if anything goes wrong
+     */
+    public void createOligoLocations() throws Exception {
+        createTransformedLocations(Transcript.class, Chromosome.class, MicroarrayOligo.class);
     }
 
     /**
@@ -1017,7 +1026,7 @@ public class CalculateLocations
             // create location of contig on chromosome, don't expect partial locations
             SimpleLoc scOnChr = (SimpleLoc) scToChr.get(scId);
             Chromosome chr = (Chromosome) chrById.get(new Integer(scOnChr.getParentId()));
-            Location contigOnChrLoc = createChromosomeLocation(scOnChr, contigOnSc, chr, contig);
+            Location contigOnChrLoc = createTransformedLocation(scOnChr, contigOnSc, chr, contig);
 
             SimpleLoc contigOnChr = new SimpleLoc(chr.getId().intValue(),
                                                   contig.getId().intValue(),
@@ -1061,57 +1070,115 @@ public class CalculateLocations
 
 
     /**
-     * Given the location of a child BioEntity on a parent and the location of
-     * the parent on a Chromsome, create a Location for the child on the Chromosome.
-     * @param parentOnChr location of parent object on Chromosome
-     * @param childOnParent location of child on parent
-     * @param chr the Chromosome
-     * @param child the child BioEntity
-     * @return location of Chromosome
+     * Make a Location on a destClass (eg. Chromosome) for each moveClass (eg. Contig).
+     * The moveClass object must be located on a sourceClass object (eg. Supercontig) and the
+     * sourceClass object must be located on the destClass.
+     * Example: Create Chromosome Locations for Contig objects that are currently Located
+     * on Supercontigs.
+     * @param sourceClass the moveClass objects are originally located on sourceClass objects
+     * @param destClass after createTransformedLocations(), extra Locations will exist between
+     * moveClass objects and destClass
+     * @param moveClass the class of objects to create new Locations for
+     * @throws Exception if anything goes wrong
      */
-    protected Location createChromosomeLocation(SimpleLoc parentOnChr, SimpleLoc childOnParent,
-                                                Chromosome chr, BioEntity child) {
-        Location childOnChr;
+    protected void createTransformedLocations(Class sourceClass, Class destClass, Class moveClass)
+        throws Exception {
+
+        Results results =
+            PostProcessUtil.findLocationsToTransform(os, moveClass, sourceClass, destClass);
+        results.setBatchSize(500);
+
+        Iterator resIter = results.iterator();
+
+        int i = 0;
+        long start = System.currentTimeMillis();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            BioEntity moveObject = (BioEntity) rr.get(0);
+            Location locMoveObjectOnSource = (Location) rr.get(1);
+            BioEntity sourceObject = (BioEntity) rr.get(2);
+            Location locSourceOnDest = (Location) rr.get(3);
+            BioEntity destObject = (BioEntity) rr.get(4);
+
+            SimpleLoc moveObjectOnSource = new SimpleLoc(sourceObject.getId().intValue(),
+                                                         moveObject.getId().intValue(),
+                                                         locMoveObjectOnSource);
+
+            SimpleLoc sourceOnDest = new SimpleLoc(destObject.getId().intValue(),
+                                                   sourceObject.getId().intValue(),
+                                                   locSourceOnDest);
+
+            // create location of moveClass on destClass (eg. Contig on Supercontig)
+            Location contigOnDestLoc =
+                createTransformedLocation(sourceOnDest, moveObjectOnSource, destObject, moveObject);
+
+            osw.store(contigOnDestLoc);
+            i++;
+
+            if (i % 100 == 0) {
+                long now = System.currentTimeMillis();
+                LOG.info("Created " + i + " BioEntity->BioEntity locations (avg = "
+                         + ((60000L * i) / (now - start)) + " per minute)");
+            }
+        }
+        LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
+    }
+
+
+    /**
+     * Given the location of a child BioEntity on a parent and the location of
+     * the parent on a destination BioEntity (eg. Chromosome), create a Location for the child on
+     * the destination.
+     * @param parentOnDest location of parent (eg. Supercontig) object on dest (eg. Chromosome)
+     * @param childOnParent location of child (eg. Contig) on parent (eg. Supercontig)
+     * @param dest the object that will be the object of the new Location (eg. Chromosome)
+     * @param child the child BioEntity - ie. the subject of the new Location
+     * @return the new Location
+     */
+    protected Location createTransformedLocation(SimpleLoc parentOnDest, SimpleLoc childOnParent,
+                                                 BioEntity dest, BioEntity child) {
+        Location childOnDest;
         if (childOnParent.startIsPartial() || childOnParent.endIsPartial()) {
-            childOnChr = (PartialLocation)
+            childOnDest = (PartialLocation)
                 DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
         } else {
-            childOnChr = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+            childOnDest = (Location)
+                DynamicUtil.createObject(Collections.singleton(Location.class));
         }
-        if (parentOnChr.getStrand() == -1) {
-            childOnChr.setStart(new Integer((parentOnChr.getEnd() - childOnParent.getEnd()) + 1));
-            childOnChr.setEnd(new Integer((parentOnChr.getEnd() - childOnParent.getStart()) + 1));
+        if (parentOnDest.getStrand() == -1) {
+            childOnDest.setStart(new Integer((parentOnDest.getEnd() - childOnParent.getEnd()) + 1));
+            childOnDest.setEnd(new Integer((parentOnDest.getEnd() - childOnParent.getStart()) + 1));
         } else {
-            childOnChr.setStart(new Integer((parentOnChr.getStart()
+            childOnDest.setStart(new Integer((parentOnDest.getStart()
                                              + childOnParent.getStart()) - 1));
-            childOnChr.setEnd(new Integer((parentOnChr.getStart() + childOnParent.getEnd()) - 1));
+            childOnDest.setEnd(new Integer((parentOnDest.getStart() + childOnParent.getEnd()) - 1));
         }
         if (childOnParent.getStrand() == -1) {
-            if (parentOnChr.getStrand() == -1) {
-                childOnChr.setStrand(new Integer(1));
+            if (parentOnDest.getStrand() == -1) {
+                childOnDest.setStrand(new Integer(1));
             } else {
-                childOnChr.setStrand(new Integer(-1));
+                childOnDest.setStrand(new Integer(-1));
             }
         } else {
-            if (parentOnChr.getStrand() == -1) {
-                childOnChr.setStrand(new Integer(-1));
+            if (parentOnDest.getStrand() == -1) {
+                childOnDest.setStrand(new Integer(-1));
             } else {
-                childOnChr.setStrand(new Integer(1));
+                childOnDest.setStrand(new Integer(1));
             }
         }
 
-        childOnChr.setStartIsPartial(Boolean.FALSE);
-        childOnChr.setEndIsPartial(Boolean.FALSE);
+        childOnDest.setStartIsPartial(Boolean.FALSE);
+        childOnDest.setEndIsPartial(Boolean.FALSE);
 
         if (childOnParent.startIsPartial()) {
-            childOnChr.setStartIsPartial(Boolean.TRUE);
+            childOnDest.setStartIsPartial(Boolean.TRUE);
         }
         if (childOnParent.endIsPartial()) {
-            childOnChr.setEndIsPartial(Boolean.TRUE);
+            childOnDest.setEndIsPartial(Boolean.TRUE);
         }
-        childOnChr.setObject(chr);
-        childOnChr.setSubject(child);
-        return childOnChr;
+        childOnDest.setObject(dest);
+        childOnDest.setSubject(child);
+        return childOnDest;
     }
 
     /**
