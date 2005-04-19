@@ -14,8 +14,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import junit.framework.TestCase;
 
 /**

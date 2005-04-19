@@ -10,18 +10,23 @@ package org.intermine.util;
  *
  */
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.intermine.metadata.Model;
-import org.intermine.model.testmodel.*;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employable;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.HasAddress;
+import org.intermine.model.testmodel.HasSecretarys;
+import org.intermine.model.testmodel.ImportantPerson;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.RandomInterface;
+import org.intermine.model.testmodel.Thing;
 
 public class DynamicUtilTest extends TestCase
 {

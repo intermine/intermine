@@ -10,9 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
-import java.util.HashMap;
-
 import servletunit.struts.MockStrutsTestCase;
 
 public class QueryClassSelectActionTest extends MockStrutsTestCase

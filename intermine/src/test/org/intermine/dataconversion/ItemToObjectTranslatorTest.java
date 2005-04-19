@@ -10,40 +10,37 @@ package org.intermine.dataconversion;
  *
  */
 
-import junit.framework.Test;
-
-import java.lang.reflect.Field;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Collection;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import junit.framework.Test;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryTestCase;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicBean;
-
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Broke;
-import org.intermine.model.testmodel.Company;
 
 
 public class ItemToObjectTranslatorTest extends QueryTestCase

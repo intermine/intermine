@@ -11,12 +11,11 @@ package org.intermine.web;
  */
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.HashMap;
 
-import servletunit.struts.MockStrutsTestCase;
-
 import org.intermine.metadata.Model;
+
+import servletunit.struts.MockStrutsTestCase;
 
 /**
  * Tests for ViewChange.

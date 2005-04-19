@@ -10,24 +10,20 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Collections;
-
-import org.apache.struts.tiles.ComponentContext;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.Constants;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
-import org.intermine.util.DynamicUtil;
-import org.intermine.web.config.*;
+import org.intermine.web.config.WebConfig;
 
 import servletunit.struts.MockStrutsTestCase;
 

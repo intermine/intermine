@@ -10,22 +10,11 @@ package org.intermine.web;
  *
  */
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import java.util.Map;
-import java.util.HashMap;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.query.ConstraintOp;
-
-import org.intermine.web.DisplayConstraint;
-
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
 
 import servletunit.struts.MockStrutsTestCase;
 

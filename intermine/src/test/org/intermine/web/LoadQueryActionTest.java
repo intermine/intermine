@@ -10,8 +10,7 @@ package org.intermine.web;
  *
  */
 
-import java.io.*;
-import java.util.*;
+import java.util.HashMap;
 
 import servletunit.struts.MockStrutsTestCase;
 

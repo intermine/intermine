@@ -10,8 +10,7 @@ package org.intermine.util;
  *
  */
 
-import junit.framework.*;
-import java.util.Random;
+import junit.framework.TestCase;
 
 public class CacheMapTest extends TestCase
 {

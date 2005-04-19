@@ -10,16 +10,8 @@ package org.intermine.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.xml.full.FullParser;
 
 public class ObjectStoreItemWriterTest extends ItemWriterTestCase {
     public ObjectStoreItemWriterTest(String arg1) {

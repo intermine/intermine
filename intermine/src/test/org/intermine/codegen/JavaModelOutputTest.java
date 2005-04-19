@@ -10,13 +10,22 @@ package org.intermine.codegen;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
-import java.util.*;
-import java.io.*;
-
-import org.intermine.util.*;
-import org.intermine.metadata.*;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 
 
 public class JavaModelOutputTest extends TestCase

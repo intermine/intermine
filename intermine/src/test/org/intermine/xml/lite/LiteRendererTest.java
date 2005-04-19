@@ -10,15 +10,15 @@ package org.intermine.xml.lite;
  *
  */
 
-import junit.framework.*;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.intermine.util.TypeUtil;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
+import junit.framework.TestCase;
+
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Types;
 
 public class LiteRendererTest extends TestCase
 {
