@@ -77,16 +77,13 @@ public class GFF3ParserTest extends TestCase
         assertEquals("EDEN", names.get(0));
         assertEquals("zen", names.get(1));
 
-        assertEquals("EDEN", record0.getName());
-        assertEquals("EDEN", record0.getName());
-
         assertEquals(9000, record0.getEnd());
 
         assertNull(record0.getSource());
 
         GFF3Record record1 = (GFF3Record) records.get(1);
 
-        assertEquals("name1", record1.getName());
+        assertEquals("name1", record1.getNames().get(0));
         assertEquals("gene00001", record1.getParents().get(0));
         assertNull(record1.getOntologyTerm());
 
