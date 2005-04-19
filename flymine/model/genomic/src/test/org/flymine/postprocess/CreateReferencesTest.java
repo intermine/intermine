@@ -10,34 +10,47 @@ package org.flymine.postprocess;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.io.InputStream;
-
-import org.intermine.objectstore.*;
-import org.intermine.objectstore.query.*;
-import org.intermine.dataloader.IntegrationWriterFactory;
-import org.intermine.dataloader.XmlDataLoader;
-import org.intermine.dataloader.IntegrationWriter;
+import org.apache.log4j.Logger;
+import org.flymine.model.genomic.Annotation;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.Evidence;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Orthologue;
+import org.flymine.model.genomic.Phenotype;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.RankedRelation;
+import org.flymine.model.genomic.Relation;
+import org.flymine.model.genomic.SimpleRelation;
+import org.flymine.model.genomic.Transcript;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-
-import org.flymine.model.genomic.*;
-import org.apache.log4j.Logger;
 
 /**
  * Tests for the CreateReferences class.

@@ -11,8 +11,8 @@ package org.intermine.objectstore;
  */
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -20,6 +20,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.CEO;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.Secretary;
+import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -27,19 +36,16 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.iql.IqlQueryParser;
 import org.intermine.util.DynamicUtil;
-
-import org.intermine.model.testmodel.*;
 
 /**
  * TestCase for all ObjectStores
@@ -647,7 +653,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         Contractor c1 = new Contractor();
         c1.setName("Clippy");
         Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        c2.setName("Übersoft");
+        c2.setName("?bersoft");
         c2.addContractors(c1);
         c1.addCompanys(c2);
 

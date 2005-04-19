@@ -12,27 +12,20 @@ package org.intermine.objectstore.fastcollections;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import junit.framework.*;
+import junit.framework.Test;
 
-import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.Lazy;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.model.testmodel.*;
 
 public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTestCase
 {

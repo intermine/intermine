@@ -10,31 +10,21 @@ package org.flymine.postprocess;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.HashSet;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
-import java.io.StringWriter;
-import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
-import java.util.Iterator;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Collection;
+
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.xml.full.FullRenderer;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.xml.full.FullParser;
-
-import org.flymine.model.genomic.Publication;
-import org.flymine.model.genomic.Author;
 
 public class UpdatePublicationsTest extends TestCase
 {

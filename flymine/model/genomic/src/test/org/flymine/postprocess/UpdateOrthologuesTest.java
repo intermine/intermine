@@ -10,43 +10,35 @@ package org.flymine.postprocess;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.io.StringReader;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import org.intermine.objectstore.query.*;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Orthologue;
+import org.flymine.model.genomic.Paralogue;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Relation;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.DatabaseUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.model.InterMineObject;
-import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.Database;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Item;
-
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Relation;
-import org.flymine.model.genomic.Orthologue;
-import org.flymine.model.genomic.Paralogue;
-
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.XMLTestCase;
+import org.intermine.util.DatabaseUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * Tests for the UpdateOrthologues class.

@@ -10,8 +10,8 @@ package org.intermine.objectstore;
  *
  */
 
-import java.io.FileWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -27,23 +27,32 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.CEO;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.HasAddress;
+import org.intermine.model.testmodel.HasSecretarys;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.Secretary;
+import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.XmlBinding;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
+import org.intermine.util.XmlBinding;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {

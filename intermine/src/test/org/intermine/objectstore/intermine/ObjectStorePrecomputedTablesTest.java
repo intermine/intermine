@@ -27,7 +27,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
 
 public class ObjectStorePrecomputedTablesTest extends TestCase
 {

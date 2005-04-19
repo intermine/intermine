@@ -10,19 +10,20 @@ package org.intermine.ontology;
  *
  */
 
-import junit.framework.*;
-
 import java.io.StringReader;
-import java.util.Iterator;
 import java.util.Set;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import junit.framework.TestCase;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.OntProperty;
-
-
-import org.intermine.metadata.*;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 
 public class Owl2InterMineTest extends TestCase

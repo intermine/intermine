@@ -10,9 +10,8 @@ package org.intermine.objectstore.webservice;
  *
  */
 
-import junit.framework.*;
+import junit.framework.Test;
 
-import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;

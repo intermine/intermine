@@ -10,6 +10,14 @@ package org.intermine.objectstore.webservice.ser;
  *
  */
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -23,27 +31,11 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-import org.xml.sax.InputSource;
-
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.intermine.util.TypeUtil;
-
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.model.testmodel.Address;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
-import org.intermine.util.DynamicUtil;
-
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.util.TypeUtil;
+import org.xml.sax.InputSource;
 
 public class SerializationFunctionalTest extends TestCase
 {

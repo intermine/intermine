@@ -10,30 +10,22 @@ package org.flymine.dataconversion;
  *
  */
 
-import junit.framework.*;
-
-import java.io.File;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
-
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.io.InputStreamReader;
 import java.util.Collection;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.FullParser;
-import org.intermine.dataconversion.ItemWriter;
+import junit.framework.TestCase;
+
+import org.flymine.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.flymine.io.gff3.GFF3Parser;
-import org.flymine.io.gff3.GFF3Record;
-import org.flymine.dataconversion.GFF3Converter;
-
-
-import org.apache.log4j.Logger;
+import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
 
 /**
  * Class to read a GFF3 source data and produce a data representation

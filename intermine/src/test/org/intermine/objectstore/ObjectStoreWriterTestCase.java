@@ -10,12 +10,16 @@ package org.intermine.objectstore;
  *
  */
 
-import java.util.Collections;
-import junit.framework.TestCase;
-
-import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.query.*;
-import org.intermine.util.DynamicUtil;
+import org.intermine.model.testmodel.Address;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 {

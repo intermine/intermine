@@ -10,15 +10,6 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 
 /**
  * Test for doing tests on the BatchWriterPostgresCopyImpl.

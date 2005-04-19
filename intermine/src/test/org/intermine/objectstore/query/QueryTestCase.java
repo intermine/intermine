@@ -13,7 +13,6 @@ package org.intermine.objectstore.query;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.testing.OneTimeTestCase;
 

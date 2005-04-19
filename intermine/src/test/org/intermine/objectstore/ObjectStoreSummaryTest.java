@@ -10,11 +10,10 @@ package org.intermine.objectstore;
  *
  */
 
-import java.util.Properties;
 import java.util.Arrays;
-import java.io.InputStream;
+import java.util.Properties;
 
-import junit.framework.*;
+import junit.framework.Test;
 
 public class ObjectStoreSummaryTest extends StoreDataTestCase
 {
