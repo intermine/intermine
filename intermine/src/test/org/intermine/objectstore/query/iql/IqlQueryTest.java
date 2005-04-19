@@ -16,11 +16,7 @@ import java.util.Iterator;
 import junit.framework.Test;
 
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.testing.OneTimeTestCase;
-
-import org.intermine.model.testmodel.Company;
 
 public class IqlQueryTest extends IqlQueryTestCase
 {

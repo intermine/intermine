@@ -10,15 +10,22 @@ package org.intermine.ontology;
  *
  */
 
-import junit.framework.*;
-
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.rdf.model.*;
-
 import java.io.StringReader;
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import junit.framework.TestCase;
+
+import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
+import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 public class MergeOwlTest extends TestCase
 {
