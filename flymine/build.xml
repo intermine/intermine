@@ -1841,6 +1841,13 @@
     <mappings operation="create-chromosome-locations" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="create-oligo-locations" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="create-oligo-locations" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>

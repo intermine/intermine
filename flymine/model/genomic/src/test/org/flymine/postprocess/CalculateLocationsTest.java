@@ -2178,7 +2178,7 @@ Iterator chrBandExonIter = results.iterator();
     }
 
 
-    public void testCreateChromosomeLocation() throws Exception {
+    public void testCreateTransformedLocation() throws Exception {
         Chromosome chr = getChromosome();
         int chrId = chr.getId().intValue();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
@@ -2194,7 +2194,7 @@ Iterator chrBandExonIter = results.iterator();
         CalculateLocations cl = new CalculateLocations(osw);
         CalculateLocations.SimpleLoc parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, 1);
         CalculateLocations.SimpleLoc childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, 1);
-        Location res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+        Location res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
 
         Location exp1 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         exp1.setStart(new Integer(251));
@@ -2212,7 +2212,7 @@ Iterator chrBandExonIter = results.iterator();
         cl = new CalculateLocations(osw);
         parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, -1);
         childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, 1);
-        res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+        res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
 
         Location exp2 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         exp2.setStart(new Integer(151));
@@ -2230,7 +2230,7 @@ Iterator chrBandExonIter = results.iterator();
         cl = new CalculateLocations(osw);
         parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, 1);
         childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, -1);
-        res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+        res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
 
         Location exp3 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         exp3.setStart(new Integer(251));
@@ -2248,7 +2248,7 @@ Iterator chrBandExonIter = results.iterator();
         cl = new CalculateLocations(osw);
         parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, -1);
         childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, -1);
-        res = cl.createChromosomeLocation(parentOnChr, childOnParent, chr, child);
+        res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
 
         Location exp4 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         exp4.setStart(new Integer(151));
@@ -2717,6 +2717,41 @@ Iterator chrBandExonIter = results.iterator();
         assertEquals(toItem(exp4), toItem(res));
     }
 
+    public void testCreateTransformedLocations() throws Exception {
+        Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome()}));
+        Supercontig sc =
+            (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
+        Contig c = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
+        sc.setId(new Integer(104));
+        c.setId(new Integer(105));
+        Location scOnChr = createLocation(getChromosome(), sc, 1, 1201, 1600, Location.class);
+        Location contigOnSc = createLocation(sc, c, 1, 101, 350, Location.class);
+        toStore.add(sc);
+        toStore.add(c);
+        toStore.add(scOnChr);
+        toStore.add(contigOnSc);
+
+        Iterator i = toStore.iterator();
+        while (i.hasNext()) {
+            osw.store((InterMineObject) i.next());
+        }
+        CalculateLocations cl = new CalculateLocations(osw);
+
+        cl.createTransformedLocations(Supercontig.class, Chromosome.class, Contig.class);
+
+        // test contig location on chromosome
+        Location expected = createLocation(getChromosome(), c, 1, 1301, 1550, Location.class);
+        expected.setId(new Integer(0));
+        Item expItem = itemFactory.makeItem(expected);
+        Results results = PostProcessUtil.findLocations(osw.getObjectStore(),
+                                                               Chromosome.class,
+                                                               Contig.class, true);
+        Iterator chrContigIter = results.iterator();
+        Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
+        Item resItem = itemFactory.makeItem(result);
+        resItem.setIdentifier("0");
+        assertEquals(expItem, resItem);
+    }
 
 
 // method removed - should test some other way

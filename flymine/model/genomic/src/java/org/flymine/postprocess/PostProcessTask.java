@@ -116,6 +116,10 @@ public class PostProcessTask extends Task
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOG.info("Starting CalculateLocations.setChromosomeLocations()");
                 cl.setChromosomeLocations();
+            } else if ("create-oligo-locations".equals(operation)) {
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
+                LOG.info("Starting CalculateLocations.createOligoLocations()");
+                cl.createOligoLocations();
             } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertReferences()");
