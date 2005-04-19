@@ -1,3 +1,112 @@
+html, body
+{
+    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+    font-size: 100%; /* NN4 */
+    margin: 0;
+    padding: 0;
+    background-color: #F0F2FF;
+}
+
+a:link { color:#049; text-decoration:none }
+
+a:visited { color:#049; text-decoration:none }
+
+a:hover { color:#CF4D23; text-decoration:underline }
+
+a:active { color:#58e; text-decoration:none }
+
+
+
+#header
+{
+    padding: 5px;
+    border-bottom: solid #888 1px;
+    margin-bottom: 0px;
+}
+
+#header h1
+{
+    font-size: 1.6em;
+    font-weight: bold;
+    margin: 3px;
+}
+
+#header h1 a
+{
+    color: #210075;
+    text-decoration: none;
+}
+
+#header p
+{
+    font-size: 1.2em;
+    font-weight: normal;
+    margin: 3px;
+    padding: 0;
+    background-color: #F0F2FF;
+}
+
+/* style for boxes with heading - used by the front page and the webapp */
+.box .heading, .heading2 {
+  border: 1px solid #888;
+  background-color: #f5f5f5;
+  padding: 1px;
+  padding-left: 5px;
+  margin: 5px;
+  margin-bottom: -1px;
+  font-size: 13px;
+  color: black;
+  white-space: nowrap;
+}
+
+
+.box .body {
+  font-size: 12px;
+  margin: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.boxbody {
+  background-color: white;
+}
+
+.body .collapsed {
+  font-size: 11px;
+  font-style: italic;
+  text-align: center;
+  color: #888;
+}
+
+table.box {
+  border: 1px solid #888;
+}
+
+table.box th {
+  background: #eee;
+  border-bottom: 1px solid #888;
+}
+
+table.box > tbody > tr > td {
+  padding: 5px;
+  background: white;
+}
+
+.help {
+  padding: 5px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+table.box th.title {
+  padding: 5px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  font-weight: bold;
+}
+
 img {
   border: none;
 }
@@ -22,7 +131,6 @@ form {
   float: right;
   padding-top: 6px;
   padding-right: 10px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 12px;
   text-align: right;
 }
@@ -42,7 +150,6 @@ table td {
   border-bottom: solid #888 1px;
   padding-top: 3px;
   padding-bottom: 3px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 .links .menu-item {
   padding-right: 5px;
@@ -53,7 +160,6 @@ table td {
 .topBar {
   background: white;
   padding: 6px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   border: 1px dashed #777;
 }
@@ -70,7 +176,6 @@ table td {
   border-bottom: solid #888 1px;
   padding-top: 13px;
   padding-bottom: 13px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   text-align: center;
 }
@@ -110,7 +215,6 @@ table.templateBuilder {
 }
 
 table.templateBuilder th {
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-weight: bold;
   font-size: 11px;
   background: #eee;
@@ -140,7 +244,6 @@ table.results th, table.results td {
   border-bottom: solid 1px black;
 }
 table.results th {
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
 table.results td td {
@@ -184,7 +287,6 @@ div.viewpath {
   margin-bottom: 5px;
   float: left;
   text-align: center;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 11px;
 }
 table.results tr.even {
@@ -253,7 +355,6 @@ span.collectionDescription {
 
 .smallnote {
   font-size: 11px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
 .altmessage {
@@ -272,7 +373,6 @@ span.collectionDescription {
 .previewTitle {
   text-align: center;
   text-decoration: underline;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 11px;
 }
 

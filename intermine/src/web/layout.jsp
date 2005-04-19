@@ -16,10 +16,6 @@
 
   <head>
     <html:base/>
-    <link rel="stylesheet" type="text/css" 
-          href="${WEB_PROPERTIES["project.sitePrefix"]}/style/base.css"/>
-    <link rel="stylesheet" type="text/css" 
-          href="${WEB_PROPERTIES["project.sitePrefix"]}/style/branding.css"/>
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
@@ -45,6 +41,7 @@
   </head>
   
   <body>
+  
     <tiles:get name="header"/>
     <tiles:get name="menu"/>
     <div id="pagecontent">
