@@ -47,6 +47,7 @@ public class TemplateQueryBinding
             writer.writeAttribute("description", template.getDescription());
             writer.writeAttribute("category", template.getCategory());
             writer.writeAttribute("important", "" + template.isImportant());
+            writer.writeAttribute("keywords", template.getKeywords());
             
             new PathQueryBinding().marshal(template.getQuery(),
                                            template.getName(),
@@ -103,6 +104,7 @@ public class TemplateQueryBinding
         String templateName;
         String templateDesc;
         String templateCat;
+        String keywords;
         boolean important;
 
         /**
@@ -123,6 +125,10 @@ public class TemplateQueryBinding
                 templateName = attrs.getValue("name");
                 templateDesc = attrs.getValue("description");
                 templateCat = attrs.getValue("category");
+                keywords = attrs.getValue("keywords");
+                if (keywords == null) {
+                    keywords = "";
+                }
                 important = Boolean.valueOf(attrs.getValue("important")).booleanValue();
             }
             super.startElement(uri, localName, qName, attrs);
@@ -138,7 +144,8 @@ public class TemplateQueryBinding
                                                               templateDesc,
                                                               templateCat,
                                                               query,
-                                                              important));
+                                                              important,
+                                                              keywords));
             }
         }
     }

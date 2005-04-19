@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
@@ -246,6 +247,7 @@ public class TemplateRepository
      * Index some TemplateQueries and return the RAMDirectory containing the index.
      * 
      * @param templates Map from template name to TemplateQuery
+     * @param type template type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
     public static RAMDirectory indexTemplates(Map templates, String type) {
@@ -270,11 +272,9 @@ public class TemplateRepository
             
             Document doc = new Document();
             doc.add(Field.Text("name", template.getName()));
-            doc.add(Field.Text("description", template.getDescription()));
+            doc.add(Field.UnStored("content", template.getDescription() + " "
+                    + template.getCategory() + " " + template.getKeywords()));
             doc.add(Field.UnIndexed("type", type));
-            doc.add(Field.Keyword("category", template.getCategory()));
-            // TODO
-            //doc.add(Field.Keyword("keywords", template.getKeywords()));
             
             try {
                 writer.addDocument(doc);
