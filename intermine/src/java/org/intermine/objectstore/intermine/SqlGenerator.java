@@ -129,11 +129,17 @@ public class SqlGenerator
      */
     public static String tableNameForId(Class clazz,
             DatabaseSchema schema) throws ObjectStoreException {
-        ClassDescriptor cld = schema.getModel().getClassDescriptorByName(clazz.getName());
-        if (cld == null) {
-            throw new ObjectStoreException(clazz.toString() + " is not in the model");
+        ClassDescriptor tableMaster;
+        if (schema.isMissingNotXml()) {
+            tableMaster = schema.getModel()
+                .getClassDescriptorByName(InterMineObject.class.getName());
+        } else {
+            ClassDescriptor cld = schema.getModel().getClassDescriptorByName(clazz.getName());
+            if (cld == null) {
+                throw new ObjectStoreException(clazz.toString() + " is not in the model");
+            }
+            tableMaster = schema.getTableMaster(cld);
         }
-        ClassDescriptor tableMaster = schema.getTableMaster(cld);
         return DatabaseUtil.getTableName(tableMaster);
     }
 
