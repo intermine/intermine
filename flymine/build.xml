@@ -774,12 +774,12 @@
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-flybase-production" 
+  <target name="build-flybase-production"
           depends="compile-genomic-java-from-db, filter-chado, retrieve-chado, load-chado"/>
 
-  
+
   <!-- build a production DB from Chado chromosome 4 - for testing -->
-  <target name="build-flybase-production-small" 
+  <target name="build-flybase-production-small"
           depends="compile-genomic-java-from-db, filter-chado-small, retrieve-chado, load-chado"/>
 
 
@@ -865,7 +865,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated" 
+    <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated"
               sourceName="orthologue-inparanoid" ignoreDuplicates="true"/>
   </target>
 
@@ -1421,7 +1421,7 @@
                    target="osw.long_oligo-tgt-items"
                    seqClsName="Transcript"
                    orgAbbrev="DM"
-                   infoSourceTitle="INDAC Long Oligo Set"
+                   infoSourceTitle="INDAC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
       <fileset dir="/shared/data/long_oligo">
@@ -1474,7 +1474,7 @@
                    target="osw.tiling_path-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="DM"
-                   infoSourceTitle="TilingPath"
+                   infoSourceTitle="Genetics"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TilingPathGFF3RecordHandler">
       <fileset dir="/shared/data/tiling">
@@ -1728,7 +1728,8 @@
   </target>
 
   <!-- create selected precomputed tables in the production database -->
-  <target name="precompute-production-queries" depends="prepare-build-model">
+  <target name="precompute-production-queries"
+          depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="build/build-model.xml" target="precompute-model" inheritRefs="true">
       <property name="objectstore.name" value="os.production"/>
       <property name="db.name" value="db.production"/>
@@ -1740,7 +1741,8 @@
 
   <!-- create selected precomputed tables in the production database and test
        the speed of queries -->
-  <target name="precompute-production-queries-test" depends="prepare-build-model">
+  <target name="precompute-production-queries-test"
+          depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="build/build-model.xml" target="precompute-model-test" inheritRefs="true">
       <property name="objectstore.name" value="os.production"/>
       <property name="db.name" value="db.production"/>
@@ -1751,7 +1753,8 @@
   </target>
 
   <!-- create selected precomputed tables in the production database -->
-  <target name="precompute-production-templates" depends="prepare-build-model">
+  <target name="precompute-production-templates"
+          depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="build/build-model.xml" target="precompute-templates" inheritRefs="true">
       <property name="objectstore.name" value="os.production"/>
       <property name="db.name" value="db.production"/>
@@ -1774,9 +1777,9 @@
   <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="production-build" 
-          depends="create-production-model, 
-                   compile-genomic-model, 
+  <target name="production-build"
+          depends="create-production-model,
+                   compile-genomic-model,
                    jar-genomic,
                    build-db-production,
                    create-indexes-production,
@@ -1793,7 +1796,7 @@
                    build-protein_structure-production,
                    analyse-db-production,
                    grant-db-production"/>
-  
+
   <target name="analyse-db-production" depends="prepare">
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
       <property name="db.name" value="db.production"/>
@@ -2378,7 +2381,7 @@
     </ant>
     <antcall target="load-default-templates"/>
   </target>
-  
+
   <!-- load default global template queries -->
   <target name="load-default-templates" depends="prepare-build-model">
     <copy todir="${build.resources}"
@@ -2391,7 +2394,7 @@
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
                               username="${webapp.superuser}"/>
   </target>
-  
+
   <target name="build-production-webservice-client" depends="compile-genomic-model">
     <jar destfile="${dist}/flymine-webservice-client.jar">
       <zipfileset src="${webservice-client.jar.path}"/>
@@ -2716,7 +2719,7 @@
           depends="remove-genomic, prepare-build-model,
                 merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
-                merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model, 
+                merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-chado-model, merge-shortcuts">
@@ -2803,7 +2806,7 @@
           depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
 
  <!-- BUILD PRODUCTION DATABASE -->
-  
+
   <!-- Build genomic model database to hold production data -->
   <target name="build-db-production-human" depends="compile-genomic-human-model, copy-genomic-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -2946,8 +2949,8 @@
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
-  
-  <target name="compile-ucsc-java" 
+
+  <target name="compile-ucsc-java"
           depends="prepare-build-model, compile-flymine-java, compile-genomic-human-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ucsc"/>
@@ -2999,7 +3002,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/tfbs">        
+      <fileset dir ="/shared/data/human/tfbs">
         <include name ="tfbsConsSites_withFactors.gff"/>
       </fileset>
     </retrieve-file>
@@ -3072,7 +3075,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FirstEFGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/firstEF">        
+      <fileset dir ="/shared/data/human/firstEF">
         <include name ="firstEF3new.gff"/>
       </fileset>
     </retrieve-file>
@@ -3145,7 +3148,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.RegionGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/encodeRegions/">        
+      <fileset dir ="/shared/data/human/encodeRegions/">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
@@ -3218,7 +3221,7 @@
                    infoSourceTitle="T1DBase"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.DiseaseRegionGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/diseaseRegions/">        
+      <fileset dir ="/shared/data/human/diseaseRegions/">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
@@ -3246,7 +3249,7 @@
                ignoreDuplicates="false"/>
   </target>
 
-  <target name="build-disease-regions-production" 
+  <target name="build-disease-regions-production"
           depends="retrieve-disease-regions, load-disease-regions"/>
 
 
