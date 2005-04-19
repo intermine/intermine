@@ -18,16 +18,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import junit.framework.TestCase;
+
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-
-import junit.framework.*;
 
 /**
  * TestCase for doing tests on the BatchWriter system.

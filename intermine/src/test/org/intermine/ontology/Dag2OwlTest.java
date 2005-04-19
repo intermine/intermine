@@ -12,13 +12,6 @@ package org.intermine.ontology;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-import java.util.ArrayList;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
-
 public class Dag2OwlTest extends TestCase{
     String namespace = "http://www.intermine.org/namespace#";
 

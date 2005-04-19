@@ -10,30 +10,26 @@ package org.intermine.ontology;
  *
  */
 
-import junit.framework.*;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.rdf.model.*;
-
-import java.util.*;
-import java.io.*;
-
+import org.custommonkey.xmlunit.XMLTestCase;
 import org.intermine.metadata.Model;
-import org.intermine.dataconversion.DataTranslator;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.MockItemReader;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.Reference;
 
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 // Test that merges two OWL models together (including restricted subclasses) and takes the
 // output to test generation of InterMine model.  Also use output to run DataTranslator

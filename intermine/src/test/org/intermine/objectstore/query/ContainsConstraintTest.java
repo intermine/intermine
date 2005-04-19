@@ -12,11 +12,10 @@ package org.intermine.objectstore.query;
 
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 
 public class ContainsConstraintTest extends TestCase {
 

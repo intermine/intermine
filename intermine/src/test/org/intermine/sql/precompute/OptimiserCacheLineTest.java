@@ -10,10 +10,10 @@ package org.intermine.sql.precompute;
  *
  */
 
-import junit.framework.*;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
+
+import junit.framework.TestCase;
 
 public class OptimiserCacheLineTest extends TestCase
 {

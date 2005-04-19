@@ -10,40 +10,39 @@ package org.flymine.postprocess;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.io.InputStream;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.dataloader.IntegrationWriterFactory;
-import org.intermine.dataloader.XmlDataLoader;
+import org.apache.log4j.Logger;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.ChromosomeBand;
+import org.flymine.model.genomic.Contig;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.PartialLocation;
+import org.flymine.model.genomic.Supercontig;
+import org.flymine.model.genomic.Transcript;
 import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-
-import org.flymine.model.genomic.*;
-import org.apache.log4j.Logger;
 
 public class CalculateLocationsTest extends TestCase {
 

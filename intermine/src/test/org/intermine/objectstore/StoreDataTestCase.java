@@ -10,45 +10,16 @@ package org.intermine.objectstore;
  *
  */
 
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.io.FileWriter;
-import java.io.File;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.SubqueryConstraint;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.sql.DatabaseFactory;
-import org.intermine.sql.Database;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.XmlBinding;
-import org.intermine.util.TypeUtil;
-import org.intermine.metadata.Model;
-
-import org.apache.log4j.Logger;
 
 public abstract class StoreDataTestCase extends SetupDataTestCase
 {

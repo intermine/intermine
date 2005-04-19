@@ -13,10 +13,9 @@ package org.intermine.web;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
+
 import org.apache.struts.tiles.ComponentContext;
-import org.intermine.web.Constants;
+
 import servletunit.struts.MockStrutsTestCase;
 
 /**

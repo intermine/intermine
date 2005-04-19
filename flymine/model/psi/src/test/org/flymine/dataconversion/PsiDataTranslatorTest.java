@@ -10,21 +10,12 @@ package org.flymine.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.HashSet;
-import java.util.Set;
 import java.io.InputStreamReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.Reader;
-import java.io.FileReader;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.DataTranslator;
@@ -33,8 +24,6 @@ import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.XmlConverter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.FullRenderer;
 
 public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";

@@ -12,16 +12,11 @@ package org.intermine.dataloader;
 
 import java.sql.Connection;
 
+import junit.framework.TestCase;
+
 import org.intermine.model.datatracking.Source;
-import org.intermine.model.datatracking.Field;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-
-import org.intermine.model.testmodel.Department;
-
-import junit.framework.TestCase;
 
 public class DataTrackingTest extends TestCase {
     protected DataTracker dt;

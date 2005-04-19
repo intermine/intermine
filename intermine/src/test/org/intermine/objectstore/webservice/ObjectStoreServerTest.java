@@ -12,7 +12,6 @@ package org.intermine.objectstore.webservice;
 
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.iql.IqlQuery;
 

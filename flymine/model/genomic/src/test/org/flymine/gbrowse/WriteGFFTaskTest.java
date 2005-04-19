@@ -10,39 +10,35 @@ package org.flymine.gbrowse;
  *
  */
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-
-import java.io.*;
-
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-
-import org.intermine.objectstore.*;
-import org.intermine.objectstore.query.*;
-import org.intermine.dataloader.IntegrationWriterFactory;
-import org.intermine.dataloader.XmlDataLoader;
-import org.intermine.dataloader.IntegrationWriter;
+import org.apache.log4j.Logger;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Transcript;
+import org.flymine.postprocess.TransferSequences;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-
-import org.flymine.postprocess.*;
-import org.flymine.model.genomic.*;
-import org.apache.log4j.Logger;
 
 /**
  * Tests for WriteGFFTask.

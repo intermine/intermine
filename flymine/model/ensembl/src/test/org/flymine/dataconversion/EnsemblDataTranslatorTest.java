@@ -10,20 +10,15 @@ package org.flymine.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Properties;
-import java.io.InputStreamReader;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
@@ -32,14 +27,10 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
-
-import java.io.FileWriter;
-import java.io.File;
 
 public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";

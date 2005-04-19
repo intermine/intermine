@@ -10,16 +10,7 @@ package org.intermine.objectstore;
  *
  */
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.model.testmodel.*;
 
 public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
 {

@@ -10,10 +10,13 @@ package org.intermine.sql.logging;
  *
  */
 
-import junit.framework.*;
-import java.sql.*;
-import javax.sql.*;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import junit.framework.TestCase;
+
 import org.intermine.sql.DatabaseFactory;
 
 public class DatabaseWriterTest extends TestCase

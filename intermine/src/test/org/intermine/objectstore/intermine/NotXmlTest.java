@@ -10,15 +10,13 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.*;
-
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Map;
 
-import org.intermine.util.TypeUtil;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
+import junit.framework.TestCase;
+
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.proxy.ProxyReference;

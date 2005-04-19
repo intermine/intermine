@@ -10,28 +10,14 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.sql.Connection;
 
 import junit.framework.Test;
 
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriterTestCase;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.DynamicUtil;
-
 import org.apache.log4j.Logger;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreWriterTestCase;
 
 public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {

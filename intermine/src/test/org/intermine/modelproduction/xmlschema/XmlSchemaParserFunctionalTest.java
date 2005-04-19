@@ -10,19 +10,17 @@ package org.intermine.modelproduction.xmlschema;
  *
  */
 
-import java.io.InputStream;
-import java.io.Reader;
 import java.io.InputStreamReader;
-
-import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.xml.InterMineModelParser;
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
+import java.io.Reader;
 
 import junit.framework.TestCase;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 
 public class XmlSchemaParserFunctionalTest extends TestCase
 {

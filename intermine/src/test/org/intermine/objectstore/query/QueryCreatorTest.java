@@ -10,15 +10,13 @@ package org.intermine.objectstore.query;
  *
  */
 
-import junit.framework.*;
+import junit.framework.Test;
 
-import java.util.Set;
-import java.util.HashSet;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
-import org.intermine.testing.OneTimeTestCase;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.testing.OneTimeTestCase;
 
 public class QueryCreatorTest extends QueryTestCase
 {

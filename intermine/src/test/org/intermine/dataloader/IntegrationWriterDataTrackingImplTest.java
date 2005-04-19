@@ -10,25 +10,30 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Collections;
-import junit.framework.Test;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Test;
+
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
-import org.intermine.model.testmodel.*;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Bank;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.CEO;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -41,9 +46,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 {

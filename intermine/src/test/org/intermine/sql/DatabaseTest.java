@@ -10,12 +10,9 @@ package org.intermine.sql;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Properties;
+
+import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 
