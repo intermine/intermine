@@ -15,12 +15,11 @@ window.onload = function() { document.getElementById("queryString").focus(); }
   <html:form action="/templateSearch" method="GET" styleId="templateSearch">
     <fmt:message key="templateSearch.search.label"/>
     <html:text property="queryString" size="40" styleId="queryString"/>
-    <%--
     <html:select property="type">
       <html:option key="templateSearch.form.global" value="global"/>
       <html:option key="templateSearch.form.user" value="user"/>
+      <html:option key="templateSearch.form.all" value="ALL"/>
     </html:select>
-    --%>
     <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
   </html:form>
   
@@ -35,7 +34,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       <fmt:formatNumber value="${entry.value*10}" maxFractionDigits="0" var="heat"/>
       <img class="searchHeatImg" src="images/heat${heat}.gif" width="${heat*2}" height="10"
            style="margin-right:${24-(heat*2)}px"/>
-      <im:templateLine type="${templateSearchForm.type}" templateQuery="${entry.key}"/>
+      <im:templateLine type="${templateTypes[entry.key]}" templateQuery="${entry.key}"/>
       <c:if test="${!status.last}">
         <hr class="tmplSeperator"/>
       </c:if>

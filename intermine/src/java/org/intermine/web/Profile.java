@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.TreeMap;
 
+import org.apache.lucene.store.Directory;
+
 /**
  * Class to represent a user of the webapp
  *
@@ -32,6 +34,7 @@ public class Profile
     protected Map savedBags = new TreeMap();
     protected Map savedTemplates = new TreeMap();
     protected Map categoryTemplates;
+    protected Directory templateIndex;
     
     /**
      * Construct a Profile
@@ -173,6 +176,9 @@ public class Profile
             }
             list.add(template);
         }
+        
+        // We also take this opportunity to index the user's template queries
+        templateIndex = TemplateRepository.indexTemplates(savedTemplates, "user");
     }
     
     /**
@@ -181,5 +187,14 @@ public class Profile
      */
     public Map getCategoryTemplates() {
         return categoryTemplates;
+    }
+    
+    /**
+     * Get the users's template index.
+     * 
+     * @return the user's template index
+     */
+    public Directory getUserTemplatesIndex() {
+        return templateIndex;
     }
 }

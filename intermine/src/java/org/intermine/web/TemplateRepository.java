@@ -54,7 +54,7 @@ public class TemplateRepository
     public TemplateRepository(ServletContext servletContext) {
         // index global templates
         this.servletContext = servletContext;
-        loadGlobalTemplateQueries(servletContext);
+        reloadGlobalTemplateQueries(servletContext);
     }
     
     /**
@@ -74,7 +74,7 @@ public class TemplateRepository
      * @param template the TemplateQuery added
      */
     public void globalTemplateAdded(TemplateQuery template) {
-        loadGlobalTemplateQueries(servletContext);
+        reloadGlobalTemplateQueries(servletContext);
     }
     
     /**
@@ -84,7 +84,7 @@ public class TemplateRepository
      * @param template the TemplateQuery removed
      */
     public void globalTemplateRemoved(TemplateQuery template) {
-        loadGlobalTemplateQueries(servletContext);
+        reloadGlobalTemplateQueries(servletContext);
     }
     
     /**
@@ -94,7 +94,7 @@ public class TemplateRepository
      * @param template the TemplateQuery updated
      */
     public void globalTemplateUpdated(TemplateQuery template) {
-        loadGlobalTemplateQueries(servletContext);
+        reloadGlobalTemplateQueries(servletContext);
     }
 
     /**
@@ -102,7 +102,7 @@ public class TemplateRepository
      * profile has changed.
      */
     public void globalTemplatesChanged() {
-        loadGlobalTemplateQueries(servletContext);
+        reloadGlobalTemplateQueries(servletContext);
     }
     
     /**
@@ -112,7 +112,7 @@ public class TemplateRepository
      *
      * @param servletContext  servlet context in which to place template map
      */
-    public static void loadGlobalTemplateQueries(ServletContext servletContext) {   
+    private static void reloadGlobalTemplateQueries(ServletContext servletContext) {   
         Map templateMap = Collections.synchronizedMap(new HashMap());
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
@@ -157,12 +157,13 @@ public class TemplateRepository
         servletContext.setAttribute(Constants.CLASS_CATEGORY_TEMPLATES, classCategoryTemplates);
         servletContext.setAttribute(Constants.CLASS_TEMPLATE_EXPRS, classTemplateExprs);
         
-        createTemplateIndex(servletContext);
+        reindexGlobalTemplates(servletContext);
     }
     
     /**
      * Return two Maps with information about the relations between classnames, a given template and
      * its template categories.
+     * 
      * @param classCategoryTemplates a Map from class name to a Map from category to template
      * @param classTemplateExprs a Map from class name to a Map from template name to field name
      * List - the field names/expressions are the ones that should be set when a template is linked
@@ -230,13 +231,24 @@ public class TemplateRepository
         }
     }
     
-
     /**
      * Create the lucene search index of all global template queries.
+     * 
      * @param servletContext the servlet context
-     * @throws ServletException if something goes wrong
      */
-    private static void createTemplateIndex(ServletContext servletContext) {
+    private static void reindexGlobalTemplates(ServletContext servletContext) {
+        Map templates = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+        RAMDirectory ram = indexTemplates(templates, "global");
+        servletContext.setAttribute(Constants.TEMPLATE_INDEX_DIR, ram);
+    }
+    
+    /**
+     * Index some TemplateQueries and return the RAMDirectory containing the index.
+     * 
+     * @param templates Map from template name to TemplateQuery
+     * @return a RAMDirectory containing the index
+     */
+    public static RAMDirectory indexTemplates(Map templates, String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing template queries");
         
@@ -249,11 +261,7 @@ public class TemplateRepository
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
         
-        servletContext.setAttribute(Constants.TEMPLATE_INDEX_DIR, ram);
-        
-        // step through global templates, indexing a Document for
-        // each template
-        Map templates = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+        // step global templates, indexing a Document for each template
         Iterator iter = templates.values().iterator();
         int indexed = 0;
         
@@ -263,6 +271,7 @@ public class TemplateRepository
             Document doc = new Document();
             doc.add(Field.Text("name", template.getName()));
             doc.add(Field.Text("description", template.getDescription()));
+            doc.add(Field.UnIndexed("type", type));
             doc.add(Field.Keyword("category", template.getCategory()));
             // TODO
             //doc.add(Field.Keyword("keywords", template.getKeywords()));
@@ -285,6 +294,8 @@ public class TemplateRepository
         time = System.currentTimeMillis() - time;
         LOG.info("Indexed " + indexed + " out of " + templates.size() + " templates in "
                 + time + " milliseconds");
+        
+        return ram;
     }
 
 }
