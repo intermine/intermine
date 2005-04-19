@@ -2195,7 +2195,10 @@
 
   <target name="test-models-full" depends="compile-genomic-model, test-models-inc"/>
 
-  <target name="fulltest" depends="clean, compile-genomic-model, build-db-genomic-test, create-indexes-genomic-test, test-models-inc, genomic-test"
+  <target name="fulltest" 
+          depends="clean, compile-genomic-model,
+                   build-db-genomic-test, create-indexes-genomic-test, test-models-inc,
+                   genomic-test, test-flymine-java"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
