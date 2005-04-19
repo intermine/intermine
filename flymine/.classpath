@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
+	<classpathentry kind="src" path="build/model/chado"/>
+	<classpathentry kind="src" path="build/model/ensembl"/>
+	<classpathentry kind="src" path="build/model/fulldata"/>
+	<classpathentry kind="src" path="build/model/genomic"/>
+	<classpathentry kind="src" path="build/model/go"/>
+	<classpathentry kind="src" path="build/model/mage"/>
+	<classpathentry kind="src" path="build/model/orthologue"/>
+	<classpathentry kind="src" path="build/model/protein_structure"/>
+	<classpathentry kind="src" path="build/model/psi"/>
+	<classpathentry kind="src" path="build/model/rnai"/>
+	<classpathentry kind="src" path="build/model/taxonomy"/>
+	<classpathentry kind="src" path="build/model/uniprot"/>
+	<classpathentry kind="src" path="build/java"/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="model/genomic/src/java"/>
+	<classpathentry kind="src" path="model/genomic/src/test"/>
 	<classpathentry kind="src" path="model/psi/src/java"/>
 	<classpathentry kind="src" path="model/psi/src/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/test"/>
