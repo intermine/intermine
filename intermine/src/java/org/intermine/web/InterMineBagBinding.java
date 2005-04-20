@@ -101,13 +101,14 @@ public class InterMineBagBinding
             try {
                 if (qName.equals("bag")) {
                     bagName = attrs.getValue("name");
-                    bag = new InterMineBag();
+                    bag = new InterMineBag(os);
                 }
                 if (qName.equals("element")) {
                     String type = attrs.getValue("type");
                     String value = attrs.getValue("value");
                     if (type.equals(InterMineObject.class.getName())) {
-                        bag.add(os.getObjectById(Integer.valueOf(value)));
+                        //bag.add(os.getObjectById(Integer.valueOf(value)));
+                        bag.addId(Integer.valueOf(value));
                     } else {
                         bag.add(TypeUtil.stringToObject(Class.forName(type), value));
                     }

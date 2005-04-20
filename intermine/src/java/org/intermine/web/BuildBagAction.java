@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * An action that makes a bag from text.
@@ -54,12 +56,14 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BuildBagForm buildBagForm = (BuildBagForm) form;
-
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
-        InterMineBag bag = new InterMineBag();
+        InterMineBag bag = new InterMineBag(os);
         String trimmedText = buildBagForm.getText().trim();
         FormFile formFile = buildBagForm.getFormFile();
 

@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.util.Map;
 import java.util.Collection;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -72,10 +74,12 @@ public class ModifyBagAction extends InterMineAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
-
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        InterMineBag combined = new InterMineBag();
+        InterMineBag combined = new InterMineBag(os);
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
             combined.addAll((Collection) savedBags.get(selectedBags[i]));
         }
@@ -113,12 +117,15 @@ public class ModifyBagAction extends InterMineAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
 
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        InterMineBag combined = new InterMineBag((Collection) savedBags.get(selectedBags[0]));
+        InterMineBag combined = new InterMineBag(os);
+        combined.addAll((Collection) savedBags.get(selectedBags[0]));
         for (int i = 1; i < selectedBags.length; i++) {
             combined.retainAll((Collection) savedBags.get(selectedBags[i]));
         }

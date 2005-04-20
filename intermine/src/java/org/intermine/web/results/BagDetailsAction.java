@@ -10,6 +10,7 @@ package org.intermine.web.results;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineBag;
@@ -50,12 +52,14 @@ public class BagDetailsAction extends Action
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         
         String bagName = request.getParameter("bagName");
         InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
         if (bag == null) {
-            bag = new InterMineBag();
+            bag = new InterMineBag(os);
         }
         
         String identifier = "bag." + bagName;

@@ -41,6 +41,7 @@ public class InterMineBagBindingTest extends TestCase
     public void testProcess() throws Exception {
         ObjectStore os = new ObjectStoreDummyImpl();
         Department d1 = new Department();
+        d1.setId(new Integer(1));
         os.cacheObjectById(new Integer(1), d1);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/InterMineBagBindingTest.xml");
@@ -48,18 +49,18 @@ public class InterMineBagBindingTest extends TestCase
         Map expected = new LinkedHashMap();
 
         //primitives
-        InterMineBag primitives = new InterMineBag();
+        InterMineBag primitives = new InterMineBag(os);
         primitives.add(new Integer(10));
         primitives.add("ten");
         expected.put("primitives", primitives);
 
         //objects
-        InterMineBag objects = new InterMineBag();
+        InterMineBag objects = new InterMineBag(os);
         objects.add(d1);
         expected.put("objects", objects);
 
         //mixture
-        InterMineBag mixture = new InterMineBag();
+        InterMineBag mixture = new InterMineBag(os);
         mixture.addAll(primitives);
         mixture.addAll(objects);
         expected.put("mixture", mixture);
