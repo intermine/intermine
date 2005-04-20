@@ -22,7 +22,7 @@
       </c:otherwise>
     </c:choose>
     <c:choose>
-      <c:when test="${!resultsTable.lastPage}">
+      <c:when test="${!resultsTable.lastPage && (resultsTable.page+2)*resultsTable.pageSize < resultsTable.maxRetrievableIndex}">
         <html:link action="/results?table=${param.table}&amp;page=${resultsTable.page+1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           <fmt:message key="results.next"/>
         </html:link>
