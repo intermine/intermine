@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import org.intermine.web.InterMineBag;
 import org.intermine.web.Profile;
 import org.intermine.web.InterMineAction;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
@@ -87,12 +89,14 @@ public class SaveBagAction extends InterMineAction
                                  HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm crf = (SaveBagForm) form;
 
-        InterMineBag bag = new InterMineBag();
+        InterMineBag bag = new InterMineBag(os);
 
         int defaultMax = 10000;
 
