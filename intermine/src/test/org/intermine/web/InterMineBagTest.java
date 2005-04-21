@@ -50,6 +50,7 @@ public class InterMineBagTest extends TestCase
         InterMineBag bag = new InterMineBag(os);
         bag.addId(new Integer(1));
         assertEquals(1, bag.getSize());
+        assertEquals(d1, bag.get(0));
     }
 
     /*
@@ -58,8 +59,10 @@ public class InterMineBagTest extends TestCase
     public void testAddObject() {
         InterMineBag bag = new InterMineBag(os);
         bag.add(new Integer(1));
-        bag.add("asdfasdf");
+        bag.add("asdf");
         assertEquals(2, bag.getSize());
+        assertEquals(new Integer(1), bag.get(0));
+        assertEquals("asdf", bag.get(1));
     }
 
     /*
@@ -148,7 +151,6 @@ public class InterMineBagTest extends TestCase
         assertEquals(2, bag2.size());
         
         bag.addAll(bag2);
-        System.out.println(bag.toString());
         assertEquals(5, bag.size());
         assertEquals(e2, bag.get(4));
         
