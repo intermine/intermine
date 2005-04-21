@@ -601,18 +601,20 @@ public class SqlGenerator
                 }
                 // Deal with OBJECT column
                 if (schema.isMissingNotXml()) {
-                    String name = "OBJECT";
                     Iterator aliasIter = aliases.entrySet().iterator();
                     while (aliasIter.hasNext()) {
                         Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
                         ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
                         String alias = (String) aliasEntry.getValue();
                         ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                        System.out.println("Table: " + tableMaster.getType().getName());
                         if (InterMineObject.class.equals(tableMaster.getType())) {
                             fieldToAlias.put("OBJECT", alias);
                             break;
                         }
                     }
+                } else if (schema.isFlatMode()) {
+                    // Do nothing. We never want an OBJECT column in this case.
                 } else {
                     fieldToAlias.put("OBJECT", baseAlias);
                 }
@@ -993,7 +995,8 @@ public class SqlGenerator
                 }
                 needComma = true;
             }
-            if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)) {
+            if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
+                    || ((kind == QUERY_NORMAL) && schema.isFlatMode())) {
                 Set fields = schema.getModel().getClassDescriptorByName(qc.getType().getName())
                     .getAllFieldDescriptors();
                 Map fieldMap = new TreeMap();
@@ -1018,7 +1021,7 @@ public class SqlGenerator
                     buffer.append((String) state.getFieldToAlias(qc).get(field.getName()))
                         .append(".")
                         .append(columnName);
-                    if (kind == QUERY_SUBQUERY_FROM) {
+                    if ((kind == QUERY_SUBQUERY_FROM) || (kind == QUERY_NORMAL)) {
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
                             //.append(alias.equals(alias.toLowerCase())

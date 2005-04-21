@@ -38,6 +38,8 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index Department__company on Department(companyId, id)");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
+        task.setAlias("os.unittest");
+        task.setUp();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Department"));
         assertEquals(expected, task.sqlStatements);
     }
@@ -60,6 +62,8 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("drop index Secretary__key__nulls");
         expected.add("create index Secretary__key__nulls on Secretary((name IS NULL))");
         task = new DummyCreateIndexesTask();
+        task.setAlias("os.unittest");
+        task.setUp();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Secretary"));
         assertEquals(expected, task.sqlStatements);
     }
@@ -85,6 +89,8 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index CEO__key__nulls on CEO((seniority IS NULL))");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
+        task.setAlias("os.unittest");
+        task.setUp();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson"));
         //assertEquals(expected, task.sqlStatements);
 
@@ -116,6 +122,8 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index CEO__seniority__nulls on CEO((seniority IS NULL))");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
+        task.setAlias("os.unittest");
+        task.setUp();
         task.createAttributeIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.CEO"));
         assertEquals(expected, task.sqlStatements);
 

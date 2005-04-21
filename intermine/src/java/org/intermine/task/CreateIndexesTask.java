@@ -58,6 +58,8 @@ public class CreateIndexesTask extends Task
     protected String alias;
     protected Connection c;
     protected boolean attributeIndexes = false;
+    protected DatabaseSchema schema = null;
+    protected Database database = null;
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
 
     /**
@@ -78,9 +80,9 @@ public class CreateIndexesTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * Sets up the instance variables
      */
-    public void execute() throws BuildException {
+    public void setUp() throws BuildException {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
         }
@@ -96,39 +98,46 @@ public class CreateIndexesTask extends Task
         if (objectStore instanceof ObjectStoreInterMineImpl) {
             ObjectStoreInterMineImpl osii = ((ObjectStoreInterMineImpl) objectStore);
 
-            Database database = osii.getDatabase();
-            DatabaseSchema databaseSchema = osii.getSchema();
-            Model m = objectStore.getModel();
-
-            try {
-                c = database.getConnection();
-                c.setAutoCommit(true);
-                for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
-                    ClassDescriptor cld = (ClassDescriptor) i.next();
-
-                    if (cld == databaseSchema.getTableMaster(cld)) {
-                        if (attributeIndexes) {
-                            createAttributeIndexes(cld);
-                        } else {
-                            createStandardIndexes(cld);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace(System.out);
-                throw new BuildException(e);
-            } finally {
-                if (c != null) {
-                    try {
-                        c.close();
-                    } catch (Exception e) {
-                    }
-                }
-            }
+            database = osii.getDatabase();
+            schema = osii.getSchema();
         } else {
             // change comment on setAlias() when this changes
             throw new BuildException("the alias (" + alias + ") does not refer to an "
                                      + "ObjectStoreInterMineImpl");
+        }
+    }
+
+    /**
+     * @see Task#execute
+     */
+    public void execute() throws BuildException {
+        setUp();
+        Model m = schema.getModel();
+
+        try {
+            c = database.getConnection();
+            c.setAutoCommit(true);
+            for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
+                ClassDescriptor cld = (ClassDescriptor) i.next();
+
+                if (cld == schema.getTableMaster(cld)) {
+                    if (attributeIndexes) {
+                        createAttributeIndexes(cld);
+                    } else {
+                        createStandardIndexes(cld);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+            throw new BuildException(e);
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
@@ -172,15 +181,17 @@ public class CreateIndexesTask extends Task
             for (Iterator k = clds.iterator(); k.hasNext();) {
                 ClassDescriptor nextCld = (ClassDescriptor) k.next();
                 String tableName = DatabaseUtil.getTableName(nextCld);
-                dropIndex(tableName + "__" + keyName);
-                createIndex(tableName + "__" + keyName, tableName,
-                            StringUtil.join(fieldNames, ", ") + ", id");
-                if (doNulls) {
-                    dropIndex(tableName + "__" + keyName + "__nulls");
-                    createIndex(tableName + "__" + keyName + "__nulls", tableName, "("
-                            + fieldNames.get(0) + " IS NULL)");
+                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
+                    dropIndex(tableName + "__" + keyName);
+                    createIndex(tableName + "__" + keyName, tableName,
+                                StringUtil.join(fieldNames, ", ") + ", id");
+                    if (doNulls) {
+                        dropIndex(tableName + "__" + keyName + "__nulls");
+                        createIndex(tableName + "__" + keyName + "__nulls", tableName, "("
+                                + fieldNames.get(0) + " IS NULL)");
+                    }
+                    doneFieldNames.add(fieldNames.get(0));
                 }
-                doneFieldNames.add(fieldNames.get(0));
             }
         }
 
@@ -191,11 +202,13 @@ public class CreateIndexesTask extends Task
             if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
                     && (ref.getReverseReferenceDescriptor() != null)) {
                 String tableName = DatabaseUtil.getTableName(cld);
-                String fieldName = DatabaseUtil.getColumnName(ref);
-                if (!doneFieldNames.contains(fieldName)) {
-                    dropIndex(tableName + "__"  + ref.getName());
-                    createIndex(tableName + "__"  + ref.getName(), tableName,
-                                fieldName + ", id");
+                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
+                    String fieldName = DatabaseUtil.getColumnName(ref);
+                    if (!doneFieldNames.contains(fieldName)) {
+                        dropIndex(tableName + "__"  + ref.getName());
+                        createIndex(tableName + "__"  + ref.getName(), tableName,
+                                    fieldName + ", id");
+                    }
                 }
             }
         }
@@ -233,57 +246,60 @@ public class CreateIndexesTask extends Task
 
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
         String tableName = DatabaseUtil.getTableName(cld);
+        if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
 
-      ATTRIBUTE: for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
-                      attributeIter.hasNext();) {
-            AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
-
-            if (att.getName().equals("id")) {
-                continue;
-            }
-
-            String fieldName = DatabaseUtil.getColumnName(att);
-
-            if (!att.getType().equals("java.lang.String")) {
-                // if the attribute is the first column of a primary key, don't bother creating
-                // another index for it - unless it's a String attribute in which case we want to
-                // create a LOWER() index
-            for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
-                 primaryKeyIter.hasNext();) {
-                Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
-                String keyName = (String) primaryKeyEntry.getKey();
-                PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
-
-                String firstKeyField = (String) ((Set) key.getFieldNames()).iterator().next();
-
-                if (firstKeyField.equals(att.getName())) {
-                    continue ATTRIBUTE;
+            ATTRIBUTE:
+            for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
+                    attributeIter.hasNext();) {
+                AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
+                
+                if (att.getName().equals("id")) {
+                    continue;
                 }
-            }
-            }
-
-            String indexName = tableName + "__"  + att.getName();
-            LOG.info("creating index: " + indexName);
-            dropIndex(indexName);
-            if (att.getType().equals("java.lang.String")) {
-                try {
-                    createIndex(indexName, tableName, "lower(" + fieldName + ")");
-                } catch (SQLException e) {
-                    if (e.getMessage().matches("ERROR: index row requires \\d+ bytes, "
-                                               + "maximum size is 8191")) {
-                        // ignore - we just don't create this index
-                        LOG.error("failed to create index for "
-                                  + tableName + "(" + fieldName + ")");
-                    } else {
-                        throw e;
+                
+                String fieldName = DatabaseUtil.getColumnName(att);
+                
+                if (!att.getType().equals("java.lang.String")) {
+                    // if the attribute is the first column of a primary key, don't bother creating
+                    // another index for it - unless it's a String attribute in which case we want to
+                    // create a LOWER() index
+                    for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
+                            primaryKeyIter.hasNext();) {
+                        Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
+                        String keyName = (String) primaryKeyEntry.getKey();
+                        PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
+                        
+                        String firstKeyField = (String) ((Set) key.getFieldNames()).iterator().next();
+                        
+                        if (firstKeyField.equals(att.getName())) {
+                            continue ATTRIBUTE;
+                        }
                     }
                 }
-            } else {
-                createIndex(indexName, tableName, fieldName);
-            }
-            if (!att.isPrimitive()) {
-                dropIndex(indexName + "__nulls");
-                createIndex(indexName + "__nulls", tableName, "(" + fieldName + " IS NULL)");
+                
+                String indexName = tableName + "__"  + att.getName();
+                LOG.info("creating index: " + indexName);
+                dropIndex(indexName);
+                if (att.getType().equals("java.lang.String")) {
+                    try {
+                        createIndex(indexName, tableName, "lower(" + fieldName + ")");
+                    } catch (SQLException e) {
+                        if (e.getMessage().matches("ERROR: index row requires \\d+ bytes, "
+                                    + "maximum size is 8191")) {
+                            // ignore - we just don't create this index
+                            LOG.error("failed to create index for "
+                                    + tableName + "(" + fieldName + ")");
+                        } else {
+                            throw e;
+                        }
+                    }
+                } else {
+                    createIndex(indexName, tableName, fieldName);
+                }
+                if (!att.isPrimitive()) {
+                    dropIndex(indexName + "__nulls");
+                    createIndex(indexName + "__nulls", tableName, "(" + fieldName + " IS NULL)");
+                }
             }
         }
     }

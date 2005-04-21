@@ -359,7 +359,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         q.addFrom(c1);
         q.addToSelect(c1);
         try {
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST, false), db, new HashMap());
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET), db, new HashMap());
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
@@ -424,7 +424,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
 
     protected DatabaseSchema getSchema() {
-        return new DatabaseSchema(model, Collections.EMPTY_LIST, true);
+        return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET);
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";

@@ -145,37 +145,40 @@ public class TorqueModelOutput
         StringBuffer sb = new StringBuffer();
         columns = new HashSet();
         className = DatabaseUtil.getTableName(cld);
-
-        // Every class and interface has a separate table
-        sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL);
-        if ((!schema.isMissingNotXml()) || InterMineObject.class.equals(cld.getType())) {
-            sb.append(generateColumn("OBJECT", "java.lang.String"));
-        }
-        DatabaseSchema.Fields fields = schema.getTableFields(cld);
-        Iterator fieldIter = fields.getAttributes().iterator();
-        while (fieldIter.hasNext()) {
-            AttributeDescriptor field = (AttributeDescriptor) fieldIter.next();
-            sb.append(generateColumn(DatabaseUtil.getColumnName(field),
-                        ((AttributeDescriptor) field).getType()));
-        }
-        fieldIter = fields.getReferences().iterator();
-        while (fieldIter.hasNext()) {
-            ReferenceDescriptor field = (ReferenceDescriptor) fieldIter.next();
-            sb.append(generateColumn(DatabaseUtil.getColumnName(field), "int"));
-        }
-        if (schema.isTruncated(cld)) {
-            sb.append(generateColumn("class", "java.lang.String"));
-            sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
-                    + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
-                    + INDENT + INDENT + INDENT + "<unique-column name=\"class\"/>" + ENDL
-                    + INDENT + INDENT + "</unique>" + ENDL);
+        if (!schema.getMissingTables().contains(className.toLowerCase())) {
+            // Every class and interface has a separate table
+            sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL);
+            if ((!schema.isMissingNotXml()) || InterMineObject.class.equals(cld.getType())) {
+                sb.append(generateColumn("OBJECT", "java.lang.String"));
+            }
+            DatabaseSchema.Fields fields = schema.getTableFields(cld);
+            Iterator fieldIter = fields.getAttributes().iterator();
+            while (fieldIter.hasNext()) {
+                AttributeDescriptor field = (AttributeDescriptor) fieldIter.next();
+                sb.append(generateColumn(DatabaseUtil.getColumnName(field),
+                            ((AttributeDescriptor) field).getType()));
+            }
+            fieldIter = fields.getReferences().iterator();
+            while (fieldIter.hasNext()) {
+                ReferenceDescriptor field = (ReferenceDescriptor) fieldIter.next();
+                sb.append(generateColumn(DatabaseUtil.getColumnName(field), "int"));
+            }
+            if (schema.isTruncated(cld)) {
+                sb.append(generateColumn("class", "java.lang.String"));
+                sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
+                        + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
+                        + INDENT + INDENT + INDENT + "<unique-column name=\"class\"/>" + ENDL
+                        + INDENT + INDENT + "</unique>" + ENDL);
+            } else {
+                sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
+                        + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
+                        + INDENT + INDENT + "</unique>" + ENDL);
+            }
+            sb.append(INDENT + "</table>" + ENDL);
+            return sb.toString();
         } else {
-            sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
-                    + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
-                    + INDENT + INDENT + "</unique>" + ENDL);
+            return "";
         }
-        sb.append(INDENT + "</table>" + ENDL);
-        return sb.toString();
     }
 
     private String generateColumn(String name, String type) {
