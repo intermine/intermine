@@ -81,6 +81,8 @@ public class CreateIndexesTask extends Task
 
     /**
      * Sets up the instance variables
+     *
+     * @throws BuildException if something is wrong
      */
     public void setUp() throws BuildException {
         if (alias == null) {
@@ -261,15 +263,16 @@ public class CreateIndexesTask extends Task
                 
                 if (!att.getType().equals("java.lang.String")) {
                     // if the attribute is the first column of a primary key, don't bother creating
-                    // another index for it - unless it's a String attribute in which case we want to
-                    // create a LOWER() index
+                    // another index for it - unless it's a String attribute in which case we want
+                    // to create a LOWER() index
                     for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
                             primaryKeyIter.hasNext();) {
                         Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
                         String keyName = (String) primaryKeyEntry.getKey();
                         PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
                         
-                        String firstKeyField = (String) ((Set) key.getFieldNames()).iterator().next();
+                        String firstKeyField = (String) ((Set) key.getFieldNames()).iterator()
+                            .next();
                         
                         if (firstKeyField.equals(att.getName())) {
                             continue ATTRIBUTE;

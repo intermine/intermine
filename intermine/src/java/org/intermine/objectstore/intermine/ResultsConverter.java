@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -108,7 +107,8 @@ public class ResultsConverter
                                     // future rows.
                                     noObjectColumns.add(node);
                                     if (obj == null) {
-                                        obj = new ProxyReference(os, idField, InterMineObject.class);
+                                        obj = new ProxyReference(os, idField,
+                                                InterMineObject.class);
                                         idsToFetch.add(idField);
                                     }
                                 }
@@ -133,14 +133,12 @@ public class ResultsConverter
                 q2.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
                             idsToFetch));
                 q2.setDistinct(false);
-                System.out.println("Need objects with IDs: " + idsToFetch);
                 Iterator iter = os.executeWithConnection(c, q2, 0, Integer.MAX_VALUE, false, false,
                         os.getSequence()).iterator();
                 HashMap fetched = new HashMap();
                 while (iter.hasNext()) {
                     ResultsRow fetchedObjectRow = (ResultsRow) iter.next();
                     InterMineObject fetchedObject = (InterMineObject) fetchedObjectRow.get(0);
-                    System.out.println("Found object: " + fetchedObject);
                     fetched.put(fetchedObject.getId(), fetchedObject);
                 }
                 iter = retval.iterator();

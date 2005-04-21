@@ -607,7 +607,6 @@ public class SqlGenerator
                         ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
                         String alias = (String) aliasEntry.getValue();
                         ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                        System.out.println("Table: " + tableMaster.getType().getName());
                         if (InterMineObject.class.equals(tableMaster.getType())) {
                             fieldToAlias.put("OBJECT", alias);
                             break;
