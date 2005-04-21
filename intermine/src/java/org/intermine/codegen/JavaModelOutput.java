@@ -13,7 +13,9 @@ package org.intermine.codegen;
 import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -200,7 +202,7 @@ public class JavaModelOutput extends ModelOutput
             sb.append(INDENT + "// Ref: " + ref.getClassDescriptor().getName() + "."
                     + ref.getName() + ENDL)
                 .append(INDENT)
-                .append("protected Object ")
+                .append("protected org.intermine.model.InterMineObject ")
                 .append(ref.getName())
                 .append(";" + ENDL);
         }
@@ -334,7 +336,7 @@ public class JavaModelOutput extends ModelOutput
                     sb.append(";" + ENDL);
                 }
                 sb.append(INDENT)
-                    .append("public Object proxGet")
+                    .append("public org.intermine.model.InterMineObject proxGet")
                     .append(StringUtil.capitalise(name))
                     .append("()");
                 if (fieldPresent) {
@@ -391,28 +393,40 @@ public class JavaModelOutput extends ModelOutput
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
         StringBuffer sb = new StringBuffer();
-        Set keyFields = cld.getAllAttributeDescriptors();
+        Set keyFields = cld.getAllFieldDescriptors();
         if (keyFields.size() > 0) {
             sb.append(INDENT)
                 .append("public String toString() { ")
                 .append("return \"")
                 .append(unqualifiedName)
-                .append(" [\"+id+\"] \"");
+                .append(" [");
+            TreeMap sortedMap = new TreeMap();
             Iterator iter = keyFields.iterator();
-            boolean isFirst = true;
             while (iter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) iter.next();
-                if (!"id".equals(field.getName())) {
-                    if (isFirst) {
-                        sb.append(" + ");
-                        isFirst = false;
-                    } else {
-                        sb.append(" + \", \" + ");
-                    }
-                    sb.append("get" + StringUtil.capitalise(field.getName()) + "()");
+                sortedMap.put(field.getName(), field);
+            }
+            iter = sortedMap.entrySet().iterator();
+            boolean needComma = false;
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                FieldDescriptor field = (FieldDescriptor) entry.getValue();
+                if (needComma) {
+                    sb.append(", ");
+                }
+                needComma = true;
+                sb.append(StringUtil.capitalise(field.getName()));
+                if (field instanceof AttributeDescriptor) {
+                    sb.append("=\\\"\" + " + field.getName() + " + \"\\\"");
+                } else if (field instanceof CollectionDescriptor) {
+                    sb.append(":Collection");
+                } else {
+                    sb.append("=\" + (" + field.getName() + " == null ? \"null\" : ("
+                            + field.getName() + ".getId() == null ? \"no id\" : "
+                            + field.getName() + ".getId().toString())) + \"");
                 }
             }
-            sb.append("; }" + ENDL);
+            sb.append("]\"; }" + ENDL);
         }
         return sb.toString();
     }

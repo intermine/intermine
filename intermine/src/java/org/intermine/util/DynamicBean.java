@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import net.sf.cglib.proxy.*;
 
@@ -98,7 +99,8 @@ public class DynamicBean implements MethodInterceptor
                 className.append(TypeUtil.unqualifiedName(clazz.getName()));
             }
             StringBuffer retval = new StringBuffer(className.toString() + " [");
-            Iterator mapIter = map.entrySet().iterator();
+            Map sortedMap = new TreeMap(map);
+            Iterator mapIter = sortedMap.entrySet().iterator();
             needComma = false;
             while (mapIter.hasNext()) {
                 Map.Entry mapEntry = (Map.Entry) mapIter.next();
