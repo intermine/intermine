@@ -12,13 +12,12 @@ package org.intermine.web;
 
 import java.util.Iterator;
 
+import junit.framework.TestCase;
+
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.model.InterMineObject;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for InterMineBag.
