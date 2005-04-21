@@ -398,6 +398,15 @@
       <property name="objectstore.name" value="os.notxmlunittest"/>
     </ant>
   </target>
+
+  <target name="build-db-flatmodeunittest" depends="compile-testmodel">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.flatmodeunittest"/>
+      <property name="objectstore.name" value="os.flatmodeunittest"/>
+    </ant>
+  </target>
   
   <target name="compile-userprofile" depends="precompile-main">
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
@@ -509,6 +518,15 @@
     </ant>
   </target>
 
+  <!-- index the flatmode unittest database -->
+  <target name="create-indexes-flatmodeunittest">
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="os.alias" value="os.flatmodeunittest"/>
+    </ant>
+  </target>
+
   <target name="create-indexes-unittest-attribute">
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
@@ -582,7 +600,7 @@
 
   <!-- run the tests -->
   <target name="test-main" 
-          depends="compile-test, build-db-unittest, create-indexes-unittest, build-db-truncunittest, build-db-notxmlunittest, create-indexes-truncunittest, create-indexes-notxmlunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+          depends="compile-test, build-db-unittest, create-indexes-unittest, build-db-truncunittest, build-db-notxmlunittest, create-indexes-truncunittest, create-indexes-notxmlunittest, build-db-flatmodeunittest, create-indexes-flatmodeunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">

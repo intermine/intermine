@@ -35,6 +35,48 @@ public class PrefetchManager
 
     protected static final int LOADING = 3;
 
+    /*
+     * This class provides methods for cancelling requests, so here is an explanation of how this
+     * magic works.
+     *
+     * The ObjectStore provides a query cancellation system, where you register your thread as
+     * having a request ID, which is any object you choose, and then you run your query as normal.
+     * Another thread can come along and pass that request ID to the objectstore, telling it to
+     * cancel the associated query. The Thread making the request may throw an exception, and
+     * all subsequent actions will throw exceptions until the request ID is deregistered from the
+     * ObjectStore.
+     *
+     * This PrefetchManager messes all of this up, because it uses extra threads to perform
+     * queries, so a thread can be waiting in the PrefetchManager for another thread to finish
+     * a query. The PrefetchManager maps user threads onto action threads - sometimes they will
+     * be the same, but other times they will not.
+     *
+     * The PrefetchManager works with PrefetchManager.Request objects, which represent a unit of
+     * work to perform. These can be used as request ID objects to hand to the ObjectStore. So,
+     * Threads should register request ID objects with this PrefetchManager, in the same way as
+     * with the ObjectStore. When a cancel request comes in, the PrefetchManager will then be able
+     * to match that against a Request object. A request ID matches a PrefetchManager.Request
+     * object if a Thread with that request ID is currently inside the PrefetchManager.doRequest()
+     * method. There are several scenarios:
+     * 1. The thread is doing the work itself, and it is the only one that needs that data.
+     *       -> dead simple, just cancel the request.
+     * 2. The thread is doing the work itself, but there are other threads waiting for the same
+     *    data.
+     *       -> Policy decision to be made. Probably cancel the request, and let the other threads
+     *          start again.
+     * 3. The thread is waiting for another thread to finish the work, and there are no other
+     *    threads waiting for the data.
+     *       -> In this case, the thread that is doing the work is guaranteed to be a prefetch
+     *          thread, so it can just be cancelled.
+     * 4. The thread is waiting for another thread to finish the work, but there are other threads
+     *    waiting for the same data. Another thread waiting for the data will be any thread that
+     *    is inside the doRequest() method with that PrefetchManager.Request object, regardless of
+     *    whether that thread has registered a request ID or not.
+     *      -> The thread that is doing the work may or may not be a prefetch thread. In either
+     *         case, the waiting thread should be kicked out of the doRequest() method without
+     *         jeopardising the thread that is performing the work.
+     */
+
     /**
      * Adds a request to the Set of pending requests, and wakes up a Thread to handle it.
      *

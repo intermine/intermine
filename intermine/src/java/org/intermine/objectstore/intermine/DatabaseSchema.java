@@ -39,6 +39,8 @@ public class DatabaseSchema
     private Model model;
     private List truncated;
     private boolean noNotXml;
+    private boolean flatMode;
+    private Set missingTables;
     
     private Set truncatedSet;
     private Map tableMasterToFieldDescriptors = new HashMap();
@@ -51,13 +53,16 @@ public class DatabaseSchema
      * @param truncated a List of ClassDescriptors representing the truncated classes, in order of
      * decreasing priority.
      * @param noNotXml true if NotXML data should be omitted from every table except InterMineObject
+     * @param missingTables a Set of lowercase table names which are missing
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
     public DatabaseSchema(Model model, List truncated,
-            boolean noNotXml) throws IllegalArgumentException {
+            boolean noNotXml, Set missingTables) throws IllegalArgumentException {
         this.model = model;
         this.truncated = truncated;
-        this.noNotXml = noNotXml;
+        this.missingTables = missingTables;
+        this.noNotXml = noNotXml && (!missingTables.contains("intermineobject"));
+        this.flatMode = noNotXml && missingTables.contains("intermineobject");
         for (int i = 0; i < truncated.size(); i++) {
             Class cA = ((ClassDescriptor) truncated.get(i)).getType();
             for (int o = 0; o < i; o++) {
@@ -117,12 +122,32 @@ public class DatabaseSchema
     }
 
     /**
-     * Returns true if NotXML should be omitted from all tables except the InterMineObject table.
+     * Returns true if NotXML should be omitted from all tables except the InterMineObject table,
+     * and the InterMineObject table is present.
      *
      * @return a boolean
      */
     public boolean isMissingNotXml() {
         return noNotXml;
+    }
+
+    /**
+     * Returns true if the ObjectStore needs to run in flat mode - if notXml is missing and
+     * the InterMineObject table is missing.
+     *
+     * @return a boolean
+     */
+    public boolean isFlatMode() {
+        return flatMode;
+    }
+
+    /**
+     * Returns the Set of table names which are tables missing from the database.
+     *
+     * @return a Set of lowercase Strings
+     */
+    public Set getMissingTables() {
+        return missingTables;
     }
 
     /**

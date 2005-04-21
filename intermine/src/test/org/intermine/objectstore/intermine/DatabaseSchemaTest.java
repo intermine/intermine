@@ -13,6 +13,7 @@ package org.intermine.objectstore.intermine;
 import junit.framework.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class DatabaseSchemaTest extends TestCase
         truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"));
         truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"));
         try {
-            new DatabaseSchema(model, truncated, false);
+            new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -47,7 +48,7 @@ public class DatabaseSchemaTest extends TestCase
         ClassDescriptor company = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         truncated.add(manager);
         truncated.add(employee);
-        DatabaseSchema schema = new DatabaseSchema(model, truncated, false);
+        DatabaseSchema schema = new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET);
 
         assertTrue(schema.isTruncated(manager));
         assertTrue(schema.isTruncated(employee));

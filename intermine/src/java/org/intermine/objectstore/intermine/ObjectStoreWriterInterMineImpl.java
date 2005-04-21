@@ -113,16 +113,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         tableToFieldNameArray = new HashMap();
         tableToReferencesFrom = new HashMap();
         tableToCollections = new HashMap();
-        Iterator missingTableIter = this.os.missingTables.iterator();
-        while (missingTableIter.hasNext()) {
-            String missingTable = (String) missingTableIter.next();
-            try {
-                Statement s = conn.createStatement();
-                s.execute("DROP TABLE " + missingTable);
-                LOG.info("Dropping table " + missingTable);
-            } catch (SQLException e2) {
-            }
-        }
     }
 
     /**
@@ -417,7 +407,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 ClassDescriptor tableMaster = schema.getTableMaster(cld);
                 String tableName = DatabaseUtil.getTableName(tableMaster);
-                if (!os.missingTables.contains(tableName)) {
+                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     if (doDeletes) {
                         batch.deleteRow(c, tableName, "id", o.getId());
                     }
@@ -490,7 +480,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     tableToCollections.put(cld.getName(), collections);
                 }
 
-                if (!os.missingTables.contains(tableName)) {
+                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     Object values[] = new Object[colNames.length];
                     Set validFieldNames = TypeUtil.getFieldInfos(o.getClass()).keySet();
                     for (int colNo = 0; colNo < colNames.length; colNo++) {
@@ -666,7 +656,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 ClassDescriptor tableMaster = schema.getTableMaster(cld);
                 String tableName = DatabaseUtil.getTableName(tableMaster);
-                if (!os.missingTables.contains(tableName)) {
+                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     batch.deleteRow(c, tableName, "id", o.getId());
                 }
             }

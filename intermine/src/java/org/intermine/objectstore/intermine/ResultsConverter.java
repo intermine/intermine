@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,32 +81,38 @@ public class ResultsConverter
                         InterMineObject obj = os.pilferObjectById(idField);
                         if (obj == null) {
                             String objectField = null;
-                            if (!noObjectColumns.contains(node)) {
+                            if (noObjectColumns.contains(node)) {
+                                noObjectColumns.add(node);
+                                if (obj == null) {
+                                    obj = new ProxyReference(os, idField, InterMineObject.class);
+                                    idsToFetch.add(idField);
+                                }
+                            } else {
                                 try {
                                     objectField = sqlResults.getString(alias);
+                                    if (objectField != null) {
+                                        currentColumn = objectField;
+                                        obj = NotXmlParser.parse(objectField, os);
+                                        //if (objectField.length() < ObjectStoreInterMineImpl
+                                        //        .CACHE_LARGEST_OBJECT) {
+                                            os.cacheObjectById(obj.getId(), obj);
+                                        //} else {
+                                        //    LOG.debug("Not cacheing large object " + obj.getId()
+                                        //            + " on read" + " (size = "
+                                        //            + (objectField.length() / 512) + " kB)");
+                                        //}
+                                    }
                                 } catch (SQLException e) {
                                     // Do nothing - it's just a notxml missing. However, to avoid an
                                     // Exception-storm, we should probably stop trying this on
                                     // future rows.
                                     noObjectColumns.add(node);
-                                }
-                                if (objectField != null) {
-                                    currentColumn = objectField;
-                                    obj = NotXmlParser.parse(objectField, os);
-                                    //if (objectField.length() < ObjectStoreInterMineImpl
-                                    //        .CACHE_LARGEST_OBJECT) {
-                                        os.cacheObjectById(obj.getId(), obj);
-                                    //} else {
-                                    //    LOG.debug("Not cacheing large object " + obj.getId()
-                                    //            + " on read" + " (size = "
-                                    //            + (objectField.length() / 512) + " kB)");
-                                    //}
+                                    if (obj == null) {
+                                        obj = new ProxyReference(os, idField, InterMineObject.class);
+                                        idsToFetch.add(idField);
+                                    }
                                 }
                             }
-                        }
-                        if (obj == null) {
-                            obj = new ProxyReference(os, idField, InterMineObject.class);
-                            idsToFetch.add(idField);
                         }
                         row.add(obj);
                     } else {
@@ -126,12 +133,14 @@ public class ResultsConverter
                 q2.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
                             idsToFetch));
                 q2.setDistinct(false);
+                System.out.println("Need objects with IDs: " + idsToFetch);
                 Iterator iter = os.executeWithConnection(c, q2, 0, Integer.MAX_VALUE, false, false,
                         os.getSequence()).iterator();
                 HashMap fetched = new HashMap();
                 while (iter.hasNext()) {
                     ResultsRow fetchedObjectRow = (ResultsRow) iter.next();
                     InterMineObject fetchedObject = (InterMineObject) fetchedObjectRow.get(0);
+                    System.out.println("Found object: " + fetchedObject);
                     fetched.put(fetchedObject.getId(), fetchedObject);
                 }
                 iter = retval.iterator();

@@ -81,8 +81,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Database db;
     protected boolean everOptimise = true;
     protected Set writers = new HashSet();
-    protected Set missingTables = new HashSet();
-    protected Set noObjectTables = new HashSet();
     protected Writer log = null;
     protected DatabaseSchema schema;
     protected Connection logTableConnection = null;
@@ -116,7 +114,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected ObjectStoreInterMineImpl(Database db, Model model) {
         super(model);
         this.db = db;
-        schema = new DatabaseSchema(model, Collections.EMPTY_LIST, false);
+        schema = new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
@@ -213,7 +211,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
 
         String missingTablesString = props.getProperty("missingTables");
-        String noObjectTablesString = props.getProperty("noObjectTables");
         String logfile = props.getProperty("logfile");
         String truncatedClassesString = props.getProperty("truncatedClasses");
         String logTable = props.getProperty("logTable");
@@ -258,21 +255,16 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     throw new ObjectStoreException("Invalid value for property noNotXml: "
                             + noNotXmlString);
                 }
-                DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses,
-                        noNotXml);
-                os = new ObjectStoreInterMineImpl(database, databaseSchema);
+                HashSet missingTables = new HashSet();
                 if (missingTablesString != null) {
                     String tables[] = missingTablesString.split(",");
                     for (int i = 0; i < tables.length; i++) {
-                        os.missingTables.add(tables[i]);
+                        missingTables.add(tables[i].toLowerCase());
                     }
                 }
-                if (noObjectTablesString != null) {
-                    String tables[] = noObjectTablesString.split(",");
-                    for (int i = 0; i < tables.length; i++) {
-                        os.noObjectTables.add(tables[i]);
-                    }
-                }
+                DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses,
+                        noNotXml, missingTables);
+                os = new ObjectStoreInterMineImpl(database, databaseSchema);
                 if (logfile != null) {
                     try {
                         FileWriter fw = new FileWriter(logfile, true);

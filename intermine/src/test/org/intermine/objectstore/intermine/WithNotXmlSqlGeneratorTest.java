@@ -213,7 +213,7 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() {
-        return new DatabaseSchema(model, Collections.EMPTY_LIST, false);
+        return new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";
