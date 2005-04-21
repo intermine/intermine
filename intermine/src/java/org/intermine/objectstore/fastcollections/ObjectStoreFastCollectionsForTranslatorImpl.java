@@ -102,6 +102,15 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     }
 
     /**
+     * Returns the doneAlready Set, for logging purposes
+     *
+     * @return an IntPresentSet
+     */
+    public IntPresentSet getDoneAlready() {
+        return doneAlready;
+    }
+
+    /**
      * @see ObjectStore#execute(Query)
      */
     public Results execute(Query q) throws ObjectStoreException {
