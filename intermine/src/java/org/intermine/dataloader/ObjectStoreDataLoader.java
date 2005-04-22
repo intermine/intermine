@@ -127,8 +127,10 @@ public class ObjectStoreDataLoader extends DataLoader
             iw.commitTransaction();
             iw.close();
         } catch (RuntimeException e) {
-            LOG.error("Exception while dataloading - doneAlreadyMap = "
-                    + ((ObjectStoreFastCollectionsForTranslatorImpl) os).getDoneAlready(), e);
+            if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
+                LOG.error("Exception while dataloading - doneAlreadyMap = "
+                        + ((ObjectStoreFastCollectionsForTranslatorImpl) os).getDoneAlready(), e);
+            }
             throw e;
         }
     }
