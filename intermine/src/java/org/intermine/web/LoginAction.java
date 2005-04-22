@@ -65,10 +65,9 @@ public class LoginAction extends InterMineAction
         if (pm.hasProfile(lf.getUsername())) {
             profile = pm.getProfile(lf.getUsername(), lf.getPassword());
         } else {
-            profile = new Profile(pm, lf.getUsername(),
+            profile = new Profile(pm, lf.getUsername(), lf.getPassword(),
                                   new HashMap(), new HashMap(), new HashMap());
             pm.saveProfile(profile);
-            pm.setPassword(lf.getUsername(), lf.getPassword());
         }
         session.setAttribute(Constants.PROFILE, profile);
         

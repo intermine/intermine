@@ -48,7 +48,7 @@ public class PathQueryBinding
      * @param modelName the model name
      * @return the corresponding XML String
      */
-    public String marshal(PathQuery query, String queryName, String modelName) {
+    public static String marshal(PathQuery query, String queryName, String modelName) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
@@ -70,8 +70,8 @@ public class PathQueryBinding
      * @param modelName the model name
      * @param writer the xml stream writer to write to
      */
-    public void marshal(PathQuery query, String queryName, String modelName, 
-                                                                XMLStreamWriter writer) {
+    public static void marshal(PathQuery query, String queryName, String modelName, 
+                               XMLStreamWriter writer) {
         try {
             writer.writeStartElement("query");
             writer.writeAttribute("name", queryName);

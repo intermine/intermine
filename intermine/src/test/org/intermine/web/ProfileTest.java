@@ -38,7 +38,8 @@ public class ProfileTest extends TestCase
     }
 
     public void testModifySavedMaps() throws Exception {
-        Profile profile = new Profile(null, "bob", new HashMap(), new HashMap(), new HashMap());
+        Profile profile = new Profile(null, "bob", "pass",
+                                      new HashMap(), new HashMap(), new HashMap());
 
         try {
             profile.getSavedQueries().put("query0", null);
@@ -54,7 +55,8 @@ public class ProfileTest extends TestCase
     }
 
     public void testSaveNoManager() throws Exception {
-        Profile profile = new Profile(null, "bob", new HashMap(), new HashMap(), new HashMap());
+        Profile profile = new Profile(null, "bob", "pass",
+                                      new HashMap(), new HashMap(), new HashMap());
         profile.saveQuery("query1", query);
         profile.saveBag("bag1", bag);
         profile.saveTemplate("template", template);
@@ -74,7 +76,7 @@ public class ProfileTest extends TestCase
         Map tmpls = new HashMap();
         tmpls.put("tmpl1", template);
         
-        Profile profile = new Profile(null, "bob", queries, bags, tmpls);
+        Profile profile = new Profile(null, "bob", "pass", queries, bags, tmpls);
         profile.deleteQuery("query1");
         profile.deleteBag("bag1");
         profile.deleteTemplate("tmpl1");
@@ -86,7 +88,7 @@ public class ProfileTest extends TestCase
 
     public void testSaveWithManager() throws Exception {
         ProfileManager profileManager = new DummyProfileManager(null);
-        Profile profile = new Profile(profileManager, "bob",
+        Profile profile = new Profile(profileManager, "bob", "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
         try {
@@ -119,7 +121,7 @@ public class ProfileTest extends TestCase
     
     public void testDeleteWithManager() throws Exception {
         ProfileManager profileManager = new DummyProfileManager(null);
-        Profile profile = new Profile(profileManager, "bob",
+        Profile profile = new Profile(profileManager, "bob", "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
         try {

@@ -152,7 +152,7 @@ public class FeedbackForm extends ValidatorForm
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query != null) {
             msg += "\n\n---- Current query: ----\n\n";
-            msg += new PathQueryBinding().marshal(query, "", query.getModel().getName());
+            msg += PathQueryBinding.marshal(query, "", query.getModel().getName());
         }
         return msg;
     }

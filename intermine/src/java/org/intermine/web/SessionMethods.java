@@ -358,7 +358,8 @@ public class SessionMethods
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         session.setAttribute(Constants.PROFILE,
-                             new Profile(pm, null, new HashMap(), new HashMap(), new HashMap()));
+                             new Profile(pm, null, null,
+                                         new HashMap(), new HashMap(), new HashMap()));
         session.setAttribute(Constants.COLLAPSED, new HashMap());
         session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectFactory(session));
     }
