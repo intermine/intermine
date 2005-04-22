@@ -27,6 +27,7 @@ public class IntToIntMapTest extends TestCase
         assertEquals(7643, map.get(30000));
         assertEquals(-1, map.get(0));
         assertEquals(2, map.size());
+        assertEquals("{4 -> 6, 30000 -> 7643}", map.toString());
 
         map.put(new Integer(4), null);
         map.put(30000, -1);
@@ -35,5 +36,6 @@ public class IntToIntMapTest extends TestCase
         assertEquals(-1, map.get(30000));
         assertEquals(-1, map.get(0));
         assertEquals(0, map.size());
+        assertEquals("{}", map.toString());
     }
 }
