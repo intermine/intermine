@@ -24,6 +24,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
@@ -244,11 +245,34 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         }
                         // materialise proxies before searching for this field
                         if (obj instanceof ProxyReference) {
-                             obj = ((ProxyReference) obj).getObject();
+                            ProxyReference newproxy = (ProxyReference) obj;
+                            obj = ((ProxyReference) obj).getObject();
+                            if (obj == null) {
+                                 LOG.error("obj is null ");
+                                 LOG.error ("o "+ o);
+                                 LOG.error("proxyId " + newproxy.getId());
+                                 LOG.error("proxy " + newproxy);
+                                 ObjectStore os = newproxy.getObjectStore();
+                                 os.invalidateObjectById(newproxy.getId());
+                                 obj = newproxy.getObject();
+                                 LOG.error("obj: " + obj);
+                             }
+
                         }
-                        if (getModel().getFieldDescriptorsForClass(obj.getClass())
+                        try {
+                            if (getModel().getFieldDescriptorsForClass(obj.getClass())
                                 .containsKey(fieldName)) {
-                            sortedEquivalentObjects.add(obj);
+                                sortedEquivalentObjects.add(obj);
+                            }
+                        } catch (RuntimeException e) {
+                             LOG.error("fieldName " + fieldName);
+                             LOG.error ("o "+ o);
+                             LOG.error("id " + obj.getId());
+                             LOG.error("obj " + obj);
+                             LOG.error("obj.getClass() "+ obj.getClass());
+                             LOG.error("desc " + getModel().getFieldDescriptorsForClass(obj.getClass()));
+                             LOG.error("error " , e);
+                             throw e;
                         }
                     }
                     fieldToEquivalentObjects.put(field, sortedEquivalentObjects);
