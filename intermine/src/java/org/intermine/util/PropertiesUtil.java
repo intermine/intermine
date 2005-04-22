@@ -43,7 +43,9 @@ public class PropertiesUtil
             is = PropertiesUtil.class.getClassLoader()
                 .getResourceAsStream("intermine.properties");
 
-            if (is != null) {
+            if (is == null) {
+                throw new RuntimeException("intermine.properties is not in the classpath");
+            } else {
                 globalProperties.load(is);
             }
 
