@@ -11,7 +11,9 @@ package org.intermine.util;
  */
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * This is a map that maps from int to int. All non-existent mappings automatically map onto -1 - 
@@ -138,5 +140,31 @@ public class IntToIntMap
     public void clear() {
         pages.clear();
         size = 0;
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        StringBuffer retval = new StringBuffer("{");
+        boolean needComma = false;
+        TreeSet sortedKeys = new TreeSet(pages.keySet());
+        Iterator keyIter = sortedKeys.iterator();
+        while (keyIter.hasNext()) {
+            Integer pageNo = (Integer) keyIter.next();
+            int pageNoInt = pageNo.intValue();
+            int[] page = (int[]) pages.get(pageNo);
+            for (int i = 0; i < PAGE_SIZE; i++) {
+                if (page[i] != -1) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    retval.append((pageNoInt + i) + " -> " + page[i]);
+                }
+            }
+        }
+        retval.append("}");
+        return retval.toString();
     }
 }

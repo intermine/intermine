@@ -28,6 +28,7 @@ public class IntPresentSetTest extends TestCase
         assertTrue(set.contains(42));
         assertTrue(set.contains(28673452));
         assertFalse(set.contains(63));
+        assertEquals("[42, 28673452]", set.toString());
 
         set.set(42, true);
 
@@ -35,6 +36,7 @@ public class IntPresentSetTest extends TestCase
         assertTrue(set.contains(42));
         assertTrue(set.contains(28673452));
         assertFalse(set.contains(63));
+        assertEquals("[42, 28673452]", set.toString());
 
         set.set(42, false);
 
@@ -42,6 +44,7 @@ public class IntPresentSetTest extends TestCase
         assertFalse(set.contains(42));
         assertTrue(set.contains(28673452));
         assertFalse(set.contains(63));
+        assertEquals("[28673452]", set.toString());
     }
 }
 

@@ -11,7 +11,9 @@ package org.intermine.util;
  */
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * This is a set of ints. This class provides methods to insert an int, check for the presence of a
@@ -138,6 +140,40 @@ public class IntPresentSet
     public void clear() {
         pages.clear();
         size = 0;
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        StringBuffer retval = new StringBuffer("[");
+        boolean needComma = false;
+        TreeSet sortedKeys = new TreeSet(pages.keySet());
+        Iterator keyIter = sortedKeys.iterator();
+        while (keyIter.hasNext()) {
+            Integer pageNo = (Integer) keyIter.next();
+            int pageNoInt = pageNo.intValue();
+            int[] page = (int[]) pages.get(pageNo);
+            for (int wordNo = 0; wordNo < PAGE_SIZE; wordNo++) {
+                int word = page[wordNo];
+                if (word != 0) {
+                    int bitMask = 1;
+                    for (int bitNo = 0; bitNo < WORD_SIZE; bitNo++) {
+                        if ((word & bitMask) != 0) {
+                            if (needComma) {
+                                retval.append(", ");
+                            }
+                            needComma = true;
+                            retval.append(Integer.toString((pageNoInt * PAGE_SIZE + wordNo)
+                                        * WORD_SIZE + bitNo));
+                        }
+                        bitMask <<= 1;
+                    }
+                }
+            }
+        }
+        retval.append("]");
+        return retval.toString();
     }
 }
 
