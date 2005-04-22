@@ -46,7 +46,12 @@ public class JavaModelOutput extends ModelOutput
             if (!"org.intermine.model.InterMineObject".equals(cldName)) {
                 String pkg = TypeUtil.packageName(cldName);
                 String cls = TypeUtil.unqualifiedName(cld.getName());
-                File dir = new File(file, pkg.replaceAll("[.]", File.separator));
+                String separator = File.separator;
+                // Escape windows path seperator
+                if (separator.equals("\\")) {
+                    separator = "\\\\";
+                }
+                File dir = new File(file, pkg.replaceAll("[.]", separator));
                 dir.mkdirs();
                 File path = new File(dir, cls + ".java");
                 initFile(path);
