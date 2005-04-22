@@ -258,7 +258,7 @@ public class Model
     /**
      * Takes a Class, and generates a Set of all ClassDescriptors that are the Class
      * or any of its parents. The Class may be a dynamic class - ie not in the model, although
-     * all its parents are in the model.
+     * at least one of its parents are in the model.
      *
      * @param c a Class
      * @return a Set of ClassDescriptor objects
@@ -304,7 +304,7 @@ public class Model
     /**
      * Takes a Class, and generates a Map of all FieldDescriptors that are the class fields
      * or any of its parents. The Class may be a dynamic class - ie not in the model, although
-     * all its parents are in the model.
+     * at least one of its parents are in the model.
      *
      * @param c a Class
      * @return a Map of FieldDescriptor objects
