@@ -24,7 +24,7 @@ public class WebConfigTest extends TestCase
     }
 
     public void testParse() throws Exception{
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/WebConfigTest.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("WebConfigTest.xml");
         WebConfig wc1 = WebConfig.parse(is, Model.getInstanceByName("testmodel"));
 
         Displayer employeeDisplayer = new Displayer();

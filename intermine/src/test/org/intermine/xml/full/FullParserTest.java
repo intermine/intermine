@@ -84,7 +84,7 @@ public class FullParserTest extends TestCase
     }
 
     public void testParse() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("FullParserTest.xml");
         assertEquals(exampleItems, FullParser.parse(is));
     }
 

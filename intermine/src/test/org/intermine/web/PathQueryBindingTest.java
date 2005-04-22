@@ -40,7 +40,7 @@ public class PathQueryBindingTest extends TestCase
     }
 
     public void testProcess() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/PathQueryBindingTest.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
         Map savedQueries = queryBinding.unmarshal(new InputStreamReader(is));
 
         Map expected = new LinkedHashMap();

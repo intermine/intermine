@@ -80,7 +80,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
     public static Collection setUpData() throws Exception {
         XmlBinding binding = new XmlBinding(model);
-        return (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"));
+        return (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("testmodel_data.xml"));
     }
 
     public static void main(String[] args) throws Exception {
