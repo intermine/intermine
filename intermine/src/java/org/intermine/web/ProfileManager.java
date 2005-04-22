@@ -11,22 +11,29 @@ package org.intermine.web;
  */
 
 import java.io.StringReader;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.HashSet;
-import org.apache.log4j.Logger;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.UserProfile;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -67,7 +74,7 @@ public class ProfileManager
      * @return true if a profile exists
      */
     public boolean hasProfile(String username) {
-        return getProfile(username) != null;
+        return getUserProfile(username) != null;
     }
 
     /**
@@ -78,7 +85,7 @@ public class ProfileManager
      * @return true if password is valid
      */
     public boolean validPassword(String username, String password) {
-        return getProfile(username).getPassword().equals(password);
+        return getUserProfile(username).getPassword().equals(password);
     }
 
     /**
@@ -87,8 +94,8 @@ public class ProfileManager
      * @param username the username
      * @param password the password
      */
-    public void setPassword(String username, String password) {
-        UserProfile userProfile = getProfile(username);
+    private void setPassword(String username, String password) {
+        UserProfile userProfile = getUserProfile(username);
         userProfile.setPassword(password);
         try {
             osw.store(userProfile);
@@ -104,58 +111,73 @@ public class ProfileManager
      * @return password the password
      */
     public String getPassword(String username) {
-        UserProfile userProfile = getProfile(username);
+        UserProfile userProfile = getUserProfile(username);
         return userProfile.getPassword();
     }
 
     /**
-     * Get a user's Profile
+     * Get a user's Profile using a username and password.
      * @param username the username
      * @param password the password
      * @return the Profile, or null if one doesn't exist
      */
     public Profile getProfile(String username, String password) {
-        Profile profile = null;
         if (hasProfile(username) && validPassword(username, password)) {
-            UserProfile userProfile = getProfile(username);
-            Map savedBags = new HashMap();
-            for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
-                SavedBag bag = (SavedBag) i.next();
-                try {
-                    savedBags.putAll(bagBinding.unmarshal(new StringReader(bag.getBag()), os));
-                } catch (Exception _) {
-                    // Ignore rows that don't unmarshal (they probably reference
-                    // another model.
-                    LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
-                }
-            }
-            Map savedQueries = new HashMap();
-            for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
-                SavedQuery query = (SavedQuery) i.next();
-                try {
-                    savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
-                } catch (Exception _) {
-                    // Ignore rows that don't unmarshal (they probably reference
-                    // another model.
-                    LOG.warn("Failed to unmarshal saved query: " + query.getQuery());
-                }
-            }
-            Map savedTemplates = new HashMap();
-            for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); i.hasNext();) {
-                SavedTemplateQuery template = (SavedTemplateQuery) i.next();
-                try {
-                    savedTemplates.putAll(
-                        templateBinding.unmarshal(new StringReader(template.getTemplateQuery())));
-                } catch (Exception _) {
-                    // Ignore rows that don't unmarshal (they probably reference
-                    // another model.
-                    LOG.warn("Failed to unmarshal saved template query: "
-                              + template.getTemplateQuery());
-                }
-            }
-            profile = new Profile(this, username, savedQueries, savedBags, savedTemplates);
+            return getProfile(username);
+        } else {
+            return null;
         }
-        return profile;
+    }
+
+    /**
+     * Get a user's Profile using a username
+     * @param username the username
+     * @return the Profile, or null if one doesn't exist
+     */
+    public Profile getProfile(String username) {
+        UserProfile userProfile = getUserProfile(username);
+
+        if (userProfile == null) {
+            return null;
+        }
+
+        Map savedBags = new HashMap();
+        for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
+            SavedBag bag = (SavedBag) i.next();
+            try {
+                savedBags.putAll(InterMineBagBinding.unmarshal(new StringReader(bag.getBag()), os));
+            } catch (Exception _) {
+                // Ignore rows that don't unmarshal (they probably reference
+                // another model.
+                LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
+            }
+        }
+        Map savedQueries = new HashMap();
+        for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
+            SavedQuery query = (SavedQuery) i.next();
+            try {
+                savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
+            } catch (Exception _) {
+                // Ignore rows that don't unmarshal (they probably reference
+                // another model.
+                LOG.warn("Failed to unmarshal saved query: " + query.getQuery());
+            }
+        }
+        Map savedTemplates = new HashMap();
+        for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); i.hasNext();) {
+            SavedTemplateQuery template = (SavedTemplateQuery) i.next();
+            try {
+                StringReader sr = new StringReader(template.getTemplateQuery());
+                savedTemplates.putAll(templateBinding.unmarshal(sr));
+            } catch (Exception _) {
+                // Ignore rows that don't unmarshal (they probably reference
+                // another model.
+                LOG.warn("Failed to unmarshal saved template query: "
+                         + template.getTemplateQuery());
+            }
+        }
+        return new Profile(this, username, userProfile.getPassword(), savedQueries, savedBags,
+                           savedTemplates);
     }
     
     /**
@@ -168,7 +190,7 @@ public class ProfileManager
             try {
                 UserProfile userProfile = null;
                 if (hasProfile(username)) {
-                    userProfile = getProfile(username);
+                    userProfile = getUserProfile(username);
                     for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
                         osw.delete((InterMineObject) i.next());
                     }
@@ -184,6 +206,7 @@ public class ProfileManager
                 } else {
                     userProfile = new UserProfile();
                     userProfile.setUsername(username);
+                    userProfile.setPassword(profile.getPassword());
                 }
 
                 for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
@@ -208,7 +231,7 @@ public class ProfileManager
                         String queryName = (String) entry.getKey();
                         query = (PathQuery) entry.getValue();
                         SavedQuery savedQuery = new SavedQuery();
-                        savedQuery.setQuery(queryBinding.marshal(query, queryName,
+                        savedQuery.setQuery(PathQueryBinding.marshal(query, queryName,
                                                                  os.getModel().getName()));
                         savedQuery.setUserProfile(userProfile);
                         osw.store(savedQuery);
@@ -237,6 +260,8 @@ public class ProfileManager
                 throw new RuntimeException(e);
             }
         }
+
+        setPassword(username, profile.getPassword());
     }
     
     /**
@@ -244,7 +269,7 @@ public class ProfileManager
      * @param username the username
      * @return the relevant UserProfile
      */
-    protected UserProfile getProfile(String username) {
+    protected UserProfile getUserProfile(String username) {
         UserProfile profile = new UserProfile();
         profile.setUsername(username);
         Set fieldNames = new HashSet();
@@ -255,5 +280,30 @@ public class ProfileManager
             throw new RuntimeException("Unable to load user profile", e);
         }
         return profile;
+    }
+
+    /**
+     * Return a List of the username in all of the stored profiles.
+     * @return the usernames
+     */
+    public List getProfileUserNames() {
+        Query q = new Query();
+        QueryClass qcUserProfile = new QueryClass(UserProfile.class);
+        QueryField qfUserName = new QueryField(qcUserProfile, "username");
+        q.addFrom(qcUserProfile);
+        q.addToSelect(qfUserName);
+
+        Results res = new Results(q, osw, osw.getSequence());
+
+        List usernames = new ArrayList();
+
+        Iterator resIter = res.iterator();
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            usernames.add(rr.get(0));
+        }
+
+        return usernames;
     }
 }

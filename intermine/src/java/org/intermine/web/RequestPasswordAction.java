@@ -71,9 +71,8 @@ public class RequestPasswordAction extends InterMineAction
             String password = generatePassword();
             successful = email(username, password, webProperties);
             if (successful) {
-                pm.saveProfile(
-                        new Profile(pm, username, new HashMap(), new HashMap(), new HashMap()));
-                pm.setPassword(username, password);
+                pm.saveProfile(new Profile(pm, username, password,
+                                           new HashMap(), new HashMap(), new HashMap()));
             }
         }
 

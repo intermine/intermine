@@ -39,7 +39,6 @@ public class LoadDefaultTemplatesTask extends Task
     
     protected String xmlFile;
     protected String username;
-    protected String alias;
     
     /**
      * Set the templates xml file.
@@ -76,10 +75,10 @@ public class LoadDefaultTemplatesTask extends Task
             Profile profile = null;
             if (!pm.hasProfile(username)) {
                 LOG.info("Creating profile for " + username);
-                profile = new Profile(pm, username, new HashMap(), new HashMap(), new HashMap());
                 String password = RequestPasswordAction.generatePassword();
+                profile = new Profile(pm, username, password,
+                                      new HashMap(), new HashMap(), new HashMap());
                 pm.saveProfile(profile);
-                pm.setPassword(username, password);
             } else {
                 LOG.warn("Profile for " + username + ", clearing template queries");
                 profile = pm.getProfile(username, pm.getPassword(username));

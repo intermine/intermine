@@ -40,7 +40,7 @@ public class TemplateQueryBinding
      * @param template theTemplateQuery
      * @param writer the XMLStreamWriter to write to
      */
-    public void marshal(TemplateQuery template, XMLStreamWriter writer) {
+    public static void marshal(TemplateQuery template, XMLStreamWriter writer) {
         try {
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
