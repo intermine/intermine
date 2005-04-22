@@ -142,7 +142,7 @@ public class XmlDataLoaderTest extends TestCase
     /*
     public void testStoreFromFile() throws Exception {
         XmlDataLoader dl = new XmlDataLoader(iw);
-        InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+        InputStream testData = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
         dl.processXml(testData);
 
         // Just test that a specific Company is there

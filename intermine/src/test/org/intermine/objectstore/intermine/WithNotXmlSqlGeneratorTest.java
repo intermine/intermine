@@ -188,11 +188,11 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results.put("OrderByReference", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", Collections.singleton("Employee"));
 
-        String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/withNotXmlLargeBag.sql"))).readLine();
+        String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("withNotXmlLargeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);
         results2.put("LargeBagConstraint", Collections.singleton("Employee"));
 
-        String largeNotBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/withNotXmlLargeNotBag.sql"))).readLine();
+        String largeNotBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("withNotXmlLargeNotBag.sql"))).readLine();
         results.put("LargeBagNotConstraint", largeNotBagConstraintText);
         results2.put("LargeBagNotConstraint", Collections.singleton("Employee"));
 

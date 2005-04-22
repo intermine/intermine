@@ -39,13 +39,13 @@ public class XmlBindingTest extends XMLTestCase {
 
 
     public void testRoundTrip() throws Exception {
-        InputStream original = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+        InputStream original = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
         XMLUnit.setIgnoreWhitespace(true);
         Collection unmarshalled = (Collection) binding.unmarshal(original);
         setIds(unmarshalled);
         binding.marshal(unmarshalled, new BufferedWriter(new FileWriter(tempFile)));
 
-        original = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+        original = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
         assertXMLEqual(new InputStreamReader(original), new FileReader(tempFile));
     }
 

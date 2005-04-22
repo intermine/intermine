@@ -58,7 +58,7 @@ public class ProfileBindingTest extends TestCase
         XmlBinding binding = new XmlBinding(osw.getModel());
 
         InputStream is =
-            getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+            getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
 
         List objects = (List) binding.unmarshal(is);
 
@@ -108,7 +108,7 @@ public class ProfileBindingTest extends TestCase
         }
 
         InputStream is =
-            getClass().getClassLoader().getResourceAsStream("test/ProfileBindingTest.xml");
+            getClass().getClassLoader().getResourceAsStream("ProfileBindingTest.xml");
         BufferedReader bis = new BufferedReader(new InputStreamReader(is));
 
         String expectedXml = bis.readLine().trim();

@@ -37,7 +37,7 @@ public class ItemWriterTestCase extends TestCase {
     }
 
     public void setUp() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("FullParserTest.xml");
         List xmlItems = FullParser.parse(is);
         Iterator iter = xmlItems.iterator();
         while (iter.hasNext()) {

@@ -67,7 +67,7 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderItems() throws Exception {
         String generated = FullRenderer.render(getExampleItems());
-        InputStream expected = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
+        InputStream expected = getClass().getClassLoader().getResourceAsStream("FullParserTest.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(new InputStreamReader(expected), new StringReader(generated));

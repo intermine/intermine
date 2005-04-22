@@ -42,7 +42,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
         items = FullParser.parse(is);
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         ObjectStoreItemWriter itemWriter = new ObjectStoreItemWriter(osw);

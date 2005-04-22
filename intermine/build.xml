@@ -169,7 +169,6 @@
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
     <pathelement path="${build.java}"/>
-    <pathelement path="${build.resources}"/>
     <fileset dir="${lib}">
       <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
@@ -271,7 +270,6 @@
         <include name="**/*"/>
       </fileset>
     </copy>
-    <copy file="${runtime.properties.local}" tofile="${build.resources.test}/intermine.properties"/>
   </target>
 
   <target name="prepare-dist">
@@ -436,7 +434,7 @@
   </target>
 
   <!-- insert the testmodel data into the database -->
-  <target name="insert-data-unittest" depends="build-db-unittest">
+  <target name="insert-data-unittest" depends="prepare-test, build-db-unittest">
     <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
@@ -587,6 +585,7 @@
         <pathelement path="${build.java}"/>
       </classpath>
     </depend>
+    <copy file="${runtime.properties.local}" tofile="${build.resources.test}/intermine.properties"/>
   </target>
 
   <target name="compile-test" depends="prepare-test"
@@ -600,7 +599,7 @@
 
   <!-- run the tests -->
   <target name="test-main" 
-          depends="compile-test, build-db-unittest, create-indexes-unittest, build-db-truncunittest, build-db-notxmlunittest, create-indexes-truncunittest, create-indexes-notxmlunittest, build-db-flatmodeunittest, create-indexes-flatmodeunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+          depends="prepare-test, compile-test, build-db-unittest, create-indexes-unittest, build-db-truncunittest, build-db-notxmlunittest, create-indexes-truncunittest, create-indexes-notxmlunittest, build-db-flatmodeunittest, create-indexes-flatmodeunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
@@ -625,6 +624,7 @@
 
   <!-- run cachemap test in a separate jvm with memory limit -->
   <target name="test-cachemap" 
+          depends="prepare-test"
           description="perform cache map test in a separate jvm" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <jvmarg value="-Xmx200M"/>
@@ -649,7 +649,7 @@
   </target>
 
   <target name="test-webapp"
-          depends="compile-webapp, insert-data-unittest, build-testable-webapp, build-db-userprofile, compile-webapp-tests"
+          depends="prepare-test, compile-webapp, insert-data-unittest, build-testable-webapp, build-db-userprofile, compile-webapp-tests"
           description="perform JUnit tests on web application" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
@@ -667,7 +667,8 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="test-webservice" depends="compile-test, build-db-unittest, build-testable-webservice, release-webservice"
+  <target name="test-webservice" 
+          depends="prepare-test, compile-test, build-db-unittest, build-testable-webservice, release-webservice"
           description="perform JUnit tests on web service" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
@@ -693,7 +694,7 @@
   </target>
   
   <target name="inctest" 
-          depends="prepare,compile-userprofile,test-main,test-webapp"
+          depends="prepare, prepare-test, compile-userprofile,test-main,test-webapp"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate InterMine coding standards" if="checkstyle.failure"/>
