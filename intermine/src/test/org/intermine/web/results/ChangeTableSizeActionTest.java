@@ -26,9 +26,9 @@ import org.intermine.util.DynamicUtil;
 
 import servletunit.struts.MockStrutsTestCase;
 
-public class ChangeResultsSizeActionTest extends MockStrutsTestCase
+public class ChangeTableSizeActionTest extends MockStrutsTestCase
 {
-    public ChangeResultsSizeActionTest(String arg1) {
+    public ChangeTableSizeActionTest(String arg1) {
         super(arg1);
     }
 
@@ -206,7 +206,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 //         assertEquals(company2, iter.next());
 //     }
 
-    class MockChangeResultsForm extends ChangeResultsSizeForm
+    class MockChangeResultsForm extends ChangeTableSizeForm
     {
         public void reset(ActionMapping mapping, HttpServletRequest request) {
         }

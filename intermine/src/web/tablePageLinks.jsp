@@ -33,7 +33,7 @@
     </c:choose>
     <c:choose>
       <c:when test="${!resultsTable.lastPage && resultsTable.maxRetrievableIndex > resultsTable.size}">
-        <html:link action="/changeResults?table=${param.table}&amp;method=last&amp;trail=${param.trail}">
+        <html:link action="/changeTable?table=${param.table}&amp;method=last&amp;trail=${param.trail}">
           <fmt:message key="results.last"/>
         </html:link>
       </c:when>

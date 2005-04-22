@@ -29,7 +29,7 @@ import org.intermine.web.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
-public class ChangeResultsAction extends DispatchAction
+public class ChangeTableAction extends DispatchAction
 {
     /**
      * Change to the last results page

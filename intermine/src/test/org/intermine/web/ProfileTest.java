@@ -31,7 +31,7 @@ public class ProfileTest extends TestCase
 
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        bag = new InterMineBag(null);
+        bag = new InterMineBag();
         template = new TemplateQuery("template", "tdesc", "tcat",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");

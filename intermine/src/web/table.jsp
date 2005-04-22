@@ -32,7 +32,7 @@
     }
     function changePageSize() {
       var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
-      var pagesize = document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value;
+      var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
       var page = ${resultsTable.startRow}/pagesize;
       url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
       if ('${param.trail}' != '')
@@ -52,7 +52,7 @@
   </c:when>
   <c:otherwise>
   
-    <html:form action="/changeResultsSize">
+    <html:form action="/changeTableSize">
       <div class="body">
         <%-- Page size controls --%>
         <fmt:message key="results.changepagesize"/>
@@ -121,7 +121,7 @@
                       <fmt:param value="${column.name}"/>
                     </fmt:message>
                     <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
-                    <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
+                    <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${moveLeftTitle}">
                       <img style="margin-right: 5px" border="0" align="middle"
                            width="13" height="13" src="images/left-arrow-square.gif" 
@@ -137,7 +137,7 @@
                       <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
                         <fmt:param value="${column.name}"/>
                       </fmt:message>
-                      <html:link action="/changeResults?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+                      <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                  title="${hideColumnTitle}">
                         <fmt:message key="results.hideColumn"/>
                       </html:link>
@@ -147,7 +147,7 @@
                     <fmt:message key="results.showColumnHelp" var="showColumnTitle">
                       <fmt:param value="${column.name}"/>
                     </fmt:message>
-                    <html:link action="/changeResults?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+                    <html:link action="/changeTable?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${showColumnTitle}">
                       <fmt:message key="results.showColumn"/>
                     </html:link>
@@ -170,7 +170,7 @@
                       <fmt:param value="${column.name}"/>
                     </fmt:message>
                     <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
-                    <html:link action="/changeResults?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+                    <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${moveRightTitle}">
                       <img style="margin-left: 5px" border="0" align="middle" 
                            width="13" height="13"
