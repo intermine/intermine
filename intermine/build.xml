@@ -106,7 +106,7 @@
   <patternset id="lib.uml">
     <include name="nsuml*.jar" />
   </patternset>
-  
+
 
   <!-- Libraries relevant to building from AceDB models and data -->
   <patternset id="lib.acedb">
@@ -206,7 +206,7 @@
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/xmlschematest"/>
     <pathelement location="${build.model}/test"/>
-    
+
   </path>
 
   <path id="acedbtest.class.path">
@@ -220,7 +220,7 @@
       <include name="intermine.war"/>
     </fileset>
   </path>
-  
+
   <path id="debug.src.path">
     <pathelement path="${src.java}"/>
     <pathelement path="${src.webapp}"/>
@@ -233,7 +233,7 @@
       <format property="YEAR" pattern="yyyy"/>
       <format property="DTSTAMP" pattern="yyyyMMddHHmm"/>
     </tstamp>
-    
+
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
@@ -257,7 +257,7 @@
     <mkdir dir="${tutorial}/model/tutorial/resources"/>
     <mkdir dir="${tutorial}/resources"/>
     <mkdir dir="${tutorial}/src/java/org/intermine/tutorial"/>
-    
+
     <filter token="LOG_DIR" value="${basedir}"/>
     <copy todir="${build.resources}" filtering="true" overwrite="true">
       <fileset dir="${resources}/runtime"/>
@@ -346,11 +346,11 @@
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
       <src path="${src.java}"/>
-      <exclude name="org/intermine/web/**"/> 
-      <exclude name="org/intermine/tutorial/**"/> 
+      <exclude name="org/intermine/web/**"/>
+      <exclude name="org/intermine/tutorial/**"/>
     </javac>
   </target>
-  
+
 
   <!-- Models to build -->
 
@@ -405,7 +405,7 @@
       <property name="objectstore.name" value="os.flatmodeunittest"/>
     </ant>
   </target>
-  
+
   <target name="compile-userprofile" depends="precompile-main">
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="userprofile"/>
@@ -431,6 +431,14 @@
     </taskdef>
     <insert-default-templates templatesXml="model/testmodel/resources/web/template-queries.xml"
                               username="${webapp.superuser}"/>
+  </target>
+
+  <!-- read the userprofile database and write it to a file as XML -->
+  <target name="write-userprofile-xml" depends="compile-main, compile-webapp">
+    <taskdef name="write-userprofile-xml" classname="org.intermine.web.task.ProfileWriteTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
   </target>
 
   <!-- insert the testmodel data into the database -->
@@ -478,7 +486,7 @@
   </target>
 
   <!-- make pre-computed tables for testmodel template queries -->
-  <target name="precompute-testmodel-templates" 
+  <target name="precompute-testmodel-templates"
           depends="compile-main, compile-userprofile, compile-testmodel, compile-webapp">
     <ant antfile="build-model.xml" target="precompute-templates" inheritRefs="true">
       <property name="objectstore.name" value="os.unittest"/>
@@ -535,7 +543,7 @@
   </target>
 
   <!-- Acedb test build targets -->
-  
+
   <!-- generate acedbtest model from .wrm file -->
   <target name="build-acedbtest" depends="compile-main" >
     <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
@@ -598,7 +606,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" 
+  <target name="test-main"
           depends="prepare-test, compile-test, build-db-unittest, create-indexes-unittest, build-db-truncunittest, build-db-notxmlunittest, create-indexes-truncunittest, create-indexes-notxmlunittest, build-db-flatmodeunittest, create-indexes-flatmodeunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
@@ -623,7 +631,7 @@
   </target>
 
   <!-- run cachemap test in a separate jvm with memory limit -->
-  <target name="test-cachemap" 
+  <target name="test-cachemap"
           depends="prepare-test"
           description="perform cache map test in a separate jvm" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
@@ -667,7 +675,7 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="test-webservice" 
+  <target name="test-webservice"
           depends="prepare-test, compile-test, build-db-unittest, build-testable-webservice, release-webservice"
           description="perform JUnit tests on web service" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
@@ -692,8 +700,8 @@
       <fileset dir="${results.junit}" includes="TEST-*.xml"/>
     </delete>
   </target>
-  
-  <target name="inctest" 
+
+  <target name="inctest"
           depends="prepare, prepare-test, compile-userprofile,test-main,test-webapp"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
@@ -705,7 +713,7 @@
   </target>
 
   <!-- target to run tests from cruiscontrol - temprarily ignores troublesome webservice tests-->
-  <target name="test-autobuild" 
+  <target name="test-autobuild"
           depends="clean,test-main,test-webapp,test-tutorial,checkstyle"
           description="run a clean and test all code except webservice">
     <fail message="Some unit tests have failed" if="junit.failure"/>
@@ -803,7 +811,7 @@
       <fileset dir="${build.webapp}/webservice"/>
     </war>
   </target>
-  
+
   <target name="build-testmodel-webservice" depends="build-webservice,jar-testmodel">
     <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
 
@@ -813,7 +821,7 @@
       <classes file="${build.tmp}/WEB-INF/intermine.properties"/>
     </war>
   </target>
-  
+
   <target name="build-testable-webservice" depends="build-testmodel-webservice">
     <war destfile="${dist.webapp}/webservice.war" update="true">
       <lib dir="${dist}" includes="intermine-testmodel.jar" />
@@ -829,7 +837,7 @@
     <copy todir="${dist.javadoc}">
       <fileset dir="${build.javadoc}"/>
     </copy>
-  </target>   
+  </target>
 
 
   <target name="jar-intermine" depends="prepare-dist, compile-main"
@@ -848,7 +856,7 @@
       <attribute name="Specification-Version" value="${version}"/>
       <attribute name="Specification-Vendor" value="InterMine"/>
       <attribute name="Implementation-Title" value="InterMine"/>
-      <attribute name="Implementation-Version" value="${version}"/> 
+      <attribute name="Implementation-Version" value="${version}"/>
       <attribute name="Implementation-Vendor" value="InterMine"/>
     </manifest>
 
@@ -879,7 +887,7 @@
       <zipfileset src="${dist}/intermine-webapp.jar"/>
       <fileset dir="${build.tmp}/jars"/>
     </jar>
-    
+
     <delete dir="${build.tmp}/jars"/>
   </target>
 
@@ -893,7 +901,7 @@
 
   <target name="jar-webservice-client" depends="jar-intermine">
     <mkdir dir="${build.tmp}/jars"/>
-    
+
     <unzip dest="${build.tmp}/jars">
       <fileset dir="${lib}">
         <patternset refid="lib.webapp.common"/>
@@ -905,7 +913,7 @@
       <zipfileset src="${dist}/intermine.jar"/>
       <fileset dir="${build.tmp}/jars"/>
     </jar>
-    
+
     <delete dir="${build.tmp}/jars"/>
   </target>
 
@@ -916,7 +924,7 @@
       <fileset dir="${build.model}/testmodel"/>
     </jar>
   </target>
-      
+
   <target name="build-tutorial" depends="jar-intermine, build-webapp"
           description="build the tutorial tree">
     <!-- root dir -->
@@ -948,9 +956,9 @@
     <copy todir="${tutorial}/model/tutorial" file="${resources}/tutorial/tutorial.zargo"/>
     <copy todir="${tutorial}/model/tutorial/resources" file="${resources}/tutorial/tutorial_keyDefs.properties"/>
     <copy todir="${tutorial}/model/tutorial/resources/" file="${resources}/tutorial/template-queries.xml"/>
-    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorialsource_keys.properties"/>  
-    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_classDescs.properties"/>  
-    <copy todir="${tutorial}/resources" file="${resources}/tutorial/objectstoresummary.config.properties"/>  
+    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorialsource_keys.properties"/>
+    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_classDescs.properties"/>
+    <copy todir="${tutorial}/resources" file="${resources}/tutorial/objectstoresummary.config.properties"/>
 
     <mkdir dir= "${tutorial}/model/tutorial/resources/web/" />
     <copy todir="${tutorial}/model/tutorial/resources/web" file="${resources}/tutorial/webconfig-model.xml" />
@@ -983,9 +991,9 @@
       <property name="runtime.properties.local" location="${runtime.properties.local}"/>
     </ant>
   </target>
-  
+
   <!-- Webapp targets -->
-  
+
   <target name="compile-webapp" depends="compile-userprofile, compile-main">
     <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="project.class.path"/>
@@ -993,7 +1001,7 @@
       <include name="org/intermine/web/**"/>
     </javac>
   </target>
-  
+
   <target name="jar-intermine-webapp" depends="compile-webapp, prepare-dist">
     <condition property="version" value="${DTSTAMP}">
       <not>
@@ -1009,7 +1017,7 @@
       <attribute name="Specification-Version" value="${version}"/>
       <attribute name="Specification-Vendor" value="InterMine"/>
       <attribute name="Implementation-Title" value="InterMine"/>
-      <attribute name="Implementation-Version" value="${version}"/> 
+      <attribute name="Implementation-Version" value="${version}"/>
       <attribute name="Implementation-Vendor" value="InterMine"/>
     </manifest>
 
@@ -1049,7 +1057,7 @@
       </fileset>
       <fileset dir="${dist}" includes="intermine.jar intermine-webapp.jar"/>
     </copy>
-    
+
     <filter token="HELP_LOCATION" value="${www.help.location}"/>
     <copy todir="${build.webapp}/intermine/WEB-INF/classes" filtering="true">
       <fileset dir="${resources}/webapps/intermine">
@@ -1057,7 +1065,7 @@
         <include name="default.intermine.properties"/>
       </fileset>
     </copy>
-    
+
     <filter token="LOG_DIR" value="${webapp.logdir}"/>
     <copy todir="${build.webapp}/intermine/WEB-INF/classes" filtering="true" overwrite="true">
       <fileset dir="${resources}/runtime/">
@@ -1070,13 +1078,13 @@
     </war>
   </target>
 
-  <target name="build-testmodel-webapp" 
+  <target name="build-testmodel-webapp"
           depends="build-webapp"
           description="Build webapp including the test model">
     <!--<ant antfile="build-model.xml" target="summarise-objectstore" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
-    </ant>      
+    </ant>
     -->
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
@@ -1085,7 +1093,7 @@
       <property name="objectstore.name" value="os.unittest"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
-    
+
     <copy todir="${build.tmp}" file="${resources}/test/default.intermine.properties"/>
     <patternset id="default-intermine-properties">
       <include name="default.intermine.properties"/>
@@ -1129,7 +1137,7 @@
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <reference torefid="file.names" refid="webapp-properties"/>
       <property name="file.dir" value="${resources}/webapps/intermine"/>
-    </ant>    
+    </ant>
   </target>
 
   <target name="release-webapp"
@@ -1137,16 +1145,16 @@
     <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <reference torefid="class.path" refid="project.class.path"/>
-    </ant>    
+    </ant>
   </target>
-  
+
   <target name="remove-webapp"
           description="remove the webapp from the server">
     <ant antfile="build-webapp.xml" target="remove-webapp" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
-    </ant>    
+    </ant>
   </target>
-  
+
   <!-- Webservice targets -->
 
   <target name="release-webservice"
@@ -1154,25 +1162,25 @@
     <ant antfile="build-webapp.xml" target="release-webservice" inheritRefs="true">
       <property name="war" value="${dist.webapp}/webservice.war"/>
       <reference torefid="class.path" refid="project.class.path"/>
-    </ant>    
+    </ant>
   </target>
 
   <target name="remove-webservice"
           description="remove the webservice from the server">
     <ant antfile="build-webapp.xml" target="remove-webservice" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
-    </ant>    
+    </ant>
   </target>
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
 
-  <property name="os.summary.properties.file" 
+  <property name="os.summary.properties.file"
             value="${model}/testmodel/resources/objectstoresummary.config.properties" />
-  <property name="summarise.output.properties" 
+  <property name="summarise.output.properties"
             value="${build.model}/testmodel/objectstoresummary.properties"/>
 
   <!-- Model diagrams -->
-  
+
   <target name="dot-main" depends="compile-main">
     <taskdef name="dot"
              classname="org.intermine.task.InheritanceDotTask">
@@ -1180,7 +1188,7 @@
     </taskdef>
     <dot directory="${src.java}" packageName="org.intermine" file="main.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
   </target>
-  
+
   <target name="dot-test" depends="compile-test">
     <taskdef name="dot"
              classname="org.intermine.task.InheritanceDotTask">
@@ -1188,7 +1196,7 @@
     </taskdef>
     <dot directory="${src.test}" packageName="org.intermine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
   </target>
-  
+
   <target name="dot-testmodel" depends="compile-test">
     <taskdef name="dot"
              classname="org.intermine.task.InheritanceDotTask">
@@ -1196,9 +1204,9 @@
     </taskdef>
     <dot directory="${build.model}/testmodel" packageName="org.intermine.model.testmodel" file="testmodel.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
   </target>
-  
+
   <!-- Cleaning-up targets -->
-  
+
   <target name="clean"
           description="clean up generated files">
     <delete dir="${build}"/>
@@ -1228,22 +1236,22 @@
     </delete>
     <antcall target="prepare" />
   </target>
-  
+
   <target name="distclean" depends="clean"
           description="clean up all distribution files">
     <delete dir="${dist}"/>
   </target>
-  
+
   <!-- antdoc target -->
-  <target name="antdoc"> 
+  <target name="antdoc">
     <taskdef name="antdoc" classname="org.ed.pack.ant.AntDoc">
       <classpath refid="project.class.path"/>
     </taskdef>
     <antdoc destination="${results.antdoc}" buildfile="${ant.file}"/>
   </target>
-  
+
   <!-- Debugging with NetBeans -->
-  
+
   <target name="debug" depends="" if="netbeans.home" description="debug intermine with netbeans debugger">
     <nbjpdaconnect name="intermine" host="localhost" address="8000" transport="dt_socket">
       <classpath refid="project.class.path"/>
