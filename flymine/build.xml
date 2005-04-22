@@ -1516,7 +1516,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -1541,7 +1541,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+      <property name="os.alias" value="os.gff3-tgt-items"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1678,7 +1678,7 @@
        changed then this can be really bad.  Should be used with extreme caution if
        absolutely confident that changes will not put model/details out of sync with schema. -->
 
-  <target name="update-metadata-production" depends="copy-genomic-config, compile-genomic-model">
+  <target name="update-metadata-production" depends="copy-genomic-config, compile-genomic-model" > <!--compile-genomic-human-model"-->
     <taskdef name="db-insert-model"
              classname="org.intermine.objectstore.intermine.StoreMetadataTask">
       <classpath refid="genomic.class.path"/>
@@ -2998,7 +2998,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3020,7 +3020,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+      <property name="os.alias" value="os.gff3-tgt-items"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3071,7 +3071,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3093,7 +3093,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+      <property name="os.alias" value="os.gff3-tgt-items"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3144,7 +3144,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3166,7 +3166,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+      <property name="os.alias" value="os.gff3-tgt-items"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3217,7 +3217,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3239,7 +3239,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+      <property name="os.alias" value="os.gff3-tgt-items"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3261,6 +3261,7 @@
 
   <target name="build-disease-regions-production"
           depends="retrieve-disease-regions, load-disease-regions"/>
+
 
 
 </project>
