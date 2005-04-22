@@ -34,8 +34,8 @@
     <form-bean name="queryClassSelectForm"
                type="org.intermine.web.QueryClassSelectForm"/>
 
-    <form-bean name="changeResultsSizeForm"
-               type="org.intermine.web.results.ChangeResultsSizeForm"/>
+    <form-bean name="changeTableSizeForm"
+               type="org.intermine.web.results.ChangeTableSizeForm"/>
 
     <form-bean name="saveBagForm"
                type="org.intermine.web.results.SaveBagForm"/>
@@ -205,8 +205,8 @@
       <forward name="results" path="results.page"/>
     </action>
     
-    <action path="/changeResults"
-            type="org.intermine.web.results.ChangeResultsAction"
+    <action path="/changeTable"
+            type="org.intermine.web.results.ChangeTableAction"
             parameter="method">
       <forward name="results" path="/results.do" redirect="true"/>
     </action>
@@ -295,10 +295,10 @@
       <forward name="query" path="query.page"/>
     </action>
     
-    <action path="/changeResultsSize"
-            name="changeResultsSizeForm"
+    <action path="/changeTableSize"
+            name="changeTableSizeForm"
             scope="request"
-            type="org.intermine.web.results.ChangeResultsSizeAction">
+            type="org.intermine.web.results.ChangeTableSizeAction">
       <forward name="results" path="/results.do" redirect="true"/>
     </action>
     

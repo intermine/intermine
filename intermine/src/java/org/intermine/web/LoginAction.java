@@ -56,9 +56,11 @@ public class LoginAction extends InterMineAction
         
         // Merge current history into loaded profile
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map merge = Collections.EMPTY_MAP;
+        Map mergeQueries = Collections.EMPTY_MAP;
+        Map mergeBags = Collections.EMPTY_MAP;
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
-            merge = new HashMap(currentProfile.getSavedQueries());
+            mergeQueries = new HashMap(currentProfile.getSavedQueries());
+            mergeBags = new HashMap(currentProfile.getSavedBags());
         }
         
         Profile profile;
@@ -76,12 +78,20 @@ public class LoginAction extends InterMineAction
         }
         
         // Merge in anonymous query history
-        for (Iterator iter = merge.entrySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = mergeQueries.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
             PathQuery query = (PathQuery) ((PathQuery) entry.getValue()).clone();
             String name = makeUniqueQueryName((String) entry.getKey(),
                                                 profile.getSavedQueries().keySet());
             profile.saveQuery(name, query);
+        }
+        // Merge anonymous bags
+        for (Iterator iter = mergeBags.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            InterMineBag bag = (InterMineBag) entry.getValue();
+            String name = makeUniqueQueryName((String) entry.getKey(),
+                                                profile.getSavedQueries().keySet());
+            profile.saveBag(name, bag);
         }
         
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);

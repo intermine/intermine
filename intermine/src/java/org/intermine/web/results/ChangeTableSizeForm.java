@@ -23,7 +23,7 @@ import org.intermine.web.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
-public class ChangeResultsSizeForm extends ActionForm
+public class ChangeTableSizeForm extends ActionForm
 {
     /**  */
     protected String pageSize;
@@ -31,7 +31,7 @@ public class ChangeResultsSizeForm extends ActionForm
     /**
      * Constructor
      */
-    public ChangeResultsSizeForm() {
+    public ChangeTableSizeForm() {
         initialise();
     }
 

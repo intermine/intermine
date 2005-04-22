@@ -19,7 +19,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.intermine.web.results.ChangeResultsSizeForm;
+import org.intermine.web.results.ChangeTableSizeForm;
 
 /**
  * Action to run constructed query.
@@ -47,8 +47,8 @@ public class ViewAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        ChangeResultsSizeForm resultsForm =
-            (ChangeResultsSizeForm) session.getAttribute("changeResultsForm");
+        ChangeTableSizeForm resultsForm =
+            (ChangeTableSizeForm) session.getAttribute("changeTableForm");
         if (resultsForm != null) {
             resultsForm.reset(mapping, request);
         }

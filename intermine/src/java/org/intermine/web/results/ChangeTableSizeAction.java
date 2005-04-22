@@ -28,7 +28,7 @@ import org.intermine.web.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
-public class ChangeResultsSizeAction extends InterMineAction
+public class ChangeTableSizeAction extends InterMineAction
 {
     /**
      * @param mapping The ActionMapping used to select this instance

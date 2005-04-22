@@ -259,9 +259,9 @@ public class ProfileManager
             } catch (ObjectStoreException e) {
                 throw new RuntimeException(e);
             }
+            
+            setPassword(username, profile.getPassword());
         }
-
-        setPassword(username, profile.getPassword());
     }
     
     /**
