@@ -115,9 +115,6 @@ public class ProfileBindingTest extends TestCase
 
         Diff diff = new Diff(expectedXml, sw.toString().trim());
 
-        org.intermine.web.LogMe.log("pbt", "expectedXml: " + expectedXml);
-        org.intermine.web.LogMe.log("pbt", "actual XML: " + sw.toString());
-
         XMLAssert.assertXMLEqual("XML doesn't match", diff, true);
     }
 }
