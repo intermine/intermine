@@ -5,7 +5,14 @@
 
 <!-- publication.jsp -->
 <fmt:message key="publication.pubmed"/>:
-<html:link href="${WEB_PROPERTIES['pubmed.url.prefix']}${object.pubMedId}">
-  ${object.pubMedId}
-</html:link>
+<div style="margin-left: 20px">
+  <html:link href="${WEB_PROPERTIES['pubmed.url.prefix']}${object.pubMedId}">
+    <span>
+      <html:img src="model/PubMed_logo_small.png"/>
+    </span>
+    <span>
+      PMID:${object.pubMedId}
+    </span>
+  </html:link>
+</div>
 <!-- /publication.jsp -->
