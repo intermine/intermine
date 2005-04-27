@@ -108,15 +108,14 @@ public class InterMineBagBinding
         }
         return bags;
     }
-
-}
-
+    
+    
 /**
  * A handler for turning XML bags data into an InterMineBag.
  * 
  * @author Mark Woodbridge
  */
-class BagHandler extends DefaultHandler
+public static class BagHandler extends DefaultHandler
 {
     private static final Logger LOG = Logger.getLogger(BagHandler.class);
     
@@ -178,4 +177,6 @@ class BagHandler extends DefaultHandler
             bags.put(bagName, bag);
         }
     }
+}
+
 }

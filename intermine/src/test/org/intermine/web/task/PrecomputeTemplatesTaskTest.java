@@ -64,9 +64,10 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
     // test that correct query and list of indexes generate for pre-computing
     public void testPrecomputeTemplate() throws Exception {
         PrecomputeTemplatesTask task = new PrecomputeTemplatesTask();
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Map templates = task.getPrecomputeTemplateQueries();
         TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
-        System.out.println(MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap()));
+        System.out.println(MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap(), os));
 
         Query q = new Query();
         q.setDistinct(true);
@@ -93,10 +94,9 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         PrecomputeTemplatesTask.QueryAndIndexes expected = task.new QueryAndIndexes();
         expected.setQuery(q);
         expected.addIndex(qfAge);
-        PrecomputeTemplatesTask.QueryAndIndexes qai = task.processTemplate(template);
+        PrecomputeTemplatesTask.QueryAndIndexes qai = task.processTemplate(template, os);
         System.out.println("generate: " + qai.getQuery());
         assertEquals(expected.toString(), qai.toString());
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         System.out.println("generate: " + qai.getQuery());
 
         task.precompute(os, qai.getQuery(), qai.getIndexes());

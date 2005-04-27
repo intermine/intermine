@@ -34,6 +34,8 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.XmlBinding;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Tests for the Profile class.
@@ -74,16 +76,13 @@ public class ProfileManagerBindingTest extends TestCase
         osw.close();
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
-        InterMineBag bag = new InterMineBag(ObjectStoreFactory.getObjectStore("os.unittest"));
+        InterMineBag bag = new InterMinePrimitiveBag();
         bag.add("foo1");
         bag.add("foo2");
         bag.add("foo3");
         bag.add(new Integer(100));
         bag.add(new Boolean(true));
         bag.add(new Float(1.1));
-
-        bag.addId(new Integer(9));
-        bag.addId(new Integer(10));
 
         TemplateQuery template =
             new TemplateQuery("template", "tdesc", "tcat",
@@ -97,8 +96,8 @@ public class ProfileManagerBindingTest extends TestCase
         bobProfile.saveTemplate("template", template);
 
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        bag = new InterMineBag(ObjectStoreFactory.getObjectStore("os.unittest"));
-        InterMineBag otherBag = new InterMineBag(ObjectStoreFactory.getObjectStore("os.unittest"));
+        bag = new InterMinePrimitiveBag();
+        InterMineBag otherBag = new InterMinePrimitiveBag();
 
         bag.add("some value");
         otherBag.add(new Integer(123));
