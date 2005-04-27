@@ -6,9 +6,4 @@
   <bag name="objects">
     <element type="org.intermine.model.InterMineObject" value="1"/>
   </bag>
-  <bag name="mixture">
-    <element type="java.lang.Integer" value="10"/>
-    <element type="java.lang.String" value="ten"/>
-    <element type="org.intermine.model.InterMineObject" value="1"/>
-  </bag>
 </bag-list>
