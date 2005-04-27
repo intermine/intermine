@@ -141,9 +141,6 @@ public class ProfileManagerBindingTest extends TestCase
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
 
-        org.intermine.web.LogMe.log("pmbt", "expectedXml: " + expectedXml);
-        org.intermine.web.LogMe.log("pmbt", "actualXml: " + actualXml);
-
         Diff diff = new Diff(actualXml, actualXml);
 
         XMLUnit.setIgnoreWhitespace(true);
