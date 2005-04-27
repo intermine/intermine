@@ -47,10 +47,10 @@ public class TemplateQueryBinding
             writer.writeAttribute("important", "" + template.isImportant());
             writer.writeAttribute("keywords", template.getKeywords());
             
-            new PathQueryBinding().marshal(template.getQuery(),
-                                           template.getName(),
-                                           template.getQuery().getModel().getName(),
-                                           writer);
+            PathQueryBinding.marshal(template.getQuery(),
+                                     template.getName(),
+                                     template.getQuery().getModel().getName(),
+                                     writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);

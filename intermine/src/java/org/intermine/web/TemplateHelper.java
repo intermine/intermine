@@ -173,7 +173,7 @@ public class TemplateHelper
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("template-list");
             while (iter.hasNext()) {
-                binding.marshal((TemplateQuery) iter.next(), writer);
+                TemplateQueryBinding.marshal((TemplateQuery) iter.next(), writer);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
