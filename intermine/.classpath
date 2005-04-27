@@ -41,21 +41,18 @@
 	<classpathentry kind="lib" path="lib/axis.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry kind="lib" path="lib/wsdl4j.jar"/>
+	<classpathentry sourcepath="/home/kmr/extern/sources/xmlunit/src/java" kind="lib" path="lib/xmlunit1.0.jar"/>
 	<classpathentry kind="lib" path="lib/saaj.jar"/>
-	<classpathentry kind="lib" path="lib/xmlunit1.0.jar"/>
 	<classpathentry kind="lib" path="lib/strutstest-2.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/mockobjects-0.07-jdk1.4.jar"/>
 	<classpathentry kind="lib" path="lib/mockobjects-0.07-core.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
-	<classpathentry exported="true" kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry exported="true" sourcepath="JUNIT_HOME" kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry kind="lib" path="lib/snowball-1.1-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/model/acedbtest"/>
-	<classpathentry exported="true" kind="lib" path="build/model/xmitest"/>
-	<classpathentry exported="true" kind="lib" path="build/model/xmlschematest"/>
 	<classpathentry kind="lib" path="build/test"/>
 	<classpathentry kind="lib" path="build/tmp"/>
 	<classpathentry kind="lib" path="build/resources/test"/>
-	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="output" path="build/eclipse"/>
 </classpath>
