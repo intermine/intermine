@@ -10,7 +10,7 @@ package org.intermine.web;
  *
  */
 
-//import java.io.InputStream;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -18,7 +18,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.metadata.Model;
-//import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.SAXParser;
+import org.xml.sax.InputSource;
 
 /**
  * Code for reading and writing Profile objects as XML.
@@ -29,7 +31,7 @@ import org.intermine.metadata.Model;
 public class ProfileBinding
 {
     /**
-     * Convert a UserProfile to XML and write XML to given writer.
+     * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
      * @param model the Model - use when marshalling queries
      * @param writer the XMLStreamWriter to write to
@@ -76,8 +78,21 @@ public class ProfileBinding
         }
     }
 
-    
-//     public static Profile unmarshal(InputStream is, ObjectStore os) {
-//         return null;
-//     }
+    /**
+     * Read a Profile from an XML stream Reader
+     * @param reader contains the Profile XML
+     * @param profileManager the ProfileManager to pass to the Profile constructor
+     * @param os ObjectStore used to resolve object ids
+     * @return the new Profile
+     */
+    public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os) {
+        try {
+            ProfileHandler profileHandler = new ProfileHandler(profileManager);
+            SAXParser.parse(new InputSource(reader), profileHandler);
+            return profileHandler.getProfile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

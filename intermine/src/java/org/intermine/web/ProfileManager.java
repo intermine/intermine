@@ -60,6 +60,14 @@ public class ProfileManager
     }
 
     /**
+     * Return the ObjectStore that was passed to the constructor.
+     * @return the ObjectStore from the constructor
+     */
+    public ObjectStore getObjectStore() {
+        return os;
+    }
+
+    /**
      * Close this ProfileManager
      *
      * @throws ObjectStoreException in exceptional circumstances

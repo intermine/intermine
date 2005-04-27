@@ -12,8 +12,6 @@ package org.intermine.web.task;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -22,9 +20,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManager;
+import org.intermine.web.ProfileManagerBinding;
 
 /**
  * Task to write an XML file of a webapp userprofile object store.
@@ -74,18 +71,7 @@ public class ProfileWriteTask extends Task
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
             XMLStreamWriter writer = factory.createXMLStreamWriter(fw);
-            writer.writeStartElement("userprofiles");
-
-            List usernames = pm.getProfileUserNames();
-
-            Iterator iter = usernames.iterator();
-
-            while (iter.hasNext()) {
-                Profile profile = pm.getProfile((String) iter.next());
-                ProfileBinding.marshal(profile, os.getModel(), writer);
-            }
-            writer.writeEndElement();
-
+            ProfileManagerBinding.marshal(pm, writer);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
