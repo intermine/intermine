@@ -10,22 +10,20 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.util.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import org.intermine.util.SAXParser;
 
 /**
  * Convert PathQueries to and from XML
@@ -98,7 +96,7 @@ public class TemplateQueryBinding
     /**
      * Extension of DefaultHandler to handle parsing TemplateQueries
      */
-    class TemplateQueryHandler extends PathQueryBinding.QueryHandler
+    static class TemplateQueryHandler extends PathQueryHandler
     {
         Map templates;
         String templateName;

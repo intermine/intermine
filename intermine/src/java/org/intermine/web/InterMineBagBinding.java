@@ -106,61 +106,60 @@ public class InterMineBagBinding
         return bags;
     }
 
-}
-
-/**
- * A handler for turning XML bags data into an InterMineBag.
- * 
- * @author Mark Woodbridge
- */
-class BagHandler extends DefaultHandler
-{
-    ObjectStore os;
-    Map bags;
-    String bagName;
-    InterMineBag bag;
-        
     /**
-     * Constructor
-     * @param os ObjectStore used to resolve object ids
-     * @param bags Map from bag name to InterMineBag
+     * A handler for turning XML bags data into an InterMineBag.
+     * 
+     * @author Mark Woodbridge
      */
-    public BagHandler(ObjectStore os, Map bags) {
-        this.os = os;
-        this.bags = bags;
-    }
-
-    /**
-     * @see DefaultHandler#startElement
-     */
-    public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
-        try {
-            if (qName.equals("bag")) {
-                bagName = attrs.getValue("name");
-                bag = new InterMineBag(os);
-            }
-            if (qName.equals("element")) {
-                String type = attrs.getValue("type");
-                String value = attrs.getValue("value");
-                if (type.equals(InterMineObject.class.getName())) {
-                    //bag.add(os.getObjectById(Integer.valueOf(value)));
-                    bag.addId(Integer.valueOf(value));
-                } else {
-                    bag.add(TypeUtil.stringToObject(Class.forName(type), value));
-                }
-            }
-        } catch (Exception e) {
-            throw new SAXException(e);
+    public static class BagHandler extends DefaultHandler
+    {
+        ObjectStore os;
+        Map bags;
+        String bagName;
+        InterMineBag bag;
+            
+        /**
+         * Constructor
+         * @param os ObjectStore used to resolve object ids
+         * @param bags Map from bag name to InterMineBag
+         */
+        public BagHandler(ObjectStore os, Map bags) {
+            this.os = os;
+            this.bags = bags;
         }
-    }
 
-    /**
-     * @see DefaultHandler#endElement
-     */
-    public void endElement(String uri, String localName, String qName) {
-        if (qName.equals("bag")) {
-            bags.put(bagName, bag);
+        /**
+         * @see DefaultHandler#startElement
+         */
+        public void startElement(String uri, String localName, String qName, Attributes attrs)
+            throws SAXException {
+            try {
+                if (qName.equals("bag")) {
+                    bagName = attrs.getValue("name");
+                    bag = new InterMineBag(os);
+                }
+                if (qName.equals("element")) {
+                    String type = attrs.getValue("type");
+                    String value = attrs.getValue("value");
+                    if (type.equals(InterMineObject.class.getName())) {
+                        //bag.add(os.getObjectById(Integer.valueOf(value)));
+                        bag.addId(Integer.valueOf(value));
+                    } else {
+                        bag.add(TypeUtil.stringToObject(Class.forName(type), value));
+                    }
+                }
+            } catch (Exception e) {
+                throw new SAXException(e);
+            }
+        }
+
+        /**
+         * @see DefaultHandler#endElement
+         */
+        public void endElement(String uri, String localName, String qName) {
+            if (qName.equals("bag")) {
+                bags.put(bagName, bag);
+            }
         }
     }
 }
