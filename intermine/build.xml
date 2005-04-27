@@ -257,19 +257,6 @@
     <mkdir dir="${tutorial}/model/tutorial/resources"/>
     <mkdir dir="${tutorial}/resources"/>
     <mkdir dir="${tutorial}/src/java/org/intermine/tutorial"/>
-
-    <filter token="LOG_DIR" value="${basedir}"/>
-    <copy todir="${build.resources}" filtering="true" overwrite="true">
-      <fileset dir="${resources}/runtime"/>
-    </copy>
-    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false" failonerror="false">
-      <fileset dir="${model}">
-        <include name="testmodel/resources/**"/>
-      </fileset>
-      <fileset dir="${resources}/test">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
   </target>
 
   <target name="prepare-dist">
@@ -594,6 +581,18 @@
       </classpath>
     </depend>
     <copy file="${runtime.properties.local}" tofile="${build.resources.test}/intermine.properties"/>
+    <filter token="LOG_DIR" value="${basedir}"/>
+    <copy todir="${build.resources.test}" filtering="true" overwrite="true">
+      <fileset dir="${resources}/runtime"/>
+    </copy>
+    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
+      <fileset dir="${model}">
+        <include name="testmodel/resources/**"/>
+      </fileset>
+      <fileset dir="${resources}/test">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="compile-test" depends="prepare-test"
