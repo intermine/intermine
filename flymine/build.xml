@@ -2405,6 +2405,25 @@
                               username="${webapp.superuser}"/>
   </target>
 
+  <!-- write the userprofile database to a file as XML -->
+  <target name="write-production-userprofile-xml" 
+          depends="prepare-test, prepare-build-model">
+    <taskdef name="write-userprofile-xml" classname="org.intermine.web.task.ProfileWriteTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
+  </target>
+
+  <!-- read the userprofile database from a file as XML -->
+  <target name="read-production-userprofile-xml" 
+          depends="prepare-test, prepare-build-model">
+    <taskdef name="read-userprofile-xml" classname="org.intermine.web.task.ProfileReadTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
+  </target>
+
+
   <target name="build-production-webservice-client" depends="compile-genomic-model">
     <jar destfile="${dist}/flymine-webservice-client.jar">
       <zipfileset src="${webservice-client.jar.path}"/>
