@@ -32,7 +32,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.MainHelper;
 import org.intermine.web.TemplateQuery;
-import org.intermine.web.task.PrecomputeTemplatesTask.QueryAndIndexes;
 
 /**
  * Tests for PrecomputeTemplatesTask.
