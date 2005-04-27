@@ -583,7 +583,8 @@
     <itemizedlist>
       <listitem>
         <para>
-          <ulink url="../../introduction.xml">The FlyMine project</ulink>
+          <!-- <ulink url="../../introduction.xml">The FlyMine project</ulink> -->
+          <ulink url="http://www.flymine.org/introduction.html">The FlyMine project</ulink>
         </para>
       </listitem>
     </itemizedlist>
