@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.TreeMap;
 
 import org.apache.lucene.store.Directory;
+import org.intermine.web.bag.InterMineBag;
 
 /**
  * Class to represent a user of the webapp

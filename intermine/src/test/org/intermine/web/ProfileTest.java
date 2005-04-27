@@ -18,6 +18,8 @@ import java.util.HashMap;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 public class ProfileTest extends TestCase
 {
@@ -31,7 +33,7 @@ public class ProfileTest extends TestCase
 
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        bag = new InterMineBag();
+        bag = new InterMinePrimitiveBag();
         template = new TemplateQuery("template", "tdesc", "tcat",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");

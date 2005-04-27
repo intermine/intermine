@@ -45,8 +45,11 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
 
 /**
  * Helper methods for main controller and main action
@@ -153,8 +156,8 @@ public class MainHelper
      * @param savedBags the current saved bags map
      * @return an InterMine Query
      */
-    public static Query makeQuery(PathQuery query, Map savedBags) {
-        return makeQuery(query, savedBags, null);
+    public static Query makeQuery(PathQuery query, Map savedBags, ObjectStore os) {
+        return makeQuery(query, savedBags, null, os);
     }
 
     /**
@@ -162,9 +165,11 @@ public class MainHelper
      * @param query the PathQuery
      * @param savedBags the current saved bags map
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
+     * @param os ObjectStore from which to load objects for bags
      * @return an InterMine Query
      */
-    public static Query makeQuery(PathQuery query, Map savedBags, Map pathToQueryNode) {
+    public static Query makeQuery(PathQuery query, Map savedBags, Map pathToQueryNode,
+                                  ObjectStore os) {
         query = (PathQuery) query.clone();
         Map qNodes = query.getNodes();
         List view = query.getView();
@@ -219,9 +224,19 @@ public class MainHelper
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    cs.addConstraint(new BagConstraint(qn,
+                    Collection bag //= (Collection) savedBags.get(c.getValue());
+                            = ((InterMineBag) savedBags.get(c.getValue())).toObjectCollection(os);
+                    /*if (bag instanceof InterMineIdBag) {
+                        // constrain the id of the object
+                        QueryField qf = new QueryField((QueryClass) qn, "id");
+                        cs.addConstraint(new BagConstraint(qf,
+                                                        c.getOp(),
+                                                        bag);
+                    } else*/ {
+                        cs.addConstraint(new BagConstraint(qn,
                                                        c.getOp(),
-                                                       (Collection) savedBags.get(c.getValue())));
+                                                       bag));
+                    }
                 } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL
                         || c.getOp() == ConstraintOp.IS_NULL) {

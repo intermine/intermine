@@ -29,6 +29,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * An action that makes a bag from text.
@@ -63,7 +65,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
-        InterMineBag bag = new InterMineBag(os);
+        InterMineBag bag = new InterMinePrimitiveBag();
         String trimmedText = buildBagForm.getText().trim();
         FormFile formFile = buildBagForm.getFormFile();
 

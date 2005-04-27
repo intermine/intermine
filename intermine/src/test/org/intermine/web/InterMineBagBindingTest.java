@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Tests for the InterMineBagBinding class
@@ -49,21 +52,15 @@ public class InterMineBagBindingTest extends TestCase
         Map expected = new LinkedHashMap();
 
         //primitives
-        InterMineBag primitives = new InterMineBag(os);
+        InterMineBag primitives = new InterMinePrimitiveBag();
         primitives.add(new Integer(10));
         primitives.add("ten");
         expected.put("primitives", primitives);
 
         //objects
-        InterMineBag objects = new InterMineBag(os);
+        InterMineBag objects = new InterMineIdBag();
         objects.add(d1);
         expected.put("objects", objects);
-
-        //mixture
-        InterMineBag mixture = new InterMineBag(os);
-        mixture.addAll(primitives);
-        mixture.addAll(objects);
-        expected.put("mixture", mixture);
 
         assertEquals(expected, savedBags);
     }
