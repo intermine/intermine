@@ -420,12 +420,20 @@
                               username="${webapp.superuser}"/>
   </target>
 
-  <!-- read the userprofile database and write it to a file as XML -->
-  <target name="write-userprofile-xml" depends="compile-main, compile-webapp">
+  <!-- write the userprofile database to a file as XML -->
+  <target name="write-userprofile-xml" depends="prepare-test, compile-main, compile-webapp">
     <taskdef name="write-userprofile-xml" classname="org.intermine.web.task.ProfileWriteTask">
       <classpath refid="test.class.path"/>
     </taskdef>
     <write-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
+  </target>
+
+  <!-- read the userprofile database from a file as XML -->
+  <target name="read-userprofile-xml" depends="prepare-test, compile-main, compile-webapp">
+    <taskdef name="read-userprofile-xml" classname="org.intermine.web.task.ProfileReadTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
   </target>
 
   <!-- insert the testmodel data into the database -->
