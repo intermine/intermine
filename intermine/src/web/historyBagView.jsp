@@ -38,7 +38,11 @@
             </html:link>
           </td>
           <td align="right">
-            <c:out value="${savedBag.value.size}"/>&nbsp;
+            <c:out value="${savedBag.value.size}"/>
+            <c:choose>
+              <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
+              <c:otherwise>values</c:otherwise>
+            </c:choose>
           </td>
         </tr>
       </c:forEach>

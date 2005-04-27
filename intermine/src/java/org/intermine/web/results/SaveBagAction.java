@@ -11,31 +11,33 @@ package org.intermine.web.results;
  */
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Iterator;
-
-import org.apache.log4j.Logger;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-
-import org.intermine.web.Constants;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.WebUtil;
-import org.intermine.web.InterMineBag;
-import org.intermine.web.Profile;
-import org.intermine.web.InterMineAction;
-import org.intermine.objectstore.query.Results;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Results;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.Profile;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Saves selected items in a new bag or combines with existing bag.
@@ -95,13 +97,25 @@ public class SaveBagAction extends InterMineAction
         //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm crf = (SaveBagForm) form;
-
-        InterMineBag bag = new InterMineBag(os);
-
+        
+        InterMineBag bag = null;
+        boolean storingIds = false;
         int defaultMax = 10000;
-
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
+        // Create the right kind of bag
+        String selected = (String) crf.getSelectedObjects()[0];
+        int index = selected.indexOf(",");
+        int col = Integer.parseInt(index == -1 ? selected : selected.substring(0, index));
+        Object type = ((Column) pt.getColumns().get(col)).getType();
+    
+        if (type instanceof ClassDescriptor) {
+            bag = new InterMineIdBag();
+            storingIds = true;
+        } else {
+            bag = new InterMinePrimitiveBag();
+        }
+        
         // Go through the selected items and add to the set
         for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
              itemIterator.hasNext();) {
@@ -110,7 +124,7 @@ public class SaveBagAction extends InterMineAction
             int commaIndex = selectedObject.indexOf(",");
             if (commaIndex == -1) {
                 int column = Integer.parseInt(selectedObject);
-
+                
                 List allRows = pt.getAllRows();
 
                 if (allRows instanceof Results) {
@@ -162,7 +176,12 @@ public class SaveBagAction extends InterMineAction
 
                 for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
                     List thisRow = (List) rowIterator.next();
-                    bag.add(thisRow.get(column));
+                    if (storingIds) {
+                        Integer id = ((InterMineObject) thisRow.get(column)).getId();
+                        bag.add(id);
+                    } else {
+                        bag.add(thisRow.get(column));
+                    }
                     
                     if (bag.size() > maxBagSize) {
                         ActionMessage actionMessage =
@@ -176,7 +195,13 @@ public class SaveBagAction extends InterMineAction
                 // use the column,row to pick out the object from PagedTable
                 int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
                 int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-                bag.add(((List) pt.getRows().get(row)).get(column));
+                Object value = ((List) pt.getRows().get(row)).get(column);
+                if (storingIds) {
+                    Integer id = ((InterMineObject) value).getId();
+                    bag.add(id);
+                } else {
+                    bag.add(value);
+                }
                 if (bag.size() > maxBagSize) {
                     ActionMessage actionMessage =
                         new ActionMessage("bag.tooBig", new Integer(maxBagSize));
@@ -195,6 +220,10 @@ public class SaveBagAction extends InterMineAction
         }
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
+            if (!existingBag.getClass().equals(bag.getClass())) {
+                recordError(new ActionMessage("bag.typesDontMatch"), request);
+                return mapping.findForward("results");
+            }
             bag.addAll(existingBag);
         }
         if (bag.size() > maxBagSize) {

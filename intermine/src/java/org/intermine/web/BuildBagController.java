@@ -18,6 +18,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.web.bag.BagHelper;
 
 /**
  * Controller Action for buildBag.jsp

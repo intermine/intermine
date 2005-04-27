@@ -34,6 +34,8 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineBagBinding;
 
 /**
  * Class to manage and persist user profile data such as saved bags

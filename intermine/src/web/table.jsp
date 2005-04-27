@@ -16,6 +16,51 @@
 
 <script type="text/javascript">
   <!--//<![CDATA[
+    function selectColumnCheckbox(column, dataType) {
+      selectColumnCheckboxes(column + dataType);
+      disableAllOthers(dataType);
+      if (isClear()) {
+        enableAll();
+      }
+    }
+    function disableAllOthers(dataType) {
+      if (dataType == 'primitive') {
+        disableAllOfType('object');
+      } else {
+        disableAllOfType('primitive');
+      }
+    }
+    function disableAllOfType(dataType) {
+      with(document.saveBagForm) {
+        for(i=0;i < elements.length;i++) {
+          thiselm = elements[i];
+          if(thiselm.id.indexOf('selectedObjects_') != -1 && thiselm.id.indexOf(dataType) != -1) {
+            thiselm.disabled = true;
+          }
+        }
+      }
+    }
+    function enableAll() {
+      with(document.saveBagForm) {
+        for(i=0;i < elements.length;i++) {
+          thiselm = elements[i];
+          if(thiselm.id.indexOf('selectedObjects_') != -1) {
+            thiselm.disabled = false;
+          }
+        }
+      }
+    }
+    function isClear() {
+      with(document.saveBagForm) {
+        for(i=0;i < elements.length;i++) {
+          thiselm = elements[i];
+          if(thiselm.id.indexOf('selectedObjects_') != -1 && thiselm.checked) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
     function selectColumnCheckboxes(column) {
       var columnCheckBox = 'selectedObjects_' + column;
       with(document.saveBagForm) {
@@ -27,6 +72,13 @@
         }
       }
     }
+    function itemChecked(column, dataType) {
+      unselectColumnCheckbox('' + column + dataType);
+      disableAllOthers(dataType);
+      if (isClear()) {
+        enableAll();
+      }
+    }
     function unselectColumnCheckbox(column) {
       document.getElementById('selectedObjects_' + column).checked = false;
     }
@@ -35,8 +87,7 @@
       var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
       var page = ${resultsTable.startRow}/pagesize;
       url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
-      if ('${param.trail}' != '')
-      {
+      if ('${param.trail}' != '') {
       	url += '&trail=${param.trail}';
       }
       document.location.href=url;
@@ -84,9 +135,17 @@
         <%-- The headers --%>
         <tr>
           <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
+          
+            <c:set var="dataType">
+              <c:choose>
+                <c:when test="${column.type.class.name == 'org.intermine.metadata.ClassDescriptor'}">object</c:when>
+                <c:otherwise>primitive</c:otherwise>
+              </c:choose>
+            </c:set>
+          
             <th align="center" rowspan="2">
-              <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
-                             onclick="selectColumnCheckboxes(${status.index})">
+              <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
+                             onclick="selectColumnCheckbox(${status.index}, '${dataType}')">
                 <c:out value="${status.index}"/>
               </html:multibox>
             </th>
@@ -198,13 +257,21 @@
 
             <tr class="<c:out value="${rowClass}"/>">
               <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
+              
+                <c:set var="dataType">
+                  <c:choose>
+                    <c:when test="${column.type.class.name == 'org.intermine.metadata.ClassDescriptor'}">object</c:when>
+                    <c:otherwise>primitive</c:otherwise>
+                  </c:choose>
+                </c:set>
+              
                 <c:choose>
                   <c:when test="${column.visible}">
                     <%-- the checkbox to select this object --%>
                     <td align="center">
                       <html:multibox property="selectedObjects"
-                                     styleId="selectedObjects_${status2.index}_${status.index}"
-                                     onclick="unselectColumnCheckbox(${status2.index})">
+                                     styleId="selectedObjects_${status2.index}${dataType}_${status.index}"
+                                     onclick="itemChecked(${status2.index}, '${dataType}')">
                         <c:out value="${status2.index},${status.index}"/>
                       </html:multibox>
                     </td>

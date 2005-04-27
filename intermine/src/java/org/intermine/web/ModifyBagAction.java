@@ -23,6 +23,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.bag.BagHelper;
+import org.intermine.web.bag.InterMineBag;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -79,7 +81,15 @@ public class ModifyBagAction extends InterMineAction
         
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        InterMineBag combined = new InterMineBag(os);
+        
+        if (!typesMatch(savedBags, selectedBags)) {
+            recordError(new ActionMessage("bag.typesDontMatch"), request);
+            return mapping.findForward("history");
+        }
+        
+        // Now combine
+        Class type = savedBags.get(selectedBags[0]).getClass();
+        InterMineBag combined = (InterMineBag) type.newInstance();
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
             combined.addAll((Collection) savedBags.get(selectedBags[i]));
         }
@@ -99,6 +109,24 @@ public class ModifyBagAction extends InterMineAction
         profile.saveBag(BagHelper.findNewBagName(savedBags), combined);
 
         return mapping.findForward("history");
+    }
+    
+    /**
+     * Given a set of bag names, find out whether they are all of the same type.
+     * 
+     * @param bags map from bag name to InterMineBag subclass
+     * @param selectedBags names of bags to match
+     * @return true if all named bags are of the same type, false if not
+     */
+    private static boolean typesMatch(Map bags, String selectedBags[]) {
+        // Check that all selected bags are of the same type
+        Class type = bags.get(selectedBags[0]).getClass();
+        for (int i = 1; i < selectedBags.length; i++) {
+            if (bags.get(selectedBags[i]).getClass() != type) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -124,7 +152,14 @@ public class ModifyBagAction extends InterMineAction
 
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        InterMineBag combined = new InterMineBag(os);
+        
+        if (!typesMatch(savedBags, selectedBags)) {
+            recordError(new ActionMessage("bag.typesDontMatch"), request);
+            return mapping.findForward("history");
+        }
+        
+        Class type = savedBags.get(selectedBags[0]).getClass();
+        InterMineBag combined = (InterMineBag) type.newInstance();
         combined.addAll((Collection) savedBags.get(selectedBags[0]));
         for (int i = 1; i < selectedBags.length; i++) {
             combined.retainAll((Collection) savedBags.get(selectedBags[i]));

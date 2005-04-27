@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.bag;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,12 +10,11 @@ package org.intermine.web;
  *
  */
 
-import java.util.LinkedHashSet;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * A LinkedHashSet with a getSize() method.
@@ -23,20 +22,9 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Kim Rutherford
  */
 
-public class InterMineBag extends LinkedHashSet
+public abstract class InterMineBag extends LinkedHashSet
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
-    
-    private ObjectStore os;
-
-    /** 
-     * Constructs a new, empty InterMineBag.
-     * @param os the object store
-     */
-    public InterMineBag(ObjectStore os) {
-        super();
-        this.os = os;
-    }
     
     /** 
      * Constructs a new, empty InterMineBag.
@@ -59,16 +47,12 @@ public class InterMineBag extends LinkedHashSet
     public int getSize() {
         return size();
     }
-
+    
     /**
-     * @param id intermine id
+     * Return a collection of actual objects represented by this bag rather than any
+     * intermediate form (such as intermine object id numbers).
+     * @param os object store to load objects from
+     * @return collection of objects
      */
-    public void addId(Integer id) {
-        try {
-            add(os.getObjectById(id));
-        } catch (ObjectStoreException err) {
-            LOG.error(err);
-            throw new RuntimeException(err);
-        }
-    }
+    public abstract Collection toObjectCollection(ObjectStore os);
 }

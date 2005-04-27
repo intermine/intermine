@@ -10,6 +10,8 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.Collection;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,9 +24,10 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
-import org.intermine.web.InterMineBag;
 import org.intermine.web.Profile;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Action that builds a PagedCollection to view a bag. Redirects to results.do
@@ -56,16 +59,22 @@ public class BagDetailsAction extends Action
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         
         String bagName = request.getParameter("bagName");
-        InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
-
+        Collection bag = (Collection) profile.getSavedBags().get(bagName);
+        Object type = Object.class; 
+        
         if (bag == null) {
-            bag = new InterMineBag(os);
+            bag = new InterMinePrimitiveBag();
+        }
+        
+        if (bag instanceof InterMineIdBag) {
+            bag = ((InterMineIdBag) bag).toObjectCollection(os);
+            type = os.getModel().getClassDescriptorByName("org.intermine.model.InterMineObject");
         }
         
         String identifier = "bag." + bagName;
         PagedCollection pc = (PagedCollection) SessionMethods.getResultsTable(session, identifier);
         if (pc == null) {
-            pc = new PagedCollection(bagName, bag, Object.class);
+            pc = new PagedCollection(bagName, bag, type);
             SessionMethods.setResultsTable(session, identifier, pc);
         }
         
