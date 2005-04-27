@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.intermine.web.bag.InterMineBagBinding;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

@@ -20,6 +20,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.SAXParser;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineBagBinding;
 import org.xml.sax.InputSource;
 
 /**
