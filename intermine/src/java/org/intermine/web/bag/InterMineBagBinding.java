@@ -92,7 +92,6 @@ public class InterMineBagBinding
         }
     }
     
-
     /**
      * Parse saved queries from a Reader
      * @param reader the saved bags
@@ -109,74 +108,74 @@ public class InterMineBagBinding
         return bags;
     }
     
-    
-/**
- * A handler for turning XML bags data into an InterMineBag.
- * 
- * @author Mark Woodbridge
- */
-public static class BagHandler extends DefaultHandler
-{
-    private static final Logger LOG = Logger.getLogger(BagHandler.class);
-    
-    ObjectStore os;
-    Map bags;
-    String bagName;
-    InterMineBag bag;
+    /**
+     * A handler for turning XML bags data into an InterMineBag.
+     * 
+     * @author Mark Woodbridge
+     */
+    public static class BagHandler extends DefaultHandler
+    {
+        private static final Logger LOG = Logger.getLogger(BagHandler.class);
         
-    /**
-     * Constructor
-     * @param os ObjectStore used to resolve object ids
-     * @param bags Map from bag name to InterMineBag
-     */
-    public BagHandler(ObjectStore os, Map bags) {
-        this.os = os;
-        this.bags = bags;
-    }
-
-    /**
-     * @see DefaultHandler#startElement
-     */
-    public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
-        try {
-            if (qName.equals("bag")) {
-                bagName = attrs.getValue("name");
-            }
-            if (qName.equals("element")) {
-                String type = attrs.getValue("type");
-                String value = attrs.getValue("value");
-                if (type.equals(InterMineObject.class.getName())) {
-                    if (bag == null) {
-                        bag = new InterMineIdBag();
-                    } else if (bag instanceof InterMinePrimitiveBag) {
-                        LOG.error("InterMineObject id " + value + " in bag of primitives");
-                        return;
-                    }
-                    bag.add(Integer.valueOf(value));
-                } else {
-                    if (bag == null) {
-                        bag = new InterMinePrimitiveBag();
-                    }  else if (bag instanceof InterMineIdBag) {
-                        LOG.error("primitive " + value + " in bag of InterMineObjects");
-                        return;
-                    }
-                    bag.add(TypeUtil.stringToObject(Class.forName(type), value));
+        ObjectStore os;
+        Map bags;
+        String bagName;
+        InterMineBag bag;
+            
+        /**
+         * Constructor
+         * @param os ObjectStore used to resolve object ids
+         * @param bags Map from bag name to InterMineBag
+         */
+        public BagHandler(ObjectStore os, Map bags) {
+            this.os = os;
+            this.bags = bags;
+        }
+    
+        /**
+         * @see DefaultHandler#startElement
+         */
+        public void startElement(String uri, String localName, String qName, Attributes attrs)
+            throws SAXException {
+            try {
+                if (qName.equals("bag")) {
+                    bagName = attrs.getValue("name");
                 }
+                if (qName.equals("element")) {
+                    String type = attrs.getValue("type");
+                    String value = attrs.getValue("value");
+                    if (type.equals(InterMineObject.class.getName())) {
+                        if (bag == null) {
+                            bag = new InterMineIdBag();
+                        } else if (bag instanceof InterMinePrimitiveBag) {
+                            LOG.error("InterMineObject id " + value + " in bag of primitives");
+                            return;
+                        }
+                        bag.add(Integer.valueOf(value));
+                    } else {
+                        if (bag == null) {
+                            bag = new InterMinePrimitiveBag();
+                        }  else if (bag instanceof InterMineIdBag) {
+                            LOG.error("primitive " + value + " in bag of InterMineObjects");
+                            return;
+                        }
+                        bag.add(TypeUtil.stringToObject(Class.forName(type), value));
+                    }
+                }
+            } catch (Exception e) {
+                throw new SAXException(e);
             }
-        } catch (Exception e) {
-            throw new SAXException(e);
+        }
+    
+        /**
+         * @see DefaultHandler#endElement
+         */
+        public void endElement(String uri, String localName, String qName) {
+            if (qName.equals("bag")) {
+                bags.put(bagName, bag);
+                bag = null;
+            }
         }
     }
-
-    /**
-     * @see DefaultHandler#endElement
-     */
-    public void endElement(String uri, String localName, String qName) {
-        if (qName.equals("bag")) {
-            bags.put(bagName, bag);
-        }
-    }
-}
 
 }
