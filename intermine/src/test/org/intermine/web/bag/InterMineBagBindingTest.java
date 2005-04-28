@@ -17,13 +17,14 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.Department;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+
 
 /**
  * Tests for the InterMineBagBinding class
@@ -60,7 +61,7 @@ public class InterMineBagBindingTest extends TestCase
 
         //objects
         InterMineBag objects = new InterMineIdBag();
-        objects.add(d1);
+        objects.add(new Integer(1));
         expected.put("objects", objects);
 
         assertEquals(expected, savedBags);
