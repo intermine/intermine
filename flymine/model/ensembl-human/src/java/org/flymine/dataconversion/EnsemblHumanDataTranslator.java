@@ -268,6 +268,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         // seq_region map to null, become Chromosome, Supercontig, Clone and Contig respectively
          } else if ("seq_region".equals(className)) {
             Item seq = getSeqItem(srcItem.getIdentifier());
+            seq.addReference(getOrgRef());
             result.add(seq);
          //simple_feature map to null, become TRNA/CpGIsland depending on analysis_id(logic_name)
          } else if ("simple_feature".equals(className)) {
