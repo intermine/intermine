@@ -224,15 +224,13 @@ public class MainHelper
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    Collection bag //= (Collection) savedBags.get(c.getValue());
-                            = ((InterMineBag) savedBags.get(c.getValue())).toObjectCollection(os);
-                    /*if (bag instanceof InterMineIdBag) {
+                    Collection bag = (Collection) savedBags.get(c.getValue());
+                    //        = ((InterMineBag) savedBags.get(c.getValue())).toObjectCollection(os);
+                    if (bag instanceof InterMineIdBag) {
                         // constrain the id of the object
                         QueryField qf = new QueryField((QueryClass) qn, "id");
-                        cs.addConstraint(new BagConstraint(qf,
-                                                        c.getOp(),
-                                                        bag);
-                    } else*/ {
+                        cs.addConstraint(new BagConstraint(qf, c.getOp(), bag));
+                    } else {
                         cs.addConstraint(new BagConstraint(qn,
                                                        c.getOp(),
                                                        bag));
