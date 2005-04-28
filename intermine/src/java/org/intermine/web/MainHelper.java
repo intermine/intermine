@@ -10,25 +10,27 @@ package org.intermine.web;
  *
  */
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Collection;
-import java.util.Date;
-import java.math.BigDecimal;
 
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -43,12 +45,8 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
 import org.intermine.util.StringUtil;
-import org.intermine.web.bag.InterMineBag;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.InterMineIdBag;
 
 /**
@@ -156,8 +154,8 @@ public class MainHelper
      * @param savedBags the current saved bags map
      * @return an InterMine Query
      */
-    public static Query makeQuery(PathQuery query, Map savedBags, ObjectStore os) {
-        return makeQuery(query, savedBags, null, os);
+    public static Query makeQuery(PathQuery query, Map savedBags) {
+        return makeQuery(query, savedBags, null);
     }
 
     /**
@@ -165,11 +163,9 @@ public class MainHelper
      * @param query the PathQuery
      * @param savedBags the current saved bags map
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
-     * @param os ObjectStore from which to load objects for bags
      * @return an InterMine Query
      */
-    public static Query makeQuery(PathQuery query, Map savedBags, Map pathToQueryNode,
-                                  ObjectStore os) {
+    public static Query makeQuery(PathQuery query, Map savedBags, Map pathToQueryNode) {
         query = (PathQuery) query.clone();
         Map qNodes = query.getNodes();
         List view = query.getView();
@@ -225,7 +221,6 @@ public class MainHelper
                 Constraint c = (Constraint) j.next();
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
                     Collection bag = (Collection) savedBags.get(c.getValue());
-                    //        = ((InterMineBag) savedBags.get(c.getValue())).toObjectCollection(os);
                     if (bag instanceof InterMineIdBag) {
                         // constrain the id of the object
                         QueryField qf = new QueryField((QueryClass) qn, "id");

@@ -67,7 +67,7 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Map templates = task.getPrecomputeTemplateQueries();
         TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
-        System.out.println(MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap(), os));
+        System.out.println(MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap()));
 
         Query q = new Query();
         q.setDistinct(true);
@@ -94,7 +94,7 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         PrecomputeTemplatesTask.QueryAndIndexes expected = task.new QueryAndIndexes();
         expected.setQuery(q);
         expected.addIndex(qfAge);
-        PrecomputeTemplatesTask.QueryAndIndexes qai = task.processTemplate(template, os);
+        PrecomputeTemplatesTask.QueryAndIndexes qai = task.processTemplate(template);
         System.out.println("generate: " + qai.getQuery());
         assertEquals(expected.toString(), qai.toString());
         System.out.println("generate: " + qai.getQuery());

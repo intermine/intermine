@@ -67,7 +67,7 @@ public class SaveQueryAction extends InterMineAction
 
         try {
             if (query.getInfo() == null) {
-                query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags(), os)));
+                query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
             }
         } catch (ObjectStoreException e) {
             recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
