@@ -13,19 +13,25 @@ package org.intermine.web.bag;
 import java.util.Collection;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 
 /**
- * Bag of primative wrappers.
+ * Bag of primitive wrapper objects.
  * 
  * @author tom
  */
 public class InterMinePrimitiveBag extends InterMineBag
 {
+    /**
+     * Construct an instance of InterMinePrimitiveBag.
+     * @param bag bag to copy
+     */
     public InterMinePrimitiveBag(InterMinePrimitiveBag bag) {
         super(bag);
     }
     
+    /**
+     * Construct an instance of InterMinePrimitiveBag.
+     */
     public InterMinePrimitiveBag() {
         super();
     }

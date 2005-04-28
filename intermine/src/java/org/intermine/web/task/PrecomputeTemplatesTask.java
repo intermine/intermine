@@ -112,7 +112,7 @@ public class PrecomputeTemplatesTask extends Task
             HashMap pathToQueryNode = new HashMap();
             TemplateQuery template = (TemplateQuery) entry.getValue();
 
-            QueryAndIndexes qai = processTemplate(template, os);
+            QueryAndIndexes qai = processTemplate(template);
 
             Query q = qai.getQuery();
 
@@ -154,11 +154,11 @@ public class PrecomputeTemplatesTask extends Task
      * @param template the template query to alter
      * @return altered query and a list of indexes
      */
-    protected QueryAndIndexes processTemplate(TemplateQuery template, ObjectStore os) {
+    protected QueryAndIndexes processTemplate(TemplateQuery template) {
         QueryAndIndexes qai = new QueryAndIndexes();
         HashMap pathToQueryNode = new HashMap();
         List indexes = new ArrayList();
-        Query tmp = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode, os);
+        Query tmp = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
 
         // find nodes with editable constraints to index and possibly add to select list
         Iterator niter = template.getNodes().iterator();
@@ -180,7 +180,7 @@ public class PrecomputeTemplatesTask extends Task
 
         // now generate query with editable constraints removed
         template.removeEditableConstraints();
-        Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap(), os);
+        Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap());
         qai.setQuery(query);
 
         // list of indexes needs to be QueryFields from generated query but list created from temp

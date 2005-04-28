@@ -106,7 +106,7 @@ public class SessionMethods
         RunQueryThread runnable = new RunQueryThread() {
             public void run () {
                 try {
-                    Query q = MainHelper.makeQuery(query, profile.getSavedBags(), os);
+                    Query q = MainHelper.makeQuery(query, profile.getSavedBags());
                     Results rtmp = TableHelper.makeResults(os, q);
                     // Register request id for query on this thread
                     // We do this before setting r
