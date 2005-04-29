@@ -19,6 +19,8 @@ import org.intermine.task.ConverterTask;
 
 import org.apache.tools.ant.BuildException;
 
+import org.apache.log4j.Logger;
+
 /**
  * Initiates retrieval and conversion of data from a source database
  *
@@ -28,6 +30,8 @@ import org.apache.tools.ant.BuildException;
  */
 public class DBRetrieverTask extends ConverterTask
 {
+    private static final Logger LOG = Logger.getLogger(DataTranslator.class);
+
     protected String database;
 
     /**
@@ -62,6 +66,7 @@ public class DBRetrieverTask extends ConverterTask
             new DBConverter(m, db, reader, writer).process();
             reader.close();
         } catch (Exception e) {
+            LOG.error("problem retrieving data: ", e);
             throw new BuildException(e);
         } finally {
             try {
