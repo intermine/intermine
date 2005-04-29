@@ -233,25 +233,9 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(organismRef);
                     addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
-                    Item geneRelation = createItem(tgtNs + "SimpleRelation", "");
-                    addReferencedItem(tgtItem, geneRelation, "objects", true, "subject", false);
-                    moveField(srcItem, geneRelation, "gene", "object");
-                    result.add(geneRelation);
-
-                    String translationId = srcItem.getReference("translation").getRefId();
-                    String proteinId = getChosenProteinId(translationId, srcNs);
-
-                    // if no SwissProt or trembl accession found there will not be a protein
-                    if (proteinId != null) {
-                        tgtItem.addReference(new Reference("protein", proteinId));
-                        Item transRelation = createItem(tgtNs + "SimpleRelation", "");
-                        transRelation.addReference(new Reference("subject", proteinId));
-                        addReferencedItem(tgtItem, transRelation, "subjects", true, "object",
-                                          false);
-                        result.add(transRelation);
-                    } else {
-                        tgtItem.removeReference("protein");
-                    }
+                    // SimpleRelation between Gene and Transcript
+                    result.add(createSimpleRelation(tgtItem.getReference("gene").getRefId(),
+                                                    tgtItem.getIdentifier()));
 
                     // set transcript identifier to be ensembl stable id
                     if (!tgtItem.hasAttribute("identifier")) {
@@ -263,14 +247,51 @@ public class EnsemblDataTranslator extends DataTranslator
                                                                srcItem.getIdentifier()));
                         }
                     }
+
+                    Item translation = ItemHelper.convert(srcItemReader.getItemById(srcItem
+                                                         .getReference("translation").getRefId()));
+                    // Transcript.translation is set by mapping file - add reference to protein
+                    // if no SwissProt or trembl accession found there will not be a protein
+                    String proteinId = getChosenProteinId(translation.getIdentifier(), srcNs);
+
+                    if (proteinId != null) {
+                        tgtItem.addReference(new Reference("protein", proteinId));
+                        result.add(createSimpleRelation(tgtItem.getIdentifier(),
+                                                        proteinId));
+                    }
+
+                    // need to fetch translation to get identifier for CDS
+                    // create CDS and reference from MRNA
+                    Item cds = createItem(tgtNs + "CDS", "");
+                    if (translation != null) {
+                        Item stableId = getStableId("translation",
+                                                    translation.getIdentifier(), srcNs);
+                        cds.setAttribute("identifier",
+                                         stableId.getAttribute("stable_id").getValue() + "_CDS");
+                        cds.addToCollection("polypeptides", translation.getIdentifier());
+                        result.add(createSimpleRelation(cds.getIdentifier(),
+                                                        translation.getIdentifier()));
+                    }
+                    cds.addReference(organismRef);
+                    addReferencedItem(cds, ensemblDb, "evidence", true, "", false);
+                    Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
+                                                 cds.getAttribute("identifier").getValue(),
+                                                 ensemblRef);
+                    result.add(synonym);
+
+
+                    if (proteinId != null) {
+                        cds.setReference("protein", proteinId);
+                    }
+                    tgtItem.addToCollection("CDSs", cds);
+                    result.add(createSimpleRelation(tgtItem.getIdentifier(),
+                                                    cds.getIdentifier()));
+                    result.add(cds);
+
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
-                    if (className.endsWith("translation_stable_id")) {
-                        storeTgtItem = false;
-                    } else {
-                        tgtItem.addReference(ensemblRef);
-                        tgtItem.addAttribute(new Attribute("type", "identifier"));
-                    }
+                    tgtItem.addReference(ensemblRef);
+                    tgtItem.addAttribute(new Attribute("type", "identifier"));
                 } else if ("chromosome".equals(className)) {
                     tgtItem.addReference(organismRef);
                     addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
@@ -282,9 +303,25 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 } else if ("translation".equals(className)) {
                     // if protein can be created it will be put in proteins collection and stored
-                    // at end of translation
-                    getProteinByPrimaryAccession(srcItem, srcNs);
-                    storeTgtItem = false;
+                    // at end of translating
+                    Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
+
+                    // Transcript.translation is set by mapping file - add reference to protein
+                    // if no SwissProt or trembl accession found there will not be a protein
+                    if (protein != null) {
+                        tgtItem.addReference(new Reference("protein", protein.getIdentifier()));
+                        result.add(createSimpleRelation(tgtItem.getIdentifier(),
+                                                        protein.getIdentifier()));
+                    }
+
+                    // set translation identifier to be ensembl stable id
+                    Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
+                    if (stableId != null) {
+                        moveField(stableId, tgtItem, "stable_id", "identifier");
+                    } else {
+                        tgtItem.addAttribute(new Attribute("identifier",
+                                                           srcItem.getIdentifier()));
+                    }
                 }
 
                 if (storeTgtItem) {
@@ -317,6 +354,14 @@ public class EnsemblDataTranslator extends DataTranslator
             flybaseRef = new Reference("source", flybaseDb.getIdentifier());
         }
         return flybaseRef;
+    }
+
+
+    private Item createSimpleRelation(String objectId, String subjectId) {
+        Item sr = createItem("SimpleRelation");
+        sr.setReference("object", objectId);
+        sr.setReference("subject", subjectId);
+        return sr;
     }
 
     /**
@@ -519,14 +564,14 @@ public class EnsemblDataTranslator extends DataTranslator
 
             // set up additional references/collections
             protein.addReference(organismRef);
-            if (translation.hasReference("start_exon")) {
-                protein.addReference(new Reference("startExon",
-                            translation.getReference("start_exon").getRefId()));
-            }
-            if (translation.hasReference("end_exon")) {
-                protein.addReference(new Reference("endExon",
-                            translation.getReference("end_exon").getRefId()));
-            }
+//             if (translation.hasReference("start_exon")) {
+//                 protein.addReference(new Reference("startExon",
+//                             translation.getReference("start_exon").getRefId()));
+//             }
+//             if (translation.hasReference("end_exon")) {
+//                 protein.addReference(new Reference("endExon",
+//                             translation.getReference("end_exon").getRefId()));
+//             }
             proteins.put(primaryAcc, protein);
             proteinSynonyms.addAll(synonyms);
             chosenProtein = protein;
