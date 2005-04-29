@@ -1086,7 +1086,7 @@
   </target>
 
   <target name="build-testmodel-webapp"
-          depends="build-webapp"
+          depends="build-webapp, prepare-test"
           description="Build webapp including the test model">
     <!--<ant antfile="build-model.xml" target="summarise-objectstore" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
