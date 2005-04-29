@@ -21,6 +21,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.RequestPasswordAction;
@@ -37,8 +39,11 @@ public class LoadDefaultTemplatesTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(LoadDefaultTemplatesTask.class);
     
-    protected String xmlFile;
-    protected String username;
+    private String xmlFile;
+    private String username;
+    private String osAlias;
+
+	private String userProfileAlias;
     
     /**
      * Set the templates xml file.
@@ -56,6 +61,14 @@ public class LoadDefaultTemplatesTask extends Task
         username = user;
     }
 
+    public void setOSAlias(String osAlias) {
+    	this.osAlias = osAlias;
+    }
+    
+    public void setUserProfileAlias(String userProfileAlias) {
+    	this.userProfileAlias = userProfileAlias;
+    }
+    
     /**
      * Load templates from an xml file into a userprofile account.
      * 
@@ -68,8 +81,10 @@ public class LoadDefaultTemplatesTask extends Task
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         
         try {
-            ObjectStore os = ObjectStoreFactory.getObjectStore();
-            ProfileManager pm = new ProfileManager(os);
+            ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
+            ObjectStoreWriter userProfileOS =
+                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            ProfileManager pm = new ProfileManager(os, userProfileOS);
             Reader templateQueriesReader = new FileReader(xmlFile);
             Map templateQueries = new TemplateQueryBinding().unmarshal(templateQueriesReader);
             Profile profile = null;

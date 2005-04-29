@@ -57,21 +57,4 @@ public class ObjectStoreFactory
         Method m = cls.getDeclaredMethod("getInstance", parameterTypes);
         return (ObjectStore) m.invoke(null, new Object[] {alias, props});
     }
-
-    /**
-     * Return the default ObjectStore. This is configured by having a property os.default=<alias>.
-     * @return a new ObjectStore
-     * @throws Exception if an error occurs in instantiating the ObjectStore
-     */
-    public static ObjectStore getObjectStore() throws Exception {
-        Properties props = PropertiesUtil.getPropertiesStartingWith("os");
-        props = PropertiesUtil.stripStart("os", props);
-        String osAlias = props.getProperty("default");
-        if (osAlias == null) {
-            throw new ObjectStoreException("No 'os.default' property specified"
-                                           + " (check properties file)");
-        }
-        return ObjectStoreFactory.getObjectStore(osAlias);
-    }
-
 }

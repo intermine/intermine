@@ -18,6 +18,7 @@ import java.util.HashMap;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
 
@@ -154,7 +155,7 @@ public class ProfileTest extends TestCase
     class DummyProfileManager extends ProfileManager
     {
         public DummyProfileManager(ObjectStore os) throws ObjectStoreException {
-            super(os);
+            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"));
         }
         
         public void saveProfile(Profile profile) {

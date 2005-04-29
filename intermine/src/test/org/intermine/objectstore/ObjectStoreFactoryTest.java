@@ -53,12 +53,4 @@ public class ObjectStoreFactoryTest extends TestCase
         } catch (ObjectStoreException e) {
         }
     }
-
-    public void testDefault() throws Exception {
-        ObjectStore os1 = ObjectStoreFactory.getObjectStore("os.unittest");
-        ObjectStore os2 = ObjectStoreFactory.getObjectStore();
-        // These should be exactly the same object
-        assertTrue(os1 == os2);
-    }
-
 }

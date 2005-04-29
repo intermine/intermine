@@ -46,7 +46,8 @@ public class ProfileManagerBindingTest extends TestCase
     private Profile sallyProfile;
     private ObjectStoreWriter osw;
     private ObjectStore os;
-
+    private ObjectStoreWriter userProfileOS;
+    
     public ProfileManagerBindingTest(String arg) {
         super(arg);
     }
@@ -55,6 +56,8 @@ public class ProfileManagerBindingTest extends TestCase
         super.setUp();
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
+        userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+
 
         XmlBinding binding = new XmlBinding(osw.getModel());
 
@@ -148,7 +151,7 @@ public class ProfileManagerBindingTest extends TestCase
     }
 
     public void testXMLRead() throws Exception {
-        ProfileManager pm = new ProfileManager(os);
+        ProfileManager pm = new ProfileManager(os, userProfileOS);
 
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");

@@ -17,6 +17,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.ProfileManagerBinding;
 
@@ -28,7 +30,9 @@ import org.intermine.web.ProfileManagerBinding;
 
 public class ProfileReadTask extends Task
 {
-    protected String fileName;
+    private String fileName;
+    private String userProfileAlias;
+	private String osAlias;
 
     /**
      * Set the name of the file to read from.
@@ -38,6 +42,14 @@ public class ProfileReadTask extends Task
         this.fileName = fileName;
     }
 
+    public void setOSAlias(String osAlias) {
+    	this.osAlias = osAlias;
+    }
+    
+    public void setUserProfileAlias(String userProfileAlias) {
+    	this.userProfileAlias = userProfileAlias;
+    }
+   
     /**
      * Execute the task - read the profiles.
      * @throws BuildException if there is a problem while reading from the file or writing to the
@@ -46,6 +58,10 @@ public class ProfileReadTask extends Task
     public void execute() throws BuildException {
         if (fileName == null) {
             throw new BuildException("fileName parameter not set");
+        }
+
+        if (userProfileAlias == null) {
+            throw new BuildException("userProfileAlias parameter not set");
         }
 
         // Needed so that STAX can find it's implementation classes
@@ -62,8 +78,9 @@ public class ProfileReadTask extends Task
         }
 
         try {
-            ObjectStore os = ObjectStoreFactory.getObjectStore();
-            ProfileManager pm = new ProfileManager(os);
+            ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
+            ObjectStoreWriter userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            ProfileManager pm = new ProfileManager(os, userProfileOS);
 
             ProfileManagerBinding.unmarshal(reader, pm, os);
         } catch (Exception e) {
