@@ -231,6 +231,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                                                  Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
 
             addItem(translation);
+            addItem(createSynonym(translation, "identifier", identifier, "FlyBase"));
 
             feature.addCollection(new ReferenceList("polypeptides",
                 new ArrayList(Collections.singleton(translation.getIdentifier()))));
