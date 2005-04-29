@@ -54,12 +54,7 @@ public class IqlShell
                         + "<objectstore alias> - to enter shell-mode");
         } else {
             try {
-                ObjectStore os;
-                if (args.length == 0) {
-                    os = ObjectStoreFactory.getObjectStore();
-                } else {
-                    os = ObjectStoreFactory.getObjectStore(args[0]);
-                }
+                ObjectStore os = ObjectStoreFactory.getObjectStore(args[0]);
                 doShell(os);
             } catch (Exception e) {
                 out.println("Exception caught: " + e);

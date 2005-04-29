@@ -37,6 +37,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.config.WebConfig;
 
@@ -72,7 +74,9 @@ public class InitialiserPlugin implements PlugIn
         
         ObjectStore os = null;
         try {
-            os = ObjectStoreFactory.getObjectStore();
+            Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+            String osAlias = (String) props.get("webapp.os.alias");
+            os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
             throw new ServletException("Unable to instantiate ObjectStore", e);
         }
@@ -291,9 +295,13 @@ public class InitialiserPlugin implements PlugIn
     private void createProfileManager(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         try {
-            profileManager = new ProfileManager(os);
+            Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+            String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
+        	ObjectStoreWriter userProfileOS =
+        	    ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            profileManager = new ProfileManager(os, userProfileOS);
         } catch (ObjectStoreException e) {
-            //throw new ServletException("Unable to create profile manager", e);
+            throw new ServletException("Unable to create profile manager", e);
         }
         servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
     }

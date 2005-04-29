@@ -44,8 +44,8 @@ public class ObjectStoreServer
      *
      * @throws Exception if the property 'os.default' is missing or invalid
      */
-    public ObjectStoreServer() throws Exception {
-        this.os = ObjectStoreFactory.getObjectStore();
+    public ObjectStoreServer(String alias) throws Exception {
+        this.os = ObjectStoreFactory.getObjectStore(alias);
     }
 
     /**

@@ -10,6 +10,22 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.SavedBag;
+import org.intermine.model.userprofile.SavedQuery;
+import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineBagBinding;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,22 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.SavedQuery;
-import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineBagBinding;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -44,21 +44,22 @@ import org.intermine.web.bag.InterMineBagBinding;
 public class ProfileManager
 {
     private static final Logger LOG = Logger.getLogger(ProfileManager.class);
-    
+
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
     protected PathQueryBinding queryBinding = new PathQueryBinding();
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
-    
+
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @throws ObjectStoreException if the user profile database cannot be found
      */
-    public ProfileManager(ObjectStore os) throws ObjectStoreException {
+    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS)
+        throws ObjectStoreException {
         this.os = os;
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile");
+        this.osw = userProfileOS;
     }
 
     /**
@@ -77,7 +78,7 @@ public class ProfileManager
     public void close() throws ObjectStoreException {
         osw.close();
     }
-    
+
     /**
      * Check whether a user already has a Profile
      * @param username the username
@@ -189,7 +190,7 @@ public class ProfileManager
         return new Profile(this, username, userProfile.getPassword(), savedQueries, savedBags,
                            savedTemplates);
     }
-    
+
     /**
      * Synchronise a user's Profile with the backing store
      * @param profile the Profile
@@ -208,7 +209,7 @@ public class ProfileManager
                     for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                         osw.delete((InterMineObject) i.next());
                     }
-                    
+
                     for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
                                                                                 i.hasNext();) {
                         osw.delete((InterMineObject) i.next());
@@ -233,7 +234,7 @@ public class ProfileManager
                         LOG.error("Failed to marshal and save bag: " + bag, e);
                     }
                 }
-                
+
                 for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
                     PathQuery query = null;
                     try {
@@ -249,7 +250,7 @@ public class ProfileManager
                         LOG.error("Failed to marshal and save query: " + query, e);
                     }
                 }
-                
+
                 for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
                     TemplateQuery template = null;
                     try {
@@ -264,16 +265,16 @@ public class ProfileManager
                         LOG.error("Failed to marshal and save template: " + template, e);
                     }
                 }
-                 
+
                 osw.store(userProfile);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException(e);
             }
-            
+
             setPassword(username, profile.getPassword());
         }
     }
-    
+
     /**
      * Perform a query to retrieve a user's backing UserProfile
      * @param username the username

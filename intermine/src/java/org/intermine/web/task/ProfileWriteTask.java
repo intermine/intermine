@@ -20,6 +20,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.ProfileManagerBinding;
 
@@ -32,6 +34,8 @@ import org.intermine.web.ProfileManagerBinding;
 public class ProfileWriteTask extends Task
 {
     protected String fileName;
+	private String osAlias;
+	private String userProfileAlias;
 
     /**
      * Set the name of the file to write to.
@@ -40,7 +44,14 @@ public class ProfileWriteTask extends Task
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-
+    public void setOSAlias(String osAlias) {
+    	this.osAlias = osAlias;
+    }
+    
+    public void setUserProfileAlias(String userProfileAlias) {
+    	this.userProfileAlias = userProfileAlias;
+    }
+    
     /**
      * Execute the task - write the profiles as XML.
      * @throws BuildException if there is a problem while writing to the file or reading the
@@ -65,8 +76,9 @@ public class ProfileWriteTask extends Task
         }
 
         try {
-            ObjectStore os = ObjectStoreFactory.getObjectStore();
-            ProfileManager pm = new ProfileManager(os);
+            ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
+            ObjectStoreWriter userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            ProfileManager pm = new ProfileManager(os, userProfileOS);
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
