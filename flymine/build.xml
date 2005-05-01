@@ -1588,8 +1588,8 @@
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
       <fileset dir="/shared/data/uniprot">
-        <include name="uniprot_sprot.xml"/>
-        <include name="uniprot_trembl.xml"/>
+        <include name="uniprot_sprot*"/>
+        <include name="uniprot_trembl*"/>
       </fileset>
     </filter-uniprot>
   </target>
@@ -1943,7 +1943,7 @@
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
 
   <!-- build genomic test database -->
-  <target name="build-db-genomic-test" depends="prepare-build-model, prepare-test">
+  <target name="build-db-genomic-test" depends="prepare-build-model, prepare-test, copy-genomic-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -1982,6 +1982,19 @@
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
+  </target>
+
+  <target name="insert-ensembl-test" depends="prepare-test">
+    <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <copy todir="${build.model}/ensembl/resources/test" overwrite="true">
+      <fileset dir="${model}/ensembl/resources/test"/>
+    </copy>
+    <delete file="${build.model}/genomic/objectstoresummary.properties"/>
+    <insert-xml-data integrationWriter="integration.genomic-test"
+                     xmlFile="${build.model}/ensembl/resources/test/EnsemblDataTranslatorFunctionalTest_tgt.xml"
+                     sourceName="ensembl-anoph"/>
   </target>
 
   <target name="compile-chado-java" depends="compile-flymine-java">
