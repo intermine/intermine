@@ -327,23 +327,6 @@
             </xs:element>
         </xs:choice>
     </xs:complexType>
-    <xs:group name="sptrCitationGroup">
-        <xs:annotation>
-            <xs:documentation>Groups the scope (RP lines) and source data (RC lines) lists.</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="scope" type="xs:string" maxOccurs="unbounded">
-                <xs:annotation>
-                    <xs:documentation>Contains a scope regarding a citation. There is no classification yet. (RP lines).</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="source" type="sourceDataType" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation>Contains all information about the source this citation is referring to (RC line).</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:group>
     <!--  Definitions for SPTr's additional citation information ends  -->
     <xs:complexType name="referenceType">
         <xs:annotation>
@@ -351,38 +334,24 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="citation" type="citationType"/>
-            <xs:group ref="sptrCitationGroup"/>
+            <xs:sequence>
+                <xs:element name="scope" type="xs:string" maxOccurs="unbounded">
+                    <xs:annotation>
+                       <xs:documentation>Contains a scope regarding a citation. There is no classification yet. (RP lines).</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="source" type="sourceDataType" minOccurs="0">
+                    <xs:annotation>
+                       <xs:documentation>Contains all information about the source this citation is referring to (RC line).</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
         </xs:sequence>
         <xs:attribute name="evidence" type="xs:string" use="optional"/>
         <xs:attribute name="key" type="xs:string" use="required"/>
     </xs:complexType>
     <!--  Citation type section ends  -->
     <!--  Comment definition begins  -->
-    <xs:group name="bpcCommentGroup">
-        <xs:sequence>
-            <xs:element name="absorption" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="kinetics" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="KM" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="Vmax" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="phDependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="redoxPotential" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="temperatureDependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:group>
-
     <xs:complexType name="commentType">
         <xs:annotation>
             <xs:documentation>The comment element stores all information found in the CC lines of the flatfile format. If there is a defined structure to the CC comment, the extracted is displayed in the various defined attributes and child-elements. See the documentation of these attributes/elements for more details.</xs:documentation>
@@ -393,7 +362,28 @@
                     <xs:documentation>If a CC line type does not have a defined structure, the text of this comment is stored in the element.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:group ref="bpcCommentGroup"/>
+            <xs:sequence>
+                <xs:element name="absorption" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="kinetics" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="KM" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="Vmax" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="phDependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="redoxPotential" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="temperatureDependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="1">
                 <xs:sequence>
                     <xs:element name="link" minOccurs="0" maxOccurs="unbounded">
@@ -618,15 +608,11 @@
         </xs:choice>
         <xs:attribute name="sequence" type="xs:string" use="optional"/>
     </xs:complexType>
-
-    <xs:group name="interactantGroup">
+    <xs:complexType name="interactantType">
         <xs:sequence>
             <xs:element name="id" type="xs:string" minOccurs="1"/>
             <xs:element name="label" type="xs:string" minOccurs="0"/>
         </xs:sequence>
-    </xs:group>
-    <xs:complexType name="interactantType">
-        <xs:group ref="interactantGroup" minOccurs="0"/>
         <xs:attribute name="intactId" type="xs:string" use="required"/>
     </xs:complexType>
 
