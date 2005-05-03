@@ -249,7 +249,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                             obj = ((ProxyReference) obj).getObject();
                             if (obj == null) {
                                  LOG.error("obj is null ");
-                                 LOG.error ("o "+ o);
+                                 LOG.error ("o " + o);
                                  LOG.error("proxyId " + newproxy.getId());
                                  LOG.error("proxy " + newproxy);
                                  ObjectStore os = newproxy.getObjectStore();
@@ -266,11 +266,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                             }
                         } catch (RuntimeException e) {
                              LOG.error("fieldName " + fieldName);
-                             LOG.error ("o "+ o);
+                             LOG.error ("o " + o);
                              LOG.error("id " + obj.getId());
                              LOG.error("obj " + obj);
-                             LOG.error("obj.getClass() "+ obj.getClass());
-                             LOG.error("desc " + getModel().getFieldDescriptorsForClass(obj.getClass()));
+                             LOG.error("obj.getClass() " + obj.getClass());
+                             LOG.error("desc "
+                                       + getModel().getFieldDescriptorsForClass(obj.getClass()));
                              LOG.error("error " , e);
                              throw e;
                         }

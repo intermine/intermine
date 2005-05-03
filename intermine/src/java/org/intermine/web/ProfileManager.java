@@ -54,6 +54,7 @@ public class ProfileManager
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
+     * @param userProfileOS the object store that hold user profile information
      * @throws ObjectStoreException if the user profile database cannot be found
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS)

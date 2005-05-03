@@ -34,8 +34,8 @@ import org.intermine.web.ProfileManagerBinding;
 public class ProfileWriteTask extends Task
 {
     protected String fileName;
-	private String osAlias;
-	private String userProfileAlias;
+    private String osAlias;
+    private String userProfileAlias;
 
     /**
      * Set the name of the file to write to.
@@ -44,12 +44,21 @@ public class ProfileWriteTask extends Task
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    /**
+     * Set the alias of the main object store.
+     * @param osAlias the object store alias
+     */
     public void setOSAlias(String osAlias) {
-    	this.osAlias = osAlias;
+        this.osAlias = osAlias;
     }
     
+    /**
+     * Set the alias of the userprofile object store.
+     * @param userProfileAlias the object store alias of the userprofile database
+     */
     public void setUserProfileAlias(String userProfileAlias) {
-    	this.userProfileAlias = userProfileAlias;
+        this.userProfileAlias = userProfileAlias;
     }
     
     /**
@@ -77,7 +86,8 @@ public class ProfileWriteTask extends Task
 
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
-            ObjectStoreWriter userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            ObjectStoreWriter userProfileOS =
+                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             ProfileManager pm = new ProfileManager(os, userProfileOS);
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();

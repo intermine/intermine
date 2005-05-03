@@ -43,7 +43,7 @@ public class LoadDefaultTemplatesTask extends Task
     private String username;
     private String osAlias;
 
-	private String userProfileAlias;
+    private String userProfileAlias;
     
     /**
      * Set the templates xml file.
@@ -61,12 +61,20 @@ public class LoadDefaultTemplatesTask extends Task
         username = user;
     }
 
+    /**
+     * Set the alias of the main object store.
+     * @param osAlias the object store alias
+     */
     public void setOSAlias(String osAlias) {
-    	this.osAlias = osAlias;
+        this.osAlias = osAlias;
     }
     
+    /**
+     * Set the alias of the userprofile object store.
+     * @param userProfileAlias the object store alias of the userprofile database
+     */
     public void setUserProfileAlias(String userProfileAlias) {
-    	this.userProfileAlias = userProfileAlias;
+        this.userProfileAlias = userProfileAlias;
     }
     
     /**

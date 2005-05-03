@@ -32,7 +32,7 @@ public class ProfileReadTask extends Task
 {
     private String fileName;
     private String userProfileAlias;
-	private String osAlias;
+    private String osAlias;
 
     /**
      * Set the name of the file to read from.
@@ -42,10 +42,18 @@ public class ProfileReadTask extends Task
         this.fileName = fileName;
     }
 
+    /**
+     * Set the alias of the main object store.
+     * @param osAlias the object store alias
+     */
     public void setOSAlias(String osAlias) {
-    	this.osAlias = osAlias;
+        this.osAlias = osAlias;
     }
     
+    /**
+     * Set the alias of the userprofile object store.
+     * @param userProfileAlias the object store alias of the userprofile database
+     */
     public void setUserProfileAlias(String userProfileAlias) {
     	this.userProfileAlias = userProfileAlias;
     }
