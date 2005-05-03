@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 /**
  * A pageable and configurable table of data.
  *
@@ -23,6 +25,8 @@ import java.util.Iterator;
  */
 public abstract class PagedTable
 {
+    protected static final Logger LOG = Logger.getLogger(PagedTable.class);
+
     protected List columns = new ArrayList();
     protected List rows;
     protected int startRow = 0;
@@ -111,8 +115,10 @@ public abstract class PagedTable
      * Set the page size of the table
      *
      * @param pageSize the page size
+     * @throws PageOutOfRangeException if the page is out of range for this source collection
+     * (ie. is past the offset limit for the objectstore)
      */    
-    public void setPageSize(int pageSize) {
+    public void setPageSize(int pageSize) throws PageOutOfRangeException {
         this.pageSize = pageSize;
         startRow = (startRow / pageSize) * pageSize;
         updateRows();
@@ -148,11 +154,24 @@ public abstract class PagedTable
      * 
      * @param page page number
      * @param size page size
+     * @throws PageOutOfRangeException if the page is out of range for this source collection
+     * (ie. is past the offset limit for the objectstore)
      */
-    public void setPageAndPageSize(int page, int size) {
-        this.pageSize = size;
-        startRow = size * page;
-        updateRows();
+    public void setPageAndPageSize(int page, int size)
+        throws PageOutOfRangeException {
+        int oldStartRow = this.startRow;
+        int oldPageSize = this.pageSize;
+        
+        try {
+            this.pageSize = size;
+            this.startRow = size * page;
+            updateRows();
+        } catch (PageOutOfRangeException e) {
+            // reset state
+            this.startRow = oldStartRow;
+            this.pageSize = oldPageSize;
+            throw e;
+        }
     }
     
     /**
@@ -168,7 +187,11 @@ public abstract class PagedTable
      */
     public void firstPage() {
         startRow = 0;
-        updateRows();
+        try {
+            updateRows();
+        } catch (PageOutOfRangeException e) {
+            throw new RuntimeException("failed to go to the first page in PagedTable", e);
+        }
     }
 
     /**
@@ -181,10 +204,19 @@ public abstract class PagedTable
 
     /**
      * Go to the last page
+     * @throws PageOutOfRangeException if the page is out of range for this source collection
+     * (ie. is past the offset limit for the objectstore)
      */
-    public void lastPage() {
-        startRow = ((getExactSize() - 1) / pageSize) * pageSize;
-        updateRows();
+    public void lastPage() throws PageOutOfRangeException {
+        int oldStartRow = startRow;
+        try {
+            startRow = ((getExactSize() - 1) / pageSize) * pageSize;
+            updateRows();
+        } catch (PageOutOfRangeException e) {
+            // go back to where we were
+            startRow = oldStartRow;
+            throw e;
+        }
     }
 
     /**
@@ -202,15 +234,33 @@ public abstract class PagedTable
         if (startRow >= pageSize) {
             startRow -= pageSize;
         }
-        updateRows();
+        try {
+            updateRows();
+        } catch (PageOutOfRangeException e) {
+            LOG.error("OutOfRangeException exception in PagedTable: " + e.getStackTrace());
+
+            // if we get here a previous call to nextPage() or lastPage() didn't through
+            // OutOfRangeException as it should.  return to first page in the hope that that doesn't
+            // cause another exception
+            firstPage();
+        }
     }
 
     /**
      * Go to the next page
+     * @throws PageOutOfRangeException if the page is out of range for this source collection
+     * (ie. is past the offset limit for the objectstore)
      */
-    public void nextPage() {
-        startRow += pageSize;
-        updateRows();
+    public void nextPage() throws PageOutOfRangeException {
+        int oldStartRow = startRow;
+        try {
+            startRow += pageSize;
+            updateRows();
+        } catch (PageOutOfRangeException e) {
+            // go back to where we were
+            startRow = oldStartRow;
+            throw e;
+        }
     }
 
     /**
@@ -249,8 +299,9 @@ public abstract class PagedTable
 
     /**
      * Update the internal row list
+     * @throws PageOutOfRangeException if update is unable to get the page we want
      */
-    protected abstract void updateRows();
+    protected abstract void updateRows() throws PageOutOfRangeException;
 
     /**
      * Return the maximum retrievable index for this PagedTable.  This will only ever return less
@@ -259,6 +310,4 @@ public abstract class PagedTable
      * @return the maximum retrieved index
      */
     public abstract int getMaxRetrievableIndex();
-
-    
 }

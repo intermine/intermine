@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreLimitReachedException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.Query;
@@ -58,7 +59,11 @@ public class PagedResults extends PagedTable
         super(columnNames);
         this.results = results;
         setColumnTypes(model);
-        updateRows();
+        try {
+            updateRows();
+        } catch (PageOutOfRangeException e) {
+            throw new RuntimeException("unable to create a PagedResults object", e);
+        }
     }
 
     /**
@@ -98,15 +103,22 @@ public class PagedResults extends PagedTable
     }
 
     /**
+     * @throws PageOutOfRangeException
      * @see PagedTable#updateRows
      */
-    protected void updateRows() {
+    protected void updateRows() throws PageOutOfRangeException {
         rows = new ArrayList();
         try {
             for (int i = startRow; i < startRow + pageSize; i++) {
                 rows.add(results.get(i));
             }
         } catch (IndexOutOfBoundsException e) {
+                // ignore 
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ObjectStoreLimitReachedException) {
+                throw new PageOutOfRangeException("PagedResults.updateRows() failed",
+                                                  e.getCause());
+            }
         }
     }
 
