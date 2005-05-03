@@ -92,7 +92,6 @@ public class SaveBagAction extends InterMineAction
         throws ServletException {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
@@ -104,7 +103,7 @@ public class SaveBagAction extends InterMineAction
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
         // Create the right kind of bag
-        String selected = (String) crf.getSelectedObjects()[0];
+        String selected = crf.getSelectedObjects()[0];
         int index = selected.indexOf(",");
         int col = Integer.parseInt(index == -1 ? selected : selected.substring(0, index));
         Object type = ((Column) pt.getColumns().get(col)).getType();
@@ -164,9 +163,8 @@ public class SaveBagAction extends InterMineAction
                             recordError(new ActionMessage("errors.query.objectstoreerror"),
                                         request, (ObjectStoreException) e.getCause(), LOG);
                             return mapping.findForward("results");
-                        } else {
-                            throw e;
                         }
+                        throw e;
                     } catch (ObjectStoreException e) {
                         recordError(new ActionMessage("errors.query.objectstoreerror"),
                                     request, e, LOG);
