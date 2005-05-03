@@ -42,6 +42,7 @@ public class ObjectStoreServer
      * Construct an ObjectStoreServer that communicates with an ObjectStore
      * given by the objectstoreserver.os property
      *
+     * @param alias the ObjectStore alias to use for this server
      * @throws Exception if the property 'os.default' is missing or invalid
      */
     public ObjectStoreServer(String alias) throws Exception {
