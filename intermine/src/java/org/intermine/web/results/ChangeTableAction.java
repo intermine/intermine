@@ -18,8 +18,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.web.ForwardParameters;
+import org.intermine.web.InterMineDispatchAction;
 import org.intermine.web.SessionMethods;
 
 /**
@@ -29,7 +30,7 @@ import org.intermine.web.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
-public class ChangeTableAction extends DispatchAction
+public class ChangeTableAction extends InterMineDispatchAction
 {
     /**
      * Change to the last results page
@@ -47,7 +48,11 @@ public class ChangeTableAction extends DispatchAction
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         int page = ((pt.getExactSize() - 1) / pt.getPageSize());
-        pt.setPageAndPageSize(page, pt.getPageSize());
+        try {
+            pt.setPageAndPageSize(page, pt.getPageSize());
+        } catch (PageOutOfRangeException e) {
+            recordError(new ActionMessage("results.maxoffsetreached"), request);
+        }
 
         return makeResultsForward(mapping.findForward("results"), request, pt);
     }

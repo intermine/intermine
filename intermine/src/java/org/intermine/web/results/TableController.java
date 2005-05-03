@@ -10,7 +10,6 @@ package org.intermine.web.results;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,6 +18,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.SessionMethods;
@@ -52,7 +53,6 @@ public class TableController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         
@@ -71,7 +71,14 @@ public class TableController extends TilesAction
         int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
         int size = (sizeStr == null ? pt.getPageSize() : Integer.parseInt(sizeStr));
         
-        pt.setPageAndPageSize(page, size);
+        try {
+            pt.setPageAndPageSize(page, size);
+        } catch (PageOutOfRangeException e) {
+            ActionMessages actionMessages = getErrors(request);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionMessage("results.maxoffsetreached"));
+            saveErrors(request, actionMessages);
+        }
         
         return null;
     }
