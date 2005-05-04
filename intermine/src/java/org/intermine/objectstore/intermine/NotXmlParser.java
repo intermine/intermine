@@ -48,68 +48,67 @@ public class NotXmlParser
      * @throws ClassNotFoundException if a class cannot be found
      */
     public static InterMineObject parse(String xml, ObjectStore os) throws ClassNotFoundException {
-        try {
-            String a[] = StringUtil.split(xml, DELIM);
-
-            Set classes = new HashSet();
-            if (!"".equals(a[0])) {
-                classes.add(Class.forName(a[0]));
-            }
-            if (!"".equals(a[1])) {
-                String b[] = a[1].split(" ");
-                for (int i = 0; i < b.length; i++) {
-                    classes.add(Class.forName(b[i]));
-                }
-            }
-            InterMineObject retval = (InterMineObject) DynamicUtil.createObject(classes);
-
-            Map fields = os.getModel().getFieldDescriptorsForClass(retval.getClass());
-            for (int i = 2; i < a.length; i += 2) {
-                if (a[i].startsWith("a")) {
-                    String fieldName = a[i].substring(1);
-                    Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName)
-                        .getType();
-                    StringBuffer string = new StringBuffer(i + 1 == a.length ? "" : a[i + 1]);
-                    while ((i + 2 < a.length) && (a[i + 2].startsWith(ENCODED_DELIM))) {
-                        i++;
-                        string.append(DELIM)
-                            .append(a[i + 1].substring(1));
-                    }
-                    TypeUtil.setFieldValue(retval, fieldName, TypeUtil.stringToObject(fieldClass,
-                                string.toString()));
-                } else if (a[i].startsWith("r")) {
-                    String fieldName = a[i].substring(1);
-                    Integer id = Integer.valueOf(a[i + 1]);
-                    ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(fieldName);
-                    TypeUtil.setFieldValue(retval, fieldName, new ProxyReference(os, id,
-                                ref.getReferencedClassDescriptor().getType()));
-                }
-            }
-
-            Iterator collIter = fields.entrySet().iterator();
-            while (collIter.hasNext()) {
-                Map.Entry collEntry = (Map.Entry) collIter.next();
-                Object maybeColl = collEntry.getValue();
-                if (maybeColl instanceof CollectionDescriptor) {
-                    CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
-                    // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
-                    //                         AND this = <this>
-                    // Or if we have a one-to-many collection, then:
-                    //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
-                    Collection lazyColl = null;
-                    if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
-                        ReferenceDescriptor reverse = coll.getReverseReferenceDescriptor();
-                        lazyColl = new ProxyCollection(os, retval, reverse.getName(),
-                                reverse.getClassDescriptor().getType(), true);
-                    } else {
-                        lazyColl = new ProxyCollection(os, retval, coll.getName(),
-                                coll.getReferencedClassDescriptor().getType(), false);
-                    }
-                    TypeUtil.setFieldValue(retval, coll.getName(), lazyColl);
-                }
-            }
-            return retval;
+        String a[] = StringUtil.split(xml, DELIM);
+        
+        Set classes = new HashSet();
+        if (!"".equals(a[0])) {
+            classes.add(Class.forName(a[0]));
         }
+        if (!"".equals(a[1])) {
+            String b[] = a[1].split(" ");
+            for (int i = 0; i < b.length; i++) {
+                classes.add(Class.forName(b[i]));
+            }
+        }
+        InterMineObject retval = (InterMineObject) DynamicUtil.createObject(classes);
+        
+        Map fields = os.getModel().getFieldDescriptorsForClass(retval.getClass());
+        for (int i = 2; i < a.length; i += 2) {
+            if (a[i].startsWith("a")) {
+                String fieldName = a[i].substring(1);
+                Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName)
+                    .getType();
+                StringBuffer string = new StringBuffer(i + 1 == a.length ? "" : a[i + 1]);
+                while ((i + 2 < a.length) && (a[i + 2].startsWith(ENCODED_DELIM))) {
+                    i++;
+                    string.append(DELIM)
+                        .append(a[i + 1].substring(1));
+                }
+                TypeUtil.setFieldValue(retval, fieldName,
+                                       TypeUtil.stringToObject(fieldClass, string.toString()));
+            } else if (a[i].startsWith("r")) {
+                String fieldName = a[i].substring(1);
+                Integer id = Integer.valueOf(a[i + 1]);
+                ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(fieldName);
+                TypeUtil.setFieldValue(retval, fieldName,
+                      new ProxyReference(os, id, ref.getReferencedClassDescriptor().getType()));
+            }
+        }
+
+        Iterator collIter = fields.entrySet().iterator();
+        while (collIter.hasNext()) {
+            Map.Entry collEntry = (Map.Entry) collIter.next();
+            Object maybeColl = collEntry.getValue();
+            if (maybeColl instanceof CollectionDescriptor) {
+                CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
+                // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
+                //                         AND this = <this>
+                // Or if we have a one-to-many collection, then:
+                //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
+                Collection lazyColl = null;
+                if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
+                    ReferenceDescriptor reverse = coll.getReverseReferenceDescriptor();
+                    lazyColl = new ProxyCollection(os, retval, reverse.getName(),
+                                                   reverse.getClassDescriptor().getType(), true);
+                } else {
+                    lazyColl = new ProxyCollection(os, retval, coll.getName(),
+                                                   coll.getReferencedClassDescriptor().getType(),
+                                                   false);
+                }
+                TypeUtil.setFieldValue(retval, coll.getName(), lazyColl);
+            }
+        }
+        return retval;
     }
 }
 

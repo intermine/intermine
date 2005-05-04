@@ -95,7 +95,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
     /**
      * @see ObjectStore#execute(Query)
      */
-    public Results execute(Query q) throws ObjectStoreException {
+    public Results execute(Query q) {
         return new Results(q, this, getSequence());
     }
 
@@ -104,29 +104,25 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
-        try {
-            List retvalList = os.execute(q, start, limit, optimise, explain, sequence);
-            if (classNameToDescriptors == null) {
-                return retvalList;
+        List retvalList = os.execute(q, start, limit, optimise, explain, sequence);
+        if (classNameToDescriptors == null) {
+            return retvalList;
+        } else {
+            CacheHoldingArrayList retval;
+            if (retvalList instanceof CacheHoldingArrayList) {
+                retval = (CacheHoldingArrayList) retvalList;
             } else {
-                CacheHoldingArrayList retval;
-                if (retvalList instanceof CacheHoldingArrayList) {
-                    retval = (CacheHoldingArrayList) retvalList;
-                } else {
-                    retval = new CacheHoldingArrayList(retvalList);
-                }
-                if (retval.size() > 0) {
-                    if ((q.getSelect().size() == 1)
-                            && (q.getSelect().get(0) instanceof QueryClass)) {
-                        if (Item.class.equals(((QueryClass) q.getSelect().get(0)).getType())) {
-                            fetchRelated(retval);
-                        }
+                retval = new CacheHoldingArrayList(retvalList);
+            }
+            if (retval.size() > 0) {
+                if ((q.getSelect().size() == 1)
+                        && (q.getSelect().get(0) instanceof QueryClass)) {
+                    if (Item.class.equals(((QueryClass) q.getSelect().get(0)).getType())) {
+                        fetchRelated(retval);
                     }
                 }
-                return retval;
             }
-        } catch (IllegalAccessException e) {
-            throw new ObjectStoreException(e);
+            return retval;
         }
     }
 
@@ -139,9 +135,8 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      *
      * @param description a Set of FieldNameAndValue objects
      * @return a List of Item objects
-     * @throws ObjectStoreException if something goes wrong
      */
-    public List getItemsByDescription(Set description) throws ObjectStoreException {
+    public List getItemsByDescription(Set description) {
         List retval = (List) descriptiveCache.get(description);
         ops++;
         if (retval == null) {
@@ -207,11 +202,8 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      * cache and in the holder part of the given list.
      *
      * @param batch the List of items
-     * @throws IllegalAccessException sometimes
-     * @throws ObjectStoreException not often
      */
-    private void fetchRelated(CacheHoldingArrayList batch) throws IllegalAccessException,
-    ObjectStoreException {
+    private void fetchRelated(CacheHoldingArrayList batch){
         // preform deep clone on classNameToDescriptors map -> need deepClone() method on all
         // enclosed stuff
         Map classNameToDescriptorsLocal = cloneClassNameToDescriptors();
@@ -275,7 +267,6 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         while (!queue.isEmpty()) {
             long start = (new Date()).getTime();
             DescriptorAndConstraints dac = (DescriptorAndConstraints) queue.removeFirst();
-            int originalSize = dac.constraints.size();
             Iterator conIter = dac.constraints.iterator();
             while (conIter.hasNext()) {
                 Set constraint = (Set) conIter.next();
