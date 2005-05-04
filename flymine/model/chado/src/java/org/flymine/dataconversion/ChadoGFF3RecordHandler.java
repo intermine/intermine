@@ -181,7 +181,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             Item gene = getItemFactory().makeItem(null, tgtNs + "Gene", "");
             gene.setReference("organism", getOrganism().getIdentifier());
             gene.addCollection(new ReferenceList("evidence",
-                                                 Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
+                    Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
             Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
             while (fbIter.hasNext()) {
                 String organismDbId = (String) fbIter.next();
@@ -191,7 +191,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                     feature.setReference("gene", gene.getIdentifier());
 
                     // add SimpleRelation between ?RNA and Gene
-                    Item simpleRelation = getItemFactory().makeItem(null, tgtNs + "SimpleRelation", "");
+                    Item simpleRelation = getItemFactory().makeItem(null,
+                                                                    tgtNs + "SimpleRelation", "");
                     simpleRelation.setReference("object", gene.getIdentifier());
                     simpleRelation.setReference("subject", feature.getIdentifier());
                     addItem(simpleRelation);
@@ -209,7 +210,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                             if (!gene.hasAttribute("identifier")) {
                                 gene.setAttribute("identifier", synonym);
                             }
-                            addItem(createSynonym(gene, "identifier", organismDbId, "FlyBase"));
+                            addItem(createSynonym(gene, "identifier", synonym, "FlyBase"));
                         }
                     }
                 }
@@ -228,7 +229,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
             translation.addCollection(new ReferenceList("evidence",
-                                                 Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
+                    Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
 
             addItem(translation);
             addItem(createSynonym(translation, "identifier", identifier, "FlyBase"));
@@ -257,6 +258,9 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         if (feature.hasAttribute("name")) {
             synonyms.add(feature.getAttribute("name").getValue());
         }
+        if (feature.hasAttribute("organismDbId")) {
+            synonyms.add(feature.getAttribute("organismDbId").getValue());
+        }
         Iterator itemIter = getItems().iterator();
         while (itemIter.hasNext()) {
             Item item = (Item) itemIter.next();
@@ -279,7 +283,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         while (iter.hasNext()) {
             String synonym = (String) iter.next();
             if (!synonyms.contains(synonym)) {
-                if (synonym.startsWith("CG") || synonym.startsWith("CR") || synonym.startsWith("FB")) {
+                if (synonym.startsWith("CG") || synonym.startsWith("CR")
+                    || synonym.startsWith("FB")) {
                     addItem(createSynonym(feature, "identifier", synonym, "FlyBase"));
                 } else {
                     addItem(createSynonym(feature, "name", synonym, "FlyBase"));
@@ -306,6 +311,11 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     }
 
 
+    /**
+     * Get identifier of InfoSource of given name.
+     * @param sourceName title of InfoSource
+     * @return the identifier
+     */
     protected String getSourceIdentifier(String sourceName) {
         String sourceId = null;
         if (sourceName.equals("FlyBase")) {
