@@ -38,14 +38,14 @@ public class MockItemReader extends AbstractItemReader
     /**
      * @see ItemReader#getItemById
      */
-    public Item getItemById(String objectId) throws ObjectStoreException {
+    public Item getItemById(String objectId) {
         return (Item) storedItems.get(objectId);
     }
 
     /**
      * @see ItemReader#itemIterator
      */
-    public Iterator itemIterator() throws ObjectStoreException {
+    public Iterator itemIterator() {
         return storedItems.values().iterator();
     }
 

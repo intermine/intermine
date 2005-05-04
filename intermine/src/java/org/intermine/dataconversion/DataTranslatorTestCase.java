@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.io.InputStream;
 
+import junit.framework.TestCase;
+
 import org.intermine.xml.full.Item;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
@@ -52,7 +54,6 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
         if (is != null) {
             mapping.load(is);
         }
-        InterMineModelParser parser = new InterMineModelParser();
         srcModel = Model.getInstanceByName(getSrcModelName());
 
     }
@@ -66,9 +67,9 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
     public Model getTargetModel(String ns) throws MetaDataException {
         if (ns.equals("http://www.flymine.org/model/genomic#")) {
             return Model.getInstanceByName("genomic");
-        } else {
-            throw new RuntimeException("can't find Model for: " + ns);
         }
+         
+        throw new RuntimeException("can't find Model for: " + ns);
     }
 
     /**

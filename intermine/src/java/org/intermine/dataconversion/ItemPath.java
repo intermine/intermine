@@ -501,7 +501,7 @@ public class ItemPath
          * @param variables set of variables being used for this path traversal
          * @return FieldNameAndValue constraint
          */
-        private FieldNameAndValue getFieldNameAndValue(Object variables[]) {
+        FieldNameAndValue getFieldNameAndValue(Object variables[]) {
             if (index >= 0) {
                 if (index >= variables.length) {
                     throw new IllegalArgumentException("too few variables passed to "

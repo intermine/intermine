@@ -72,7 +72,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
     /**
      * @see ItemReader#itemIterator
      */
-    public Iterator itemIterator() throws ObjectStoreException {
+    public Iterator itemIterator() {
         SingletonResults sr = new SingletonResults(getDefaultQuery(), os, os.getSequence());
         sr.setBatchSize(1000);
         return sr.iterator();
@@ -97,9 +97,8 @@ public class ObjectStoreItemReader extends AbstractItemReader
      * @param q the Query - must have one element in the SELECT list, which must be an Item Object
      * @param batchSize number of items to read in each batch
      * @return an Iterator
-     * @throws ObjectStoreException if anything goes wrong
      */
-    public Iterator itemIterator(Query q, int batchSize) throws ObjectStoreException {
+    public Iterator itemIterator(Query q, int batchSize) {
         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
         sr.setBatchSize(batchSize);
         return sr.iterator();

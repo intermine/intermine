@@ -40,14 +40,14 @@ public class MockItemWriter implements ItemWriter
     /**
      * @see ItemWriter#store
      */
-    public void store(Item item) throws ObjectStoreException {
+    public void store(Item item) {
         storedItems.put(item.getIdentifier(), item);
     }
 
     /**
      * @see ItemWriter#storeAll
      */
-    public void storeAll(Collection items) throws ObjectStoreException {
+    public void storeAll(Collection items) {
         for (Iterator i = items.iterator(); i.hasNext();) {
             store((Item) i.next());
         }
@@ -56,7 +56,7 @@ public class MockItemWriter implements ItemWriter
     /**
      * @see ItemWriter#close
      */
-    public void close() throws ObjectStoreException {
+    public void close() {
     }
     
     /**

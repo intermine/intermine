@@ -218,7 +218,6 @@ public class DirectDBReader implements DBReader
     private class SqlIterator implements Iterator
     {
         private int thisQueryNo;
-        private String sql;
         private int cursor;
 
         /**

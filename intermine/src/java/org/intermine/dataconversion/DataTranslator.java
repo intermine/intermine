@@ -298,10 +298,9 @@ public class DataTranslator
      * @param srcItem item to convert
      * @return converted items
      * @throws ObjectStoreException if error reading/writing an item
-     * @throws InterMineException if no target class/property name can be found
      */
     protected Collection translateItem(Item srcItem)
-        throws ObjectStoreException, InterMineException {
+        throws ObjectStoreException {
         String tgtClsName = null;
 
         // see if there are any SubclassRestriction template for this class
@@ -453,7 +452,7 @@ public class DataTranslator
      * @return the Iterator
      * @throws ObjectStoreException if an error occurs
      */
-    protected Iterator getCollection(Item item, String refListName) throws ObjectStoreException {
+    protected Iterator getCollection(Item item, String refListName) {
         ReferenceList refList = item.getCollection(refListName);
         return (refList == null ? null : new ItemIterator(refList.getRefIds()));
     }

@@ -165,75 +165,68 @@ public class LiteParser
                     (Class []) intClasses.toArray(new Class [] {}));
         }
 
-        try {
-            // Set the data for every given Field
-            Iterator fieldIter = item.getFields().iterator();
-            while (fieldIter.hasNext()) {
-                Field field = (Field) fieldIter.next();
-                Class fieldClass = TypeUtil.getFieldInfo(obj.getClass(), field.getName()).getType();
-                TypeUtil.setFieldValue(obj, field.getName(),
-                                       TypeUtil.stringToObject(fieldClass, field.getValue()));
-            }
-
-            // Set the data for every given reference
-            Map fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
-            Iterator refIter = item.getReferences().iterator();
-            while (refIter.hasNext()) {
-                Field field = (Field) refIter.next();
-                Integer id = new Integer(Integer.parseInt(field.getValue()));
-                ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(field.getName());
-                TypeUtil.setFieldValue(obj, field.getName(), new ProxyReference(os, id,
-                            ref.getReferencedClassDescriptor().getType()));
-            }
-
-            // Set the data for every given Collection
-            Iterator collIter = fields.entrySet().iterator();
-            while (collIter.hasNext()) {
-                Map.Entry collEntry = (Map.Entry) collIter.next();
-                Object maybeColl = collEntry.getValue();
-                if (maybeColl instanceof CollectionDescriptor) {
-                    CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
-                    // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
-                    //                         AND this = <this>
-                    // Or if we have a one-to-many collection, then:
-                    //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
-                    Query q = new Query();
-                    if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
-                        QueryClass qc1 = new QueryClass(coll.getReferencedClassDescriptor()
-                                .getType());
-                        q.addFrom(qc1);
-                        q.addToSelect(qc1);
-                        QueryObjectReference qor = new QueryObjectReference(qc1,
-                                coll.getReverseReferenceDescriptor().getName());
-                        ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS,
-                                obj);
-                        q.setConstraint(cc);
-                        q.setDistinct(false);
-                    } else {
-                        QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
-                        QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
-                            .getType());
-                        q.addFrom(qc1);
-                        q.addFrom(qc2);
-                        q.addToSelect(qc2);
-                        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
-                                        coll.getName()), ConstraintOp.CONTAINS, qc2));
-                        cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
-                                    ConstraintOp.EQUALS, new QueryValue(obj.getId())));
-                        q.setConstraint(cs);
-                        q.setDistinct(false);
-                    }
-                    Collection lazyColl = new SingletonResults(q, os, os.getSequence());
-                    TypeUtil.setFieldValue(obj, coll.getName(), lazyColl);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            IllegalArgumentException e2 = new IllegalArgumentException();
-            e2.initCause(e);
-            throw e2;
+        // Set the data for every given Field
+        Iterator fieldIter = item.getFields().iterator();
+        while (fieldIter.hasNext()) {
+            Field field = (Field) fieldIter.next();
+            Class fieldClass = TypeUtil.getFieldInfo(obj.getClass(), field.getName()).getType();
+            TypeUtil.setFieldValue(obj, field.getName(),
+                                   TypeUtil.stringToObject(fieldClass, field.getValue()));
         }
 
+        // Set the data for every given reference
+        Map fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
+        Iterator refIter = item.getReferences().iterator();
+        while (refIter.hasNext()) {
+            Field field = (Field) refIter.next();
+            Integer id = new Integer(Integer.parseInt(field.getValue()));
+            ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(field.getName());
+            TypeUtil.setFieldValue(obj, field.getName(), new ProxyReference(os, id,
+                                                                            ref.getReferencedClassDescriptor().getType()));
+        }
+
+        // Set the data for every given Collection
+        Iterator collIter = fields.entrySet().iterator();
+        while (collIter.hasNext()) {
+            Map.Entry collEntry = (Map.Entry) collIter.next();
+            Object maybeColl = collEntry.getValue();
+            if (maybeColl instanceof CollectionDescriptor) {
+                CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
+                // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
+                //                         AND this = <this>
+                // Or if we have a one-to-many collection, then:
+                //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
+                Query q = new Query();
+                if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
+                    QueryClass qc1 = new QueryClass(coll.getReferencedClassDescriptor()
+                                                    .getType());
+                    q.addFrom(qc1);
+                    q.addToSelect(qc1);
+                    QueryObjectReference qor = new QueryObjectReference(qc1,
+                                                                        coll.getReverseReferenceDescriptor().getName());
+                    ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS,
+                                                                   obj);
+                    q.setConstraint(cc);
+                    q.setDistinct(false);
+                } else {
+                    QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
+                    QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
+                                                    .getType());
+                    q.addFrom(qc1);
+                    q.addFrom(qc2);
+                    q.addToSelect(qc2);
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
+                                                                                         coll.getName()), ConstraintOp.CONTAINS, qc2));
+                    cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
+                                                          ConstraintOp.EQUALS, new QueryValue(obj.getId())));
+                    q.setConstraint(cs);
+                    q.setDistinct(false);
+                }
+                Collection lazyColl = new SingletonResults(q, os, os.getSequence());
+                TypeUtil.setFieldValue(obj, coll.getName(), lazyColl);
+            }
+        }
         return obj;
     }
 }

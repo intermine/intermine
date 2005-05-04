@@ -197,7 +197,7 @@ public class DBConverter extends DataConverter
             while (iter.hasNext()) {
                 Map row = (Map) iter.next();
                 String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (++identifier);
-                String uniqueId = (String) getUniqueId(alias(clsName) + "_" + clsId);
+                String uniqueId = getUniqueId(alias(clsName) + "_" + clsId);
                 Item item = getItem(cld, uniqueId, clsId, row);
 
                 if (nonUniqueId) {
