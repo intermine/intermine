@@ -62,8 +62,7 @@ public class EmployeeExporter implements TableExporter
 
         PrintStream printStream = new PrintStream(response.getOutputStream());
 
-        PagedTable pt
-            = (PagedTable) SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         try {
             List columns = pt.getColumns();
@@ -119,7 +118,6 @@ public class EmployeeExporter implements TableExporter
      */
     public boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();
-        int employeeCount = 0;
 
         if (pt.getVisibleColumnCount() == 1) {
             for (int i = 0; i < columns.size(); i++) {

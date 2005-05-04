@@ -109,10 +109,6 @@ public class NotXmlParser
                 }
             }
             return retval;
-        } catch (IllegalAccessException e) {
-            IllegalArgumentException e2 = new IllegalArgumentException();
-            e2.initCause(e);
-            throw e2;
         }
     }
 }

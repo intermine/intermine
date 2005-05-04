@@ -55,7 +55,7 @@ public class ProfileReadTask extends Task
      * @param userProfileAlias the object store alias of the userprofile database
      */
     public void setUserProfileAlias(String userProfileAlias) {
-    	this.userProfileAlias = userProfileAlias;
+        this.userProfileAlias = userProfileAlias;
     }
    
     /**
@@ -87,7 +87,8 @@ public class ProfileReadTask extends Task
 
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
-            ObjectStoreWriter userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            ObjectStoreWriter userProfileOS =
+                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             ProfileManager pm = new ProfileManager(os, userProfileOS);
 
             ProfileManagerBinding.unmarshal(reader, pm, os);

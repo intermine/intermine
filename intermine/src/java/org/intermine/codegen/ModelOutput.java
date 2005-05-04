@@ -108,6 +108,7 @@ public abstract class ModelOutput
             fos = new BufferedWriter(new FileWriter (f, true));
             fos.write (src);
         } catch (IOException exp) {
+            // ignore
         } finally {
             try {
                 if (fos != null) {
