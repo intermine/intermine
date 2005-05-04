@@ -326,10 +326,6 @@ public class ItemToObjectTranslator extends Translator
                     throw new MetaDataException(message);
                 }
             }
-        } catch (IllegalAccessException e) {
-            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
-                      + item.getIdentifier(), e);
-            throw new RuntimeException(e);
         } catch (MetaDataException e) {
             LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
                       + item.getIdentifier(), e);

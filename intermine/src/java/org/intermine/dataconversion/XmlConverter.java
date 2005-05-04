@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
  */
 public class XmlConverter extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(XmlConverter.class);
+    static final Logger LOG = Logger.getLogger(XmlConverter.class);
 
     protected Model model;
     protected XmlMetaData xmlInfo;
@@ -56,8 +56,8 @@ public class XmlConverter extends DataConverter
     protected Reader xsdReader;
     private int id = 1;
 
-    private long count = 0;
-    private long start, time, times[];
+    long count = 0;
+    long start, time, times[];
 
     /**
      * Construct with model, reader for xml data, reader for schema and an ItemWriter
@@ -89,7 +89,7 @@ public class XmlConverter extends DataConverter
         SAXParser.parse(new InputSource(xmlReader), new XmlHandler(model));
     }
 
-    private String getIdentifier() {
+    String getIdentifier() {
         return "0_" + id++;
     }
 
@@ -110,7 +110,7 @@ public class XmlConverter extends DataConverter
         ItemFactory itemFactory;
 
         /**
-         * @see DefaultHandler#DefaultHandler
+         * @see DefaultHandler#DefaultHandler()
          * @param model the Model to use when creating items
          */
         public XmlHandler(Model model) {
@@ -307,7 +307,6 @@ public class XmlConverter extends DataConverter
                 s.append(ch, start, length);
                 Item item = (Item) items.peek();
                 ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
-                String tmpName = null;
                 if (attributeName == null) {
                     // If no attribute name set, will be name og last element
                     String path = (String) paths.peek();
@@ -335,7 +334,6 @@ public class XmlConverter extends DataConverter
             if (attributeName != null) {
                 // create attributes specified in content of tags
                 Item item = (Item) items.peek();
-                ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
 
                 if (item.hasAttribute(attributeName)) {
                     throw new SAXException("A value has already been set for attribute ("
@@ -348,7 +346,6 @@ public class XmlConverter extends DataConverter
                 attributeName = null;
             }
             if (!isAttribute) {
-                String tmp = (String) elements.pop();
                 String path = (String) paths.pop();
                 try {
                     if (!xmlInfo.isReferenceElement(path)) {

@@ -186,7 +186,7 @@ public class DataTranslator
     /**
      * Build the "traditional" data translator maps from our set of Equivalences
      * @param equivalences the set of Equivalences
-     * @param model the source model
+     * @param srcModel the source model
      */
     private void buildTranslationMaps(Set equivalences, Model srcModel) {
         for (Iterator i = equivalences.iterator(); i.hasNext();) {

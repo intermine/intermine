@@ -66,6 +66,7 @@ public class ReadAheadDBReader extends BatchingDBReader
                 try {
                     wait(100000L);
                 } catch (InterruptedException e) {
+                    // ignore
                 }
             }
         }
@@ -112,6 +113,7 @@ public class ReadAheadDBReader extends BatchingDBReader
                 try {
                     wait(100000L);
                 } catch (InterruptedException e) {
+                    // ignore
                 }
             }
             if (doClose) {
@@ -138,7 +140,7 @@ public class ReadAheadDBReader extends BatchingDBReader
         }
     }
 
-    private void workLoop() {
+    void workLoop() {
         boolean cont = true;
         while (cont) {
             doWork();

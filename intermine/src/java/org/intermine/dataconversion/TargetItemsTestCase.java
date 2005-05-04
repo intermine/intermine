@@ -52,7 +52,7 @@ public abstract class TargetItemsTestCase extends TestCase
     }
 
     /**
-     * @see TestCase#SetUp
+     * @see TestCase#setUp
      */
     public void setUp() throws Exception {
         ObjectStore objectStore = ObjectStoreWriterFactory.getObjectStoreWriter(oswAlias);

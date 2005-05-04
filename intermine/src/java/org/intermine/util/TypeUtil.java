@@ -42,9 +42,6 @@ public class TypeUtil
     private TypeUtil() {
     }
 
-    private static Map classToFieldToGetter = new HashMap();
-    private static Map classToFieldToSetter = new HashMap();
-
     private static Map classToFieldnameToFieldInfo = new HashMap();
 
     /**
@@ -124,6 +121,7 @@ public class TypeUtil
             try {
                 type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
             } catch (Exception e3) {
+                // ignore
             }
             IllegalAccessException e2 = new IllegalAccessException("Couldn't proxyGet field \""
                     + o.getClass().getName() + "." + fieldName + "\""
@@ -139,10 +137,8 @@ public class TypeUtil
      * @param o the Object
      * @param fieldName the name of the relevant Field
      * @param fieldValue the value of the Field
-     * @throws IllegalAccessException if the field is inaccessible
      */
-    public static void setFieldValue(Object o, String fieldName, Object fieldValue)
-        throws IllegalAccessException {
+    public static void setFieldValue(Object o, String fieldName, Object fieldValue) {
         try {
             if (fieldValue instanceof ProxyReference) {
                 getProxySetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
@@ -154,6 +150,7 @@ public class TypeUtil
             try {
                 type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
             } catch (Exception e3) {
+                // ignore
             }
             IllegalArgumentException e2 = new IllegalArgumentException("Couldn't set field \""
                     + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""

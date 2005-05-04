@@ -297,8 +297,8 @@ public class InitialiserPlugin implements PlugIn
         try {
             Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
             String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
-        	ObjectStoreWriter userProfileOS =
-        	    ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            ObjectStoreWriter userProfileOS =
+                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             profileManager = new ProfileManager(os, userProfileOS);
         } catch (ObjectStoreException e) {
             throw new ServletException("Unable to create profile manager", e);
