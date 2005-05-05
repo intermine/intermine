@@ -198,8 +198,8 @@
   </path>
 
   <path id="test.class.path">
-    <path refid="project.class.path"/>
     <pathelement path="${build.resources.test}"/>
+    <path refid="project.class.path"/>
     <pathelement location="${build.test}"/>
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
