@@ -427,7 +427,7 @@
       <classpath refid="test.class.path"/>
     </taskdef>
     <write-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.unittest"
-                           userProfileAlias="os.userprofile-test"/>
+                           userProfileAlias="osw.userprofile-test"/>
   </target>
 
   <!-- read the userprofile database from a file as XML -->
@@ -436,7 +436,7 @@
       <classpath refid="test.class.path"/>
     </taskdef>
     <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.unittest"
-                          userProfileAlias="os.userprofile-test"/>
+                          userProfileAlias="osw.userprofile-test"/>
   </target>
 
   <!-- insert the testmodel data into the database -->
