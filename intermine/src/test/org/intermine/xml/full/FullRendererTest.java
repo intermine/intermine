@@ -53,16 +53,18 @@ public class FullRendererTest extends XMLTestCase
         col1.addRefId("4");
         item1.addCollection(col1);
 
-        String expected = "<item id=\"1\" class=\"\" implements=\"http://www.intermine.org/testmodel#Company\">" + ENDL
-            + "<attribute name=\"name\" value=\"Company1\"/>" + ENDL
-            + "<reference name=\"address\" ref_id=\"2\"/>" + ENDL
-            + "<collection name=\"departments\">" + ENDL
-            + "<reference ref_id=\"3\"/>" + ENDL
-            + "<reference ref_id=\"4\"/>" + ENDL
-            + "</collection>" + ENDL
-            + "</item>" + ENDL;
+        String expected = "<item id=\"1\" class=\"\" implements=\"http://www.intermine.org/testmodel#Company\">"
+            + "<attribute name=\"name\" value=\"Company1\"/>"
+            + "<reference name=\"address\" ref_id=\"2\"/>"
+            + "<collection name=\"departments\">"
+            + "<reference ref_id=\"3\"/>"
+            + "<reference ref_id=\"4\"/>"
+            + "</collection>"
+            + "</item>";
 
-        assertEquals(expected, FullRenderer.render(item1));
+        String got = FullRenderer.render(item1);
+        
+        assertXMLEqual(expected, got);
     }
 
     public void testRenderItems() throws Exception {
@@ -184,6 +186,7 @@ public class FullRendererTest extends XMLTestCase
             FullRenderer.render(e, model);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException ex) {
+            // expected
         }
     }
 
@@ -204,7 +207,7 @@ public class FullRendererTest extends XMLTestCase
             + "</item>" + ENDL;
 
         String got = FullRenderer.render(e, model);
-        assertEquals(got, expected, got);
+        assertXMLEqual(expected, got);
     }
 
     public void testRenderObjectDynamic() throws Exception {
@@ -232,7 +235,7 @@ public class FullRendererTest extends XMLTestCase
             + "</collection>" + ENDL
             + "</item>" + ENDL;
 
-        assertEquals(expected, FullRenderer.render(b, model));
+        assertXMLEqual(expected, FullRenderer.render(b, model));
     }
 
     public void testRenderBusinessObjects() throws Exception {
@@ -250,7 +253,7 @@ public class FullRendererTest extends XMLTestCase
             + "</item>" + ENDL
             + "</items>" + ENDL;
 
-        assertEquals(expected, FullRenderer.render(list, model));
+        assertXMLEqual(expected, FullRenderer.render(list, model));
     }
 
     public void testRenderTypes() throws Exception {
@@ -292,7 +295,7 @@ public class FullRendererTest extends XMLTestCase
             + "<attribute name=\"stringObjType\" value=\"A String\"/>" + ENDL
             + "</item>" + ENDL;
 
-        assertEquals(expected, FullRenderer.render(t, model));
+        assertXMLEqual(expected, FullRenderer.render(t, model));
     }
 
     public List getExampleItems() {

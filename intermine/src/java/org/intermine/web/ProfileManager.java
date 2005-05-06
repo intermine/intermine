@@ -72,6 +72,14 @@ public class ProfileManager
     }
 
     /**
+     * Return the userprofile ObjectStore that was passed to the constructor.
+     * @return the userprofile  ObjectStore from the constructor
+     */
+    public ObjectStore getUserProfileObjectStore() {
+        return osw;
+    }
+    
+    /**
      * Close this ProfileManager
      *
      * @throws ObjectStoreException in exceptional circumstances

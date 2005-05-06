@@ -46,7 +46,8 @@ public class ProfileManagerBinding
 
             while (iter.hasNext()) {
                 Profile profile = profileManager.getProfile((String) iter.next());
-                ProfileBinding.marshal(profile, profileManager.getObjectStore().getModel(), writer);
+                ProfileBinding.marshal(profile, profileManager.getObjectStore().getModel(),
+                                        profileManager.getObjectStore(), writer);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {

@@ -38,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class InterMineBagBinding
 {
     private static final Logger LOG = Logger.getLogger(InterMineBagBinding.class);
-    
+
     /**
      * Convert an InterMine bag to XML
      * @param bag the InterMineBag
@@ -55,7 +55,7 @@ public class InterMineBagBinding
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-        
+
         return sw.toString();
     }
 
@@ -76,7 +76,7 @@ public class InterMineBagBinding
                 String type, value;
                 if (bag instanceof InterMineIdBag) {
                     type = InterMineObject.class.getName();
-                    value = ((InterMineObject) o).getId().toString();
+                    value = o.toString();
                 } else {
                     type = o.getClass().getName();
                     value = TypeUtil.objectToString(o);
@@ -91,7 +91,7 @@ public class InterMineBagBinding
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Parse saved queries from a Reader
      * @param reader the saved bags
@@ -107,21 +107,21 @@ public class InterMineBagBinding
         }
         return bags;
     }
-    
+
     /**
      * A handler for turning XML bags data into an InterMineBag.
-     * 
+     *
      * @author Mark Woodbridge
      */
     public static class BagHandler extends DefaultHandler
     {
         private static final Logger LOG = Logger.getLogger(BagHandler.class);
-        
+
         ObjectStore os;
         Map bags;
         String bagName;
         InterMineBag bag;
-            
+
         /**
          * Constructor
          * @param os ObjectStore used to resolve object ids
@@ -131,7 +131,7 @@ public class InterMineBagBinding
             this.os = os;
             this.bags = bags;
         }
-    
+
         /**
          * @see DefaultHandler#startElement
          */
@@ -166,7 +166,7 @@ public class InterMineBagBinding
                 throw new SAXException(e);
             }
         }
-    
+
         /**
          * @see DefaultHandler#endElement
          */

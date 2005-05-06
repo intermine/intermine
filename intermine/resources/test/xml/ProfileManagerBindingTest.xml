@@ -1,1 +1,108 @@
-<userprofiles><userprofile username="bob" password="pass"><bags><bag name="bag1"><element type="java.lang.String" value="foo1"></element><element type="java.lang.String" value="foo2"></element><element type="java.lang.String" value="foo3"></element><element type="java.lang.Integer" value="100"></element><element type="java.lang.Boolean" value="true"></element><element type="java.lang.Float" value="1.1"></element><element type="org.intermine.model.InterMineObject" value="9"></element><element type="org.intermine.model.InterMineObject" value="10"></element></bag></bags><queries><query name="query1" model="userprofile" view=""></query></queries><template-queries><template name="template" description="tdesc" category="tcat" important="false" keywords=""><query name="template" model="testmodel" view=""></query></template></template-queries></userprofile><userprofile username="sally" password="sally_pass"><bags><bag name="sally_bag1"><element type="java.lang.String" value="some value"></element></bag><bag name="sally_bag2"><element type="java.lang.Integer" value="123"></element></bag></bags><queries><query name="query1" model="userprofile" view=""></query></queries><template-queries><template name="template" description="some desc" category="some category" important="true" keywords="some_keyword"><query name="template" model="testmodel" view=""></query></template></template-queries></userprofile></userprofiles>
+<userprofiles>
+  <userprofile username="bob" password="pass">
+    <bags>
+      <bag name="bag1">
+        <element type="java.lang.String" value="foo1">
+        </element>
+        <element type="java.lang.String" value="foo2">
+        </element>
+        <element type="java.lang.String" value="foo3">
+        </element>
+        <element type="java.lang.Integer" value="100">
+        </element>
+        <element type="java.lang.Boolean" value="true">
+        </element>
+        <element type="java.lang.Float" value="1.1">
+        </element>
+      </bag>
+    </bags>
+    <queries>
+      <query name="query1" model="testmodel" view="">
+      </query>
+    </queries>
+    <template-queries>
+      <template name="template" description="tdesc" category="tcat" important="false" keywords="">
+        <query name="template" model="testmodel" view="">
+        </query>
+      </template>
+    </template-queries>
+  </userprofile>
+  <userprofile username="sally" password="sally_pass">
+    <items>
+      <item id="10" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+        <attribute name="age" value="30">
+        </attribute>
+        <attribute name="end" value="3">
+        </attribute>
+        <attribute name="fullTime" value="false">
+        </attribute>
+        <attribute name="name" value="EmployeeA3">
+        </attribute>
+        <reference name="department" ref_id="5">
+        </reference>
+      </item>
+      <item id="11" class="http://www.intermine.org/model/testmodel#CEO" implements="http://www.intermine.org/model/testmodel#Broke">
+        <attribute name="age" value="40">
+        </attribute>
+        <attribute name="debt" value="340">
+        </attribute>
+        <attribute name="end" value="4">
+        </attribute>
+        <attribute name="fullTime" value="true">
+        </attribute>
+        <attribute name="name" value="EmployeeB1">
+        </attribute>
+        <attribute name="salary" value="45000">
+        </attribute>
+        <attribute name="seniority" value="76321">
+        </attribute>
+        <attribute name="title" value="Mr.">
+        </attribute>
+        <reference name="company" ref_id="2">
+        </reference>
+        <reference name="department" ref_id="6">
+        </reference>
+      </item>
+      <item id="12" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+        <attribute name="age" value="50">
+        </attribute>
+        <attribute name="end" value="5">
+        </attribute>
+        <attribute name="fullTime" value="true">
+        </attribute>
+        <attribute name="name" value="EmployeeB2">
+        </attribute>
+        <reference name="department" ref_id="6">
+        </reference>
+      </item>
+    </items>
+    <bags>
+      <bag name="sally_bag1">
+        <element type="java.lang.String" value="some value">
+        </element>
+      </bag>
+      <bag name="sally_bag2">
+        <element type="java.lang.Integer" value="123">
+        </element>
+      </bag>
+      <bag name="sally_bag3">
+        <element type="org.intermine.model.InterMineObject" value="10">
+        </element>
+        <element type="org.intermine.model.InterMineObject" value="11">
+        </element>
+        <element type="org.intermine.model.InterMineObject" value="12">
+        </element>
+      </bag>
+    </bags>
+    <queries>
+      <query name="query1" model="testmodel" view="">
+      </query>
+    </queries>
+    <template-queries>
+      <template name="template" description="some desc" category="some category" important="true" keywords="some_keyword">
+        <query name="template" model="testmodel" view="">
+        </query>
+      </template>
+    </template-queries>
+  </userprofile>
+</userprofiles>

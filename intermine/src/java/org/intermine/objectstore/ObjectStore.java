@@ -10,6 +10,7 @@ package org.intermine.objectstore;
  *
  */
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -76,6 +77,15 @@ public interface ObjectStore
      * @throws ObjectStoreException if an error occurs during the retrieval of the object
      */
     public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException;
+
+    /**
+     * Get an objects from the ObjectStore that have the IDs in the ids colection
+     *
+     * @param ids the IDs of the objects to fetch
+     * @return the objects from the ObjectStore or cache
+     * @throws ObjectStoreException if an error occurs during retrieval of the object
+     */
+    public List getObjectsByIds(Collection ids) throws ObjectStoreException;
 
     /**
      * Prefetches an object into the objectstore getObjectById cache. This method doesn't
