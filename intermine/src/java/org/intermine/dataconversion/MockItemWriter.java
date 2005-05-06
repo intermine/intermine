@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.model.fulldata.Item;
 import org.intermine.xml.full.ItemHelper;
 

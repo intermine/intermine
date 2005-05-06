@@ -140,7 +140,7 @@ public class ReadAheadDBReader extends BatchingDBReader
         }
     }
 
-    void workLoop() {
+    private void workLoop() {
         boolean cont = true;
         while (cont) {
             doWork();

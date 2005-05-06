@@ -17,12 +17,9 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.intermine.xml.full.Item;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
  * TestCase for all DataTranslators
