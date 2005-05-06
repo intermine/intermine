@@ -354,6 +354,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
+     * @see ObjectStore#getObjectsByIds(Collection)
+     */
+    public List getObjectsByIds(Collection ids) throws ObjectStoreException {
+        return osw.getObjectsByIds(ids);
+    }
+
+    /**
      * Store an object in this ObjectStore, delegates to internal ObjectStoreWriter.
      *
      * @param o the object to store

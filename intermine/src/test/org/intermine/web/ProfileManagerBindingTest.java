@@ -22,11 +22,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import junit.framework.TestCase;
-
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.XMLTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -34,13 +30,14 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.XmlBinding;
 import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Tests for the Profile class.
  */
 
-public class ProfileManagerBindingTest extends TestCase
+public class ProfileManagerBindingTest extends XMLTestCase
 {
     private Profile bobProfile;
     private Profile sallyProfile;
@@ -104,6 +101,11 @@ public class ProfileManagerBindingTest extends TestCase
         bag.add("some value");
         otherBag.add(new Integer(123));
 
+        InterMineIdBag objectBag = new InterMineIdBag();
+        objectBag.add(10);
+        objectBag.add(11);
+        objectBag.add(12);
+
         template = new TemplateQuery("template", "some desc", "some category",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,
                                      "some_keyword");
@@ -114,6 +116,7 @@ public class ProfileManagerBindingTest extends TestCase
         sallyProfile.saveQuery("query1", query);
         sallyProfile.saveBag("sally_bag1", bag);
         sallyProfile.saveBag("sally_bag2", otherBag);
+        sallyProfile.saveBag("sally_bag3", objectBag);
         sallyProfile.saveTemplate("template", template);
     }
 
@@ -124,8 +127,10 @@ public class ProfileManagerBindingTest extends TestCase
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
-            ProfileBinding.marshal(bobProfile, Model.getInstanceByName("userprofile"), writer);
-            ProfileBinding.marshal(sallyProfile, Model.getInstanceByName("userprofile"), writer);
+            ProfileBinding.marshal(bobProfile, Model.getInstanceByName("userprofile"), 
+                                    os, writer);
+            ProfileBinding.marshal(sallyProfile, Model.getInstanceByName("userprofile"), os, 
+                                   writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -144,10 +149,7 @@ public class ProfileManagerBindingTest extends TestCase
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
 
-        Diff diff = new Diff(actualXml, actualXml);
-
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLAssert.assertXMLEqual("XML doesn't match", diff, true);
+        assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
 
     public void testXMLRead() throws Exception {

@@ -10,6 +10,7 @@ package org.intermine.objectstore;
  *
  */
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -65,6 +66,13 @@ public class ObjectStorePassthruImpl implements ObjectStore
      */
     public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
         return os.getObjectById(id, clazz);
+    }
+
+    /**
+     * @see ObjectStore#getObjectsByIds(Integer)
+     */
+    public List getObjectsByIds(Collection ids) throws ObjectStoreException {
+        return os.getObjectsByIds(ids);
     }
 
     /**

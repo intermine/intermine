@@ -12,6 +12,8 @@ package org.intermine.objectstore;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
@@ -156,6 +158,17 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         return null;
     }
 
+    /**
+     * @see ObjectStore#getObjectsByIds(Collection)
+     */
+    public List getObjectsByIds(Collection ids) throws ObjectStoreException {
+        Results results = execute(QueryCreator.createQueryForIds(ids, InterMineObject.class));
+        results.setNoOptimise();
+        results.setNoExplain();
+
+        return results;
+    }
+    
     /**
      * Read the Model from the classpath.
      * @param osAlias the alias of the ObjectStore properties to get the model name from.

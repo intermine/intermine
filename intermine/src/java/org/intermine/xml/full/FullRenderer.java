@@ -10,11 +10,16 @@ package org.intermine.xml.full;
  *
  */
 
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -91,56 +96,81 @@ public class FullRenderer
     }
 
     /**
+     * Render the given Item as XML using an XMLStreamWriter
+     * @param writer to XMLStreamWriter to write to 
+     * @param item the Item to render
+     */
+    public static void render(XMLStreamWriter writer, Item item) {
+        if (item.getIdentifier() == null) {
+            throw new IllegalArgumentException("Item has null Identifier");
+        }
+        
+        try {
+            writer.writeStartElement("item");
+            writer.writeAttribute("id", item.getIdentifier());
+            writer.writeAttribute("class", item.getClassName() == null ? "" : item.getClassName());
+
+            if (item.getImplementations() != null && !item.getImplementations().equals("")) {
+                writer.writeAttribute("implements", item.getImplementations());
+            }
+
+            TreeSet attrs = new TreeSet(new RendererComparator());
+            attrs.addAll(item.getAttributes());
+            for (Iterator i = attrs.iterator(); i.hasNext();) {
+                Attribute attr = (Attribute) i.next();
+                String value = attr.getValue();
+
+                writer.writeEmptyElement("attribute");
+                writer.writeAttribute("name", attr.getName());
+                writer.writeAttribute("value", attr.getValue());
+            }
+
+            TreeSet refs = new TreeSet(new RendererComparator());
+            refs.addAll(item.getReferences());
+            for (Iterator i = refs.iterator(); i.hasNext();) {
+                Reference ref = (Reference) i.next();
+                writer.writeEmptyElement("reference");
+                writer.writeAttribute("name", ref.getName());
+                writer.writeAttribute("ref_id", ref.getRefId());
+            }
+
+            TreeSet cols = new TreeSet(new RendererComparator());
+            cols.addAll(item.getCollections());
+            for (Iterator i = cols.iterator(); i.hasNext();) {
+                ReferenceList refList = (ReferenceList) i.next();
+                writer.writeStartElement("collection");
+                writer.writeAttribute("name", refList.getName());
+            
+                for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
+                    writer.writeEmptyElement("reference");
+                    writer.writeAttribute("ref_id", (String) j.next());
+                }
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("unexpected exception while accessing a XMLStreamWriter", e);
+        }
+    }
+        
+    /**
      * Render the given Item as XML
      * @param item the Item to render
      * @return an XML representation of the Item
      */
     public static String render(Item item) {
-        if (item.getIdentifier() == null) {
-            throw new IllegalArgumentException("Item has null Identifier");
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        XMLStreamWriter writer;
+        try {
+            writer = factory.createXMLStreamWriter(sw);
+            render(writer, item);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("unexpected failure while creating Item XML", e);
         }
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("<item id=\"" + item.getIdentifier() + "\"")
-          .append(" class=\"")
-          .append(item.getClassName() == null ? "" : item.getClassName())
-          .append("\"");
-        if (item.getImplementations() != null && !item.getImplementations().equals("")) {
-            sb.append(" implements=\"" + item.getImplementations() + "\"");
-        }
-        sb.append(">" + ENDL);
-
-        TreeSet attrs = new TreeSet(new RendererComparator());
-        attrs.addAll(item.getAttributes());
-        for (Iterator i = attrs.iterator(); i.hasNext();) {
-            Attribute attr = (Attribute) i.next();
-            String value = attr.getValue();
-            
-            sb.append("<attribute name=\"" + attr.getName() + "\" value=\""
-                      + attr.getValue().replaceAll("\"", "&quot;").replaceAll("'", "&apos;")
-                      + "\"/>" + ENDL);
-        }
-
-        TreeSet refs = new TreeSet(new RendererComparator());
-        refs.addAll(item.getReferences());
-        for (Iterator i = refs.iterator(); i.hasNext();) {
-            Reference ref = (Reference) i.next();
-            sb.append("<reference name=\"" + ref.getName() + "\" ref_id=\""
-                + ref.getRefId() + "\"/>" + ENDL);
-        }
-
-        TreeSet cols = new TreeSet(new RendererComparator());
-        cols.addAll(item.getCollections());
-        for (Iterator i = cols.iterator(); i.hasNext();) {
-            ReferenceList refList = (ReferenceList) i.next();
-            sb.append("<collection name=\"" + refList.getName() + "\">" + ENDL);
-            for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
-                sb.append("<reference ref_id=\"" + j.next() + "\"/>" + ENDL);
-            }
-            sb.append("</collection>" + ENDL);
-        }
-        sb.append("</item>" + ENDL);
-        return sb.toString();
+        return sw.toString();
     }
 
     /**

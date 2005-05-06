@@ -10,6 +10,7 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.Map;
 import java.util.Iterator;
@@ -44,6 +45,27 @@ public class QueryCreator
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
                                              new QueryValue(id)));
+        return q;
+    }   
+
+    /**
+     * Create a query that will retrieve all objects with the given IDs from the objectstore.
+     *
+     * @param ids a collection of ID to fetch
+     * @param clazz a Class in the object
+     * @return a Query
+     */
+    public static Query createQueryForIds(Collection ids, Class clazz) {
+        Query q = new Query();
+
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(clazz);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        
+        QueryField qf = new QueryField(qc, "id");
+        q.setConstraint(new BagConstraint(qf, ConstraintOp.IN, ids));
+        
         return q;
     }   
 
