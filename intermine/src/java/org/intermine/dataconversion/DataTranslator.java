@@ -298,9 +298,10 @@ public class DataTranslator
      * @param srcItem item to convert
      * @return converted items
      * @throws ObjectStoreException if error reading/writing an item
+     * @throws InterMineException if no target class/property name can be found
      */
     protected Collection translateItem(Item srcItem)
-        throws ObjectStoreException {
+        throws ObjectStoreException, InterMineException {
         String tgtClsName = null;
 
         // see if there are any SubclassRestriction template for this class
