@@ -139,12 +139,7 @@ public class UpdateOrthologues
                 // clone so we don't change ObjectStore cache
                 Relation newRelation = (Relation) PostProcessUtil.cloneInterMineObject(relation);
                 // set reference to Gene
-                try {
-                    TypeUtil.setFieldValue(newRelation, refType, gene);
-                } catch (IllegalAccessException e) {
-                    LOG.info("Object (" + relationClass + ") with ID: " + relation.getId()
-                              + " has no " + refType + " field");
-                }
+                TypeUtil.setFieldValue(newRelation, refType, gene);
                 osw.store(newRelation);
                 updated++;
             } else if (!(gene.equals(lastGene) && relation.equals(lastRelation))) {

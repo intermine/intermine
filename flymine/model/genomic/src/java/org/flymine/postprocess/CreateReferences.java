@@ -196,14 +196,9 @@ public class CreateReferences
                     // clone so we don't change the ObjectStore cache
                     InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
 
-                    try {
-                        TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-                        count += newCollection.size();
-                        osw.store(tempObject);
-                    } catch (IllegalAccessException e) {
-                        LOG.error("Object with ID: " + tempObject.getId()
-                                  + " has no " + collectionFieldName + " field");
-                    }
+                    TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+                    count += newCollection.size();
+                    osw.store(tempObject);
                 }
 
                 newCollection = new ArrayList();
@@ -217,14 +212,9 @@ public class CreateReferences
         if (lastObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            try {
-                TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-                count += newCollection.size();
-                osw.store(tempObject);
-            } catch (IllegalAccessException e) {
-                LOG.error("Object with ID: " + tempObject.getId()
-                          + " has no " + collectionFieldName + " field");
-            }
+            TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+            count += newCollection.size();
+            osw.store(tempObject);
         }
         LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
                  + subjectClass.getName() + " via the " + collectionFieldName + " field");
@@ -408,14 +398,9 @@ public class CreateReferences
         if (lastDestObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastDestObject);
-            try {
-                TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
-                count += newCollection.size();
-                osw.store(tempObject);
-            } catch (IllegalAccessException e) {
-                LOG.error("Object with ID: " + tempObject.getId()
-                          + " has no " + createFieldName + " field");
-            }
+            TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
+            count += newCollection.size();
+            osw.store(tempObject);
         }
 
         LOG.info("Created " + count + " references in " + secondClass.getName() + " to "
@@ -469,14 +454,9 @@ public class CreateReferences
                     // clone so we don't change the ObjectStore cache
                     InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
 
-                    try {
-                        TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-                        count += newCollection.size();
-                        osw.store(tempObject);
-                    } catch (IllegalAccessException e) {
-                        LOG.error("Object with ID: " + tempObject.getId()
-                                  + " has no " + newCollectionName + " field");
-                    }
+                    TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+                    count += newCollection.size();
+                    osw.store(tempObject);
                 }
 
                 newCollection = new ArrayList();
@@ -490,14 +470,9 @@ public class CreateReferences
         if (lastObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            try {
-                TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-                count += newCollection.size();
-                osw.store(tempObject);
-            } catch (IllegalAccessException e) {
-                LOG.error("Object with ID: " + tempObject.getId()
-                          + " has no " + newCollectionName + " field");
-            }
+            TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+            count += newCollection.size();
+            osw.store(tempObject);
         }
         LOG.info("Created " + count + " " + newCollectionName + " collections in "
                  + thisClass.getName() + " of " + collectionClass.getName());
@@ -546,14 +521,9 @@ public class CreateReferences
                     // clone so we don't change the ObjectStore cache
                     InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
 
-                    try {
-                        TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-                        count += newCollection.size();
-                        osw.store(tempObject);
-                    } catch (IllegalAccessException e) {
-                        LOG.error("Object with ID: " + tempObject.getId()
-                                  + " has no " + newCollectionName + " field");
-                    }
+                    TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+                    count += newCollection.size();
+                    osw.store(tempObject);
                 }
 
                 newCollection = new ArrayList();
@@ -567,14 +537,9 @@ public class CreateReferences
         if (lastObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            try {
-                TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-                count += newCollection.size();
-                osw.store(tempObject);
-            } catch (IllegalAccessException e) {
-                LOG.error("Object with ID: " + tempObject.getId()
-                          + " has no " + newCollectionName + " field");
-            }
+            TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
+            count += newCollection.size();
+            osw.store(tempObject);
         }
         LOG.info("Created " + count + " " + newCollectionName + " collections in "
                  + entityClass.getName() + " of " + propertyClass.getName());
