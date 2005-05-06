@@ -2415,7 +2415,8 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
-                              username="${webapp.superuser}"/>
+                              username="${webapp.superuser}" osAlias="os.production"
+                              userProfileAlias="os.userprofile-production"/>
   </target>
 
   <!-- write the userprofile database to a file as XML -->
@@ -2424,7 +2425,8 @@
     <taskdef name="write-userprofile-xml" classname="org.intermine.web.task.ProfileWriteTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
+    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"
+                           userProfileAlias="os.userprofile-production"/>
   </target>
 
   <!-- read the userprofile database from a file as XML -->
@@ -2433,7 +2435,8 @@
     <taskdef name="read-userprofile-xml" classname="org.intermine.web.task.ProfileReadTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml"/>
+    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"
+                          userProfileAlias="os.userprofile-production"/>
   </target>
 
 
