@@ -89,7 +89,7 @@ public class XmlConverter extends DataConverter
         SAXParser.parse(new InputSource(xmlReader), new XmlHandler(model));
     }
 
-    String getIdentifier() {
+    private String getIdentifier() {
         return "0_" + id++;
     }
 

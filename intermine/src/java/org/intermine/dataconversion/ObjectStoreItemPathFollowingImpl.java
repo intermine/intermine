@@ -203,7 +203,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      *
      * @param batch the List of items
      */
-    private void fetchRelated(CacheHoldingArrayList batch){
+    private void fetchRelated(CacheHoldingArrayList batch) {
         // preform deep clone on classNameToDescriptors map -> need deepClone() method on all
         // enclosed stuff
         Map classNameToDescriptorsLocal = cloneClassNameToDescriptors();

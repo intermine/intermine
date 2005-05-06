@@ -181,8 +181,9 @@ public class LiteParser
             Field field = (Field) refIter.next();
             Integer id = new Integer(Integer.parseInt(field.getValue()));
             ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(field.getName());
-            TypeUtil.setFieldValue(obj, field.getName(), new ProxyReference(os, id,
-                                                                            ref.getReferencedClassDescriptor().getType()));
+            ProxyReference proxyReference =
+                new ProxyReference(os, id, ref.getReferencedClassDescriptor().getType());
+            TypeUtil.setFieldValue(obj, field.getName(), proxyReference);
         }
 
         // Set the data for every given Collection
@@ -202,10 +203,9 @@ public class LiteParser
                                                     .getType());
                     q.addFrom(qc1);
                     q.addToSelect(qc1);
-                    QueryObjectReference qor = new QueryObjectReference(qc1,
-                                                                        coll.getReverseReferenceDescriptor().getName());
-                    ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS,
-                                                                   obj);
+                    String revRefDescriptor = coll.getReverseReferenceDescriptor().getName();
+                    QueryObjectReference qor = new QueryObjectReference(qc1, revRefDescriptor);
+                    ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, obj);
                     q.setConstraint(cc);
                     q.setDistinct(false);
                 } else {
@@ -216,10 +216,14 @@ public class LiteParser
                     q.addFrom(qc2);
                     q.addToSelect(qc2);
                     ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                    cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
-                                                                                         coll.getName()), ConstraintOp.CONTAINS, qc2));
+                    
+                    QueryCollectionReference queryCollectionRef =
+                        new QueryCollectionReference(qc1, coll.getName());
+                    cs.addConstraint(new ContainsConstraint(queryCollectionRef, 
+                                     ConstraintOp.CONTAINS, qc2));
                     cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
-                                                          ConstraintOp.EQUALS, new QueryValue(obj.getId())));
+                                                          ConstraintOp.EQUALS,
+                                                          new QueryValue(obj.getId())));
                     q.setConstraint(cs);
                     q.setDistinct(false);
                 }
