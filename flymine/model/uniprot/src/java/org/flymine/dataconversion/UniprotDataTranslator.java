@@ -417,7 +417,8 @@ public class UniprotDataTranslator extends DataTranslator
                                 retval.add(synonym);
                             }
                         }
-                        if (primaryGeneName != null) {
+                        // Probmlem with gene names for drosophila - ignore
+                        if (primaryGeneName != null && taxonId != 7227) {
                             gene.addAttribute(new Attribute("name", primaryGeneName));
                         }
                         gene.addReference(organismReference);
