@@ -133,6 +133,7 @@
   </path>
 
   <path id="webapp.class.path">
+    <pathelement path="${resources}/webapp"/>
     <path refid="base.class.path"/>
     <path refid="genomic.class.path"/>
     <fileset dir="${build.webapp.intermine.lib}">
@@ -2427,7 +2428,8 @@
     <taskdef name="write-userprofile-xml" classname="org.intermine.web.task.ProfileWriteTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"/>
+    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"
+                           userProfileAlias="osw.userprofile-production"/>
   </target>
 
   <!-- read the userprofile database from a file as XML -->
@@ -2436,7 +2438,8 @@
     <taskdef name="read-userprofile-xml" classname="org.intermine.web.task.ProfileReadTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"/>
+    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production" 
+                          userProfileAlias="osw.userprofile-production"/>
   </target>
 
 
