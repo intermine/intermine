@@ -312,11 +312,21 @@
             <im:helplink key="results.help.estimate"/>
           </c:when>
           <c:otherwise>
-            <fmt:message key="results.pageinfo.exact">
-              <fmt:param value="${resultsTable.startRow+1}"/>
-              <fmt:param value="${resultsTable.endRow+1}"/>
-              <fmt:param value="${resultsTable.size}"/>
-            </fmt:message>
+            <c:choose>
+              <c:when test="${resultsTable.startRow == 0 &&
+                              resultsTable.endRow == resultsTable.size - 1}">
+                <fmt:message key="results.pageinfo.allrows">
+                  <fmt:param value="${resultsTable.size}"/>
+                </fmt:message>
+              </c:when>
+              <c:otherwise>
+                <fmt:message key="results.pageinfo.exact">
+                  <fmt:param value="${resultsTable.startRow+1}"/>
+                  <fmt:param value="${resultsTable.endRow+1}"/>
+                  <fmt:param value="${resultsTable.size}"/>
+                </fmt:message>
+              </c:otherwise>
+            </c:choose>
           </c:otherwise>
         </c:choose>
         
