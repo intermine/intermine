@@ -102,9 +102,16 @@ public class ProfileManagerBindingTest extends XMLTestCase
         otherBag.add(new Integer(123));
 
         InterMineIdBag objectBag = new InterMineIdBag();
+
+        // employees and managers
         objectBag.add(10);
         objectBag.add(11);
         objectBag.add(12);
+
+        // a department - this will cause the department with ID 6 to be add to the Item XML output
+        // and will also implicitly add the Company of this department to the output because the
+        // primary key of the Department includes the company reference
+        objectBag.add(6);
 
         template = new TemplateQuery("template", "some desc", "some category",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,
@@ -148,6 +155,9 @@ public class ProfileManagerBindingTest extends XMLTestCase
         }
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
+
+        org.intermine.web.LogMe.log("pmbt", "expectedXml: " + expectedXml);
+        org.intermine.web.LogMe.log("pmbt", "actualXml: " + actualXml);
 
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }

@@ -10,12 +10,18 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.dataloader.DataLoaderHelper;
+import org.intermine.dataloader.PrimaryKey;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.bag.InterMineIdBag;
@@ -50,7 +56,7 @@ public class ProfileBinding
      * @param os the ObjectStore to use when looking up the ids of objects in bags
      * @param writer the XMLStreamWriter to write to
      */
-    public static void marshal(Profile profile, Model model, ObjectStore os, 
+    public static void marshal(Profile profile, Model model, ObjectStore os,
                                XMLStreamWriter writer) {
         try {
             writer.writeStartElement("userprofile");
@@ -61,17 +67,8 @@ public class ProfileBinding
 
             Set idSet = new HashSet();
 
-            // serialise all object in all bags and all objects mentioned in primary keys of those
-            // items (recursively)
-            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                InterMineBag bag = (InterMineBag) entry.getValue();
+            getProfileObjectIds(profile, os, idSet);
 
-                if (bag instanceof InterMineIdBag) {
-                    idSet.addAll(bag);
-                }
-            }
-            
             if (!idSet.isEmpty()) {
                 List objects = os.getObjectsByIds(idSet);
 
@@ -123,6 +120,82 @@ public class ProfileBinding
             throw new RuntimeException("exception while marshalling profile", e);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("exception while marshalling profile", e);
+        }
+    }
+
+    /**
+     * Get the ids of objects in all bags and all objects mentioned in primary keys of those
+     * items (recursively).
+     * @param profile read the object in the bags from this Profile
+     * @param os the ObjectStore to use when following references
+     * @param idsToSerialise object ids are added to this Set
+     */
+    private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
+        for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            InterMineBag bag = (InterMineBag) entry.getValue();
+
+            if (bag instanceof InterMineIdBag) {
+                Iterator iter = bag.iterator();
+
+                while (iter.hasNext()) {
+                    Integer id = (Integer) iter.next();
+                    InterMineObject object;
+                    try {
+                        object = os.getObjectById(id);
+                    } catch (ObjectStoreException e) {
+                        throw new RuntimeException("Unable to find object for id: " + id, e);
+                    }
+                    getIdsFromObject(object, os.getModel(), idsToSerialise);
+                }
+            }
+        }
+    }
+
+    /**
+     * For the given object, add its ID and all IDs of all objects in any of its primary keys to
+     * idsToSerialise.
+     * @param object the InterMineObject to add
+     * @param model the Model to use for looking up ClassDescriptors
+     * @param idsToSerialise object ids are added to this Set
+     */
+    protected static void getIdsFromObject(InterMineObject object, Model model,
+                                           Set idsToSerialise) {
+        idsToSerialise.add(object.getId());
+        Set cds = model.getClassDescriptorsForClass(object.getClass());
+        Iterator cdIter = cds.iterator();
+
+        while (cdIter.hasNext()) {
+            ClassDescriptor cd = (ClassDescriptor) cdIter.next();
+            Map primaryKeyMap = DataLoaderHelper.getPrimaryKeys(cd);
+            Iterator primaryKeyIter = primaryKeyMap.values().iterator();
+
+            while (primaryKeyIter.hasNext()) {
+                PrimaryKey pk = (PrimaryKey) primaryKeyIter.next();
+                Set fieldNames = pk.getFieldNames();
+                Iterator fieldNameIter = fieldNames.iterator();
+
+                while (fieldNameIter.hasNext()) {
+                    String fieldName = (String) fieldNameIter.next();
+                    FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
+
+                    if (fd instanceof ReferenceDescriptor) {
+                        InterMineObject referencedObject;
+                        try {
+                            referencedObject =
+                                (InterMineObject) TypeUtil.getFieldValue(object, fieldName);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException("Unable to access field " + fieldName
+                                                       + " in object: " + object);
+                        }
+
+                        if (referencedObject != null) {
+                            // recurse
+                            getIdsFromObject(referencedObject, model, idsToSerialise);
+                        }
+                    }
+                }
+            }
         }
     }
 
