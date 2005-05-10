@@ -66,6 +66,11 @@ public interface Constants
     public static final String CATEGORIES = "CATEGORIES";
     
     /**
+     * ServletContext attribute, Map from unqualified type name to list of subclass names.
+     */
+    public static final String SUBCLASSES = "SUBCLASSES";
+    
+    /**
      * ServletContext attribute, provides an interface for actions and
      * controllers to query some model meta-data like class counts and
      * field enumerations.
