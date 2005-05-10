@@ -81,10 +81,9 @@ public class InterMineBagBinding
                     type = o.getClass().getName();
                     value = TypeUtil.objectToString(o);
                 }
-                writer.writeStartElement("element");
+                writer.writeEmptyElement("element");
                 writer.writeAttribute("type", type);
                 writer.writeAttribute("value", value);
-                writer.writeEndElement();
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {

@@ -2,18 +2,12 @@
   <userprofile username="bob" password="pass">
     <bags>
       <bag name="bag1">
-        <element type="java.lang.String" value="foo1">
-        </element>
-        <element type="java.lang.String" value="foo2">
-        </element>
-        <element type="java.lang.String" value="foo3">
-        </element>
-        <element type="java.lang.Integer" value="100">
-        </element>
-        <element type="java.lang.Boolean" value="true">
-        </element>
-        <element type="java.lang.Float" value="1.1">
-        </element>
+        <element type="java.lang.String" value="foo1"/>
+        <element type="java.lang.String" value="foo2"/>
+        <element type="java.lang.String" value="foo3"/>
+        <element type="java.lang.Integer" value="100"/>
+        <element type="java.lang.Boolean" value="true"/>
+        <element type="java.lang.Float" value="1.1"/>
       </bag>
     </bags>
     <queries>
@@ -29,69 +23,69 @@
   </userprofile>
   <userprofile username="sally" password="sally_pass">
     <items>
+      <item id="2" class="" implements="http://www.intermine.org/model/testmodel#Company">
+        <attribute name="name" value="CompanyB"/>
+        <attribute name="vatNumber" value="5678"/>
+        <collection name="contractors">
+          <reference ref_id="3"/>
+          <reference ref_id="4"/>
+        </collection>
+        <collection name="departments">
+          <reference ref_id="6"/>
+          <reference ref_id="7"/>
+        </collection>
+        <collection name="oldContracts">
+          <reference ref_id="3"/>
+          <reference ref_id="4"/>
+        </collection>
+      </item>
+      <item id="6" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+        <attribute name="name" value="DepartmentB1"/>
+        <reference name="company" ref_id="2"/>
+        <collection name="employees">
+          <reference ref_id="11"/>
+          <reference ref_id="12"/>
+        </collection>
+      </item>
       <item id="10" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
-        <attribute name="age" value="30">
-        </attribute>
-        <attribute name="end" value="3">
-        </attribute>
-        <attribute name="fullTime" value="false">
-        </attribute>
-        <attribute name="name" value="EmployeeA3">
-        </attribute>
-        <reference name="department" ref_id="5">
-        </reference>
+        <attribute name="age" value="30"/>
+        <attribute name="end" value="3"/>
+        <attribute name="fullTime" value="false"/>
+        <attribute name="name" value="EmployeeA3"/>
+        <reference name="department" ref_id="5"/>
       </item>
       <item id="11" class="http://www.intermine.org/model/testmodel#CEO" implements="http://www.intermine.org/model/testmodel#Broke">
-        <attribute name="age" value="40">
-        </attribute>
-        <attribute name="debt" value="340">
-        </attribute>
-        <attribute name="end" value="4">
-        </attribute>
-        <attribute name="fullTime" value="true">
-        </attribute>
-        <attribute name="name" value="EmployeeB1">
-        </attribute>
-        <attribute name="salary" value="45000">
-        </attribute>
-        <attribute name="seniority" value="76321">
-        </attribute>
-        <attribute name="title" value="Mr.">
-        </attribute>
-        <reference name="company" ref_id="2">
-        </reference>
-        <reference name="department" ref_id="6">
-        </reference>
+        <attribute name="age" value="40"/>
+        <attribute name="debt" value="340"/>
+        <attribute name="end" value="4"/>
+        <attribute name="fullTime" value="true"/>
+        <attribute name="name" value="EmployeeB1"/>
+        <attribute name="salary" value="45000"/>
+        <attribute name="seniority" value="76321"/>
+        <attribute name="title" value="Mr."/>
+        <reference name="company" ref_id="2"/>
+        <reference name="department" ref_id="6"/>
       </item>
       <item id="12" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
-        <attribute name="age" value="50">
-        </attribute>
-        <attribute name="end" value="5">
-        </attribute>
-        <attribute name="fullTime" value="true">
-        </attribute>
-        <attribute name="name" value="EmployeeB2">
-        </attribute>
-        <reference name="department" ref_id="6">
-        </reference>
+        <attribute name="age" value="50"/>
+        <attribute name="end" value="5"/>
+        <attribute name="fullTime" value="true"/>
+        <attribute name="name" value="EmployeeB2"/>
+        <reference name="department" ref_id="6"/>
       </item>
     </items>
     <bags>
       <bag name="sally_bag1">
-        <element type="java.lang.String" value="some value">
-        </element>
+        <element type="java.lang.String" value="some value"/>
       </bag>
       <bag name="sally_bag2">
-        <element type="java.lang.Integer" value="123">
-        </element>
+        <element type="java.lang.Integer" value="123"/>
       </bag>
       <bag name="sally_bag3">
-        <element type="org.intermine.model.InterMineObject" value="10">
-        </element>
-        <element type="org.intermine.model.InterMineObject" value="11">
-        </element>
-        <element type="org.intermine.model.InterMineObject" value="12">
-        </element>
+        <element type="org.intermine.model.InterMineObject" value="10"/>
+        <element type="org.intermine.model.InterMineObject" value="11"/>
+        <element type="org.intermine.model.InterMineObject" value="12"/>
+        <element type="org.intermine.model.InterMineObject" value="6"/>
       </bag>
     </bags>
     <queries>
@@ -106,3 +100,4 @@
     </template-queries>
   </userprofile>
 </userprofiles>
+
