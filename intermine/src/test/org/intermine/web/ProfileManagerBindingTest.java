@@ -156,9 +156,6 @@ public class ProfileManagerBindingTest extends XMLTestCase
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
 
-        org.intermine.web.LogMe.log("pmbt", "expectedXml: " + expectedXml);
-        org.intermine.web.LogMe.log("pmbt", "actualXml: " + actualXml);
-
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
 
