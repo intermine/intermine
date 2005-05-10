@@ -10,25 +10,21 @@ package org.intermine.xml.full;
  *
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.apache.commons.digester.Digester;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.xml.sax.SAXException;
-
+import org.intermine.metadata.Model;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
-import org.intermine.metadata.Model;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.xml.sax.InputSource;
 
 /**
  * Unmarshal XML Full format data into java business objects.
@@ -38,50 +34,24 @@ import org.intermine.metadata.Model;
  */
 public class FullParser
 {
-    private static Log log = LogFactory.getLog(FullParser.class);
-
     /**
      * Parse a InterMine Full XML file
      *
      * @param is the InputStream to parse
      * @return a list of Items
-     * @throws SAXException if there is an error in the XML file
-     * @throws IOException if there is an error reading the XML file
-     * @throws ClassNotFoundException if a class cannot be found
+     * @throws Exception if there is an error while parsing
      */
     public static List parse(InputStream is)
-        throws IOException, SAXException, ClassNotFoundException {
+        throws Exception {
 
         if (is == null) {
             throw new NullPointerException("Parameter 'is' cannot be null");
         }
 
-        Digester digester = new Digester();
-        digester.setValidating(false);
-        digester.setLogger(log);
+        FullHandler handler = new FullHandler();
+        SAXParser.parse(new InputSource(is), handler);
 
-        digester.addObjectCreate("items", ArrayList.class);
-
-        digester.addObjectCreate("items/item", Item.class);
-        digester.addSetProperties("items/item", new String[]{"id", "class", "implements"},
-                                  new String[] {"identifier", "className", "implementations"});
-        digester.addSetNext("items/item", "add");
-
-        digester.addObjectCreate("items/item/attribute", Attribute.class);
-        digester.addSetProperties("items/item/attribute");
-        digester.addSetNext("items/item/attribute", "addAttribute");
-
-        digester.addObjectCreate("items/item/reference", Reference.class);
-        digester.addSetProperties("items/item/reference", "ref_id", "refId");
-        digester.addSetNext("items/item/reference", "addReference");
-
-        digester.addObjectCreate("items/item/collection", ReferenceList.class);
-        digester.addSetProperties("items/item/collection");
-        digester.addCallMethod("items/item/collection/reference", "addRefId", 1);
-        digester.addCallParam("items/item/collection/reference", 0, "ref_id");
-        digester.addSetNext("items/item/collection", "addCollection");
-
-        return (List) digester.parse(is);
+        return handler.getItems();
     }
 
     /**

@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/intermine/tutorial/*" kind="src" path="src/java"/>
-	<classpathentry kind="src" path="model/testmodel/src/web/java"/>
-	<classpathentry kind="src" path="build/model/testmodel"/>
-	<classpathentry excluding="org/intermine/dataloader/AceDataLoaderTest.java" kind="src" path="src/test"/>
-	<classpathentry kind="src" path="build/model/datatracking"/>
-	<classpathentry kind="src" path="build/model/userprofile"/>
-	<classpathentry kind="src" path="build/model/fulldata"/>
-	<classpathentry kind="src" path="build/javasrc"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="org/intermine/tutorial/*" kind="src" path="src/java"/>
+	<classpathentry excluding="org/intermine/dataloader/AceDataLoaderTest.java" kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/stax-ri-1.0.jar"/>
@@ -54,5 +48,13 @@
 	<classpathentry kind="lib" path="build/test"/>
 	<classpathentry kind="lib" path="build/tmp"/>
 	<classpathentry kind="lib" path="build/resources/test"/>
+	<classpathentry kind="lib" path="build/model/xmitest"/>
+	<classpathentry kind="lib" path="build/model/xmlschematest"/>
+	<classpathentry kind="src" path="model/testmodel/src/web/java"/>
+	<classpathentry kind="src" path="build/model/testmodel"/>
+	<classpathentry kind="src" path="build/model/datatracking"/>
+	<classpathentry kind="src" path="build/model/userprofile"/>
+	<classpathentry kind="src" path="build/model/fulldata"/>
+	<classpathentry kind="src" path="build/javasrc"/>
 	<classpathentry kind="output" path="build/eclipse"/>
 </classpath>
