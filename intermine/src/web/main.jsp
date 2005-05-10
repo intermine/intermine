@@ -120,16 +120,23 @@
                 </fmt:message>
               </c:otherwise>
             </c:choose>
-            <c:if test="${viewPaths[fullpath] == null}">
-              <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
-                         title="${selectNodeTitle}">
-                <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
+            <c:choose>
+              <c:when test="${viewPaths[fullpath] == null}">
+                <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
+                           title="${selectNodeTitle}">
+                  <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
+                </html:link>
+              </c:when>
+              <c:otherwise>
+                <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
+              </c:otherwise>
+            </c:choose>
+            <%-- <c:if test="${(!node.reference && !node.collection) || !empty PROFILE.savedBags || !empty SUBCLASSES[node.type] || allNodeTypes[node.type] != null}"> --%>
+              <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
+                         title="${addConstraintToTitle}">
+                <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
               </html:link>
-            </c:if>
-            <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
-                       title="${addConstraintToTitle}">
-              <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
-            </html:link>
+            <%-- </c:if> --%>
           </div>
         
       </c:forEach>
@@ -400,11 +407,11 @@
               </table>
             </c:when>
             <c:otherwise>
-              <c:if test="${editingNode.indentation != 0 && !empty subclasses}">
+              <c:if test="${editingNode.indentation != 0 && !empty SUBCLASSES[editingNode.type]}">
                 <p style="text-align: left;">
                   <fmt:message key="query.subclassConstraint"/>
                   <html:select property="subclassValue">
-                    <c:forEach items="${subclasses}" var="subclass">
+                    <c:forEach items="${SUBCLASSES[editingNode.type]}" var="subclass">
                       <html:option value="${subclass}">
                         <c:out value="${subclass}"/>
                       </html:option>

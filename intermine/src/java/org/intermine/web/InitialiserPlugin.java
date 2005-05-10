@@ -16,11 +16,13 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
@@ -31,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -177,7 +180,6 @@ public class InitialiserPlugin implements PlugIn
             String className = (String) i.next();
             classes.put(className, TypeUtil.unqualifiedName(className));
             try {
-                //classCounts.put(className, new Integer(1));
                 classCounts.put(className, new Integer(oss.getClassCount(className)));
             } catch (Exception e) {
                 throw new ServletException("Unable to get class count for " + className, e);
@@ -186,6 +188,22 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.OBJECT_STORE_SUMMARY, oss);
         servletContext.setAttribute("classes", classes);
         servletContext.setAttribute("classCounts", classCounts);
+        // Build subclass lists for JSPs
+        Map subclassesMap = new LinkedHashMap();
+        for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
+            String className = TypeUtil.unqualifiedName((String) i.next());
+            ClassDescriptor cld = MainHelper.getClassDescriptor(className, model);
+            ArrayList subclasses = new ArrayList();
+            Iterator iter = new TreeSet(getChildren(cld)).iterator();
+            while (iter.hasNext()) {
+                String thisClassName = (String) iter.next();
+                if (((Integer) classCounts.get(thisClassName)).intValue() > 0) {
+                    subclasses.add(TypeUtil.unqualifiedName(thisClassName));
+                }
+            }
+            subclassesMap.put(className, subclasses);
+        }
+        servletContext.setAttribute(Constants.SUBCLASSES, subclassesMap);
     }
 
     /**
@@ -314,6 +332,30 @@ public class InitialiserPlugin implements PlugIn
             profileManager.close();
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Get the names of the type of this ClassDescriptor and all its descendents
+     * @param cld the ClassDescriptor
+     * @return a Set of class names
+     */
+    protected static Set getChildren(ClassDescriptor cld) {
+        Set children = new HashSet();
+        getChildren(cld, children);
+        return children;
+    }
+
+    /**
+     * Add the names of the descendents of a ClassDescriptor to a Set
+     * @param cld the ClassDescriptor
+     * @param children the Set of child names
+     */
+    protected static void getChildren(ClassDescriptor cld, Set children) {
+        for (Iterator i = cld.getSubDescriptors().iterator(); i.hasNext();) {
+            ClassDescriptor child = (ClassDescriptor) i.next();
+            children.add(child.getName());
+            getChildren(child, children);
         }
     }
 }
