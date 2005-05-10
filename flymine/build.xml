@@ -1674,11 +1674,13 @@
     </ant>
   </target>
 
-  <!-- NOTE - following target updates model and other metadata in production database.  If the model has
-       changed then this can be really bad.  Should be used with extreme caution if
+  <!-- NOTE - following target updates model and other metadata in production database.  
+       If the model has changed then this can be really bad.  Should be used with extreme caution if
        absolutely confident that changes will not put model/details out of sync with schema. -->
 
-  <target name="update-metadata-production" depends="copy-genomic-config, compile-genomic-model" > <!--compile-genomic-human-model"-->
+  <target name="update-metadata-production" depends="copy-genomic-config">
+        <!-- compile-genomic-model--> 
+        <!-- compile-genomic-human-model-->
     <taskdef name="db-insert-model"
              classname="org.intermine.objectstore.intermine.StoreMetadataTask">
       <classpath refid="genomic.class.path"/>
@@ -2399,8 +2401,8 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="userprofile"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.userprofile"/>
-      <property name="objectstore.name" value="os.userprofile"/>
+      <property name="db.name" value="db.userprofile-production"/>
+      <property name="objectstore.name" value="os.userprofile-production"/>
     </ant>
     <antcall target="load-default-templates"/>
   </target>
@@ -2416,7 +2418,7 @@
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
                               username="${webapp.superuser}" osAlias="os.production"
-                              userProfileAlias="os.userprofile-production"/>
+                              userProfileAlias="osw.userprofile-production"/>
   </target>
 
   <!-- write the userprofile database to a file as XML -->
@@ -2425,8 +2427,7 @@
     <taskdef name="write-userprofile-xml" classname="org.intermine.web.task.ProfileWriteTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"
-                           userProfileAlias="os.userprofile-production"/>
+    <write-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"/>
   </target>
 
   <!-- read the userprofile database from a file as XML -->
@@ -2435,8 +2436,7 @@
     <taskdef name="read-userprofile-xml" classname="org.intermine.web.task.ProfileReadTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"
-                          userProfileAlias="os.userprofile-production"/>
+    <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"/>
   </target>
 
 
@@ -2742,6 +2742,18 @@
     </ant>
   </target>
 
+ <target name="load-static-human" depends="prepare-build-model, copy-genomic-config">
+    <taskdef name="load-xml-data"
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/databases.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/ontologies.xml" sourceName="static"/>
+  </target>
+
+
   <!-- ENSEMBL HUMAN  MODEL GENERATION -->
 
   <!-- convert ensembl human zargo to InterMine model -->
@@ -2892,11 +2904,13 @@
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
       <antcall target="analyse-db-production"/>
-      <antcall target="transfer-sequences-chromosome"/>
-      <antcall target="analyse-db-production"/>
+      <!-- removed due to running out of memory -->
+      <!--antcall target="transfer-sequences-chromosome"/-->
+      <!--antcall target="analyse-db-production"/-->
       <!--antcall target="create-indexes-production-attribute"/-->
       <!--antcall target="analyse-db-production"/-->
   </target>
+ 
 
   <!--COMPILATION AND TESTING TARGETS -->
   <target name="compile-ensembl-human-java">
@@ -3055,7 +3069,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3128,7 +3142,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3201,7 +3215,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3274,7 +3288,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3297,7 +3311,6 @@
   <target name="build-disease-regions-production"
           depends="retrieve-disease-regions, load-disease-regions"/>
 
-
-
+  
 </project>
 
