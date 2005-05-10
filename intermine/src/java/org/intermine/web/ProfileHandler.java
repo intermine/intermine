@@ -10,10 +10,14 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.web.bag.InterMineBagBinding;
+import org.intermine.xml.full.FullHandler;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -25,12 +29,13 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class ProfileHandler extends DefaultHandler
 {
-    ProfileManager profileManager;
-    String username;
-    String password;
-    Map savedQueries;
-    Map savedBags;
-    Map savedTemplates;
+    private ProfileManager profileManager;
+    private String username;
+    private String password;
+    private Map savedQueries;
+    private Map savedBags;
+    private Map savedTemplates;
+    private List items;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -48,6 +53,7 @@ class ProfileHandler extends DefaultHandler
     public ProfileHandler(ProfileManager profileManager) {
         super();
         this.profileManager = profileManager;
+        items = new ArrayList();
     }
 
     /**
@@ -67,6 +73,9 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("userprofile")) {
             username = attrs.getValue("username");
             password = attrs.getValue("password");
+        }
+        if (qName.equals("items")) {
+            subHandler = new FullHandler();
         }
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
@@ -91,10 +100,14 @@ class ProfileHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
+        if (qName.equals("items")) {
+            items = ((FullHandler) subHandler).getItems(); 
+        }
         if (qName.equals("bags") || qName.equals("template-queries")
-            || qName.equals("queries")) {
+            || qName.equals("queries") || qName.equals("items")) {
             subHandler = null;
         }
+
         if (subHandler != null) {
             subHandler.endElement(uri, localName, qName);
         }

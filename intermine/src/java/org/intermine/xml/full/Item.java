@@ -95,6 +95,9 @@ public class Item
      * @param identifier the identifier
      */
     public void setIdentifier(String identifier) {
+        if (identifier == null) {
+            throw new IllegalArgumentException("identifier argument cannot be null");
+        }
         this.identifier = identifier;
     }
 
@@ -111,6 +114,9 @@ public class Item
      * @param className the class
      */
     public void setClassName(String className) {
+        if (className == null) {
+            throw new IllegalArgumentException("className argument cannot be null");
+        }
         classDescriptor = getClassDescriptorByName(className);
         this.className = className;
     }
@@ -128,6 +134,9 @@ public class Item
      * @param implementations the interfaces that this item implements
      */
     public void setImplementations(String implementations) {
+        if (implementations == null) {
+            throw new IllegalArgumentException("implementations argument cannot be null");
+        }
         implementationClassDescriptors = null;
         checkImplementations(implementations);
         this.implementations = implementations;
