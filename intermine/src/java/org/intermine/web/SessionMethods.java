@@ -108,6 +108,7 @@ public class SessionMethods
                 try {
                     Query q = MainHelper.makeQuery(query, profile.getSavedBags());
                     Results rtmp = TableHelper.makeResults(os, q);
+                    rtmp.setNoPrefetch();
                     // Register request id for query on this thread
                     // We do this before setting r
                     if (ios != null) {
