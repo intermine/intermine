@@ -145,7 +145,8 @@
           
             <th align="center" rowspan="2">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
-                             onclick="selectColumnCheckbox(${status.index}, '${dataType}')">
+                             onclick="selectColumnCheckbox(${status.index}, '${dataType}')"
+                             disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
                 <c:out value="${status.index}"/>
               </html:multibox>
             </th>
