@@ -497,6 +497,13 @@
         //-->
         </script>
         </div>
+        <div style="text-align:right">
+          <script language="JavaScript">
+          <!--
+            document.write('<input type="submit" onclick="window.location.reload()" value="<fmt:message key="query.cancelConstraint"/>"/>');
+          //-->
+          </script>
+        </div>
       </td>
     </tr>
     
