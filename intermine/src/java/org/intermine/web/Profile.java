@@ -20,6 +20,8 @@ import java.util.TreeMap;
 
 import org.apache.lucene.store.Directory;
 import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Class to represent a user of the webapp
@@ -148,6 +150,36 @@ public class Profile
      */
     public Map getSavedBags() {
         return Collections.unmodifiableMap(savedBags);
+    }
+    
+    /**
+     * Get a mapping from bag name to InterMineIdBag
+     * @return all InterMineIdBags mapped by name
+     */
+    public Map getObjectBags() {
+        TreeMap map = new TreeMap();
+        for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            if (entry.getValue() instanceof InterMineIdBag) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return map;
+    }
+    
+    /**
+     * Get a mapping from bag name to InterMinePrimitiveBag
+     * @return all InterMinePrimitiveBags mapped by name
+     */
+    public Map getPrimitiveBags() {
+        TreeMap map = new TreeMap();
+        for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            if (entry.getValue() instanceof InterMinePrimitiveBag) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return map;
     }
 
     /**

@@ -131,7 +131,7 @@
                 <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
               </c:otherwise>
             </c:choose>
-            <%-- <c:if test="${(!node.reference && !node.collection) || !empty PROFILE.savedBags || !empty SUBCLASSES[node.type] || allNodeTypes[node.type] != null}"> --%>
+            <%-- <c:if test="${node.attribute || !empty PROFILE.savedBags || !empty SUBCLASSES[node.type] || allNodeTypes[node.type] != null}"> --%>
               <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
                          title="${addConstraintToTitle}">
                 <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
@@ -446,7 +446,17 @@
               </c:if>
             </c:otherwise>
           </c:choose>
-          <c:if test="${!empty PROFILE.savedBags}">
+          <%-- Find the right set of bags --%>
+          <c:choose>
+            <c:when test="${editingNode.attribute}">
+              <c:set var="bags" value="${PROFILE.primitiveBags}"/>
+            </c:when>
+            <c:otherwise>
+              <c:set var="bags" value="${PROFILE.objectBags}"/>
+            </c:otherwise>
+          </c:choose>
+          <%-- Display popup if bags exist --%>
+          <c:if test="${!empty bags}">
             <p style="text-align: left;">
               <fmt:message key="query.bagConstraint"/>
               <html:select property="bagOp">
@@ -457,7 +467,7 @@
                 </c:forEach>
               </html:select>
               <html:select property="bagValue">
-                <c:forEach items="${PROFILE.savedBags}" var="bag">
+                <c:forEach items="${bags}" var="bag">
                   <html:option value="${bag.key}">
                     <c:out value="${bag.key}"/>
                   </html:option>
