@@ -10,11 +10,6 @@
         <table>
           <tbody>
             <row>
-              <entry>27th April 2005</entry>
-              <entry>Matthew</entry>
-              <entry>An Overview of Java 5.0</entry>
-            </row>
-            <row>
               <entry>18th May 2005</entry>
               <entry>Richard</entry>
               <entry>Extreme Programming</entry>
@@ -46,6 +41,11 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>27th April 2005</entry>
+              <entry>Matthew</entry>
+              <entry><ulink url="CSS2004Java_matt.sxi">An Overview of Java 5.0</ulink></entry>
+            </row>
             <row>
               <entry>23rd Novemebr 2004</entry>
               <entry>Software Summit overview</entry>
