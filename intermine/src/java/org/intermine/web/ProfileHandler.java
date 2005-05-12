@@ -10,13 +10,18 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.web.bag.InterMineBagHandler;
+import org.intermine.xml.full.FullHandler;
+import org.intermine.xml.full.FullParser;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.intermine.web.bag.InterMineBagBinding;
-import org.intermine.xml.full.FullHandler;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -36,10 +41,11 @@ class ProfileHandler extends DefaultHandler
     private Map savedBags;
     private Map savedTemplates;
     private List items;
+    private Map idObjectMap;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
-     * InterMineBagBinding.BagHandler.  If "template-queries" it will be an
+     * InterMineBagBinding.InterMineBagHandler.  If "template-queries" it will be an
      * TemplateQueryBinding.TemplateQueryHandler.  If "queries" it will be a
      * PathQueryBinding.PathQueryHandler.  If subHandler is not null subHandler.startElement() and
      * subHandler.endElement(), etc will be called from this class.
@@ -79,8 +85,8 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
-            subHandler = new InterMineBagBinding.BagHandler(profileManager.getObjectStore(),
-                                                            savedBags);
+            subHandler = new InterMineBagHandler(profileManager.getObjectStore(),
+                                                            savedBags, idObjectMap);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
@@ -102,6 +108,19 @@ class ProfileHandler extends DefaultHandler
         super.endElement(uri, localName, qName);
         if (qName.equals("items")) {
             items = ((FullHandler) subHandler).getItems(); 
+            idObjectMap = new HashMap();
+            Model model = profileManager.getObjectStore().getModel();
+            List objects;
+            try {
+                objects = FullParser.realiseObjects(items, model);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("cannot turn items into objects", e);
+            }
+            Iterator objectIter = objects.iterator();
+            while (objectIter.hasNext()) {
+                InterMineObject object = (InterMineObject) objectIter.next();
+                idObjectMap.put(object.getId(), object);
+            }
         }
         if (qName.equals("bags") || qName.equals("template-queries")
             || qName.equals("queries") || qName.equals("items")) {

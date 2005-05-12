@@ -10,8 +10,14 @@ package org.intermine.web.bag;
  *
  */
 
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.SAXParser;
+import org.intermine.util.TypeUtil;
+
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,14 +27,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.SAXParser;
-import org.intermine.util.TypeUtil;
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Parse InterMineBags in XML format
@@ -100,81 +99,11 @@ public class InterMineBagBinding
     public static Map unmarshal(final Reader reader, final ObjectStore os) {
         final Map bags = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new BagHandler(os, bags));
+            SAXParser.parse(new InputSource(reader),
+                            new InterMineBagHandler(os, bags, new HashMap()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return bags;
     }
-
-    /**
-     * A handler for turning XML bags data into an InterMineBag.
-     *
-     * @author Mark Woodbridge
-     */
-    public static class BagHandler extends DefaultHandler
-    {
-        private static final Logger LOG = Logger.getLogger(BagHandler.class);
-
-        ObjectStore os;
-        Map bags;
-        String bagName;
-        InterMineBag bag;
-
-        /**
-         * Constructor
-         * @param os ObjectStore used to resolve object ids
-         * @param bags Map from bag name to InterMineBag
-         */
-        public BagHandler(ObjectStore os, Map bags) {
-            this.os = os;
-            this.bags = bags;
-        }
-
-        /**
-         * @see DefaultHandler#startElement
-         */
-        public void startElement(String uri, String localName, String qName, Attributes attrs)
-            throws SAXException {
-            try {
-                if (qName.equals("bag")) {
-                    bagName = attrs.getValue("name");
-                }
-                if (qName.equals("element")) {
-                    String type = attrs.getValue("type");
-                    String value = attrs.getValue("value");
-                    if (type.equals(InterMineObject.class.getName())) {
-                        if (bag == null) {
-                            bag = new InterMineIdBag();
-                        } else if (bag instanceof InterMinePrimitiveBag) {
-                            LOG.error("InterMineObject id " + value + " in bag of primitives");
-                            return;
-                        }
-                        bag.add(Integer.valueOf(value));
-                    } else {
-                        if (bag == null) {
-                            bag = new InterMinePrimitiveBag();
-                        }  else if (bag instanceof InterMineIdBag) {
-                            LOG.error("primitive " + value + " in bag of InterMineObjects");
-                            return;
-                        }
-                        bag.add(TypeUtil.stringToObject(Class.forName(type), value));
-                    }
-                }
-            } catch (Exception e) {
-                throw new SAXException(e);
-            }
-        }
-
-        /**
-         * @see DefaultHandler#endElement
-         */
-        public void endElement(String uri, String localName, String qName) {
-            if (qName.equals("bag")) {
-                bags.put(bagName, bag);
-                bag = null;
-            }
-        }
-    }
-
 }
