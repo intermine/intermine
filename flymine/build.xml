@@ -2361,7 +2361,7 @@
     <filter token="SITE_PREFIX" value="${www.location}"/>
     <filter token="HELP_LOCATION" value="${www.help.location}"/>
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
-    <filter token="RELEASE_VERSION" value="${webapp.release.version}"/>
+    <filter token="RELEASE_VERSION" value="${release.version}"/>
     <copy todir="${build.tmp}" filtering="true"
           file="${resources}/webapp/flymine/global.web.properties"
           overwrite="true" verbose="true"/>
