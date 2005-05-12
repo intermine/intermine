@@ -378,12 +378,12 @@
                       </td>
                       <td valign="top" align="center">
                         <span id="operandEditSpan0">
-                          <html:text property="attributeValue"/><br/>
+                          <html:text property="attributeValue"/>
                           <%-- might want to show up arrow --%>
                           <c:if test="${!empty options}">
-                            <im:vspacer height="5"/><br/>
-                            <img src="images/up-arrow.gif" alt="^^^" border="0" height="13" width="13"/><br/>
-                            <im:vspacer height="5"/><br/>
+                            <br/><im:vspacer height="2"/>
+                            <img src="images/up-arrow.gif" alt="^^^" border="0" height="13" width="13"/>
+                            <im:vspacer height="2"/>
                           </c:if>
                         </span>
                         <c:if test="${!empty options}">
