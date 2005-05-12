@@ -87,7 +87,7 @@ public class PortalQueryAction extends InterMineAction
         TemplateForm tf = new TemplateForm();
         tf.setAttributeOps("1", op.toString());
         tf.setAttributeValues("1", extId);
-        tf.parseAttributeValues(template, session, new ActionErrors());
+        tf.parseAttributeValues(template, session, new ActionErrors(), false);
 
         // Convert form to path query
         PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);

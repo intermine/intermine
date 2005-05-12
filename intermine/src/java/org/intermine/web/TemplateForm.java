@@ -197,7 +197,10 @@ public class TemplateForm extends ActionForm
         
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         ActionErrors errors = new ActionErrors();
-        parseAttributeValues(template, session, errors);
+        
+        boolean appendWildcard = (request.getParameter("appendWildcard") != null &&
+                                  !request.getParameter("appendWildcard").equals("no"));
+        parseAttributeValues(template, session, errors, appendWildcard);
         return errors;
     }
     
@@ -210,7 +213,7 @@ public class TemplateForm extends ActionForm
      * @param errors a place to store any parse errors
      */
     protected void parseAttributeValues(TemplateQuery template, HttpSession session,
-                                        ActionErrors errors) {
+                                        ActionErrors errors, boolean appendWildcard) {
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         int j = 0;
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
@@ -228,6 +231,9 @@ public class TemplateForm extends ActionForm
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
                     Object parseVal = MainForm.parseValue((String) attributeValues.get(key),
                                                         fieldClass, constraintOp, locale, errors);
+                    if (parseVal instanceof String && appendWildcard) {
+                         parseVal = ((String) parseVal) + "%";
+                    }
                     parsedAttributeValues.put(key, parseVal);
                 }
                 j++;
