@@ -124,17 +124,17 @@
               <c:when test="${viewPaths[fullpath] == null}">
                 <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
                            title="${selectNodeTitle}">
-                  <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
+                  <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
                 </html:link>
               </c:when>
               <c:otherwise>
-                <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex;vertical-align:middle"/>
+                <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
               </c:otherwise>
             </c:choose>
             <%-- <c:if test="${node.attribute || !empty PROFILE.savedBags || !empty SUBCLASSES[node.type] || allNodeTypes[node.type] != null}"> --%>
               <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
                          title="${addConstraintToTitle}">
-                <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
+                <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain"/>
               </html:link>
             <%-- </c:if> --%>
           </div>

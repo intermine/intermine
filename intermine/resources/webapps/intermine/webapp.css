@@ -46,6 +46,20 @@ a:active { color:#58e; text-decoration:none }
     background-color: #F0F2FF;
 }
 
+.version {
+  border: 1px solid #222;
+  font-size: 15px;
+  color: white;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  background-color: #c55;
+  line-height: 170%;
+  font-weight: bold;
+  text-shadow: black 0px 0px 2px;
+}
+
 /* style for boxes with heading - used by the front page and the webapp */
 .box .heading, .heading2 {
   border: 1px solid #888;
@@ -107,6 +121,10 @@ table.box th.title {
   font-weight: bold;
 }
 
+.arrow {
+  vertical-align: middle;
+}
+
 img {
   border: none;
 }
@@ -133,14 +151,14 @@ form {
   padding-right: 10px;
   font-size: 12px;
   text-align: right;
+  line-height: 125%;
 }
 #topright .wellcome {
   font-size: 11px;
 }
 #topright .contact {
   margin-top: 3px;
-  font-size: 10px;
-  line-height: 14px;
+  font-size: 11px;
 }
 table td {
   font-size: 12px;
