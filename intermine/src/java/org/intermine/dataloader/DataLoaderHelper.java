@@ -250,7 +250,12 @@ public class DataLoaderHelper
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+                Set primaryKeys;
+                if (source == null) {
+                    primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+                } else {
+                    primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+                }
                 if (!primaryKeys.isEmpty()) {
                     Iterator pkSetIter = primaryKeys.iterator();
                     while (pkSetIter.hasNext()) {
