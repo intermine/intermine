@@ -1,10 +1,10 @@
 html, body
 {
-    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-    font-size: 100%; /* NN4 */
-    margin: 0;
-    padding: 0;
-    background-color: #F0F2FF;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 100%; /* NN4 */
+  margin: 0;
+  padding: 0;
+  background-color: #F0F2FF;
 }
 
 a:link { color:#049; text-decoration:none }
@@ -19,31 +19,31 @@ a:active { color:#58e; text-decoration:none }
 
 #header
 {
-    padding: 5px;
-    border-bottom: solid #888 1px;
-    margin-bottom: 0px;
+  padding: 5px;
+  border-bottom: solid #888 1px;
+  margin-bottom: 0px;
 }
 
 #header h1
 {
-    font-size: 1.6em;
-    font-weight: bold;
-    margin: 3px;
+  font-size: 1.6em;
+  font-weight: bold;
+  margin: 3px;
 }
 
 #header h1 a
 {
-    color: #210075;
-    text-decoration: none;
+  color: #210075;
+  text-decoration: none;
 }
 
 #header p
 {
-    font-size: 1.2em;
-    font-weight: normal;
-    margin: 3px;
-    padding: 0;
-    background-color: #F0F2FF;
+  font-size: 1.2em;
+  font-weight: normal;
+  margin: 3px;
+  padding: 0;
+  background-color: #F0F2FF;
 }
 
 .version {
