@@ -1056,7 +1056,7 @@
     <filter token="SITE_PREFIX" value="${www.location}"/>
     <filter token="HELP_LOCATION" value="${www.help.location}"/>
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
-    <filter token="RELEASE_VERSION" value="${webapp.release.version}"/>
+    <filter token="RELEASE_VERSION" value="${release.version}"/>
     <copy todir="${build.webapp}/intermine/WEB-INF" filtering="true">
       <fileset dir="${resources}/webapps/intermine"
                excludes="web.xml images/** InterMineWebApp*.properties default.intermine.properties *.css"/>
