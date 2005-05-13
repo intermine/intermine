@@ -40,7 +40,6 @@
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="chromosome.identifier"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
