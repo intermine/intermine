@@ -227,4 +227,7 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
     public String getRegisterOffset4() {
         return "WHERE";
     }
+    public String precompTableString() {
+        return "SELECT intermine_Alias.OBJECT AS \"intermine_Alias\", intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id";
+    }
 }

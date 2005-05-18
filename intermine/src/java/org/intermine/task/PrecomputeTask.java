@@ -224,7 +224,7 @@ public class PrecomputeTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes);
+            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, true);
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query
                     + " with indexes " + indexes, e);
@@ -245,7 +245,7 @@ public class PrecomputeTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query);
+            ((ObjectStoreInterMineImpl) os).precompute(query, true);
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query, e);
         }
@@ -378,10 +378,10 @@ public class PrecomputeTask extends Task
                     continue;
                 }
 
+                //queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
+                //                                thisSubjectCD.getType(), true));
                 queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                                                thisSubjectCD.getType(), true));
-//                 queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
-//                                                 thisSubjectCD.getType(), false));
+                                                thisSubjectCD.getType(), false));
             }
         }
 
@@ -446,13 +446,13 @@ public class PrecomputeTask extends Task
                         continue;
                     }
 
+                    //queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
+                    //                                thisObject2CD.getType(), connectingFieldname2,
+                    //                                thisObject3CD.getType(), true));
+
                     queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
                                                     thisObject2CD.getType(), connectingFieldname2,
-                                                    thisObject3CD.getType(), true));
-
-//                    queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
-//                                                    thisObject2CD.getType(), connectingFieldname2,
-//                                                    thisObject3CD.getType(), false));
+                                                    thisObject3CD.getType(), false));
                 }
             }
         }

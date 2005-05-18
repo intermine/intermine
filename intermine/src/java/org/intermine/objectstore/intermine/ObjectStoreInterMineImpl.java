@@ -1063,7 +1063,20 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if anything goes wrong
      */
     public String precompute(Query q) throws ObjectStoreException {
-        return precompute(q, null);
+        return precompute(q, null, false);
+    }
+
+    /**
+     * Creates a precomputed table for the given query.
+     *
+     * @param q the Query for which to create the precomputed table
+     * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
+     * the precomputed table's SELECT list.
+     * @return the name of the new precomputed table
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public String precompute(Query q, boolean allFields) throws ObjectStoreException {
+        return precompute(q, null, allFields);
     }
 
     /**
@@ -1075,10 +1088,25 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if anything goes wrong
      */
     public String precompute(Query q, Collection indexes) throws ObjectStoreException {
+        return precompute(q, indexes, false);
+    }
+
+    /**
+     * Creates a precomputed table for the given query.
+     *
+     * @param q the Query for which to create the precomputed table
+     * @param indexes a Collection of QueryOrderables for which to create indexes
+     * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
+     * the precomputed table's SELECT list.
+     * @return the name of the new precomputed table
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public String precompute(Query q, Collection indexes,
+            boolean allFields) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
-            return precomputeWithConnection(c, q, indexes);
+            return precomputeWithConnection(c, q, indexes, allFields);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
         } finally {
@@ -1096,13 +1124,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return the name of the new precomputed table
      * @throws ObjectStoreException if anything goes wrong
      */
-    public String precomputeWithConnection(Connection c, Query q,
-            Collection indexes) throws ObjectStoreException {
+    public String precomputeWithConnection(Connection c, Query q, Collection indexes,
+            boolean allFields) throws ObjectStoreException {
         QueryNode qn = null;
         try {
             int tableNumber = getUniqueInteger(c);
-            String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
-                    bagConstraintTables);
+            String sql = null;
+            if (allFields) {
+                sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP,
+                        Collections.EMPTY_MAP);
+            } else {
+                sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
+                        Collections.EMPTY_MAP);
+            }
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     "precomputed_table_" + tableNumber, c);
             Set stringIndexes = null;

@@ -82,6 +82,7 @@ public class SqlGenerator
     protected static final int QUERY_SUBQUERY_CONSTRAINT = 2;
     protected static final int ID_ONLY = 2;
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
+    protected static final int QUERY_FOR_PRECOMP = 4;
 
     protected static Map sqlCache = new WeakHashMap();
     protected static Map tablenamesCache = new WeakHashMap();
@@ -354,7 +355,7 @@ public class SqlGenerator
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String generate(Query q, DatabaseSchema schema, Database db,
+    public static String generate(Query q, DatabaseSchema schema, Database db,
                                      Constraint offsetCon, int kind,
                                      Map bagTableNames) throws ObjectStoreException {
         State state = new State();
@@ -363,7 +364,8 @@ public class SqlGenerator
         buildFromComponent(state, q, schema, bagTableNames);
         buildWhereClause(state, q, q.getConstraint(), schema);
         buildWhereClause(state, q, offsetCon, schema);
-        String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, schema) : "");
+        String orderBy = ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
+                ? buildOrderBy(state, q, schema) : "");
         StringBuffer retval = new StringBuffer("SELECT ")
             .append(needsDistinct(q) ? "DISTINCT " : "")
             .append(buildSelectComponent(state, q, schema, kind))
@@ -982,7 +984,7 @@ public class SqlGenerator
             if (objectAlias != null) {
                 buffer.append(objectAlias)
                     .append(".OBJECT");
-                if (kind == QUERY_NORMAL) {
+                if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
                     buffer.append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias)
@@ -995,7 +997,8 @@ public class SqlGenerator
                 needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
-                    || ((kind == QUERY_NORMAL) && schema.isFlatMode())) {
+                    || ((kind == QUERY_NORMAL) && schema.isFlatMode())
+                    || (kind == QUERY_FOR_PRECOMP)) {
                 Set fields = schema.getModel().getClassDescriptorByName(qc.getType().getName())
                     .getAllFieldDescriptors();
                 Map fieldMap = new TreeMap();
@@ -1020,13 +1023,15 @@ public class SqlGenerator
                     buffer.append((String) state.getFieldToAlias(qc).get(field.getName()))
                         .append(".")
                         .append(columnName);
-                    if ((kind == QUERY_SUBQUERY_FROM) || (kind == QUERY_NORMAL)) {
+                    if (kind == QUERY_SUBQUERY_FROM) {
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
-                            //.append(alias.equals(alias.toLowerCase())
-                            //        ? DatabaseUtil.generateSqlCompatibleName(alias) + columnName
-                            //        : "\"" + DatabaseUtil.generateSqlCompatibleName(alias)
-                            //        + columnName + "\"");
+                    } else if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
+                        buffer.append(" AS ")
+                            .append(alias.equals(alias.toLowerCase())
+                                    ? DatabaseUtil.generateSqlCompatibleName(alias) + columnName
+                                    : "\"" + DatabaseUtil.generateSqlCompatibleName(alias)
+                                    + columnName.toLowerCase() + "\"");
                     }
                 }
             } else {
@@ -1201,7 +1206,7 @@ public class SqlGenerator
             } else if (node instanceof QueryEvaluable) {
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 String alias = (String) q.getAliases().get(node);
-                if (kind == QUERY_NORMAL) {
+                if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase())
                             ? DatabaseUtil.generateSqlCompatibleName(alias)
                             : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\""));

@@ -229,4 +229,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     public String getRegisterOffset4() {
         return "AND";
     }
+    public String precompTableString() {
+        return "SELECT intermine_Alias.OBJECT AS \"intermine_Alias\", intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM InterMineObject AS intermine_Alias WHERE intermine_Alias.class = 'org.intermine.model.testmodel.Company' ORDER BY intermine_Alias.id";
+    }
 }
