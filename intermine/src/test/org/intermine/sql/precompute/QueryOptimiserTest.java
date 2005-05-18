@@ -751,6 +751,34 @@ public class QueryOptimiserTest extends TestCase
         assertEquals(eSet, bestQuery.getQueries());
     }
 
+    public void testRecursiveOptimise3() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM table1, table2 WHERE table1.c = 'five' AND table2.c = 'six' AND table1.d = table2.d");
+        Query pq1 = new Query("SELECT table1.a AS fhjs, table1.b AS sjhf, table1.d AS kjhds FROM table1 WHERE table1.c = 'five'");
+        Query pq2 = new Query("SELECT table2.a AS kjsd, table2.b AS hjas, table2.d AS kjhsd FROM table2 WHERE table2.c = 'six'");
+        Query pq3 = new Query("SELECT table2.a AS kjsd, table2.b AS hjas, table2.d AS jsdff FROM table2 WHERE table2.c = 'seven'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, "precomp2", con);
+        PrecomputedTable pt3 = new PrecomputedTable(pq3, "precomp3", con);
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+        precomps.add(pt2);
+        precomps.add(pt3);
+        
+        Query eq1 = new Query("SELECT P42.fhjs AS t1_a, P42.sjhf AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM precomp1 AS P42, table2 WHERE table2.c = 'six' AND P42.kjhds = table2.d");
+        Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five' AND table1.d = P43.kjhsd");
+        Query eq3 = new Query("SELECT P44.fhjs AS t1_a, P44.sjhf AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM precomp1 AS P44, precomp2 AS P43 WHERE P44.kjhds = P43.kjhsd");
+        Set eSet = new ConsistentSet();
+        eSet.add(eq1);
+        eSet.add(eq2);
+        eSet.add(eq3);
+
+        StringUtil.setNextUniqueNumber(42);
+        BestQueryStorer bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+
+        assertEquals(eSet, bestQuery.getQueries());
+    }
+
     public void testRemapAliasesToAvoidPrecomputePrefix() throws Exception {
         Query q1 = new Query("SELECT table1.a, Putty.b FROM table1, table AS Putty");
         Query eq1 = new Query("SELECT table1.a, P42.b FROM table1, table AS P42");

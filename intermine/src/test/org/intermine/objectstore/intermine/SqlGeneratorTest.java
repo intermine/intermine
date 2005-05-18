@@ -423,6 +423,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
         assertEquals("SELECT DISTINCT a1_.age AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.age > 34 ORDER BY a1_.age OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
     }
 
+    public void testForPrecomp() throws Exception {
+        DatabaseSchema schema = getSchema();
+        Query q = (Query) queries.get("SelectSimpleObject");
+        assertEquals(precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
+    }
+
     protected DatabaseSchema getSchema() {
         return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET);
     }
@@ -437,5 +443,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
     public String getRegisterOffset4() {
         return "WHERE";
+    }
+    public String precompTableString() {
+        return "SELECT intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id";
     }
 }
