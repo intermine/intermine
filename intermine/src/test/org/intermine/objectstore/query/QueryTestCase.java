@@ -23,7 +23,7 @@ public class QueryTestCase extends OneTimeTestCase
     }
 
     protected void assertEquals(Query q1, Query q2) {
-        assertEquals(null, q1, q2);
+        assertEquals("asserting equal", q1, q2);
     }
 
     /**
