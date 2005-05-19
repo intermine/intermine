@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -151,10 +152,12 @@ public class DataLoaderHelper
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
         cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
-        for (Iterator i = cldKeys.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            String keyName = (String) entry.getKey();
-            PrimaryKey key = new PrimaryKey((String) entry.getValue());
+        List keyNames = new ArrayList(cldKeys.keySet());
+        Collections.sort(keyNames);
+        Iterator iter = keyNames.iterator();
+        while (iter.hasNext()) {
+            String keyName = (String) iter.next();
+            PrimaryKey key = new PrimaryKey((String) cldKeys.get(keyName));
             keyMap.put(keyName, key);
         }
         return keyMap;
@@ -330,7 +333,7 @@ public class DataLoaderHelper
             primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
         }
 
-        Set returnSet = new HashSet();
+        Set returnSet = new LinkedHashSet();
 
         Iterator pkSetIter = primaryKeys.iterator();
         while (pkSetIter.hasNext()) {
