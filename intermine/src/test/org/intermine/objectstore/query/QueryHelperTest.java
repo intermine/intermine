@@ -38,116 +38,19 @@ public class QueryHelperTest extends TestCase
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
 
-        //simpleconstraint
-        try {
-            QueryHelper.addConstraint(q, null, qc, ConstraintOp.EQUALS, new QueryValue("Dennis"));
-            fail("Expected NullPointerException, fieldName parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, "name", null, ConstraintOp.EQUALS, new QueryValue("Dennis"));
-            fail("Expected NullPointerException, qc parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, "name", qc, null, new QueryValue("Dennis"));
-            fail("Expected NullPointerException, ops parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, "name", qc, ConstraintOp.EQUALS, (QueryValue) null);
-            fail("Expected NullPointerException, qv parameter null");
-        } catch (NullPointerException e) {
-        }
-
-        //queryfield bagconstraint
-        try {
-            QueryHelper.addConstraint(q, null, qc, ConstraintOp.EQUALS, new HashSet());
-            fail("Expected NullPointerException, fieldName parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, "name", null, ConstraintOp.EQUALS, new HashSet());
-            fail("Expected NullPointerException, qc parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, "name", qc, null, new HashSet());
-            fail("Expected NullPointerException, op parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, "name", qc, ConstraintOp.EQUALS, (QueryValue) null);
-            fail("Expected NullPointerException, qv parameter null");
-        } catch (NullPointerException e) {
-        }
-
         //main
         try {
-            QueryHelper.addConstraint(null, qc, new BagConstraint(qc, ConstraintOp.IN, new HashSet()));
+            QueryHelper.addConstraint(null, new BagConstraint(qc, ConstraintOp.IN, new HashSet()));
             fail("Expected NullPointerException, q parameter null");
         } catch (NullPointerException e) {
         }
         try {
-            QueryHelper.addConstraint(q, null, new BagConstraint(qc, ConstraintOp.IN, new HashSet()));
-            fail("Expected NullPointerException, qc parameter null");
-        } catch (NullPointerException e) {
-        }
-        try {
-            QueryHelper.addConstraint(q, qc, null);
+            QueryHelper.addConstraint(q, null);
             fail("Expected NullPointerException, constraint parameter null");
         } catch (NullPointerException e) {
         }
     }
 
-    public void testAddSimpleConstraint() throws Exception {
-        Query q = new Query();
-
-        QueryHelper.addConstraint(q, "name", new QueryClass(Employee.class),
-                                  ConstraintOp.EQUALS, new QueryValue("Dennis"));
-
-        assertEquals(Employee.class, ((QueryClass) q.getFrom().iterator().next()).getType());
-
-        SimpleConstraint sc = (SimpleConstraint) q.getConstraint();
-        assertEquals("name", ((QueryField) sc.getArg1()).getFieldName());
-        assertEquals(String.class, ((QueryField) sc.getArg1()).getType());
-        assertEquals(ConstraintOp.EQUALS, sc.getOp());
-        assertEquals("Dennis", ((QueryValue) sc.getArg2()).getValue());
-        assertEquals(String.class, ((QueryValue) sc.getArg2()).getType());
-    }
-
-    // Add a QueryClass and its constraints to a query then alter and add
-    // the same again - i.e. editing existing QueryClass
-    public void testAddSimpleConstraintExists() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Employee.class);
-
-        QueryHelper.addConstraint(q, "name", qc,
-                                  ConstraintOp.EQUALS, new QueryValue("Dennis"));
-        assertTrue(q.getConstraint() instanceof SimpleConstraint);
-        QueryHelper.addConstraint(q, "fullTime", qc,
-                                  ConstraintOp.EQUALS, new QueryValue(Boolean.TRUE));
-
-        LOG.debug("testAddToQueryExists(): " + q.getConstraint());
-        LOG.debug("testAddToQueryExists(): " +
-                 ((ConstraintSet) q.getConstraint()).getConstraints());
-
-        assertEquals(1, q.getFrom().size());
-        assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
-
-        QueryHelper.addConstraint(q, "name", qc,
-                                  ConstraintOp.EQUALS, new QueryValue("Gerald"));
-        QueryHelper.addConstraint(q, "fullTime", qc,
-                                  ConstraintOp.NOT_EQUALS, new QueryValue(Boolean.TRUE));
-        QueryHelper.addConstraint(q, "age", qc,
-                                  ConstraintOp.EQUALS, new QueryValue(new Integer(43)));
-
-        assertEquals(1, q.getFrom().size());
-
-        Set constraints = ((ConstraintSet) q.getConstraint()).getConstraints();
-        assertFalse(constraints.iterator().next() instanceof ConstraintSet);
-        assertEquals(5, constraints.size());
-    }
 
     public void testAddConstraintEmpty() throws Exception {
         Query q = new Query();
@@ -156,7 +59,7 @@ public class QueryHelperTest extends TestCase
                                                    ConstraintOp.EQUALS, new QueryValue("Bob"));
 
         q.setConstraint(sc);
-        QueryHelper.addConstraint(q, qc, new ConstraintSet(ConstraintOp.AND));
+        QueryHelper.addConstraint(q, new ConstraintSet(ConstraintOp.AND));
 
         assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
     }
@@ -169,7 +72,7 @@ public class QueryHelperTest extends TestCase
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(sc);
 
-        QueryHelper.addConstraint(q, qc, cs);
+        QueryHelper.addConstraint(q, cs);
 
         assertEquals(cs, q.getConstraint());
     }
@@ -187,7 +90,7 @@ public class QueryHelperTest extends TestCase
         cs2.addConstraint(sc2);
 
         q.setConstraint(sc1);
-        QueryHelper.addConstraint(q, qc, cs2);
+        QueryHelper.addConstraint(q, cs2);
 
         assertTrue(q.getConstraint() instanceof ConstraintSet);
 
@@ -213,7 +116,7 @@ public class QueryHelperTest extends TestCase
         cs2.addConstraint(sc2);
 
         q.setConstraint(cs1);
-        QueryHelper.addConstraint(q, qc, cs2);
+        QueryHelper.addConstraint(q, cs2);
 
         ConstraintSet cs3 = new ConstraintSet(ConstraintOp.AND);
         cs3.addConstraint(sc1);
@@ -221,11 +124,4 @@ public class QueryHelperTest extends TestCase
         assertEquals(cs3, q.getConstraint());
     }
 
-    public void testAddQueryClass() throws Exception {
-        Query q = new Query();
-
-        QueryHelper.addQueryClass(q,new QueryClass(Employee.class));
-
-        assertEquals(Employee.class, ((QueryClass) q.getFrom().iterator().next()).getType());
-    }
 }
