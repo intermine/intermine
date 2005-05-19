@@ -10,7 +10,6 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,78 +21,25 @@ import java.util.ArrayList;
  */
 public abstract class QueryHelper
 {
-    /**
-     * Add a SimpleConstraint to a Query
-     *
-     * @param q a query to add QueryClass and constraints to
-     * @param fieldName name of the attribute in the QueryClass to constraint
-     * @param qc QueryClass to pass to the Constraint constructor
-     * @param op operation for the new Constraint
-     * @param qv the QueryValue to pass to the SimpleConstraint constructor
-     * @throws Exception if an error occurs
-     */
-    public static void addConstraint(Query q, String fieldName, QueryClass qc, ConstraintOp op,
-                                     QueryValue qv) throws Exception {
-        if (op == null) {
-            throw new NullPointerException("ConstraintOp parameter is null");
-        } else if (qv == null) {
-            throw new NullPointerException("QueryValue parameter is null");
-        }
 
-        QueryField qf = new QueryField(qc, fieldName);
-        addConstraint(q, qc, new SimpleConstraint(qf, op, qv));
-    }
-
-    /**
-     * Add a QueryField BagConstraint to a Query
-     *
-     * @param q a query to add QueryClass and constraints to
-     * @param fieldName name of the attribute in the QueryClass to constraint
-     * @param qc QueryClass to pass to the Constraint constructor
-     * @param op operation for the new Constraint
-     * @param collection the Collection to pass to the BagConstraint constructor
-     * @throws Exception if an error occurs
-     */
-    public static void addConstraint(Query q, String fieldName, QueryClass qc, ConstraintOp op,
-                                     Collection collection) throws Exception {
-        if (qc == null) {
-            throw new NullPointerException("QueryField qf parameter is null");
-        } else if (fieldName == null) {
-            throw new NullPointerException("fieldName parameter is null");
-        } else if (op == null) {
-            throw new NullPointerException("ConstraintOp parameter is null");
-        } else if (collection == null) {
-            throw new NullPointerException("Collection parameter is null");
-        }
-
-        QueryField qf = new QueryField(qc, fieldName);
-        addConstraint(q, qc, new BagConstraint(qf, op, collection));
-    }
 
     /**
      * Add a constraint to those present in a Query.  If the Query currently
      * has no constraints just add the newConstraint.  If q.getConstraint()
      * returns a ConstraintSet add newConstraint to it.  If q.getConstraint()
      * returns something that isn't a ConstraintSet make and add a new
-     * ConstraintSet that contains both the old and new constraints.  If the
-     * QueryClass
+     * ConstraintSet that contains both the old and new constraints.
      *
      * @param q the query in question
-     * @param qc the QueryClass referred to by the Constraint
      * @param constraint the constraint to add
      */
-    public static void addConstraint(Query q, QueryClass qc, Constraint constraint) {
+    public static void addConstraint(Query q, Constraint constraint) {
         if (q == null) {
             throw new NullPointerException("q cannot be null");
-        }
-        if (qc == null) {
-            throw new NullPointerException("qc cannot be null");
         }
         if (constraint == null) {
             throw new NullPointerException("constraint cannot be null");
         }
-
-        addQueryClass(q, qc);
 
         Constraint queryConstraint = q.getConstraint();
 
@@ -125,18 +71,6 @@ public abstract class QueryHelper
         }
     }
 
-    /**
-     * Add a QueryClass to a Query.  Do nothing if it's already there.
-     *
-     * @param q a query to add QueryClass to
-     * @param qc QueryClass to add
-     */
-    public static void addQueryClass(Query q, QueryClass qc) {
-        if (!q.getFrom().contains(qc)) {
-            q.addFrom(qc);
-            q.addToSelect(qc);
-        }
-    }
 
     /**
      * Returns a list of aliases, where each alias corresponds to each element of the SELECT list
