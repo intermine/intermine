@@ -112,14 +112,14 @@ class ProfileHandler extends DefaultHandler
             Model model = profileManager.getObjectStore().getModel();
             List objects;
             try {
-                objects = FullParser.realiseObjects(items, model);
+                objects = FullParser.realiseObjects(items, model, true);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("cannot turn items into objects", e);
             }
             Iterator objectIter = objects.iterator();
             while (objectIter.hasNext()) {
                 InterMineObject object = (InterMineObject) objectIter.next();
-                idObjectMap.put(object.getId(), object);
+                idObjectMap.put(object.getId() + "", object);
             }
         }
         if (qName.equals("bags") || qName.equals("template-queries")

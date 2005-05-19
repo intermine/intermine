@@ -81,10 +81,9 @@ public class InterMineBagHandler extends DefaultHandler
                         return;
                     }
 
-                    
+
                     if (idToObjectMap.containsKey(value)) {
-                        Integer oldId = Integer.valueOf(value);
-                        InterMineObject oldObject = (InterMineObject) idToObjectMap.get(oldId);
+                        InterMineObject oldObject = (InterMineObject) idToObjectMap.get(value);
 
                         bag.addAll(getNewIds(oldObject, os));
                     } else {
@@ -126,15 +125,15 @@ public class InterMineBagHandler extends DefaultHandler
         Query query;
         try {
             query = DataLoaderHelper.createPKQuery(os.getModel(), oldObject, null,
-                                                   new IntToIntMap());
+                                                   new IntToIntMap(), false);
         } catch (MetaDataException e) {
            throw new RuntimeException("Unable to create query for new object", e);
         }
 
         SingletonResults results = new SingletonResults(query, os, os.getSequence());
-        
+
         int size = results.size();
-        
+
         if (size != 1) {
             throw new RuntimeException("createPKQuery() query didn't return 1 result for: "
                                        + oldObject.getId() + " (size was " + size + ")");
