@@ -26,6 +26,7 @@ import org.intermine.metadata.Model;
 public class FullParserTest extends TestCase
 {
     private List exampleItems;
+    private Item departmentItem;
 
     public FullParserTest(String arg) {
         super(arg);
@@ -71,16 +72,16 @@ public class FullParserTest extends TestCase
         field3.setValue("Department1");
         item3.addAttribute(field3);
 
-        Item item4 = new Item();
-        item4.setClassName("http://www.intermine.org/model/testmodel#Department");
-        item4.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
-        item4.setIdentifier("4");
+        departmentItem = new Item();
+        departmentItem.setClassName("http://www.intermine.org/model/testmodel#Department");
+        departmentItem.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
+        departmentItem.setIdentifier("4");
         Attribute field4 = new Attribute();
         field4.setName("name");
         field4.setValue("Department2");
-        item4.addAttribute(field4);
+        departmentItem.addAttribute(field4);
 
-        exampleItems = Arrays.asList(new Object[] {item1, item2, item3, item4});
+        exampleItems = Arrays.asList(new Object[] {item1, item2, item3, departmentItem});
     }
 
     public void testParse() throws Exception {
@@ -97,7 +98,8 @@ public class FullParserTest extends TestCase
     }
 
     public void testRealiseObjects() throws Exception {
-        Collection objects = FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"));
+        Collection objects =
+            FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), false);
         Company c1 = (Company) objects.iterator().next();
         assertEquals("Company1", c1.getName());
         assertNull(c1.getId());
@@ -111,7 +113,36 @@ public class FullParserTest extends TestCase
         assertNull(d1.getId());
         Department d2 = (Department) departments.get(1);
         assertEquals("Department2", d2.getName());
-        assertNull(d1.getId());
+        assertNull(d2.getId());
+    }
+
+    public void testRealiseObjectsWithID() throws Exception {
+        Collection objects =
+            FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true);
+        Company c1 = (Company) objects.iterator().next();
+        assertEquals("Company1", c1.getName());
+        assertEquals(new Integer(1), c1.getId());
+        Address a1 = c1.getAddress();
+        assertEquals("\"Company's\" street", a1.getAddress());
+        assertEquals(new Integer(2), a1.getId());
+        List departments = new ArrayList(c1.getDepartments());
+        Collections.sort(departments, new DepartmentComparator());
+        Department d1 = (Department) departments.get(0);
+        assertEquals("Department1", d1.getName());
+        assertEquals(new Integer(3), d1.getId());
+        Department d2 = (Department) departments.get(1);
+        assertEquals("Department2", d2.getName());
+        assertEquals(new Integer(4), d2.getId());
+    }
+    
+    public void testRealiseObjectsWithUnderscoreID() throws Exception {
+        departmentItem.setIdentifier("1_4");
+        try {
+            FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true);
+            fail("Expected: NumberFormatException");
+        } catch (NumberFormatException e) {
+            // expected
+        }
     }
 
     class DepartmentComparator implements Comparator
