@@ -51,6 +51,8 @@ import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.precompute.BestQuery;
+import org.intermine.sql.precompute.BestQueryExplainer;
 import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
@@ -635,9 +637,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             long estimatedTime = 0;
             long startOptimiseTime = System.currentTimeMillis();
+            ExplainResult explainResult = null;
             if (optimise && everOptimise) {
-                sql = QueryOptimiser.optimise(sql, db, (explain ? limitedContext
-                            : QueryOptimiserContext.DEFAULT));
+                BestQuery bestQuery = QueryOptimiser.optimise(sql, null, db, null,
+                        (explain ? limitedContext : QueryOptimiserContext.DEFAULT));
+                sql = bestQuery.getBestQueryString();
+                if (bestQuery instanceof BestQueryExplainer) {
+                    explainResult = ((BestQueryExplainer) bestQuery).getBestExplainResult();
+                }
             }
             long endOptimiseTime = System.currentTimeMillis();
             sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
@@ -645,7 +652,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
                 //long time = (new Date()).getTime();
-                ExplainResult explainResult = ExplainResult.getInstance(sql, c);
+                if (explainResult == null) {
+                    explainResult = ExplainResult.getInstance(sql, c);
+                }
                 //long now = (new Date()).getTime();
                 //if (now - time > 10) {
                 //    LOG.debug(getModel().getName() + ": Executed SQL (time = "
