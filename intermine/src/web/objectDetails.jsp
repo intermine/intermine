@@ -7,7 +7,7 @@
 
 <!-- objectDetails.jsp -->
 <html:xhtml/>
-<c:set var="helpUrl" 
+<c:set var="helpUrl"
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
 
 <%-- figure out whether we should show templates or not --%>
@@ -27,57 +27,17 @@
     </c:forEach>
   </c:if>
 </c:forEach>
-       
+
 <im:box helpUrl="${helpUrl}"
         titleKey="objectDetails.heading.details">
 
 <tiles:get name="objectTrail.tile"/>
-        
+
 <c:if test="${!empty object}">
-        
+
   <table width="100%">
     <tr>
       <td valign="top" width="30%">
-
-        <im:heading id="primary">
-          Primary keys for selected
-          <c:forEach items="${object.clds}" var="cld">
-            ${cld.unqualifiedName}
-          </c:forEach>
-        </im:heading>
-
-        <im:body id="summary">
-          <table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
-            <c:forEach items="${object.keyAttributes}" var="attributeName">
-              <tr>
-                <td>
-                  <span class="attributeField">${attributeName}</span>
-                </td>
-                <td colspan="2"><span class="value">${object.attributes[attributeName]}</span></td>
-              </tr>
-            </c:forEach>
-            <c:forEach items="${object.keyReferences}" var="referenceName">
-              <c:set var="reference" value="${object.references[referenceName]}"/>
-              <c:forEach items="${object.references[referenceName].keyAttributes}" var="attributeEntry" varStatus="status">
-                <tr>
-                  <c:if test="${status.first}">
-                    <td rowspan="${fn:length(object.references[referenceName].keyAttributes)}">
-                      <html:link action="/objectDetails?id=${object.references[referenceName].id}&amp;trail=${param.trail}_${object.id}">
-                        <span class="referenceField">${referenceName}</span>
-                      </html:link>
-                    </td>
-                  </c:if>
-                  <td>
-                    <span class="attributeField">${attributeEntry.key}</span>
-                  </td>
-                  <td>
-                    <span class="value">${attributeEntry.value}</span>
-                  </td>
-                </tr>
-              </c:forEach>
-            </c:forEach>
-          </table>
-        </im:body>
 
         <im:heading id="summary">
           Summary for selected
@@ -119,7 +79,7 @@
                         <span class="value">${fn:substring(entry.value, 0, maxLength/2)}<br/>
                         <span class="value" style="white-space:nowrap">${fn:substring(entry.value, maxLength/2, maxLength)}
                           <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-                            <fmt:message key="objectDetails.viewall"/>	
+                            <fmt:message key="objectDetails.viewall"/>
                           </html:link>
                         </span>
                       </c:when>
@@ -154,7 +114,7 @@
       </td>
 
       <td valign="top" width="66%">
-      
+
         <%-- show important templates here --%>
         <c:if test="${showImportantTemplatesFlag == 'true'}">
           <im:heading id="important">Predefined template queries</im:heading>
@@ -167,7 +127,7 @@
                   <%--<div class="heading">${category}</div>--%>
                   <c:set var="interMineObject" value="${object.object}"/>
                   <!--<div class="body">-->
-                    <im:templateList type="global" category="${category}" className="${className}" 
+                    <im:templateList type="global" category="${category}" className="${className}"
                                      interMineObject="${object.object}" important="true"/>
                   <!--</div>-->
                   <%--<im:vspacer height="5"/>--%>
@@ -177,7 +137,7 @@
           </im:body>
           <im:vspacer height="6"/>
         </c:if>
-      
+
         <im:heading id="other">Other Information<im:helplink key="objectDetails.help.otherInfo"/></im:heading>
         <im:body id="other">
           <table border="0">
@@ -224,7 +184,7 @@
                     <td colspan="2">
                       <table border="0" cellspacing="0" cellpadding="0" width="100%">
                         <tr>
-                          <td width="15"> 
+                          <td width="15">
                             <img border="0" src="images/blank.gif" alt="" width="15" height="11"/>
                           </td>
                           <td>
@@ -268,7 +228,7 @@
                                         </c:when>
                                         <c:otherwise>
                                           &nbsp;<%--for IE--%>
-                                        </c:otherwise>                            
+                                        </c:otherwise>
                                       </c:choose>
                                     </td>
                                   </c:forEach>
@@ -298,7 +258,7 @@
                             </html:link>]
                           </div>
                         </c:otherwise>
-                      </c:choose>                          
+                      </c:choose>
                     </td>
                   </tr>
                 </c:if>
@@ -310,7 +270,7 @@
 
     </tr>
   </table>
-  
+
 </c:if>
 <c:if test="${empty object}">
   <%-- Display message if object not found --%>
@@ -332,9 +292,9 @@
 <im:vspacer height="12"/>
 
 <c:if test="${showTemplatesFlag == 'true'}">
-  <c:set var="helpUrl" 
+  <c:set var="helpUrl"
          value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualTemplatequeries.html"/>
-  
+
   <im:box helpUrl="${helpUrl}"
           titleKey="objectDetails.heading.templates">
     <c:forEach items="${CATEGORIES}" var="category">
@@ -344,7 +304,7 @@
           <div class="heading">${category}</div>
           <c:set var="interMineObject" value="${object.object}"/>
           <div class="body">
-            <im:templateList type="global" category="${category}" className="${className}" 
+            <im:templateList type="global" category="${category}" className="${className}"
                              interMineObject="${object.object}"/>
           </div>
           <im:vspacer height="5"/>
