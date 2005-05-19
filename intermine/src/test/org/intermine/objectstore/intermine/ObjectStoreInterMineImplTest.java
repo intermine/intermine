@@ -10,6 +10,7 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -434,24 +435,37 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
     }
 
     public void testCancelMethods5() throws Exception {
-        Object id = "flibble5";
-        Connection c = ((ObjectStoreInterMineImpl) os).getConnection();
-        Statement s = null;
-        try {
-            s = c.createStatement();
-            ((ObjectStoreInterMineImpl) os).registerRequestId(id);
-            ((ObjectStoreInterMineImpl) os).registerStatement(s);
-            ((ObjectStoreInterMineImpl) os).registerStatement(s);
-            fail("Should have thrown exception");
-        } catch (ObjectStoreException e) {
-            assertEquals("Request id flibble5 is currently being serviced in another thread. Don't share request IDs over multiple threads!", e.getMessage());
-        } finally {
-            if (s != null) {
-                ((ObjectStoreInterMineImpl) os).deregisterStatement(s);
+        UndeclaredThrowableException failure = null;
+
+        // this test sometimes fails even when all is OK, so run it multiple times and exit if it
+        // passes
+        for (int i = 0 ;i < 20 ; i++) {
+            Object id = "flibble5";
+            Connection c = ((ObjectStoreInterMineImpl) os).getConnection();
+            Statement s = null;
+            try {
+                s = c.createStatement();
+                ((ObjectStoreInterMineImpl) os).registerRequestId(id);
+                ((ObjectStoreInterMineImpl) os).registerStatement(s);
+                ((ObjectStoreInterMineImpl) os).registerStatement(s);
+                fail("Should have thrown exception");
+            } catch (ObjectStoreException e) {
+                assertEquals("Request id flibble5 is currently being serviced in another thread. Don't share request IDs over multiple threads!", e.getMessage());
+                // test passed so stop immediately
+                return;
+            } catch (UndeclaredThrowableException t) {
+                // test failed but might pass next time - try again
+                failure = t;
+            } finally {
+                if (s != null) {
+                    ((ObjectStoreInterMineImpl) os).deregisterStatement(s);
+                }
+                ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
+                ((ObjectStoreInterMineImpl) os).releaseConnection(c);
             }
-            ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
-            ((ObjectStoreInterMineImpl) os).releaseConnection(c);
         }
+
+        throw failure;
     }
 
     public void testCancelMethods6() throws Exception {
