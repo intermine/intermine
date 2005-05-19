@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -106,7 +107,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap()));
     }
 
-    public void testCreateQuery2() throws Exception {
+    public void testCreateQueryNullFields() throws Exception {
         Source source = new Source();
         source.setName("testsource");
         Query q = new Query();
@@ -118,12 +119,51 @@ public class DataLoaderHelperTest extends QueryTestCase
         q.setConstraint(cs);
         q.setDistinct(false);
 
-        Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
+        Employable e =
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
         assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap()));
     }
-        
+
+    public void testCreateQueryDisableNullFields1() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employable.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.IS_NULL));
+        q.setConstraint(cs);
+        q.setDistinct(false);
+
+        Employable e =
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
+        e.setName(null);
+
+        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), false));
+    }
+    
+    public void testCreateQueryDisableNullFields2() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employable.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.IS_NULL));
+        q.setConstraint(cs);
+        q.setDistinct(false);
+
+        Employable e =
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
+        e.setName(null);
+
+        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), false));
+    }
+
     public void testCreateQuery3() throws Exception {
         Source source = new Source();
         source.setName("testsource");
@@ -187,6 +227,15 @@ public class DataLoaderHelperTest extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+        Query qD = new Query();
+        QueryClass qcD = new QueryClass(Company.class);
+        qD.addFrom(qcD);
+        qD.addToSelect(qcD);
+        ConstraintSet csD = new ConstraintSet(ConstraintOp.AND);
+        csD.addConstraint(new SimpleConstraint(new QueryField(qcD, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(765213))));
+        qD.setConstraint(csD);
+        qD.setDistinct(false);
+        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qD));
         Query qB = new Query();
         QueryClass qcB = new QueryClass(Company.class);
         qB.addFrom(qcB);
@@ -208,15 +257,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         qB.setConstraint(csB);
         qB.setDistinct(false);
         cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qB));
-        Query qD = new Query();
-        QueryClass qcD = new QueryClass(Company.class);
-        qD.addFrom(qcD);
-        qD.addToSelect(qcD);
-        ConstraintSet csD = new ConstraintSet(ConstraintOp.AND);
-        csD.addConstraint(new SimpleConstraint(new QueryField(qcD, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(765213))));
-        qD.setConstraint(csD);
-        qD.setDistinct(false);
-        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qD));
+        
         q.setConstraint(cs);
         q.setDistinct(false);
 
@@ -228,6 +269,96 @@ public class DataLoaderHelperTest extends QueryTestCase
         c.setVatNumber(765213);
 
         assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
+    }
+
+    public void testObjectPrimaryKeyIsNull1() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+        
+        Employable e =
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
+        e.setName("jkhsdfg");
+        ClassDescriptor cld =
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Employable");
+        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
+
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source));
+    }
+
+    public void testObjectPrimaryKeyIsNullNullField() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+        
+        Employable e =
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
+        e.setName(null);
+        ClassDescriptor cld =
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Employable");
+        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
+
+        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source));
+    }
+
+    public void testObjectPrimaryKeyIsNull2() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+        
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setName("jkhsdfg");
+        Address a = new Address();
+        a.setAddress("10 Downing Street");
+        c.setAddress(a);
+        c.setVatNumber(765213);
+        
+        ClassDescriptor cld =
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
+
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk, source));
+    }
+
+    public void testObjectPrimaryKeyIsNullNullField2() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+        
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setName("jkhsdfg");
+        Address a = new Address();
+        a.setAddress(null);
+        c.setAddress(a);
+        c.setVatNumber(765213);
+        
+        ClassDescriptor cld =
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        Iterator pkIter = primaryKeys.iterator();
+        PrimaryKey pk1 = (PrimaryKey) pkIter.next();
+
+        // Company.key1=name, address
+        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk1, source));
+
+        PrimaryKey pk2 = (PrimaryKey) pkIter.next();
+
+        // Company.key2=vatNumber
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source));
+    }
+    
+    public void testObjectPrimaryKeyIsNullNullField3() throws Exception {
+        Department d = (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        d.setName("jkhsdfg");
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setAddress(null);
+        c.setVatNumber(765213);
+        d.setCompany(c);
+        ClassDescriptor cld =
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
+        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
+
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, d, cld, pk, null));
     }
 
     public void testGetDescriptors() throws Exception {

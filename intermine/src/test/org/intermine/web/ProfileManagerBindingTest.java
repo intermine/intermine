@@ -15,8 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -28,6 +30,9 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.XmlBinding;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
@@ -44,7 +49,7 @@ public class ProfileManagerBindingTest extends XMLTestCase
     private ObjectStoreWriter osw;
     private ObjectStore os;
     private ObjectStoreWriter userProfileOS;
-    
+
     public ProfileManagerBindingTest(String arg) {
         super(arg);
     }
@@ -72,7 +77,6 @@ public class ProfileManagerBindingTest extends XMLTestCase
             osw.store(o);
         }
         osw.commitTransaction();
-        osw.close();
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         InterMineBag bag = new InterMinePrimitiveBag();
@@ -127,6 +131,27 @@ public class ProfileManagerBindingTest extends XMLTestCase
         sallyProfile.saveTemplate("template", template);
     }
 
+    public void tearDown() throws Exception {
+        if (osw.isInTransaction()) {
+            osw.abortTransaction();
+        }
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ObjectStore os = osw.getObjectStore();
+        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
+                                                    .getSequence());
+        Iterator resIter = res.iterator();
+        osw.beginTransaction();
+        while (resIter.hasNext()) {
+            InterMineObject o = (InterMineObject) resIter.next();
+            osw.delete(o);
+        }
+        osw.commitTransaction();
+        osw.close();
+    }
+
     public void testXMLWrite() throws Exception {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -134,9 +159,9 @@ public class ProfileManagerBindingTest extends XMLTestCase
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
-            ProfileBinding.marshal(bobProfile, Model.getInstanceByName("userprofile"), 
+            ProfileBinding.marshal(bobProfile, Model.getInstanceByName("userprofile"),
                                     os, writer);
-            ProfileBinding.marshal(sallyProfile, Model.getInstanceByName("userprofile"), os, 
+            ProfileBinding.marshal(sallyProfile, Model.getInstanceByName("userprofile"), os,
                                    writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -156,6 +181,9 @@ public class ProfileManagerBindingTest extends XMLTestCase
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
 
+        System.err.println ("expectedXml: " + expectedXml);
+        System.err.println ("actualXml: " + actualXml);
+
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
 
@@ -163,7 +191,7 @@ public class ProfileManagerBindingTest extends XMLTestCase
         ProfileManager pm = new ProfileManager(os, userProfileOS);
 
         InputStream is =
-            getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");
+            getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
         ProfileManagerBinding.unmarshal(reader, pm, os);
@@ -173,6 +201,14 @@ public class ProfileManagerBindingTest extends XMLTestCase
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
         Profile bobProfile = pm.getProfile("bob", "pass");
-        Profile sallyProfile = pm.getProfile("bob", "pass");
+        Profile sallyProfile = pm.getProfile("sally", "sally_pass");
+
+        Set expectedIDs = new HashSet();
+
+        expectedIDs.add(new Integer(10));
+        expectedIDs.add(new Integer(11));
+        expectedIDs.add(new Integer(12));
+        expectedIDs.add(new Integer(6));
+        assertEquals(expectedIDs, sallyProfile.getSavedBags().get("sally_bag3"));
     }
 }
