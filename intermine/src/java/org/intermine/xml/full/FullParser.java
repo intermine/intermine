@@ -58,10 +58,11 @@ public class FullParser
      * Create business objects from a collection of Items.
      * @param items a collection of items to realise
      * @param model the parent model
+     * @param useIdentifier if true, set the id of each new object using the identifier of the Item
      * @return a collection of realised business objects
      * @throws ClassNotFoundException if invalid item className found
      */
-    public static List realiseObjects(Collection items, Model model)
+    public static List realiseObjects(Collection items, Model model, boolean useIdentifier)
         throws ClassNotFoundException {
         Map objMap = new LinkedHashMap(); // map from id to outline object
 
@@ -77,21 +78,22 @@ public class FullParser
 
         List result = new ArrayList();
         for (Iterator i = items.iterator(); i.hasNext();) {
-            result.add(populateObject((Item) i.next(), objMap));
+            result.add(populateObject((Item) i.next(), objMap, useIdentifier));
         }
 
         return result;
     }
-    
+
     /**
      * Fill in fields of an outline business object which is in the map under item.identifier
      * Note that this modifies the relevant object in the map
      * It also returns the object for convenience
      * @param item a the Item to read field data from
      * @param objMap a map of item identifiers to outline business objects
+     * @param useIdentifier if true, set the id of the new object using the identifier of the Item
      * @return a populated object
      */
-    protected static Object populateObject(Item item, Map objMap) {
+    protected static Object populateObject(Item item, Map objMap, boolean useIdentifier) {
         Object obj = objMap.get(item.getIdentifier());
 
         try {
@@ -111,6 +113,11 @@ public class FullParser
                 }
             }
 
+            if (useIdentifier) {
+                TypeUtil.setFieldValue(obj, "id", TypeUtil.stringToObject(Integer.class,
+                                                                          item.getIdentifier()));
+            }
+
             // Set the data for every given reference
             Iterator refIter = item.getReferences().iterator();
             while (refIter.hasNext()) {
@@ -128,9 +135,11 @@ public class FullParser
                     col.add(objMap.get(i.next()));
                 }
             }
+
         } catch (IllegalAccessException e) {
+            // ignore
         }
-        
+
         return obj;
     }
 }

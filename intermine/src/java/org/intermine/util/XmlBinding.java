@@ -55,7 +55,7 @@ public class XmlBinding
      */
     public Collection unmarshal(InputStream is) throws InterMineException {
         try {
-            return FullParser.realiseObjects(FullParser.parse(is), model);
+            return FullParser.realiseObjects(FullParser.parse(is), model, false);
         } catch (Exception e) {
             throw new InterMineException("Error during unmarshalling", e);
         }
