@@ -20,7 +20,7 @@
         Datasources
       </title>
        <para>
-        T1DMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink> and <ulink url="http://www.flymine.org">FlyMine</ulink>. Current release incorporates the following data sources:      
+        T1DMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink> and <ulink url="http://www.flymine.org">FlyMine</ulink>. Currently Beta release is available which incorporates the following data sources:      
         
         <sources sources="/sources.xml" version="beta"/>
       </para>
