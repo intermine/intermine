@@ -35,6 +35,11 @@
     <item url="/project/jobs.xml" title="Jobs"/>
   </item>
   
+  <item title="Related Projects">
+    <item url="http://www.intermine.org" title="InterMine"/>
+    <item url="/t1dmine/" title="T1DMine"/>
+  </item>
+  
   <item title="Internal">
     <item url="/internal/index.xml" title="Menu"/>
   </item>
