@@ -16,6 +16,7 @@ import org.apache.tools.ant.Task;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +62,8 @@ public class CreateIndexesTask extends Task
     protected DatabaseSchema schema = null;
     protected Database database = null;
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
+    protected Map tableIndexesDone = new HashMap();
+    protected Set indexesMade = new HashSet();
 
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
@@ -116,21 +119,27 @@ public class CreateIndexesTask extends Task
         setUp();
         Model m = schema.getModel();
 
+        ClassDescriptor tmpCldA = null;
+        ClassDescriptor tmpCldB = null;
         try {
             c = database.getConnection();
             c.setAutoCommit(true);
             for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) i.next();
+                tmpCldA = cld;
+                tmpCldB = schema.getTableMaster(tmpCldA);
 
-                if (cld == schema.getTableMaster(cld)) {
+                //if (cld == schema.getTableMaster(cld)) {
                     if (attributeIndexes) {
                         createAttributeIndexes(cld);
                     } else {
                         createStandardIndexes(cld);
                     }
-                }
+                //}
             }
         } catch (Exception e) {
+            System.out .println("Error creating indexes for " + tmpCldA.getType()
+                    + ", table master = " + tmpCldB.getType());
             e.printStackTrace(System.out);
             throw new BuildException(e);
         } finally {
@@ -154,6 +163,7 @@ public class CreateIndexesTask extends Task
         throws SQLException, MetaDataException {
         // Set of fieldnames that already are the first element of an index.
         Set doneFieldNames = new HashSet();
+        String cldTableName = DatabaseUtil.getTableName(cld);
 
         //add an index for each primary key
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
@@ -175,6 +185,7 @@ public class CreateIndexesTask extends Task
                                                 + cld.getName() + ".");
                 }
                 fieldNames.add(DatabaseUtil.getColumnName(fd));
+                firstOne = false;
             }
 
             // create indexes on this class and on all subclasses
@@ -182,15 +193,16 @@ public class CreateIndexesTask extends Task
             clds.addAll(cld.getModel().getAllSubs(cld));
             for (Iterator k = clds.iterator(); k.hasNext();) {
                 ClassDescriptor nextCld = (ClassDescriptor) k.next();
-                String tableName = DatabaseUtil.getTableName(nextCld);
+                ClassDescriptor tableMaster = schema.getTableMaster(nextCld);
+                String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
-                    dropIndex(tableName + "__" + keyName);
-                    createIndex(tableName + "__" + keyName, tableName,
+                    dropIndex(tableName + "__" + cldTableName + "__" + keyName);
+                    createIndex(tableName + "__" + cldTableName + "__" + keyName, tableName,
                                 StringUtil.join(fieldNames, ", ") + ", id");
                     if (doNulls) {
-                        dropIndex(tableName + "__" + keyName + "__nulls");
-                        createIndex(tableName + "__" + keyName + "__nulls", tableName, "("
-                                + fieldNames.get(0) + " IS NULL)");
+                        dropIndex(tableName + "__" + cldTableName + "__" + keyName + "__nulls");
+                        createIndex(tableName + "__" + cldTableName + "__" + keyName + "__nulls",
+                                tableName, "(" + fieldNames.get(0) + " IS NULL)");
                     }
                     doneFieldNames.add(fieldNames.get(0));
                 }
@@ -201,14 +213,16 @@ public class CreateIndexesTask extends Task
         //e.g. company.getDepartments
         for (Iterator i = cld.getAllReferenceDescriptors().iterator(); i.hasNext();) {
             ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
+            ClassDescriptor refMaster = ref.getClassDescriptor();
+            ClassDescriptor tableMaster = schema.getTableMaster(cld);
+            String tableName = DatabaseUtil.getTableName(tableMaster);
             if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
                     && (ref.getReverseReferenceDescriptor() != null)) {
-                String tableName = DatabaseUtil.getTableName(cld);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     String fieldName = DatabaseUtil.getColumnName(ref);
                     if (!doneFieldNames.contains(fieldName)) {
-                        dropIndex(tableName + "__"  + ref.getName());
-                        createIndex(tableName + "__"  + ref.getName(), tableName,
+                        dropIndex(cldTableName + "__"  + ref.getName());
+                        createIndex(cldTableName + "__"  + ref.getName(), tableName,
                                     fieldName + ", id");
                     }
                 }
@@ -313,7 +327,9 @@ public class CreateIndexesTask extends Task
     */
     protected void dropIndex(String indexName) {
         try {
-            execute("drop index " + indexName);
+            if (!indexesMade.contains(indexName)) {
+                execute("drop index " + indexName);
+            }
         } catch (SQLException e) {
             // ignore because the exception is probably because the index doesn't exist
         }
@@ -328,7 +344,18 @@ public class CreateIndexesTask extends Task
      */
     protected void createIndex(String indexName, String tableName, String columnNames)
         throws SQLException {
-            execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
+        Set indexesForTable = (Set) tableIndexesDone.get(tableName);
+        if (indexesForTable == null) {
+            indexesForTable = new HashSet();
+            tableIndexesDone.put(tableName, indexesForTable);
+        }
+        String indexText = "create index " + indexName + " on " + tableName + "(" + columnNames
+            + ")";
+        if (!indexesForTable.contains(columnNames)) {
+            execute(indexText);
+        }
+        indexesForTable.add(columnNames);
+        indexesMade.add(indexName);
     }
 
     /**

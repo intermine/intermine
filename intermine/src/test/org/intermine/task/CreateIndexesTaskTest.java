@@ -30,10 +30,10 @@ public class CreateIndexesTaskTest extends TestCase
     //test defined keys and N-1 keys
     public void testCreateStandardIndexes1() throws Exception {
         List expected = new ArrayList();
-        expected.add("drop index Department__key");
-        expected.add("create index Department__key on Department(name, companyId, id)");
-        expected.add("drop index Department__key__nulls");
-        expected.add("create index Department__key__nulls on Department((name IS NULL))");
+        expected.add("drop index Department__Department__key");
+        expected.add("create index Department__Department__key on Department(name, companyId, id)");
+        expected.add("drop index Department__Department__key__nulls");
+        expected.add("create index Department__Department__key__nulls on Department((name IS NULL))");
         expected.add("drop index Department__company");
         expected.add("create index Department__company on Department(companyId, id)");
 
@@ -57,10 +57,10 @@ public class CreateIndexesTaskTest extends TestCase
         assertEquals(expected, task.sqlStatements);
 
         expected = new ArrayList();
-        expected.add("drop index Secretary__key");
-        expected.add("create index Secretary__key on Secretary(name, id)");
-        expected.add("drop index Secretary__key__nulls");
-        expected.add("create index Secretary__key__nulls on Secretary((name IS NULL))");
+        expected.add("drop index Secretary__Secretary__key");
+        expected.add("create index Secretary__Secretary__key on Secretary(name, id)");
+        expected.add("drop index Secretary__Secretary__key__nulls");
+        expected.add("create index Secretary__Secretary__key__nulls on Secretary((name IS NULL))");
         task = new DummyCreateIndexesTask();
         task.setAlias("os.unittest");
         task.setUp();
@@ -71,30 +71,30 @@ public class CreateIndexesTaskTest extends TestCase
     // test that primary key indexes are created on subclasses
     public void testCreateIndexesSubclasses() throws Exception {
         List expected = new ArrayList();
-        expected.add("drop index ImportantPerson__key");
-        expected.add("create index ImportantPerson__key on ImportantPerson(seniority, id)");
-        expected.add("drop index ImportantPerson__key__nulls");
-        expected.add("create index ImportantPerson__key__nulls on ImportantPerson((seniority IS NULL))");
-        expected.add("drop index Contractor__key");
-        expected.add("create index Contractor__key on Contractor(seniority, id)");
-        expected.add("drop index Contractor__key__nulls");
-        expected.add("create index Contractor__key__nulls on Contractor((seniority IS NULL))");
-        expected.add("drop index Manager__key");
-        expected.add("create index Manager__key on Manager(seniority, id)");
-        expected.add("drop index Manager__key__nulls");
-        expected.add("create index Manager__key__nulls on Manager((seniority IS NULL))");
-        expected.add("drop index CEO__key");
-        expected.add("create index CEO__key on CEO(seniority, id)");
-        expected.add("drop index CEO__key__nulls");
-        expected.add("create index CEO__key__nulls on CEO((seniority IS NULL))");
+        expected.add("drop index CEO__ImportantPerson__key");
+        expected.add("create index CEO__ImportantPerson__key on CEO(seniority, id)");
+        expected.add("drop index CEO__ImportantPerson__key__nulls");
+        expected.add("create index CEO__ImportantPerson__key__nulls on CEO((seniority IS NULL))");
+        expected.add("drop index Contractor__ImportantPerson__key");
+        expected.add("create index Contractor__ImportantPerson__key on Contractor(seniority, id)");
+        expected.add("drop index Contractor__ImportantPerson__key__nulls");
+        expected.add("create index Contractor__ImportantPerson__key__nulls on Contractor((seniority IS NULL))");
+        expected.add("drop index ImportantPerson__ImportantPerson__key");
+        expected.add("create index ImportantPerson__ImportantPerson__key on ImportantPerson(seniority, id)");
+        expected.add("drop index ImportantPerson__ImportantPerson__key__nulls");
+        expected.add("create index ImportantPerson__ImportantPerson__key__nulls on ImportantPerson((seniority IS NULL))");
+        expected.add("drop index Manager__ImportantPerson__key");
+        expected.add("create index Manager__ImportantPerson__key on Manager(seniority, id)");
+        expected.add("drop index Manager__ImportantPerson__key__nulls");
+        expected.add("create index Manager__ImportantPerson__key__nulls on Manager((seniority IS NULL))");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
         task.setAlias("os.unittest");
         task.setUp();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson"));
-        //assertEquals(expected, task.sqlStatements);
+        assertEquals(expected, task.sqlStatements);
 
-        assertEquals(new HashSet(expected), new HashSet(task.sqlStatements));
+        //assertEquals(new HashSet(expected), new HashSet(task.sqlStatements));
     }
 
 
