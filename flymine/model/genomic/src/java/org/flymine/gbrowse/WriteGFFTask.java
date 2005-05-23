@@ -27,7 +27,6 @@ import java.io.IOException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import org.biojava.bio.program.gff.SimpleGFFRecord;
 import org.biojava.bio.symbol.IllegalSymbolException;
 
 import org.intermine.objectstore.query.*;
@@ -40,6 +39,7 @@ import org.intermine.objectstore.proxy.ProxyCollection;
 
 import org.flymine.postprocess.PostProcessUtil;
 import org.flymine.model.genomic.*;
+import org.flymine.io.gff3.GFF3Record;
 
 import org.apache.log4j.Logger;
 
@@ -244,11 +244,9 @@ public class WriteGFFTask extends Task
             index = new Integer(0);
         }
 
-        StringBuffer lineBuffer = new StringBuffer();
-
-        lineBuffer.append(chromosomeFileNamePrefix(chr)).append("\t");
-        lineBuffer.append(FLYMINE_STRING).append("\t");
-
+        String sequenceID = chromosomeFileNamePrefix(chr);
+        String source = FLYMINE_STRING;
+        String type;
         String featureName = null;
 
         if (parent == null) {
@@ -270,7 +268,7 @@ public class WriteGFFTask extends Task
 
             featureName = nameBuffer.toString();
             String lcName = featureName.toLowerCase();
-            lineBuffer.append(lcName).append("\t");
+            type = lcName;
         } else {
             if (bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)) {
                 featureName = "mRNA";
@@ -281,49 +279,47 @@ public class WriteGFFTask extends Task
                     throw new RuntimeException("unknown BioEntity: " + bioEntity);
                 }
             }
-            lineBuffer.append(featureName).append("\t");
+            type = featureName;
         }
+
+        int    start;
+        int    end;
 
         if (location == null && bioEntity == chr) {
             // special case for Chromosome location
-            lineBuffer.append(1).append("\t").append(chr.getLength()).append("\t");
+            start = 1;
+            end = chr.getLength().intValue();
         } else {
-            lineBuffer.append(location.getStart()).append("\t");
-            lineBuffer.append(location.getEnd()).append("\t");
+            start = location.getStart().intValue();
+            end = location.getEnd().intValue();
         }
 
-        lineBuffer.append(0).append("\t");
-        int strand;
+        Double score = null;
+        String strand;
 
         if (location == null) {
-            lineBuffer.append(".");
+            strand = ".";
         } else {
             if (location.getStrand().intValue() == 1) {
-                lineBuffer.append("+");
+                strand = "+";
             } else {
                 if (location.getStrand().intValue() == -1) {
-                    lineBuffer.append("-");
+                    strand = "-";
                 } else {
-                    lineBuffer.append(".");
+                    strand = ".";
                 }
             }
         }
 
-        lineBuffer.append("\t");
+        String phase;
 
-        if (location == null) {
-            lineBuffer.append(".");
+        if (location == null || location.getPhase() == null) {
+            phase = ".";
         } else {
-            if (location.getPhase() == null) {
-                lineBuffer.append(".");
-            } else {
-                lineBuffer.append(location.getPhase());
-            }
+            phase = location.getPhase() + "";
         }
 
-        lineBuffer.append("\t");
-
-        Map attributes = new LinkedHashMap();
+        Map attributes = new LinkedHashMap(); 
 
         List identifiers = new ArrayList();
         if (location == null && bioEntity == chr) {
@@ -392,9 +388,10 @@ public class WriteGFFTask extends Task
             attributes.put("promoter", promoterFlagList);
         }
 
-        lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
+        GFF3Record gff3Record =
+            new GFF3Record(sequenceID, source, type, start, end, score, strand, phase, attributes);
 
-        gffWriter.println(lineBuffer.toString());
+        gffWriter.print(gff3Record.toGFF3());
     }
 
     /**
@@ -479,20 +476,6 @@ public class WriteGFFTask extends Task
             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
 
         PrintStream printStream = new PrintStream(fileStream);
-
-// using BioJava - too slow!
-//         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-
-//         if (sequence != null) {
-//             try {
-//                 sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-//                                                      chromosomeFileNamePrefix(chr));
-//             } catch (ChangeVetoException e) {
-//                 throw new RuntimeException("failed to set a property", e);
-//             }
-//            SeqIOTools.writeFasta(outputStream, sequence);
-//         }
-
         printStream.println(">" + chromosomeFileNamePrefix(chr));
 
         String residues = chromosomeSequence.getResidues();
@@ -516,7 +499,7 @@ public class WriteGFFTask extends Task
     }
 
     private File chromosomeGFFFile(File destinationDirectory, Chromosome chr) {
-        return new File(destinationDirectory, chromosomeFileNamePrefix(chr) + ".gff");
+        return new File(destinationDirectory, chromosomeFileNamePrefix(chr) + ".gff3");
     }
 
     private String chromosomeFileNamePrefix(Chromosome chr) {

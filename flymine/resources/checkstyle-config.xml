@@ -120,7 +120,12 @@
 
     <module name="ParameterNumber">
       <property name="max" value="7"/>
-      <property name="tokens" value="METHOD_DEF,CTOR_DEF"/>
+      <property name="tokens" value="METHOD_DEF"/>
+    </module>
+
+    <module name="ParameterNumber">
+      <property name="max" value="9"/>
+      <property name="tokens" value="CTOR_DEF"/>
     </module>
 
 
