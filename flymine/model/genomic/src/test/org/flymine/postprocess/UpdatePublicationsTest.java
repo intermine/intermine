@@ -45,8 +45,8 @@ public class UpdatePublicationsTest extends TestCase
 
         protected List getPublications() {
             try {
-                List items =  FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UpdatePublicationsTest_src.xml"));
-                return FullParser.realiseObjects(items, Model.getInstanceByName("genomic"));
+                List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UpdatePublicationsTest_src.xml"));
+                return FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
