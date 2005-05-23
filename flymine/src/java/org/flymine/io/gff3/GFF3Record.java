@@ -31,12 +31,12 @@ public class GFF3Record
     private String sequenceID;
     private String source;
     private String type;
-    private int start;
-    private int end;
+    private int    start;
+    private int    end;
     private Double score;
     private String strand;
     private String phase;
-    private Map attributes = new LinkedHashMap();
+    private Map    attributes   = new LinkedHashMap();
 
     /**
      * Create a GFF3Record from a line of a GFF3 file
@@ -101,6 +101,31 @@ public class GFF3Record
         if (st.hasMoreTokens()) {
             parseAttribute(st.nextToken(), line);
         }
+    }
+
+    /**
+     * Create a new GFF3Record
+     * @param sequenceID the sequence name
+     * @param source the source
+     * @param type the feature type
+     * @param start the start coordinate on the sequence given by sequenceID
+     * @param end the end coordinate on the sequence
+     * @param score the feature score or null if there is no score
+     * @param strand the feature strand or null
+     * @param phase the phase or null
+     * @param attributes a Map from attribute name to a List of attribute values
+     */
+    public GFF3Record(String sequenceID, String source, String type, int start, int end,
+                      Double score, String strand, String phase, Map attributes) {
+        this.sequenceID = sequenceID;
+        this.source = source;
+        this.type = type;
+        this.start = start;
+        this.end = end;
+        this.score = score;
+        this.strand = strand;
+        this.phase = phase;
+        this.attributes = attributes;
     }
 
     private void parseAttribute(String attributeString, String line) throws IOException {
