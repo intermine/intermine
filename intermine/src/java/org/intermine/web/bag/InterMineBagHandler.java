@@ -132,6 +132,10 @@ public class InterMineBagHandler extends DefaultHandler
 
         SingletonResults results = new SingletonResults(query, os, os.getSequence());
 
+        // faster just to execute the query immediately:
+        results.setNoOptimise();
+        results.setNoExplain();
+
         int size = results.size();
 
         if (size != 1) {
