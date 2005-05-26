@@ -81,23 +81,32 @@ public class UpdatePublications
      * @throws Exception if an error occurs
      */
     public void execute() throws Exception {
-        Set pubMedIds = new HashSet();
-        Set toStore = new HashSet();
-        ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
-        writer.write(FullRenderer.getHeader() + ENDL);
-        for (Iterator i = getPublications().iterator(); i.hasNext();) {
-            pubMedIds.add(((Publication) i.next()).getPubMedId());
-            if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
-                SAXParser.parse(new InputSource(getReader(pubMedIds)),
-                                new Handler(toStore, itemFactory));
-                for (Iterator j = toStore.iterator(); j.hasNext();) {
-                    writer.write(FullRenderer.render((Item) j.next()));
+        // Needed so that STAX can find it's implementation classes
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+        try {
+            Set pubMedIds = new HashSet();
+            Set toStore = new HashSet();
+            ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
+            writer.write(FullRenderer.getHeader() + ENDL);
+            for (Iterator i = getPublications().iterator(); i.hasNext();) {
+                pubMedIds.add(((Publication) i.next()).getPubMedId());
+                if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
+                    SAXParser.parse(new InputSource(getReader(pubMedIds)),
+                                    new Handler(toStore, itemFactory));
+                    for (Iterator j = toStore.iterator(); j.hasNext();) {
+                        writer.write(FullRenderer.render((Item) j.next()));
+                    }
+                    pubMedIds.clear();
+                    toStore.clear();
                 }
-                pubMedIds.clear();
-                toStore.clear();
             }
+            writer.write(FullRenderer.getFooter() + ENDL);
+        } finally {
+            Thread.currentThread().setContextClassLoader(cl);
         }
-        writer.write(FullRenderer.getFooter() + ENDL);
     }
 
     /**
