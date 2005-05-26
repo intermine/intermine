@@ -71,7 +71,11 @@
         <input type="hidden" name="noSaveQuery" value="1"/>
         <html:submit><fmt:message key="begin.input.submit"/></html:submit>
         <br/>
-        <span class="smallnote">${WEB_PROPERTIES["begin.browse.prompt"]}</span>
+        <div>${WEB_PROPERTIES["begin.browse.prompt"]}</div>
+        <div class="smallnote">
+          <fmt:message key="begin.browse.help.message"/>
+          [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
+        </div>
       </html:form>
     </div>
   </im:box>
