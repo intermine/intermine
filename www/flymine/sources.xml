@@ -268,4 +268,11 @@
       <version>2.0</version>
     </source>
   </sources>
+   <source>
+      <name>Whole genome tiling path</name>
+      <description>Primers and their amplimers tiled across whole genome.
+      </description>
+      <version>4.0</version>
+    </source>
+  </sources>
 </intermine-sources>
