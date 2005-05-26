@@ -10,6 +10,7 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -58,6 +60,7 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.UnknownTypeValue;
 import org.intermine.sql.Database;
 import org.intermine.util.AlwaysMap;
+import org.intermine.util.CombinedIterator;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
 
@@ -99,6 +102,16 @@ public class SqlGenerator
     public static String generateQueryForId(Integer id, Class clazz,
             DatabaseSchema schema) throws ObjectStoreException {
         ClassDescriptor tableMaster;
+//        if (schema.isFlatMode()) {
+//            Query q = new Query();
+//            QueryClass qc = new QueryClass(clazz);
+//            q.addFrom(qc);
+//            q.addToSelect(qc);
+//            q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
+//                        new QueryValue(id)));
+//            q.setDistinct(false);
+//            return generate(q, 0, 2, schema, null, null);
+//        }
         if (schema.isMissingNotXml()) {
             tableMaster = schema.getModel()
                 .getClassDescriptorByName(InterMineObject.class.getName());
@@ -585,17 +598,28 @@ public class SqlGenerator
                 }
                 Map fields = schema.getModel().getFieldDescriptorsForClass(qc.getType());
                 Map fieldToAlias = state.getFieldToAlias(qc);
-                Iterator fieldIter = fields.entrySet().iterator();
+                Iterator fieldIter = null;
+                if (schema.isFlatMode()) {
+                    List iterators = new ArrayList();
+                    ClassDescriptor cld = schema.getTableMaster((ClassDescriptor) schema.getModel()
+                        .getClassDescriptorsForClass(qc.getType()).iterator().next());
+                    DatabaseSchema.Fields dbsFields = schema.getTableFields(schema
+                            .getTableMaster(cld));
+                    iterators.add(dbsFields.getAttributes().iterator());
+                    iterators.add(dbsFields.getReferences().iterator());
+                    fieldIter = new CombinedIterator(iterators);
+                } else {
+                    fieldIter = fields.values().iterator();
+                }
                 while (fieldIter.hasNext()) {
-                    Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-                    FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
+                    FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                     String name = field.getName();
                     Iterator aliasIter = aliases.entrySet().iterator();
                     while (aliasIter.hasNext()) {
                         Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
                         ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
                         String alias = (String) aliasEntry.getValue();
-                        if (cld.getAllFieldDescriptors().contains(field)) {
+                        if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode()) {
                             fieldToAlias.put(name, alias);
                             break;
                         }
@@ -615,7 +639,9 @@ public class SqlGenerator
                         }
                     }
                 } else if (schema.isFlatMode()) {
-                    // Do nothing. We never want an OBJECT column in this case.
+                    // We never want an OBJECT column in this case. However, we may want an
+                    // objectclass column.
+                    fieldToAlias.put("objectclass", baseAlias);
                 } else {
                     fieldToAlias.put("OBJECT", baseAlias);
                 }
@@ -967,9 +993,10 @@ public class SqlGenerator
      * @param schema the DatabaseSchema in which to look up metadata
      * @param kind the type of the output requested
      * @param state a State object
+     * @throws ObjectStoreException if the model is internally inconsistent
      */
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
-            DatabaseSchema schema, int kind, State state) {
+            DatabaseSchema schema, int kind, State state) throws ObjectStoreException {
         String alias = (String) q.getAliases().get(qc);
         if (alias == null) {
             throw new NullPointerException("A QueryClass is referenced by elements of a query,"
@@ -999,10 +1026,20 @@ public class SqlGenerator
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
                     || ((kind == QUERY_NORMAL) && schema.isFlatMode())
                     || (kind == QUERY_FOR_PRECOMP)) {
-                Set fields = schema.getModel().getClassDescriptorByName(qc.getType().getName())
-                    .getAllFieldDescriptors();
+                Iterator fieldIter = null;
+                ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
+                        .getName());
+                if (schema.isFlatMode() && (kind == QUERY_NORMAL)) {
+                    List iterators = new ArrayList();
+                    DatabaseSchema.Fields fields = schema.getTableFields(schema
+                            .getTableMaster(cld));
+                    iterators.add(fields.getAttributes().iterator());
+                    iterators.add(fields.getReferences().iterator());
+                    fieldIter = new CombinedIterator(iterators);
+                } else {
+                    fieldIter = cld.getAllFieldDescriptors().iterator();
+                }
                 Map fieldMap = new TreeMap();
-                Iterator fieldIter = fields.iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                     String columnName = DatabaseUtil.getColumnName(field);
@@ -1033,6 +1070,15 @@ public class SqlGenerator
                                     : "\"" + DatabaseUtil.generateSqlCompatibleName(alias)
                                     + columnName.toLowerCase() + "\"");
                     }
+                }
+                if (schema.isFlatMode() && schema.isTruncated(schema.getTableMaster(cld))) {
+                    buffer.append(", ")
+                        .append((String) state.getFieldToAlias(qc).get("objectclass"))
+                        .append(".objectclass AS ")
+                        .append(alias.equals(alias.toLowerCase())
+                                ? DatabaseUtil.generateSqlCompatibleName(alias) + "objectclass"
+                                : "\"" + DatabaseUtil.generateSqlCompatibleName(alias)
+                                + "objectclass\"");
                 }
             } else {
                 if (needComma) {
@@ -1293,9 +1339,11 @@ public class SqlGenerator
                             // This means that the field's QueryClass is present in the SELECT list,
                             // so adding the field artificially will not alter the number of rows
                             // of a DISTINCT query.
-                            buffer.append(" AS ")
-                                .append(state.getOrderByAlias());
-                            state.addToOrderBy(buffer.toString());
+                            if (!schema.isFlatMode()) {
+                                buffer.append(" AS ")
+                                    .append(state.getOrderByAlias());
+                                state.addToOrderBy(buffer.toString());
+                            }
                         } else {
                             throw new ObjectStoreException("Reference " + buffer.toString()
                                     + " in the ORDER BY list must be in the SELECT list, or the"
@@ -1314,9 +1362,11 @@ public class SqlGenerator
                             // This means that this field is not in the SELECT list, but its
                             // FromElement is, therefore adding it artificially to the SELECT
                             // list will not alter the number of rows of a DISTINCT query.
-                            buffer.append(" AS ")
-                                .append(state.getOrderByAlias());
-                            state.addToOrderBy(buffer.toString());
+                            if (!schema.isFlatMode()) {
+                                buffer.append(" AS ")
+                                    .append(state.getOrderByAlias());
+                                state.addToOrderBy(buffer.toString());
+                            }
                         } else if (fe instanceof QueryClass) {
                             throw new ObjectStoreException("Field " + buffer.toString()
                                     + " in the ORDER BY list must be in the SELECT list, or the"

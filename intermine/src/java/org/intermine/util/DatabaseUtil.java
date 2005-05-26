@@ -279,6 +279,7 @@ public class DatabaseUtil
         "NULLIF",
         "NUMERIC",
         "OBJECT",
+        "OBJECTCLASS",
         "OCTET_LENGTH",
         "OF",
         "OFF",

@@ -190,7 +190,7 @@ public class DatabaseSchema
                     // proper subset of another. We check this here, as not all subclasses of
                     // the table master are necessarily mapped onto the same table.
                     ClassDescriptor subsMaster = getTableMaster(subCld);
-                    if (subsMaster == cld) {
+                    if ((subsMaster == cld) || isFlatMode()) {
                         // This class does map onto this table. We need to look at all the
                         // FieldDescriptors of this class, but we can give a small warning if this
                         // results in fields from classes that are not a subclass of the table

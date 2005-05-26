@@ -429,7 +429,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         assertEquals(precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
     }
 
-    protected DatabaseSchema getSchema() {
+    protected DatabaseSchema getSchema() throws Exception {
         return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET);
     }
     public String getRegisterOffset1() {

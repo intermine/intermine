@@ -10,7 +10,18 @@ package org.intermine.objectstore;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.BigDepartment;
+import org.intermine.model.testmodel.Cleaner;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.ImportantPerson;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
@@ -20,6 +31,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.util.DynamicUtil;
 
 public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 {
@@ -528,51 +540,51 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             assertNull(realOs.pilferObjectById(id));
             assertNull(writer.pilferObjectById(id));
 
-            assertNotNull("Looked for id " + id, realOs.getObjectById(id));
+            assertNotNull("Looked for id " + id, realOs.getObjectById(id, Address.class));
             assertNull(writer.pilferObjectById(id));
             assertNotNull(realOs.pilferObjectById(id));
             realOs.flushObjectById();
 
-            assertNotNull(writer.getObjectById(id));
+            assertNotNull(writer.getObjectById(id, Address.class));
             assertNotNull(writer.pilferObjectById(id));
             assertNull(realOs.pilferObjectById(id));
-            assertNotNull(realOs.getObjectById(id));
+            assertNotNull(realOs.getObjectById(id, Address.class));
 
             writer.store(address2);
-            assertNotNull(writer.getObjectById(id));
-            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
-            assertNotNull(realOs.getObjectById(id));
-            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+            assertNotNull(writer.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id, Address.class)).getAddress());
+            assertNotNull(realOs.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
             
             writer.delete(address2);
-            assertNull(writer.getObjectById(id));
-            assertNull(realOs.getObjectById(id));
+            assertNull(writer.getObjectById(id, Address.class));
+            assertNull(realOs.getObjectById(id, Address.class));
 
             writer.store(address1);
             writer.beginTransaction();
             writer.store(address2);
-            assertNotNull(writer.getObjectById(id));
-            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
-            assertNotNull(realOs.getObjectById(id));
-            assertEquals("Address 1", ((Address) realOs.getObjectById(id)).getAddress());
+            assertNotNull(writer.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id, Address.class)).getAddress());
+            assertNotNull(realOs.getObjectById(id, Address.class));
+            assertEquals("Address 1", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
 
             writer.commitTransaction();
-            assertNotNull(writer.getObjectById(id));
-            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
-            assertNotNull(realOs.getObjectById(id));
-            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+            assertNotNull(writer.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id, Address.class)).getAddress());
+            assertNotNull(realOs.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
 
             writer.beginTransaction();
             writer.delete(address1);
-            assertNull(writer.getObjectById(id));
-            assertNotNull(realOs.getObjectById(id));
-            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+            assertNull(writer.getObjectById(id, Address.class));
+            assertNotNull(realOs.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
             
             writer.abortTransaction();
-            assertNotNull(writer.getObjectById(id));
-            assertEquals("Address 2", ((Address) writer.getObjectById(id)).getAddress());
-            assertNotNull(realOs.getObjectById(id));
-            assertEquals("Address 2", ((Address) realOs.getObjectById(id)).getAddress());
+            assertNotNull(writer.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) writer.getObjectById(id, Address.class)).getAddress());
+            assertNotNull(realOs.getObjectById(id, Address.class));
+            assertEquals("Address 2", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
         } finally {
             writer.delete(address1);
         }
@@ -593,6 +605,86 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             if (writer.isInTransaction()) {
                 writer.abortTransaction();
             }
+        }
+    }
+
+    public void testWriteDynamicObject() throws Exception {
+        InterMineObject o = (InterMineObject) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Employee.class})));
+        try {
+            writer.store(o);
+            o = writer.getObjectById(o.getId(), Employee.class);
+            if (!(o instanceof Company)) {
+                fail("Expected a Company back");
+            }
+            if (!(o instanceof Employee)) {
+                fail("Expected an Employee back");
+            }
+        } finally {
+            writer.delete(o);
+        }
+    }
+
+    public void testWriteDynamicObject2() throws Exception {
+        InterMineObject o = (InterMineObject) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employee.class})));
+        try {
+            writer.store(o);
+            o = writer.getObjectById(o.getId(), Employee.class);
+            if (!(o instanceof ImportantPerson)) {
+                fail("Expected an ImportantPerson back");
+            }
+            if (!(o instanceof Employee)) {
+                fail("Expected an Employee back");
+            }
+        } finally {
+            writer.delete(o);
+        }
+    }
+
+    public void testWriteInterMineObject() throws Exception {
+        InterMineObject o = (InterMineObject) DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
+        try {
+            writer.store(o);
+        } finally {
+            writer.delete(o);
+        }
+    }
+    
+    public void testWriteCleaner() throws Exception {
+        InterMineObject o = new Cleaner();
+        try {
+            writer.store(o);
+            o = writer.getObjectById(o.getId(), Employee.class);
+            if (!(o instanceof Cleaner)) {
+                fail("Expected a Cleaner back");
+            }
+        } finally {
+            writer.delete(o);
+        }
+    }
+
+    public void testWriteCloneable() throws Exception {
+        InterMineObject o = (InterMineObject) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Employee.class, Cloneable.class})));
+        try {
+            writer.store(o);
+            o = writer.getObjectById(o.getId(), Employee.class);
+            if (!(o instanceof Cloneable)) {
+                fail("Expected a Cloneable back");
+            }
+        } finally {
+            writer.delete(o);
+        }
+    }
+
+    public void testWriteBigDepartment() throws Exception {
+        InterMineObject o = new BigDepartment();
+        try {
+            writer.store(o);
+            o = writer.getObjectById(o.getId(), Department.class);
+            if (!(o instanceof BigDepartment)) {
+                fail("Expected a BigDepartment back");
+            }
+        } finally {
+            writer.delete(o);
         }
     }
 }

@@ -52,7 +52,7 @@ public class NotXmlRenderer
                 Class clazz = (Class) classIter.next();
                 sb.append(clazz.getName());
             }
-            
+
             Map infos = TypeUtil.getFieldInfos(obj.getClass());
             Iterator fieldIter = infos.keySet().iterator();
             while (fieldIter.hasNext()) {
