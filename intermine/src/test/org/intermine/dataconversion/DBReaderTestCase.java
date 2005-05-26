@@ -42,11 +42,13 @@ public class DBReaderTestCase extends TestCase {
         try {
             s.execute("DROP TABLE testread");
         } catch (SQLException e) {
+            e.printStackTrace(System.out);
             c.rollback();
         }
         try {
             s.execute("DROP TABLE company_contractor");
         } catch (SQLException e) {
+            e.printStackTrace(System.out);
             c.rollback();
         }
         s.execute("CREATE TABLE testread (value int, id text)");
