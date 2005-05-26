@@ -58,6 +58,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
     protected static Map data = new LinkedHashMap();
     protected static Model model;
+    protected static String alternateDataFile = null;
 
     public SetupDataTestCase(String arg) {
         super(arg);
@@ -80,7 +81,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
     public static Collection setUpData() throws Exception {
         XmlBinding binding = new XmlBinding(model);
-        return (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("testmodel_data.xml"));
+        return (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream(alternateDataFile == null ? "testmodel_data.xml" : alternateDataFile));
     }
 
     public static void main(String[] args) throws Exception {

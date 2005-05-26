@@ -25,6 +25,7 @@ import java.util.Set;
 import junit.framework.Test;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Types;
@@ -64,7 +65,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
     public void testLargeOffset() throws Exception {
         Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
+        QueryClass qc = new QueryClass(Address.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         Query q2 = QueryCloner.cloneQuery(q);

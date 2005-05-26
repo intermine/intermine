@@ -42,6 +42,7 @@ import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.TypeUtil;
@@ -67,9 +68,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Batch batch;
     protected String createSituation;
     protected Map recentSequences;
+    protected Map tableToInfo;
     protected Map tableToColNameArray;
-    protected Map tableToFieldNameArray;
-    protected Map tableToReferencesFrom;
     protected Map tableToCollections;
     protected String connectionTakenBy = null;
 
@@ -109,9 +109,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     + " with sequence = " + sequence + ", model = \"" + model.getName()
                     + "\" recentSequences cache"));
         batch = new Batch(new BatchWriterPostgresCopyImpl());
+        tableToInfo = new HashMap();
         tableToColNameArray = new HashMap();
-        tableToFieldNameArray = new HashMap();
-        tableToReferencesFrom = new HashMap();
         tableToCollections = new HashMap();
     }
 
@@ -359,47 +358,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected void storeWithConnection(Connection c,
                                        InterMineObject o) throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
-        boolean doDeletes = true;
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
         }
 
         try {
-            // Make sure this object has an ID
-            if (o.getId() == null) {
-                o.setId(getSerialWithConnection(c));
-                doDeletes = false;
-            } else {
-                doDeletes = !recentSequences.containsKey(o.getId());
-            }
-            recentSequences.remove(o.getId());
-
-            // Make sure all objects pointed to have IDs
-            Map fieldInfos = TypeUtil.getFieldInfos(o.getClass());
-            Iterator fieldIter = fieldInfos.entrySet().iterator();
-            while (fieldIter.hasNext()) {
-                Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-                TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldEntry.getValue();
-                if (InterMineObject.class.isAssignableFrom(fieldInfo.getType())) {
-                    InterMineObject obj = (InterMineObject) TypeUtil.getFieldProxy(o,
-                            fieldInfo.getName());
-                    if ((obj != null) && (obj.getId() == null)) {
-                        obj.setId(getSerialWithConnection(c));
-                    }
-                } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
-                    Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
-                    if (!(coll instanceof Lazy)) {
-                        Iterator collIter = coll.iterator();
-                        while (collIter.hasNext()) {
-                            InterMineObject obj = (InterMineObject) collIter.next();
-                            if (obj.getId() == null) {
-                                obj.setId(getSerialWithConnection(c));
-                            }
-                        }
-                    }
-                }
-            }
+            boolean doDeletes = populateIds(c, o);
             String xml = null;
+            String objectClass = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
             Iterator cldIter = classDescriptors.iterator();
@@ -413,64 +379,28 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     }
                 }
             }
+            int tablesWritten = 0;
+            Iterator validFieldEntryIter = TypeUtil.getFieldInfos(o.getClass()).entrySet()
+                .iterator();
+            Set validFieldNames = new HashSet();
+            while (validFieldEntryIter.hasNext()) {
+                Map.Entry entry = (Map.Entry) validFieldEntryIter.next();
+                String fieldName = (String) entry.getKey();
+                TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) entry.getValue();
+                if (!Collection.class.isAssignableFrom(fieldInfo.getType())) {
+                    validFieldNames.add(fieldName);
+                }
+            }
             cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                String tableName = DatabaseUtil.getTableName(tableMaster);
-                String colNames[] = (String []) tableToColNameArray.get(tableName);
-                String fieldNames[] = (String []) tableToFieldNameArray.get(tableName);
-                Integer referencesFromInteger = (Integer) tableToReferencesFrom.get(tableName);
-                if (colNames == null) {
-                    LOG.info("Generating cached metadata for table " + tableName);
-                    DatabaseSchema.Fields allColumns = schema.getTableFields(tableMaster);
-                    int colCount = 0 + allColumns.getAttributes().size()
-                        + allColumns.getReferences().size();
-                    boolean isTruncated = schema.isTruncated(tableMaster);
-                    boolean hasObject = "InterMineObject".equals(tableName)
-                        || (!schema.isMissingNotXml());
-                    if (isTruncated) {
-                        colCount++;
-                    }
-                    if (hasObject) {
-                        colCount++;
-                    }
-                    colNames = new String[colCount];
-                    fieldNames = new String[colCount];
-                    int colNo = 0;
-                    if (hasObject) {
-                        colNames[colNo] = "OBJECT";
-                        colNo++;
-                    }
-                    if (isTruncated) {
-                        colNames[colNo] = "class";
-                        colNo++;
-                    }
-                    fieldIter = allColumns.getAttributes().iterator();
-                    while (fieldIter.hasNext()) {
-                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
-                        colNames[colNo] = DatabaseUtil.getColumnName(field);
-                        fieldNames[colNo] = field.getName();
-                        colNo++;
-                    }
-                    referencesFromInteger = new Integer(colNo);
-                    fieldIter = allColumns.getReferences().iterator();
-                    while (fieldIter.hasNext()) {
-                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
-                        colNames[colNo] = DatabaseUtil.getColumnName(field);
-                        fieldNames[colNo] = field.getName();
-                        colNo++;
-                    }
-                    tableToColNameArray.put(tableName, colNames);
-                    tableToFieldNameArray.put(tableName, fieldNames);
-                    tableToReferencesFrom.put(tableName, referencesFromInteger);
-                }
-                int referencesFrom = referencesFromInteger.intValue();
+                TableInfo tableInfo = getTableInfo(tableMaster);
                 Set collections = (Set) tableToCollections.get(cld.getName());
                 if (collections == null) {
                     LOG.info("Generating cached metadata for ClassDescriptor " + cld.getName());
                     collections = new HashSet();
-                    fieldIter = cld.getAllFieldDescriptors().iterator();
+                    Iterator fieldIter = cld.getAllFieldDescriptors().iterator();
                     while (fieldIter.hasNext()) {
                         FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                         if (field instanceof CollectionDescriptor) {
@@ -480,33 +410,73 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     tableToCollections.put(cld.getName(), collections);
                 }
 
-                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
-                    Object values[] = new Object[colNames.length];
-                    Set validFieldNames = TypeUtil.getFieldInfos(o.getClass()).keySet();
-                    for (int colNo = 0; colNo < colNames.length; colNo++) {
+                if (!schema.getMissingTables().contains(tableInfo.tableName.toLowerCase())) {
+                    tablesWritten++;
+                    if (schema.isFlatMode() && (!schema.isTruncated(schema.getTableMaster(cld)))
+                            && (!(cld.getType().equals(o.getClass())))) {
+                        Set decomposed = DynamicUtil.decomposeClass(o.getClass());
+                        if (!((decomposed.size() == 1) && cld.getType().equals(decomposed.iterator()
+                                        .next()))) {
+                            throw new ObjectStoreException("Non-flat model heirarchy used in flat "
+                                    + "mode. Cannot store object with classes = " + decomposed);
+                        }
+                    }
+                    Object values[] = new Object[tableInfo.colNames.length];
+                    Set fieldNamesWritten = new HashSet();
+                    for (int colNo = 0; colNo < tableInfo.colNames.length; colNo++) {
                         Object value = null;
-                        if ("class".equals(colNames[colNo])) {
+                        if ("class".equals(tableInfo.colNames[colNo])) {
                             value = cld.getName();
-                        } else if ("OBJECT".equals(colNames[colNo])) {
+                        } else if ("objectClass".equals(tableInfo.colNames[colNo])) {
+                            if (objectClass == null) {
+                                Iterator objectClassIter = DynamicUtil.decomposeClass(o.getClass())
+                                    .iterator();
+                                StringBuffer sb = new StringBuffer();
+                                boolean needComma = false;
+                                while (objectClassIter.hasNext()) {
+                                    if (needComma) {
+                                        sb.append(" ");
+                                    }
+                                    needComma = true;
+                                    sb.append(((Class) objectClassIter.next()).getName());
+                                }
+                                objectClass = sb.toString();
+                            }
+                            value = objectClass;
+                        } else if ("OBJECT".equals(tableInfo.colNames[colNo])) {
                             if (xml == null) {
                                 xml = NotXmlRenderer.render(o);
                             }
                             value = xml;
-                        } else if (validFieldNames.contains(fieldNames[colNo])) {
-                            value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
+                        } else if (validFieldNames.contains(tableInfo.fieldNames[colNo])) {
+                            value = TypeUtil.getFieldProxy(o, tableInfo.fieldNames[colNo]);
                             if (value instanceof Date) {
                                 value = new Long(((Date) value).getTime());
                             }
-                            if ((value instanceof InterMineObject) && (colNo >= referencesFrom)) {
+                            if ((value instanceof InterMineObject)
+                                    && (colNo >= tableInfo.referencesFrom)) {
                                 value = ((InterMineObject) value).getId();
                             } else if ((value instanceof InterMineObject)
-                                    || (colNo >= referencesFrom)) {
+                                    || (colNo >= tableInfo.referencesFrom)) {
                                 value = null;
                             }
+                            fieldNamesWritten.add(tableInfo.fieldNames[colNo]);
                         }
                         values[colNo] = value;
                     }
-                    batch.addRow(c, tableName, o.getId(), colNames, values);
+                    if (schema.isFlatMode()) {
+                        Iterator validFieldNameIter = validFieldNames.iterator();
+                        while (validFieldNameIter.hasNext()) {
+                            String validFieldName = (String) validFieldNameIter.next();
+                            if (!fieldNamesWritten.contains(validFieldName)) {
+                                Set decomposed = DynamicUtil.decomposeClass(o.getClass());
+                                throw new ObjectStoreException("Cannot store object " + decomposed
+                                        + " - no column for field " + validFieldName + " in table "
+                                        + tableInfo.tableName);
+                            }
+                        }
+                    }
+                    batch.addRow(c, tableInfo.tableName, o.getId(), tableInfo.colNames, values);
                 }
 
                 Iterator collectionIter = collections.iterator();
@@ -556,7 +526,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     }
                 }
             }
-
+            if (tablesWritten < 1) {
+                throw new ObjectStoreException("Object " + DynamicUtil.decomposeClass(o.getClass())
+                        + " does not map onto any database table.");
+            }
             invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
@@ -567,6 +540,119 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         if (!wasInTransaction) {
             commitTransactionWithConnection(c);
         }
+    }
+
+    /**
+     * Produces metadata for a given table, caching it to save time.
+     *
+     * @param tableMaster the ClassDescriptor describing the table
+     * @return a TableInfo object
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected TableInfo getTableInfo(ClassDescriptor tableMaster)
+        throws ObjectStoreException {
+        String tableName = DatabaseUtil.getTableName(tableMaster);
+        TableInfo retval = (TableInfo) tableToInfo.get(tableName);
+        if (retval == null) {
+            retval = new TableInfo();
+            retval.tableName = tableName;
+            LOG.info("Generating cached metadata for table " + tableName);
+            DatabaseSchema.Fields allColumns = schema.getTableFields(tableMaster);
+            int colCount = allColumns.getAttributes().size() + allColumns.getReferences().size();
+            boolean isTruncated = schema.isTruncated(tableMaster);
+            boolean hasObject = "InterMineObject".equals(tableName) || (!(schema.isMissingNotXml()
+                        || schema.isFlatMode()));
+            if (isTruncated) {
+                if (schema.isFlatMode()) {
+                    colCount++;
+                }
+                colCount++;
+            }
+            if (hasObject) {
+                colCount++;
+            }
+            retval.colNames = new String[colCount];
+            retval.fieldNames = new String[colCount];
+            int colNo = 0;
+            if (hasObject) {
+                retval.colNames[colNo] = "OBJECT";
+                colNo++;
+            }
+            if (isTruncated) {
+                if (schema.isFlatMode()) {
+                    retval.colNames[colNo] = "objectClass";
+                    colNo++;
+                }
+                retval.colNames[colNo] = "class";
+                colNo++;
+            }
+            Iterator fieldIter = allColumns.getAttributes().iterator();
+            while (fieldIter.hasNext()) {
+                FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                retval.colNames[colNo] = DatabaseUtil.getColumnName(field);
+                retval.fieldNames[colNo] = field.getName();
+                colNo++;
+            }
+            retval.referencesFrom = colNo;
+            fieldIter = allColumns.getReferences().iterator();
+            while (fieldIter.hasNext()) {
+                FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                retval.colNames[colNo] = DatabaseUtil.getColumnName(field);
+                retval.fieldNames[colNo] = field.getName();
+                colNo++;
+            }
+            tableToInfo.put(tableName, retval);
+        }
+        return retval;
+    }
+
+    /**
+     * Populates the object o with IDs.
+     *
+     * @param c a Connection with which to fetch more IDs
+     * @param o the InterMineObject
+     * @return true if the object will need to be deleted from the DB before a store
+     * @throws SQLException if the database cannot produce a new ID
+     * @throws IllegalAccessException if the ID field cannot be set
+     */
+    protected boolean populateIds(Connection c, InterMineObject o) throws SQLException,
+              IllegalAccessException {
+        boolean doDeletes = true;
+        // Make sure this object has an ID
+        if (o.getId() == null) {
+            o.setId(getSerialWithConnection(c));
+            doDeletes = false;
+        } else {
+            doDeletes = !recentSequences.containsKey(o.getId());
+        }
+        recentSequences.remove(o.getId());
+
+        // Make sure all objects pointed to have IDs
+        Map fieldInfos = TypeUtil.getFieldInfos(o.getClass());
+        Iterator fieldIter = fieldInfos.entrySet().iterator();
+        while (fieldIter.hasNext()) {
+            Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
+            TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldEntry.getValue();
+            if (InterMineObject.class.isAssignableFrom(fieldInfo.getType())) {
+                InterMineObject obj = (InterMineObject) TypeUtil.getFieldProxy(o,
+                        fieldInfo.getName());
+                if ((obj != null) && (obj.getId() == null)) {
+                    obj.setId(getSerialWithConnection(c));
+                }
+            } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
+                Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
+                if (!(coll instanceof Lazy)) {
+                    Iterator collIter = coll.iterator();
+                    while (collIter.hasNext()) {
+                        InterMineObject obj = (InterMineObject) collIter.next();
+                        if (obj.getId() == null) {
+                            obj.setId(getSerialWithConnection(c));
+                        }
+                    }
+                }
+            }
+        }
+        return doDeletes;
     }
 
     /**
@@ -859,6 +945,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     protected InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
+        if (schema.isFlatMode()) {
+            return super.internalGetObjectById(id, clazz);
+        }
         Connection c = null;
         try {
             c = getConnection();
@@ -894,5 +983,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public boolean isMultiConnection() {
         return false;
+    }
+
+    private static class TableInfo
+    {
+        String tableName;
+        String colNames[];
+        String fieldNames[];
+        int referencesFrom;
     }
 }

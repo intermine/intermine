@@ -11,6 +11,7 @@ package org.intermine.objectstore;
  */
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -68,8 +69,9 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             storeDataWriter.beginTransaction();
             iter = data.entrySet().iterator();
             while (iter.hasNext()) {
-                InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
-                    .getValue();
+                Map.Entry entry = (Map.Entry) iter.next();
+                InterMineObject o = (InterMineObject) entry.getValue();
+                String oName = (String) entry.getKey();
                 storeDataWriter.store(o);
             }
             storeDataWriter.commitTransaction();
@@ -101,11 +103,21 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
                 storeDataWriter.delete(toDelete);
             }
             storeDataWriter.commitTransaction();
+        } catch (RuntimeException e) {
+            storeDataWriter.abortTransaction();
+            storeDataWriter.beginTransaction();
+            Iterator iter = data.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                InterMineObject o = (InterMineObject) entry.getValue();
+                String oName = (String) entry.getKey();
+                storeDataWriter.delete(o);
+            }
+            storeDataWriter.commitTransaction();
         } catch (Exception e) {
             storeDataWriter.abortTransaction();
             throw e;
         }
         System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data");
     }
-
 }

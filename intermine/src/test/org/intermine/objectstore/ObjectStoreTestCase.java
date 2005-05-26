@@ -410,8 +410,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         q1.setConstraint(sc1);
         List l1 = os.execute(q1);
+        assertEquals(1, l1.size());
         CEO ceo = (CEO) (((ResultsRow) l1.get(0)).get(0));
-        assertEquals(45000, ceo.getSalary());
+        assertEquals(ceo.toString(), 45000, ceo.getSalary());
     }
 
     public void testLazyCollection() throws Exception {
@@ -632,17 +633,17 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
     public void testGetObjectById() throws Exception {
         Integer id = ((Employee) data.get("EmployeeA1")).getId();
-        Employee e = (Employee) os.getObjectById(id);
+        Employee e = (Employee) os.getObjectById(id, Employee.class);
         assertEquals(data.get("EmployeeA1"), e);
-        assertTrue(e == os.getObjectById(id));
+        assertTrue(e == os.getObjectById(id, Employee.class));
     }
 
     public void testGetObjectMultipleTimes() throws Exception {
         Query q = IqlQueryParser.parse(new IqlQuery("select Secretary from Secretary where Secretary.name = 'Secretary1'", "org.intermine.model.testmodel"));
         Secretary a = (Secretary) ((List) os.execute(q).get(0)).get(0);
 
-        Secretary b = (Secretary) os.getObjectById(a.getId());
-        Secretary c = (Secretary) os.getObjectById(a.getId());
+        Secretary b = (Secretary) os.getObjectById(a.getId(), Secretary.class);
+        Secretary c = (Secretary) os.getObjectById(a.getId(), Secretary.class);
         assertEquals(b, c);
         assertTrue(b == c);
         assertEquals(a, b);

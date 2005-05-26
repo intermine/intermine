@@ -148,7 +148,8 @@ public class TorqueModelOutput
         if (!schema.getMissingTables().contains(className.toLowerCase())) {
             // Every class and interface has a separate table
             sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL);
-            if ((!schema.isMissingNotXml()) || InterMineObject.class.equals(cld.getType())) {
+            if ((!(schema.isMissingNotXml() || schema.isFlatMode()))
+                    || InterMineObject.class.equals(cld.getType())) {
                 sb.append(generateColumn("OBJECT", "java.lang.String"));
             }
             DatabaseSchema.Fields fields = schema.getTableFields(cld);
@@ -164,6 +165,9 @@ public class TorqueModelOutput
                 sb.append(generateColumn(DatabaseUtil.getColumnName(field), "int"));
             }
             if (schema.isTruncated(cld)) {
+                if (schema.isFlatMode()) {
+                    sb.append(generateColumn("objectClass", "java.lang.String"));
+                }
                 sb.append(generateColumn("class", "java.lang.String"));
                 sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
                         + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL

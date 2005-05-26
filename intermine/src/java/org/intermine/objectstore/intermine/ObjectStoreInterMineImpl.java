@@ -992,6 +992,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
+        if (schema.isFlatMode()) {
+            return super.internalGetObjectById(id, clazz);
+        }
         Connection c = null;
         try {
             c = getConnection();
@@ -1130,6 +1133,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param q the Query
      * @param indexes a Collection of QueryNodes for which to create indexes - they must all exist
      * in the SELECT list of the query
+     * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
+     * the precomputed table's SELECT list.
      * @return the name of the new precomputed table
      * @throws ObjectStoreException if anything goes wrong
      */

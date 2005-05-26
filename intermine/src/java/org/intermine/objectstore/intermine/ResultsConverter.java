@@ -14,14 +14,23 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -31,6 +40,8 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DatabaseUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -65,6 +76,7 @@ public class ResultsConverter
             Connection c) throws ObjectStoreException {
         Object currentColumn = null;
         HashSet noObjectColumns = new HashSet();
+        HashSet noObjectClassColumns = new HashSet();
         try {
             ArrayList retval = new ArrayList();
             HashSet idsToFetch = new HashSet();
@@ -81,35 +93,41 @@ public class ResultsConverter
                         if (obj == null) {
                             String objectField = null;
                             if (noObjectColumns.contains(node)) {
-                                noObjectColumns.add(node);
                                 if (obj == null) {
                                     obj = new ProxyReference(os, idField, InterMineObject.class);
                                     idsToFetch.add(idField);
                                 }
                             } else {
-                                try {
-                                    objectField = sqlResults.getString(alias);
-                                    if (objectField != null) {
-                                        currentColumn = objectField;
-                                        obj = NotXmlParser.parse(objectField, os);
-                                        //if (objectField.length() < ObjectStoreInterMineImpl
-                                        //        .CACHE_LARGEST_OBJECT) {
-                                            os.cacheObjectById(obj.getId(), obj);
-                                        //} else {
-                                        //    LOG.debug("Not cacheing large object " + obj.getId()
-                                        //            + " on read" + " (size = "
-                                        //            + (objectField.length() / 512) + " kB)");
-                                        //}
-                                    }
-                                } catch (SQLException e) {
-                                    // Do nothing - it's just a notxml missing. However, to avoid an
-                                    // Exception-storm, we should probably stop trying this on
-                                    // future rows.
-                                    noObjectColumns.add(node);
-                                    if (obj == null) {
-                                        obj = new ProxyReference(os, idField,
-                                                InterMineObject.class);
-                                        idsToFetch.add(idField);
+                                if (os.getSchema().isFlatMode()) {
+                                    obj = buildObject(sqlResults, alias, os,
+                                            ((QueryClass) node).getType(), noObjectClassColumns);
+                                    os.cacheObjectById(obj.getId(), obj);
+                                } else {
+                                    try {
+                                        objectField = sqlResults.getString(alias);
+                                        if (objectField != null) {
+                                            currentColumn = objectField;
+                                            obj = NotXmlParser.parse(objectField, os);
+                                            //if (objectField.length() < ObjectStoreInterMineImpl
+                                            //        .CACHE_LARGEST_OBJECT) {
+                                                os.cacheObjectById(obj.getId(), obj);
+                                            //} else {
+                                            //    LOG.debug("Not cacheing large object "
+                                            //            + obj.getId() + " on read" + " (size = "
+                                            //            + (objectField.length() / 512) + " kB)");
+                                            //}
+                                        }
+                                    } catch (SQLException e) {
+                                        // Do nothing - it's just a notxml missing. However, to
+                                        // avoid an Exception-storm, we should probably stop trying
+                                        // this on future rows. We don't know how slow this
+                                        // ResultSet is at throwing these exceptions.
+                                        noObjectColumns.add(node);
+                                        if (obj == null) {
+                                            obj = new ProxyReference(os, idField,
+                                                    InterMineObject.class);
+                                            idsToFetch.add(idField);
+                                        }
                                     }
                                 }
                             }
@@ -165,5 +183,76 @@ public class ResultsConverter
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);
         }
+    }
+
+    /**
+     * Builds an object from separate fields in flat mode.
+     *
+     * @param sqlResults the SQL ResultSet
+     * @param alias the name of the column being built
+     * @param os the ObjectStore
+     * @param type a Class matching the QueryClass that is this column
+     * @param noObjectClassColumns a Set used internally
+     * @return an InterMineObject
+     * @throws SQLException if something goes wrong
+     */
+    protected static InterMineObject buildObject(ResultSet sqlResults, String alias,
+            ObjectStoreInterMineImpl os, Class type, Set noObjectClassColumns) throws SQLException {
+        Set classes = Collections.singleton(type);
+        if (!noObjectClassColumns.contains(alias)) {
+            String objectClass = null;
+            try {
+                objectClass = sqlResults.getString(alias + "objectclass");
+            } catch (SQLException e) {
+                noObjectClassColumns.add(alias);
+            }
+            if (objectClass != null) {
+                classes = new HashSet();
+                try {
+                    String b[] = objectClass.split(" ");
+                    for (int i = 0; i < b.length; i++) {
+                        classes.add(Class.forName(b[i]));
+                    }
+                } catch (ClassNotFoundException e) {
+                    SQLException e2 = new SQLException("Invalid entry in objectclass column");
+                    e2.initCause(e);
+                    throw e2;
+                }
+            }
+        }
+        InterMineObject retval = (InterMineObject) DynamicUtil.createObject(classes);
+        Map fields = os.getModel().getFieldDescriptorsForClass(retval.getClass());
+        Iterator iter = fields.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String fieldName = (String) entry.getKey();
+            FieldDescriptor fd = (FieldDescriptor) entry.getValue();
+            if (fd instanceof AttributeDescriptor) {
+                Object value = sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
+                if ((value instanceof Long) && Date.class.equals(TypeUtil.getFieldInfo(type,
+                                fieldName).getType())) {
+                    value = new Date(((Long) value).longValue());
+                }
+                TypeUtil.setFieldValue(retval, fieldName, value);
+            } else if (fd instanceof CollectionDescriptor) {
+                CollectionDescriptor cd = (CollectionDescriptor) fd;
+                Collection lazyColl = null;
+                if (cd.relationType() == CollectionDescriptor.ONE_N_RELATION) {
+                    ReferenceDescriptor reverse = cd.getReverseReferenceDescriptor();
+                    lazyColl = new ProxyCollection(os, retval, reverse.getName(),
+                            reverse.getClassDescriptor().getType(), true);
+                } else {
+                    lazyColl = new ProxyCollection(os, retval, cd.getName(),
+                            cd.getReferencedClassDescriptor().getType(), false);
+                }
+                TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
+            } else if (fd instanceof ReferenceDescriptor) {
+                ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                Integer id = new Integer(sqlResults.getInt(alias + DatabaseUtil.getColumnName(fd)));
+                Class refType = rd.getReferencedClassDescriptor().getType();
+                TypeUtil.setFieldValue(retval, fieldName, new ProxyReference(os, id, refType));
+            }
+        }
+        return retval;
     }
 }
