@@ -48,19 +48,19 @@ public class XmlMetaData
     protected static final Logger LOG = Logger.getLogger(XmlMetaData.class);
 
     protected Stack paths;
-    /** path -> Set of key fields */
+    /** path -&gt; Set of key fields */
     protected Map keyFields;
-    /** key name -> path */
+    /** key name -&gt; path */
     protected Map keyNameToPath;
-    /** key name -> field name */
+    /** key name -&gt; field name */
     protected Map keyNameToField;
-    /** path -> Set of referring fields */
+    /** path -&gt; Set of referring fields */
     protected Map keyrefFields;
-    /** path+"/"+field -> key name */
+    /** path+"/"+field -&gt; key name */
     protected Map keyrefFieldToKey;
-    /** key/keyref xpath -> to regex pattern */
+    /** key/keyref xpath -&gt; to regex pattern */
     protected Map xpathToRegex;
-    /** element path -> field name. */
+    /** element path -&gt; field name. */
     protected Map referenceElements;
 
     protected Map keyNames;
