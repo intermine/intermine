@@ -172,7 +172,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         tgtItem.addAttribute(new Attribute("organismDbId",
                                              srcItem.getIdentifier()));
                     }
-                    result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
+                    String identifier = tgtItem.getOrganismDbId();
+                    result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs, identifier));
                     // if no organismDbId set to be same as identifier
                     if (!tgtItem.hasAttribute("organismDbId")) {
                         tgtItem.addAttribute(new Attribute("organismDbId",
@@ -629,7 +630,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @return a set of Synonyms
      * @throws ObjectStoreException if problem retrieving items
      */
-    protected Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs)
+    protected Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs, String geneIdentifier)
         throws ObjectStoreException {
         // additional gene information is in xref table only accessible via translation
         Set synonyms = new HashSet();
@@ -654,31 +655,43 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             }
            if (accession != null && !accession.equals("")
                 && dbname != null && !dbname.equals("")) {
-                if (dbname.equals("HUGO") || dbname.equals("RefSeq_dna")) {
-                    //?HUGO RefSeq_dna RefSeq_peptide
-                    Item synonym = new Item();
-                    if (dbname.equals("HUGO")) {
-                        synonym = createSynonym(tgtItem.getIdentifier(),
-                                                "name", name, getHugoRef());
-                        synonyms.add(synonym);
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        synonym = createSynonym(tgtItem.getIdentifier(),
-                                               "accession", accession, getHugoRef());
-                        synonyms.add(synonym);
+               //dbname could be one of HUGO, RefSeq_dna, Uniprot/SWISSPORT Uniprot/SPTREMBL
+               //no RefSeq_peptide is used in current version
+               //HUGO identifier is used as gene Identifier, if no HUGO refed then ensembl_stable_id
+               //(eg ENSG???????????) used as identifier
+               Item synonym = new Item();
+               if (dbname.equals("HUGO")) {
+                   synonym = createSynonym(tgtItem.getIdentifier(),
+                                           "name", name, getHugoRef());
+                   synonyms.add(synonym);
+                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                   synonym = createSynonym(tgtItem.getIdentifier(),
+                                           "accession", accession, getHugoRef());
+                   synonyms.add(synonym);
+                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                   tgtItem.addAttribute(new Attribute("identifier", accession));
+                   tgtItem.addAttribute(new Attribute("name", name));
+               } else if (dbname.equals("RefSeq_dna")) {
+                   synonym = createSynonym(tgtItem.getIdentifier(),
+                                           "accession", accession, getRefSeqRef());
+                   synonyms.add(synonym);
+                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
 
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        tgtItem.addAttribute(new Attribute("identifier", accession));
-                        tgtItem.addAttribute(new Attribute("name", name));
-                    } else {
-                        synonym = createSynonym(tgtItem.getIdentifier(),
-                                               "accession", accession, getRefSeqRef());
-                        synonyms.add(synonym);
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        tgtItem.addAttribute(new Attribute("accession", accession));
-                    }
+                   synonym = createSynonym(tgtItem.getIdentifier(),
+                                           "identifier", geneIdentifier, getEnsemblRef());
+                   synonyms.add(synonym);
+                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                   tgtItem.addAttribute(new Attribute("accession", accession));
+                   tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
+               } else if (dbname.equals("Uniprot/SWISSPORT") || dbname.equals("Uniprot/SPTREMBL")) {
+                   synonym = createSynonym(tgtItem.getIdentifier(),
+                                           "identifier", geneIdentifier, getEnsemblRef());
+                   synonyms.add(synonym);
+                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                   tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
+               }
 
-                }
-            }
+           }
         }
         return synonyms;
     }
@@ -859,7 +872,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         if (hugoDb == null) {
             hugoDb = createItem(tgtNs + "Database", "");
             Attribute title = new Attribute("title", "HUGO");
-            Attribute url = new Attribute("url", "http://www.hugo-international.org/hugo");
+            Attribute url = new Attribute("url", "http://www.hugo-international.org/");
             hugoDb.addAttribute(title);
             hugoDb.addAttribute(url);
         }
@@ -883,8 +896,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Item getGenbankDb() {
         if (genbankDb == null) {
             genbankDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "genbank");
-            Attribute url = new Attribute("url", "http://www.ncbi.nlm.nih.gov/");
+            Attribute title = new Attribute("title", "GenBank");
+            Attribute url = new Attribute("url", "http://www.ncbi.nlm.nih.gov/genbank");
             genbankDb.addAttribute(title);
             genbankDb.addAttribute(url);
         }
@@ -908,7 +921,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Item getGdbDb() {
         if (gdbDb == null) {
             gdbDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "gdb");
+            Attribute title = new Attribute("title", "GDB");
             Attribute url = new Attribute("url", "http://gdbwww.gdb.org/");
             gdbDb.addAttribute(title);
             gdbDb.addAttribute(url);
@@ -933,7 +946,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Item getUnistsDb() {
         if (unistsDb == null) {
             unistsDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "unists");
+            Attribute title = new Attribute("title", "UniSTS");
             Attribute url = new Attribute("url",
                         "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=unists");
             unistsDb.addAttribute(title);
