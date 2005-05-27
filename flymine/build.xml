@@ -2566,7 +2566,7 @@
   <target name="load-gbrowse-data-mysql"
           description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec executable="/bin/sh">
-      <arg line="-c 'bp_bulk_load_gff.pl -create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
+      <arg line="-c 'bp_bulk_load_gff.pl --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --maxfeature 1000000000 --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
     </exec>
   </target>
 
@@ -2752,9 +2752,9 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/databases.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/ontologies.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/human/databases.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/human/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/human/ontologies.xml" sourceName="static"/>
   </target>
 
 
@@ -2907,6 +2907,8 @@
       <antcall target="fetch-contig-sequences"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="update-publications" />  
       <antcall target="analyse-db-production"/>
       <!-- removed due to running out of memory -->
       <!--antcall target="transfer-sequences-chromosome"/-->
@@ -3315,6 +3317,7 @@
   <target name="build-disease-regions-production"
           depends="retrieve-disease-regions, load-disease-regions"/>
 
-  
+
+   
 </project>
 
