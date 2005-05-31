@@ -35,7 +35,7 @@
       </legalnotice>
       <abstract>
         <para>
-          This document describes release 1.1 of the FlyMine Drosophila and
+          This document describes release 2.1 of the FlyMine Drosophila and
           Anopheles integrated genomics database.
         </para>
       </abstract>
@@ -46,16 +46,33 @@
   
       <para>
         The FlyMine query page provides three routes to the data in
-        the FlyMine database: The query Builder, Browse mode and
+        the FlyMine database: The query Builder, Quick Search and
         predefined template queries. These are described in more
         detail in the following chapters.
       </para>
 
       <mediaobject>
         <imageobject>
-          <imagedata fileref="mainPage1.png" />
+          <imagedata fileref="mainQueryPage1.png" />
         </imageobject>
       </mediaobject>
+
+      <para>Different types of data in FlyMine are described by
+	classes.  For example, information describing genes is 'held'
+	in the 'Gene' class.  A class contains fields to hold specific
+	information about the type of item it is describing.  For
+	example, the Gene class includes the fields 'name' and
+	'identifier'. Each item within a class is called an
+	object. For example the 'Notch' gene is an object that belongs
+	to the Gene class.  The different classes that describe the
+	data in FlyMine are linked together (through references).  For
+	example, the Gene class is linked to the Transcript class and
+	other relevent classes. The classes and the way in which they
+	are all linked together is called the FlyMine data model. (see
+	<xref linkend="manualCOF"/> and <xref linkend="manualFields"/>
+	for an explanation of these concepts).
+       </para>
+
   </chapter>
 
 
@@ -68,7 +85,7 @@
         The FlyMine query builder allows you to construct complex
         queries across the multiple integrated data sources in the
         database. The query-builder interface enables you to browse
-        through classes and attributes of the object model, selecting
+        through classes and fields of the data model, selecting
         those that you wish to constrain and those that you wish to
         include in your results.
       </para>
@@ -107,28 +124,26 @@
     <orderedlist>
       <listitem>
         <para>
-          STARTING POINT: Choose the starting point for your query either from the
-          classes displayed (which have been divided into biologically
-          meaniful categories) or by selecting the 'List all classes' link.
-          This will take you to the main query builder page. See
-          <xref linkend="manualClasschooser"/> for
-          more details.
+          STARTING POINT: Choose the starting point for your query
+          either from the classes displayed (which have been divided
+          into biologically meaniful categories) or by selecting the
+          'List all classes' link.  This will take you to the <xref
+          linkend="manualQuerybuilder"/>.
         </para>
       </listitem>
 
       <listitem>
         <para>
           BROWSE: In the model browser of the query builder, browse to
-          the classes and attributes you are interested in. See
-          <xref linkend="manualModelbrowser"/>
-          for more details.
+          the classes and fields you are interested in. See <xref
+          linkend="manualModelbrowser"/> for more details.
         </para>
       </listitem>
 
       <listitem>
         <para>
-          CONSTRAIN: Select the classes and/or attributes you wish to
-          constrain using the -&gt; constrain arrows. Specify your
+          CONSTRAIN: Select the classes and/or fields you wish to
+          constrain using the "constrain" buttons. Specify your
           constraints in the right hand constraints list.  See <xref
           linkend="manualConstraintslist"/> for more details.
         </para>
@@ -136,9 +151,9 @@
 
       <listitem>
         <para>
-          SHOW: Select the classes and/or attributes you wish to show
-          in the results output using the "show" buttons. The
-          classes/attributes selected will appear in the output fields
+          SHOW: Select the classes and/or fields you wish to show in
+          the results output using the "show" buttons. The
+          classes/fields selected will appear in the output fields
           list. See <xref linkend="manualOutputfields"/> for more
           details.
         </para>
@@ -146,8 +161,8 @@
 
       <listitem>
         <para>
-          VIEW: Press 'show results' to view your results in the results page.
-          See <xref linkend="manualShowresults"/> for
+          VIEW: Press 'show results' to view your results in the
+          results page.  See <xref linkend="manualShowresults"/> for
           more details.
         </para>
       </listitem>
@@ -156,12 +171,13 @@
 
 
     <sect1>
-      <title>The class chooser page</title>
+      <title>Selecting a starting point for your query</title>
       <para>
-        The screen shot below shows the class
-        chooser. This displays only the main starting points for
-        a query and these have been divided into biologically
-        meaniful categories.
+        The screen shot below shows the starting point for using the
+        query builder. The main starting points for a query are
+        displayed and these have been divided into biologically
+        meaniful categories. Clicking on a class will take you to the
+        <xref linkend="manualQuerybuilder"/>.
       </para>
 
       <mediaobject>
@@ -180,9 +196,9 @@
       </para>
 
       <para>
-        Selecting the class from which you wish to start your query and
-        pressing the 'Select' button will take you to the FlyMine query
-        builder page.
+        Selecting the class from which you wish to start your query
+        and pressing the 'Select' button will take you to the <xref
+        linkend="manualQuerybuilder"/>.
       </para>
 
       <mediaobject>
@@ -193,7 +209,7 @@
 
       <para>
         The browse model button (accessed from the initial class selection
-        point)allows you to browse the complete FlyMine object model. This
+        point) allows you to browse the complete FlyMine data model. This
         shows all the classes in FlyMine, some of which do not yet have
         data associated with them.
       </para>
@@ -205,12 +221,13 @@
 
       <para>
         Clicking on a class name within the browser will take you to
-        the FlyMine query builder page.
+        the <xref linkend="manualQuerybuilder"/>.
       </para>
 
      <mediaobject>
         <imageobject>
           <imagedata fileref="browsingModel1.png" />
+
         </imageobject>
       </mediaobject>
  
@@ -254,22 +271,25 @@
           The model browser
         </title>
 
+
+
         <para>
-          The model browser allows you to select the classes that contain the
-          objects you require. Depending on the starting class you will be
-          able to navigate to other classes as defined by the references
-          between the classes (see <xref linkend="manualCOF"/> for an
-          explanation of these concepts). In other words, to combine classes
-          containing the objects you require, you find a path through the
-          classes that link together the information you require. Within the
-          model browser classes that can be accessed from a parent class (ie
-          are linked to the parent class through a reference) are shown as
-          fields within that class.
+          The model browser allows you to browse through the FlyMine
+          data model, selecting the classes that contain the objects
+          you require. Depending on the starting class you will be
+          able to navigate to other classes as defined by the
+          references between the classes. In other words, to combine
+          classes containing the objects you require, you find a path
+          through the classes that link together the information you
+          require. Within the model browser classes that can be
+          accessed from a parent class (ie are linked to the parent
+          class through a reference) are shown as fields within that
+          class.
         </para>
 
         <para>
-          For each class and attribute within the model browser there
-          isa 'show' and a 'constrain' (-&gt;) option. These are used
+          For each class and field within the model browser there
+          is a 'show' and a 'constrain' option. These are used
           to either select a field to show in the results output or to
           constrain in the constraints list.
         </para>
@@ -277,12 +297,12 @@
         <para>
           See <xref linkend="manualModelbrowser"/>
           for more information about classes and
-          attributes.
+          fields.
         </para>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="modelBrowser2.png" />
+            <imagedata fileref="modelBrowser1.png" />
           </imageobject>
         </mediaobject>
       </sect2>
@@ -293,15 +313,17 @@
         </title>
 
         <para>
-          The constraints list is on the right hand side of the
-          query builder page. In this section you specify the
-          constraints you wish to apply to particular classes and
-          attributes.
+          The constraints list is on the right hand side of the query
+          builder page. In this section you specify the constraints
+          you wish to apply to particular classes and fields. A
+          constraint is like a filter - you filer out a subset of the
+          objects in a class which have certain characteristics (defined
+          by the constraint).
         </para>
 
         <para>
-          To apply a constraint to a field, navigate to the field
-          in the model browser and click on the -&gt; (constrain) next
+          To apply a constraint to a field, navigate to the field in
+          the model browser and click on the "constrain" button next
           to it. This will add the field to the constraints list and
           bring up a box in which you specify your constraint.
         </para>
@@ -313,7 +335,7 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="constraintsList1.png" />
+            <imagedata fileref="constraining1.png" />
           </imageobject>
         </mediaobject>
       </sect2>
@@ -331,21 +353,39 @@
         </para>
 
         <para>
-          The output fields list shows all attributes or classes that
-          you have selected to show in the results output. To select a
-          field to show in the results output you press 'show' next to
-          the attriute or class.
+          The output fields list shows all fields or classes that you
+          have selected to show in the results output. To select a
+          field or class to show in the results output you press
+          'show' next to the field or class. You can select any field
+          or class to show in your results (regardless of fields or
+          classes you have constrained). 
+        </para>
+
+	<para>There is a 'show' button next to every class field (eg
+	next to the Gene name field) and next to each class itself (eg
+	next to the Gene class - above the fields). Selecting 'show'
+	next to a class will return all the information available for
+	each object in that class (or subset of objects if a
+	constraint has been applied). This option is useful if you
+	wish to browse the information associated with certain
+	objects. See <xref linkend="manualResults"/> for more details
+	on how this information can be viewed. Selecting 'show' next
+	to a class field (eg Gene name) will return just the text
+	information stored in that field.  This type of result is most
+	suitable if you wish to export information (see <xref
+	linkend="manualResults"/> and <xref
+	linkend="manualExportingData"/> for more details.
         </para>
 
         <para>
-          The order of attributes and classes in the output fields
+          The order of fields and classes in the output fields
           list can be changed using the &lt; and &gt; arrows. Fields can
           be deleted from the output fields list using the x.
         </para>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="fieldsSelected1.png" />
+            <imagedata fileref="showFields1.png" />
           </imageobject>
         </mediaobject>
       </sect2>
@@ -369,7 +409,7 @@
       </para>
 
       <para>
-        You can scroll though the objects using Next, or go
+        You can scroll through the objects using Next, or go
         to the last 10 objects using Last.
       </para>
 
@@ -387,49 +427,55 @@
         From the results page you can save your data to a
         bag (see <xref linkend="manualSavingBags"/>)
         and export your data in various formats (see
-        <xref linkend="manualExportingdata"/>).
+        <xref linkend="manualExportingData"/>).
       </para>
 
       <para>
-        If there are any objects in your results (rather
-        than attributes) you can click on an object to view it in
-        detail.
+        If you selected any classes to 'show' in your results (as
+        opposed to class fields), then all the information for each
+        object (or subset of objects) from that class will be returned
+        by the query. In these cases a summary of each object will be
+        displayed in the results page, with a link to a 'details' page
+        that allows you to view all the information available for that
+        object (including links to objects in classes referenced from
+        that class).  See next section for more details.
       </para>
 
       <mediaobject>
         <imageobject>
-          <imagedata fileref="tableResults1.png" />
+          <imagedata fileref="results1.png" />
         </imageobject>
       </mediaobject>
 
       <sect1>
         <title>
-          Attribute List vs Browse Mode: 2 modes of result display
+          Field List vs Browse Mode: 2 modes of result display
         </title>
 
         <para>
-          There are two modes of result display in FlyMine
-          depending on what you select to show in your results
-          output. If you look at the model browser you will notice
-          that there are 'show' options next to the attributes of
-          classes and next to the actual class names (see screenshot below).
+          There are two modes of result display in FlyMine depending
+          on what you select to show in your results output. If you
+          look at the model browser you will notice that there are
+          'show' options next to the fields of classes and next to the
+          actual class names (see screenshot below).
         </para>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="modelBrowser_browsing1.png" />
+            <imagedata fileref="modelBrowserBrowsing1.png" />
           </imageobject>
         </mediaobject>
 
         <para>
-          Selecting 'show' next to attributes results in a
-          table-style results output as shown in the results
-          displayed in the screenshot above (under C. The Results
-          Page).  Selecting 'show' next to a class name means that
-          each object required from that class will be returned (i.e
-          all it's attributes and the references to other
-          classes). It is also possible to show a mix of attributes
-          and objects in the result display.
+          Selecting 'show' next to class fields results in a
+          table-style results output as shown in the results displayed
+          in the screenshot above (under C. The Results Page).
+          Selecting 'show' next to a class name means that each object
+          required from that class will be returned (i.e all its
+          fields and the references to other classes). It is also
+          possible to show a mix of fields and objects in the result
+          display, ie it is possible to select 'show' next to both
+          class fields and classes in the same query.
         </para>
 
         <para>
@@ -437,7 +483,7 @@
           initially show a summary for each object. However, For
           each object in the database there is also a detailed
           results view (accessed by a link from the summary view)
-          which shows all the attributes of the objects and the
+          which shows all the fields of the objects and the
           classes referenced by that object.  From this detailed
           results view it is possible to browse the information
           contained in the referenced classes (see screenshot below).
@@ -453,22 +499,32 @@
 </chapter>
 
     <chapter id="manualQuickStartBrowsing">
-      <title>Browsing : Quick Search</title>
+      <title>Quick Search</title>
 
       <para>
-        The FlyMine Browse search allows you to quickly and
-        directly access the data in FlyMine. Entering any object
-        identifier (such as a gene name or identifier) will take you
-        straight to the details page for that object.  Wildcards are
-        automatically attached to any text entered and so your search
-        may match more than one object identifier in the database.
-        In such a case a list of all matching objects is shown, from
-        where you can access the object details pages.
+        The FlyMine Quick Search allows you to quickly and directly
+        access the data in FlyMine. Entering any object identifier
+        (such as a gene name or identifier) will take you straight to
+        the details page for that object.  Wildcards (*) can be
+        attached to any text entered to increase the scope of your
+        search.  (A wild card added to the end of the text will search
+        for anything beginning with that text (eg zen* will search zen
+        and anything that begins with zen - and so your query could
+        return several results such as zen, zen2 and zen-4).  A *
+        added to the beginning of your text will search for anything
+        that ends in that text (eg *_DROME will search for all entries
+        ending in _DROME - ie all the Drosophila entries in
+        Swissprot). The Quick Search is case-insensitive.
       </para>
+
+      <para> In cases where more than one object is returned by your
+        quick search, the results will provide a summary of each
+        object with a link to each object details page.
+     </para>
 
       <mediaobject>
         <imageobject>
-          <imagedata fileref="Browsing1.png" />
+          <imagedata fileref="browsing1.png" />
         </imageobject>
       </mediaobject>
 
@@ -479,21 +535,22 @@
       <title>Template Queries : Predefined Queries</title>
 
       <para>
-        Template queries provide an easier route to
-        accessing the data in FlyMine. A template query is like a
+        Template queries provide a quicker and easier route to
+        accessing the data in FlyMine. A template query provides a
         form with various boxes for you to fill in.  A number of
         template queries have been predefined.  These range from
-        simple queries to more complex queries covering a wide
-        range of data. To run a template query:
+        simple queries to more complex queries covering a wide range
+        of data. More template queries will be added as FlyMine
+        develops. To run a template query:
       </para>
 
       <orderedlist>
         <listitem>
           <para>
-            Select the query you wish to run either from the
-            lists on the main Query page or by selecting 'view all
-            template queries'.  Pressing the -&gt; next to the query
-            description will take you to the template form.
+            Select the query you wish to run either from the lists on
+            the main Query page or by using the 'Search Templates'
+            option on the menu bar. Pressing the -&gt; next to the
+            query description will take you to the template form.
           </para>
 
           <mediaobject>
@@ -514,13 +571,14 @@
 
         <listitem>
           <para>
-            Pressing the 'View results' button will take you
-            directly to the results page. Pressing the 'View query'
-            button will display the template query in the FlyMine Query
-            Builder.  Here you can either use the template as a
-            starting point for building a more complex query, edit the
-            query or simply run the query as it is.  Press 'Show
-            results' to run your query.
+            Pressing the 'View results' button will take you directly
+            to the results for your query. Pressing the 'View query'
+            button will display the template query in the FlyMine
+            Query Builder (see <xref linkend="manualQueryBuilder"/>).
+            Here you can either use the template as a starting point
+            for building a more complex query, edit the query or
+            simply run the query as it is.  Press 'Show results' to
+            run your query.
           </para>
 
           <mediaobject>
@@ -571,7 +629,7 @@
     </legalnotice>
     <abstract>
       <para>
-        This document describes release 1.1 of the FlyMine Drosophila and Anopheles
+        This document describes release 2.1 of the FlyMine Drosophila and Anopheles
         integrated genomics database.
       </para>
     </abstract>
@@ -595,10 +653,28 @@
     <title>The FlyMine Query Builder</title>
      <sect1>
          <title>Introduction</title>
+
+	<para>Different types of data in FlyMine are described by
+	classes.  For example, information describing genes is 'held'
+	in the 'Gene' class.  A class contains fields to hold specific
+	information about the type of item it is describing.  For
+	example, the Gene class includes the fields 'name' and
+	'identifier'. Each item within a class is called an
+	object. For example the 'Notch' gene is an object that belongs
+	to the Gene class.  The different classes that describe the
+	data in FlyMine are linked together (through references).  For
+	example, the Gene class is linked to the Transcript class and
+	other relevent classes. The classes and the way in which they
+	are all linked together is called the FlyMine data model. (see
+	<xref linkend="manualCOF"/> and <xref linkend="manualFields"/>
+	for an explanation of these concepts)
+       </para>
+
+
     <para>
       The FlyMine query builder allows you to construct queries on the
       data in the FlyMine database.  The query-builder interface
-      enables you to browse through classes and attributes of the data
+      enables you to browse through classes and fields of the data
       model, selecting those that you wish to constrain and those that
       you wish to include in your results. The following points provide
       a basic outline of the steps involved in building a query with
@@ -608,19 +684,19 @@
     <orderedlist>
       <listitem>
         <para>
-          STARTING POINT: Choose the starting point for your query either from the
-          classes displayed (which have been divided into biologically
-          meaniful categories) or by selecting the 'List all classes' link.
-          This will take you to the main query builder page. See
-          <xref linkend="manualClasschooser"/> for
-          more details.
+          STARTING POINT: Choose the starting point for your query
+          either from the classes displayed (which have been divided
+          into biologically meaniful categories) or by selecting the
+          'List all classes' link.  This will take you to the main
+          query builder page. See <xref linkend="manualClasschooser"/>
+          for more details.
         </para>
       </listitem>
 
       <listitem>
         <para>
           BROWSE: In the model browser of the query builder, browse to
-          the classes and attributes you are interested in. See
+          the classes and fields you are interested in. See
           <xref linkend="manualModelbrowser"/>
           for more details.
         </para>
@@ -628,7 +704,7 @@
 
       <listitem>
         <para>
-          CONSTRAIN: Select the classes and/or attributes you wish to
+          CONSTRAIN: Select the classes and/or fields you wish to
           constrain using the -&gt; constrain arrows. Specify your
           constraints in the right hand constraints list.  See <xref
           linkend="manualConstraintslist"/> for more details.
@@ -637,9 +713,9 @@
 
       <listitem>
         <para>
-          SHOW: Select the classes and/or attributes you wish to show
-          in the results output using the "show" buttons. The
-          classes/attributes selected will appear in the output fields
+          SHOW: Select the classes and/or fields you wish to show in
+          the results output using the "show" buttons. The
+          classes/fields selected will appear in the output fields
           list. See <xref linkend="manualOutputfields"/> for more
           details.
         </para>
@@ -647,8 +723,8 @@
 
       <listitem>
         <para>
-          VIEW: Press 'show results' to view your results in the results page.
-          See <xref linkend="manualShowresults"/> for
+          VIEW: Press 'show results' to view your results in the
+          results page.  See <xref linkend="manualShowresults"/> for
           more details.
         </para>
       </listitem>
@@ -660,14 +736,13 @@
     <title>Choosing a starting point</title>
 
     <para>
-      To build a query using the FlyMine Query Builder you
-      must first decide on a starting class for your query.  The
-      main classes are displayed on the initial query page and are
-      divided into biologically meaniful categories.  This page
-      contains a list of classes for which objects exist in the
-      database (i.e. classes for which there is data associated).
-      Selecting a class will take you to the
-      <link linkend="manualQuerybuilder">FlyMine query builder page</link>.
+      To build a query using the FlyMine Query Builder you must first
+      decide on a starting class for your query.  The main classes are
+      displayed on the initial query page and are divided into
+      biologically meaniful categories.  This page contains a list of
+      classes for which objects exist in the database (i.e. classes
+      for which there is data associated).  Selecting a class will
+      take you to the <xref linkend="manualQuerybuilder"/>.
     </para>
 
     <mediaobject>
@@ -677,16 +752,15 @@
     </mediaobject>
 
     <para>
-      In addition to the above classes a full list of classes
-      from which you can start your query can be accessed by
-      clicking on the 'List all classes' link (see above
-      screenshot).  This takes you to the class chooser page (see
-      screenshot below).  This page contains a list of classes for
-      which objects exist in the database (i.e. classes for which
-      there is data associated). Select the class from which you
-      wish to start your query and press the Select button. This
-      will take you to the
-      <link linkend="manualQuerybuilder">FlyMine query builder page</link>.
+      In addition to the above classes a full list of classes from
+      which you can start your query can be accessed by clicking on
+      the 'List all classes' link (see above screenshot).  This takes
+      you to the class chooser page (see screenshot below).  This page
+      contains a list of classes for which objects exist in the
+      database (i.e. classes for which there is data
+      associated). Select the class from which you wish to start your
+      query and press the Select button. This will take you to the
+      <xref linkend="manualQuerybuilder"/>.
     </para>
 
     <mediaobject>
@@ -711,7 +785,9 @@
       </para>
 
       <para>
-        Click on a class name to begin your query with that class
+        Click on a class name to begin your query with that class.
+      This will take you to the <xref
+      linkend="manualQuerybuilder"/>.
       </para>
 
       <mediaobject>
@@ -763,24 +839,24 @@
       <title>The model browser</title>
 
       <para>
-        The FlyMine model browser allows you to select the classes
-        that contain the objects you require. Depending on the
-        starting class you will be able to navigate to other classes
-        as defined by the references between the classes (see <xref
-        linkend="manualCOF"/> for an explanation of these
-        concepts). In other words, to combine classes containing the
-        objects you require, you find a path through the classes that
-        link together the information you require. Within the model
-        browser classes that can be accessed from a parent class (ie
-        are linked to the parent class through a reference) are shown
-        as fields within that class (see <xref
+        The model browser allows you to browse through the FlyMine
+        data model, selecting the classes that contain the objects you
+        require. Depending on the starting class you will be able to
+        navigate to other classes as defined by the references between
+        the classes (see <xref linkend="manualCOF"/> for an
+        explanation of these concepts). In other words, to combine
+        classes containing the objects you require, you find a path
+        through the classes that link together the information you
+        require. Within the model browser classes that can be accessed
+        from a parent class (ie are linked to the parent class through
+        a reference) are shown as fields within that class (see <xref
         linkend="manualFields"/> for more explanation on fields.
       </para>
 
       <para>
-        For each class and attribute within the model browser there is
-        a 'show' and a 'constrain' (-&gt;) option. These are used to
-        either select a class/attribute to show in the results output
+        For each class and field within the model browser there is
+        a 'show' and a 'constrain'  option. These are used to
+        either select a class/field to show in the results output
         (see <xref linkend="manualOutputfields"/>) or to constrain in
         the constraints list (see <xref
         linkend="manualConstraintslist"/>).
@@ -797,20 +873,20 @@
       <title>Fields</title>
 
       <para>
-        The following is an explanation of the classes and attributes
-        displayed by the model browser. The Gene class is used as an example,
-        but the information is easily transferable to other classes. The
-        screen-shot below shows the model browser displaying the Gene
-        class.
+        The following is an explanation of the classes and fields
+        displayed by the model browser. The Gene class is used as an
+        example, but the information is easily transferable to other
+        classes. The screen-shot below shows the model browser
+        displaying the Gene class.
       </para>
 
       <para>
-        The following fields are 'attributes' of the Gene class:
-        identifier, name and organismDbId. Attributes hold just one
-        piece of information which can be either text or a number. The
-        attributes of a class are always displayed directly below the
-        class name and can be distinguished from other fields (see
-        below) as they do not a have a + for expanding before them.
+        The following are 'fields' of the Gene class: identifier, name
+        and organismDbId. Class fields hold just one piece of
+        information which can be either text or a number. The fields
+        of a class are always displayed directly below the class name
+        and can be distinguished from other fields (see below) as they
+        do not a have a + for expanding before them.
       </para>
 
       <para>
@@ -841,15 +917,15 @@
         you are asking for objects of the Gene class which includes
         all the information stored about each object. For example, if
         you query for the Notch gene object, your results will include
-        all the attributes and referenced classes associated with the
-        Notch gene.  If you select an attribute of a class to 'show',
-        you are asking for only a specific piece of information stored
-        with the objects of that class.
+        all the fields and referenced classes associated with the
+        Notch gene.  If you select a fields of a class to 'show' (eg
+        gene name), you are asking for only a specific piece of
+        information stored with the objects of that class.
       </para>
 
       <para>
-        For specific information about each class or attribute click
-        on the ? help link next to the class/attribute in the model
+        For specific information about each class or fields click
+        on the ? help link next to the class/field in the model
         browser.
       </para>
 
@@ -868,15 +944,18 @@
 
       <para>
         The constraints list is on the right hand side of the query
-        builder page. In this section you specify the constraints you wish to
-        apply to particular classes and attributes.
+        builder page. In this section you specify the constraints you
+        wish to apply to particular classes and fields.  A
+        constraint is like a filter - you filer out a subset of the
+        objects in a class which have certain characteristics (defined
+        by the constraint).
       </para>
 
       <para>
         To apply a constraint to a field, navigate to the field in the
-        model browser and click on the -&gt; (constrain) next to it. This will
-        add the field to the constraints list and bring up a box in which you
-        specify your constraint.
+        model browser and click on the 'constrain' button next to
+        it. This will add the field to the constraints list and bring
+        up a box in which you specify your constraint.
       </para>
 
       <para>
@@ -886,7 +965,7 @@
 
       <mediaobject>
         <imageobject>
-          <imagedata fileref="constraintsList1.png" />
+          <imagedata fileref="constraining1.png" />
         </imageobject>
       </mediaobject>
     </sect1>
@@ -896,26 +975,27 @@
 
       <para>
         The output fields list is located at the bottom of the query
-        builder (underneath the <link linkend="manualModelbrowser">Model browser</link>).
-        Initially the output fields list will say 'No fields
-        selected for output'.
+        builder (underneath the <link
+        linkend="manualModelbrowser">Model browser</link>).  Initially
+        the output fields list will say 'No fields selected for
+        output'.
       </para>
 
       <para>
         The output fields list shows all fields that you have selected
-        to show in the results output. To select a field to show in the
+        to show in your results. To select a field to show in the
         results output you press 'show' next to the field.
       </para>
 
       <para>
         The order of fields in the output fields list can be changed
-        using the &lt; and &gt; arrows. Fields can be deleted from the output
-        fields list using the x.
+        using the &lt; and &gt; arrows. Fields can be deleted from the
+        output fields list using the x.
       </para>
 
       <mediaobject>
         <imageobject>
-          <imagedata fileref="fieldsSelected1.png" />
+          <imagedata fileref="showFields1.png" />
         </imageobject>
       </mediaobject>
     </sect1>
@@ -956,7 +1036,11 @@
       </para>
 
       <para>
-        Saved queries can be accessed from your <link linkend="manualHistory">query history</link>.
+        Saved queries can be accessed from your <link
+        linkend="manualHistory">query history</link>. This history is
+        available for the duration of your session unless you log in -
+        in which case it will be saved permanently. See <xref
+        linkend="LoggingIn"/>)
       </para>
     </sect1>
 
@@ -1000,22 +1084,31 @@
       <title>Browsing directly</title>
 
       <para>
-        The FlyMine Browse search, accessible from the main
-        query page (see screenshot below), allows you to quickly and
-        directly access the data in FlyMine.  Entering any object
-        identifier (such as a gene name or identifier) will take you
-        straight to the details page for that object (see
-        <xref linkend="manualObjectDetails"/>).
-        Wildcards are automatically attached to any text entered and
-        so your search may match more than one object in the
-        database.  In such a case a list of all matching objects is
-        shown, from where you can access the object details
-        page.
+        The FlyMine Quick Search, accessible from the main query page
+        (see screenshot below), allows you to quickly and directly
+        access the data in FlyMine.  Entering any object identifier
+        (such as a gene name or identifier) will take you straight to
+        the details page for that object (see <xref
+        linkend="manualObjectDetails"/>). Wildcards (*) can be
+        attached to any text entered to increase the scope of your
+        search.  (A wild card added to the end of the text will search
+        for anything beginning with that text (eg zen* will search zen
+        and anything that begins with zen - and so your query could
+        return several results such as zen, zen2 and zen-4).  A *
+        added to the beginning of your text will search for anything
+        that ends in that text (eg *_DROME will search for all entries
+        ending in _DROME - ie all the Drosophila entries in
+        Swissprot). The Quick Search is case-insensitive.
       </para>
 
+      <para> In cases where more than one object is returned by your
+        quick search, the results will provide a summary of each
+        object with a link to each object details page.
+     </para>
+    
       <mediaobject>
         <imageobject>
-          <imagedata fileref="Browsing1.png" />
+          <imagedata fileref="browsing1.png" />
         </imageobject>
       </mediaobject>
     </sect1>
@@ -1027,15 +1120,17 @@
         such a way that the results are browsable.  (see <xref
         linkend="manualQueryBuilder"/> for details on using the query
         builder). If you select an entire class to 'show' in the
-        output (as opposed to selecting attributes of a class, see
-        screenshot below), your result will provide a link to a
-        details page for the objects returned from that class. See
-        <xref linkend="manualObjectDetails"/> for more.
+        output (as opposed to selecting fields of a class, see
+        screenshot below), your result will provide links to the
+        details pages for the objects returned from that class, from
+        where you can browse the information stored in the objects
+        fields and in classes referenced from the object. See <xref
+        linkend="manualObjectDetails"/> for more details.
       </para>
 
       <mediaobject>
         <imageobject>
-          <imagedata fileref="modelBrowser_browsing1.png" />
+          <imagedata fileref="modelBrowserBrowsing1.png" />
         </imageobject>
       </mediaobject>
  
@@ -1048,23 +1143,25 @@
    <sect1>
       <title>Introduction</title>
     <para>
-      To provide a more direct route to the data in FlyMine, a
-      number of queries have been predefined as templates.  A
-      template query is like a form with various boxes for you to
-      fill in. A number of template queries have been
-      predefined. These range from simple queries to more complex
-      queries covering a wide range of data.
+      To provide a more direct route to the data in FlyMine, a number
+      of queries have been predefined as templates.  A template query
+      provides a form with various boxes for you to fill in. A number
+      of template queries have been predefined. These range from
+      simple queries to more complex queries covering a wide range of
+      data.  More template queries will be added as FlyMine develops.
     </para>
 
     <para>
-      Template queries can be accessed from the main FlyMine
-      query page.  Templates can be selected either via a link from
-      the class categories section, where the templates have also
-      been divided into appropriate biological categories (note
-      that a template query may belong in more than category) or
-      from the 'Predefined template queries' section on the main query
-      page, from where there is a link to all template
-      queries (see screenshot below).
+      Template queries can be accessed from the main FlyMine query
+      page.  Templates can be selected either via a link from the
+      class categories section, where the templates have also been
+      divided into appropriate biological categories (note that a
+      template query may belong in more than category) or from the
+      'Predefined template queries' section on the main query page,
+      from where there is a link to all template queries (see
+      screenshot below).  Alternatively, you can search the template
+      queries by clicking on the Search Templates link on the main
+      menu bar.
     </para>
 
       <mediaobject>
@@ -1085,9 +1182,10 @@
     <orderedlist>
       <listitem>
         <para>
-          Select the query you wish to run either from the
-          lists on the main Query page or by selecting 'view all
-          template queries'.  Pressing the -&gt; next to the query
+          Select the query you wish to run either from the lists on
+          the main Query page, by selecting 'view all template
+          queries', or by searching the templates with the 'Search
+          Templates' option.  Pressing the -&gt; next to the query
           description will take you to the template form.
         </para>
 
@@ -1142,12 +1240,11 @@
         detail pages which provide more information about specific
         objects.  The type of result displayed depends on what items
         have been selected to show in the results - ie. only class
-        attributes, only classes or a combination of attributes and
-        classes.  See <xref linkend="manualFields"/> for an
-        explanation of classes and attributes.  Each of these types of
-        result display are described in more detail in the following
-        sections . The general features of each result display are
-        described below.
+        fields, only classes or a combination of fields and classes.
+        See <xref linkend="manualFields"/> for an explanation of
+        classes and fields.  Each of these types of result display
+        are described in more detail in the following sections . The
+        general features of each result display are described below.
       </para>
 
     <para>
@@ -1177,12 +1274,12 @@
     <para>
       From the results page you can save your data to a bag (see <xref
       linkend="manualSavingBags"/>) and export your data in various
-      formats (see <xref linkend="manualExportingdata"/>).
+      formats (see <xref linkend="manualExportingData"/>).
     </para>
 
     <para>
       If there are any objects in your results (as opposed to
-      attributes) you can click on an object to view it in
+      class fields) you can click on an object to view it in
       detail (see <xref linkend="manualObjectDetails"/>).
     </para>
 
@@ -1200,13 +1297,13 @@
           <title>Table-style results</title>
             <para>
                A table-style of result can be created if a query is
-               constructed to only show class attributes (as opposed
+               constructed to only show class fields (as opposed
                to entire objects belonging to a class), as these
                consist of a single value, such as a name or
                number. Such table-style results are useful if you wish
                to download data (to a speadsheet for example).  The
                screenshots below show an example of a query
-               constructed to show only class attributes and the
+               constructed to show only class fields and the
                table-style result it produces.
             </para>
 
@@ -1249,10 +1346,10 @@
 
     <para>
       For every object in the FlyMine database there is a details page
-      which provides all the attributes, references and collections for
-      that object along with additional information such as the GBrowse
-      genome viewer for sequence features. (see <xref linkend="manualCOF"/>
-      for an explanation of these concepts).
+      which provides all the fields, references and collections for
+      that object along with additional information such as the
+      GBrowse genome viewer for sequence features. (see <xref
+      linkend="manualFields"/> for an explanation of these concepts).
     </para>
 
     <para>
@@ -1263,7 +1360,7 @@
     </para>
 
     <para>
-      If you are using the 'Browse' search from the main query
+      If you are using the Quick Search from the main query
       page, you may be taken to an object details page directly if
       only one object in the database matches your search.
     </para>
@@ -1287,7 +1384,11 @@
      <title>Introduction</title>
        
       <para>
-        Bags are holders for sets of data.  The data in a bag can be either attributes (eg a list of gene identifiers) or a set of objects (or a combination of attributes and objects). The following sections describe how bags can be created and used in FlyMine.
+        Bags are holders for sets of data.  The data in a bag can be
+        either fields (eg a list of gene identifiers) or a set of
+        objects (or a combination of fields and objects). The
+        following sections describe how bags can be created and used
+        in FlyMine.
       </para>
 
   </sect1>
@@ -1300,12 +1401,14 @@
 
     <para>
       Data can be saved into 'bags' and stored in your query history.
-      To save your data to a bag select the required data and either add it
-      to an existing bag or save it to a new bag. Selecting the check-boxes
-      next to the column headings will select the entire column for export.
-      Alternatively, individual items can be saved by selecting check-boxes
-      next to the items. Saved bags of data can be viewed from the History
-      page (accessible from the menu bar) (see <xref linkend="manualHistory"/>).
+      To save your data to a bag select the required data and either
+      add it to an existing bag or save it to a new bag, using the
+      boxes displayed underneath the results. Selecting the
+      check-boxes next to the column headings will select the entire
+      column for saving.  Alternatively, individual items can be saved
+      by selecting check-boxes next to the items. Saved bags of data
+      can be viewed from your History page (accessible from the menu
+      bar - see <xref linkend="manualHistory"/>).
     </para>
 
     <para>
@@ -1328,9 +1431,9 @@
     <title>Creating a bag of identifiers from an external source</title>
 
     <para>
-      A bag of objects can be created from an external source.
-      From the main query page click on the 'Create a bag of
-      identifiers' link (see screenshot below).
+      A bag can be created from an external source.  From the main
+      query page click on the 'Create a bag of identifiers' link (see
+      screenshot below).
     </para>
 
 
@@ -1343,14 +1446,15 @@
 
     <para>
       To make your bag, either type or cut and paste in a list of
-      identifiers, or upload a list from a file. Press 'Make bag' to
-      save the bag of identifiers to your <link
-      linkend="manualHistory">history</link>.  The bag you create will
-      be a bag of attributes (see <link
-      linkend="manualFields">Fields</link>). See <xref
-      linkend="manualUsingBags"/> for details on how to use a bag of
-      identifiers in a query and for performing the logical operations
-      union and intersect.
+      identifiers, or upload a list from a file. Enter a name for your
+      bag (or leave the default) and press 'Make bag' to save the bag
+      of identifiers to your <link
+      linkend="manualHistory">history</link>.  Do not mix up different
+      types of identifiers if want to use your bag to constrain a
+      query - eg make a bag of gene names only or gene identifiers
+      only.  See <xref linkend="manualUsingBags"/> for details on how
+      to use a bag of identifiers in a query and for performing the
+      logical operations union and intersect.
     </para>
 
     <mediaobject>
@@ -1366,15 +1470,6 @@
     <para>Bags can be used in three different ways: to constrain a
     query, to perform logical operations and to export.  The following
     sections describe each of these in more detail.
-    </para>
-
-    <para>
-      Bags of objects or identifiers can be created either from your
-      query results (see <xref linkend="manualSavingBags"/>) or from an
-      external source (see <xref linkend="manualCreatingBag"/>) These
-      bags of data can be used for logical operations (union and
-      intersect) or for constraining queries in the query builder -
-      details below.
     </para>
 
     <para>
@@ -1395,7 +1490,7 @@
       Bags of data can be used to constrain queries in the query
       builder.  If you have bags of data saved in your history you will
       automatically be able to use these from within the query builder
-      to constrain a query.  When an attribute or class is selected for
+      to constrain a query.  When a field or class is selected for
       constraining in the query builder the constraint box in the right
       hand constaint pane will ask you to either add a constraint or
       constrain to a choice of your bags (see screenshot below).
@@ -1403,49 +1498,98 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="constrain2bag1.png" />
+        <imagedata fileref="constrain2Bag1.png" />
       </imageobject>
     </mediaobject>
-  </sect1>
+ 
+
+
+  <para>
+      To export the contents of a bag, click on the bag name. This
+      will display the contents of the bag as a results page - with
+      the export options available at the bottom of the page - see
+      <xref linkend="manualExportingData"/>)
+  </para>
+
+ </sect1>
 
 </chapter>
 
-  <chapter id="manualExportingdata">
+
+
+  <chapter id="manualExportingData">
     <title>Exporting data</title>
     <para>
       Data can be exported from the results page in various formats -
-        currently Excel format, comma separated values or tab
-        separated values.  The entire data set will be exported - you
-        do not need to select any check-boxes. If you do not wish to
-        export certain columns these can be hidden using the 'hide'
-        option in the column header.
+      currently Excel (or open office) format, comma separated values,
+      tab separated values, or for items with sequences, fasta format.
+      The entire data set will be exported - you do not need to select
+      any check-boxes. If you do not wish to export certain columns
+      these can be hidden using the 'hide' option in the column
+      header.
     </para>
   </chapter>
 
   <chapter id="manualHistory">
     <title>History</title>
+
+      <sect1>
+        <title>Introduction</title>
     <para>
       This page displays your list of saved bags and queries
     </para>
 
     <para>
-      A saved query is a copy of the actual query configuration, while
-      a saved bag contains specific data saved from a particular
-      query.
+      A saved query is a copy of the actual query configuration,
+      created in the query builder.
     </para>
 
     <para>
-      All queries run are saved in the query history. If you do not give your
-      query a particular name (in the 'Save query' box at the bottom of the
-      query interface), it will be saved as query_x (where x increments for
-      each query run) (see <xref linkend="manualSavingqueries"/>)
+      All queries that you run are saved in your query history with
+      the default name query_x (where x increments for each query run)
+      You can also save a query with a name of your choice using the
+      'Save query' box at the bottom of the query builder
+      interface. (see <xref linkend="manualSavingqueries"/>)
+    </para>
+
+    <para>
+    If you run a template query it will be saved to your query
+    history.  However, if you then access this query from your
+    history, it will be displayed in the query builder.  If you just
+    wish to run this query again, press the 'Show results' button
+    towards the bottom of the query builder.
     </para>
 
     <para>
       Saved bags are created by saving specific data from the results
-      page, (see <xref linkend="manualSavingBags"/>).
+      page, or are uploaded from an external source.  (see <xref
+      linkend="manualSavingBags"/>).
     </para>
+   </sect1>
 
+     <sect1 id = "LoggingIn">
+	<title>Logging in</title>
+	    
+     <para>Your history will remain available to you only for the
+     duration of a session unless you create and use a log in.  If you
+     log in, your history will be stored permanently.</para>
+ 
+     <para> To log in, click on the Log in link in the main menu bar.
+     If you have never logged in before, enter your email address into
+     the third box and press 'request password'.  A password will be
+     emailed to you immediately.  You can then log in.  Your username
+     is the email address for which you requested a password.  If you
+     forget your password, enter your email address into the third box
+     and it will be emailed to you again.
+     </para>
+
+     <para>Note that any queries or bags saved before you log-in will
+     not be available once you have logged in.  Only queries and bags
+     created after you have logged in will be available and stored
+     permanently.
+     </para>
+    </sect1>    
+ 
     <sect1>
       <title>Using saved queries</title>
 
@@ -1460,7 +1604,9 @@
       <title>Using saved bags</title>
 
       <para>
-        Click on the bag name to view its items in the results page.
+        Click on the bag name to view its items in the results
+        page. Bags can be used to perform logical operations and to
+        constrain queries - see <xref linkend="manualUsingBags"/>)
       </para>
     </sect1>
 
