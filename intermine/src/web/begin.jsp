@@ -62,7 +62,7 @@
           titleKey="begin.heading.browse">
     <div class="body" align="center">
       <html:form action="/browseAction">
-        <fmt:message key="begin.input.browse"/>
+        ${WEB_PROPERTIES["begin.browse.prompt"]}:&nbsp;
         <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
         <html:text property="attributeValues(1)"/>
         <input type="hidden" name="templateType" value="global"/>
@@ -71,7 +71,6 @@
         <input type="hidden" name="noSaveQuery" value="1"/>
         <html:submit><fmt:message key="begin.input.submit"/></html:submit>
         <br/>
-        <div>${WEB_PROPERTIES["begin.browse.prompt"]}</div>
         <div class="smallnote">
           <fmt:message key="begin.browse.help.message"/>
           [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
