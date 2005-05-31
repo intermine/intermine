@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class DBRetrieverTask extends ConverterTask
 {
-    private static final Logger LOG = Logger.getLogger(DataTranslator.class);
+    private static final Logger LOG = Logger.getLogger(DBRetrieverTask.class);
 
     protected String database;
 
