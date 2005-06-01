@@ -43,7 +43,7 @@ public class LoginForm extends ActionForm
      * @param username value to assign to username
      */
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.toLowerCase();
     }
 
     /**
