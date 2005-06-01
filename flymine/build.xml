@@ -1837,11 +1837,12 @@
     <mappings operation="calculate-locations" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="create-chromosome-locations" depends="compile-genomic-java-from-db">
+  <target name="create-chromosome-locations-and-lengths" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings operation="create-chromosome-locations" objectStoreWriter="osw.production"/>
+    <mappings operation="create-chromosome-locations-and-lengths" 
+              objectStoreWriter="osw.production"/>
   </target>
 
   <target name="create-oligo-locations" depends="compile-genomic-java-from-db">
@@ -1851,11 +1852,26 @@
     <mappings operation="create-oligo-locations" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="create-overlap-relations" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="create-overlap-relations" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
     <mappings operation="create-references" objectStoreWriter="osw.production"/>
+  </target>
+
+  <target name="create-symmetrical-relation-references" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="create-symmetrical-relation-references"
+              objectStoreWriter="osw.production"/>
   </target>
 
   <target name="make-spanning-locations" depends="compile-genomic-java-from-db">

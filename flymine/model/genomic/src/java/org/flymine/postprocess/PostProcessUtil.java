@@ -230,6 +230,48 @@ public class PostProcessUtil
         return res.iterator();
     }
 
+    /**
+     * Query ObjectStore for all SymmetricalRelation objects (or specified subclass)
+     * for the given object (ie. Obj1 <- SymmetricalRelation -> Obj2  - obj1 and obj2 will be in the
+     * bioEntities collection of the SymmetricalRelation).
+     * Return an iterator over: obj1, SymmetricalRelation, obj2 order by obj1
+     * @param os an ObjectStore to query
+     * @param objectCls the type in the bioEntities collection of the SymmetricalRelation
+     * @param relationCls type of SymmetricalRelation
+     * @return an iterator over the results.  Each pair of objects will be returned twice: (obj1,
+     * rel, obj2) and (obj2, rel, obj1).
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Iterator findSymmetricalRelation(ObjectStore os, Class objectCls,
+                                                   Class relationCls) throws ObjectStoreException {
+        // TODO check objectCls and subjectCls assignable to BioEntity
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcObj1 = new QueryClass(objectCls);
+        q.addFrom(qcObj1);
+        q.addToSelect(qcObj1);
+        q.addToOrderBy(qcObj1);
+        QueryClass qcRel = new QueryClass(relationCls);
+        q.addFrom(qcRel);
+        q.addToSelect(qcRel);
+        QueryClass qcObj2 = new QueryClass(objectCls);
+        q.addFrom(qcObj2);
+        q.addToSelect(qcObj2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryCollectionReference ref1 = new QueryCollectionReference(qcRel, "bioEntities");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj1);
+        cs.addConstraint(cc1);
+        QueryCollectionReference ref2 = new QueryCollectionReference(qcRel, "bioEntities");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcObj2);
+        cs.addConstraint(cc2);
+        q.setConstraint(cs);
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+        return res.iterator();
+    }
+
 
     /**
      * Query ObjectStore for BioProperty subclasses related to BioEntities by an

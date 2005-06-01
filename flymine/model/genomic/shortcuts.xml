@@ -22,5 +22,9 @@
 </class>
 <class name="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   <reference name="chromosomeLocation" referenced-type="org.flymine.model.genomic.Location"/>
+  <collection name="overlappingFeatures" 
+              referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" ordered="true"/>
+  <attribute name="length" type="java.lang.Integer"/>
+  <!--reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/-->
 </class>
 </classes>
