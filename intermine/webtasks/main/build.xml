@@ -1,0 +1,8 @@
+
+<project name="intermine-webapp-tasks" default="default" basedir=".">
+  
+  <description>build, test, package intermine-webapp-tasks</description>
+  <import file="../../../imbuild/library.xml"/>
+  
+</project>
+

@@ -1,0 +1,8 @@
+
+<project name="acedbtest" default="default" basedir=".">
+  
+  <description>build acedbtest model</description>
+  <import file="../../../../imbuild/model.xml"/>
+  
+</project>
+

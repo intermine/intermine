@@ -1,0 +1,6 @@
+
+<project name="datatracking" default="default" basedir=".">
+  <description>build datatracking model</description>
+  <import file="../../../../imbuild/model.xml"/>
+</project>
+

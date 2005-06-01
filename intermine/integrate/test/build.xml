@@ -1,0 +1,13 @@
+
+<project name="intermine-integrate-test" default="default" basedir="."
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
+  
+  <description>build, test, package intermine-integrate-test</description>
+  <import file="../../../imbuild/tests.xml"/>
+
+  <target name="-pre-test">
+    <copy file="${user.home}/intermine.properties" todir="${build.test.resources.dir}"/>
+  </target>
+  
+</project>
+
