@@ -184,6 +184,16 @@ public class CreateReferencesTest extends TestCase {
         compareResultsToExpected();
     }
 
+    public void testInsertSymmetricalRelationReferences() throw Exception {
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.fixPartials();
+        cl.createLocations();
+        CreateReferences cr = new CreateReferences(osw);
+        cr.insertSymmetricalRelationReferences();
+
+        assertTrue(storedGene1.getOverlappingFeatures().get(0).getId().equals(storedGene2.getId()));
+    }
+
     private void compareChromosomeExonResultsToExpected() throws Exception {
         osw.flushObjectById();
         Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
@@ -934,6 +944,16 @@ public class CreateReferencesTest extends TestCase {
         storedTranscript1.setProtein(storedProtein1);
         storedTranscript2.setProtein(storedProtein2);
         storedTranscript3.setProtein(storedProtein3);
+
+        OverlapRelation overlapRelation =
+            (overlapRelation) DynamicUtil.createObject(Collections.singleton(overlapRelation.class));
+
+        // note: this isn't very consistent because there are no locations for these genes
+        // use for testing insertSymmetricalRelationReferences()
+        overlapRelation.addBioEntities(storedGene1);
+        overlapRelation.addBioEntities(storedGene2);
+
+
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     storedGene, storedGene1, storedGene2,

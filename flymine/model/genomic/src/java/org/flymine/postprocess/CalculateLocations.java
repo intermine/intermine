@@ -13,9 +13,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Collections;
 
 import org.intermine.objectstore.query.*;
@@ -47,7 +47,7 @@ public class CalculateLocations
 
     protected ObjectStoreWriter osw;
     protected ObjectStore os;
-    protected Map chrById = new HashMap();
+    protected Map chrById = null;
     protected Map bandToChr = new HashMap();
     protected Map chrToBand = new HashMap();
     protected Map chrToSc = new HashMap();
@@ -261,7 +261,7 @@ public class CalculateLocations
         osw.beginTransaction();
 
         // 0. Hold Chromosomes in map by id
-        makeChromosomeMap();
+        chrById = makeChromosomeMap();
 
         // 1. Find and hold locations of ChromosomeBands on Chromsomes
         makeChromosomeBandLocations();
@@ -412,6 +412,247 @@ public class CalculateLocations
      */
     public void createOligoLocations() throws Exception {
         createTransformedLocations(Transcript.class, Chromosome.class, MicroarrayOligo.class);
+    }
+
+    /**
+     * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
+     * objects that are located on chromosomes and overlap.
+     * @throws Exception if anything goes wrong
+     */
+    public void createOverlapRelations() throws Exception {
+        osw.beginTransaction();
+        Map chromosomeMap = makeChromosomeMap();
+        Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
+        while (chromosomeIdIter.hasNext()) {
+            Integer id = (Integer) chromosomeIdIter.next();
+            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id));
+        }
+        osw.commitTransaction();
+    }
+
+    /**
+     * Create OverlapRelation objects for locations that have the given subject.
+     */
+    private void createSubjectOverlapRelations(Chromosome subject) throws Exception {
+        final int defaultBucketSize = 100000;
+
+        // needed because with may see the same overlap in two buckets
+        HashSet seenOverlaps = new HashSet();
+
+        int bucketSize = defaultBucketSize;
+
+        int maxLength = getMaxObjectLength(subject);
+
+        if (maxLength > defaultBucketSize) {
+            LOG.warn("maximum length of LocatedSequenceFeature is large (" + maxLength + ")"
+                     + " - query may be slow");
+            bucketSize = maxLength;
+        }
+
+        // We query for pairs of LocatedSequenceFeatures that overlap and are have there start or
+        // end in a given region.
+        // If the query wasn't constrained to a small region it would be very slow because all
+        // feature need to be checked against all others.
+        // Choose regions larger than the largest feature to avoid missing overlaps in this case:
+        //    region:         |---------------------|
+        //    feature a:  |-------------------------------|
+        //    feature b:             |----------|
+        for (int bucketStart = 1;
+             bucketStart < subject.getLength().intValue();
+             bucketStart += bucketSize) {
+            int bucketEnd = bucketStart + bucketSize - 1;
+            if (bucketEnd > subject.getLength().intValue()) {
+                bucketEnd = subject.getLength().intValue();
+            }
+
+            QueryValue bucketStartQV = new QueryValue(new Integer(bucketStart));
+            QueryValue bucketEndQV = new QueryValue(new Integer(bucketEnd));
+
+            Query q = new Query();
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            q.setConstraint(cs);
+
+            q.setDistinct(false);
+            QueryClass qcObj1 = new QueryClass(LocatedSequenceFeature.class);
+            q.addFrom(qcObj1);
+            q.addToSelect(qcObj1);
+
+            QueryClass qcLoc1 = new QueryClass(Location.class);
+            q.addFrom(qcLoc1);
+//            q.addToSelect(qcLoc1);
+
+            QueryClass qcSub = new QueryClass(BioEntity.class);
+            q.addFrom(qcSub);
+//            q.addToSelect(qcSub);
+
+            QueryClass qcLoc2 = new QueryClass(Location.class);
+            q.addFrom(qcLoc2);
+//            q.addToSelect(qcLoc2);
+
+            QueryClass qcObj2 = new QueryClass(LocatedSequenceFeature.class);
+            q.addFrom(qcObj2);
+            q.addToSelect(qcObj2);
+
+            QueryObjectReference ref1 = new QueryObjectReference(qcLoc1, "subject");
+            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj1);
+            cs.addConstraint(cc1);
+
+            QueryObjectReference ref2 = new QueryObjectReference(qcLoc1, "object");
+            ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
+            cs.addConstraint(cc2);
+
+            QueryObjectReference ref3 = new QueryObjectReference(qcLoc2, "subject");
+            ContainsConstraint cc3 = new ContainsConstraint(ref3, ConstraintOp.CONTAINS, qcObj2);
+            cs.addConstraint(cc3);
+
+            QueryObjectReference ref4 = new QueryObjectReference(qcLoc2, "object");
+            ContainsConstraint cc4 = new ContainsConstraint(ref4, ConstraintOp.CONTAINS, qcSub);
+            cs.addConstraint(cc4);
+
+            QueryField qfLoc1Start = new QueryField(qcLoc1, "start");
+            QueryField qfLoc1End = new QueryField(qcLoc1, "end");
+            QueryField qfLoc2Start = new QueryField(qcLoc2, "start");
+            QueryField qfLoc2End = new QueryField(qcLoc2, "end");
+
+            SimpleConstraint sc1 =
+                new SimpleConstraint(qfLoc1End, ConstraintOp.GREATER_THAN_EQUALS, qfLoc2Start);
+            cs.addConstraint(sc1);
+
+            SimpleConstraint sc2 =
+                new SimpleConstraint(qfLoc1Start, ConstraintOp.LESS_THAN_EQUALS, qfLoc2End);
+            cs.addConstraint(sc2);
+
+
+            QueryField subIdQF = new QueryField(qcSub, "id");
+            SimpleConstraint chrConstraint =
+                new SimpleConstraint(subIdQF, ConstraintOp.EQUALS, new QueryValue(subject.getId()));
+
+            cs.addConstraint(chrConstraint);
+
+            ConstraintSet obj1PosConstraint = new ConstraintSet(ConstraintOp.OR);
+
+            ConstraintSet obj1StartConstraint = new ConstraintSet(ConstraintOp.AND);
+            SimpleConstraint obj1StartMin =
+                new SimpleConstraint(bucketStartQV, ConstraintOp.LESS_THAN_EQUALS, qfLoc1Start);
+            SimpleConstraint obj1StartMax =
+                new SimpleConstraint(qfLoc1Start, ConstraintOp.LESS_THAN_EQUALS, bucketEndQV);
+            obj1StartConstraint.addConstraint(obj1StartMin);
+            obj1StartConstraint.addConstraint(obj1StartMax);
+            obj1PosConstraint.addConstraint(obj1StartConstraint);
+
+            ConstraintSet obj1EndConstraint = new ConstraintSet(ConstraintOp.AND);
+            SimpleConstraint obj1EndMin =
+                new SimpleConstraint(bucketStartQV, ConstraintOp.LESS_THAN_EQUALS, qfLoc1End);
+            SimpleConstraint obj1EndMax =
+                new SimpleConstraint(qfLoc1End, ConstraintOp.LESS_THAN_EQUALS, bucketEndQV);
+            obj1EndConstraint.addConstraint(obj1EndMin);
+            obj1EndConstraint.addConstraint(obj1EndMax);
+            obj1PosConstraint.addConstraint(obj1EndConstraint);
+
+            cs.addConstraint(obj1PosConstraint);
+
+
+            ConstraintSet obj2PosConstraint = new ConstraintSet(ConstraintOp.OR);
+
+            ConstraintSet obj2StartConstraint = new ConstraintSet(ConstraintOp.AND);
+            SimpleConstraint obj2StartMin =
+                new SimpleConstraint(bucketStartQV, ConstraintOp.LESS_THAN_EQUALS, qfLoc2Start);
+            SimpleConstraint obj2StartMax =
+                new SimpleConstraint(qfLoc2Start, ConstraintOp.LESS_THAN_EQUALS, bucketEndQV);
+            obj2StartConstraint.addConstraint(obj2StartMin);
+            obj2StartConstraint.addConstraint(obj2StartMax);
+            obj2PosConstraint.addConstraint(obj2StartConstraint);
+
+            ConstraintSet obj2EndConstraint = new ConstraintSet(ConstraintOp.AND);
+            SimpleConstraint obj2EndMin =
+                new SimpleConstraint(bucketStartQV, ConstraintOp.LESS_THAN_EQUALS, qfLoc2End);
+            SimpleConstraint obj2EndMax =
+                new SimpleConstraint(qfLoc2End, ConstraintOp.LESS_THAN_EQUALS, bucketEndQV);
+            obj2EndConstraint.addConstraint(obj2EndMin);
+            obj2EndConstraint.addConstraint(obj2EndMax);
+            obj2PosConstraint.addConstraint(obj2EndConstraint);
+
+            cs.addConstraint(obj2PosConstraint);
+
+
+            // this ensures that we don't see two objects that are the same (ie. X overlaps X) and
+            // we only see one of (A overlaps B) and (B overlaps A)
+            QueryField qfObj1Id = new QueryField(qcObj1, "id");
+            QueryField qfObj2Id = new QueryField(qcObj2, "id");
+            SimpleConstraint idLessThanConstraint =
+                new SimpleConstraint(qfObj1Id, ConstraintOp.LESS_THAN, qfObj2Id);
+
+            cs.addConstraint(idLessThanConstraint);
+
+
+            Results results = os.execute(q);
+
+            Iterator resIter = results.iterator();
+
+            while (resIter.hasNext()) {
+                ResultsRow rr = (ResultsRow) resIter.next();
+                LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) rr.get(0);
+                LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) rr.get(1);
+
+                String overlapKey = lsf1.getId() + "_" + lsf2.getId();
+
+                if (!seenOverlaps.contains(overlapKey)) {
+                    OverlapRelation overlap = (OverlapRelation)
+                        DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
+                    overlap.addBioEntities(lsf1);
+                    overlap.addBioEntities(lsf2);
+                    osw.store(overlap);
+
+                    seenOverlaps.add(overlapKey);
+                }
+            }
+        }
+    }
+
+    /**
+     * Find the length of the longest feature located on the given subject.
+     * @param subject find max length of objects located on this BioEntity
+     * @return the length of the longest feature
+     */
+    public int getMaxObjectLength(Chromosome subject) {
+        Query q = new Query();
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        q.setConstraint(cs);
+
+        QueryClass qcObj = new QueryClass(LocatedSequenceFeature.class);
+        q.addFrom(qcObj);
+
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+
+        QueryClass qcSub = new QueryClass(BioEntity.class);
+        q.addFrom(qcSub);
+
+        QueryField subIdQF = new QueryField(qcSub, "id");
+        SimpleConstraint chrConstraint =
+            new SimpleConstraint(subIdQF, ConstraintOp.EQUALS, new QueryValue(subject.getId()));
+
+        cs.addConstraint(chrConstraint);
+
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
+        cs.addConstraint(cc1);
+
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
+        cs.addConstraint(cc2);
+
+
+        QueryField qfObjLength = new QueryField(qcObj, "length");
+
+        QueryFunction maxFunc = new QueryFunction(qfObjLength, QueryFunction.MAX);
+
+        q.addToSelect(maxFunc);
+
+        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+        Integer maxLength = (Integer) sr.iterator().next();
+
+        return maxLength.intValue();
     }
 
     /**
@@ -898,17 +1139,20 @@ public class CalculateLocations
     /**
      * Hold Chromosomes in map by id
      */
-    private void makeChromosomeMap() throws Exception {
+    private Map makeChromosomeMap() throws Exception {
+        Map returnMap = new HashMap();
         Query q = new Query();
         QueryClass qc = new QueryClass(Chromosome.class);
         q.addToSelect(qc);
         q.addFrom(qc);
+
         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
         Iterator chrIter = sr.iterator();
         while (chrIter.hasNext()) {
             Chromosome chr = (Chromosome) chrIter.next();
-            chrById.put(chr.getId(), chr);
+            returnMap.put(chr.getId(), chr);
         }
+        return returnMap;
     }
 
 
@@ -1186,7 +1430,7 @@ public class CalculateLocations
      * LocatedSequenceFeature.chromosomeLocation reference to be that Location.
      * @throws Exception if anything goes wrong
      */
-    public void setChromosomeLocations() throws Exception {
+    public void setChromosomeLocationsAndLengths() throws Exception {
         Results results = PostProcessUtil.findLocations(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
         results.setBatchSize(2000);
@@ -1205,6 +1449,8 @@ public class CalculateLocations
                 (LocatedSequenceFeature) cloneInterMineObject(lsf);
 
             lsfClone.setChromosomeLocation(locOnChr);
+            int length = locOnChr.getEnd().intValue() - locOnChr.getStart().intValue() + 1;
+            lsfClone.setLength(new Integer(length));
 
             osw.store(lsfClone);
         }

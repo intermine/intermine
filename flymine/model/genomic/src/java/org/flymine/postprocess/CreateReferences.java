@@ -149,7 +149,18 @@ public class CreateReferences
         }
     }
 
+    /**
+     * Fill in missing references/collections in model by querying SymmetricalRelations
+     * @throws Exception if anything goes wrong
+     */
+    public void insertSymmetricalRelationReferences() throws Exception {
+        LOG.info("insertReferences stage 1");
+        // Transcript.exons / Exon.transcripts
+        insertSymmetricalRelationReferences(LocatedSequenceFeature.class, OverlapRelation.class,
+                                            "overlappingFeatures");
+    }
 
+    
     /**
      * Fill in the "orthologues" collection of Gene.  Needs to be run after
      * UpdateOrthologues which in turn relies on CreateReferences -> so has
@@ -551,6 +562,78 @@ public class CreateReferences
             ClassDescriptor cld = model.getClassDescriptorByName(entityClass.getName());
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
+    }
+
+    /**
+     * Set the collection in objectClass by the name of collectionFieldName by querying for pairs of
+     * objects in the bioEntities collection of relationClass (which should be a
+     * SymmetricalRelation).
+     * @param objectClass the class of the objects to which the collection will be added and which
+     * should be in the bioEntities collection of the relationClass
+     * @param relationClass the class that relates objectClass objects togeather
+     * @param collectionFieldName the name of the collection to set
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertSymmetricalRelationReferences(Class objectClass, Class relationClass,
+                                                       String collectionFieldName)
+        throws Exception {
+        LOG.info("Beginning insertSymmetricalReferences(" + objectClass.getName() + ", "
+                 + relationClass.getName() + ", "
+                 + collectionFieldName + ")");
+
+        InterMineObject lastObject = null;
+        List newCollection = new ArrayList();
+        // results will be:  object1, relation, object2  (ordered by object1)
+        Iterator resIter =
+            PostProcessUtil.findSymmetricalRelation(osw.getObjectStore(), objectClass,
+                                                    relationClass);
+
+        osw.beginTransaction();
+
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            BioEntity object1 = (BioEntity) rr.get(0);
+            SymmetricalRelation relation = (SymmetricalRelation) rr.get(1);
+            BioEntity object2 = (BioEntity) rr.get(2);
+
+            if (lastObject == null || !object1.getId().equals(lastObject.getId())) {
+                if (lastObject != null) {
+                    // clone so we don't change the ObjectStore cache
+                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+
+                    TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+                    count += newCollection.size();
+                    osw.store(tempObject);
+                }
+
+                newCollection = new ArrayList();
+            }
+
+            newCollection.add(object2);
+
+            lastObject = object1;
+        }
+
+        if (lastObject != null) {
+            // clone so we don't change the ObjectStore cache
+            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
+            TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+            count += newCollection.size();
+            osw.store(tempObject);
+        }
+        LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
+                 + objectClass.getName() + " via the " + collectionFieldName + " field");
+        osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(objectClass.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+        
     }
 
     /**

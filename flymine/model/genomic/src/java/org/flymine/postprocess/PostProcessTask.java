@@ -112,18 +112,26 @@ public class PostProcessTask extends Task
                 cl.fixPartials();
                 LOG.info("Starting CalculateLocations.createLocations()");
                 cl.createLocations();
-            } else if ("create-chromosome-locations".equals(operation)) {
+            } else if ("create-chromosome-locations-and-lengths".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOG.info("Starting CalculateLocations.setChromosomeLocations()");
-                cl.setChromosomeLocations();
+                LOG.info("Starting CalculateLocations.setChromosomeLocationsAndLengths()");
+                cl.setChromosomeLocationsAndLengths();
             } else if ("create-oligo-locations".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOG.info("Starting CalculateLocations.createOligoLocations()");
                 cl.createOligoLocations();
+            } else if ("create-overlap-relations".equals(operation)) {
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
+                LOG.info("Starting CalculateLocations.createOverlapRelations()");
+                cl.createOverlapRelations();
             } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
+            } else if ("create-symmetrical-relation-references".equals(operation)) {
+                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
+                LOG.info("Starting CreateReferences.insertSymmetricalRelationReferences()");
+                cr.insertSymmetricalRelationReferences();
             } else if ("fetch-contig-sequences-human".equals(operation)) {
                 if (ensemblDb == null) {
                     throw new BuildException("ensemblDb attribute is not set");
