@@ -29,6 +29,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
@@ -153,7 +154,7 @@ public class DataLoaderHelper
      */
     public static Set getPrimaryKeys(ClassDescriptor cld, Source source) {
         Properties keys = getKeyProperties(source);
-        Map map = getPrimaryKeys(cld);
+        Map map = PrimaryKeyUtil.getPrimaryKeys(cld);
         Set keySet = new HashSet();
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         String keyList = (String) keys.get(cldName);
@@ -184,24 +185,7 @@ public class DataLoaderHelper
         }
         return keys;
     }
-
-    /**
-     * Return the Properties that specify the key fields for the classes in this Model
-     *
-     * @param model the Model
-     * @return the relevant Properties
-     */
-    public static Properties getKeyProperties(Model model) {
-        Properties keys = null;
-        synchronized (modelKeys) {
-            keys = (Properties) modelKeys.get(model);
-            if (keys == null) {
-                keys = MetadataManager.loadKeyDefinitions(model.getName());
-                modelKeys.put(model, keys);
-            }
-        }
-        return keys;
-    }
+    
     /**
      * Generates a query that searches for all objects in the database equivalent to a given
      * example object according to the primary keys defined for the given source.
@@ -305,7 +289,7 @@ public class DataLoaderHelper
         throws Exception {
         Set primaryKeys;
         if (source == null) {
-            primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+            primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         } else {
             primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
         }
@@ -459,7 +443,7 @@ public class DataLoaderHelper
                     Set primaryKeys;
                 
                     if (source == null) {
-                        primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(refCld).values());
+                        primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
                     } else {
                         primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source);
                     }

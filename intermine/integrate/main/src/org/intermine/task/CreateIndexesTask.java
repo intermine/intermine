@@ -30,6 +30,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.MetaDataException;
@@ -166,7 +167,7 @@ public class CreateIndexesTask extends Task
         String cldTableName = DatabaseUtil.getTableName(cld);
 
         //add an index for each primary key
-        Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
+        Map primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
         for (Iterator i = primaryKeys.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String keyName = (String) entry.getKey();
@@ -260,7 +261,7 @@ public class CreateIndexesTask extends Task
     protected void createAttributeIndexes(ClassDescriptor cld)
         throws SQLException, MetaDataException {
 
-        Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
+        Map primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
         String tableName = DatabaseUtil.getTableName(cld);
         if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
 
