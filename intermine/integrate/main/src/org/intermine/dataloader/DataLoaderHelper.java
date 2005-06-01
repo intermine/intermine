@@ -60,7 +60,7 @@ import org.apache.log4j.Logger;
  */
 public class DataLoaderHelper
 {
-    protected static Map modelKeys = new HashMap();
+
     protected static Map sourceKeys = new HashMap();
     protected static Map modelDescriptors = new HashMap();
 
@@ -139,29 +139,6 @@ public class DataLoaderHelper
         return descriptorSources;
     }
 
-    /**
-     * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
-     * that exist on a particular class, without performing any recursion.
-     *
-     * @param cld the ClassDescriptor to fetch primary keys for
-     * @return the Map from key names to PrimaryKeys
-     */
-    public static Map getPrimaryKeys(ClassDescriptor cld) {
-        Map keyMap = new LinkedHashMap();
-        Properties keys = getKeyProperties(cld.getModel());
-        String cldName = TypeUtil.unqualifiedName(cld.getName());
-        Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
-        cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
-        List keyNames = new ArrayList(cldKeys.keySet());
-        Collections.sort(keyNames);
-        Iterator iter = keyNames.iterator();
-        while (iter.hasNext()) {
-            String keyName = (String) iter.next();
-            PrimaryKey key = new PrimaryKey((String) cldKeys.get(keyName));
-            keyMap.put(keyName, key);
-        }
-        return keyMap;
-    }
 
     /**
      * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor. The Set
