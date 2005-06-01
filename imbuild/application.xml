@@ -1,0 +1,126 @@
+
+<project name="application" default="default" basedir="."
+         xmlns:imapplproj="http://www.intermine.org/ns/im-appl-proj/1"
+         xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+
+  <dirname property="application.xml.basedir" file="${ant.file.application}"/>
+  <import file="${application.xml.basedir}/webapp.xml"/>
+  <import file="${application.xml.basedir}/db.xml"/>
+  
+  <!-- Local webapp build/deploy properties -->
+  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+  <property file="${build.properties.local}"/>
+  
+  <!-- INIT -->
+  
+  <target name="-pre-init" depends="webapp.-pre-init">
+    <!-- Any generated files WEB-INF files should be placed in this directory -->   
+    <property name="build.webinf.dir" location="${build.dir}/web-inf"/>
+    <!-- Files -->
+    <property name="default.template.queries" location="${resources.dir}/default-template-queries.xml"/>
+    <!-- Location of model-less intermine-webapp.war -->
+    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../intermine-webapp/main/dist/intermine-webapp.war"/>
+  </target>
+  
+  <!-- WAR INSTEAD OF JAR -->
+  
+  <target name="-pre-jar" depends="webapp.-pre-jar">
+    <!-- Start with base intermine webapp war -->
+    <copy file="${source.intermine.webapp.war}" tofile="${main.dist.war}"/>
+    <!-- Concatenate local build.properties with web.properties -->
+    <mkdir dir="${build.webinf.dir}"/>
+    <copy tofile="${build.webinf.dir}/web.properties.tmp"
+          file="${webinf.dir}/web.properties"
+          overwrite="true" verbose="true"/>
+    <concat destfile="${build.webinf.dir}/web.properties">
+      <fileset file="${build.webinf.dir}/web.properties.tmp"/>
+      <fileset file="${build.properties.local}"/>
+    </concat>
+    <delete file="${build.webinf.dir}/web.properties.tmp"/>
+    <!-- Copy intermine.properties into build/classes -->
+    <copy file="${user.home}/intermine.properties" todir="${main.build.classes.dir}"/>
+  </target>
+  
+  <target name="do-jar" depends="-init-presetdef-war">
+    <imapplproj:war/>
+  </target>
+  
+  <!-- USER PROFILE -->
+  
+  <target name="-init-build-db" depends="init, -init-deps">
+    <!-- Load db tasks -->
+    <runtarget target="-init-db-tasks"/>
+    <!-- Copy intermine.properties onto the task classpath -->
+    <copy file="${user.home}/intermine.properties" todir="${build.task.dir}"/>
+  </target>
+  
+  <target name="-load-db-taskdefs" depends="db.-load-db-taskdefs">
+    <!-- Overriden to load web tasks -->
+    <taskdef resource="org/intermine/web/task/antlib-web.xml">
+      <classpath refid="db.class.path"/>
+    </taskdef>
+  </target>
+  
+  <target name="build-db-userprofile" depends="-init-build-db">
+    <imdbproj:build-db osname="${userprofile.objectstore.name}"
+                       dbname="${userprofile.db.name}"
+                       model="${userprofile.model.name}"/>
+    <runtarget target="load-default-templates"/>
+  </target>
+  
+  <target name="load-default-templates" depends="-init-build-db">
+    <load-default-templates templatesXml="${default.template.queries}"
+                            username="${webapp.superuser}" osAlias="${objectstore.name}"
+                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+  
+  <target name="write-userprofile-xml" depends="-init-build-db">
+    <write-userprofile-xml fileName="${build.dir}/userprofile.xml" osAlias="${objectstore.name}"
+                           userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
+  <target name="read-userprofile-xml" depends="-init-build-db">
+    <read-userprofile-xml fileName="${build.dir}/userprofile.xml" osAlias="${objectstore.name}"
+                          userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+  
+  <!-- PRECOMPUTING -->
+  
+  <target name="drop-precomputed-tables" depends="-init-build-db">
+    <drop-precomputed-tables alias="${objectstore.name}"/>
+  </target>
+  
+  <target name="precompute-queries" depends="-init-build-db">
+    <precompute-queries alias="${objectstore.name}"
+                        summaryPropertiesFile="objectstoresummary.properties"
+                        minRows="0"/>
+  </target>
+  
+  <target name="precompute-queries-test" depends="-init-build-db">
+    <precompute-queries alias="${objectstore.name}" testMode="true"
+                        summaryPropertiesFile="objectstoresummary.properties"
+                        minRows="0"/>
+  </target>
+  
+  <target name="precompute-templates" depends="-init-build-db">
+    <precompute-templates alias="${objectstore.name}" minRows="0"
+                          templatesFile="${default.template.queries}"/>
+  </target>
+  
+  <!-- MACRO DEFINITIONS -->
+  
+  <target name="-init-presetdef-war">
+    <macrodef name="war" uri="http://www.intermine.org/ns/im-appl-proj/1">
+      <sequential>
+        <war compress="${jar.compress}" destfile="${main.dist.war}" update="true">
+          <classes dir="${main.build.classes.dir}"/>
+          <lib dir="${web.lib.dir}"/>
+          <webinf dir="${webinf.dir}" excludes="web.xml,web.properties"/>
+          <webinf dir="${build.webinf.dir}"/>
+          <fileset dir="${main.resources.dir}"/>
+        </war>
+      </sequential>
+    </macrodef>
+  </target>
+
+</project>

@@ -1,0 +1,73 @@
+
+<project name="webapp" default="default" basedir="." xmlns:imwebappproj="http://www.intermine.org/ns/im-webapp-proj/1">
+
+  <dirname property="webapp.xml.basedir" file="${ant.file.webapp}"/>
+  
+  <import file="${webapp.xml.basedir}/library.xml"/>
+  
+  <target name="-pre-pre-init" depends="library.-pre-pre-init">
+    <property name="main.resources.dir" location="resources/main"/>
+  </target>
+  
+  <target name="-pre-init" depends="library.-pre-init">
+    <property name="main.dist.war" location="${dist.dir}/${ant.project.name}.war"/>
+    <property name="webinf.dir" location="${resources.dir}/web-inf"/>
+    <property name="web.xml" location="${webinf.dir}/web.xml"/>
+    <property name="web.lib.dir" location="${build.dir}/lib"/>
+    <!-- War settings -->
+    <property name="war.update" value="false"/>
+  </target>
+  
+  <!-- WAR INSTEAD OF JAR -->
+  
+  <target name="-pre-jar">
+    <dependencies basedir="${library.xml.basedir}/.." buildDependencies="false"
+                  type="deploy" pathid="deploy.class.path"/>
+    <!-- copy all dependencies into build/lib -->
+    <mkdir dir="${web.lib.dir}"/>
+    <copy todir="${web.lib.dir}" flatten="true">
+      <fileset refid="deploy.class.path.fileset"/>
+    </copy>
+  </target>
+  
+  <target name="do-jar" depends="-init-presetdef-war">
+    <imwebappproj:war/>
+  </target>
+  
+  <!-- RELEASE / REMOVE FROM TOMCAT -->
+  
+  <target name="release-webapp" depends="init">
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask"
+             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
+    <tomcat-deploy url="${webapp.deploy.url}/manager"
+                   username="${webapp.manager}" 
+                   password="${webapp.password}"
+                   path="/${webapp.path}" 
+                   war="file://${main.dist.war}"/>
+  </target>
+
+  <target name="remove-webapp" depends="init">
+    <taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask"
+             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
+    <tomcat-undeploy url="${webapp.deploy.url}/manager"
+                     username="${webapp.manager}" 
+                     password="${webapp.password}"
+                     path="/${webapp.path}"/>
+  </target>
+  
+  <!-- MACRO DEFINITIONS -->
+  
+  <target name="-init-presetdef-war">
+    <macrodef name="war" uri="http://www.intermine.org/ns/im-webapp-proj/1">
+      <sequential>
+        <war compress="${jar.compress}" warfile="${main.dist.war}" webxml="${web.xml}">
+          <classes dir="${main.build.classes.dir}"/>
+          <lib dir="${web.lib.dir}"/>
+          <webinf dir="${webinf.dir}" excludes="web.xml"/>
+          <fileset dir="${main.resources.dir}"/>
+        </war>
+      </sequential>
+    </macrodef>
+  </target>
+  
+</project>

@@ -1,0 +1,11 @@
+
+<project name="core-model" default="default" basedir="." xmlns:imcoremodelproj="http://www.intermine.org/ns/im-core-model-proj/1">
+
+  <dirname property="core-model.xml.basedir" file="${ant.file.core-model}"/>
+  <import file="${core-model.xml.basedir}/model.xml"/>
+  
+  <target name="-pre-init" depends="model.-pre-init">
+    <property name="is.core.model" value="true"/>
+  </target>
+  
+</project>

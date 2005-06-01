@@ -1,0 +1,166 @@
+
+<project name="library" default="default" basedir="." xmlns:imlibproj="http://www.intermine.org/ns/im-lib-proj/1" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+  
+  <dirname property="library.xml.basedir" file="${ant.file.library}"/>
+  
+  <!-- Import antcontrib tasks -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${library.xml.basedir}/lib/ant-contrib.jar"/>
+  
+  <!-- Import intermine build tasks -->
+  <taskdef resource="org/intermine/task/antlib.xml" classpath="${library.xml.basedir}/lib/ant-tasks.jar"/>
+  
+  <!-- INIT -->
+  
+  <target name="-init-project">
+    <property file="project.properties"/>
+  </target>
+  
+  <target name="-pre-pre-init" depends="-init-project"/>
+  
+  <target name="-pre-init" depends="-pre-pre-init">
+    <!-- Directories -->
+    <property name="build.dir" location="build"/>
+    <property name="src.dir" location="src"/>
+    <property name="resources.dir" location="resources"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="main.build.classes.dir" location="${build.dir}/classes"/>
+    <property name="test.build.classes.dir" location="${build.dir}/test/classes"/>
+    <property name="main.src.dir" location="${src.dir}/"/>
+    <property name="test.src.dir" location="${src.dir}/test"/>
+    <property name="gen.src.dir" location="${build.dir}/gen/src"/>
+    <property name="main.resources.dir" location="${resources.dir}/"/>
+    <property name="test.resources.dir" location="${resources.dir}/test"/>
+    <!-- Compilation settings -->
+    <property name="javac.source" value="1.4"/>
+    <property name="javac.target" value="1.4"/>
+    <property name="javac.debug" value="on"/>
+    <property name="javac.debuglevel" value="lines,vars,source"/>
+    <property name="main.build.classes.excludes" value="**/*.java"/>
+    <property name="javac.compilerargs" value=""/>
+    <property name="generating.code" value="false"/>
+    <!-- Packaging settings -->
+    <property name="main.dist.jar" location="${dist.dir}/${ant.project.name}.jar"/>
+    <property name="test.dist.jar" location="${dist.dir}/${ant.project.name}-test.jar"/>
+    <property name="jar.compress" value="off"/>
+    <!-- Conditions -->
+    <condition property="gen.code">
+      <and><istrue value="${generating.code}"/></and>
+    </condition>
+  </target>
+    
+  <target name="init" depends="-pre-init"/>
+
+  <target name="default" depends="compile, jar"/>
+  
+  <target name="-init-deps">
+    <echo>${ant.project.name}</echo>
+    <dependencies basedir="${library.xml.basedir}/.."/>
+    <!--property name="cp" refid="main.class.path.artifact.fileset"/>
+    <echo>${cp}</echo>
+    <property name="cp" refid="main.class.path"/>
+    <echo message="main.class.path classpath is ${cp}"/-->
+  </target>
+  
+  <!-- CODE GENERATION -->
+  
+  <target name="-init-generate" if="gen.code" depends="init, -init-deps">
+    <mkdir dir="${gen.src.dir}"/>
+  </target>
+  
+  <target name="-pre-generate"/>
+  
+  <target name="-post-generate"/>
+  
+  <target name="do-generate"/>
+  
+  <target name="generate" depends="-init-generate, -pre-generate, do-generate, -post-generate"/>
+  
+  <!-- COMPILE -->
+  
+  <target name="-init-compile" depends="init, -init-deps">
+    <mkdir dir="${main.build.classes.dir}"/>
+  </target>
+  
+  <target name="-pre-compile"/>
+  
+  <target name="-post-compile"/>
+  
+  <target name="do-compile-with-gen-src" if="gen.code">
+    <imlibproj:javac>
+      <customize>
+        <src path="${gen.src.dir}"/>
+      </customize>
+    </imlibproj:javac>
+  </target>
+  
+  <target name="do-compile-without-gen-src" unless="gen.code">
+    <imlibproj:javac/>
+  </target>
+  
+  <target name="do-compile" depends="-init-macrodef-javac, do-compile-with-gen-src, do-compile-without-gen-src">
+    <copy todir="${main.build.classes.dir}">
+      <fileset dir="${main.src.dir}" excludes="${main.build.classes.excludes}"/>
+    </copy>
+  </target>
+  
+  <target name="compile" depends="-init-compile, generate, -pre-compile, do-compile, -post-compile"/>
+    
+  <!-- JAR -->
+  
+  <target name="-pre-jar"/>
+  
+  <target name="-post-jar"/>
+  
+  <target name="-init-jar" depends="init, -init-deps">
+    <mkdir dir="${dist.dir}"/>
+  </target>
+  
+  <target name="do-jar" depends="-init-presetdef-jar">
+    <imlibproj:jar/>
+  </target>
+  
+  <target name="jar" depends="compile, -init-jar, -pre-jar, do-jar, -post-jar"/>
+  
+  <!-- CLEAN -->
+  
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+  
+  <target name="clean-all" depends="init, clean">
+    <dependencies basedir="${library.xml.basedir}/.." target="clean"/>
+  </target>
+  
+  <target name="-init-macrodef-javac">
+    <macrodef name="javac" uri="http://www.intermine.org/ns/im-lib-proj/1">
+      <attribute name="srcdir" default="${main.src.dir}"/>
+      <attribute name="destdir" default="${main.build.classes.dir}"/>
+      <attribute name="classpath" default="main.class.path"/>
+      <attribute name="debug" default="${javac.debug}"/>
+      <element name="customize" optional="true"/>
+      <sequential>
+      <!-- property name="cp" refid="@{classpath}"/>
+      <echo message="main.class.path classpath is ${cp}"/ -->
+        <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="modern"
+           deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}"
+           includeantruntime="false">
+          <classpath refid="@{classpath}"/>
+          <compilerarg line="${javac.compilerargs}"/>
+          <customize/>
+        </javac>
+      </sequential>
+    </macrodef>
+  </target>
+  
+  <target name="-init-presetdef-jar">
+    <presetdef name="jar" uri="http://www.intermine.org/ns/im-lib-proj/1">
+      <jar compress="${jar.compress}" jarfile="${main.dist.jar}">
+        <fileset dir="${main.build.classes.dir}"/>
+        <fileset dir="${main.resources.dir}"/>
+      </jar>
+    </presetdef>
+  </target>
+  
+</project>

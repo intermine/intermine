@@ -1,0 +1,161 @@
+
+<project name="model" default="default" basedir="." xmlns:immodelproj="http://www.intermine.org/ns/im-model-proj/1">
+
+  <dirname property="model.xml.basedir" file="${ant.file.model}"/>
+  
+  <property name="generating.code" value="true"/>
+  
+  <import file="${model.xml.basedir}/library.xml"/>
+  
+  <target name="-pre-init" depends="library.-pre-init">
+    <!-- Model specific -->
+    <property name="model.name" value="${ant.project.name}"/>
+    <property name="namespace" value="http://www.intermine.org/model"/>
+    <property name="packagename" value="org.intermine.model"/>
+  </target>
+
+  <!-- CODE GENERATION -->
+
+  <target name="unpack-xmi-model">
+    <unzip src="${model.name}.zargo" dest="${build.dir}">
+      <patternset>
+        <include name="${model.name}_.xmi"/>
+      </patternset>
+    </unzip>
+    <touch file="${build.dir}/${model.name}_.xmi" />
+  </target>
+  
+  <target name="generate-model-java" if="regenerate.java" depends="-init-macrodef-model-output">
+    <immodelproj:model-output/>
+  </target>
+  
+  <target name="build-model-from-zargo" if="have.zargo">
+    <echo>Found zargo file</echo>
+    <immodelproj:modeloutofdate source="${model.name}.zargo">
+      <then>
+        <runtarget target="unpack-xmi-model"/>
+        <immodelproj:model-generation type="xmi" source="${build.dir}/${model.name}_.xmi"/>
+        <!--antcall target="copy-keydefs"/-->
+        <property name="regenerate.java" value="true"/>
+      </then>
+    </immodelproj:modeloutofdate>
+  </target>
+  
+  <target name="build-model-from-xml" if="have.xml">
+    <echo>Found xml file</echo>
+    <immodelproj:modeloutofdate source="${model.name}_model.xml">
+      <then>
+        <copy file="${model.name}_model.xml" tofile="${build.dir}/${model.name}_model.xml"/>
+        <!--antcall target="copy-keydefs"/-->
+        <property name="regenerate.java" value="true"/>
+      </then>
+    </immodelproj:modeloutofdate>
+  </target>
+  
+  <target name="build-model-from-xmlschema" if="have.xmlschema">
+    <echo>Found xml-schema file</echo>
+    <immodelproj:modeloutofdate source="${model.name}.xsd">
+      <then>
+        <immodelproj:model-generation type="xmlschema" source="${model.name}.xsd"/>
+        <!--antcall target="copy-keydefs"/-->
+        <property name="regenerate.java" value="true"/>
+      </then>
+    </immodelproj:modeloutofdate>
+  </target>
+  
+  <target name="build-model-from-acedb" if="have.acedb">
+    <echo>Found acedb file</echo>
+    <immodelproj:modeloutofdate source="${model.name}.wrm">
+      <then>
+        <immodelproj:model-generation type="acedb" source="${model.name}.wrm"/>
+        <!--antcall target="copy-keydefs"/-->
+        <property name="regenerate.java" value="true"/>
+      </then>
+    </immodelproj:modeloutofdate>
+  </target>
+  
+  <target name="-init-generate" depends="library.-init-generate, -init-model-out-of-date, -init-macrodef-model-generation">
+    <!-- Conditions -->
+    <available file="${model.name}.zargo" property="have.zargo"/>
+    <available file="${model.name}_model.xml" property="have.xml"/>
+    <available file="${model.name}.xsd" property="have.xmlschema"/>
+    <available file="${model.name}.wrm" property="have.acedb"/>
+    <available file="${model.name}_additions.xml" property="have.additions"/>
+  </target>
+  
+  <target name="do-generate" depends="build-model-from-xml,
+                                      build-model-from-zargo,
+                                      build-model-from-xmlschema,
+                                      build-model-from-acedb,
+                                      generate-model-java"/>
+
+  <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->
+
+  <target name="-init-presetdef-jar">
+    <presetdef name="jar" uri="http://www.intermine.org/ns/im-lib-proj/1">
+      <jar compress="${jar.compress}" jarfile="${main.dist.jar}">
+        <fileset dir="${main.build.classes.dir}"/>
+        <fileset dir="${main.resources.dir}"/>
+        <fileset file="${build.dir}/${model.name}_model.xml"/>
+      </jar>
+    </presetdef>
+  </target>
+  
+  <!-- MACRO DEFINITION -->
+
+  <target name="-init-macrodef-model-output">
+    <macrodef name="model-output" uri="http://www.intermine.org/ns/im-model-proj/1">
+      <sequential>
+        <echo>Generating model java code...</echo>
+        <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
+          <classpath>
+            <path refid="main.class.path"/>
+            <pathelement location="${build.dir}"/>
+          </classpath>
+        </taskdef>
+        <model-output type="java" model="${model.name}" destdir="${gen.src.dir}"/>
+      </sequential>
+    </macrodef>
+  </target>
+  
+  <target name="-init-macrodef-model-generation">
+    <macrodef name="model-generation" uri="http://www.intermine.org/ns/im-model-proj/1">
+      <attribute name="type"/>
+      <attribute name="source"/>
+      <sequential>
+        <echo>Generating model...</echo>
+        <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
+          <classpath>
+            <path refid="main.class.path"/>
+            <pathelement location="${build.dir}"/>
+          </classpath>
+        </taskdef>
+        <model-generation type="@{type}"
+                          modelName="${model.name}"
+                          nameSpace="${namespace}"
+                          pkg="${packagename}.${model.name}"
+                          source="@{source}"
+                          destDir="${build.dir}"/>
+      </sequential>
+    </macrodef>
+  </target>
+  
+  <target name="-init-model-out-of-date">
+    <macrodef name="modeloutofdate" uri="http://www.intermine.org/ns/im-model-proj/1">
+      <attribute name="source"/>
+      <element name="then" optional=""/>
+      <sequential>
+        <outofdate>
+          <sourcefiles path="@{source}"/>
+          <targetfiles>
+            <fileset dir="${gen.src.dir}" includes="**/*.java"/>
+          </targetfiles>
+          <sequential>
+            <then/>
+          </sequential>
+        </outofdate>
+      </sequential>
+    </macrodef>
+  </target>
+  
+</project>

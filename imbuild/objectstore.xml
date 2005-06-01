@@ -1,0 +1,65 @@
+
+<project name="objectstore" default="default" basedir="." xmlns:imosproj="http://www.intermine.org/ns/im-os-proj/1"
+    xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+
+  <dirname property="objectstore.xml.basedir" file="${ant.file.objectstore}"/>
+  
+  <import file="${objectstore.xml.basedir}/model.xml"/>
+  <import file="${objectstore.xml.basedir}/db.xml"/>
+  
+  <!-- Our generate phase involves fetching the model from the database. -->
+  <property name="generating.code" value="true"/>
+  
+  <!-- INIT TASKS -->
+  
+  <target name="-pre-init" depends="model.-pre-init">
+    <property name="build.model.dir" location="${build.dir}/model"/>
+    <property name="objectstore.summary.properties" location="${main.build.classes.dir}/objectstoresummary.properties"/>
+  </target>
+  
+  <target name="-init-tasks">
+    <!-- Make directories -->
+    <mkdir dir="${build.model.dir}"/>
+    <!-- Load db tasks -->
+    <runtarget target="-init-db-tasks"/>
+    <!-- Copy intermine.properties onto the classpath -->
+    <copy file="${user.home}/intermine.properties" todir="${build.task.dir}"/>
+  </target>
+  
+  <!-- BUILD DB -->
+  
+  <target name="build-db" depends="init, -init-deps, -init-tasks">
+    <imdbproj:build-db osname="${objectstore.name}" dbname="${db.name}" model="${model.name}"/>
+  </target>
+  
+  <!-- GENERATE (FETCH) -->
+  
+  <target name="-init-generate" depends="model.-init-generate">
+    <!-- We actually get the model xml quite late (from the database) so we set this now -->
+    <condition property="have.xml">
+      <and><istrue value="true"/></and>
+    </condition>
+  </target>
+  
+  <target name="-pre-generate" depends="-init-tasks">
+    <!-- Retrieve model from database -->
+    <retrieve-metadata database="${db.name}" destDir="${build.model.dir}"/>
+    <!-- Summarise objectstore -->
+    <echo message="Summarising object store ${objectstore.name}..."/>
+    <summarise-objectstore alias="${objectstore.name}"
+                           outputFile="${objectstore.summary.properties}"
+                           inputFile="objectstoresummary.config.properties"/>
+    <!-- Copy retrieved files so that model generation and packaging tasks will find them -->
+    <copy file="${build.model.dir}/${model.name}_model.xml"
+          tofile="${model.name}_model.xml"
+          preservelastmodified="true"/>
+    <mkdir dir="${main.build.classes.dir}"/>
+    <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
+          todir="${main.build.classes.dir}"/>
+  </target>
+  
+  <target name="-post-generate">
+    <delete file="${model.name}_model.xml"/>
+  </target>
+    
+</project>
