@@ -1,0 +1,9 @@
+<antlib>
+    <!-- condition typedefs - these do not work for ant less than 1.6 -->
+    <typedef
+        name="filename"
+        classname="org.intermine.task.FileName"/>
+    <typedef
+        name="dependencies"
+        classname="org.intermine.task.Dependencies"/>
+</antlib>

@@ -1,0 +1,71 @@
+
+<project name="db" default="default" basedir="." xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+
+  <dirname property="db.xml.basedir" file="${ant.file.db}"/>
+  
+  <!--
+     |
+     | Import this file and call the target -init-db-tasks to have access
+     | to database/objectstore related tasks. The classpath used to laod the
+     | tasks is called db.class.path and is defined with the target -define-db-classpath.
+     | By default, this classpath extends main.class.path and adds the location
+     | ${build.task.dir} directory. Put things in ${build.task.dir} that are expected
+     | to be on the classpath while running tasks.
+     | Override -define-db-classpath to alter the classpath defined.
+     |
+     | Before calling -init-db-tasks, these properties should be defined:
+     |
+     |    ${build.dir}
+     |
+   -->
+  
+  <target name="-load-db-taskdefs">
+    <!-- Load tasks -->
+    <taskdef resource="org/intermine/task/antlib-os.xml">
+      <classpath refid="db.class.path"/>
+    </taskdef>
+    <taskdef resource="org/intermine/task/antlib-int.xml">
+      <classpath refid="db.class.path"/>
+    </taskdef>
+  </target>
+  
+  <target name="-pre-define-db-classpath">
+     <property name="build.task.dir" location="${build.dir}/task"/>
+     <property name="build.tmp.dir" location="${build.dir}/tmp"/>
+     <mkdir dir="${build.task.dir}"/>
+     <mkdir dir="${build.tmp.dir}"/>
+  </target>
+  
+  <target name="-define-db-classpath">
+    <!-- Override to alter the classpath created -->
+    <path id="db.class.path">
+      <path refid="main.class.path"/>
+      <pathelement location="${build.task.dir}"/>
+    </path>
+  </target>
+
+  <target name="-init-db-tasks" depends="-pre-define-db-classpath,
+                                         -define-db-classpath,
+                                         -load-db-taskdefs,
+                                         -init-macrodef-build-db"/>
+  
+  <!-- MACRODEF -->
+  
+  <target name="-init-macrodef-build-db">
+    <macrodef name="build-db" uri="http://www.intermine.org/ns/im-db-proj/1">
+      <attribute name="osname"/>
+      <attribute name="dbname"/>
+      <attribute name="model"/>
+      <sequential>
+        <build-torque osName="@{osname}"
+                      destFile="${build.task.dir}/@{osname}-schema.xml"/>
+        <build-db database="@{dbname}"
+                  tempdir="${build.tmp.dir}"
+                  schemafile="@{osname}-schema.xml"/>
+        <db-insert-model database="@{dbname}" modelName="@{model}"/>
+      </sequential>
+    </macrodef>
+  </target>
+
+  
+</project>

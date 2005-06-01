@@ -1,0 +1,88 @@
+
+<project name="tests" default="default" basedir="." xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
+
+  <dirname property="tests.xml.basedir" file="${ant.file.tests}"/>
+  
+  <import file="${tests.xml.basedir}/library.xml"/>
+  
+  <target name="-pre-init" depends="library.-pre-init">
+    <property name="test.results.dir" location="${build.dir}/test/results"/>
+    <property name="test.excludes" location=""/>
+    <property name="build.test.resources.dir" location="${build.dir}/test/resources"/>
+  </target>
+  
+  <!-- RUN TESTS -->
+  
+  <target name="-init-test" depends="init, -init-deps">
+    <mkdir dir="${test.results.dir}"/>
+    <mkdir dir="${build.test.resources.dir}"/>
+  </target>
+  
+  <target name="-pre-test"/>
+  
+  <target name="-post-test"/>
+  
+  <target name="do-test" depends="-init-macrodef-junit">
+    <imtestsproj:junit/>
+  </target>
+  
+  <target name="test-report" depends="init">
+    <junitreport todir="${test.results.dir}">
+      <fileset dir="${test.results.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${test.results.dir}"/>
+    </junitreport>
+  </target>
+  
+  <target name="test" depends="library.default, -init-test, -pre-test, do-test, test-report, -post-test"/>
+  
+  <target name="test-all" depends="init, -init-deps, jar">
+    <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
+    <runtarget target="test"/>
+  </target>
+  
+  <target name="default" depends="test"/>
+  
+  <!-- CLEAN -->
+  
+  <target name="clean-results" depends="init">
+    <delete dir="${test.results.dir}"/>
+  </target>
+  
+  <!-- MACRO DEFINITIONS -->
+  
+  <target name="-init-macrodef-junit">
+    <macrodef name="junit" uri="http://www.intermine.org/ns/im-tests-proj/1">
+    <attribute name="includes" default="**/*Test.class"/>
+    <attribute name="excludes" default="${test.excludes}"/>
+    <attribute name="fork" default="no"/>
+    <element name="customize" optional="true"/>
+    <sequential>
+      <junit showoutput="true" reloading="false" printsummary="yes"
+             failureproperty="tests.failed" errorproperty="tests.failed">
+        <customize/>
+        <formatter type="xml"/>
+        <batchtest todir="${test.results.dir}" fork="no">
+          <fileset dir="${main.build.classes.dir}" includes="@{includes}" excludes="@{excludes}">
+            <depend targetdir="${test.results.dir}">
+              <mapper type="package" from="*.class" to="TEST-*.xml" />
+            </depend>
+          </fileset>
+        </batchtest>
+        <classpath>
+          <path refid="main.class.path"/>
+          <pathelement location="${main.build.classes.dir}"/>
+          <pathelement location="${main.resources.dir}"/>
+          <pathelement location="${build.test.resources.dir}"/>
+        </classpath>
+        <syspropertyset>
+          <propertyref prefix="test-sys-prop."/>
+          <mapper to="*" from="test-sys-prop.*" type="glob"/>
+        </syspropertyset>
+      </junit>
+    </sequential>
+    </macrodef>
+  </target>
+  
+</project>
