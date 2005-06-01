@@ -1,0 +1,14 @@
+<antlib>
+    <typedef
+        name="load-default-templates"
+        classname="org.intermine.web.task.LoadDefaultTemplatesTask"/>
+    <typedef
+        name="precompute-templates"
+        classname="org.intermine.web.task.PrecomputeTemplatesTask"/>
+    <typedef
+        name="read-userprofile-xml"
+        classname="org.intermine.web.task.ProfileReadTask"/>
+    <typedef
+        name="write-userprofile-xml"
+        classname="org.intermine.web.task.ProfileWriteTask"/>
+</antlib>

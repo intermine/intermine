@@ -1,0 +1,80 @@
+
+<project name="intermine-objectstore-test" default="default" basedir="."
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
+  xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+  
+  <description>build, test, package intermine-objectstore-test</description>
+  
+  <import file="../../../imbuild/tests.xml"/>
+  <import file="../../../imbuild/db.xml"/>
+  
+  <target name="-pre-test">
+    <copy file="${user.home}/intermine.properties" todir="${build.test.resources.dir}"/>
+  </target>
+   
+  <target name="do-test" depends="-init-macrodef-junit">
+    <imtestsproj:junit excludes="org/intermine/objectstore/webservice/**,org/intermine/util/CacheMapTest.class"/>
+    <imtestsproj:junit fork="yes" includes="org/intermine/util/CacheMapTest.class">
+      <customize>
+        <jvmarg value="-Xmx200M"/>
+      </customize>
+    </imtestsproj:junit>
+  </target>
+  
+  <target name="-init-build-db" depends="init, -init-deps">
+    <!-- Load db tasks -->
+    <runtarget target="-init-db-tasks"/>
+    <!-- Copy intermine.properties onto the classpath -->
+    <copy file="${user.home}/intermine.properties" todir="${build.task.dir}"/>
+  </target>
+  
+  <target name="build-db-fulldatatest" depends="-init-build-db">
+    <imdbproj:build-db osname="os.fulldatatest"
+                       dbname="db.fulldatatest"
+                       model="fulldata"/>
+  </target>
+
+  <target name="build-db-truncunittest" depends="-init-build-db">
+    <imdbproj:build-db osname="os.truncunittest"
+                       dbname="db.truncunittest"
+                       model="testmodel"/>
+  </target>
+
+  <target name="build-db-notxmlunittest" depends="-init-build-db">
+    <imdbproj:build-db osname="os.notxmlunittest"
+                       dbname="db.notxmlunittest"
+                       model="testmodel"/>
+  </target>
+
+  <target name="build-db-flatmodeunittest" depends="-init-build-db">
+    <imdbproj:build-db osname="os.flatmodeunittest"
+                       dbname="db.flatmodeunittest"
+                       model="testmodel"/>
+  </target>
+  
+  <!-- index the unittest database -->
+  <target name="create-indexes-unittest" depends="-init-build-db">
+    <create-indexes alias="os.unittest" attributeIndexes="false"/>
+  </target>
+
+  <!-- index the truncated unittest database -->
+  <target name="create-indexes-truncunittest" depends="-init-build-db">
+    <create-indexes alias="os.truncunittest" attributeIndexes="false"/>
+  </target>
+
+  <!-- index the withNotXml unittest database -->
+  <target name="create-indexes-notxmlunittest" depends="-init-build-db">
+    <create-indexes alias="os.notxmlunittest" attributeIndexes="false"/>
+  </target>
+
+  <!-- index the flatmode unittest database -->
+  <target name="create-indexes-flatmodeunittest" depends="-init-build-db">
+    <create-indexes alias="os.flatmodeunittest" attributeIndexes="false"/>
+  </target>
+
+  <target name="create-indexes-unittest-attribute" depends="-init-build-db">
+    <create-indexes alias="os.unittest" attributeIndexes="true"/>
+  </target>
+  
+</project>
+

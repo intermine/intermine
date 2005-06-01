@@ -1,0 +1,3 @@
+<!-- @@@REPLACE_PATH@@@ will be replaced with the correct application path by ANT -->
+<Context path="@@@REPLACE_PATH@@@">
+</Context>

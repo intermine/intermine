@@ -1,0 +1,20 @@
+<antlib>
+    <typedef
+        name="build-torque"
+        classname="org.intermine.objectstore.intermine.TorqueModelOutputTask"/>
+    <typedef
+        name="build-db"
+        classname="org.intermine.task.BuildDbTask"/>
+    <typedef
+        name="db-insert-model"
+        classname="org.intermine.objectstore.intermine.StoreMetadataTask"/>
+    <typedef
+        name="analyse-db"
+        classname="org.intermine.task.AnalyseDbTask"/>
+    <typedef
+        name="retrieve-metadata"
+        classname="org.intermine.objectstore.intermine.RetrieveMetadataTask"/>
+    <typedef
+        name="dot"
+        classname="org.intermine.task.InheritanceDotTask"/>
+</antlib>

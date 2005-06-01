@@ -1,0 +1,17 @@
+<antlib>
+    <typedef
+        name="create-indexes"
+        classname="org.intermine.task.CreateIndexesTask"/>
+    <typedef
+        name="precompute-queries"
+        classname="org.intermine.task.PrecomputeTask"/>
+    <typedef
+        name="summarise-objectstore"
+        classname="org.intermine.task.SummariseObjectStoreTask"/>
+    <typedef
+        name="drop-precomputed-tables"
+        classname="org.intermine.task.DropPrecomputedTablesTask"/>
+    <typedef
+        name="insert-xml-data"
+        classname="org.intermine.dataloader.XmlDataLoaderTask"/>
+</antlib>
