@@ -58,7 +58,6 @@ public abstract class PrimaryKeyUtil
         return keyMap;
     }
 
-
     /**
      * Return the Properties that specify the key fields for the classes in this Model
      *
