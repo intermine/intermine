@@ -1,6 +1,10 @@
 <project name="flymine" default="help" basedir=".">
   <description>FlyMine build file</description>
 
+  <!-- Import intermine build tasks -->
+  <taskdef resource="org/intermine/task/antlib.xml" classpath="../imbuild/lib/ant-tasks.jar"/>
+
+
   <!-- SETUP TARGETS -->
 
   <!-- Property setup targets -->
@@ -20,8 +24,8 @@
 
   <property name="intermine.path" location="../intermine"/>
   <property name="intermine.dist.path" location="${intermine.path}/dist"/>
-  <property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/>
-  <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
+  <!--property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/-->
+  <property name="intermine.war.path" location="../intermine/webapp/main/dist/intermine-webapp.war"/>
   <property name="webservice.war.path" location="${intermine.dist.path}/webapp/webservice.war"/>
   <property name="webservice-client.jar.path" location="${intermine.dist.path}/webservice-client.jar"/>
 
@@ -114,114 +118,123 @@
   </patternset>
 
 
+  <target name="init-paths">
+  
+    <!-- build dependencies -->
+    <dependencies basedir=".."/>
+  
+    <!-- set the classpath for the build - basically everything in lib -->
+    <path id="base.class.path">
+      <path refid="main.class.path"/>
+      <pathelement path="${build.java}"/>
+      <pathelement path="${build.resources}"/>
+      <fileset dir="${lib}">
+        <patternset refid="lib.build"/>
+      </fileset>
+      <!--<fileset dir="${intermine.dist.path}">
+        <include name="intermine-all.jar" />
+      </fileset>-->
+    </path>
+  
+    <path id="genomic.class.path">
+      <path refid="base.class.path"/>
+      <pathelement location="${build.model}/genomic"/>
+    </path>
+  
+    <path id="webapp.class.path">
+      <pathelement path="${resources}/webapp"/>
+      <path refid="base.class.path"/>
+      <path refid="genomic.class.path"/>
+      <fileset dir="${build.webapp.intermine.lib}">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+  
+    <path id="webservice.class.path">
+      <path refid="base.class.path"/>
+      <fileset dir="${build.webservice.lib}">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+  
+    <path id="checkstyle.class.path">
+      <fileset dir="${lib}">
+        <patternset refid="lib.checkstyle"/>
+      </fileset>
+    </path>
+  
+    <path id="models.class.path">
+      <path refid="base.class.path"/>
+      <path refid="genomic.class.path"/>
+      <pathelement location="${build.model}/userprofile"/>
+      <pathelement location="${build.model}/acedb"/>
+      <pathelement location="${build.model}/mage"/>
+      <pathelement location="${build.model}/chado"/>
+      <pathelement location="${build.model}/so"/>
+      <pathelement location="${build.model}/ensembl"/>
+      <pathelement location="${build.model}/ensembl-human"/>
+      <pathelement location="${build.model}/rnai"/>
+      <pathelement location="${build.model}/long_oligo"/>
+      <pathelement location="${build.model}/tiling_path"/>
+      <pathelement location="${build.model}/flyreg"/>
+      <pathelement location="${build.model}/drosdel"/>
+      <pathelement location="${build.model}/orthologue"/>
+      <pathelement location="${build.model}/phenotype"/>
+      <pathelement location="${build.model}/fulldata"/>
+      <pathelement location="${build.model}/psi"/>
+      <pathelement location="${build.model}/go"/>
+      <pathelement location="${build.model}/taxonomy"/>
+      <pathelement location="${build.model}/uniprot"/>
+      <pathelement location="${build.model}/protein_structure"/>
+      <pathelement location="${build.model}/ucsc"/>
+      <pathelement location="${build.model}/firstef"/>
+      <pathelement location="${build.model}/tfbs"/>
+      <pathelement location="${build.model}/region"/>
+      <pathelement location="${build.model}/diseaseregion"/>
+  
+      <fileset dir="${model}">
+        <patternset refid="lib.models"/>
+      </fileset>
+    </path>
+  
+    <path id="project.class.path">
+      <path refid="base.class.path"/>
+      <fileset dir="${dist}">
+        <include name="intermine*.jar" />
+      </fileset>
+    </path>
+  
+    <path id="test.class.path">
+      <pathelement path="${build.resources.test}"/>
+      <pathelement location="${build.test}"/>
+      <path refid="models.class.path"/>
+    </path>
 
-  <!-- set the classpath for the build - basically everything in lib -->
-  <path id="base.class.path">
-    <pathelement path="${build.java}"/>
-    <pathelement path="${build.resources}"/>
-    <fileset dir="${lib}">
-      <patternset refid="lib.build"/>
-    </fileset>
-    <fileset dir="${intermine.dist.path}">
-      <include name="intermine-all.jar" />
-    </fileset>
-  </path>
 
-  <path id="genomic.class.path">
-    <path refid="base.class.path"/>
-    <pathelement location="${build.model}/genomic"/>
-  </path>
-
-  <path id="webapp.class.path">
-    <pathelement path="${resources}/webapp"/>
-    <path refid="base.class.path"/>
-    <path refid="genomic.class.path"/>
-    <fileset dir="${build.webapp.intermine.lib}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <path id="webservice.class.path">
-    <path refid="base.class.path"/>
-    <fileset dir="${build.webservice.lib}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <path id="checkstyle.class.path">
-    <fileset dir="${lib}">
-      <patternset refid="lib.checkstyle"/>
-    </fileset>
-  </path>
-
-  <path id="models.class.path">
-    <path refid="base.class.path"/>
-    <path refid="genomic.class.path"/>
-    <pathelement location="${build.model}/userprofile"/>
-    <pathelement location="${build.model}/acedb"/>
-    <pathelement location="${build.model}/mage"/>
-    <pathelement location="${build.model}/chado"/>
-    <pathelement location="${build.model}/so"/>
-    <pathelement location="${build.model}/ensembl"/>
-    <pathelement location="${build.model}/ensembl-human"/>
-    <pathelement location="${build.model}/rnai"/>
-    <pathelement location="${build.model}/long_oligo"/>
-    <pathelement location="${build.model}/tiling_path"/>
-    <pathelement location="${build.model}/flyreg"/>
-    <pathelement location="${build.model}/drosdel"/>
-    <pathelement location="${build.model}/orthologue"/>
-    <pathelement location="${build.model}/phenotype"/>
-    <pathelement location="${build.model}/fulldata"/>
-    <pathelement location="${build.model}/psi"/>
-    <pathelement location="${build.model}/go"/>
-    <pathelement location="${build.model}/taxonomy"/>
-    <pathelement location="${build.model}/uniprot"/>
-    <pathelement location="${build.model}/protein_structure"/>
-    <pathelement location="${build.model}/ucsc"/>
-    <pathelement location="${build.model}/firstef"/>
-    <pathelement location="${build.model}/tfbs"/>
-    <pathelement location="${build.model}/region"/>
-    <pathelement location="${build.model}/diseaseregion"/>
-
-    <fileset dir="${model}">
-      <patternset refid="lib.models"/>
-    </fileset>
-  </path>
-
-  <path id="project.class.path">
-    <path refid="base.class.path"/>
-    <fileset dir="${dist}">
-      <include name="intermine*.jar" />
-    </fileset>
-  </path>
-
-  <path id="test.class.path">
-    <pathelement path="${build.resources.test}"/>
-    <pathelement location="${build.test}"/>
-    <path refid="models.class.path"/>
-  </path>
-
+  </target>
 
   <!-- ============================== GLOBAL TASKDEFS ============================= -->
 
-  <!-- taskdefs -->
-
+<!--
   <taskdef name="merge-additions" classname="org.intermine.task.ModelMergerTask">
     <classpath refid="models.class.path"/>
   </taskdef>
 
-
-  <!-- presetdefs -->
 
   <presetdef name="merge-genomic-additions">
     <merge-additions inputModelFile="${build.model}/genomic/genomic_model.xml"
                      additionsFile="${additionsFile}"
                      outputFile="${build.model}/genomic/genomic_model.xml"/>
   </presetdef>
+-->
 
   <!-- ========================= INITIALISATION TARGETS =========================== -->
 
-  <target name="prepare">
+  <target name="no-dep">
+    <property name="no.dep" value="true"/>
+  </target>
+
+  <target name="prepare" depends="init-paths">
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
       <format property="DTSTAMP" pattern="yyyyMMddHHmm"/>
@@ -260,6 +273,22 @@
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
     </copy>
+      
+    <!-- taskdefs -->
+  
+    <taskdef name="merge-additions" classname="org.intermine.task.ModelMergerTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+  
+  
+    <!-- presetdefs -->
+  
+    <presetdef name="merge-genomic-additions">
+      <merge-additions inputModelFile="${build.model}/genomic/genomic_model.xml"
+                       additionsFile="${additionsFile}"
+                       outputFile="${build.model}/genomic/genomic_model.xml"/>
+    </presetdef>
+    
   </target>
 
   <target name="prepare-test" depends="prepare">
@@ -1837,12 +1866,11 @@
     <mappings operation="calculate-locations" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="create-chromosome-locations-and-lengths" depends="compile-genomic-java-from-db">
+  <target name="create-chromosome-locations" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings operation="create-chromosome-locations-and-lengths" 
-              objectStoreWriter="osw.production"/>
+    <mappings operation="create-chromosome-locations" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="create-oligo-locations" depends="compile-genomic-java-from-db">
@@ -1852,26 +1880,11 @@
     <mappings operation="create-oligo-locations" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="create-overlap-relations" depends="compile-genomic-java-from-db">
-    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <mappings operation="create-overlap-relations" objectStoreWriter="osw.production"/>
-  </target>
-
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
     <mappings operation="create-references" objectStoreWriter="osw.production"/>
-  </target>
-
-  <target name="create-symmetrical-relation-references" depends="compile-genomic-java-from-db">
-    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <mappings operation="create-symmetrical-relation-references"
-              objectStoreWriter="osw.production"/>
   </target>
 
   <target name="make-spanning-locations" depends="compile-genomic-java-from-db">
@@ -2397,7 +2410,7 @@
     </ant>
   </target>
 
-  <target name="release-webapp" depends="prepare-build-model"
+  <target name="release-webapp" depends="no-dep, prepare-build-model"
           description="release the webapp to the server">
     <ant antfile="${build}/build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
@@ -2405,7 +2418,7 @@
     </ant>
   </target>
 
-  <target name="remove-webapp" depends="prepare-build-model"
+  <target name="remove-webapp" depends="no-dep, prepare-build-model"
           description="remove the webapp from the server">
     <ant antfile="${build}/build-webapp.xml" target="remove-webapp" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
@@ -2582,7 +2595,7 @@
   <target name="load-gbrowse-data-mysql"
           description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec executable="/bin/sh">
-      <arg line="-c 'bp_bulk_load_gff.pl --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --maxfeature 1000000000 --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
+      <arg line="-c 'bp_bulk_load_gff.pl -create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
     </exec>
   </target>
 
@@ -2768,9 +2781,9 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/human/databases.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/human/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/human/ontologies.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/databases.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/ontologies.xml" sourceName="static"/>
   </target>
 
 
@@ -2923,8 +2936,6 @@
       <antcall target="fetch-contig-sequences"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
-      <antcall target="analyse-db-production"/>
-      <antcall target="update-publications" />  
       <antcall target="analyse-db-production"/>
       <!-- removed due to running out of memory -->
       <!--antcall target="transfer-sequences-chromosome"/-->
@@ -3333,7 +3344,6 @@
   <target name="build-disease-regions-production"
           depends="retrieve-disease-regions, load-disease-regions"/>
 
-
-   
+  
 </project>
 
