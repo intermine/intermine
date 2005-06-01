@@ -63,7 +63,9 @@
         </html:link>
       </c:when>
       <c:otherwise>
-        <fmt:message key="menu.login"/>
+        <html:link action="/logout.do">
+          <fmt:message key="menu.logout"/>
+        </html:link>
       </c:otherwise>
     </c:choose>
   </span>
