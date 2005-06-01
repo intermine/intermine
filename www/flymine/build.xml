@@ -121,51 +121,63 @@
   </target>
 
   <target name="remove-production-webapp">
-    <ant dir="../../flymine-www" target="remove-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../flymine" target="remove-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
   </target>
 
   <target name="release-production-webapp">
-    <ant dir="../../intermine-www" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine-www" target="build-webapp" inheritRefs="true"/>
-    <ant dir="../../intermine-www" target="jar" inheritRefs="true"/>
-    <ant dir="../../flymine-www" target="distclean" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+    <ant dir="../../intermine" target="build-webapp" inheritRefs="true"/>
+    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
+    <ant dir="../../flymine" target="distclean" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
-    <ant dir="../../flymine-www" target="build-production-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../flymine" target="build-production-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
-    <ant dir="../../flymine-www" target="release-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../flymine" target="release-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
   </target>
 
   <target name="release-production-webapp-nobuild">
-    <ant dir="../../flymine-www" target="release-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../flymine" target="release-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
   </target>
 
   <target name="release-production-webservice">
-    <ant dir="../../intermine-www" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine-www" target="build-webservice" inheritRefs="true"/>
-    <ant dir="../../intermine-www" target="jar" inheritRefs="true"/>
+    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+    <ant dir="../../intermine" target="build-webservice" inheritRefs="true"/>
+    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
 
-    <ant dir="../../flymine-www" target="distclean" inheritRefs="true"/>
-    <ant dir="../../flymine-www" target="build-production-webservice" inheritRefs="true"/>
-    <ant dir="../../flymine-www" target="release-webservice" inheritRefs="true"/>
+    <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
+    <ant dir="../../flymine" target="build-production-webservice" inheritRefs="true"/>
+    <ant dir="../../flymine" target="release-webservice" inheritRefs="true"/>
   </target>
 
   <target name="create-indexes-production-attribute" depends="prepare">
-    <ant dir="../../flymine-www" target="create-indexes-production-attribute" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../flymine" target="create-indexes-production-attribute" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="dump-userprofile" depends="prepare">
+    <ant dir="../../flymine" target="write-production-userprofile-xml" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="load-userprofile" depends="prepare">
+    <ant dir="../../flymine" target="read-production-userprofile-xml" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
   </target>
 
   <target name="setup-userprofile" depends="prepare">
-    <ant dir="../../flymine-www" target="build-db-userprofile" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+    <ant dir="../../flymine" target="build-db-userprofile" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
   </target>
 
