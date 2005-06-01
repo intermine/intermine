@@ -15,6 +15,7 @@ import org.intermine.dataloader.PrimaryKey;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -167,7 +168,7 @@ public class ProfileBinding
 
         while (cdIter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) cdIter.next();
-            Map primaryKeyMap = DataLoaderHelper.getPrimaryKeys(cd);
+            Map primaryKeyMap = PrimaryKeyUtil.getPrimaryKeys(cd);
             Iterator primaryKeyIter = primaryKeyMap.values().iterator();
 
             while (primaryKeyIter.hasNext()) {
