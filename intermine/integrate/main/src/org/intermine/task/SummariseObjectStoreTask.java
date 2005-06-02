@@ -10,6 +10,7 @@ package org.intermine.task;
  *
  */
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
@@ -29,7 +30,8 @@ import org.apache.tools.ant.Task;
 
 public class SummariseObjectStoreTask extends Task
 {
-    protected String alias, outputFile, inputFile;
+    protected String alias;
+    protected File outputFile, inputFile;
 
     /**
      * Set the ObjectStore alias 
@@ -44,7 +46,7 @@ public class SummariseObjectStoreTask extends Task
      * summarise.
      * @param inputFile the properties file
      */
-    public void setInputFile(String inputFile) {
+    public void setInputFile(File inputFile) {
         this.inputFile = inputFile;
     }
 
@@ -52,7 +54,7 @@ public class SummariseObjectStoreTask extends Task
      * Set the name of the file to write the summary into
      * @param outputFile the output file
      */
-    public void setOutputFile(String outputFile) {
+    public void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
     }
 
