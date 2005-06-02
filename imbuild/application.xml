@@ -19,7 +19,7 @@
     <!-- Files -->
     <property name="default.template.queries" location="${resources.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
-    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../intermine-webapp/main/dist/intermine-webapp.war"/>
+    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../intermine/webapp/main/dist/intermine-webapp.war"/>
   </target>
   
   <!-- WAR INSTEAD OF JAR -->
