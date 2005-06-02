@@ -209,8 +209,8 @@ public class Dependencies extends Task
             fileset.setProject(getProject());
             mainPath.addFileset(fileset);
             
-            includes += depName + "dist/*.jar dist/*.war ";
-            artifactIncludes += depName + "dist/*.jar dist/*.war ";
+            includes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
+            artifactIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
             
             // Add lib/main/*.jar
             fileset = new FileSet();
@@ -225,6 +225,7 @@ public class Dependencies extends Task
         if (includes.length() > 0) {
             mainFileSet.setIncludes(includes);
             getProject().addReference(pathid + ".fileset", mainFileSet);
+            System.out.println(includes);
         }
         
         if (artifactIncludes.length() > 0) {
