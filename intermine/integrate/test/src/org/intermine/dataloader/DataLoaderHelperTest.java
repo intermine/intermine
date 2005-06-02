@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
@@ -56,20 +57,6 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void setUp() throws Exception {
         super.setUp();
         model = Model.getInstanceByName("testmodel");
-    }
-
-    public void testGetPrimaryKeysCld() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Map expected = new HashMap();
-        expected.put("key1", new PrimaryKey("name, address"));
-        expected.put("key2", new PrimaryKey("vatNumber"));        
-        assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld));
-    }
-
-    public void testGetPrimaryKeysCldInherited() throws Exception {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Manager");
-        Map expected = new HashMap();
-        assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld));
     }
 
     public void testGetPrimaryKeysCldSource() throws Exception {
@@ -144,7 +131,7 @@ public class DataLoaderHelperTest extends QueryTestCase
 
         assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), false));
     }
-    
+
     public void testCreateQueryDisableNullFields2() throws Exception {
         Source source = new Source();
         source.setName("testsource");
@@ -259,7 +246,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         qD.setConstraint(csD);
         qD.setDistinct(false);
         cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qD));
-        
+
         q.setConstraint(cs);
         q.setDistinct(false);
 
@@ -276,13 +263,13 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testObjectPrimaryKeyIsNull1() throws Exception {
         Source source = new Source();
         source.setName("testsource");
-        
+
         Employable e =
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Employable");
-        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
         assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source));
@@ -291,13 +278,13 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testObjectPrimaryKeyIsNullNullField() throws Exception {
         Source source = new Source();
         source.setName("testsource");
-        
+
         Employable e =
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Employable");
-        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
         assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source));
@@ -306,17 +293,17 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testObjectPrimaryKeyIsNull2() throws Exception {
         Source source = new Source();
         source.setName("testsource");
-        
+
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         Address a = new Address();
         a.setAddress("10 Downing Street");
         c.setAddress(a);
         c.setVatNumber(765213);
-        
+
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
         assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk, source));
@@ -325,17 +312,17 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testObjectPrimaryKeyIsNullNullField2() throws Exception {
         Source source = new Source();
         source.setName("testsource");
-        
+
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         Address a = new Address();
         a.setAddress(null);
         c.setAddress(a);
         c.setVatNumber(765213);
-        
+
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         Iterator pkIter = primaryKeys.iterator();
         PrimaryKey pk1 = (PrimaryKey) pkIter.next();
 
@@ -347,7 +334,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         // Company.key2=vatNumber
         assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source));
     }
-    
+
     public void testObjectPrimaryKeyIsNullNullField3() throws Exception {
         Department d = (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         d.setName("jkhsdfg");
@@ -357,7 +344,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         d.setCompany(c);
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
-        Set primaryKeys = new HashSet(DataLoaderHelper.getPrimaryKeys(cld).values());
+        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
         assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, d, cld, pk, null));

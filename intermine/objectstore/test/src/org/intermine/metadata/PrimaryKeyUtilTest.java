@@ -14,6 +14,10 @@ import junit.framework.TestCase;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+
+import org.intermine.dataloader.PrimaryKey;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
@@ -26,8 +30,15 @@ import org.intermine.metadata.FieldDescriptor;
  */
 public class PrimaryKeyUtilTest extends TestCase
 {
+    private Model model;
+
     public PrimaryKeyUtilTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() throws Exception {
+        super.setUp();
+        model = Model.getInstanceByName("testmodel");
     }
 
     public void testGetPrimaryKeyFields() throws Exception {
@@ -40,4 +51,20 @@ public class PrimaryKeyUtilTest extends TestCase
         testFieldNames.add(fd);
         assertEquals(testFieldNames, fields);
     }
+
+    public void testGetPrimaryKeysCld() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        Map expected = new HashMap();
+        expected.put("key1", new PrimaryKey("name, address"));
+        expected.put("key2", new PrimaryKey("vatNumber"));
+        assertEquals(expected, PrimaryKeyUtil.getPrimaryKeys(cld));
+    }
+
+    public void testGetPrimaryKeysCldInherited() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Manager");
+        Map expected = new HashMap();
+        assertEquals(expected, PrimaryKeyUtil.getPrimaryKeys(cld));
+    }
+
+
 }
