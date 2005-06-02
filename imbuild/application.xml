@@ -47,7 +47,7 @@
   
   <!-- USER PROFILE -->
   
-  <target name="-init-build-db" depends="init, -init-deps">
+  <target name="-init-build-db" depends="init, -init-deps-no-build">
     <!-- Load db tasks -->
     <runtarget target="-init-db-tasks"/>
     <!-- Copy intermine.properties onto the task classpath -->

@@ -53,6 +53,11 @@
 
   <target name="default" depends="compile, jar"/>
   
+  <target name="-init-deps-no-build">
+    <property name="no.dep" value="true"/>
+    <dependencies basedir="${library.xml.basedir}/.."/>
+  </target>
+  
   <target name="-init-deps">
     <echo>${ant.project.name}</echo>
     <dependencies basedir="${library.xml.basedir}/.."/>
