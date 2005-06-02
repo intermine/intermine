@@ -34,13 +34,15 @@
      <property name="build.tmp.dir" location="${build.dir}/tmp"/>
      <mkdir dir="${build.task.dir}"/>
      <mkdir dir="${build.tmp.dir}"/>
+     <copy file="${db.xml.basedir}/task.log4j.properties" toFile="${build.task.dir}/log4j.properties"/>
   </target>
   
   <target name="-define-db-classpath">
     <!-- Override to alter the classpath created -->
     <path id="db.class.path">
-      <path refid="main.class.path"/>
       <pathelement location="${build.task.dir}"/>
+      <path refid="main.class.path"/>
+      
     </path>
   </target>
 
