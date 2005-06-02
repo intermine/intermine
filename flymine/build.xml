@@ -23,6 +23,7 @@
   <property name="packagename" value="org.flymine.model"/>
 
   <property name="intermine.path" location="../intermine"/>
+  <property name="old-intermine.path" location="../old-intermine"/>
   <property name="intermine.dist.path" location="${intermine.path}/dist"/>
   <!--property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/-->
   <property name="intermine.war.path" location="../intermine/webapp/main/dist/intermine-webapp.war"/>
@@ -353,8 +354,8 @@
     <touch file="${build}/build-model.xml"/>
     <touch file="${build}/build-webapp.xml"/>-->
 
-    <copy file="${intermine.path}/build-model.xml" todir="${build}"/>
-    <copy file="${intermine.path}/build-webapp.xml" todir="${build}"/>
+    <copy file="${old-intermine.path}/build-model.xml" todir="${build}"/>
+    <copy file="${old-intermine.path}/build-webapp.xml" todir="${build}"/>
   </target>
 
 
