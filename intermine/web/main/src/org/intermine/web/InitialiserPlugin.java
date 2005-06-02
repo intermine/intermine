@@ -120,7 +120,7 @@ public class InitialiserPlugin implements PlugIn
      */
     private void loadClassDescriptions(ServletContext servletContext, ObjectStore os)
         throws ServletException {
-        Properties classDescriptions = null;
+        Properties classDescriptions = new Properties();
         try {
             classDescriptions.load(servletContext.getResourceAsStream("/WEB-INF/classDescriptions.properties"));
         } catch (Exception e) {
@@ -162,9 +162,10 @@ public class InitialiserPlugin implements PlugIn
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =
-            servletContext.getResourceAsStream("/WEB-INF/objectstoresummary.properties");
+            getClass().getClassLoader().getResourceAsStream("objectstoresummary.properties");
         if (objectStoreSummaryPropertiesStream == null) {
             // there are no model specific properties
+            throw new ServletException("Unable to find objectstoresummary.properties");
         } else {
             try {
                 objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
