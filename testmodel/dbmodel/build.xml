@@ -1,5 +1,5 @@
 
-<project name="testmodel-objectstore" default="default" basedir=".">
+<project name="testmodel-dbmodel" default="default" basedir=".">
   
   <description>perform actions on the testmodel database</description>
   <import file="../../imbuild/objectstore.xml"/>
