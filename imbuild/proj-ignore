@@ -1,4 +1,6 @@
 build
 dist
 bin
-
+intermine.log*
+velocity.log*
+executeLog*
