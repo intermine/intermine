@@ -69,11 +69,11 @@ public class StoreMetadataTask extends Task
                                       PropertiesUtil.serialize(keys));
             }
 
-            Properties descriptions = MetadataManager.loadClassDescriptions(modelName);
+            /*Properties descriptions = MetadataManager.loadClassDescriptions(modelName);
             if (descriptions != null) {
                 MetadataManager.store(db, MetadataManager.CLASS_DESCRIPTIONS,
                                       PropertiesUtil.serialize(descriptions));
-            }
+            }*/
         } catch (Exception e) {
             throw new BuildException(e);
         }

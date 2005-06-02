@@ -63,13 +63,13 @@ public class RetrieveMetadataTask extends Task
 
             String modelXml = MetadataManager.retrieve(db, MetadataManager.MODEL);
             String keyDefs = MetadataManager.retrieve(db, MetadataManager.KEY_DEFINITIONS);
-            String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
+            //String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
             
             Model model = new InterMineModelParser().process(new StringReader(modelXml));
 
             MetadataManager.saveModel(model, destDir);
             MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
-            MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
+            //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
             throw new BuildException(e);
         }
