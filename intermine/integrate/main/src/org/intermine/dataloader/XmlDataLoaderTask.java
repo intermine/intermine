@@ -12,6 +12,7 @@ package org.intermine.dataloader;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
@@ -29,7 +30,8 @@ public class XmlDataLoaderTask extends Task
     protected File xmlFile;
     protected String sourceName;
     protected boolean ignoreDuplicates = false;
-
+    protected String xmlRes;
+    
     /**
      * Set the IntegrationWriter.
      *
@@ -48,6 +50,10 @@ public class XmlDataLoaderTask extends Task
         this.xmlFile = xmlFile;
     }
 
+    public void setXmlResource(String resName) {
+        this.xmlRes = resName;
+    }
+    
     /**
      * Set the source name, as used by primary key priority config.
      *
@@ -74,21 +80,27 @@ public class XmlDataLoaderTask extends Task
         if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
         }
-        if (xmlFile == null) {
-            throw new BuildException("xmlFile attribute is not set");
+        if (xmlFile == null && xmlRes == null) {
+            throw new BuildException("neither xmlRes or xmlFile attributes set");
         }
         if (sourceName == null) {
             throw new BuildException("sourceName attribute is not set");
         }
-
         try {
+            InputStream is = null;
+            if (xmlRes != null) {
+                is = getClass().getClassLoader().getResourceAsStream(xmlRes);
+            } else {
+                is = new FileInputStream(xmlFile);
+            }
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
             iw.setIgnoreDuplicates(ignoreDuplicates);
-            new XmlDataLoader(iw).processXml(new FileInputStream(xmlFile),
+            new XmlDataLoader(iw).processXml(is,
                                              iw.getMainSource(sourceName),
                                              iw.getSkeletonSource(sourceName));
         } catch (Exception e) {
-            throw new BuildException("Exception while reading from: " + xmlFile + " with source "
+            throw new BuildException("Exception while reading from: "
+                    + (xmlRes != null ? xmlRes : xmlFile.toString()) + " with source "
                                      + sourceName, e);
         }
     }
