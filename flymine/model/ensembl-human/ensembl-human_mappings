@@ -1,9 +1,6 @@
 ChromosomeBand = karyotype
 ChromosomeBand.identifier = karyotype.band
 ChromosomeBand.stain = karyotype.stain
-Comment = gene_description
-Comment.subject = gene_description.gene
-Comment.text = gene_description.description
 ComputationalAnalysis = analysis
 ComputationalAnalysis.algorithm = analysis.logic_name
 Exon = exon
