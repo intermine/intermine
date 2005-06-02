@@ -498,6 +498,14 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return result;
     }
 
+    /**
+     * Create comment class referenced by Gene item if there is a description field
+     * in gene
+     * @param srcItem gene
+     * @param tgtItem gene
+     * @throws ObjectStoreException when anything goes wrong.
+     * @return new comment item
+     */
     protected Item createComment(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
         Item comment = null;
