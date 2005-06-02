@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.fastcollections.ObjectStoreFastCollectionsForTranslatorImpl;

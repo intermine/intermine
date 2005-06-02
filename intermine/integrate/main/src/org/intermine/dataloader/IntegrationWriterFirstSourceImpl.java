@@ -18,7 +18,6 @@ import java.util.Properties;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 
 
 /**

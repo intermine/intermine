@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.intermine.model.datatracking.Source;
 import org.intermine.sql.Database;
 
 import org.apache.log4j.Logger;
@@ -59,7 +58,6 @@ public class DataTracker
     private HashMap writeBack = new HashMap();
     private HashMap nameToSource = new HashMap();
     private HashMap sourceToName = new HashMap();
-    private int serial = 0;
     private Connection conn;
     private Connection storeConn;
     protected Exception broken = null;
@@ -468,8 +466,6 @@ public class DataTracker
                 retval.setName(name);
                 retval.setSkeleton(false);
             }
-            retval.setId(new Integer(serial));
-            serial++;
             nameToSource.put(name, retval);
             sourceToName.put(retval, name);
         }
