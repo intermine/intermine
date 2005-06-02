@@ -27,6 +27,7 @@
     <reference name="seq_region" ref_id="1_965389"/>
     <reference name="analysis" ref_id="11_70"/>
     <reference name="display_xref" ref_id="5_1"/>
+    <attribute name="description" value="Transcribed locus, moderately similar to XP_343063.1 similar to sorting nexin 6 [Rattus norvegicus] [Source:UniGene;Acc:Hs.429230]"/>
   </item>
  <item id="4_327" class="http://www.flymine.org/model/ensembl-human#gene">
     <attribute name="type" value="ensembl"/>
@@ -36,6 +37,7 @@
     <reference name="seq_region" ref_id="1_965389"/>
     <reference name="analysis" ref_id="11_70"/>
     <reference name="display_xref" ref_id="5_145095"/>
+    <attribute name="description" value="RNA, U39 small nucleolar (RNU39) on chromosome 1 [Source:RefSeq_dna;Acc:NR_000015]"/>
   </item>
   <item id="4_949" class="http://www.flymine.org/model/ensembl-human#gene">
     <attribute name="type" value="ensembl"/>
@@ -46,14 +48,7 @@
     <reference name="analysis" ref_id="11_70"/>
     <reference name="display_xref" ref_id="5_59086"/>
   </item>
-  <item id="21_1" class="http://www.flymine.org/model/ensembl-human#gene_description">
-    <attribute name="description" value=" TRGV11 protein (Fragment). [Source:SPTREMBL;Acc:Q99601]"/>
-    <reference name="gene" ref_id="4_949"/>
-  </item>
- <item id="21_11941" class="http://www.flymine.org/model/ensembl-human#gene_description">
-    <attribute name="description" value="Tuftelin-interacting protein 11 (HSPC006). [Source:SWISSPROT;Acc:Q9UBB9]"/>
-    <reference name="gene" ref_id="4_327"/>
-  </item>
+ 
 
   <item id="22_1" class="http://www.flymine.org/model/ensembl-human#gene_stable_id">
     <attribute name="created_date" value="1095634800000"/>

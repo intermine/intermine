@@ -7,7 +7,7 @@
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="name" type="java.lang.String"/>
   <attribute name="accession" type="java.lang.String"/>
-  <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+  <reference name="comment" referenced-type="org.flymine.model.genomic.Comment" />
 </class>
 <class name="org.flymine.model.genomic.Chromosome" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="length" type="java.lang.Integer"/>

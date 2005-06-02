@@ -155,14 +155,18 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
+                    Item comment = createComment(srcItem, tgtItem);
+                    if (comment != null) {
+                        result.add(comment);
+                    }
                     Item location = createLocation(srcItem, tgtItem, true);
                     result.add(location);
                     Item anaResult = createAnalysisResult(srcItem, tgtItem);
                     result.add(anaResult);
-                    List comments = getCommentIds(srcItem.getIdentifier(), srcNs);
-                    if (!comments.isEmpty()) {
-                        tgtItem.addCollection(new ReferenceList("comments", comments));
-                    }
+                    //  List comments = getCommentIds(srcItem.getIdentifier(), srcNs);
+//                      if (!comments.isEmpty()) {
+//                          tgtItem.addCollection(new ReferenceList("comments", comments));
+//                      }
                     // gene organismDbId should be its stable id (or identifier if none)
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
@@ -478,7 +482,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @throws ObjectStoreException when anything goes wrong.
      * @return new AnalysisResult item
      */
-    protected Item createAnalysisResult(Item srcItem, Item tgtItem) throws ObjectStoreException {
+    protected Item createAnalysisResult(Item srcItem, Item tgtItem)
+        throws ObjectStoreException {
         Item result = createItem(tgtNs + "ComputationalResult", "");
         if (srcItem.hasReference("analysis")) {
             moveField(srcItem, result, "analysis", "analysis");
@@ -491,6 +496,19 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                       {result.getIdentifier(), getEnsemblDb().getIdentifier()}));
         tgtItem.addCollection(evidence);
         return result;
+    }
+
+    protected Item createComment(Item srcItem, Item tgtItem)
+        throws ObjectStoreException {
+        Item comment = null;
+        if (srcItem.hasAttribute("description")) {
+            comment = createItem(tgtNs + "Comment", "");
+            moveField(srcItem, comment, "description", "text");
+            //comment.addReference(new Reference("subject", srcItem.getIdentifier()));
+            tgtItem.addReference(new Reference("comment", comment.getIdentifier()));
+        }
+
+        return comment;
     }
 
     /**
