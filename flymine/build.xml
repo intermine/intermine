@@ -2399,10 +2399,12 @@
       <fileset file="${model}/genomic/resources/web/web.properties" />
       <fileset file="${build.properties.local}" />
     </concat>
+    <copy todir="${build.tmp}" file="${resources}/webapp/flymine/classDescriptions.properties"/>
     <patternset id="flymine-global-web-properties-patternset">
       <include name="global.web.properties"/>
       <include name="web.properties"/>
       <include name="objectstoresummary.properties"/>
+      <include name="classDescriptions.properties"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
