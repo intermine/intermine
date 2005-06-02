@@ -154,10 +154,10 @@ public class MetadataManager
      * Load the class descriptions file for the named model from the classpath
      * @param modelName the model name
      * @return the class descriptions
-     */
+     *
     public static Properties loadClassDescriptions(String modelName) {
         return PropertiesUtil.loadProperties(getFilename(CLASS_DESCRIPTIONS, modelName));
-    }
+    }*/
 
     /**
      * Save the class descriptions, in serialized form, to the specified directory
@@ -165,11 +165,11 @@ public class MetadataManager
      * @param destDir the destination directory
      * @param modelName the name of the associated model, used the generate the filename
      * @throws IOException if an error occurs
-     */
+     *
     public static void saveClassDescriptions(String properties, File destDir, String modelName)
         throws IOException {
         write(properties, new File(destDir, getFilename(CLASS_DESCRIPTIONS, modelName)));
-    }
+    }*/
 
     private static String getFilename(String key, String modelName) {
         String filename = modelName + "_" + key;
