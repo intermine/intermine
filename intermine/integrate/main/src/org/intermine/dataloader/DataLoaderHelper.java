@@ -32,7 +32,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;

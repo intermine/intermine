@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.model.datatracking.Source;
-
 /**
  * Object class used by DataTracker for data tracking.
  *

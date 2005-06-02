@@ -16,7 +16,6 @@ import java.io.InputStream;
 
 import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
 

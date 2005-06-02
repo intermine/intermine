@@ -14,7 +14,6 @@ import java.util.Comparator;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.util.IntPresentSet;
 
 import org.apache.log4j.Logger;

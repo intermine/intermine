@@ -10,7 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import org.intermine.model.datatracking.Source;
 import org.intermine.sql.Database;
 
 /**
