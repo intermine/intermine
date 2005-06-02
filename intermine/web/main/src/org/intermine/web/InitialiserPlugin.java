@@ -253,9 +253,9 @@ public class InitialiserPlugin implements PlugIn
      * The properties file should look something like:
      * <pre>
      *   category.0.name = People
-     *   category.0.subcategories = Employee Manager CEO Contractor Secretary
+     *   category.0.classes = Employee Manager CEO Contractor Secretary
      *   category.1.name = Entities
-     *   category.1.subcategories = Bank Address Department
+     *   category.1.classes = Bank Address Department
      * </pre>
      *
      * If a specified class cannot be found in the model, the class is ignored and not added to
@@ -265,7 +265,7 @@ public class InitialiserPlugin implements PlugIn
      * @param os              the main object store
      */
     private void loadClassCategories(ServletContext servletContext, ObjectStore os)
-                                                                       throws ServletException {
+        throws ServletException {
         List categories = new ArrayList();
         Map subcategories = new HashMap();
         InputStream in = servletContext.getResourceAsStream("/WEB-INF/classCategories.properties");
