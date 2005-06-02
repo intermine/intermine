@@ -225,7 +225,6 @@ public class Dependencies extends Task
         if (includes.length() > 0) {
             mainFileSet.setIncludes(includes);
             getProject().addReference(pathid + ".fileset", mainFileSet);
-            System.out.println(includes);
         }
         
         if (artifactIncludes.length() > 0) {
