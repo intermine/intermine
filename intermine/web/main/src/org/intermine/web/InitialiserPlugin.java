@@ -122,7 +122,7 @@ public class InitialiserPlugin implements PlugIn
         throws ServletException {
         Properties classDescriptions = null;
         try {
-            classDescriptions = MetadataManager.loadClassDescriptions(os.getModel().getName());
+            classDescriptions.load(servletContext.getResourceAsStream("/WEB-INF/classDescriptions.properties"));
         } catch (Exception e) {
             throw new ServletException("Error loading class descriptions", e);
         }
