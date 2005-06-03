@@ -15,6 +15,8 @@ import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 
+import org.intermine.codegen.JavaModelOutput;
+import org.intermine.codegen.ModelOutput;
 import org.intermine.metadata.Model;
 
 /**
