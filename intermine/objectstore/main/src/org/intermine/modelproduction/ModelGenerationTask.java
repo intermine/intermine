@@ -19,7 +19,6 @@ import java.io.FileReader;
 
 import org.intermine.modelproduction.uml.XmiParser;
 import org.intermine.modelproduction.xmlschema.XmlSchemaParser;
-import org.intermine.modelproduction.acedb.AceModelParser;
 import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 
@@ -109,8 +108,6 @@ public class ModelGenerationTask extends Task
 
         if (type.equals("xmi")) {
             parser = new XmiParser(modelName, pkg, namespace);
-        } else if (type.equals("acedb")) {
-            parser = new AceModelParser(modelName, pkg, namespace);
         } else if (type.equals("xmlschema")) {
             parser = new XmlSchemaParser(modelName, pkg, namespace);
         } else {
