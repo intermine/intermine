@@ -22,7 +22,6 @@ import java.util.Set;
 import junit.framework.Test;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Broke;

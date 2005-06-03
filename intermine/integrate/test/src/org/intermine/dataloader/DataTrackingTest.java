@@ -14,7 +14,6 @@ import java.sql.Connection;
 
 import junit.framework.TestCase;
 
-import org.intermine.model.datatracking.Source;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 

@@ -23,7 +23,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;

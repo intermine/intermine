@@ -26,7 +26,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreWriter;

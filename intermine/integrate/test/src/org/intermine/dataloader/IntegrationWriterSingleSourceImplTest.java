@@ -18,7 +18,6 @@ import java.util.HashSet;
 import junit.framework.Test;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.model.datatracking.Source;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
