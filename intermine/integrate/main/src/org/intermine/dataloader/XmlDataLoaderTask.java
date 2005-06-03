@@ -71,7 +71,6 @@ public class XmlDataLoaderTask extends Task
         this.ignoreDuplicates = ignoreDuplicates;
     }
 
-
     /**
      * @see Task#execute
      * @throws BuildException
