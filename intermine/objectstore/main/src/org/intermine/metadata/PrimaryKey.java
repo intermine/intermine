@@ -1,4 +1,4 @@
-package org.intermine.dataloader;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2005 FlyMine

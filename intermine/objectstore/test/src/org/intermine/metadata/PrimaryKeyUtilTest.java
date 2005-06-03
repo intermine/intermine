@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.intermine.dataloader.PrimaryKey;
-
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
