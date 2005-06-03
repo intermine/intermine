@@ -107,7 +107,7 @@
     <macrodef name="model-output" uri="http://www.intermine.org/ns/im-model-proj/1">
       <sequential>
         <echo>Generating model java code...</echo>
-        <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
+        <taskdef name="model-output" classname="org.intermine.task.ModelOutputTask">
           <classpath>
             <path refid="main.class.path"/>
             <pathelement location="${build.dir}"/>
