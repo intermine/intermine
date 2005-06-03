@@ -4,3 +4,5 @@ bin
 intermine.log*
 velocity.log*
 executeLog*
+.settings
+
