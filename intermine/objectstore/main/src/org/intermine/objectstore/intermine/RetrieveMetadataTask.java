@@ -11,8 +11,10 @@ package org.intermine.objectstore.intermine;
  */
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
@@ -66,7 +68,14 @@ public class RetrieveMetadataTask extends Task
             //String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
             
             Model model = new InterMineModelParser().process(new StringReader(modelXml));
-
+            File localModel = new File(destDir,
+                    MetadataManager.getFilename(MetadataManager.MODEL, model.getName()));
+            
+            if (localModel.exists() && IOUtils.contentEquals(new FileReader(localModel), new StringReader(modelXml))) {
+                System.out.println("Model in database is identical to local model.");
+                return;
+            }
+            
             MetadataManager.saveModel(model, destDir);
             MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
