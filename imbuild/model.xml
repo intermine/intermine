@@ -63,30 +63,17 @@
     </immodelproj:modeloutofdate>
   </target>
   
-  <target name="build-model-from-acedb" if="have.acedb">
-    <echo>Found acedb file</echo>
-    <immodelproj:modeloutofdate source="${model.name}.wrm">
-      <then>
-        <immodelproj:model-generation type="acedb" source="${model.name}.wrm"/>
-        <!--antcall target="copy-keydefs"/-->
-        <property name="regenerate.java" value="true"/>
-      </then>
-    </immodelproj:modeloutofdate>
-  </target>
-  
   <target name="-init-generate" depends="library.-init-generate, -init-model-out-of-date, -init-macrodef-model-generation">
     <!-- Conditions -->
     <available file="${model.name}.zargo" property="have.zargo"/>
     <available file="${model.name}_model.xml" property="have.xml"/>
     <available file="${model.name}.xsd" property="have.xmlschema"/>
-    <available file="${model.name}.wrm" property="have.acedb"/>
     <available file="${model.name}_additions.xml" property="have.additions"/>
   </target>
   
   <target name="do-generate" depends="build-model-from-xml,
                                       build-model-from-zargo,
                                       build-model-from-xmlschema,
-                                      build-model-from-acedb,
                                       generate-model-java"/>
 
   <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->

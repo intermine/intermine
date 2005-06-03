@@ -68,7 +68,6 @@
 	<classpathentry kind="lib" path="/intermine/lib/AntDoc.jar"/>
 	<classpathentry kind="lib" path="/intermine/lib/ant.jar"/>
 	<classpathentry kind="lib" path="/intermine/lib/activation.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/acedb.jar"/>
 	<classpathentry kind="lib" path="/intermine/lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
