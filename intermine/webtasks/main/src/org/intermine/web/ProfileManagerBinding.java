@@ -19,6 +19,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.SAXParser;
+import org.intermine.web.bag.IdUpgrader;
+import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -60,10 +62,13 @@ public class ProfileManagerBinding
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param os ObjectStore used to resolve object ids
+     * @param upgrader 
      */    
-    public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os) {
+    public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
+    		PkQueryIdUpgrader idUpgrader) {
         try {
-            ProfileManagerHandler profileManagerHandler = new ProfileManagerHandler(profileManager);
+            ProfileManagerHandler profileManagerHandler =
+            	new ProfileManagerHandler(profileManager, idUpgrader);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,16 +84,18 @@ public class ProfileManagerBinding
  */
 class ProfileManagerHandler extends DefaultHandler
 {
-    ProfileHandler profileHandler = null;
-    ProfileManager profileManager = null;
+	private ProfileHandler profileHandler = null;
+	private ProfileManager profileManager = null;
+	private IdUpgrader idUpgrader;
     
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
      */
-    public ProfileManagerHandler(ProfileManager profileManager) {
+    public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         super();
         this.profileManager = profileManager;
+		this.idUpgrader = idUpgrader;
     }
 
     /**
@@ -97,7 +104,7 @@ class ProfileManagerHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
-            profileHandler = new ProfileHandler(profileManager);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);

@@ -10,20 +10,17 @@ package org.intermine.web.bag;
  *
  */
 
+import org.intermine.web.bag.IdUpgrader;
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineBagBinding;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
-import org.intermine.model.testmodel.Department;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 
 
 /**
@@ -50,7 +47,8 @@ public class InterMineBagBindingTest extends TestCase
         os.cacheObjectById(new Integer(1), d1);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("InterMineBagBindingTest.xml");
-        Map savedBags = InterMineBagBinding.unmarshal(new InputStreamReader(is), os);
+        Map savedBags = InterMineBagBinding.unmarshal(new InputStreamReader(is), os, 
+        		new IdUpgrader(os, os));
         Map expected = new LinkedHashMap();
 
         //primitives

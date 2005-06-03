@@ -21,6 +21,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.ProfileManagerBinding;
+import org.intermine.web.bag.PkQueryIdUpgrader;
 
 /**
  * Task to read an XML file of a webapp userprofiles into a userprofile ObjectStore.
@@ -91,7 +92,7 @@ public class ProfileReadTask extends Task
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             ProfileManager pm = new ProfileManager(os, userProfileOS);
 
-            ProfileManagerBinding.unmarshal(reader, pm, os);
+            ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {

@@ -58,7 +58,13 @@ public class ObjectDetailsController extends InterMineAction
                 || ((DisplayObject) session.getAttribute("object")).getId()
                 != Integer.parseInt(idString))) {
             // Move to a different object
-            Integer key = new Integer(idString);
+            Integer key;
+            try {
+                key = new Integer(idString);
+            } catch (NumberFormatException e) {
+                session.removeAttribute("object");
+                return null;
+            }
             InterMineObject object = os.getObjectById(key);
             if (object == null) {
                 // no such object
