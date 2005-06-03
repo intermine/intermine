@@ -100,7 +100,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("Old company");
 
         try {
-            Set newIds = InterMineBagHandler.getNewIds(oldCompany, os);
+            Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
             fail("expected RuntimeException");
         } catch (RuntimeException e) {
             // expected
@@ -114,7 +114,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("Old company");
         oldCompany.setVatNumber(5678);
 
-        Set newIds = InterMineBagHandler.getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
@@ -129,7 +129,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("CompanyB");
         oldCompany.setAddress(oldAddress);
 
-        Set newIds = InterMineBagHandler.getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
@@ -140,7 +140,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("CompanyB");
 
         try {
-            Set newIds = InterMineBagHandler.getNewIds(oldCompany, os);
+            Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
             fail("expected RuntimeException");
         } catch (RuntimeException e) {
             // expected
@@ -158,7 +158,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setAddress(oldAddress);
         oldCompany.setVatNumber(5678);
 
-        Set newIds = InterMineBagHandler.getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
@@ -175,10 +175,11 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setVatNumber(1234);
 
         try {
-            Set newIds = InterMineBagHandler.getNewIds(oldCompany, os);
+            Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
             fail("expected RuntimeException");
         } catch (RuntimeException e) {
             // expected
         }
     }
+
 }

@@ -23,6 +23,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.bag.InterMineIdBag;
@@ -209,7 +210,13 @@ public class ProfileBinding
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os) {
         try {
-            ProfileHandler profileHandler = new ProfileHandler(profileManager);
+            ProfileHandler profileHandler =
+            	new ProfileHandler(profileManager, new IdUpgrader() {
+					public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
+						throw new RuntimeException("Shouldn't call getNewIds() in a"
+								+ " running webapp");
+					}
+            	});
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

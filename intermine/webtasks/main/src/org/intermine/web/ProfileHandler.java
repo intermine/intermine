@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBagHandler;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.FullParser;
@@ -42,7 +43,8 @@ class ProfileHandler extends DefaultHandler
     private Map savedTemplates;
     private List items;
     private Map idObjectMap;
-
+	private IdUpgrader idUpgrader;
+	
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
      * InterMineBagBinding.InterMineBagHandler.  If "template-queries" it will be an
@@ -56,9 +58,10 @@ class ProfileHandler extends DefaultHandler
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
      */
-    public ProfileHandler(ProfileManager profileManager) {
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         super();
         this.profileManager = profileManager;
+		this.idUpgrader = idUpgrader;
         items = new ArrayList();
     }
 
@@ -86,7 +89,7 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getObjectStore(),
-                                                            savedBags, idObjectMap);
+                                                            savedBags, idObjectMap, idUpgrader);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();

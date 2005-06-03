@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -96,11 +97,12 @@ public class InterMineBagBinding
      * @param os ObjectStore used to resolve object ids
      * @return a Map from bag name to InterMineBag
      */
-    public static Map unmarshal(final Reader reader, final ObjectStore os) {
+    public static Map unmarshal(final Reader reader, final ObjectStore os,
+    		IdUpgrader idUpgrader) {
         final Map bags = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader),
-                            new InterMineBagHandler(os, bags, new HashMap()));
+                            new InterMineBagHandler(os, bags, new HashMap(), idUpgrader));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

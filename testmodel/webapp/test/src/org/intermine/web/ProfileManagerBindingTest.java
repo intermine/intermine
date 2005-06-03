@@ -37,6 +37,7 @@ import org.intermine.util.XmlBinding;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
+import org.intermine.web.bag.PkQueryIdUpgrader;
 
 /**
  * Tests for the Profile class.
@@ -191,7 +192,7 @@ public class ProfileManagerBindingTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, os);
+        ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
 
         assertEquals(3, pm.getProfileUserNames().size());
 

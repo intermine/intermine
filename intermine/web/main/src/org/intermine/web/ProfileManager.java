@@ -23,9 +23,9 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +55,7 @@ public class ProfileManager
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
+     * @param upgrader 
      * @throws ObjectStoreException if the user profile database cannot be found
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS)
@@ -165,7 +166,16 @@ public class ProfileManager
         for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
             SavedBag bag = (SavedBag) i.next();
             try {
-                savedBags.putAll(InterMineBagBinding.unmarshal(new StringReader(bag.getBag()), os));
+                savedBags.putAll(InterMineBagBinding.unmarshal(new StringReader(bag.getBag()), os,
+                			new IdUpgrader() {
+
+								public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
+									throw new RuntimeException("Shouldn't call getNewIds() in a"
+											+ " running webapp");
+								}
+                	
+                	
+                }));
             } catch (Exception _) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
