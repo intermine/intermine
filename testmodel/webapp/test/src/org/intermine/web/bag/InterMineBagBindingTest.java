@@ -46,9 +46,10 @@ public class InterMineBagBindingTest extends TestCase
         d1.setId(new Integer(1));
         os.cacheObjectById(new Integer(1), d1);
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("InterMineBagBindingTest.xml");
+        InputStream is =
+            getClass().getClassLoader().getResourceAsStream("InterMineBagBindingTest.xml");
         Map savedBags = InterMineBagBinding.unmarshal(new InputStreamReader(is), os, 
-        		new IdUpgrader(os, os));
+                                                      new PkQueryIdUpgrader());
         Map expected = new LinkedHashMap();
 
         //primitives
