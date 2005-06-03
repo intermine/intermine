@@ -1,4 +1,4 @@
-package org.intermine.codegen;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2005 FlyMine

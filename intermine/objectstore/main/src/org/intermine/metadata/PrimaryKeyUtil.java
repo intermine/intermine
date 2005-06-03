@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.intermine.dataloader.PrimaryKey;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 

@@ -85,7 +85,6 @@ import org.intermine.modelproduction.ModelParser;
 import org.intermine.metadata.*;
 import org.intermine.util.XmlUtil;
 import org.intermine.util.StringUtil;
-import org.intermine.dataconversion.XmlMetaData;
 
 import org.apache.log4j.Logger;
 
