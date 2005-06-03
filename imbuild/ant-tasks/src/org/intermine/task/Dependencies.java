@@ -169,7 +169,7 @@ public class Dependencies extends Task
             mainPath.addFileset(fileset);
             
             String thisProj = calcThisProjectName();
-            System.out.println(thisProj);
+            
             includes += thisProj + "/lib/*.jar ";
         }
         
