@@ -62,6 +62,10 @@ public class SummariseObjectStoreTask extends Task
      * @see Task#execute
      */
     public void execute() throws BuildException {
+        if (outputFile.exists() && outputFile.lastModified() > inputFile.lastModified()) {
+            System.out.println("Summarisation is newer than config. Skipping summarisation.");
+            return;
+        }
         try {
             Properties config = new Properties();
             config.load(new FileInputStream(inputFile));

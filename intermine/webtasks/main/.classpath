@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="/fulldata"/>
 	<classpathentry kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="src" path="/userprofile"/>
-	<classpathentry kind="src" path="/datatracking"/>
 	<classpathentry kind="src" path="/intermine-web"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
