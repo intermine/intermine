@@ -31,5 +31,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/nsuml.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-1.1-dev.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

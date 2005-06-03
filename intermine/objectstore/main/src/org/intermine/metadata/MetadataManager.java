@@ -10,17 +10,20 @@ package org.intermine.metadata;
  *
  */
 
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
@@ -50,7 +53,7 @@ public class MetadataManager
     /**
      * Name of the key under which to store the serialized version of the class descriptions
      */
-    public static final String CLASS_DESCRIPTIONS = "classDescs";
+    //public static final String CLASS_DESCRIPTIONS = "classDescs";
 
     /**
      * Store a (key, value) pair in the metadata table of the database
@@ -126,6 +129,8 @@ public class MetadataManager
      * @throws IOException if an error occurs
      */
     public static void saveModel(Model model, File destDir) throws IOException {
+        File file = new File(destDir, getFilename(MODEL, model.getName()));
+        
         write(model.toString(), new File(destDir, getFilename(MODEL, model.getName())));
     }
 
@@ -171,11 +176,17 @@ public class MetadataManager
         write(properties, new File(destDir, getFilename(CLASS_DESCRIPTIONS, modelName)));
     }*/
 
-    private static String getFilename(String key, String modelName) {
+    /**
+     * Given  a key and model name, return filename for reading/writing.
+     * @param key key name
+     * @param modelName the name of the model
+     * @return name of file
+     */
+    public static String getFilename(String key, String modelName) {
         String filename = modelName + "_" + key;
         if (MODEL.equals(key)) {
             return filename += ".xml";
-        } else if (KEY_DEFINITIONS.equals(key) || CLASS_DESCRIPTIONS.equals(key)) {
+        } else if (KEY_DEFINITIONS.equals(key)/* || CLASS_DESCRIPTIONS.equals(key)*/) {
             return filename += ".properties";
         }
         throw new IllegalArgumentException("Unrecognised key '" + key + "'");
