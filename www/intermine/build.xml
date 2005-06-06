@@ -1,7 +1,4 @@
 <project name="intermine-www" default="www-intermine" basedir=".">
-  <property name="build.properties.local" value="${user.home}/build.properties.intermine" />
-
-  <property file="${build.properties.local}"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="../site"/>
   <property name="src.doc" location="../../intermine/doc"/>
@@ -63,6 +60,8 @@
   </target>
 
   <target name="validate-site-xml" depends="prepare">
+    <property name="build.properties.local" value="${user.home}/build.properties.intermine" />
+    <property file="${build.properties.local}"/> 
     <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
         <exclude name="index.xml"/>
@@ -79,6 +78,8 @@
 
   <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">
+    <property name="build.properties.local" value="${user.home}/build.properties.intermine" />
+    <property file="${build.properties.local}"/>
     <fixcrlf srcdir="${dist.www}"
        eol="crlf"
        includes="**/*.css"/>
@@ -103,43 +104,19 @@
   </target>
 
   <target name="release-demo-webapp">
-    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
-    <ant dir="../../intermine" target="build-testmodel-webapp" inheritRefs="true"/>
-
-    <path id="demo.class.path">
-      <fileset dir="../../intermine/dist" includes="*.jar"/>
-      <pathelement path="../../intermine/build/resources/test"/>
-      <pathelement path="../../intermine/build/model/testmodel"/>
-      <pathelement path="../../intermine/build/resources"/>
-    </path>
-
-    <property name="build.model" location="../../intermine/build/model" />
-    <ant dir="../../intermine" antfile="build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="demo.class.path"/>
-      <property name="db.name" value="db.unittest"/>
-      <property name="objectstore.name" value="os.unittest"/>
-    </ant>
-
-    <taskdef name="insert-xml-data"
-             classname="org.intermine.dataloader.XmlDataLoaderTask">
-      <classpath refid="demo.class.path"/>
-    </taskdef>
-    <insert-xml-data integrationWriter="integration.unittestsingle"
-                     xmlFile="../../intermine/resources/test/testmodel_data.xml"
-                     sourceName="testsource"/>
-    <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
+    <ant dir="../../testmodel/dbmodel" target="insert-data-unittest" inheritAll="false"/>
+    <ant dir="../../testmodel/webapp/main" inheritAll="false"/>
+    <ant dir="../../testmodel/webapp/main" target="release-webapp" inheritAll="false"/>
   </target>
 
   <target name="release-demo-webservice">
-    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine" target="build-testmodel-webservice" inheritRefs="true"/>
-    <ant dir="../../intermine" target="release-webservice" inheritRefs="true"/>
+    <ant dir="../../intermine" target="distclean" inheritAll="false"/>
+    <ant dir="../../intermine" target="build-testmodel-webservice" inheritAll="false"/>
+    <ant dir="../../intermine" target="release-webservice" inheritAll="false"/>
   </target>
 
   <target name="setup-userprofile">
-    <ant dir="../../intermine" target="build-db-userprofile" inheritRefs="true">
+    <ant dir="../../intermine" target="build-db-userprofile" inheritAll="false">
       <!--property name="intermine.dist.path" location="../../intermine/dist"/-->
     </ant>
   </target>
