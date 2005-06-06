@@ -31,6 +31,7 @@
     <property name="gen.src.dir" location="${build.dir}/gen/src"/>
     <property name="main.resources.dir" location="${resources.dir}/"/>
     <property name="test.resources.dir" location="${resources.dir}/test"/>
+    <property name="build.javadoc.dir" value="${build.dir}/javadoc"/>
     <!-- Compilation settings -->
     <property name="javac.source" value="1.4"/>
     <property name="javac.target" value="1.4"/>
@@ -43,6 +44,9 @@
     <property name="main.dist.jar" location="${dist.dir}/${ant.project.name}.jar"/>
     <property name="test.dist.jar" location="${dist.dir}/${ant.project.name}-test.jar"/>
     <property name="jar.compress" value="off"/>
+    <!-- Javadoc settings -->
+    <property name="javadoc.windowtitle" value="${ant.project.name}"/>
+    <property name="javadoc.additionalparam" value=""/>
     <!-- Conditions -->
     <condition property="gen.code">
       <and><istrue value="${generating.code}"/></and>
@@ -126,6 +130,28 @@
   </target>
   
   <target name="jar" depends="compile, -init-jar, -pre-jar, do-jar, -post-jar"/>
+  
+  <!-- JAVADOC -->
+  
+  <target name="-init-javadoc" depends="init, -init-deps">
+    <mkdir dir="${build.javadoc.dir}"/>
+  </target>
+  
+  <target name="-javadoc-build" depends="-init-javadoc">
+    <javadoc destdir="${build.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}"
+            use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}"
+            splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}"
+            windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
+            additionalparam="${javadoc.additionalparam}" failonerror="true">
+      <classpath refid="main.class.path"/>
+      <sourcepath>
+        <pathelement location="${src.dir}"/>
+      </sourcepath>
+      <fileset dir="${src.dir}"/>
+    </javadoc>
+  </target>
+  
+  <target name="javadoc" depends="-init-javadoc,-javadoc-build" description="Build Javadoc."/>
   
   <!-- CLEAN -->
   
