@@ -1,0 +1,26 @@
+
+<project name="intermine-javadoc" default="javadoc" basedir=".">
+  
+  <description>create combined javadoc for intermine public apis</description>
+  <import file="../library.xml"/>
+  
+  <target name="-javadoc-build" depends="-init-javadoc">
+    <javadoc destdir="${build.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}"
+            use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}"
+            splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}"
+            windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
+            additionalparam="${javadoc.additionalparam}" failonerror="true">
+      <classpath refid="main.class.path"/>
+      <sourcepath>
+        <pathelement location="../../intermine/objectstore/main/src"/>
+        <pathelement location="../../intermine/integrate/main/src"/>
+        <pathelement location="../../intermine/web/main/src"/>
+      </sourcepath>
+      <fileset dir="../../intermine/objectstore/main/src"/>
+      <fileset dir="../../intermine/integrate/main/src"/>
+      <fileset dir="../../intermine/web/main/src"/>
+    </javadoc>
+  </target>
+  
+</project>
+
