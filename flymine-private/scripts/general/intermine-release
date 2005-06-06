@@ -41,9 +41,11 @@ mkdir $tempdir
 cd $tempdir
 now=`date +"%d %b %Y %H:%M"`
 #echo "Date is $now"
-command="svn export svn://svn.flymine.org/flymine/trunk/intermine intermine-$version"
+command="svn export svn://subversion.flymine.org/trunk intermine-$version"
 eval $command
 
+command="rm -rf $tempdir/intermine-$version/flymine"
+eval $command
 
 ## Create the tarred source files from the clean checkout
 tar czvf intermine-src-$version.tar.gz intermine-$version
@@ -54,20 +56,21 @@ cd $tempdir/intermine-$version
 ant build-tutorial
 
 cd $tempdir
-mv intermine-$version/build/tutorial intermine-tutorial-$version
-tar czvf intermine-tutorial-$version.tar.gz intermine-tutorial-$version
-zip -r intermine-tutorial-$version.zip intermine-tutorial-$version
+# no longer create tutorial
+#mv intermine-$version/build/tutorial intermine-tutorial-$version
+#tar czvf intermine-tutorial-$version.tar.gz intermine-tutorial-$version
+#zip -r intermine-tutorial-$version.zip intermine-tutorial-$version
 
 ### Release javadoc
 if [ $1 == "nightly" ]
 then
-    cd $tempdir/intermine-$version
-    ant dist-javadoc
+    cd $tempdir/intermine-$version/imbuild/javadoc
+    ant
 
     command="ssh $apiserver \"rm -rf $apidir/*\""
     eval $command
 
-    command="scp -r dist/api/* $apiserver:$apidir/"
+    command="scp -r build/javadoc/* $apiserver:$apidir/"
     eval $command
 
     command="ssh $apiserver \"find $apidir -type f | xargs chmod a+r\""
