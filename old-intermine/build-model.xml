@@ -181,7 +181,7 @@
   <!-- Code generation targets -->
   <target name="generate-model-java" depends="prepare"
           description="Generate Java files from a InterMine model file">
-    <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
+    <taskdef name="model-output" classname="org.intermine.task.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
     <model-output type="java" model="${model.name}" destdir="${build.model.dir}"/>
