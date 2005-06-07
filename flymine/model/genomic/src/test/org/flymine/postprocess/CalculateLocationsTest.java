@@ -133,7 +133,6 @@ public class CalculateLocationsTest extends TestCase {
         Iterator iter = toStore.iterator();
         while (iter.hasNext()) {
             InterMineObject o = (InterMineObject) iter.next();
-            org.intermine.web.LogMe.log("clt",  "o: " + o);
             osw.store(o);
         }
 
@@ -155,8 +154,6 @@ public class CalculateLocationsTest extends TestCase {
             new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore().getSequence());
 
         assertEquals(expectedOverlapObj1.length, res.size());
-
-        org.intermine.web.LogMe.log("clt", "size: " + res.size());
 
         Iterator resIter = res.iterator();
       RESULTS:
