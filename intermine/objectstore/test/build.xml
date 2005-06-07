@@ -9,7 +9,9 @@
   <import file="../../../imbuild/db.xml"/>
   
   <target name="-pre-test">
-    <copy file="${user.home}/intermine.properties" todir="${build.test.resources.dir}"/>
+    <echo message="==================== ${user.home}/${intermine.properties.file}"/>
+    <copy file="${user.home}/${intermine.properties.file}"
+          tofile="${build.test.resources.dir}/intermine.properties"/>
   </target>
    
   <target name="do-test" depends="-init-macrodef-junit">
@@ -25,7 +27,7 @@
     <!-- Load db tasks -->
     <runtarget target="-init-db-tasks"/>
     <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/intermine.properties" todir="${build.task.dir}"/>
+    <copy file="${user.home}/${intermine.properties.file}" todir="${build.task.dir}"/>
   </target>
   
   <target name="build-db-fulldatatest" depends="-init-build-db">

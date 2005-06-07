@@ -14,7 +14,7 @@
   <property file="${build.properties.local}"/>
   <property file="build.properties"/>
 
-  <property name="runtime.properties.local" value="${user.home}/intermine.properties" />
+  <property name="runtime.properties.local" value="${user.home}/flymine.properties" />
 
   <!-- used by build-model.xml -->
   <property name="namespace" value="http://www.flymine.org/model"/>
