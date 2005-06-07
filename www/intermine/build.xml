@@ -116,7 +116,7 @@
   </target>
 
   <target name="setup-userprofile">
-    <ant dir="../../intermine" target="build-db-userprofile" inheritAll="false">
+    <ant dir="../../testmodel/webapp/main" target="build-db-userprofile" inheritAll="false">
       <!--property name="intermine.dist.path" location="../../intermine/dist"/-->
     </ant>
   </target>
