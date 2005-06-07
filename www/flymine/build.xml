@@ -1,7 +1,4 @@
 <project name="flymine-www" default="www-flymine" basedir=".">
-  <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
-
-  <property file="${build.properties.local}"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="../site"/>
   <property name="src.doc" location="../../flymine/doc"/>
@@ -70,6 +67,8 @@
   </target>
 
   <target name="style-site" depends="prepare">
+    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+    <property file="${build.properties.local}"/>
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${flymine.main.stylesheet}" includes="**/*.xml"
            force="false">
@@ -86,6 +85,8 @@
   </target>
 
   <target name="validate-site-xml" depends="prepare">
+    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+    <property file="${build.properties.local}"/>
     <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
         <exclude name="internal/**"/>
@@ -102,6 +103,8 @@
 
   <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">
+    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+    <property file="${build.properties.local}"/>
     <fixcrlf srcdir="${dist.www}"
        eol="crlf"
        includes="**/*.css"/>
