@@ -17,7 +17,7 @@
     <!-- Any generated files WEB-INF files should be placed in this directory -->   
     <property name="build.webinf.dir" location="${build.dir}/web-inf"/>
     <!-- Files -->
-    <property name="default.template.queries" location="${resources.dir}/default-template-queries.xml"/>
+    <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
     <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../intermine/webapp/main/dist/intermine-webapp.war"/>
   </target>

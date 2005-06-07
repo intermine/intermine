@@ -16,6 +16,7 @@
   <target name="-init-test" depends="init, -init-deps">
     <mkdir dir="${test.results.dir}"/>
     <mkdir dir="${build.test.resources.dir}"/>
+    <copy file="${tests.xml.basedir}/test.log4j.properties" toFile="${build.test.resources.dir}/log4j.properties"/>
   </target>
   
   <target name="-pre-test"/>

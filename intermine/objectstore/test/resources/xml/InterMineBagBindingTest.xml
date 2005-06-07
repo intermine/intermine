@@ -1,9 +1,0 @@
-<bag-list>
-  <bag name="primitives">
-    <element type="java.lang.Integer" value="10"/>
-    <element type="java.lang.String" value="ten"/>
-  </bag>
-  <bag name="objects">
-    <element type="org.intermine.model.InterMineObject" value="1"/>
-  </bag>
-</bag-list>

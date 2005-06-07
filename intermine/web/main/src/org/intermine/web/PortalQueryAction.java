@@ -83,6 +83,10 @@ public class PortalQueryAction extends InterMineAction
         Integer op = ConstraintOp.EQUALS.getIndex();
         TemplateQuery template = TemplateHelper.findTemplate(request, templateName, "global");
 
+        if (template == null) {
+            throw new IllegalStateException("Could not find template \"" + templateName + "\"");
+        }
+        
         // Populate template form bean
         TemplateForm tf = new TemplateForm();
         tf.setAttributeOps("1", op.toString());

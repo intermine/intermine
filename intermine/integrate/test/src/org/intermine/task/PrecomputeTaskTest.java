@@ -65,7 +65,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
         Properties summaryProperties;
 
-        String configFile = "objectstoresummary.config.properties";
+        /*String configFile = "objectstoresummary.config.properties";
 
         InputStream is = PrecomputeTask.class.getClassLoader().getResourceAsStream(configFile);
 
@@ -74,12 +74,12 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         }
 
         summaryProperties = new Properties();
-        summaryProperties.load(is);
+        summaryProperties.load(is);*/
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ObjectStoreSummary oss = new ObjectStoreSummary(os, summaryProperties);
+        //ObjectStoreSummary oss = new ObjectStoreSummary(os, null);//summaryProperties);
 
-        task.precomputeModel(os, oss);
+        task.precomputeModel(os, null);//oss);
 
         String[] expectedQueries = new String[] {
             "SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.CEO AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_)",
