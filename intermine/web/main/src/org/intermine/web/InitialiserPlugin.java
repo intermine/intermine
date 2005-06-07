@@ -233,16 +233,8 @@ public class InitialiserPlugin implements PlugIn
      */
     private void loadSuperUserDetails(ServletContext servletContext)
         throws ServletException {
-        Properties properties = new Properties();
-        InputStream propertiesStream =
-            servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
-        try {
-            properties.load(propertiesStream);
-        } catch (Exception e) {
-            throw new ServletException("Unable to find model.properties", e);
-        }
-        
-        String superuser = properties.getProperty("superuser.account");
+        Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String superuser = (String) props.get("superuser.account");
         servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
     }
     
