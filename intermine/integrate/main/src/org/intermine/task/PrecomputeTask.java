@@ -137,8 +137,7 @@ public class PrecomputeTask extends Task
      * @param os the ObjectStore to precompute in
      * @param oss the ObjectStoreSummary for os
      */
-    protected void precomputeModel(ObjectStore os, ObjectStoreSummary oss) {
-        this.oss = oss;
+    protected void precomputeModel(ObjectStore os, ObjectStoreSummary oss_) {
         this.os = os;
 
         readProperties();

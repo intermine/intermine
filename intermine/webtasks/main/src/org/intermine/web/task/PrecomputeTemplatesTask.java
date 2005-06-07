@@ -314,7 +314,7 @@ public class PrecomputeTemplatesTask extends Task
     protected Map getPrecomputeTemplateQueries() throws BuildException {
         TemplateQueryBinding binding = new TemplateQueryBinding();
         ClassLoader cl = PrecomputeTemplatesTask.class.getClassLoader();
-        InputStream sin = cl.getResourceAsStream("template-queries.xml");
+        InputStream sin = cl.getResourceAsStream("default-template-queries.xml");
         Map templates = binding.unmarshal(new InputStreamReader(sin));
         return templates;
     }
