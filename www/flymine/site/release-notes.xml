@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>FlyMine version 2.1 - release notes</title>
+    
+    <itemizedlist>
+      <listitem>
+        <para>Data - new sources</para>
+        <itemizedlist>
+          <listitem><para>Added Drosophila whole genome amplimer tiling path (Genetics Department, Cambridge, UK)</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Data - bug fixes</para>
+         <itemizedlist>
+          <listitem><para>Fixed an off by one error with chromsome locations of FlyReg binding sites</para></listitem>
+          <listitem><para>GBrowse images now appear on Transcript details page</para></listitem>
+          <listitem><para>Removed duplicate GO (Gene Ontology) Ontology object</para></listitem>
+          <listitem><para>Sequences are no longer a mix of upper and lower case - now all lower case</para></listitem>
+          <listitem><para>Added CDS and Translation objects for each Anopheles gambiae Transcript</para></listitem>
+          <listitem><para>INDAC oligos - Transcripts now correctly merged with other Drosophila annotation</para></listitem>
+          <listitem><para>All genome annotation features now have a chromosomeLocation field</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Data - known issues</para>
+         <itemizedlist>
+          <listitem><para>Information from FlyBase missing for some Drosophila melanogaster genes due to problems reading FlyBase gff3 (fixed in FlyBase release 4.1)</para></listitem>
+          <listitem><para>INDAC, FlyReg and Genetics Dept (Cambridge) InfoSource objects are duplicated</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Interface - new features</para>
+        <itemizedlist>
+          <listitem><para>Template queries now work with bags - an attribute can be constrained to be in/not-in a bag</para></listitem>
+          <listitem><para>Template search facility added. Users can search public and private templates</para></listitem>
+          <listitem><para>All string matches in FlyMine queries are now case insensitive</para></listitem>
+          <listitem><para>Performance improvements while paging through results/collection tables</para></listitem>
+          <listitem><para>Collection/bag table pages are now bookmarkable</para></listitem>
+          <listitem><para>Keywords can be attached to template queries</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Interface - bug fixes</para>
+        <itemizedlist>
+          <listitem><para>Users with javascript disabled can now run queries</para></listitem>
+          <listitem><para>Fixed bug that stopped the user from creating certain loop-queries</para></listitem> 
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>
+
