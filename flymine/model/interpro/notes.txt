@@ -1,0 +1,10 @@
+
+
+
+* schema won't work as it is with DBConverter code.  Could write an SQL script to move
+data into more consistently named schema.
+
+* MATCH_STATUS - only take matches where there is a MATCH_STATUS with value 'T'
+
+* STRUCT_CLASS - links to PDB and other known/predicted structure databases.  Could get links
+from here when we have more structure data.
