@@ -22,7 +22,6 @@
 	<classpathentry kind="src" path="model/psi/src/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/intermine"/>
 	<classpathentry kind="lib" path="/intermine/lib/xmlunit1.0.jar"/>
 	<classpathentry kind="lib" path="/intermine/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="/intermine/lib/xercesImpl-2.6.1.jar"/>
