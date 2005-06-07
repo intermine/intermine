@@ -16,6 +16,7 @@
     <property name="web.lib.dir" location="${build.dir}/lib"/>
     <!-- War settings -->
     <property name="war.update" value="false"/>
+    <property name="deploy.excludes" value=""/>
   </target>
   
   <!-- WAR INSTEAD OF JAR -->
@@ -62,7 +63,7 @@
       <sequential>
         <war compress="${jar.compress}" warfile="${main.dist.war}" webxml="${web.xml}">
           <classes dir="${main.build.classes.dir}"/>
-          <lib dir="${web.lib.dir}"/>
+          <lib dir="${web.lib.dir}" excludes="${deploy.excludes}"/>
           <webinf dir="${webinf.dir}" excludes="web.xml"/>
           <fileset dir="${main.resources.dir}"/>
         </war>
