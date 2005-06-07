@@ -34,6 +34,7 @@ import org.flymine.model.genomic.RankedRelation;
 import org.flymine.model.genomic.Relation;
 import org.flymine.model.genomic.SimpleRelation;
 import org.flymine.model.genomic.Transcript;
+import org.flymine.model.genomic.OverlapRelation;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -184,7 +185,7 @@ public class CreateReferencesTest extends TestCase {
         compareResultsToExpected();
     }
 
-    public void testInsertSymmetricalRelationReferences() throw Exception {
+    public void testInsertSymmetricalRelationReferences() throws Exception {
         CalculateLocations cl = new CalculateLocations(osw);
         cl.fixPartials();
         cl.createLocations();
