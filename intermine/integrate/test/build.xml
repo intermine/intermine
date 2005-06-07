@@ -6,7 +6,8 @@
   <import file="../../../imbuild/tests.xml"/>
 
   <target name="-pre-test">
-    <copy file="${user.home}/intermine.properties" todir="${build.test.resources.dir}"/>
+    <copy file="${user.home}/${intermine.properties.file}"
+          todir="${build.test.resources.dir}/intermine.properties"/>
   </target>
   
 </project>

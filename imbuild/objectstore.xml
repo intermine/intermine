@@ -23,7 +23,8 @@
     <!-- Load db tasks -->
     <runtarget target="-init-db-tasks"/>
     <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/intermine.properties" todir="${build.task.dir}"/>
+    <copy file="${user.home}/${intermine.properties.file}" 
+          tofile="${build.task.dir}/intermine.properties"/>
   </target>
   
   <!-- BUILD DB -->
