@@ -137,7 +137,7 @@ public class PrecomputeTask extends Task
      * @param os the ObjectStore to precompute in
      * @param oss the ObjectStoreSummary for os
      */
-    protected void precomputeModel(ObjectStore os, ObjectStoreSummary oss_) {
+    protected void precomputeModel(ObjectStore os, ObjectStoreSummary oss) {
         this.os = os;
 
         readProperties();
@@ -155,7 +155,7 @@ public class PrecomputeTask extends Task
                                  + " seconds");
         }
 
-        Map pq = getPrecomputeQueries();
+        Map pq = getPrecomputeQueries(oss);
         LOG.info("pq.size(): " + pq.size());
         Iterator iter = pq.entrySet().iterator();
         //Iterator iter = getPrecomputeQueries().entrySet().iterator();
@@ -254,11 +254,13 @@ public class PrecomputeTask extends Task
 
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
+     * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
+     * have no objects
      * @return a Map of keys to Query objects
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist
      */
-    protected Map getPrecomputeQueries() throws BuildException {
+    protected Map getPrecomputeQueries(ObjectStoreSummary oss) throws BuildException {
         Map returnMap = new TreeMap();
 
         Iterator iter = new TreeSet(precomputeProperties.keySet()).iterator();
@@ -284,7 +286,8 @@ public class PrecomputeTask extends Task
                         String subjectClassName = queryBits[2];
 
                         List constructedQueries =
-                            constructQueries(objectClassName, connectingField, subjectClassName);
+                            constructQueries(objectClassName, connectingField, subjectClassName,
+                                             oss);
 
                         returnMap.put(precomputeKey, constructedQueries);
                     } else {
@@ -298,8 +301,7 @@ public class PrecomputeTask extends Task
                             List constructedQueries =
                                 constructQueries(object1ClassName, connectingField1,
                                                  object2ClassName, connectingField2,
-                                                 object3ClassName);
-
+                                                 object3ClassName, oss);
 
                             returnMap.put(precomputeKey, constructedQueries);
                         } else {
@@ -330,13 +332,16 @@ public class PrecomputeTask extends Task
      * @param objectClassName the name of the object class
      * @param connectingFieldname the field name to use to reference the subject class
      * @param subjectClassName the name of the subject class
+     * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
+     * have no objects
      * @return a List of Query objects
      * @throws BuildException if a query cannot be constructed (for example when a class or the
      * collection doesn't exist)
      */
     protected List constructQueries(String objectClassName,
                                     String connectingFieldname,
-                                    String subjectClassName)
+                                    String subjectClassName,
+                                    ObjectStoreSummary oss)
         throws BuildException {
 
         Set allObjectCDs = getClassDecriptors(objectClassName);
@@ -386,6 +391,8 @@ public class PrecomputeTask extends Task
      * @param object2ClassName the name of the second object class
      * @param connectingFieldname2 the field name to use to reference the Class for object 3
      * @param object3ClassName the name of the third object class
+     * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
+     * have no objects
      * @return a List of Query objects
      * @throws BuildException if a query cannot be constructed (for example when a class or the
      * collection doesn't exist)
@@ -394,7 +401,8 @@ public class PrecomputeTask extends Task
                                     String connectingFieldname1,
                                     String object2ClassName,
                                     String connectingFieldname2,
-                                    String object3ClassName)
+                                    String object3ClassName,
+                                    ObjectStoreSummary oss)
         throws BuildException {
 
         Set allObject1CDs = getClassDecriptors(object1ClassName);
