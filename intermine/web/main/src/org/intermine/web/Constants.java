@@ -124,6 +124,11 @@ public interface Constants
      * pages.
      */
     public static final String OBJECT_DETAILS_TRAIL = "OBJECT_DETAILS_TRAIL";
+
+    /**
+     * Servlet context attribute - map from data set name to DataSet object.
+     */
+    public static final String DATASETS = "DATASETS";
     
     /**
      * Session attribute equals Boolean.TRUE when logged in user is superuser.
