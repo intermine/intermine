@@ -1,30 +1,23 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.Chromosome" is-interface="true">
-  <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="chromosome"/>
-  <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="chromosome"/>
-  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="chromosome"/>
-  <collection name="bands" referenced-type="org.flymine.model.genomic.ChromosomeBand" ordered="true" reverse-reference="chromosome"/>
+  <collection name="features" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" ordered="true" reverse-reference="chromosome"/>
+  <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true"/>
+  <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true"/>
+  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
+  <collection name="chromosomeBands" referenced-type="org.flymine.model.genomic.ChromosomeBand" ordered="true"/>
+  <collection name="chromosomalStructuralElements" referenced-type="org.flymine.model.genomic.ChromosomalStructuralElement" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Exon" is-interface="true">
-  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="exons"/>
   <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="exons"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="genes"/>
   <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="gene"/>
-</class>
-<class name="org.flymine.model.genomic.Transcript" is-interface="true">
-  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="transcripts"/>
-</class>
-<class name="org.flymine.model.genomic.ChromosomeBand" is-interface="true">
-  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="bands"/>
 </class>
 <class name="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   <reference name="chromosomeLocation" referenced-type="org.flymine.model.genomic.Location"/>
-  <collection name="overlappingFeatures" 
-              referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" ordered="true"/>
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="features"/>
+  <collection name="overlappingFeatures" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" ordered="true"/>
   <attribute name="length" type="java.lang.Integer"/>
-  <!--reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/-->
 </class>
 </classes>

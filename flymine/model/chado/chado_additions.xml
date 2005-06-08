@@ -32,7 +32,6 @@
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.UTR" is-interface="true">
-    <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
   </class>
   <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">

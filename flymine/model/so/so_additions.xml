@@ -161,9 +161,7 @@
   <class name="org.flymine.model.genomic.U1SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
   <class name="org.flymine.model.genomic.RepeatFamily" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
   <class name="org.flymine.model.genomic.CloneStart" extends="org.flymine.model.genomic.Junction org.flymine.model.genomic.Clone" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Chromosome" extends="org.flymine.model.genomic.Region" is-interface="true">
-    <collection name="chromosomalStructuralElements" referenced-type="org.flymine.model.genomic.ChromosomalStructuralElement" ordered="true" reverse-reference="chromosome"/>
-  </class>
+  <class name="org.flymine.model.genomic.Chromosome" extends="org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.Insertion" extends="org.flymine.model.genomic.SequenceVariant org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.Primer" extends="org.flymine.model.genomic.Oligo" is-interface="true"/>
   <class name="org.flymine.model.genomic.Inversion" extends="org.flymine.model.genomic.Region org.flymine.model.genomic.SequenceVariant" is-interface="true"/>
@@ -172,9 +170,7 @@
   <class name="org.flymine.model.genomic.ORF" extends="org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.InvertedRepeat" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
   <class name="org.flymine.model.genomic.DeletionJunction" extends="org.flymine.model.genomic.Junction org.flymine.model.genomic.SequenceVariant" is-interface="true"/>
-  <class name="org.flymine.model.genomic.ChromosomalStructuralElement" extends="org.flymine.model.genomic.Region" is-interface="true">
-    <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="chromosomalStructuralElements"/>
-  </class>
+  <class name="org.flymine.model.genomic.ChromosomalStructuralElement" extends="org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.GeneGroup" extends="org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.PolyASignalSequence" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
   <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.Region" is-interface="true">
