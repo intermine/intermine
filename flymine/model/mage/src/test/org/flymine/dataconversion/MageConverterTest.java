@@ -60,8 +60,8 @@ public class MageConverterTest extends TestCase
     String ns = "http://www.flymine.org/model/mage#";
     File f = null;
 
-    public void setUp() {
-        converter = new MageConverter(new MockItemWriter(new HashMap()));
+    public void setUp() throws Exception {
+        converter = new MageConverter(new MockItemWriter(new HashMap()), new HashSet());
     }
 
     public void tearDown() throws Exception {
@@ -77,7 +77,7 @@ public class MageConverterTest extends TestCase
 
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, new HashSet());
         mc.process(reader);
         mc.close();
 
@@ -101,7 +101,7 @@ public class MageConverterTest extends TestCase
         attr.setValue("GATTACA");
         expected.addAttribute(attr);
 
-        assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
+        assertEquals(expected, converter.createItem(bio));
     }
 
     public void testCreateItemReferenceInnerClass() throws Exception {
@@ -118,7 +118,7 @@ public class MageConverterTest extends TestCase
         attr.setValue("both");
         expected.addAttribute(attr);
 
-        assertEquals(expected, ItemHelper.convert(converter.createItem(s1)));
+        assertEquals(expected, converter.createItem(s1));
     }
 
     public void testCreateItemReference() throws Exception {
@@ -144,7 +144,7 @@ public class MageConverterTest extends TestCase
         ref.setRefId("1_1");
         expected.addReference(ref);
 
-        assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
+        assertEquals(expected, converter.createItem(bio));
     }
 
     public void testCreateItemCollection() throws Exception {
@@ -184,12 +184,12 @@ public class MageConverterTest extends TestCase
         expected.addCollection(r1);
 
 
-        assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
+        assertEquals(expected, converter.createItem(bio));
     }
 
-    public void testBioAssayData() throws Exception{
+    public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, new HashSet());
 
         String exampleData = "1.006\t3.456" + System.getProperty("line.separator")
             + "435.223\t1.004" + System.getProperty("line.separator");
@@ -241,38 +241,38 @@ public class MageConverterTest extends TestCase
         Item expected = new Item();
         expected.setClassName(ns + "DerivedBioAssayData");
         expected.setIdentifier("0_0");
-        expected.addReference(createReference("bioDataValues","0_13"));
+        expected.addReference(createReference("bioDataValues","9_13"));
         expected.addReference(createReference("quantitationTypeDimension", "6_8"));
         expected.addReference(createReference("designElementDimension", "1_1"));
         mc.seenMap = new LinkedHashMap();
-        assertEquals(expected, ItemHelper.convert(mc.createItem(dbad)));
+        assertEquals(expected, mc.createItem(dbad));
 
-        Item d=createItems(ns+"BioDataTuples","0_13", "");
+        Item d=createItems(ns+"BioDataTuples","9_13", "");
         ReferenceList rl=new ReferenceList();
         rl.setName("bioAssayTupleData");
 
-        Item d1=createItems(ns+"BioAssayDatum", "0_14","" );
+        Item d1=createItems(ns+"BioAssayDatum", "10_14","" );
         d1.addReference(createReference("designElement", "3_3"));
         d1.addReference(createReference("quantitationType", "7_9"));
         d1.addAttribute(createAttribute("value", "1.006"));
         d1.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d1.getIdentifier());
 
-        Item d2=createItems(ns+"BioAssayDatum", "0_15","" );
+        Item d2=createItems(ns+"BioAssayDatum", "10_15","" );
         d2.addReference(createReference("designElement", "3_3"));
         d2.addReference(createReference("quantitationType", "7_11"));
         d2.addAttribute(createAttribute("value", "3.456"));
         d2.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d2.getIdentifier());
 
-        Item d3=createItems(ns+"BioAssayDatum", "0_16","" );
+        Item d3=createItems(ns+"BioAssayDatum", "10_16","" );
         d3.addReference(createReference("designElement", "3_5"));
         d3.addReference(createReference("quantitationType", "7_9"));
         d3.addAttribute(createAttribute("value", "435.223"));
         d3.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d3.getIdentifier());
 
-        Item d4=createItems(ns+"BioAssayDatum", "0_17","" );
+        Item d4=createItems(ns+"BioAssayDatum", "10_17","" );
         d4.addReference(createReference("designElement", "3_5"));
         d4.addReference(createReference("quantitationType", "7_11"));
         d4.addAttribute(createAttribute("value", "1.004"));
@@ -287,14 +287,14 @@ public class MageConverterTest extends TestCase
         // only interested in BioAssayDatam and BioDataTuples items
         mc.close();
         Iterator i = itemWriter.getItems().iterator();
-        while(i.hasNext()){
+        while(i.hasNext()) {
             Item item = (Item) i.next();
+            System.out.println(item.getClassName() + " - " + item.getIdentifier());
             if (item.getClassName().endsWith("BioAssayDatum") || item.getClassName().endsWith("BioDataTuples")) {
                 results.add(item);
             }
         }
         assertEquals(expSet, results);
-
     }
 
     public void testIgnoreClass() throws Exception {
@@ -322,9 +322,10 @@ public class MageConverterTest extends TestCase
         Set results = new HashSet();
 
         converter.createItem(m1);
+        System.out.println("seenMap: " + converter.seenMap);
         Iterator i = converter.seenMap.values().iterator();
         while(i.hasNext()){
-            results.add(ItemHelper.convert((org.intermine.model.fulldata.Item)i.next()));
+            results.add((Item) i.next());
         }
 
         assertEquals(expSet, results);
