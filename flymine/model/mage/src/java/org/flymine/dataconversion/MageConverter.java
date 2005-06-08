@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -34,13 +35,16 @@ import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.FeatureDimension;
 import org.biomage.ArrayDesign.PhysicalArrayDesign;
 
-import org.intermine.model.fulldata.Attribute;
-import org.intermine.model.fulldata.Item;
-import org.intermine.model.fulldata.Reference;
-import org.intermine.model.fulldata.ReferenceList;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.metadata.Model;
 
 import org.apache.log4j.Logger;
 
@@ -63,13 +67,22 @@ public class MageConverter extends FileConverter
     protected HashMap seenMap;
     protected HashMap padIdentifiers = new HashMap();
     protected HashMap featureIdentifiers = new HashMap();
+    protected ItemFactory itemFactory;
+    protected Set qTypes;
     protected int id = 0;
 
     /**
      * @see FileConverter#FileConverter
      */
-    public MageConverter(ItemWriter writer) {
+//     public MageConverter(ItemWriter writer) {
+//         super(writer);
+//     }
+
+
+    public MageConverter(ItemWriter writer, Set qTypes) throws Exception {
         super(writer);
+        this.qTypes = qTypes;
+        this.itemFactory = new ItemFactory(Model.getInstanceByName("mage"));
     }
 
     /**
@@ -96,20 +109,22 @@ public class MageConverter extends FileConverter
     }
 
 
+
     /**
      * @see FileConverter#process
      */
     public void close() throws Exception {
         long now = System.currentTimeMillis();
-        writer.storeAll(padIdentifiers.values());
+        storeItems(padIdentifiers.values());
         LOG.info("store padIdentifiers " + padIdentifiers.values().size()
                  + " in " + (System.currentTimeMillis() - now) + " ms");
 
         now = System.currentTimeMillis();
-        writer.storeAll(featureIdentifiers.values());
+        storeItems(featureIdentifiers.values());
         LOG.info("store featureIdentifiers " + featureIdentifiers.values().size()
                  + " in " + (System.currentTimeMillis() - now) + " ms");
     }
+
 
     /**
      * Create an item and associated fields, references and collections
@@ -159,44 +174,29 @@ public class MageConverter extends FileConverter
                 Object value = m.invoke(obj, null);
                 if (value != null) {
                     if (Collection.class.isAssignableFrom(m.getReturnType())) {
-                        ReferenceList refs = new ReferenceList();
-                        refs.setName(info.getName());
+                        ReferenceList col = new ReferenceList(info.getName());
                         StringBuffer sb = new StringBuffer();
                         for (Iterator j = ((Collection) value).iterator(); j.hasNext();) {
-                            sb.append(createItem(j.next()).getIdentifier() + " ");
+                            col.addRefId(createItem(j.next()).getIdentifier());
                         }
-                        if (sb.length() > 0) {
-                            refs.setRefIds(sb.toString().trim());
-                            item.addCollections(refs);
-                            refs.setItem(item);
+                        if (col.getRefIds().size() > 0) {
+                            item.addCollection(col);
                         }
                     } else if (m.getReturnType().getName().startsWith("org.biomage")) {
                         if (m.getReturnType().getName().startsWith(cls.getName() + "$")) {
-                            Attribute attr = new Attribute();
-                            attr.setName(info.getName());
                             Method getName = value.getClass().getMethod("getName", null);
                             String attValue = (String) getName.invoke(value, null);
                             if (attValue != null) {
-                                attr.setValue(escapeQuotes(attValue));
-                                item.addAttributes(attr);
-                                attr.setItem(item);
+                                item.setAttribute(info.getName(), escapeQuotes(attValue));
                             } else {
                                 LOG.warn("Null value for attribute " + info.getName() + " in Item "
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
                             }
                         } else {
-                            Reference ref = new Reference();
-                            ref.setName(info.getName());
-                            ref.setRefId(createItem(value).getIdentifier());
-                            item.addReferences(ref);
-                            ref.setItem(item);
+                            item.setReference(info.getName(), createItem(value).getIdentifier());
                         }
                     } else if (!info.getName().equals("identifier")) {
-                        Attribute attr = new Attribute();
-                        attr.setName(info.getName());
-                        attr.setValue(escapeQuotes(value.toString()));
-                        item.addAttributes(attr);
-                        attr.setItem(item);
+                        item.setAttribute(info.getName(), escapeQuotes(value.toString()));
                         // TODO handle dates?
                     }
                 }
@@ -246,13 +246,9 @@ public class MageConverter extends FileConverter
                 .getContainedFeatures();
             BufferedReader br = new BufferedReader(new
                 InputStreamReader(getClass().getClassLoader().getResourceAsStream(fileName)));
-            Item bdt = new Item();
-            bdt.setClassName(MAGE_NS + "BioDataTuples");
-            bdt.setImplementations("");
-            bdt.setIdentifier(alias(className) + "_" + (id++));
-            ReferenceList rl = new ReferenceList();
-            rl.setName("bioAssayTupleData");
-            StringBuffer sb = new StringBuffer();
+            Item bdt = makeItem("BioDataTuples");
+            ReferenceList dataList = new ReferenceList("bioAssayTupleData");
+
             for (Iterator i = rowNames.iterator(); i.hasNext();) {
                 Feature feature = (Feature) i.next();
                 String s = br.readLine();
@@ -260,64 +256,46 @@ public class MageConverter extends FileConverter
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
                     QuantitationType qt = (QuantitationType) j.next();
                     String value = st.nextToken();
-                    Item datum = new Item();
-                    datum.setClassName(MAGE_NS + "BioAssayDatum");
-                    datum.setImplementations("");
-                    datum.setIdentifier(alias(className) + "_" + (id++));
-                    sb.append(datum.getIdentifier() + " ");
-                    Reference ref = new Reference();
-                    ref.setName("quantitationType");
-                    ref.setRefId(createItem(qt).getIdentifier());
-                    datum.addReferences(ref);
-                    ref.setItem(datum);
-                    ref = new Reference();
-                    ref.setName("designElement");
-                    ref.setRefId(createItem(feature).getIdentifier());
-                    datum.addReferences(ref);
-                    ref.setItem(datum);
-                    Attribute attr = new Attribute();
-                    attr.setName("value");
-                    attr.setValue(value);
-                    datum.addAttributes(attr);
-                    attr.setItem(datum);
+                    Item datum = makeItem("BioAssayDatum");
+                    dataList.addRefId(datum.getIdentifier());
+                    datum.setReference("quantitationType", createItem(qt).getIdentifier());
+                    datum.setReference("designElement", createItem(feature).getIdentifier());
+                    datum.setAttribute("value", value);
                     // add normalised attribute - not actually in MAGE model, will be removed
                     // by MageDataTranslator before validating against model
-                    Attribute norm = new Attribute();
-                    norm.setName("normalised");
-                    norm.setValue(normalised ? "true" : "false");
-                    datum.addAttributes(norm);
-                    norm.setItem(datum);
+                    datum.setAttribute("normalised", normalised ? "true" : "false");
                     //should create reference for bioAssay
                     //ref = new Reference(); ref.setName("bioAssay");
                     //ref.setRefId(createItem(obj).getIdentifier()); datum.addReferences(ref);
-                    writer.store(datum);
+                    storeItem(datum);
                 }
             }
-            rl.setRefIds(sb.toString().trim());
-            bdt.addCollections(rl);
-            rl.setItem(bdt);
-            writer.store(bdt); // store BioDataTuple item
-            Reference bdtRef = new Reference();
-            bdtRef.setName("bioDataValues");
-            bdtRef.setRefId(bdt.getIdentifier());
-            Set newRefs = new HashSet();
-            Iterator refIter = item.getReferences().iterator();
-            while (refIter.hasNext()) {
-                Reference ref = (Reference) refIter.next();
-                if (!ref.getName().equals("bioDataValues")) {
-                    newRefs.add(ref);
-                }
-            }
-            newRefs.add(bdtRef);
-            item.setReferences(newRefs);
-            bdtRef.setItem(item);
+
+            bdt.addCollection(dataList);
+            storeItem(bdt); // store BioDataTuple item
+            item.setReference("bioDataValues", bdt.getIdentifier());
         }
         if (storeItem) {
-            writer.store(item);
+            storeItem(item);
         }
         return item;
     }
 
+
+    private Item makeItem(String className) {
+        return new Item(alias(className) + "_" + id++, MAGE_NS + className, "");
+        // TODO get this to use an item factory.  Problem is with a class DataExternal
+        // which appears in object model but is not defined in XMI.
+        //return itemFactory.makeItem(alias(className) + "_" + id++, MAGE_NS + className, "");
+    }
+
+    private void storeItems(Collection items) throws Exception {
+        writer.storeAll(ItemHelper.convertToFullDataItems(new ArrayList(items)));
+    }
+
+    private void storeItem(Item item) throws Exception {
+        writer.store(ItemHelper.convert(item));
+    }
 
     /**
      * escape quotes
