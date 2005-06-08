@@ -25,6 +25,9 @@
     <!-- Copy intermine.properties onto the classpath -->
     <copy file="${user.home}/${intermine.properties.file}" 
           tofile="${build.task.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties onto the classpath -->
+    <copy file="${default.intermine.properties.file}" 
+          tofile="${build.task.dir}/default.intermine.properties"/>
   </target>
   
   <!-- BUILD DB -->
