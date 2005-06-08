@@ -44,6 +44,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.config.WebConfig;
+import org.intermine.web.dataset.DataSetBinding;
 
 /**
  * Initialiser for the InterMine web application.
@@ -86,6 +87,7 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         
         loadWebConfig(servletContext, os);
+        //loadDataSetsConfig(servletContext, os);
 
         loadClassCategories(servletContext, os);
         loadClassDescriptions(servletContext, os);
@@ -96,6 +98,23 @@ public class InitialiserPlugin implements PlugIn
         loadSuperUserDetails(servletContext);
         servletContext.setAttribute(Constants.TEMPLATE_REPOSITORY,
                 new TemplateRepository(servletContext));
+    }
+
+    /**
+     * 
+     * 
+     * @param servletContext the servlet cnotext
+     * @param os the main objectstore
+     */
+    private void loadDataSetsConfig(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        Map dataSets = new LinkedHashMap();
+        InputStream is = servletContext.getResourceAsStream("/WEB-INF/datasets.xml");
+        if (is == null) {
+            throw new ServletException("Unable to find /WEB-INF/datasets.xml");
+        }
+        Map sets = DataSetBinding.unmarhsal(is);
+        servletContext.setAttribute(Constants.DATASETS, sets);
     }
 
     /**
