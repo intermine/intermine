@@ -12,6 +12,8 @@
     <echo message="==================== ${user.home}/${intermine.properties.file}"/>
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.test.resources.dir}/intermine.properties"/>
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.test.resources.dir}/default.intermine.properties"/>
   </target>
    
   <target name="do-test" depends="-init-macrodef-junit">

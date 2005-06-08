@@ -7,7 +7,9 @@
 
   <target name="-pre-test">
     <copy file="${user.home}/${intermine.properties.file}"
-          todir="${build.test.resources.dir}/intermine.properties"/>
+          tofile="${build.test.resources.dir}/intermine.properties"/>
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.test.resources.dir}/default.intermine.properties"/>
   </target>
   
 </project>
