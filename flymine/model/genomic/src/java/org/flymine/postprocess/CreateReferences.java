@@ -61,24 +61,35 @@ public class CreateReferences
      */
     public void insertReferences() throws Exception {
         LOG.info("insertReferences stage 1");
+
         // Transcript.exons / Exon.transcripts
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
         insertReferences(Transcript.class, Exon.class, SimpleRelation.class, "exons");
+
         // Intron.MRNAs / MRNA.introns
         insertReferences(MRNA.class, Intron.class, SimpleRelation.class, "introns");
         insertReferences(Transcript.class, Exon.class, SimpleRelation.class, "exons");
+
         LOG.info("insertReferences stage 2");
         // Gene.transcript / Transcript.gene
         insertReferenceField(Gene.class, "subjects", SimpleRelation.class, "subject",
                              Transcript.class, "gene");
+
         LOG.info("insertReferences stage 3");
-        // Exon.chromosome / Chromosome.exons
         insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-                             Exon.class, "chromosome");
+                             LocatedSequenceFeature.class, "chromosome");
+
         LOG.info("insertReferences stage 4");
-        // ChromosomeBand.chromosome / Chromosome.bands
-        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-                             ChromosomeBand.class, "chromosome");
+        // fill in collections on Chromosome
+        insertCollectionField(Gene.class, "objects", Location.class, "object",
+                              Chromosome.class, "genes", false);
+        insertCollectionField(Transcript.class, "objects", Location.class, "object",
+                              Chromosome.class, "transcripts", false);
+        insertCollectionField(Exon.class, "objects", Location.class, "object",
+                              Chromosome.class, "exons", false);
+        insertCollectionField(ChromosomeBand.class, "subjects", Location.class, "subject",
+                              Chromosome.class, "chromosomeBands", false);
+
         LOG.info("insertReferences stage 5");
         // Exon.gene / Gene.exons
         insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
@@ -87,9 +98,6 @@ public class CreateReferences
         // UTR.gene / Gene.UTRs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs",
                              UTR.class, "gene");
-        // UTR.chromosome
-        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-                             UTR.class, "chromosome");
         LOG.info("insertReferences stage 7");
         // Gene.chromosome / Chromosome.genes
         insertReferenceField(Chromosome.class, "exons", Exon.class, "gene",
