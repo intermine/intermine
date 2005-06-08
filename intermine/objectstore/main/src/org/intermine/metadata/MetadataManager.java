@@ -117,7 +117,7 @@ public class MetadataManager
         try {
             model = new InterMineModelParser().process(new InputStreamReader(is));
         } catch (Exception e) {
-            throw new RuntimeException("Error parsing model definition file '" + filename + "'");
+            throw new RuntimeException("Error parsing model definition file '" + filename + "'", e);
         }
         return model;
     }
