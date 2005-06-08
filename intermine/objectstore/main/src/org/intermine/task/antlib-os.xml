@@ -17,4 +17,10 @@
     <typedef
         name="dot"
         classname="org.intermine.task.InheritanceDotTask"/>
+    <typedef
+        name="model-generation"
+        classname="org.intermine.modelproduction.ModelGenerationTask"/>
+    <typedef
+        name="model-output"
+        classname="org.intermine.task.ModelOutputTask"/>
 </antlib>
