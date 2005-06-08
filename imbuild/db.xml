@@ -42,7 +42,6 @@
     <path id="db.class.path">
       <pathelement location="${build.task.dir}"/>
       <path refid="main.class.path"/>
-      
     </path>
   </target>
 

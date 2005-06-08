@@ -40,6 +40,9 @@
     <!-- Copy intermine.properties into build/classes -->
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${main.build.classes.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties into build/classes -->
+    <copy file="${default.intermine.properties.file}"
+          tofile="${main.build.classes.dir}/default.intermine.properties"/>
   </target>
 
   <target name="do-jar" depends="-init-presetdef-war">
@@ -54,6 +57,9 @@
     <!-- Copy intermine.properties onto the task classpath -->
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.task.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties into build/classes -->
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.task.dir}/default.intermine.properties"/>
   </target>
 
   <target name="-load-db-taskdefs" depends="db.-load-db-taskdefs">
@@ -72,7 +78,7 @@
 
   <target name="load-default-templates" depends="-init-build-db">
     <load-default-templates templatesXml="${default.template.queries}"
-                            username="${webapp.superuser}" osAlias="${objectstore.name}"
+                            username="${superuser.account}" osAlias="${objectstore.name}"
                             userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 

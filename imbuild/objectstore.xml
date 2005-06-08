@@ -5,7 +5,6 @@
   <dirname property="objectstore.xml.basedir" file="${ant.file.objectstore}"/>
   
   <import file="${objectstore.xml.basedir}/model.xml"/>
-  <import file="${objectstore.xml.basedir}/db.xml"/>
   
   <!-- Our generate phase involves fetching the model from the database. -->
   <property name="generating.code" value="true"/>
@@ -17,11 +16,9 @@
     <property name="objectstore.summary.properties" location="${main.build.classes.dir}/objectstoresummary.properties"/>
   </target>
   
-  <target name="-init-tasks">
+  <target name="-init-tasks" depends="model.-init-tasks">
     <!-- Make directories -->
     <mkdir dir="${build.model.dir}"/>
-    <!-- Load db tasks -->
-    <runtarget target="-init-db-tasks"/>
     <!-- Copy intermine.properties onto the classpath -->
     <copy file="${user.home}/${intermine.properties.file}" 
           tofile="${build.task.dir}/intermine.properties"/>

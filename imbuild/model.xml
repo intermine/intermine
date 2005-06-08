@@ -6,6 +6,7 @@
   <property name="generating.code" value="true"/>
   
   <import file="${model.xml.basedir}/library.xml"/>
+  <import file="${model.xml.basedir}/db.xml"/>
   
   <target name="-pre-init" depends="library.-pre-init">
     <!-- Model specific -->
@@ -14,8 +15,13 @@
     <property name="packagename" value="org.intermine.model"/>
   </target>
 
-  <!-- CODE GENERATION -->
+  <target name="-init-tasks">
+    <!-- Load db tasks -->
+    <runtarget target="-init-db-tasks"/>
+  </target>
 
+  <!-- CODE GENERATION -->
+  
   <target name="unpack-xmi-model">
     <unzip src="${model.name}.zargo" dest="${build.dir}">
       <patternset>
@@ -45,7 +51,7 @@
     <echo>Found xml file</echo>
     <immodelproj:modeloutofdate source="${model.name}_model.xml">
       <then>
-        <copy file="${model.name}_model.xml" tofile="${build.dir}/${model.name}_model.xml"/>
+        <copy file="${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
         <!--antcall target="copy-keydefs"/-->
         <property name="regenerate.java" value="true"/>
       </then>
@@ -63,7 +69,7 @@
     </immodelproj:modeloutofdate>
   </target>
   
-  <target name="-init-generate" depends="library.-init-generate, -init-model-out-of-date, -init-macrodef-model-generation">
+  <target name="-init-generate" depends="library.-init-generate, -init-tasks, -init-model-out-of-date, -init-macrodef-model-generation">
     <!-- Conditions -->
     <available file="${model.name}.zargo" property="have.zargo"/>
     <available file="${model.name}_model.xml" property="have.xml"/>
@@ -83,7 +89,7 @@
       <jar compress="${jar.compress}" jarfile="${main.dist.jar}">
         <fileset dir="${main.build.classes.dir}"/>
         <fileset dir="${main.resources.dir}"/>
-        <fileset file="${build.dir}/${model.name}_model.xml"/>
+        <fileset file="${build.task.dir}/${model.name}_model.xml"/>
       </jar>
     </presetdef>
   </target>
@@ -94,12 +100,12 @@
     <macrodef name="model-output" uri="http://www.intermine.org/ns/im-model-proj/1">
       <sequential>
         <echo>Generating model java code...</echo>
-        <taskdef name="model-output" classname="org.intermine.task.ModelOutputTask">
+        <!-- <taskdef name="model-output" classname="org.intermine.task.ModelOutputTask">
           <classpath>
             <path refid="main.class.path"/>
-            <pathelement location="${build.dir}"/>
+            <pathelement location="${build.task.dir}"/>
           </classpath>
-        </taskdef>
+        </taskdef> -->
         <model-output type="java" model="${model.name}" destdir="${gen.src.dir}"/>
       </sequential>
     </macrodef>
@@ -111,18 +117,18 @@
       <attribute name="source"/>
       <sequential>
         <echo>Generating model...</echo>
-        <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
+        <!--<taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
           <classpath>
             <path refid="main.class.path"/>
             <pathelement location="${build.dir}"/>
           </classpath>
-        </taskdef>
+        </taskdef>-->
         <model-generation type="@{type}"
                           modelName="${model.name}"
                           nameSpace="${namespace}"
                           pkg="${packagename}.${model.name}"
                           source="@{source}"
-                          destDir="${build.dir}"/>
+                          destDir="${build.task.dir}"/>
       </sequential>
     </macrodef>
   </target>
