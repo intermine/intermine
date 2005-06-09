@@ -35,6 +35,7 @@ import org.flymine.model.genomic.Relation;
 import org.flymine.model.genomic.SimpleRelation;
 import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.OverlapRelation;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -73,9 +74,16 @@ public class CreateReferencesTest extends TestCase {
     private Transcript storedTranscript2 = null;
     private Transcript storedTranscript3 = null;
     private Exon storedExon = null;
-    private Location storedChromosomeRelation = null;
+    private Location storedExonLocation = null;
+    private Location storedGeneLocation = null;
+    private Location storedGeneLocation1 = null;
+    private Location storedGeneLocation2 = null;
+    private Location storedTranscriptLocation = null;
+    private Location storedTranscriptLocation1 = null;
+    private Location storedTranscriptLocation2 = null;
+    private Location storedTranscriptLocation3 = null;
     private SimpleRelation storedTranscriptRelation = null;
-    private RankedRelation storedExonRelation = null;
+    private RankedRelation storedExonRankedRelation = null;
     private Orthologue storedOrthologue1 = null;
     private Orthologue storedOrthologue2 = null;
     private GOTerm storedGOTerm = null;
@@ -83,6 +91,7 @@ public class CreateReferencesTest extends TestCase {
     private Annotation storedGOTermAnnotation = null;
     private Annotation storedPhenotypeAnnotation = null;
     private Evidence storedPhenotypeEvidence = null;
+    private OverlapRelation storedOverlapRelation = null;
     private ItemFactory itemFactory;
 
     private static final Logger LOG = Logger.getLogger(CreateReferencesTest.class);
@@ -150,15 +159,15 @@ public class CreateReferencesTest extends TestCase {
         compareGeneTranscriptResultsToExpected();
     }
 
-    public void testInsertChromosomeExonReferences() throws Exception {
+    public void testInsertChromosomeLSFReferences() throws Exception {
         CalculateLocations cl = new CalculateLocations(osw);
         cl.fixPartials();
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
         cr.insertReferenceField(Chromosome.class, "subjects", Relation.class, "subject",
-                                Exon.class, "chromosome");
+                                LocatedSequenceFeature.class, "chromosome");
 
-        compareChromosomeExonResultsToExpected();
+        compareChromosomeLSFResultsToExpected();
     }
 
     public void testInsertCollectionField1() throws Exception {
@@ -190,12 +199,13 @@ public class CreateReferencesTest extends TestCase {
         cl.fixPartials();
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
+        cr.insertReferences();
         cr.insertSymmetricalRelationReferences();
 
         assertTrue(((Gene) storedGene1.getOverlappingFeatures().get(0)).getId().equals(storedGene2.getId()));
     }
 
-    private void compareChromosomeExonResultsToExpected() throws Exception {
+    private void compareChromosomeLSFResultsToExpected() throws Exception {
         osw.flushObjectById();
         Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         expectedExon.setIdentifier("exon1");
@@ -206,24 +216,106 @@ public class CreateReferencesTest extends TestCase {
         expectedChromosome.setIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
 
-        Relation expectedChromosomeRelation =
-            (Relation) DynamicUtil.createObject(Collections.singleton(Relation.class));
-        expectedChromosomeRelation.setId(storedChromosomeRelation.getId());
-        expectedChromosomeRelation.setObject(expectedChromosome);
-        expectedChromosomeRelation.setSubject(expectedExon);
-        expectedChromosome.setSubjects(Arrays.asList(new Object[] { expectedChromosomeRelation }));
-        expectedChromosome.setExons(Arrays.asList(new Object[] { expectedExon }));
-        expectedExon.setChromosome(expectedChromosome);
+        Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        expectedGene.setId(storedGene.getId());
+        Gene expectedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        expectedGene1.setId(storedGene1.getId());
+        Gene expectedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        expectedGene2.setId(storedGene2.getId());
+        Transcript expectedTranscript =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript.setId(storedTranscript.getId());
+        Transcript expectedTranscript1 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class)); 
+        expectedTranscript1.setId(storedTranscript1.getId());
+        Transcript expectedTranscript2 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript2.setId(storedTranscript2.getId());
+        Transcript expectedTranscript3 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript3.setId(storedTranscript3.getId());
+
+        Relation expectedChromosomeExonLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeExonLocation.setId(storedExonLocation.getId());
+        expectedChromosomeExonLocation.setObject(expectedChromosome);
+        expectedChromosomeExonLocation.setSubject(expectedExon);
+
+        Location expectedChromosomeGeneLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeGeneLocation.setId(storedGeneLocation.getId());
+        expectedChromosomeGeneLocation.setObject(expectedChromosome);
+        expectedChromosomeGeneLocation.setSubject(expectedGene);
+
+        Location expectedChromosomeGeneLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeGeneLocation1.setId(storedGeneLocation1.getId());
+        expectedChromosomeGeneLocation1.setObject(expectedChromosome);
+
+        Location expectedChromosomeGeneLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeGeneLocation2.setId(storedGeneLocation2.getId());
+        expectedChromosomeGeneLocation2.setObject(expectedChromosome);
+
+        Location expectedChromosomeTranscriptLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation.setId(storedTranscriptLocation.getId());
+        expectedChromosomeTranscriptLocation.setObject(expectedChromosome);
+        expectedChromosomeTranscriptLocation.setSubject(expectedTranscript);
+
+        Location expectedChromosomeTranscriptLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation1.setId(storedTranscriptLocation1.getId());
+        expectedChromosomeTranscriptLocation1.setObject(expectedChromosome);
+
+        Location expectedChromosomeTranscriptLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation2.setId(storedTranscriptLocation2.getId());
+        expectedChromosomeTranscriptLocation2.setObject(expectedChromosome);
+
+        Location expectedChromosomeTranscriptLocation3 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation3.setId(storedTranscriptLocation3.getId());
+        expectedChromosomeTranscriptLocation3.setObject(expectedChromosome);
 
         RankedRelation expectedExonRelation =
             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-        expectedExonRelation.setId(storedExonRelation.getId());
+        expectedExonRelation.setId(storedExonRankedRelation.getId());
         expectedExonRelation.setRank(new Integer(1));
         expectedExonRelation.setSubject(expectedExon);
         expectedExon.setObjects(Arrays.asList(new Object[] {
-                                                  expectedChromosomeRelation,
+                                                  expectedChromosomeExonLocation,
                                                   expectedExonRelation
                                               }));
+        expectedExon.setChromosome(expectedChromosome);
+
+        expectedChromosome.setSubjects(Arrays.asList(new Object[] { expectedExonRelation }));
+
+        OverlapRelation expectedOverlapRelation =
+            (OverlapRelation) DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
+        expectedOverlapRelation.addBioEntities(storedGene1);
+        expectedOverlapRelation.addBioEntities(storedGene2);
+
+
+        expectedChromosome.setSubjects(Arrays.asList(new Object[] {
+                expectedChromosomeTranscriptLocation3,
+                expectedChromosomeTranscriptLocation2,
+                expectedChromosomeTranscriptLocation1,
+                expectedChromosomeTranscriptLocation,
+                expectedChromosomeGeneLocation2,
+                expectedChromosomeGeneLocation1,
+                expectedChromosomeGeneLocation,
+                expectedChromosomeExonLocation,
+            }));
+
+        expectedChromosome.addFeatures(expectedTranscript3);
+        expectedChromosome.addFeatures(expectedTranscript2);
+        expectedChromosome.addFeatures(expectedTranscript1);
+        expectedChromosome.addFeatures(expectedTranscript);
+        expectedChromosome.addFeatures(expectedGene2);
+        expectedChromosome.addFeatures(expectedGene1);
+        expectedChromosome.addFeatures(expectedGene);
+        expectedChromosome.addFeatures(expectedExon);
 
         Item expExonItem = toItem(expectedExon);
         Item expChromosomeItem = toItem(expectedChromosome);
@@ -266,13 +358,23 @@ public class CreateReferencesTest extends TestCase {
     private void compareCollectionField1ResultsToExpected() throws Exception {
         osw.flushObjectById();
 
+        Location expectedGeneLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedGeneLocation1.setId(storedGeneLocation1.getId());
+        
         Gene expectedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene1.setIdentifier("gene1");
         expectedGene1.setId(storedGene1.getId());
+        expectedGene1.setObjects(Arrays.asList(new Object[] {expectedGeneLocation1}));
+
+        Location expectedGeneLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedGeneLocation2.setId(storedGeneLocation2.getId());
 
         Gene expectedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene2.setIdentifier("gene2");
         expectedGene2.setId(storedGene2.getId());
+        expectedGene2.setObjects(Arrays.asList(new Object[] {expectedGeneLocation2}));
 
         Transcript expectedTranscript1 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
@@ -314,6 +416,15 @@ public class CreateReferencesTest extends TestCase {
 
         expectedGene1.setProteins(Arrays.asList(new Object[] {expectedProtein2, expectedProtein1}));
         expectedGene2.setProteins(Arrays.asList(new Object[] {expectedProtein3}));
+
+        OverlapRelation expectedOverlapRelation =
+            (OverlapRelation) DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
+        expectedOverlapRelation.setId(storedOverlapRelation.getId());
+        expectedOverlapRelation.addBioEntities(expectedGene1);
+        expectedOverlapRelation.addBioEntities(expectedGene2);
+
+        expectedGene1.addRelations(expectedOverlapRelation);
+        expectedGene2.addRelations(expectedOverlapRelation);
 
         Item expGene1Item = toItem(expectedGene1);
         Item expGene2Item = toItem(expectedGene2);
@@ -384,10 +495,14 @@ public class CreateReferencesTest extends TestCase {
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
 
+        Location expectedGeneLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedGeneLocation.setId(storedGeneLocation.getId());
+
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
-        expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
+        expectedGene.setObjects(Arrays.asList(new Object[] {expectedGeneLocation, expectedOrthologue2}));
         expectedGene.setAnnotations(Arrays.asList(new Object[] {expectedPhenotypeAnnotation}));
         expectedGene.setProteins(Arrays.asList(new Object[] {expectedProtein}));
 
@@ -398,17 +513,21 @@ public class CreateReferencesTest extends TestCase {
         expectedTranscript.setGene(expectedGene);
         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
 
+        Location expectedTranscriptLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedTranscriptLocation.setId(storedTranscriptLocation.getId());
+        
         SimpleRelation expectedTranscriptRelation =
             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
         expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
         expectedTranscriptRelation.setObject(expectedGene);
         expectedTranscriptRelation.setSubject(expectedTranscript);
-        expectedTranscript.setObjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
+        expectedTranscript.setObjects(Arrays.asList(new Object[] { expectedTranscriptLocation, expectedTranscriptRelation }));
         expectedGene.setSubjects(Arrays.asList(new Object[] { expectedOrthologue1, expectedTranscriptRelation }));
 
         RankedRelation expectedExonRelation =
             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-        expectedExonRelation.setId(storedExonRelation.getId());
+        expectedExonRelation.setId(storedExonRankedRelation.getId());
         expectedExonRelation.setRank(new Integer(1));
         expectedExonRelation.setObject(expectedTranscript);
         expectedTranscript.setSubjects(Arrays.asList(new Object[] { expectedExonRelation }));
@@ -448,6 +567,12 @@ public class CreateReferencesTest extends TestCase {
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
+
+        QueryField qf2 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc2 =
+            new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene0"));
+        q.setConstraint(sc2);
+
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -484,6 +609,10 @@ public class CreateReferencesTest extends TestCase {
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
 
+        Location expectedGeneLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedGeneLocation.setId(storedGeneLocation.getId());
+
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
@@ -491,7 +620,7 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setOrthologues(Arrays.asList(new Object[] {expectedOrthologue1}));
         expectedGene.setSubjects(Arrays.asList(new Object[] {expectedOrthologue1,
                                                        expectedTranscriptRelation}));
-        expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
+        expectedGene.setObjects(Arrays.asList(new Object[] {expectedGeneLocation, expectedOrthologue2}));
         expectedGene.setTranscripts(Arrays.asList(new Object[] {expectedTranscript}));
         expectedGene.setProteins(Arrays.asList(new Object[] {expectedProtein}));
 
@@ -558,6 +687,21 @@ public class CreateReferencesTest extends TestCase {
     private void compareResultsToExpected() throws Exception {
         osw.flushObjectById();
 
+        Chromosome expectedChromosome =
+            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Gene expectedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Gene expectedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Transcript expectedTranscript =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        Transcript expectedTranscript1 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class)); 
+        Transcript expectedTranscript2 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        Transcript expectedTranscript3 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+
         Orthologue expectedOrthologue1 =
             (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         expectedOrthologue1.setId(storedOrthologue1.getId());
@@ -586,10 +730,52 @@ public class CreateReferencesTest extends TestCase {
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
 
-        Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Relation expectedChromosomeExonLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeExonLocation.setId(storedExonLocation.getId());
+        expectedChromosomeExonLocation.setObject(expectedChromosome);
+        expectedChromosomeExonLocation.setSubject(expectedExon);
+
+        Location expectedChromosomeGeneLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeGeneLocation.setId(storedGeneLocation.getId());
+        expectedChromosomeGeneLocation.setObject(expectedChromosome);
+        expectedChromosomeGeneLocation.setSubject(expectedGene);
+
+        Location expectedChromosomeGeneLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeGeneLocation1.setId(storedGeneLocation1.getId());
+        expectedChromosomeGeneLocation1.setObject(expectedChromosome);
+
+        Location expectedChromosomeGeneLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeGeneLocation2.setId(storedGeneLocation2.getId());
+        expectedChromosomeGeneLocation2.setObject(expectedChromosome);
+
+        Location expectedChromosomeTranscriptLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation.setId(storedTranscriptLocation.getId());
+        expectedChromosomeTranscriptLocation.setObject(expectedChromosome);
+        expectedChromosomeTranscriptLocation.setSubject(expectedTranscript);
+
+        Location expectedChromosomeTranscriptLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation1.setId(storedTranscriptLocation1.getId());
+        expectedChromosomeTranscriptLocation1.setObject(expectedChromosome);
+
+        Location expectedChromosomeTranscriptLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation2.setId(storedTranscriptLocation2.getId());
+        expectedChromosomeTranscriptLocation2.setObject(expectedChromosome);
+
+        Location expectedChromosomeTranscriptLocation3 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        expectedChromosomeTranscriptLocation3.setId(storedTranscriptLocation3.getId());
+        expectedChromosomeTranscriptLocation3.setObject(expectedChromosome);
+
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
-        expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
+        expectedGene.setObjects(Arrays.asList(new Object[] {expectedChromosomeGeneLocation, expectedOrthologue2}));
         expectedGene.setOrthologues(Arrays.asList(new Object[] {expectedOrthologue1}));
         expectedGene.setAnnotations(Arrays.asList(new Object[] {expectedPhenotypeAnnotation,
                                                                 expectedGOTermAnnotation}));
@@ -597,22 +783,28 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setGOTerms(Arrays.asList(new Object[] {expectedGOTerm}));
         expectedGene.setProteins(Arrays.asList(new Object[] {expectedProtein}));
 
-        Transcript expectedTranscript =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedGene1.setId(storedGene1.getId());
+        expectedGene2.setId(storedGene2.getId());
+
         expectedTranscript.setIdentifier("trans0");
         expectedTranscript.setId(storedTranscript.getId());
         expectedTranscript.setGene(expectedGene);
         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
+
+        expectedTranscript1.setId(storedTranscript1.getId());
+        expectedTranscript2.setId(storedTranscript2.getId());
+        expectedTranscript3.setId(storedTranscript3.getId());
+
 
         SimpleRelation expectedTranscriptRelation =
             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
         expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
         expectedTranscriptRelation.setObject(expectedGene);
         expectedTranscriptRelation.setSubject(expectedTranscript);
-        expectedTranscript.setObjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
+        expectedTranscript.setObjects(Arrays.asList(new Object[] { expectedChromosomeTranscriptLocation,
+                                                            expectedTranscriptRelation }));
         expectedGene.setSubjects(Arrays.asList(new Object[] { expectedOrthologue1, expectedTranscriptRelation }));
 
-        Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         expectedExon.setIdentifier("exon1");
         expectedExon.setId(storedExon.getId());
         expectedTranscript.setExons(Arrays.asList(new Object[] {expectedExon}));
@@ -622,26 +814,44 @@ public class CreateReferencesTest extends TestCase {
 
         RankedRelation expectedExonRelation =
             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-        expectedExonRelation.setId(storedExonRelation.getId());
+        expectedExonRelation.setId(storedExonRankedRelation.getId());
         expectedExonRelation.setRank(new Integer(1));
         expectedExonRelation.setObject(expectedTranscript);
         expectedExonRelation.setSubject(expectedExon);
         expectedTranscript.setSubjects(Arrays.asList(new Object[] { expectedExonRelation }));
 
-        Chromosome expectedChromosome =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         expectedChromosome.setIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
-
+        expectedChromosome.addFeatures(expectedTranscript3);
+        expectedChromosome.addFeatures(expectedTranscript2);
+        expectedChromosome.addFeatures(expectedTranscript1);
+        expectedChromosome.addFeatures(expectedTranscript);
+        expectedChromosome.addFeatures(expectedGene2);
+        expectedChromosome.addFeatures(expectedGene1);
+        expectedChromosome.addFeatures(expectedGene);
+        expectedChromosome.addFeatures(expectedExon);
+        
         Relation expectedChromosomeRelation =
             (Relation) DynamicUtil.createObject(Collections.singleton(Relation.class));
-        expectedChromosomeRelation.setId(storedChromosomeRelation.getId());
+        expectedChromosomeRelation.setId(storedExonLocation.getId());
         expectedChromosomeRelation.setObject(expectedChromosome);
         expectedChromosomeRelation.setSubject(expectedExon);
-        expectedChromosome.setSubjects(Arrays.asList(new Object[] { expectedChromosomeRelation }));
+
+        expectedChromosome.setSubjects(Arrays.asList(new Object[] {
+                expectedChromosomeTranscriptLocation3,
+                expectedChromosomeTranscriptLocation2,
+                expectedChromosomeTranscriptLocation1,
+                expectedChromosomeTranscriptLocation,
+                expectedChromosomeGeneLocation2,
+                expectedChromosomeGeneLocation1,
+                expectedChromosomeGeneLocation,
+                expectedChromosomeExonLocation,
+            }));
         expectedChromosome.setExons(Arrays.asList(new Object[] { expectedExon }));
-        expectedChromosome.setGenes(Arrays.asList(new Object[] { expectedGene }));
-        expectedChromosome.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
+        expectedChromosome.setGenes(Arrays.asList(new Object[] {
+            expectedGene2, expectedGene1, expectedGene }));
+        expectedChromosome.setTranscripts(Arrays.asList(new Object[] {
+            expectedTranscript3, expectedTranscript2, expectedTranscript1, expectedTranscript }));
         expectedGene.setChromosome(expectedChromosome);
         expectedTranscript.setChromosome(expectedChromosome);
         expectedExon.setChromosome(expectedChromosome);
@@ -880,16 +1090,53 @@ public class CreateReferencesTest extends TestCase {
         storedTranscriptRelation.setObject(storedGene);
         storedTranscriptRelation.setSubject(storedTranscript);
 
-        storedExonRelation =
+        storedExonRankedRelation =
             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-        storedExonRelation.setObject(storedTranscript);
-        storedExonRelation.setSubject(storedExon);
-        storedExonRelation.setRank(new Integer(1));
+        storedExonRankedRelation.setObject(storedTranscript);
+        storedExonRankedRelation.setSubject(storedExon);
+        storedExonRankedRelation.setRank(new Integer(1));
 
-        storedChromosomeRelation =
+        storedExonLocation =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedChromosomeRelation.setObject(storedChromosome);
-        storedChromosomeRelation.setSubject(storedExon);
+        storedExonLocation.setObject(storedChromosome);
+        storedExonLocation.setSubject(storedExon);
+
+        storedGeneLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedGeneLocation.setObject(storedChromosome);
+        storedGeneLocation.setSubject(storedGene);
+
+        storedGeneLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedGeneLocation1.setObject(storedChromosome);
+        storedGeneLocation1.setSubject(storedGene1);
+
+        storedGeneLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedGeneLocation2.setObject(storedChromosome);
+        storedGeneLocation2.setSubject(storedGene2);
+
+
+        storedTranscriptLocation =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedTranscriptLocation.setObject(storedChromosome);
+        storedTranscriptLocation.setSubject(storedTranscript);
+        
+        storedTranscriptLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedTranscriptLocation1.setObject(storedChromosome);
+        storedTranscriptLocation1.setSubject(storedTranscript1);
+        
+        storedTranscriptLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedTranscriptLocation2.setObject(storedChromosome);
+        storedTranscriptLocation2.setSubject(storedTranscript2);
+        
+        storedTranscriptLocation3 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        storedTranscriptLocation3.setObject(storedChromosome);
+        storedTranscriptLocation3.setSubject(storedTranscript3);
+
 
         storedProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         storedProtein.setIdentifier("Protein0");
@@ -946,30 +1193,33 @@ public class CreateReferencesTest extends TestCase {
         storedTranscript2.setProtein(storedProtein2);
         storedTranscript3.setProtein(storedProtein3);
 
-        OverlapRelation overlapRelation =
+        storedOverlapRelation =
             (OverlapRelation) DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
 
         // note: this isn't very consistent because there are no locations for these genes
         // use for testing insertSymmetricalRelationReferences()
-        overlapRelation.addBioEntities(storedGene1);
-        overlapRelation.addBioEntities(storedGene2);
-
+        storedOverlapRelation.addBioEntities(storedGene1);
+        storedOverlapRelation.addBioEntities(storedGene2);
 
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
-                                                    storedGene, storedGene1, storedGene2,
-                                                    storedTranscriptRelation,
-                                                    storedExonRelation, storedTranscript,
-                                                    storedTranscript1,
-                                                    storedTranscript2, storedTranscript3,
-                                                    storedExon, storedChromosomeRelation,
-                                                    storedChromosome, storedOrthologue1,
-                                                    storedOrthologue2, storedGOTermAnnotation,
-                                                    storedGOTerm, storedPhenotype,
-                                                    storedPhenotypeAnnotation, storedProtein,
-                                                    storedProtein1, storedProtein2, storedProtein3,
-                                                    storedPhenotypeEvidence
-                                                }));
+                storedGene, storedGene1, storedGene2,
+                storedTranscriptRelation,
+                storedExonRankedRelation, storedTranscript,
+                storedTranscript1,
+                storedTranscript2, storedTranscript3,
+                storedExon, storedExonRankedRelation,
+                storedChromosome, storedOrthologue1,
+                storedOrthologue2, storedGOTermAnnotation,
+                storedGOTerm, storedPhenotype,
+                storedPhenotypeAnnotation, storedProtein,
+                storedProtein1, storedProtein2, storedProtein3,
+                storedPhenotypeEvidence, storedOverlapRelation,
+                storedExonRankedRelation, storedExonLocation,
+                storedGeneLocation, storedGeneLocation1, storedGeneLocation2,
+                storedTranscriptLocation, storedTranscriptLocation1, storedTranscriptLocation2,
+                storedTranscriptLocation3,
+            }));
         Iterator i = toStore.iterator();
         osw.beginTransaction();
         LOG.info("begun transaction in createData()");
