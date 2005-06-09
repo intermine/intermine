@@ -248,7 +248,7 @@ public class MageConverter extends FileConverter
                 InputStreamReader(getClass().getClassLoader().getResourceAsStream(fileName)));
             Item bdt = makeItem("BioDataTuples");
             ReferenceList dataList = new ReferenceList("bioAssayTupleData");
-
+            boolean storeTuple = false;
             for (Iterator i = rowNames.iterator(); i.hasNext();) {
                 Feature feature = (Feature) i.next();
                 String s = br.readLine();
@@ -256,24 +256,28 @@ public class MageConverter extends FileConverter
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
                     QuantitationType qt = (QuantitationType) j.next();
                     String value = st.nextToken();
-                    Item datum = makeItem("BioAssayDatum");
-                    dataList.addRefId(datum.getIdentifier());
-                    datum.setReference("quantitationType", createItem(qt).getIdentifier());
-                    datum.setReference("designElement", createItem(feature).getIdentifier());
-                    datum.setAttribute("value", value);
-                    // add normalised attribute - not actually in MAGE model, will be removed
-                    // by MageDataTranslator before validating against model
-                    datum.setAttribute("normalised", normalised ? "true" : "false");
-                    //should create reference for bioAssay
-                    //ref = new Reference(); ref.setName("bioAssay");
-                    //ref.setRefId(createItem(obj).getIdentifier()); datum.addReferences(ref);
-                    storeItem(datum);
+                    if (qTypes.contains(qt.getDataType().getValue())) {
+                        storeTuple = true;
+                        Item datum = makeItem("BioAssayDatum");
+                        dataList.addRefId(datum.getIdentifier());
+                        datum.setReference("quantitationType", createItem(qt).getIdentifier());
+                        datum.setReference("designElement", createItem(feature).getIdentifier());
+                        datum.setAttribute("value", value);
+                        // add normalised attribute - not actually in MAGE model, will be removed
+                        // by MageDataTranslator before validating against model
+                        datum.setAttribute("normalised", normalised ? "true" : "false");
+                        //should create reference for bioAssay
+                        //ref = new Reference(); ref.setName("bioAssay");
+                        //ref.setRefId(createItem(obj).getIdentifier()); datum.addReferences(ref);
+                        storeItem(datum);
+                    }
                 }
             }
-
-            bdt.addCollection(dataList);
-            storeItem(bdt); // store BioDataTuple item
-            item.setReference("bioDataValues", bdt.getIdentifier());
+            if (storeTuple) {
+                bdt.addCollection(dataList);
+                storeItem(bdt); // store BioDataTuple item
+                item.setReference("bioDataValues", bdt.getIdentifier());
+            }
         }
         if (storeItem) {
             storeItem(item);
