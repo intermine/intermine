@@ -189,10 +189,11 @@ public class MageConverterTest extends TestCase
 
     public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        MageConverter mc = new MageConverter(itemWriter, new HashSet());
+        Set qts = new HashSet(Arrays.asList(new String[] {"col1", "col3"}));
+        MageConverter mc = new MageConverter(itemWriter, qts);
 
-        String exampleData = "1.006\t3.456" + System.getProperty("line.separator")
-            + "435.223\t1.004" + System.getProperty("line.separator");
+        String exampleData = "1.006\t3.456\t234" + System.getProperty("line.separator")
+            + "435.223\t1.004\t523" + System.getProperty("line.separator");
 
         f = new File("build/model/mage/resources/test/mage_example_data");
         FileWriter fw = new FileWriter(f);
@@ -219,6 +220,11 @@ public class MageConverterTest extends TestCase
         oe2.setValue("col2");
         qt2.setDataType(oe2);
         qtd.addToQuantitationTypes(qt2);
+        MeasuredSignal qt3 = new MeasuredSignal();
+        OntologyEntry oe3=new OntologyEntry();
+        oe3.setValue("col3");
+        qt3.setDataType(oe3);
+        qtd.addToQuantitationTypes(qt3);
         dbad.setQuantitationTypeDimension(qtd);
 
         FeatureDimension fd = new FeatureDimension();
@@ -241,41 +247,41 @@ public class MageConverterTest extends TestCase
         Item expected = new Item();
         expected.setClassName(ns + "DerivedBioAssayData");
         expected.setIdentifier("0_0");
-        expected.addReference(createReference("bioDataValues","9_13"));
+        expected.addReference(createReference("bioDataValues","9_15"));
         expected.addReference(createReference("quantitationTypeDimension", "6_8"));
         expected.addReference(createReference("designElementDimension", "1_1"));
         mc.seenMap = new LinkedHashMap();
         assertEquals(expected, mc.createItem(dbad));
 
-        Item d=createItems(ns+"BioDataTuples","9_13", "");
+        Item d=createItems(ns+"BioDataTuples","9_15", "");
         ReferenceList rl=new ReferenceList();
         rl.setName("bioAssayTupleData");
 
-        Item d1=createItems(ns+"BioAssayDatum", "10_14","" );
+        Item d1=createItems(ns+"BioAssayDatum", "10_16","" );
         d1.addReference(createReference("designElement", "3_3"));
         d1.addReference(createReference("quantitationType", "7_9"));
         d1.addAttribute(createAttribute("value", "1.006"));
         d1.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d1.getIdentifier());
 
-        Item d2=createItems(ns+"BioAssayDatum", "10_15","" );
+        Item d2=createItems(ns+"BioAssayDatum", "10_17","" );
         d2.addReference(createReference("designElement", "3_3"));
-        d2.addReference(createReference("quantitationType", "7_11"));
-        d2.addAttribute(createAttribute("value", "3.456"));
+        d2.addReference(createReference("quantitationType", "7_13"));
+        d2.addAttribute(createAttribute("value", "234"));
         d2.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d2.getIdentifier());
 
-        Item d3=createItems(ns+"BioAssayDatum", "10_16","" );
+        Item d3=createItems(ns+"BioAssayDatum", "10_18","" );
         d3.addReference(createReference("designElement", "3_5"));
         d3.addReference(createReference("quantitationType", "7_9"));
         d3.addAttribute(createAttribute("value", "435.223"));
         d3.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d3.getIdentifier());
 
-        Item d4=createItems(ns+"BioAssayDatum", "10_17","" );
+        Item d4=createItems(ns+"BioAssayDatum", "10_19","" );
         d4.addReference(createReference("designElement", "3_5"));
-        d4.addReference(createReference("quantitationType", "7_11"));
-        d4.addAttribute(createAttribute("value", "1.004"));
+        d4.addReference(createReference("quantitationType", "7_13"));
+        d4.addAttribute(createAttribute("value", "523"));
         d4.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d4.getIdentifier());
         d.addCollection(rl);
