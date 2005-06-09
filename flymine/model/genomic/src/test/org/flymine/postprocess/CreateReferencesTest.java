@@ -202,7 +202,36 @@ public class CreateReferencesTest extends TestCase {
         cr.insertReferences();
         cr.insertSymmetricalRelationReferences();
 
-        assertTrue(((Gene) storedGene1.getOverlappingFeatures().get(0)).getId().equals(storedGene2.getId()));
+        ObjectStore os = osw.getObjectStore();
+        
+        Query q = new Query();
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+
+        QueryField qf2 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc2 =
+            new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene1"));
+        q.setConstraint(sc2);
+
+        Results res = new Results(q, os, os.getSequence());
+        ResultsRow row = (ResultsRow) res.iterator().next();
+
+        Gene resGene = (Gene) row.get(0);
+
+        List overlappingFeatures = resGene.getOverlappingFeatures();
+
+        assertEquals(2, overlappingFeatures.size());
+
+        Set expectedIDs = new HashSet();
+        expectedIDs.add(storedGene1.getId());
+        expectedIDs.add(storedGene2.getId());
+
+        Set actualIDs = new HashSet();
+        actualIDs.add(((Gene) overlappingFeatures.get(0)).getId());
+        actualIDs.add(((Gene) overlappingFeatures.get(1)).getId());
+
+        assertEquals(expectedIDs, actualIDs);
     }
 
     private void compareChromosomeLSFResultsToExpected() throws Exception {
