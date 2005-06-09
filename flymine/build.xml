@@ -192,6 +192,8 @@
       <pathelement location="${build.model}/tfbs"/>
       <pathelement location="${build.model}/region"/>
       <pathelement location="${build.model}/diseaseregion"/>
+      <pathelement location="${build.model}/ensembl-variation"/>
+      <pathelement location="${build.model}/ensembl-disease"/>
   
       <fileset dir="${model}">
         <patternset refid="lib.models"/>
@@ -641,7 +643,7 @@
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into production -->
-  <target name="load-ensembl-drosophila" depends="prepare-build-model, copy-genomic-config">
+  <target name="load-ensembl-drosophila" depends="prepare-build-model, copy-flymine-config">
     <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -707,7 +709,7 @@
   </target>
 
   <!-- Load data from ensembl anopheles tgt items into production -->
-  <target name="load-ensembl-anopheles" depends="prepare-build-model, copy-genomic-config">
+  <target name="load-ensembl-anopheles" depends="prepare-build-model, copy-flymine-config">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -797,7 +799,7 @@
 
 
   <!-- Load data from chado tgt items into production -->
-  <target name="load-chado" depends="prepare-build-model, copy-genomic-config">
+  <target name="load-chado" depends="prepare-build-model, copy-flymine-config">
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -850,7 +852,7 @@
   </target>
 
   <!-- Load data from ensembl orthologues into production -->
-  <target name="load-orthologues-ensembl" depends="copy-genomic-config">
+  <target name="load-orthologues-ensembl" depends="copy-flymine-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -891,7 +893,7 @@
   </target>
 
   <!-- Load data from inparanoid orthologues into production -->
-  <target name="load-orthologues-inparanoid" depends="copy-genomic-config">
+  <target name="load-orthologues-inparanoid" depends="copy-flymine-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -932,7 +934,7 @@
     </ant>
   </target>
 
-  <target name="load-rnai" depends="copy-genomic-config">
+  <target name="load-rnai" depends="copy-flymine-config">
     <taskdef name="load-rnai" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -972,7 +974,7 @@
   </target>
 
 
-  <target name="load-phenotype"  depends="copy-genomic-config">
+  <target name="load-phenotype"  depends="copy-flymine-config">
     <taskdef name="load-phenotype" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1007,7 +1009,7 @@
     </ant>
   </target>
 
-  <target name="load-psi-dag"  depends="copy-genomic-config">
+  <target name="load-psi-dag"  depends="copy-flymine-config">
     <taskdef name="load-psi-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1096,14 +1098,14 @@
     </ant>
   </target>
 
-  <target name="load-psi-hybrigenics"  depends="copy-genomic-config">
+  <target name="load-psi-hybrigenics"  depends="copy-flymine-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi-hybrigenics" ignoreDuplicates="true"/>
   </target>
 
-  <target name="load-psi-intact" depends="copy-genomic-config">
+  <target name="load-psi-intact" depends="copy-flymine-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1138,7 +1140,7 @@
     </ant>
   </target>
 
-  <target name="load-taxonomy"  depends="copy-genomic-config">
+  <target name="load-taxonomy"  depends="copy-flymine-config">
     <taskdef name="load-taxonomy" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1226,7 +1228,7 @@
     </ant>
   </target>
 
-  <target name="load-mage" depends = "prepare-build-model, copy-genomic-config">
+  <target name="load-mage" depends = "prepare-build-model, copy-flymine-config">
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1291,7 +1293,7 @@
     </ant>
   </target>
 
-  <target name="load-protein_structure"  depends="copy-genomic-config">
+  <target name="load-protein_structure"  depends="copy-flymine-config">
     <taskdef name="load-protein_structure" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1421,7 +1423,7 @@
   </target>
 
   <target name="load-flyreg"
-          depends="copy-genomic-config, prepare-build-model, compile-flyreg-java, compile-genomic-java">
+          depends="copy-flymine-config, prepare-build-model, compile-flyreg-java, compile-genomic-java">
     <taskdef name="load-flyreg" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1474,7 +1476,7 @@
   </target>
 
   <target name="load-long_oligo"
-          depends="copy-genomic-config, prepare-build-model, compile-long_oligo-java, compile-genomic-java">
+          depends="copy-flymine-config, prepare-build-model, compile-long_oligo-java, compile-genomic-java">
     <taskdef name="load-long_oligo" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1527,7 +1529,7 @@
   </target>
 
   <target name="load-tiling_path"
-          depends="copy-genomic-config, prepare-build-model, compile-tiling_path-java, compile-genomic-java">
+          depends="copy-flymine-config, prepare-build-model, compile-tiling_path-java, compile-genomic-java">
     <taskdef name="load-tiling_path" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1598,7 +1600,7 @@
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
-  <target name="load-static" depends="prepare-build-model, copy-genomic-config">
+  <target name="load-static" depends="prepare-build-model, copy-flymine-config">
     <taskdef name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
@@ -1685,7 +1687,7 @@
     </ant>
   </target>
 
-  <target name="load-uniprot"  depends="copy-genomic-config">
+  <target name="load-uniprot"  depends="copy-flymine-config">
     <taskdef name="load-uniprot" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1705,11 +1707,42 @@
     </ant>
   </target>
 
+  <target name="copy-flymine-config" depends="prepare-build-model">
+    <property name="model.name" value="genomic"/>
+    <copy todir="${build.model}/${model.name}" failonerror="false">
+      <fileset dir="${model}/${model.name}/resources">
+        <include name="*.properties"/>
+        <include name="*.sql"/>
+        <include name="flymine/*.properties"/>
+        <include name="flymine/*.sql"/>
+      </fileset>
+    </copy>
+  </target> 
+      
+  <target name="copy-t1dmine-config" depends="prepare-build-model">
+    <property name="model.name" value="genomic"/>
+    <copy todir="${build.model}/${model.name}" failonerror="false">    
+      <fileset dir="${model}/${model.name}/resources">
+        <include name="*.properties"/>
+        <include name="*.sql"/>
+        <include name="t1dmine/*.properties"/>
+        <include name="t1dmine/*.sql"/>
+      </fileset>
+    </copy>
+  </target>
   <!-- NOTE - following target updates model and other metadata in production database.  
        If the model has changed then this can be really bad.  Should be used with extreme caution if
        absolutely confident that changes will not put model/details out of sync with schema. -->
-
-  <target name="update-metadata-production" depends="copy-genomic-config">
+ <target name="update-metadata-flymine-production" depends="copy-flymine-config">
+        <!-- compile-genomic-model--> 
+        <!-- compile-genomic-human-model-->
+    <taskdef name="db-insert-model"
+             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <db-insert-model database="db.production" modelName="genomic"/>
+  </target>
+  <target name="update-metadata-t1dmine-production" depends="copy-t1dmine-config">
         <!-- compile-genomic-model--> 
         <!-- compile-genomic-human-model-->
     <taskdef name="db-insert-model"
@@ -1720,7 +1753,7 @@
   </target>
 
   <!-- Build genomic model database to hold production data -->
-  <target name="build-db-production" depends="compile-genomic-model, copy-genomic-config">
+  <target name="build-db-production" depends="compile-genomic-model, copy-flymine-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1992,7 +2025,7 @@
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
 
   <!-- build genomic test database -->
-  <target name="build-db-genomic-test" depends="prepare-build-model, prepare-test, copy-genomic-config">
+  <target name="build-db-genomic-test" depends="prepare-build-model, prepare-test, copy-flymine-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -2363,6 +2396,7 @@
 
   <target name="build-production-webapp"
           depends="prepare-build-model, compile-flymine-java">
+    <property name = "model.css.file" value = "model/genomic/resources/web/model.css"/>
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2785,16 +2819,16 @@
   </target>
 
 
-  <!-- =============== HUMAN TARGETS ================= -->
+  <!-- =============== TIDMINE TARGETS ======================================== -->
 
- <target name="compile-genomic-human-java" depends="compile-flymine-java, compile-genomic-human-model">
+ <target name="compile-genomic-t1dmine-java" depends="compile-flymine-java, compile-genomic-t1dmine-model">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
- <target name="load-static-human" depends="prepare-build-model, copy-genomic-config">
+ <target name="load-static-t1dmine" depends="prepare-build-model, copy-t1dmine-config">
     <taskdef name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
@@ -2806,7 +2840,7 @@
   </target>
 
 
-  <!-- ENSEMBL HUMAN  MODEL GENERATION -->
+  <!-- ENSEMBL HUMAN  CORE MODEL GENERATION -->
 
   <!-- convert ensembl human zargo to InterMine model -->
   <target name="convert-ensembl-human" depends="prepare-build-model">
@@ -2821,10 +2855,17 @@
     <merge-genomic-additions additionsFile="${model}/ensembl-human/ensembl-human_additions.xml"/>
   </target>
 
+
+  <!-- ENSEMBL HUMAN DISEASE MODEL GENERATION -->
+  <!-- merge the ensembl model additions with the current genomic model -->
+  <target name="merge-ensembl-disease-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/ensembl-disease/ensembl-disease_additions.xml"/>
+  </target>
+
   <!-- MERGED GENOMIC HUMAN MODEL  -->
 
  <!-- create human genomic model from core and all additions files -->
-  <target name="create-human-production-model"
+  <target name="create-t1dmine-production-model"
           depends="remove-genomic, prepare-build-model,
                 merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
@@ -2836,7 +2877,7 @@
 
 
   <!-- create java objects for the genomic human model-->
-  <target name="compile-genomic-human-model" depends="create-human-production-model">
+  <target name="compile-genomic-t1dmine-model" depends="create-t1dmine-production-model">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2873,7 +2914,7 @@
   </target>
 
   <!-- translate ensembl human data -->
-  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-human-java">
+  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2902,7 +2943,7 @@
   </target>
 
   <!-- Load data from ensembl-human-tgt-items into production -->
-  <target name="load-ensembl-human" depends="prepare-build-model, copy-genomic-config">
+  <target name="load-ensembl-human" depends="prepare-build-model, copy-t1dmine-config">
     <taskdef name="load-human" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -2917,7 +2958,7 @@
  <!-- BUILD PRODUCTION DATABASE -->
 
   <!-- Build genomic model database to hold production data -->
-  <target name="build-db-production-human" depends="compile-genomic-human-model, copy-genomic-config">
+  <target name="build-db-production-t1dmine" depends="compile-genomic-t1dmine-model, copy-t1dmine-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2926,10 +2967,11 @@
     </ant>
   </target>
 
+  
    <!-- build production database - assumes that ensembl databases already retrieved -->
-  <target name="human-production-build"
-          depends="create-human-production-model, compile-genomic-human-model,jar-genomic,
-                   build-db-production-human,create-indexes-production, load-static,
+  <target name="t1dmine-production-build"
+          depends="create-t1dmine-production-model, compile-genomic-t1dmine-model,jar-genomic,
+                   build-db-production-t1dmine,create-indexes-production, load-static,
                    build-ensembl-human-production, build-go-human-production,
                    build-tfbs-production, build-firstef-production,
                    build-regions-production, build-disease-regions-production,
@@ -2951,7 +2993,7 @@
     <transfer-sequences operation="transfer-sequences-chromosome" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="post-process-human">
+  <target name="post-process-t1dmine">
       <antcall target="fetch-contig-sequences"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
@@ -2980,23 +3022,22 @@
     </ant>
   </target>
 
-  <target name="test-human-models-inc"
-          depends="ensembl-human-test, rnai-test, psi-test, orthologue-test, go-test,
-                   taxonomy-test, uniprot-test, protein_structure-test, 
+  <target name="test-t1dmine-models-inc"
+          depends="ensembl-human-test, go-test,
                    tfbs-test, firstef-test, region-test, diseaseregion-test">
     <antcall target="test-report"/>
   </target>
 
-  <target name="test-human-models-full"
-          depends="compile-genomic-human-model, test-human-models-inc">
+  <target name="test-t1dmine-models-full"
+          depends="compile-genomic-t1dmine-model, test-t1dmine-models-inc">
     <antcall target="test-report"/>
   </target>
 
-  <target name="genomic-human-test" depends="compile-genomic-human-model, genomic-test-inc"/>
+  <target name="genomic-t1dmine-test" depends="compile-genomic-t1dmine-model, genomic-test-inc"/>
 
-  <target name="fullhumantest"
-          depends="clean, compile-genomic-human-model, build-db-genomic-test,
-                   create-indexes-genomic-test, test-human-models-inc, genomic-human-test"
+  <target name="t1dminefulltest"
+          depends="clean, compile-genomic-t1dmine-model, build-db-genomic-test,
+                   create-indexes-genomic-test, test-t1dmine-models-inc, genomic-t1dmine-test"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
@@ -3054,7 +3095,7 @@
   </target>
 
   <target name="ucsc-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-human-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ucsc"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3062,7 +3103,7 @@
   </target>
 
   <target name="compile-ucsc-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-human-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ucsc"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3078,7 +3119,7 @@
   </target>
 
   <target name="tfbs-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-human-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="tfbs"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3086,7 +3127,7 @@
   </target>
   
   <target name="compile-tfbs-java" 
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-human-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="tfbs"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3130,7 +3171,7 @@
     </ant>
   </target>
 
-  <target name="load-tfbs" depends="copy-genomic-config">
+  <target name="load-tfbs" depends="copy-t1dmine-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -3151,7 +3192,7 @@
   </target>
 
   <target name="firstef-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-human-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="firstef"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3159,7 +3200,7 @@
   </target>
   
   <target name="compile-firstef-java" 
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-human-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="firstef"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3203,7 +3244,7 @@
     </ant>
   </target>
 
- <target name="load-firstef" depends="copy-genomic-config">
+ <target name="load-firstef" depends="copy-t1dmine-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -3224,7 +3265,7 @@
   </target>
 
   <target name="region-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-human-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="region"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3232,7 +3273,7 @@
   </target>
   
   <target name="compile-region-java" 
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-human-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="region"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3276,7 +3317,7 @@
     </ant>
   </target>
 
- <target name="load-regions" depends="copy-genomic-config">
+ <target name="load-regions" depends="copy-t1dmine-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -3297,7 +3338,7 @@
   </target>
 
   <target name="diseaseregion-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-human-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="diseaseregion"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3305,7 +3346,7 @@
   </target>
   
   <target name="compile-diseaseregion-java" 
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-human-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="diseaseregion"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3349,7 +3390,7 @@
     </ant>
   </target>
 
-  <target name="load-disease-regions" depends="copy-genomic-config">
+  <target name="load-disease-regions" depends="copy-t1dmine-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -3363,6 +3404,42 @@
   <target name="build-disease-regions-production"
           depends="retrieve-disease-regions, load-disease-regions"/>
 
-  
+
+  <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="userprofile"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.userprofile-production"/>
+      <property name="objectstore.name" value="os.userprofile-production"/>
+    </ant>
+    <antcall target="load-default-templates-t1dmine"/>
+  </target>
+
+  <!-- load default global template queries -->
+  <target name="load-default-templates-t1dmine" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="insert-default-templates" classname="org.intermine.web.task.LoadDefaultTemplatesTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <insert-default-templates templatesXml="model/genomic/resources/web/t1dmine/template-queries.xml"
+                              username="${webapp.superuser}" osAlias="os.production"
+                              userProfileAlias="osw.userprofile-production"/>
+  </target>       
+
+  <target name="build-production-webapp-t1dmine"
+          depends="t1dmine-model-css, build-production-webapp">        
+  </target>
+
+  <target name ="t1dmine-model-css">
+     <property name = "model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
+  </target>
+
+
 </project>
 
