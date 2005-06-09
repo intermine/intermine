@@ -119,7 +119,7 @@ public class ModelGenerationTask extends Task
         try {
             model = parser.process(new FileReader(source));
         } catch (Exception e) {
-            BuildException be = new BuildException("Error parsing model: ");
+            BuildException be = new BuildException("Error parsing model: ", e);
             be.initCause(e);
             e.printStackTrace();
             throw be;
