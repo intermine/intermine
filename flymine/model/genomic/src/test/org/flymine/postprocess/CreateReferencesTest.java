@@ -154,7 +154,8 @@ public class CreateReferencesTest extends TestCase {
         cl.fixPartials();
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
+        cr.insertCollectionField(Transcript.class, "objects", SimpleRelation.class, "object",
+                                 Gene.class, "transcripts", false);
 
         compareGeneTranscriptResultsToExpected();
     }

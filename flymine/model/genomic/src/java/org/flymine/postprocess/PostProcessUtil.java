@@ -77,50 +77,6 @@ public class PostProcessUtil
         return newObj;
     }
 
-
-    /**
-     * Query ObjectStore for all Relation objects (or specified subclass)
-     * between given object and a given subject classes.  Return an iterator ordered
-     * by objectCls.
-     * e.g.  Transcript -> Location -> Exon
-     * @param os an ObjectStore to query
-     * @param objectCls object type of the Relation
-     * @param subjectCls subject type of the Relation
-     * @param relationCls type of relation
-     * @return an iterator over the results
-     * @throws ObjectStoreException if problem reading ObjectStore
-     */
-    public static Iterator findRelations(ObjectStore os, Class objectCls, Class subjectCls,
-                                         Class relationCls) throws ObjectStoreException {
-        // TODO check objectCls and subjectCls assignable to BioEntity
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(objectCls);
-        q.addFrom(qcObj);
-        q.addToSelect(qcObj);
-        QueryClass qcSub = new QueryClass(subjectCls);
-        q.addFrom(qcSub);
-        q.addToSelect(qcSub);
-        QueryClass qcRel = new QueryClass(relationCls);
-        q.addFrom(qcRel);
-        q.addToSelect(qcRel);
-        q.addToOrderBy(qcObj);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryObjectReference ref1 = new QueryObjectReference(qcRel, "object");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
-        cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcRel, "subject");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
-        cs.addConstraint(cc2);
-        q.setConstraint(cs);
-
-        ((ObjectStoreInterMineImpl) os).precompute(q);
-        Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(500);
-        return res.iterator();
-    }
-
-
     /**
      * Query ObjectStore for all Relation objects (or specified subclass)
      * between given object and any subject classes.  Return an iterator ordered
