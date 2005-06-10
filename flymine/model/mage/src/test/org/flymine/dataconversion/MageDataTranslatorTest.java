@@ -577,7 +577,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     protected Collection getSrcItems() throws Exception {
         BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/MageTestData_adf.xml")));
         MockItemWriter mockIw = new MockItemWriter(new LinkedHashMap());
-        MageConverter converter = new MageConverter(mockIw, new HashSet());
+        MageConverter converter = new MageConverter(mockIw);
         converter.process(srcReader);
 
 
