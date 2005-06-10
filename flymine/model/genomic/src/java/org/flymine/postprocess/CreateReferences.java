@@ -63,12 +63,16 @@ public class CreateReferences
         LOG.info("insertReferences stage 1");
 
         // Transcript.exons / Exon.transcripts
-        insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
-        insertReferences(Transcript.class, Exon.class, SimpleRelation.class, "exons");
+        insertCollectionField(Transcript.class, "subjects", RankedRelation.class, "subject",
+                              Exon.class, "transcripts", false);
+        insertCollectionField(Transcript.class, "subjects", SimpleRelation.class, "subject",
+                              Exon.class, "transcripts", false);
 
         // Intron.MRNAs / MRNA.introns
-        insertReferences(MRNA.class, Intron.class, SimpleRelation.class, "introns");
-        insertReferences(Transcript.class, Exon.class, SimpleRelation.class, "exons");
+        insertCollectionField(MRNA.class, "subjects", SimpleRelation.class, "subject",
+                              Intron.class, "introns", false);
+        insertCollectionField(Transcript.class, "subjects", SimpleRelation.class, "subject",
+                              Exon.class, "exons", false);
 
         LOG.info("insertReferences stage 2");
         // Gene.transcript / Transcript.gene
@@ -111,9 +115,6 @@ public class CreateReferences
         insertCollectionField(Gene.class, "transcripts", Transcript.class, "protein",
                               Protein.class, "genes", false);
 
-        // TODO CDS.chromosome - currently missing from model
-        //insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-        //                     CDS.class, "chromosome");
         // CDS.gene / Gene.CDSs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
                              CDS.class, "gene");
@@ -177,74 +178,6 @@ public class CreateReferences
      */
     public void populateOrthologuesCollection() throws Exception {
         insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
-    }
-
-    /**
-     * Fill in missing references/collectiosn in model by querying relations
-     * BioEntity1 -> Relation -> BioEntity2   ==>   BioEntity1 -> BioEntity2
-     * @param objectClass the class of the objects to which the collection will be added
-     * @param subjectClass the class of the objects added to the collection
-     * @param relationClass the class that relates subjectClass and objectClass
-     * @param collectionFieldName the field in the object class to which the subjects will be added
-     * @throws Exception if anything goes wrong
-     */
-    protected void insertReferences(Class objectClass, Class subjectClass,
-                                    Class relationClass, String collectionFieldName)
-        throws Exception {
-
-        LOG.info("Beginning insertReferences(" + objectClass.getName() + ", "
-                 + subjectClass.getName() + ", " + relationClass.getName() + ", "
-                 + collectionFieldName + ")");
-
-        InterMineObject lastObject = null;
-        List newCollection = new ArrayList();
-        Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), objectClass,
-                                                         subjectClass, relationClass);
-        // results will be:  object ; subject ; relation  (ordered by object_
-        osw.beginTransaction();
-
-        int count = 0;
-
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            InterMineObject thisObject = (InterMineObject) rr.get(0);
-            InterMineObject thisSubject = (InterMineObject) rr.get(1);
-
-            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
-                if (lastObject != null) {
-                    // clone so we don't change the ObjectStore cache
-                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-
-                    TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-                    count += newCollection.size();
-                    osw.store(tempObject);
-                }
-
-                newCollection = new ArrayList();
-            }
-
-            newCollection.add(thisSubject);
-
-            lastObject = thisObject;
-        }
-
-        if (lastObject != null) {
-            // clone so we don't change the ObjectStore cache
-            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-            count += newCollection.size();
-            osw.store(tempObject);
-        }
-        LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
-                 + subjectClass.getName() + " via the " + collectionFieldName + " field");
-        osw.commitTransaction();
-
-        // now ANALYSE tables relation to class that has been altered - may be rows added
-        // to indirection tables
-        if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(objectClass.getName());
-            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-        }
     }
 
     /**
