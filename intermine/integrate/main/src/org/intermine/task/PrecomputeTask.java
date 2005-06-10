@@ -32,23 +32,25 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -72,6 +74,8 @@ public class PrecomputeTask extends Task
     protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
     private static final String TEST_QUERY_PREFIX = "test.query.";
+    private boolean selectAllFields = true;   // put all available fields on the select list
+    private boolean createAllOrders = false;  // create same table with all possible orders
 
     /**
      * Set the ObjectStore alias
@@ -131,6 +135,7 @@ public class PrecomputeTask extends Task
         precomputeModel(objectStore, oss);
     }
 
+
     /**
      * Create precomputed tables for the given ObjectStore.  This method is also called from
      * PrecomputeTaskTest.
@@ -158,7 +163,6 @@ public class PrecomputeTask extends Task
         Map pq = getPrecomputeQueries(oss);
         LOG.info("pq.size(): " + pq.size());
         Iterator iter = pq.entrySet().iterator();
-        //Iterator iter = getPrecomputeQueries().entrySet().iterator();
 
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
@@ -209,6 +213,7 @@ public class PrecomputeTask extends Task
         }
     }
 
+
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
      * @param os the ObjectStore to call precompute() on
@@ -232,6 +237,7 @@ public class PrecomputeTask extends Task
                  + " seconds for: " + query);
     }
 
+
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
      * @param os the ObjectStore to call precompute() on
@@ -252,6 +258,7 @@ public class PrecomputeTask extends Task
                  + " seconds for: " + query);
     }
 
+
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
      * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
@@ -262,6 +269,10 @@ public class PrecomputeTask extends Task
      */
     protected Map getPrecomputeQueries(ObjectStoreSummary oss) throws BuildException {
         Map returnMap = new TreeMap();
+
+        // TODO - read selectAllFields and createAllOrders from properties
+
+        // TODO - property to not create empty tables
 
         Iterator iter = new TreeSet(precomputeProperties.keySet()).iterator();
 
@@ -278,36 +289,11 @@ public class PrecomputeTask extends Task
                 returnMap.put(precomputeKey, list);
             } else {
                 if (precomputeKey.startsWith("precompute.constructquery")) {
-                    String[] queryBits = value.split("[ \t]");
-
-                    if (queryBits.length == 3) {
-                        String objectClassName = queryBits[0];
-                        String connectingField = queryBits[1];
-                        String subjectClassName = queryBits[2];
-
-                        List constructedQueries =
-                            constructQueries(objectClassName, connectingField, subjectClassName,
-                                             oss);
-
+                    try {
+                        List constructedQueries = constructQueries(value, createAllOrders);
                         returnMap.put(precomputeKey, constructedQueries);
-                    } else {
-                        if (queryBits.length == 5) {
-                            String object1ClassName = queryBits[0];
-                            String connectingField1 = queryBits[1];
-                            String object2ClassName = queryBits[2];
-                            String connectingField2 = queryBits[3];
-                            String object3ClassName = queryBits[4];
-
-                            List constructedQueries =
-                                constructQueries(object1ClassName, connectingField1,
-                                                 object2ClassName, connectingField2,
-                                                 object3ClassName, oss);
-
-                            returnMap.put(precomputeKey, constructedQueries);
-                        } else {
-                            throw new BuildException(precomputeKey + " should have three or five "
-                                                     + "fields (ie. class fieldname class)");
-                        }
+                    } catch (Exception e) {
+                        throw new BuildException(e);
                     }
                 } else {
                     if (!precomputeKey.startsWith(TEST_QUERY_PREFIX)) {
@@ -320,381 +306,260 @@ public class PrecomputeTask extends Task
         return returnMap;
     }
 
-    /**
-     * Take two class names and a connecting collection or reference field name and create a new
-     * Query.  Eg. for
-     * "Company", "departments", "Department", create:
-     *   SELECT DISTINCT a1_, a2_ FROM org.intermine.model.test model.Company AS a1_,
-     *   org.intermine.model.testmodel.Department AS a2_ WHERE a1_.departments CONTAINS a2_ ORDER BY
-     *   a1_
-     * Queries will also be created for all combinations of sub-classes of objectClassName and
-     * subjectClassName.
-     * @param objectClassName the name of the object class
-     * @param connectingFieldname the field name to use to reference the subject class
-     * @param subjectClassName the name of the subject class
-     * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
-     * have no objects
-     * @return a List of Query objects
-     * @throws BuildException if a query cannot be constructed (for example when a class or the
-     * collection doesn't exist)
-     */
-    protected List constructQueries(String objectClassName,
-                                    String connectingFieldname,
-                                    String subjectClassName,
-                                    ObjectStoreSummary oss)
-        throws BuildException {
 
-        Set allObjectCDs = getClassDecriptors(objectClassName);
-        Set allSubjectCDs = getClassDecriptors(subjectClassName);
-
-        List queryList = new ArrayList();
-
-        Iterator allObjectCDsIter = allObjectCDs.iterator();
-
-        while (allObjectCDsIter.hasNext()) {
-            ClassDescriptor thisObjectCD = (ClassDescriptor) allObjectCDsIter.next();
-
-            if (oss.getClassCount(thisObjectCD.getName()) == 0) {
-                continue;
-            }
-
-            Iterator allSubjectCDsIter = allSubjectCDs.iterator();
-
-            while (allSubjectCDsIter.hasNext()) {
-                ClassDescriptor thisSubjectCD = (ClassDescriptor) allSubjectCDsIter.next();
-
-                if (oss.getClassCount(thisSubjectCD.getName()) == 0) {
-                    continue;
-                }
-
-                //queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                //                                thisSubjectCD.getType(), true));
-                queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                                                thisSubjectCD.getType(), false));
-            }
-        }
-
-        return queryList;
-    }
 
     /**
-     * Take three class names and two connecting collection or reference field names and create a
-     * new Query.  Eg. for
-     * "Company", "departments", "Department", "employees", "Employee" create:
-     *   SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_,
-     *   org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS
-     *   a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_)
-     * Queries will also be created for all combinations of sub-classes of objectClassName and
-     * subjectClassName if they are tagged with a "+" as the first character.
-     * @param object1ClassName the name of the first object class
-     * @param connectingFieldname1 the field name to use to reference the Class for object 2
-     * @param object2ClassName the name of the second object class
-     * @param connectingFieldname2 the field name to use to reference the Class for object 3
-     * @param object3ClassName the name of the third object class
-     * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
-     * have no objects
-     * @return a List of Query objects
-     * @throws BuildException if a query cannot be constructed (for example when a class or the
-     * collection doesn't exist)
+     * Given a class return a set with the unqualified class name in and if preceded by
+     * a '+' also the unqualified names of all subclasses.
+     * @param clsName an unqullified class name
+     * @return a set of class names
      */
-    protected List constructQueries(String object1ClassName,
-                                    String connectingFieldname1,
-                                    String object2ClassName,
-                                    String connectingFieldname2,
-                                    String object3ClassName,
-                                    ObjectStoreSummary oss)
-        throws BuildException {
+    protected Set getClassNames(String clsName) {
+        Model model = os.getModel();
 
-        Set allObject1CDs = getClassDecriptors(object1ClassName);
-        Set allObject2CDs = getClassDecriptors(object2ClassName);
-        Set allObject3CDs = getClassDecriptors(object3ClassName);
-
-        List queryList = new ArrayList();
-
-        Iterator allObject1CDsIter = allObject1CDs.iterator();
-
-        while (allObject1CDsIter.hasNext()) {
-            ClassDescriptor thisObject1CD = (ClassDescriptor) allObject1CDsIter.next();
-
-            if (oss.getClassCount(thisObject1CD.getName()) == 0) {
-                continue;
-            }
-
-            Iterator allObject2CDsIter = allObject2CDs.iterator();
-
-            while (allObject2CDsIter.hasNext()) {
-                ClassDescriptor thisObject2CD = (ClassDescriptor) allObject2CDsIter.next();
-
-                if (oss.getClassCount(thisObject2CD.getName()) == 0) {
-                    continue;
-                }
-
-                Iterator allObject3CDsIter = allObject3CDs.iterator();
-
-                while (allObject3CDsIter.hasNext()) {
-                    ClassDescriptor thisObject3CD = (ClassDescriptor) allObject3CDsIter.next();
-
-                    if (oss.getClassCount(thisObject3CD.getName()) == 0) {
-                        continue;
-                    }
-
-                    //queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
-                    //                                thisObject2CD.getType(), connectingFieldname2,
-                    //                                thisObject3CD.getType(), true));
-
-                    queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
-                                                    thisObject2CD.getType(), connectingFieldname2,
-                                                    thisObject3CD.getType(), false));
-                }
-            }
-        }
-
-        return queryList;
-    }
-
-    /**
-     * Return a Set of ClassDescriptors for the given className.  If className is a simple class
-     * name (with or without the full package), then return it's ClassDescriptor.  If className
-     * begins with a "+", remove the "+" and return Set containing the ClassDescriptor for the class
-     * and ClassDescriptors for all subclasses.
-     * @param className the class name
-     * @return a Set of ClassDescriptors for the given className.
-     */
-    protected Set getClassDecriptors(String className) {
         boolean useSubClasses = false;
-        if (className.startsWith("+")) {
-            className = className.substring(1);
+        if (clsName.startsWith("+")) {
+            clsName = clsName.substring(1);
             useSubClasses = true;
         }
-        if (className.indexOf(".") == -1) {
-            className = os.getModel().getPackageName() + "." + className;
-        }
-        ClassDescriptor classDesc = os.getModel().getClassDescriptorByName(className);
-        if (classDesc == null) {
-            throw new BuildException("cannot find ClassDescriptor for " + className
+
+        ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
+                                                             + "." + clsName);
+        if (cld == null) {
+            throw new BuildException("cannot find ClassDescriptor for " + clsName
                                      + " (read name from "
                                      + getPropertiesFileName() + ")");
         }
 
-        Set returnSet;
+        Set clsNames = new LinkedHashSet();
+        clsNames.add(clsName);
 
         if (useSubClasses) {
-            returnSet = os.getModel().getAllSubs(classDesc);
-        } else {
-            returnSet = new LinkedHashSet();
+            Set clds = model.getAllSubs(cld);
+            Iterator cldIter = clds.iterator();
+            while (cldIter.hasNext()) {
+                clsNames.add(TypeUtil.unqualifiedName(((ClassDescriptor)
+                                                       cldIter.next()).getName()));
+            }
         }
-
-        returnSet.add(classDesc);
-
-        return returnSet;
+        return clsNames;
     }
 
+
     /**
-     * Take two class object and a connecting collection or reference field name and create a new
-     * Query with objectClass.connectingFieldname = subjectClass
-     * @param objectClass the object class
-     * @param connectingFieldname the field name to use to reference the subject class
-     * @param subjectClass the subject class
-     * @param selectAllFields if true add all of the fields of objectClass and subjectClass to the
-     * select list of the Query to precompute()
-     * @return the new Queries
-     * @throws BuildException if the query cannot be constructed (for example when a class or the
-     * collection doesn't exist)
+     * Path should be of the form: Class1 ref1 Class2 ref2 Class3
+     * Where the number of elements is greater than one and an odd number.  Check
+     * that all classes anf references are valid in the model.
+     * @param path the path string
+     * @throws IllegalArgumentException if path not valid
      */
-    protected List constructQuery(Class objectClass, String connectingFieldname,
-                                  Class subjectClass, boolean selectAllFields)
-        throws BuildException {
+    protected void validatePath(String path) {
+        Model model = os.getModel();
+
+        // must be more than one element and odd number
+        String[] queryBits = path.split("[ \t]");
+        if (!(queryBits.length > 1) || (queryBits.length % 2 == 0)) {
+            throw new IllegalArgumentException("Construct query path does not have valid "
+                                               + " number of elements: " + path);
+        }
+
+        for (int i = 0; i + 2 < queryBits.length; i += 2) {
+            String start = model.getPackageName() + "." + queryBits[i];
+            String refName = queryBits[i + 1];
+            String end = model.getPackageName() + "." + queryBits[i + 2];
+
+            if (!model.hasClassDescriptor(start)) {
+                throw new IllegalArgumentException("Class not found in model: " + start);
+            } else if (!model.hasClassDescriptor(end)) {
+                throw new IllegalArgumentException("Class not found in model: " + end);
+            }
+
+            ClassDescriptor startCld = model.getClassDescriptorByName(start);
+            ReferenceDescriptor rd = startCld.getReferenceDescriptorByName(refName);
+            if ((startCld.getReferenceDescriptorByName(refName, true) == null)
+                && (startCld.getCollectionDescriptorByName(refName, true) == null)) {
+                throw new IllegalArgumentException("Cannot find descriptor for " + refName
+                                         + " in " + startCld.getName());
+            }
+            // TODO check type of end vs. referenced type
+        }
+    }
+
+
+    /**
+     * Create queries for given path.  If path has a '+' next to any class then
+     * expand to include all subclasses.
+     * @param path the path to construct a query for
+     * @param createAllOrders if true then create a query for all possible orders of QueryClass
+     * objects on the from list of the query
+     * @return a list of queries
+     * @throws ClassNotFoundException if problem processing path
+     * @throws IllegalArgumentException if problem processing path
+     */
+    protected List constructQueries(String path, boolean createAllOrders)
+        throws ClassNotFoundException, IllegalArgumentException {
+
+        List queries = new ArrayList();
+
+        // expand '+' to all subclasses in path
+        Set paths = expandPath(path);
+        Iterator pathIter = paths.iterator();
+        while (pathIter.hasNext()) {
+            String nextPath = (String) pathIter.next();
+            Query q = constructQuery(nextPath);
+            if (createAllOrders) {
+                queries.addAll(getOrderedQueries(q));
+            } else {
+                queries.add(q);
+            }
+        }
+        return queries;
+    }
+
+
+    /**
+     * Given a path return a set of paths replacing a path with a '+' preceding a class
+     * name with an additional path for every subclass of that class.
+     * @param path the path to expand
+     * @return a Set of paths
+     */
+    protected Set expandPath(String path) {
+        Set paths = new LinkedHashSet();
+
+        String clsName;
+        String refName = "";
+        int refEnd = 0;
+        if (path.indexOf(' ') != -1) {
+            int clsEnd = path.indexOf(' ');
+            clsName = path.substring(0, clsEnd);
+            refEnd = path.indexOf(' ', clsEnd + 1);
+            refName = path.substring(clsEnd, refEnd);
+        } else {
+            // at end, this is last clsName
+            clsName = path;
+        }
+
+        Set subs = getClassNames(clsName);
+        Iterator subIter = subs.iterator();
+        while (subIter.hasNext()) {
+            String subName = (String) subIter.next();
+            Set nextPaths = new LinkedHashSet();
+            if (refName != "") {
+                nextPaths.addAll(expandPath(path.substring(refEnd + 1).trim()));
+            } else {
+                nextPaths.addAll(subs);
+                return nextPaths;
+            }
+            Iterator pathIter = nextPaths.iterator();
+            while (pathIter.hasNext()) {
+                String nextPath = (String) pathIter.next();
+                paths.add((subName + refName + " " + nextPath).trim());
+            }
+        }
+        return paths;
+    }
+
+
+    /**
+     * Construct an objectstore query represented by the given path.
+     * @param path path to construct query for
+     * @return the constructed query
+     * @throws ClassNotFoundException if problem processing path
+     * @throws IllegalArgumentException if problem processing path
+     */
+    protected Query constructQuery(String path) throws ClassNotFoundException,
+                                                       IllegalArgumentException {
+        String[] queryBits = path.split("[ \t]");
+
+        // validate path against model
+        validatePath(path);
+
+        Model model = os.getModel();
+
         Query q = new Query();
-        q.setDistinct(true);
-
-        QueryClass qcObj = new QueryClass(objectClass);
-        q.addFrom(qcObj);
-        q.addToSelect(qcObj);
-
-        if (selectAllFields) {
-            List fieldNames = getAttributeFieldNames(objectClass);
-            addFieldsToQuery(q, qcObj, fieldNames);
+        QueryClass qcLast = null;
+        for (int i = 0; i + 2 < queryBits.length; i += 2) {
+            QueryClass qcStart = new QueryClass(Class.forName(model.getPackageName()
+                                                              + "." + queryBits[i]));
+            String refName = queryBits[i + 1];
+            QueryClass qcEnd = new QueryClass(Class.forName(model.getPackageName()
+                                                            + "." + queryBits[i + 2]));
+            if (qcLast != null) {
+                qcStart = qcLast;
+            }
+            qcLast = addReferenceConstraint(q, qcStart, refName, qcEnd, (i == 0));
         }
 
-        QueryClass qcSub = new QueryClass(subjectClass);
-        q.addFrom(qcSub);
-        q.addToSelect(qcSub);
+        return q;
+    }
 
-        // fields should be added straight after the corresponding class for performance reasons
-        if (selectAllFields) {
-            List fieldNames = getAttributeFieldNames(subjectClass);
-            addFieldsToQuery(q, qcSub, fieldNames);
+
+    /**
+     * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
+     * Return qcEnd as it may need to be passed into mehod again as qcStart.
+     * @param q the query
+     * @param qcStart the QueryClass that contains the reference
+     * @param refName name of reference to qcEnd
+     * @param qcEnd the target QueryClass of refName
+     * @param first true if this is the first constraint added - qcStart needs to be added
+     * to the query
+     * @return QueryClass return qcEnd
+     */
+    protected QueryClass addReferenceConstraint(Query q, QueryClass qcStart, String refName,
+                                                QueryClass qcEnd, boolean first) {
+        if (first) {
+            q.addToSelect(qcStart);
+            q.addFrom(qcStart);
+            q.addToOrderBy(qcStart);
         }
+        q.addToSelect(qcEnd);
+        q.addFrom(qcEnd);
+        q.addToOrderBy(qcEnd);
 
-        ClassDescriptor objectClassDesc =
-            os.getModel().getClassDescriptorByName(objectClass.getName());
-        FieldDescriptor fd = objectClassDesc.getFieldDescriptorByName(connectingFieldname);
-        if (fd == null) {
-            throw new BuildException("cannot find FieldDescriptor for " + connectingFieldname
-                                     + " in " + objectClass.getName());
-        }
+        // already validated against model
+        ClassDescriptor startCld =
+            os.getModel().getClassDescriptorByName(qcStart.getType().getName());
+        FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
 
-        QueryReference ref;
-
+        QueryReference qRef;
         if (fd.isReference()) {
-            ref = new QueryObjectReference(qcObj, connectingFieldname);
+            qRef = new QueryObjectReference(qcStart, refName);
         } else {
-            ref = new QueryCollectionReference(qcObj, connectingFieldname);
+            qRef = new QueryCollectionReference(qcStart, refName);
         }
+        ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
+        QueryHelper.addConstraint(q, cc);
 
-        ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcSub);
-        q.setConstraint(cc);
-
-        return getOrderedQueries(q);
+        return qcEnd;
     }
 
-    /**
-     * Take three class objects and two connecting collection or reference field name and create a
-     * new Query.
-     * @param object1Class an object class
-     * @param connectingFieldname1 the field name to use to reference objectClass2 from objectClass1
-     * @param object2Class an object class
-     * @param connectingFieldname2 the field name to use to reference objectClass3 from objectClass2
-     * @param object3Class an object class
-     * @param selectAllFields if true add all of the fields of objectClass and subjectClass to the
-     * select list of the Query to precompute()
-     * @return the new Queries
-     * @throws BuildException if the query cannot be constructed (for example when a class or the
-     * collection doesn't exist)
-     */
-    protected List constructQuery(Class object1Class, String connectingFieldname1,
-                                  Class object2Class, String connectingFieldname2,
-                                  Class object3Class, boolean selectAllFields)
-        throws BuildException {
-        Query q = new Query();
-        q.setDistinct(true);
-
-        QueryClass qcObj1 = new QueryClass(object1Class);
-        q.addFrom(qcObj1);
-        q.addToSelect(qcObj1);
-
-        if (selectAllFields) {
-            List fieldNames = getAttributeFieldNames(object1Class);
-            addFieldsToQuery(q, qcObj1, fieldNames);
-        }
-
-        QueryClass qcObj2 = new QueryClass(object2Class);
-        q.addFrom(qcObj2);
-        q.addToSelect(qcObj2);
-
-        if (selectAllFields) {
-            List fieldNames = getAttributeFieldNames(object2Class);
-            addFieldsToQuery(q, qcObj2, fieldNames);
-        }
-
-        QueryClass qcObj3 = new QueryClass(object3Class);
-        q.addFrom(qcObj3);
-        q.addToSelect(qcObj3);
-
-        if (selectAllFields) {
-            List fieldNames = getAttributeFieldNames(object3Class);
-            addFieldsToQuery(q, qcObj3, fieldNames);
-        }
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        ClassDescriptor object1ClassDesc =
-            os.getModel().getClassDescriptorByName(object1Class.getName());
-        FieldDescriptor fd1 = object1ClassDesc.getFieldDescriptorByName(connectingFieldname1);
-        if (fd1 == null) {
-            throw new BuildException("cannot find FieldDescriptor for " + connectingFieldname1
-                                     + " in " + object1Class.getName());
-        }
-
-        QueryReference ref1;
-        if (fd1.isReference()) {
-            ref1 = new QueryObjectReference(qcObj1, connectingFieldname1);
-        } else {
-            ref1 = new QueryCollectionReference(qcObj1, connectingFieldname1);
-        }
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj2);
-        cs.addConstraint(cc1);
-
-        ClassDescriptor object2ClassDesc =
-            os.getModel().getClassDescriptorByName(object2Class.getName());
-        FieldDescriptor fd2 = object2ClassDesc.getFieldDescriptorByName(connectingFieldname2);
-        if (fd2 == null) {
-            throw new BuildException("cannot find FieldDescriptor for " + connectingFieldname2
-                                     + " in " + object2Class.getName());
-        }
-
-        QueryReference ref2;
-        if (fd2.isReference()) {
-            ref2 = new QueryObjectReference(qcObj2, connectingFieldname2);
-        } else {
-            ref2 = new QueryCollectionReference(qcObj2, connectingFieldname2);
-        }
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcObj3);
-        cs.addConstraint(cc2);
-
-        q.setConstraint(cs);
-        return getOrderedQueries(q);
-    }
 
     /**
-     * Return a List containing clones of the given Query, but with each ordered by a different
-     * field of the Query.
+     * Return a List containing clones of the given Query, but with all permutations
+     * of order by for the QueryClass objects on the from list.
      * @param q the Query
-     * @return clones of the Query order by each of the fields
+     * @return clones of the Query with all permutations of orderBy
      */
     protected List getOrderedQueries(Query q) {
         List queryList = new ArrayList();
 
-        for (int i = 0; i < q.getSelect().size(); i++) {
-            // clone() first, then call addToOrderBy() with a QueryNode from the cloned Query
-            Query queryClone = QueryCloner.cloneQuery(q);
+        Set permutations = permutations(q.getOrderBy().size());
+        Iterator iter = permutations.iterator();
+        while (iter.hasNext()) {
+            Query newQuery = QueryCloner.cloneQuery(q);
+            List orderBy = new ArrayList(newQuery.getOrderBy());
+            newQuery.clearOrderBy();
 
-            if (i == 0) {
-                // by default, the Query is ordered by the first selected QueryNode, so just use the
-                // clone to avoid adding extra unnecessary order by elements
-                queryList.add(queryClone);
-            } else {
-                QueryNode selectNode = (QueryNode) queryClone.getSelect().get(i);
-
-                if (selectNode instanceof QueryClass) {
-                    QueryClass queryClass = (QueryClass) selectNode;
-                    queryClone.addToOrderBy(queryClass);
-                } else {
-                    // for now, don't order by all possible fields, just order by classes on the
-                    // select list
-                    // when the webapp allows ordering by any field, add this again
-                    // 
-                    //     QueryEvaluable queryEvaluable = (QueryEvaluable) selectNode;
-                    //     queryClone.addToOrderBy(queryEvaluable);
-                    //
-                    continue;
-                }
-                queryList.add(queryClone);
+            int[] order = (int[]) iter.next();
+            for (int i = 0; i < order.length; i++) {
+                newQuery.addToOrderBy((QueryClass) orderBy.get(order[i]));
             }
-        }
 
+            queryList.add(newQuery);
+        }
         return queryList;
     }
 
-    /**
-     * Return the names of the attribute fields of a class.
-     * @param c the Class
-     * @return the names of the attribute fields of a class.
-     */
-    protected List getAttributeFieldNames(Class c) {
-        List returnList = new ArrayList();
-
-        ClassDescriptor classDesc = os.getModel().getClassDescriptorByName(c.getName());
-        Set attributeFDs = classDesc.getAllAttributeDescriptors();
-        Iterator attributeFDIter = attributeFDs.iterator();
-
-        while (attributeFDIter.hasNext()) {
-            FieldDescriptor fd = (FieldDescriptor) attributeFDIter.next();
-            returnList.add(fd.getName());
-        }
-
-        return returnList;
-    }
 
     /**
      * Add QueryFields for each of the field names in fieldNames to the given Query.
@@ -760,7 +625,7 @@ public class PrecomputeTask extends Task
                 }
                 int resultsSize = results.size();
                 outputStream.println("  got size " + resultsSize + " in "
-                                     + (System.currentTimeMillis() - start) / 1000 + " seconds");
+                                   + (System.currentTimeMillis() - start) / 1000 + " seconds");
                 if (resultsSize > 0) {
                     start = System.currentTimeMillis();
                     List resultsRow1 = (List) results.get(0);
@@ -776,6 +641,7 @@ public class PrecomputeTask extends Task
             }
         }
     }
+
 
     /**
      * Set precomputeProperties by reading from propertiesFileName.
@@ -801,6 +667,7 @@ public class PrecomputeTask extends Task
         }
     }
 
+
     /**
      * Create a ObjectStoreSummary from the summaryPropertiesFile.
      * @return a new ObjectStoreSummary
@@ -824,11 +691,50 @@ public class PrecomputeTask extends Task
         }
     }
 
+
     /**
      * Return the name of the properties file that passed to the constructor.
      * @return the name of the properties file that passed to the constructor.
      */
     protected String getPropertiesFileName() {
         return os.getModel().getName() + "_precompute.properties";
+    }
+
+
+    /**
+     * Given an integer number, n, return a Set of int arrays with all permutations
+     * of numbers 0 to n.
+     * @param n number of entities in ordered arrays
+     * @return a set of int arrays
+     */
+    protected Set permutations(int n) {
+        Set result = new LinkedHashSet();
+        int[] array = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            array[i] = i;
+        }
+        enumerate(result, array, n);
+        return result;
+    }
+
+    private void swap(int[] array, int i, int j) {
+        int tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+
+    private void enumerate(Set result, int[] array, int n) {
+        if (n == 1) {
+            int[] copy = new int[array.length];
+            System.arraycopy(array, 0, copy, 0, array.length);
+            result.add(copy);
+            return;
+        }
+        for (int i = 0; i < n; i++) {
+            swap(array, i, n - 1);
+            enumerate(result, array, n - 1);
+            swap(array, i, n - 1);
+        }
     }
 }
