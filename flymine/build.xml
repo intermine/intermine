@@ -2396,7 +2396,8 @@
 
   <target name="build-production-webapp"
           depends="prepare-build-model, compile-flymine-java">
-    <property name = "model.css.file" value = "model/genomic/resources/web/model.css"/>
+    <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
+    <property name ="web.properties.file" value ="${resources}/webapp/t1dmine/global.web.properties"/>
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2443,7 +2444,7 @@
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
     <filter token="RELEASE_VERSION" value="${release.version}"/>
     <copy todir="${build.tmp}" filtering="true"
-          file="${resources}/webapp/flymine/global.web.properties"
+          file="${web.properties.file}"
           overwrite="true" verbose="true"/>
     <concat destfile="${build.tmp}/web.properties">
       <fileset file="${model}/genomic/resources/web/web.properties" />
@@ -3433,11 +3434,12 @@
   </target>       
 
   <target name="build-production-webapp-t1dmine"
-          depends="t1dmine-model-css, build-production-webapp">        
+          depends="t1dmine-model-style, build-production-webapp">        
   </target>
 
-  <target name ="t1dmine-model-css">
-     <property name = "model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
+  <target name ="t1dmine-model-style">
+     <property name="model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
+     <property name="web.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
   </target>
 
 
