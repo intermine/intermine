@@ -10,17 +10,18 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Arrays;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -452,9 +453,31 @@ public class DataTranslator
      * @param refListName the name of the collection
      * @return the Iterator
      */
-    protected Iterator getCollection(Item item, String refListName) {
+    protected Iterator getCollection(Item item, String refListName) throws ObjectStoreException {
         ReferenceList refList = item.getCollection(refListName);
-        return (refList == null ? null : new ItemIterator(refList.getRefIds()));
+        Iterator idIter = refList.getRefIds().iterator();
+        StringBuffer refIds = new StringBuffer();
+        boolean needComma = false;
+        while (idIter.hasNext()) {
+            String identifier = (String) idIter.next();
+            if (needComma) {
+                refIds.append(" ");
+            }
+            needComma = true;
+            refIds.append(identifier);
+        }
+        Set description = Collections.singleton(new FieldNameAndValue(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, refIds.toString(), true));
+        List fulldataItems = srcItemReader.getItemsByDescription(description);
+        List results = new ArrayList();
+        Iterator itemIter = fulldataItems.iterator();
+        while (itemIter.hasNext()) {
+            org.intermine.model.fulldata.Item i = (org.intermine.model.fulldata.Item) itemIter
+                .next();
+            results.add(ItemHelper.convert(i));
+        }
+        return results.iterator();
+        //return (refList == null ? null : new ItemIterator(refList.getRefIds()));
     }
 
     /**
@@ -478,7 +501,7 @@ public class DataTranslator
 
     /**
      * "Flattens" a collection by removing intermediate items
-     * eg. A-[B1,B2] + B1-[C1,C2] + B2-[C3] -> A'-[C1, C2, C3]
+     * eg. A-[B1,B2] + B1-[C1,C2] + B2-[C3] -&gt; A'-[C1, C2, C3]
      * @param srcItem the source item eg. A
      * @param colName the collection name eg. Bs
      * @param colFieldName the other collection name eg. Cs
@@ -607,27 +630,6 @@ public class DataTranslator
             return (String) col.getRefIds().get(0);
         }
         return null;
-    }
-
-    private class ItemIterator implements Iterator
-    {
-        Iterator i;
-        public ItemIterator(Collection ids) {
-            i = ids.iterator();
-        }
-        public Object next() {
-            try {
-                return ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        public boolean hasNext() {
-            return i.hasNext();
-        }
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
     }
 
     /**

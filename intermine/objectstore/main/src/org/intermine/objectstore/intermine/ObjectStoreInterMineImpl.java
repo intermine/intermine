@@ -88,6 +88,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Connection logTableConnection = null;
     protected Batch logTableBatch = null;
     protected String logTableName = null;
+    protected boolean logEverything = false;
+    protected long statsGenTime = 0;
+    protected long statsOptTime = 0;
+    protected long statsNulTime = 0;
+    protected long statsEstTime = 0;
+    protected long statsExeTime = 0;
+    protected long statsConTime = 0;
     protected QueryOptimiserContext limitedContext;
 
     // don't use a table to represent bags if the bag is smaller than this value
@@ -218,6 +225,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String logTable = props.getProperty("logTable");
         String minBagTableSizeString = props.getProperty("minBagTableSize");
         String noNotXmlString = props.getProperty("noNotXml");
+        String logEverythingString = props.getProperty("logEverything");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -293,6 +301,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         LOG.error("Error setting minBagTableSize: " + e);
                     }
                 }
+                if ("true".equals(logEverythingString)) {
+                    os.setLogEverything(true);
+                }
                 instances.put(osAlias, os);
             }
             return os;
@@ -349,6 +360,24 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             logTableName = null;
             throw e;
         }
+    }
+
+    /**
+     * Sets the logEverything configuration option.
+     *
+     * @param logEverything a boolean
+     */
+    public void setLogEverything(boolean logEverything) {
+        this.logEverything = logEverything;
+    }
+
+    /**
+     * Gets the logEverything configuration option.
+     *
+     * @return a boolean
+     */
+    public boolean getLogEverything() {
+        return logEverything;
     }
 
     /**
@@ -571,7 +600,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException in subclasses
      */
     public synchronized void close() throws ObjectStoreException {
-        LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequence);
+        LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequence
+                + ", time spent: SQL Gen: " + statsGenTime + ", SQL Optimise: " + statsOptTime
+                + ", Nulls: " + statsNulTime + ", Estimate: " + statsEstTime
+                + ", Execute: " + statsExeTime + ", Results Convert: " + statsConTime);
         flushLogTable();
         Connection c = null;
         try {
@@ -633,6 +665,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
+        long preGenTime = System.currentTimeMillis();
         String sql = generateSql(c, q, start, limit);
         try {
             long estimatedTime = 0;
@@ -649,6 +682,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long endOptimiseTime = System.currentTimeMillis();
             sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
             sql = sql.replaceAll(" ([^ ]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
+            long postNullStuff = System.currentTimeMillis();
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
                 //long time = (new Date()).getTime();
@@ -698,7 +732,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             ? sql.substring(0, 1000) : sql));
                 }
             }
-            if (estimatedTime > 0) {
+            if ((estimatedTime > 0) || getLogEverything()) {
                 Writer executeLog = getLog();
                 if (executeLog != null) {
                     try {
@@ -714,6 +748,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
                         permittedTime, postConvert - postExecute, q, sql);
             }
+            statsGenTime += startOptimiseTime - preGenTime;
+            statsOptTime += endOptimiseTime - startOptimiseTime;
+            statsNulTime += postNullStuff - endOptimiseTime;
+            statsEstTime += preExecute - postNullStuff;
+            statsExeTime += postExecute - preExecute;
+            statsConTime += postConvert - postExecute;
             QueryOrderable firstOrderBy = null;
             firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
             if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {

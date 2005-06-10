@@ -188,8 +188,11 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             LOG.debug("Fetching Items by description: " + description + ", query = "
                     + q.toString());
             retval = new SingletonResults(q, os, os.getSequence());
+            ((SingletonResults) retval).setBatchSize(1000);
+            ((SingletonResults) retval).setNoExplain();
+            ((SingletonResults) retval).setNoOptimise();
             descriptiveCache.put(description, retval);
-            if (misses % 1000 == 0) {
+            if (ops % 100000 == 0) {
                 LOG.info("getItemsByDescription: ops = " + ops + ", misses = " + misses
                         + " cache size: " + descriptiveCache.size());
             }
@@ -283,7 +286,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             // same ItemPrefetchDescriptor. So, they can all be fetched in the same query.
 
 
-            if (dac.constraints.size() > 1) {
+            if (dac.constraints.size() > 0) {
                 Query q = buildQuery(dac);
                 //LOG.debug(dac.descriptor + " -> " + q.toString());
 
@@ -296,6 +299,8 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 long afterQuery = (new Date()).getTime();
                 SingletonResults results = new SingletonResults(q, os, os.getSequence());
                 results.setBatchSize(10000);
+                results.setNoExplain();
+                results.setNoOptimise();
                 long afterExecute = 0;
                 Iterator resIter = results.iterator();
                 while (resIter.hasNext()) {
@@ -356,7 +361,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 }
 
                 long now = (new Date()).getTime();
-                LOG.info("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
+                LOG.debug("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
                          + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
                          + (now - afterExecute) + " ms to process results for " + dac.descriptor);
             }
