@@ -25,6 +25,15 @@
     </imtestsproj:junit>
   </target>
   
+  <target name="-define-db-classpath">
+    <!-- Override to alter the classpath created -->
+    <path id="db.class.path">
+      <pathelement location="${build.task.dir}"/>
+      <pathelement location="${build.test.resources.dir}"/>
+      <path refid="main.class.path"/>
+    </path>
+  </target>
+  
   <target name="-init-build-db" depends="init, -init-deps">
     <!-- Load db tasks -->
     <runtarget target="-init-db-tasks"/>

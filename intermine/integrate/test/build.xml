@@ -12,5 +12,14 @@
           tofile="${build.test.resources.dir}/default.intermine.properties"/>
   </target>
   
+  <target name="-define-db-classpath">
+    <!-- Override to alter the classpath created -->
+    <path id="db.class.path">
+      <pathelement location="${build.task.dir}"/>
+      <pathelement location="${build.test.resources.dir}"/>
+      <path refid="main.class.path"/>
+    </path>
+  </target>
+  
 </project>
 
