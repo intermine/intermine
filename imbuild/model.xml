@@ -100,12 +100,6 @@
     <macrodef name="model-output" uri="http://www.intermine.org/ns/im-model-proj/1">
       <sequential>
         <echo>Generating model java code...</echo>
-        <!-- <taskdef name="model-output" classname="org.intermine.task.ModelOutputTask">
-          <classpath>
-            <path refid="main.class.path"/>
-            <pathelement location="${build.task.dir}"/>
-          </classpath>
-        </taskdef> -->
         <model-output type="java" model="${model.name}" destdir="${gen.src.dir}"/>
       </sequential>
     </macrodef>
@@ -117,12 +111,6 @@
       <attribute name="source"/>
       <sequential>
         <echo>Generating model...</echo>
-        <!--<taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
-          <classpath>
-            <path refid="main.class.path"/>
-            <pathelement location="${build.dir}"/>
-          </classpath>
-        </taskdef>-->
         <model-generation type="@{type}"
                           modelName="${model.name}"
                           nameSpace="${namespace}"
