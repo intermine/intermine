@@ -10,6 +10,7 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -19,9 +20,14 @@ import java.util.Set;
 import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.CombinedIterator;
 
 /**
  * Provides an interface between a DataTranslator and the source Item ObjectStore which it wishes to
@@ -55,27 +61,45 @@ public class ObjectStoreItemReader extends AbstractItemReader
     }
 
     /**
-     * Returns the default itemIterator Query.
+     * Returns the underlying ObjectStoreItemPathFollowingImpl
      *
-     * @return a Query
+     * @return an ObjectStore
      */
-    public Query getDefaultQuery() {
-        Query q = new Query();
-        // database has a hard time selecting distinct on object xml
-        q.setDistinct(false);
-        QueryClass qc = new QueryClass(Item.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        return q;
+    public ObjectStoreItemPathFollowingImpl getObjectStore() {
+        return os;
     }
 
     /**
      * @see ItemReader#itemIterator
      */
     public Iterator itemIterator() {
-        SingletonResults sr = new SingletonResults(getDefaultQuery(), os, os.getSequence());
-        sr.setBatchSize(1000);
-        return sr.iterator();
+        /*Query cnQuery = new Query();
+        QueryClass cnQc = new QueryClass(Item.class);
+        cnQuery.addFrom(cnQc);
+        cnQuery.addToSelect(new QueryField(cnQc, "className"));
+        cnQuery.setDistinct(true);
+
+        SingletonResults cnRes = new SingletonResults(cnQuery, os, os.getSequence());
+        cnRes.setBatchSize(1000);
+        cnRes.setNoExplain();
+        cnRes.setNoOptimise();
+        Iterator cnIter = cnRes.iterator();
+        List iters = new ArrayList();
+        while (cnIter.hasNext()) {*/
+            Query q = new Query();
+            QueryClass qc = new QueryClass(Item.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            //q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"),
+            //            ConstraintOp.EQUALS, new QueryValue((String) cnIter.next())));
+            SingletonResults res = new SingletonResults(q, os, os.getSequence());
+            res.setBatchSize(10000);
+            res.setNoExplain();
+            res.setNoOptimise();
+            return res.iterator();
+            /*iters.add(res.iterator());
+        }
+        return new CombinedIterator(iters);*/
     }
 
     /**
@@ -101,6 +125,8 @@ public class ObjectStoreItemReader extends AbstractItemReader
     public Iterator itemIterator(Query q, int batchSize) {
         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
         sr.setBatchSize(batchSize);
+        sr.setNoExplain();
+        sr.setNoOptimise();
         return sr.iterator();
     }
 

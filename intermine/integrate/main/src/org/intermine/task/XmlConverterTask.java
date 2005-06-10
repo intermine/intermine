@@ -89,8 +89,12 @@ public class XmlConverterTask extends ConverterTask
             throw new BuildException(e);
         } finally {
             try {
-                writer.close();
-                osw.close();
+                if (writer != null) {
+                    writer.close();
+                }
+                if (osw != null) {
+                    osw.close();
+                }
             } catch (Exception e) {
                 throw new BuildException(e);
             }

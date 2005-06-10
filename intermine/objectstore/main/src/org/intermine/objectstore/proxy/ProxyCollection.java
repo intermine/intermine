@@ -230,10 +230,10 @@ public class ProxyCollection extends AbstractList implements Set, LazyCollection
     }
 
     private static void maybeLog() {
-        if ((createdCount + usedCount + evaluateCount) % 10000 == 0) {
+        if ((createdCount + usedCount + evaluateCount) % 1000000 == 0) {
             LOG.info("Created: " + createdCount + ", Used: " + usedCount + ", Evaluated: "
                     + evaluateCount);
-        } else if ((createdCount + usedCount + evaluateCount) % 100 == 0) {
+        } else if ((createdCount + usedCount + evaluateCount) % 10000 == 0) {
             LOG.debug("Created: " + createdCount + ", Used: " + usedCount + ", Evaluated: "
                     + evaluateCount);
         }

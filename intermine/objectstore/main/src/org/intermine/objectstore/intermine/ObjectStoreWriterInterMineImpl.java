@@ -142,6 +142,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
+     * @see ObjectStoreInterMineImpl#getLogEverything
+     */
+    public boolean getLogEverything() {
+        return os.getLogEverything();
+    }
+
+    /**
      * @see ObjectStoreInterMineImpl#dbLog
      */
     protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
@@ -203,7 +210,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             if (loops > 100) {
                 LOG.error("Waited for connection for 100 seconds - probably a deadlock"
                         + " - throwing exception");
-                LOG.error("The connection was taken out by stack trace: " + connectionTakenBy);
+                //LOG.error("The connection was taken out by stack trace: " + connectionTakenBy);
                 throw new SQLException("This ObjectStoreWriter appears to be dead due to"
                         + " deadlock");
             } else if (loops > 1) {
@@ -221,14 +228,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         }
         connInUse = true;
         
-        Exception trace = new Exception();
-        trace.fillInStackTrace();
-        StringWriter message = new StringWriter();
-        PrintWriter pw = new PrintWriter(message);
-        trace.printStackTrace(pw);
-        pw.println("In Thread " + Thread.currentThread().getName());
-        pw.flush();
-        connectionTakenBy = message.toString();
+        //Exception trace = new Exception();
+        //trace.fillInStackTrace();
+        //StringWriter message = new StringWriter();
+        //PrintWriter pw = new PrintWriter(message);
+        //trace.printStackTrace(pw);
+        //pw.println("In Thread " + Thread.currentThread().getName());
+        //pw.flush();
+        //connectionTakenBy = message.toString();
         //LOG.debug("getConnection returning connection");
         return conn;
     }
