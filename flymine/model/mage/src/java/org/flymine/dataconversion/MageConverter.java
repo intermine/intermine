@@ -68,7 +68,7 @@ public class MageConverter extends FileConverter
     protected HashMap padIdentifiers = new HashMap();
     protected HashMap featureIdentifiers = new HashMap();
     protected ItemFactory itemFactory;
-    protected Set qTypes;
+    protected Set qTypes = new HashSet();
     protected int id = 0;
 
     /**
@@ -79,9 +79,8 @@ public class MageConverter extends FileConverter
 //     }
 
 
-    public MageConverter(ItemWriter writer, Set qTypes) throws Exception {
+    public MageConverter(ItemWriter writer) throws Exception {
         super(writer);
-        this.qTypes = qTypes;
         this.itemFactory = new ItemFactory(Model.getInstanceByName("mage"));
     }
 
@@ -89,6 +88,9 @@ public class MageConverter extends FileConverter
      * @see FileConverter#process
      */
     public void process(Reader reader) throws Exception {
+
+        setQTypes();
+
         seenMap = new LinkedHashMap();
         opCount = 0;
         time = System.currentTimeMillis();
@@ -108,7 +110,16 @@ public class MageConverter extends FileConverter
         }
     }
 
-
+    protected void setQTypes() {
+        // param1 is a comma separated list of QuantitationTypes to include,
+        // turn it into a set
+        if (param1 != null) {
+            StringTokenizer st = new StringTokenizer(param1, ",");
+            while (st.hasMoreTokens()) {
+                qTypes.add(((String) st.nextToken()).trim());
+            }
+        }
+    }
 
     /**
      * @see FileConverter#process
@@ -256,7 +267,7 @@ public class MageConverter extends FileConverter
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
                     QuantitationType qt = (QuantitationType) j.next();
                     String value = st.nextToken();
-                    if (qTypes.contains(qt.getDataType().getValue())) {
+                    if (qTypes.contains(qt.getName())) {
                         storeTuple = true;
                         Item datum = makeItem("BioAssayDatum");
                         dataList.addRefId(datum.getIdentifier());
