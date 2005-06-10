@@ -6,8 +6,8 @@
 
 <div id="topright">
   <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span><br/>
-  <div class="contact"><a href="mailto:info%5Bat%5Dflymine.org">info[at]flymine.org</a></div>
-  <div class="wellcome">FlyMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>.</div>
+  <div class="contact">${WEB_PROPERTIES['project.contact']}</div>
+  <div class="wellcome">${WEB_PROPERTIES['project.funded.by']}</div>
 </div>
 
 <div id="header">
