@@ -11,7 +11,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="/testmodel/dist/testmodel.jar"/>
 	<classpathentry kind="lib" path="build/test/resources"/>
-	<classpathentry kind="lib" path="/intermine-integrate-test/build"/>
 	<classpathentry kind="lib" path="/intermine-integrate-test/resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
