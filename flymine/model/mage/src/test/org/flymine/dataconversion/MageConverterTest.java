@@ -61,7 +61,7 @@ public class MageConverterTest extends TestCase
     File f = null;
 
     public void setUp() throws Exception {
-        converter = new MageConverter(new MockItemWriter(new HashMap()), new HashSet());
+        converter = new MageConverter(new MockItemWriter(new HashMap()));
     }
 
     public void tearDown() throws Exception {
@@ -77,7 +77,7 @@ public class MageConverterTest extends TestCase
 
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter, new HashSet());
+        MageConverter mc = new MageConverter(itemWriter);
         mc.process(reader);
         mc.close();
 
@@ -113,10 +113,9 @@ public class MageConverterTest extends TestCase
         Item expected = new Item();
         expected.setClassName(ns + "SeqFeature");
         expected.setIdentifier("0_0");
-        Attribute attr = new Attribute();
-        attr.setName("basis");
-        attr.setValue("both");
-        expected.addAttribute(attr);
+        expected.setAttribute("basis", "both");
+        expected.setAttribute("nameBasis", "both");
+        expected.setAttribute("valueBasis", "2");
 
         assertEquals(expected, converter.createItem(s1));
     }
@@ -189,8 +188,10 @@ public class MageConverterTest extends TestCase
 
     public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        Set qts = new HashSet(Arrays.asList(new String[] {"col1", "col3"}));
-        MageConverter mc = new MageConverter(itemWriter, qts);
+        //Set qts = new HashSet(Arrays.asList(new String[] {"col1", "col3"}));
+        MageConverter mc = new MageConverter(itemWriter);
+        mc.setParam1("col1, col3");
+        mc.setQTypes();
 
         String exampleData = "1.006\t3.456\t234" + System.getProperty("line.separator")
             + "435.223\t1.004\t523" + System.getProperty("line.separator");
@@ -211,18 +212,21 @@ public class MageConverterTest extends TestCase
 
         QuantitationTypeDimension qtd = new QuantitationTypeDimension();
         MeasuredSignal qt1 = new MeasuredSignal();
+        qt1.setName("col1");
         OntologyEntry oe1=new OntologyEntry();
-        oe1.setValue("col1");
+        oe1.setValue("type1");
         qt1.setDataType(oe1);
         qtd.addToQuantitationTypes(qt1);
         MeasuredSignal qt2 = new MeasuredSignal();
-        OntologyEntry oe2=new OntologyEntry();
-        oe2.setValue("col2");
+        qt2.setName("col2");
+        OntologyEntry oe2 = new OntologyEntry();
+        oe2.setValue("type2");
         qt2.setDataType(oe2);
         qtd.addToQuantitationTypes(qt2);
         MeasuredSignal qt3 = new MeasuredSignal();
+        qt3.setName("col3");
         OntologyEntry oe3=new OntologyEntry();
-        oe3.setValue("col3");
+        oe3.setValue("type3");
         qt3.setDataType(oe3);
         qtd.addToQuantitationTypes(qt3);
         dbad.setQuantitationTypeDimension(qtd);
@@ -295,7 +299,6 @@ public class MageConverterTest extends TestCase
         Iterator i = itemWriter.getItems().iterator();
         while(i.hasNext()) {
             Item item = (Item) i.next();
-            System.out.println(item.getClassName() + " - " + item.getIdentifier());
             if (item.getClassName().endsWith("BioAssayDatum") || item.getClassName().endsWith("BioDataTuples")) {
                 results.add(item);
             }
@@ -328,7 +331,6 @@ public class MageConverterTest extends TestCase
         Set results = new HashSet();
 
         converter.createItem(m1);
-        System.out.println("seenMap: " + converter.seenMap);
         Iterator i = converter.seenMap.values().iterator();
         while(i.hasNext()){
             results.add((Item) i.next());
