@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
