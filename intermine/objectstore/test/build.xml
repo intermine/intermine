@@ -8,8 +8,9 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/db.xml"/>
   
-  <target name="-pre-test">
-    <echo message="==================== ${user.home}/${intermine.properties.file}"/>
+  <target name="-pre-test" depends="build-db-truncunittest, build-db-notxmlunittest, build-db-flatmodeunittest"/>
+  
+  <target name="-init-test" depends="tests.-init-test">
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.test.resources.dir}/intermine.properties"/>
     <copy file="${default.intermine.properties.file}"
@@ -33,59 +34,46 @@
       <path refid="main.class.path"/>
     </path>
   </target>
-  
-  <target name="-init-build-db" depends="init, -init-deps">
-    <!-- Load db tasks -->
-    <runtarget target="-init-db-tasks"/>
-    <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/${intermine.properties.file}" todir="${build.task.dir}"/>
-  </target>
-  
-  <target name="build-db-fulldatatest" depends="-init-build-db">
-    <imdbproj:build-db osname="os.fulldatatest"
-                       dbname="db.fulldatatest"
-                       model="fulldata"/>
-  </target>
 
-  <target name="build-db-truncunittest" depends="-init-build-db">
+  <target name="build-db-truncunittest" depends="init, -init-deps, -init-db-tasks">
     <imdbproj:build-db osname="os.truncunittest"
                        dbname="db.truncunittest"
                        model="testmodel"/>
   </target>
 
-  <target name="build-db-notxmlunittest" depends="-init-build-db">
+  <target name="build-db-notxmlunittest" depends="init, -init-deps, -init-db-tasks">
     <imdbproj:build-db osname="os.notxmlunittest"
                        dbname="db.notxmlunittest"
                        model="testmodel"/>
   </target>
 
-  <target name="build-db-flatmodeunittest" depends="-init-build-db">
+  <target name="build-db-flatmodeunittest" depends="init, -init-deps, -init-db-tasks">
     <imdbproj:build-db osname="os.flatmodeunittest"
                        dbname="db.flatmodeunittest"
                        model="testmodel"/>
   </target>
   
   <!-- index the unittest database -->
-  <target name="create-indexes-unittest" depends="-init-build-db">
+  <target name="create-indexes-unittest" depends="init, -init-deps, -init-db-tasks">
     <create-indexes alias="os.unittest" attributeIndexes="false"/>
   </target>
 
   <!-- index the truncated unittest database -->
-  <target name="create-indexes-truncunittest" depends="-init-build-db">
+  <target name="create-indexes-truncunittest" depends="init, -init-deps, -init-db-tasks">
     <create-indexes alias="os.truncunittest" attributeIndexes="false"/>
   </target>
 
   <!-- index the withNotXml unittest database -->
-  <target name="create-indexes-notxmlunittest" depends="-init-build-db">
+  <target name="create-indexes-notxmlunittest" depends="init, -init-deps, -init-db-tasks">
     <create-indexes alias="os.notxmlunittest" attributeIndexes="false"/>
   </target>
 
   <!-- index the flatmode unittest database -->
-  <target name="create-indexes-flatmodeunittest" depends="-init-build-db">
+  <target name="create-indexes-flatmodeunittest" depends="init, -init-deps, -init-db-tasks">
     <create-indexes alias="os.flatmodeunittest" attributeIndexes="false"/>
   </target>
 
-  <target name="create-indexes-unittest-attribute" depends="-init-build-db">
+  <target name="create-indexes-unittest-attribute" depends="init, -init-deps, -init-db-tasks">
     <create-indexes alias="os.unittest" attributeIndexes="true"/>
   </target>
   
