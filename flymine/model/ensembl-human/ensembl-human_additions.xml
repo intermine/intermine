@@ -19,7 +19,7 @@
 <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="exonCount" type="java.lang.Integer"/>
   <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
-  <collection name="protein" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="transcript"/>
+  <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
 </class>
 <class name="org.flymine.model.genomic.Comment" is-interface="true">
   <reference name="subject" referenced-type="org.flymine.model.genomic.Gene"/>
