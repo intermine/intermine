@@ -3431,25 +3431,25 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.disease-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-disease-tgt-items-std"/>
     </ant>
 
-    <taskdef name="retrieve-file" classname="org.intermine.task.FileConverterTask">
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="ensembldisease.class.path"/>
     </taskdef>
 
-    <retrieve-file converter="org.flymine.dataconversion.EnsemblDiseaseConverter"
-                   target="osw.disease-tgt-items"
+    <convert-file clsName="org.flymine.dataconversion.EnsemblDiseaseConverter"
+                   osName="osw.ensembl-disease-tgt-items"
                    model="ensembl-disease">
       <fileset dir ="/shared/data/ensemblDisease/">
         <include name ="*.tsv"/>
       </fileset>
-    </retrieve-file>
+    </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.disease-tgt-items-std"/>
+      <property name="os.alias" value="os.ensembl-disease-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -3464,7 +3464,7 @@
     </taskdef>
 
     <load-ensembl-disease integrationWriter="integration.production"
-               source="os.disease-translated"
+               source="os.ensembl-disease-translated"
                sourceName="ensembl-disease"
                ignoreDuplicates="false"/>
   </target>
