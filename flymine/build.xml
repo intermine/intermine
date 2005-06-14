@@ -3,7 +3,7 @@
 
   <!-- Import intermine build tasks -->
   <taskdef resource="org/intermine/task/antlib.xml" classpath="../imbuild/lib/ant-tasks.jar"/>
-
+  <taskdef resource="checkstyletask.properties" classpath="../imbuild/lib/checkstyle-all-3.0b1.jar"/>
 
   <!-- SETUP TARGETS -->
 
@@ -2367,9 +2367,6 @@
   <!-- Java checkstyle targets -->
   <target name="checkstyle" depends="prepare"
           description="checks the coding style of all the java files in the project">
-    <taskdef resource="checkstyletask.properties">
-      <classpath refid="checkstyle.class.path"/>
-    </taskdef>
     <checkstyle config="${resources}/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
