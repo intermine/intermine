@@ -91,13 +91,19 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         }
         try {
             storeDataWriter.beginTransaction();
+            Iterator iter = data.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                InterMineObject o = (InterMineObject) entry.getValue();
+                storeDataWriter.delete(o);
+            }
             Query q = new Query();
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
             Set dataToRemove = new SingletonResults(q, storeDataWriter.getObjectStore(),
                     storeDataWriter.getObjectStore().getSequence());
-            Iterator iter = dataToRemove.iterator();
+            iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 InterMineObject toDelete = (InterMineObject) iter.next();
                 storeDataWriter.delete(toDelete);
