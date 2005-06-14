@@ -2854,13 +2854,7 @@
   </target>
 
 
-  <!-- ENSEMBL HUMAN DISEASE MODEL GENERATION -->
-  <!-- merge the ensembl model additions with the current genomic model -->
-  <target name="merge-ensembl-disease-model" depends="prepare-genomic-model">
-    <merge-genomic-additions additionsFile="${model}/ensembl-disease/ensembl-disease_additions.xml"/>
-  </target>
-
-  <!-- MERGED GENOMIC HUMAN MODEL  -->
+ <!-- MERGED GENOMIC HUMAN MODEL  -->
 
  <!-- create human genomic model from core and all additions files -->
   <target name="create-t1dmine-production-model"
@@ -2870,6 +2864,7 @@
                 merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
+                merge-ensembl-disease-model,
                 merge-chado-model, merge-shortcuts">
   </target>
 
@@ -3019,6 +3014,7 @@
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
+
 
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
@@ -3403,6 +3399,81 @@
           depends="retrieve-disease-regions, load-disease-regions"/>
 
 
+ <!-- ENSEMBL HUMAN DISEASE MODEL GENERATION -->
+  <!-- merge the ensembl model additions with the current genomic model -->
+  <target name="merge-ensembl-disease-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/ensembl-disease/ensembl-disease_additions.xml"/>
+  </target>
+
+  <target name="compile-ensembl-disease-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="ensembl-disease"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="ensembl-disease-test"
+          depends="prepare-test, build-db-fulldatatest">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="ensembl-disease"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <!--load human disease data, tab separated from ensembl EnsMart-->
+  <path id="ensembldisease.class.path">
+    <path refid="models.class.path"/>
+    <pathelement location="${model}/ensembl-disease/resources"/>
+  </path>
+   
+  <target name="retrieve-ensembl-disease" depends="prepare-build-model, compile-ensembl-disease-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.disease-tgt-items"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="ensembldisease.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.EnsemblDiseaseConverter"
+                   target="osw.disease-tgt-items"
+                   model="ensembl-disease">
+      <fileset dir ="/shared/data/ensemblDisease/">
+        <include name ="*.tsv"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.disease-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-ensembl-disease" depends="copy-t1dmine-config">
+    <taskdef name="load-ensembl-disease" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-ensembl-disease integrationWriter="integration.production"
+               source="os.disease-translated"
+               sourceName="ensembl-disease"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-ensembl-disease-production"
+          depends="retrieve-ensembl-disease, load-ensembl-disease"/>
+
+
+  <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${resources}/webapp/default.intermine.properties"
