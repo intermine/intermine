@@ -3018,7 +3018,7 @@
 
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
-                   tfbs-test, firstef-test, region-test, diseaseregion-test">
+                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test">
     <antcall target="test-report"/>
   </target>
 

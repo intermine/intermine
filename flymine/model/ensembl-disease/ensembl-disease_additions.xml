@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+<classes>
 <class name="org.flymine.model.genomic.Disease" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
   <attribute name="omimId" type="java.lang.String"/>
   <attribute name="description" type="java.lang.String"/>
@@ -5,3 +7,4 @@
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <collection name="omimDiseases" referenced-type="org.flymine.model.genomic.Disease" ordered="true"/>
 </class>
+</classes>
