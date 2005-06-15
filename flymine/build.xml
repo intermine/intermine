@@ -2419,7 +2419,7 @@
   <target name="build-production-webapp"
           depends="prepare-build-model, compile-flymine-java">
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
-    <property name ="web.properties.file" value ="${resources}/webapp/t1dmine/global.web.properties"/>
+    <property name ="web.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
