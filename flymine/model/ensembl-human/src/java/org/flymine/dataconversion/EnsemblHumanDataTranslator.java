@@ -681,8 +681,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
            if (accession != null && !accession.equals("")
                 && dbname != null && !dbname.equals("")) {
                //dbname could be one of HUGO, RefSeq_dna, RefSeq_dna_predicted,
-               //RefSeq_peptide,RefSeq_peptide_predicted, Uniprot/SWISSPORT Uniprot/SPTREMBL
-
+               //RefSeq_peptide,RefSeq_peptide_predicted, Uniprot/SWISSPROT Uniprot/SPTREMBL
                //HUGO identifier is used as gene Identifier, if no HUGO refed then ensembl_stable_id
                //(eg ENSG???????????) used as identifier
                Item synonym = new Item();
@@ -709,7 +708,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                    tgtItem.addAttribute(new Attribute("accession", accession));
                    tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
-               } else if (dbname.equals("Uniprot/SWISSPORT") || dbname.equals("Uniprot/SPTREMBL")
+               } else if (dbname.equals("Uniprot/SWISSPROT") || dbname.equals("Uniprot/SPTREMBL")
                    || dbname.equals("RefSeq_peptide")
                    || dbname.equals("RefSeq_peptide_predicted")) {
                    synonym = createSynonym(tgtItem.getIdentifier(),
@@ -767,21 +766,22 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      * @return a list of commentIds
      * @throws ObjectStoreException if problem retrieving items
      */
-    private List getCommentIds(String identifier, String srcNs) throws
-        ObjectStoreException {
-        String value = identifier;
-        Set constraints = new HashSet();
-        constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    srcNs + "gene_description", false));
-        constraints.add(new FieldNameAndValue("gene", value, true));
-        List commentIds = new ArrayList();
-        for (Iterator i = srcItemReader.getItemsByDescription(constraints).iterator();
-                i.hasNext(); ) {
-            Item comment = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
-            commentIds.add((String) comment.getIdentifier());
-        }
-        return commentIds;
-    }
+    //not suitable for homo_sapiens_core_31_35d
+    //  private List getCommentIds(String identifier, String srcNs) throws
+//          ObjectStoreException {
+//          String value = identifier;
+//          Set constraints = new HashSet();
+//          constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+//                      srcNs + "gene_description", false));
+//          constraints.add(new FieldNameAndValue("gene", value, true));
+//          List commentIds = new ArrayList();
+//          for (Iterator i = srcItemReader.getItemsByDescription(constraints).iterator();
+//                  i.hasNext(); ) {
+//              Item comment = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
+//              commentIds.add((String) comment.getIdentifier());
+//          }
+//          return commentIds;
+//      }
 
     /**
      * set database object
@@ -1064,11 +1064,12 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc1);
         descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
-        desc.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#gene_description", false));
-        descSet.add(desc);
+        //not suitable for homo_sapiens_core_31_35d
+        //  desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
+//          desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
+//          desc.addConstraint(new FieldNameAndValue(classname,
+//                      "http://www.flymine.org/model/ensembl-human#gene_description", false));
+//          descSet.add(desc);
 
         desc = new ItemPrefetchDescriptor("gene.display_xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
