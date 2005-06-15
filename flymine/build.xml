@@ -547,7 +547,7 @@
                 merge-go-model, merge-uniprot-model,
                 merge-protein_structure-model, merge-so-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
-                merge-chado-model, merge-shortcuts">
+                merge-chado-model, merge-mage-model, merge-shortcuts">
   </target>
 
 
@@ -1175,6 +1175,16 @@
     </ant>
   </target>
 
+  <!-- build mage tgt items database -->
+  <target name="build-db-mage-tgt-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="objectstore.name" value="os.mage-tgt-items-std"/>
+    </ant>
+  </target>
+
 
   <target name="retrieve-mage" depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
@@ -1216,11 +1226,11 @@
   </target>
 
 
-  <target name="translate-mage" depends="convert-mage, compile-mage-java, compile-genomic-java">
+  <target name="translate-mage" depends="convert-mage, compile-genomic-java, compile-mage-java, build-db-mage-tgt-items">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="db.name" value="db.mage-tgt-items"/>
       <property name="objectstore.name" value="os.mage-tgt-items-std"/>
     </ant>
     <copy file="${model}/mage/mage_mappings" toDir="${build.model}/mage"/>
@@ -1238,7 +1248,7 @@
       <property name="os.alias" value="os.mage-tgt-items-std"/>
     </ant>
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="db.name" value="db.mage-tgt-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1752,7 +1762,7 @@
         <!-- compile-genomic-model--> 
         <!-- compile-genomic-human-model-->
     <taskdef name="db-insert-model"
-             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
+             classname="org.intermine.task.StoreMetadataTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
     <db-insert-model database="db.production" modelName="genomic"/>
@@ -1761,7 +1771,7 @@
         <!-- compile-genomic-model--> 
         <!-- compile-genomic-human-model-->
     <taskdef name="db-insert-model"
-             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
+             classname="org.interminetask.StoreMetadataTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
     <db-insert-model database="db.production" modelName="genomic"/>
