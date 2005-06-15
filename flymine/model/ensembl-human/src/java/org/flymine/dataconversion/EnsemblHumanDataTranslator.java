@@ -140,28 +140,33 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 if ("karyotype".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
-                    Item location = createLocation(srcItem, tgtItem, true);
+                    Item location = createLocation(srcItem, tgtItem, true); // seq_region
+                                                                            // seq_region.coord-sys
                     location.addAttribute(new Attribute("strand", "0"));
                     result.add(location);
                 } else if ("exon".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
+                                                        // <- exon_stable_id.exon
                     if (stableId != null) {
                         moveField(stableId, tgtItem, "stable_id", "identifier");
                     }
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
-                    Item location = createLocation(srcItem, tgtItem, true);
+                    Item location = createLocation(srcItem, tgtItem, true); // seq_region
+                                                                            // seq_region.coord-sys
                     result.add(location);
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item comment = createComment(srcItem, tgtItem);
+                                                        // Nothing
                     if (comment != null) {
                         result.add(comment);
                     }
-                    Item location = createLocation(srcItem, tgtItem, true);
+                    Item location = createLocation(srcItem, tgtItem, true); // seq_region
+                                                                            // seq_region.coord-sys
                     result.add(location);
-                    Item anaResult = createAnalysisResult(srcItem, tgtItem);
+                    Item anaResult = createAnalysisResult(srcItem, tgtItem); // analysis
                     result.add(anaResult);
                     //  List comments = getCommentIds(srcItem.getIdentifier(), srcNs);
 //                      if (!comments.isEmpty()) {
@@ -170,6 +175,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     // gene organismDbId should be its stable id (or identifier if none)
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
+                                                        // <- gene_stable_id.gene
                     if (stableId != null) {
                          moveField(stableId, tgtItem, "stable_id", "organismDbId");
                     } else {
@@ -178,6 +184,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     }
                     String identifier = tgtItem.getAttribute("organismDbId").getValue();
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs, identifier));
+                                                        // display_xref
+                                                        // display_xref.external_db
                     // if no organismDbId set to be same as identifier
                     if (!tgtItem.hasAttribute("organismDbId")) {
                         tgtItem.addAttribute(new Attribute("organismDbId",
@@ -193,6 +201,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     // if no identifier set the identifier as name (primary key)
                     if (!tgtItem.hasAttribute("identifier")) {
                         Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
+                                                        // <- transcript_stable_id.transcript
                         if (stableId != null) {
                             moveField(stableId, tgtItem, "stable_id", "identifier");
                         } else {
@@ -200,13 +209,17 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                                                srcItem.getIdentifier()));
                         }
                     }
-                    Item location = createLocation(srcItem, tgtItem, true);
+                    Item location = createLocation(srcItem, tgtItem, true); // seq_region
+                                                                            // seq_region.coord-sys
                     result.add(location);
                 } else if ("translation".equals(className)) {
                     Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
-
+                                        // transcript
+                                        // transcript.display_xref
+                                        // transcript.display_xref.external_db
                     if (protein != null && srcItem.hasReference("transcript")) {
                         String transcriptId = srcItem.getReference("transcript").getRefId();
+                                        // transcript
                         Item transRelation = createItem(tgtNs + "SimpleRelation", "");
                         transRelation.addReference(new Reference("subject",  transcriptId));
                         addReferencedItem(protein, transRelation, "subjects", true,
@@ -229,14 +242,23 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
+                                        // analysis
                     result.add(createLocation(srcItem, tgtItem, true));
+                                        // seq_region
+                                        // seq_region.coord_system
                     promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
                                 "repeat_consensus");
+                                        // repeat_consensus
                     promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
+                                        // repeat_consensus
                     promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
+                                        // repeat_consensus
                 } else if ("marker".equals(className)) {
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Set locations = createLocations(srcItem, tgtItem, srcNs);
+                                        // <- marker_feature.marker
+                                        // (<- marker_feature.marker).seq_region
+                                        // (<- marker_feature.marker).seq_region.coord_system
                     List locationIds = new ArrayList();
                     for (Iterator j = locations.iterator(); j.hasNext(); ) {
                         Item location = (Item) j.next();
@@ -244,6 +266,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         result.add(location);
                     }
                     setNameAttribute(srcItem, tgtItem);
+                                        // display_marker_synonym
                 } else if ("marker_synonym".equals(className)) {
                     tgtItem.addAttribute(new Attribute("type", "identifier"));
                     if (srcItem.hasAttribute("source")) {
@@ -678,48 +701,48 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     dbname =  externalDb.getAttribute("db_name").getValue();
                 }
             }
-           if (accession != null && !accession.equals("")
-                && dbname != null && !dbname.equals("")) {
-               //dbname could be one of HUGO, RefSeq_dna, RefSeq_dna_predicted,
-               //RefSeq_peptide,RefSeq_peptide_predicted, Uniprot/SWISSPROT Uniprot/SPTREMBL
-               //HUGO identifier is used as gene Identifier, if no HUGO refed then ensembl_stable_id
-               //(eg ENSG???????????) used as identifier
-               Item synonym = new Item();
-               if (dbname.equals("HUGO")) {
-                   synonym = createSynonym(tgtItem.getIdentifier(),
-                                           "name", name, getHugoRef());
-                   synonyms.add(synonym);
-                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                   synonym = createSynonym(tgtItem.getIdentifier(),
-                                           "accession", accession, getHugoRef());
-                   synonyms.add(synonym);
-                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                   tgtItem.addAttribute(new Attribute("identifier", accession));
-                   tgtItem.addAttribute(new Attribute("name", name));
-               } else if (dbname.equals("RefSeq_dna") || dbname.equals("RefSeq_dna_predicted")) {
-                   synonym = createSynonym(tgtItem.getIdentifier(),
-                                           "accession", accession, getRefSeqRef());
-                   synonyms.add(synonym);
-                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-
-                   synonym = createSynonym(tgtItem.getIdentifier(),
-                                           "identifier", geneIdentifier, getEnsemblRef());
-                   synonyms.add(synonym);
-                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                   tgtItem.addAttribute(new Attribute("accession", accession));
-                   tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
-               } else if (dbname.equals("Uniprot/SWISSPROT") || dbname.equals("Uniprot/SPTREMBL")
-                   || dbname.equals("RefSeq_peptide")
-                   || dbname.equals("RefSeq_peptide_predicted")) {
-                   synonym = createSynonym(tgtItem.getIdentifier(),
-                                           "identifier", geneIdentifier, getEnsemblRef());
-                   synonyms.add(synonym);
-                   addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                   tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
-
-               }
-
-           }
+            if (accession != null && !accession.equals("")
+                 && dbname != null && !dbname.equals("")) {
+                //dbname could be one of HUGO, RefSeq_dna, RefSeq_dna_predicted,
+                //RefSeq_peptide,RefSeq_peptide_predicted, Uniprot/SWISSPROT Uniprot/SPTREMBL
+                //HUGO identifier is used as gene Identifier, if no HUGO refed then ensembl_stable_id
+                //(eg ENSG???????????) used as identifier
+                Item synonym = new Item();
+                if (dbname.equals("HUGO")) {
+                    synonym = createSynonym(tgtItem.getIdentifier(),
+                                            "name", name, getHugoRef());
+                    synonyms.add(synonym);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonym = createSynonym(tgtItem.getIdentifier(),
+                                            "accession", accession, getHugoRef());
+                    synonyms.add(synonym);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    tgtItem.addAttribute(new Attribute("identifier", accession));
+                    tgtItem.addAttribute(new Attribute("name", name));
+                } else if (dbname.equals("RefSeq_dna") || dbname.equals("RefSeq_dna_predicted")) {
+                    synonym = createSynonym(tgtItem.getIdentifier(),
+                                            "accession", accession, getRefSeqRef());
+                    synonyms.add(synonym);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+ 
+                    synonym = createSynonym(tgtItem.getIdentifier(),
+                                            "identifier", geneIdentifier, getEnsemblRef());
+                    synonyms.add(synonym);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    tgtItem.addAttribute(new Attribute("accession", accession));
+                    tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
+                } else if (dbname.equals("Uniprot/SWISSPROT") || dbname.equals("Uniprot/SPTREMBL")
+                    || dbname.equals("RefSeq_peptide")
+                    || dbname.equals("RefSeq_peptide_predicted")) {
+                    synonym = createSynonym(tgtItem.getIdentifier(),
+                                            "identifier", geneIdentifier, getEnsemblRef());
+                    synonyms.add(synonym);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
+ 
+                }
+ 
+            }
         }
         return synonyms;
     }
@@ -1024,8 +1047,12 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         //karyotype
         ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("karyotype.seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor(
+                "karyotype.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
         paths.put("http://www.flymine.org/model/ensembl-human#karyotype",
-                    Collections.singleton(desc));
+                Collections.singleton(desc));
 
         //exon
         Set descSet = new HashSet();
@@ -1036,11 +1063,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("exon.seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
-        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor(
-                               "exon.seq_region <- seq_region.coord_system");
+        desc1 = new ItemPrefetchDescriptor("exon.seq_region.coord_system");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl-human#exon", descSet);
@@ -1052,31 +1076,25 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         desc.addConstraint(new FieldNameAndValue(classname,
                     "http://www.flymine.org/model/ensembl-human#gene_stable_id", false));
         descSet.add(desc);
-
         desc = new ItemPrefetchDescriptor("gene.analysis");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("gene.seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
-        desc1 = new ItemPrefetchDescriptor("gene.seq_region <- seq_region.coord_system");
+        desc1 = new ItemPrefetchDescriptor("gene.seq_region.coord_system");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc1);
         descSet.add(desc);
         //not suitable for homo_sapiens_core_31_35d
-        //  desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
-//          desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
-//          desc.addConstraint(new FieldNameAndValue(classname,
-//                      "http://www.flymine.org/model/ensembl-human#gene_description", false));
-//          descSet.add(desc);
-
+        //desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
+        //desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
+        //desc.addConstraint(new FieldNameAndValue(classname,
+        //              "http://www.flymine.org/model/ensembl-human#gene_description", false));
+        //descSet.add(desc);
         desc = new ItemPrefetchDescriptor("gene.display_xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
-        desc1 = new ItemPrefetchDescriptor("gene.display_xref <- xref.external_db");
+        desc1 = new ItemPrefetchDescriptor("gene.display_xref.external_db");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("external_db", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#xref", false));
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl-human#gene", descSet);
@@ -1093,11 +1111,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("transcript.seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
-        desc1 = new ItemPrefetchDescriptor(
-                               "transcript.seq_region <- seq_region.coord_system");
+        desc1 = new ItemPrefetchDescriptor("transcript.seq_region.coord_system");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl-human#transcript", descSet);
@@ -1112,48 +1127,28 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         desc = new ItemPrefetchDescriptor("translation.transcript");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("transcript", identifier));
         descSet.add(desc);
-        desc1 = new ItemPrefetchDescriptor("(translation.transcript).display_xref");
+        desc1 = new ItemPrefetchDescriptor("translation.transcript.display_xref");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#transcript", false));
         ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
-                               "transcript.display_xref <- xref.external_db");
+                               "translation.transcript.display_xref.external_db");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("external_db", identifier));
-        desc2.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#xref", false));
         desc1.addPath(desc2);
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl-human#translation", descSet);
 
-        //simple_feature
-        descSet = new HashSet();
-        desc = new ItemPrefetchDescriptor("simple_feature.analysis");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
-        descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("simple_feature.seq_region");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
-        desc1 = new ItemPrefetchDescriptor(
-                               "simple_feature.seq_region <- seq_region.coord_system");
-        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
-        desc.addPath(desc1);
-        descSet.add(desc);
-        paths.put("http://www.flymine.org/model/ensembl-human#simple_feature", descSet);
-
         //repeat_feature
         descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("repeat_feature.analysis");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
+        descSet.add(desc);
         desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", identifier));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("repeat_feature.seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
-        desc1 = new ItemPrefetchDescriptor(
-                               "repeat_feature.seq_region <- seq_region.coord_system");
+        desc1 = new ItemPrefetchDescriptor("repeat_feature.seq_region.coord_system");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc1.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl-human#repeat_feature", descSet);
@@ -1167,14 +1162,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "marker"));
         desc.addConstraint(new FieldNameAndValue(classname,
                     "http://www.flymine.org/model/ensembl-human#marker_feature", false));
-
-        desc1 = new ItemPrefetchDescriptor("marker_feature.seq_region");
+        desc1 = new ItemPrefetchDescriptor("(<- marker_feature.marker).seq_region");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
         desc2 = new ItemPrefetchDescriptor(
-                               "marker_feature.seq_region <- seq_region.coord_system");
+                "(<- marker_feature.marker).seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc2.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc1.addPath(desc2);
         desc.addPath(desc1);
         descSet.add(desc);
@@ -1185,21 +1177,14 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("assembly.asm_seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("asm_seq_region", identifier));
-        desc2 = new ItemPrefetchDescriptor(
-                               "assembly.asm_seq_region <- seq_region.coord_system");
+        desc2 = new ItemPrefetchDescriptor("assembly.asm_seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc2.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc2);
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("assembly.cmp_seq_region");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("cmp_seq_region",
-                     identifier));
-        desc2 = new ItemPrefetchDescriptor(
-                               "assembly.cmp_seq_region <- seq_region.coord_system");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("cmp_seq_region", identifier));
+        desc2 = new ItemPrefetchDescriptor("assembly.cmp_seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
-        desc2.addConstraint(new FieldNameAndValue(classname,
-                    "http://www.flymine.org/model/ensembl-human#seq_region", false));
         desc.addPath(desc2);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl-human#assembly", descSet);
@@ -1209,6 +1194,19 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         paths.put("http://www.flymine.org/model/ensembl-human#seq_region",
                   Collections.singleton(desc));
+
+        //simple_feature
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("simple_feature.analysis");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("simple_feature.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc1 = new ItemPrefetchDescriptor("simple_feature.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#simple_feature", descSet);
 
         return paths;
     }
