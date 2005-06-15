@@ -601,6 +601,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
+    public void testGetPrefetchDescriptors() throws Exception {
+        MageDataTranslator.getPrefetchDescriptors();
+
+    }
+
     public void XtestBioEntity2MAER() throws Exception {
 
         Item srcItem= createSrcItem("Reporter", "12_45", "");
@@ -608,7 +613,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                    new ArrayList(Arrays.asList(new Object[]{"7_41"}))));
         srcItem.addCollection(new ReferenceList("immobilizedCharacteristics",
                    new ArrayList(Arrays.asList(new Object[]{"0_3"}))));
-
         Item srcItem1= createSrcItem("FeatureReporterMap", "7_41", "");
         srcItem1.addCollection(new ReferenceList("featureInformationSources",
                    new ArrayList(Arrays.asList(new Object[]{"8_42"}))));
