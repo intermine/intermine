@@ -202,9 +202,6 @@
         <patternset refid="lib.models"/>
       </fileset>
       
-      <fileset dir="${lib}">
-        <include name="mysql*.jar"/>
-      </fileset>
     </path>
   
     <path id="project.class.path">
