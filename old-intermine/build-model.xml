@@ -259,7 +259,7 @@
     </build-db>
 
     <taskdef name="db-insert-model"
-             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
+             classname="org.intermine.task.StoreMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
     <db-insert-model database="${db.name}" modelName="${model.name}"/>
