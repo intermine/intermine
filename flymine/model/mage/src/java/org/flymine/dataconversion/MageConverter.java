@@ -245,10 +245,6 @@ public class MageConverter extends FileConverter
             storeItem = false;
         } else if (className.equals("MeasuredBioAssayData")
             || className.equals("DerivedBioAssayData")) {
-            boolean normalised = false;
-            if (className.equals("DerivedBioAssayData")) {
-                normalised = true;
-            }
             BioAssayData bad = (BioAssayData) obj;
             String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                 .getFilenameURI();
@@ -274,12 +270,6 @@ public class MageConverter extends FileConverter
                         datum.setReference("quantitationType", createItem(qt).getIdentifier());
                         datum.setReference("designElement", createItem(feature).getIdentifier());
                         datum.setAttribute("value", value);
-                        // add normalised attribute - not actually in MAGE model, will be removed
-                        // by MageDataTranslator before validating against model
-                        datum.setAttribute("normalised", normalised ? "true" : "false");
-                        //should create reference for bioAssay
-                        //ref = new Reference(); ref.setName("bioAssay");
-                        //ref.setRefId(createItem(obj).getIdentifier()); datum.addReferences(ref);
                         storeItem(datum);
                     }
                 }

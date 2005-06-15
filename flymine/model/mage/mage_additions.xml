@@ -1,81 +1,53 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.MicroArrayAssay" is-interface="true">
+  <attribute name="name" type="java.lang.String"/>
+  <attribute name="description" type="java.lang.String"/>
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="assays"/>
-  <reference name="slide" referenced-type="org.flymine.model.genomic.MicroArraySlide" reverse-reference="assay"/>
-  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayExperimentalResult" ordered="true" reverse-reference="assay"/>
-  <collection name="tissues" referenced-type="org.flymine.model.genomic.LabeledExtract" ordered="true" reverse-reference="assay"/>
+  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" ordered="true" reverse-reference="assay"/>
+  <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" ordered="true" reverse-reference="assay"/>
 </class>
 <class name="org.flymine.model.genomic.Treatment" is-interface="true">
   <attribute name="action" type="java.lang.String"/>
+  <attribute name="protocol" type="java.lang.String"/>
 </class>
 <class name="org.flymine.model.genomic.MicroArrayExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
   <attribute name="description" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
   <collection name="assays" referenced-type="org.flymine.model.genomic.MicroArrayAssay" ordered="true" reverse-reference="experiment"/>
 </class>
-<class name="org.flymine.model.genomic.MicroArraySlide" is-interface="true">
-  <reference name="design" referenced-type="org.flymine.model.genomic.MicroArraySlideDesign" reverse-reference="slides"/>
-  <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="slide"/>
-</class>
 <class name="org.flymine.model.genomic.Reporter" is-interface="true">
   <attribute name="failType" type="java.lang.String"/>
   <attribute name="type" type="java.lang.String"/>
   <reference name="material" referenced-type="org.flymine.model.genomic.BioEntity"/>
-  <reference name="location" referenced-type="org.flymine.model.genomic.ReporterLocation" reverse-reference="reporter"/>
-  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayExperimentalResult" ordered="true" reverse-reference="reporter"/>
+  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" ordered="true" reverse-reference="reporter"/>
 </class>
 <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayExperimentalResult" ordered="true" reverse-reference="material"/>
+  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" ordered="true" reverse-reference="assay"/>
 </class>
+<class name="org.flymine.model.genomic.NuclearDNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
+<class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.Sample" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <attribute name="materialType" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
-  <reference name="labeledExtract" referenced-type="org.flymine.model.genomic.LabeledExtract" reverse-reference="sample"/>
+  <attribute name="description" type="java.lang.String"/>
+  <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="samples"/>
   <collection name="characteristics" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
   <collection name="treatments" referenced-type="org.flymine.model.genomic.Treatment" ordered="true"/>
 </class>
-<class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
-<class name="org.flymine.model.genomic.MicroArraySlideDesign" is-interface="true">
-  <attribute name="version" type="java.lang.String"/>
-  <attribute name="name" type="java.lang.String"/>
-  <attribute name="surfaceType" type="java.lang.String"/>
-  <collection name="locations" referenced-type="org.flymine.model.genomic.ReporterLocation" ordered="true" reverse-reference="design"/>
-  <collection name="slides" referenced-type="org.flymine.model.genomic.MicroArraySlide" ordered="true" reverse-reference="design"/>
-  <collection name="descriptions" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
-</class>
-<class name="org.flymine.model.genomic.ReporterLocation" is-interface="true">
-  <attribute name="localY" type="java.lang.Integer"/>
-  <attribute name="zoneY" type="java.lang.Integer"/>
-  <attribute name="zoneX" type="java.lang.Integer"/>
-  <attribute name="localX" type="java.lang.Integer"/>
-  <reference name="design" referenced-type="org.flymine.model.genomic.MicroArraySlideDesign" reverse-reference="locations"/>
-  <reference name="reporter" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="location"/>
-</class>
-<class name="org.flymine.model.genomic.LabeledExtract" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <attribute name="label" type="java.lang.String"/>
-  <attribute name="materialType" type="java.lang.String"/>
-  <reference name="sample" referenced-type="org.flymine.model.genomic.Sample" reverse-reference="labeledExtract"/>
-  <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="tissues"/>
-  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayExperimentalResult" ordered="true" reverse-reference="tissues"/>
-  <collection name="treatments" referenced-type="org.flymine.model.genomic.Treatment" ordered="true"/>
-</class>
-<class name="org.flymine.model.genomic.NuclearDNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
-<class name="org.flymine.model.genomic.MicroArrayExperimentalResult" extends="org.flymine.model.genomic.ExperimentalResult" is-interface="true">
+<class name="org.flymine.model.genomic.MicroArrayResult" extends="org.flymine.model.genomic.ExperimentalResult" is-interface="true">
   <attribute name="scale" type="java.lang.String"/>
-  <attribute name="isBackground" type="java.lang.Boolean"/>
   <attribute name="flag" type="java.lang.String"/>
-  <attribute name="normalised" type="java.lang.Boolean"/>
-  <attribute name="value" type="java.lang.Float"/>
   <attribute name="type" type="java.lang.String"/>
+  <attribute name="isControl" type="java.lang.Boolean"/>
+  <attribute name="value" type="java.lang.Float"/>
   <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
   <reference name="reporter" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
   <reference name="material" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="results"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="microArrayResults"/>
-  <collection name="tissues" referenced-type="org.flymine.model.genomic.LabeledExtract" ordered="true" reverse-reference="results"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayExperimentalResult" ordered="true" reverse-reference="genes"/>
+  <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayResult" ordered="true" reverse-reference="genes"/>
 </class>
 </classes>
 
