@@ -249,9 +249,6 @@ public class MageDataTranslator extends DataTranslator
                 } else if (className.equals("BioSequence")) {
                     //translateBioEntity(srcItem, tgtItem);
                     storeTgtItem = false;
-                } else if (className.equals("LabeledExtract")) {
-                    translateLabeledExtract(srcItem);
-                    storeTgtItem = false;
                 } else if (className.equals("BioSource")) {
                     translateSample(srcItem, tgtItem);
                     storeTgtItem = false;
@@ -264,6 +261,8 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
 
+        } else if (className.equals("LabeledExtract")) {
+            translateLabeledExtract(srcItem);
         }
         return result;
     }
@@ -304,7 +303,8 @@ public class MageDataTranslator extends DataTranslator
         if (srcItem.hasAttribute("name")) {
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
         }
-        // prefetch done
+
+        // PATH Experiment.descriptions.bibliographicReferences
         if (srcItem.hasCollection("descriptions")) {
             boolean desFlag = false;
             boolean pubFlag = false;
@@ -362,7 +362,7 @@ public class MageDataTranslator extends DataTranslator
 
          // set up map from mage:BioAssayDatum identifier to genomic:MicroArrayAssay
 
-         // MeasuredBioAssay.measuredBioAssayData.bioDataValues.bioAssayTupleData
+         // PATH MeasuredBioAssay.measuredBioAssayData.bioDataValues.bioAssayTupleData
          if (srcItem.hasCollection("measuredBioAssayData")) {
              Iterator iter = getCollection(srcItem, "measuredBioAssayData");
 
@@ -399,6 +399,8 @@ public class MageDataTranslator extends DataTranslator
          // Item pbaItem = getItemByPath(new ItemPath("MeasuredBioAssay.featureExtraction.physicalBioAssaySource",
          //                                      srcNs), srcItem);
 
+
+         // PATH MeasuredBioAssay.featureExtraction.physicalBioAssaySource.bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial
          Item pbaItem = null;
          if (srcItem.hasReference("featureExtraction")) {
              Item feItem = getReference(srcItem, "featureExtraction");
@@ -446,6 +448,9 @@ public class MageDataTranslator extends DataTranslator
         tgtItem.setReference("analysis", getExperimentId());
 
         // TODO do we still need maer2FeatureMap?
+
+        // PATH BioAssayDatum.designElement
+        // PATH BioAssayDatum.quatitationType.scale
 
         //create maer2Feature map, and maer set
         if (srcItem.hasReference("designElement")) {
@@ -544,6 +549,9 @@ public class MageDataTranslator extends DataTranslator
         // level LabeledExtract.  Sample needs collection of treatments.
 
 
+        // PATH is recursive - duplicate a number of times?  Refactor easier prefetch
+        // PATH LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
+
         if (bioMaterial.hasCollection("treatments")) {
             Iterator treatmentIter = getCollection(bioMaterial, "treatments");
             while (treatmentIter.hasNext()) {
@@ -588,6 +596,7 @@ public class MageDataTranslator extends DataTranslator
         //      will need config to be passed in
         // TODO set identifier to be internal MAGE identifier?
 
+        // PATH BioSource.characteristics
         List list = new ArrayList();
         Item organism = new Item();
         if (srcItem.hasCollection("characteristics")) {
@@ -613,6 +622,7 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
+        // PATH BioSource.materialType
         if (srcItem.hasReference("materialType")) {
             Item type = ItemHelper.convert(srcItemReader.getItemById(
                  (String) srcItem.getReference("materialType").getRefId()));
@@ -638,6 +648,7 @@ public class MageDataTranslator extends DataTranslator
 
         // TODO protocol - either attribute of treatment or reference to object
 
+        // PATH Treatment.action
         if (srcItem.hasReference("action")) {
             Item action = ItemHelper.convert(srcItemReader.getItemById(
                               (String) srcItem.getReference("action").getRefId()));
@@ -1296,10 +1307,73 @@ public class MageDataTranslator extends DataTranslator
         return ItemHelper.convert(srcItemReader.getItemByPath(path, ItemHelper.convert(startItem)));
     }
 
+        // PATH Experiment.descriptions.bibliographicReferences
+        // PATH MeasuredBioAssay.measuredBioAssayData.bioDataValues.bioAssayTupleData
+        // PATH MeasuredBioAssay.featureExtraction.physicalBioAssaySource.bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial
+        // PATH BioAssayDatum.designElement
+        // PATH BioAssayDatum.quatitationType.scale
+        // PATH is recursive - duplicate a number of times?  Refactor easier prefetch
+        // PATH LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
+        // PATH BioSource.characteristics
+        // PATH BioSource.materialType
+        // PATH Treatment.action
+
+//     public static Map getPrefetchDescriptors() {
+//         return new HashMap();
+//     }
+
+
+    public static Map getPrefetchDescriptors() {
+        Map paths = new HashMap();
+        Set descSet;
+        ItemPath path;
+        String srcNs = "http://www.flymine.org/mage#";
+
+        path = new ItemPath("Experiment.descriptions.bibliographicReferences", srcNs);
+        paths.put(srcNs + "Experiment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
+
+        descSet = new HashSet();
+        path = new ItemPath("MeasuredBioAssay.measuredBioAssayData.bioDataValues.bioAssayTupleData", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("MeasuredBioAssay.featureExtraction.physicalBioAssaySource.bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "MeasuredBioAssay", descSet);
+
+
+
+        descSet = new HashSet();
+        path = new ItemPath("BioAssayDatum.designElement", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("BioAssayDatum.quatitationType.scale", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "BioAssayDatum", descSet);
+
+        descSet = new HashSet();
+        path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial.treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "LabeledExtract", descSet);
+
+
+        descSet = new HashSet();
+        path = new ItemPath("BioSource.characteristics", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("BioSource.materialType", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "BioSource", descSet);
+
+        path = new ItemPath("Treatment.action", srcNs);
+        paths.put(srcNs + "Treatment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
+
+        return paths;
+    }
+
+
     /**
      * @see DataTranslatorTask#execute
      */
-    public static Map getPrefetchDescriptors() {
+    public static Map getPrefetchDescriptorsOld() {
         Map paths = new HashMap();
         HashSet descSet = new HashSet();
 
