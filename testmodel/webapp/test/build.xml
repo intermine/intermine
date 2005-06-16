@@ -8,10 +8,12 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/db.xml"/>
   
-  <target name="-pre-test">
-    <copy file="${user.home}/intermine.properties" todir="${build.test.resources.dir}"/>
+  <target name="-init-test" depends="tests.-init-test">
+    <copy file="${user.home}/${intermine.properties.file}"
+          tofile="${build.test.resources.dir}/intermine.properties"/>
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.test.resources.dir}/default.intermine.properties"/>
   </target>
-  
   
 </project>
 
