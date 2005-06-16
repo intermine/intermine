@@ -267,7 +267,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expFeatureToReporter, translator.featureToReporter);
     }
 
-    public void testProcessTreatments() throws Exception {
+    public void testSearchTreatments() throws Exception {
 
         Item srcItem1 = createSrcItem("LabeledExtract", "0_1", "");
         srcItem1.addCollection(new ReferenceList("treatments",
@@ -302,7 +302,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
         // call with top level LabeledExtract and empty list
         List treatments = new ArrayList();
-        translator.processTreatments(srcItem1, treatments);
+        translator.searchTreatments(srcItem1, treatments);
 
         List expTreatments = new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"}));
         assertEquals(expTreatments, treatments);
@@ -444,8 +444,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item srcItem1 = createSrcItem("BioSource", "0_1", "");
         srcItem1.setAttribute("identifier", "S:BioSource:FLYC:10");
         srcItem1.setAttribute("name", "BioSource name");
+        srcItem1.setReference("materialType", "1_3");
         srcItem1.addCollection(new ReferenceList("characteristics",
-                                                 new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2", "1_3"}))));
+                                                 new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"}))));
 
         Item srcItem2 = createSrcItem("OntologyEntry", "1_1", "");
         srcItem2.setAttribute("category", "Organism");
@@ -455,7 +456,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem3.setAttribute("category", "height");
         srcItem3.setAttribute("value", "30 metres");
 
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem1, srcItem2, srcItem3}));
+        Item srcItem4 = createSrcItem("OntologyEntry", "1_3", "");
+        srcItem4.setAttribute("category", "materialType");
+        srcItem4.setAttribute("value", "genomic DNA");
+
+        Set src = new HashSet(Arrays.asList(new Object[]{srcItem1, srcItem2, srcItem3, srcItem4}));
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
@@ -464,6 +469,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item expItem1 = createTgtItem("Sample", "0_1", "");
         expItem1.setAttribute("name", "BioSource name");
+        expItem1.setAttribute("materialType", "genomic DNA");
         expItem1.setReference("organism", "-1_1");
         expItem1.addCollection(new ReferenceList("characteristics", new ArrayList(Collections.singleton("1_2"))));
 
@@ -476,7 +482,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expItem4 = createTgtItem("OntologyTerm", "1_1", "");
         expItem4.setAttribute("name", "Giraffe");
 
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2, expItem3, expItem4}));
+        Item expItem5 = createTgtItem("OntologyTerm", "1_3", "");
+        expItem5.setAttribute("name", "genomic DNA");
+
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2, expItem3, expItem4, expItem5}));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
