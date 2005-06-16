@@ -40,7 +40,7 @@
     </junitreport>
   </target>
   
-  <target name="test" depends="library.default, -init-test, -pre-test, do-test, test-report, -post-test"/>
+  <target name="test" depends="-init-test, library.default, -pre-test, do-test, test-report, -post-test"/>
   
   <target name="test-all" depends="init, -init-deps, jar">
     <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
