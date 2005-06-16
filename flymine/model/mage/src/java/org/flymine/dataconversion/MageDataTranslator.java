@@ -553,7 +553,7 @@ public class MageDataTranslator extends DataTranslator
     public void translateLabeledExtract(Item srcItem)
         throws ObjectStoreException {
 
-        String sampleId = processTreatments(srcItem, new ArrayList());
+        String sampleId = searchTreatments(srcItem, new ArrayList());
         // map from sample to top level LabeledExtract
         // TODO is this needed for link from MicroArrayAssay to Sample??
         sampleToLabeledExtract.put(sampleId, srcItem.getIdentifier());
@@ -564,7 +564,7 @@ public class MageDataTranslator extends DataTranslator
      * For a given BioMaterial iterate through treatments applied and add to a collection.
      * Recurse into source BioMaterials and add their treatments.
      */
-    protected String processTreatments(Item bioMaterial, List treatments)  throws ObjectStoreException {
+    protected String searchTreatments(Item bioMaterial, List treatments)  throws ObjectStoreException {
         // TODO check if BioSource (genomic:Sample) and create map from sample to top
         // level LabeledExtract.  Sample needs collection of treatments.
 
@@ -587,7 +587,7 @@ public class MageDataTranslator extends DataTranslator
                         Item sourceMaterial = (Item) sourceIter.next();
                         if (sourceMaterial.hasReference("bioMaterial")) {
                             // recurse into next BioMaterial
-                            processTreatments(getReference(sourceMaterial, "bioMaterial"), treatments);
+                            searchTreatments(getReference(sourceMaterial, "bioMaterial"), treatments);
                         }
                     }
                 }
@@ -1367,8 +1367,6 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "MeasuredBioAssay", descSet);
 
-
-
         descSet = new HashSet();
         path = new ItemPath("BioAssayDatum.designElement", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1393,6 +1391,10 @@ public class MageDataTranslator extends DataTranslator
 
         path = new ItemPath("Treatment.action", srcNs);
         paths.put(srcNs + "Treatment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
+
+
+        path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
+        paths.put(srcNs + "Reporter", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
 
         return paths;
     }
