@@ -227,10 +227,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expItem1 = createTgtItem("Treatment", "0_1", "");
         expItem1.setAttribute("action", "labeling");
 
-        Item expItem2 = createTgtItem("OntologyTerm", "1_1", "");
-        expItem2.setAttribute("name", "labeling");
-
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2}));
+        HashSet expected = new HashSet(Collections.singleton(expItem1));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -339,10 +336,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem.setAttribute("type","Log Ratio");
         expectedItem.setReference("analysis","-1_1");
 
-        Item expectedItem2 = createTgtItem("OntologyTerm", "1_611", "");
-        expectedItem2.setAttribute("name","log");
-
-        HashSet expected = new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2}));
+        HashSet expected = new HashSet(Collections.singleton(expectedItem));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -428,10 +422,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem.setAttribute("scale","linear_scale");
         expectedItem.setReference("analysis","-1_1");
 
-        Item expectedItem2 = createTgtItem("OntologyTerm", "1_611", "");
-        expectedItem2.setAttribute("name","linear_scale");
-
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2}));
+        HashSet expected=new HashSet(Collections.singleton(expectedItem));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -471,21 +462,16 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expItem1.setAttribute("name", "BioSource name");
         expItem1.setAttribute("materialType", "genomic DNA");
         expItem1.setReference("organism", "-1_1");
-        expItem1.addCollection(new ReferenceList("characteristics", new ArrayList(Collections.singleton("1_2"))));
+        expItem1.addCollection(new ReferenceList("characteristics", new ArrayList(Collections.singleton("-1_2"))));
 
         Item expItem2 = createTgtItem("Organism", "-1_1", "");
         expItem2.setAttribute("name", "Giraffe");
 
-        Item expItem3 = createTgtItem("OntologyTerm", "1_2", "");
-        expItem3.setAttribute("name", "30 metres");
+        Item expItem3 = createTgtItem("SampleCharacteristic", "-1_2", "");
+        expItem3.setAttribute("type", "height");
+        expItem3.setAttribute("value", "30 metres");
 
-        Item expItem4 = createTgtItem("OntologyTerm", "1_1", "");
-        expItem4.setAttribute("name", "Giraffe");
-
-        Item expItem5 = createTgtItem("OntologyTerm", "1_3", "");
-        expItem5.setAttribute("name", "genomic DNA");
-
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2, expItem3, expItem4, expItem5}));
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2, expItem3}));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
