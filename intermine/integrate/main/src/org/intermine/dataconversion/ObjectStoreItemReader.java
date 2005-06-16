@@ -69,10 +69,22 @@ public class ObjectStoreItemReader extends AbstractItemReader
         return os;
     }
 
+
+
     /**
      * @see ItemReader#itemIterator
      */
     public Iterator itemIterator() {
+        return itemIterator(defaultBatchSize);
+    }
+
+
+    /**
+     * @see ItemReader#itemIterator
+     * @param batchSize batch size for item retrieval
+     *
+     */
+    public Iterator itemIterator(int batchSize) {
         /*Query cnQuery = new Query();
         QueryClass cnQc = new QueryClass(Item.class);
         cnQuery.addFrom(cnQc);
@@ -93,7 +105,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
             //q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"),
             //            ConstraintOp.EQUALS, new QueryValue((String) cnIter.next())));
             SingletonResults res = new SingletonResults(q, os, os.getSequence());
-            res.setBatchSize(10000);
+            res.setBatchSize(batchSize);
             res.setNoExplain();
             res.setNoOptimise();
             return res.iterator();
