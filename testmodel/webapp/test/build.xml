@@ -10,6 +10,7 @@
   
   <target name="-pre-pre-init" depends="library.-pre-pre-init">
     <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false"/>
+    <ant antfile="../main/build.xml" target="build-db-userprofile" inheritAll="false"/>
   </target>
   
   <target name="-init-test" depends="tests.-init-test">
