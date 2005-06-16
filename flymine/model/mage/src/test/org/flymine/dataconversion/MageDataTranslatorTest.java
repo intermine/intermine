@@ -239,6 +239,34 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
+    public void testTranslateReporter() throws Exception {
+        Item srcItem1 = createSrcItem("Reporter", "0_1", "");
+        srcItem1.addCollection(new ReferenceList("featureReporterMaps",
+                                                 new ArrayList(Collections.singleton("1_1"))));
+
+
+        Item srcItem2 = createSrcItem("FeatureReporterMap", "1_1", "");
+        srcItem2.addCollection(new ReferenceList("featureInformationSources",
+                                                 new ArrayList(Collections.singleton("2_1"))));
+
+        Item srcItem3 = createSrcItem("FeatureInformation", "2_1", "");
+        srcItem3.setReference("feature", "3_1");
+
+        Set src = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2, srcItem3}));
+        Map srcMap = writeItems(src);
+
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        // map from mage:Feature identifier to genomic:Reporter
+        Map expFeatureToReporter = new HashMap();
+        expFeatureToReporter.put("3_1", "0_1");
+        assertEquals(expFeatureToReporter, translator.featureToReporter);
+    }
+
     public void testProcessTreatments() throws Exception {
 
         Item srcItem1 = createSrcItem("LabeledExtract", "0_1", "");
@@ -286,9 +314,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void testMicroArrayResult() throws Exception {
+    public void testTranslateMicroArrayResult() throws Exception {
         Item srcItem1= createSrcItem("BioAssayDatum", "58_762", "");
         srcItem1.setReference("quantitationType","40_620");
+        srcItem1.setReference("designElement","3_1");
 
         Item srcItem2= createSrcItem("SpecializedQuantitationType", "40_620", "");
         srcItem2.setAttribute("name", "Log Ratio");
@@ -296,6 +325,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item srcItem3= createSrcItem("OntologyEntry", "1_611", "");
         srcItem3.setAttribute("value", "log");
+
+        Item srcItem4= createSrcItem("Feature", "3_1", "");
 
         Set src = new HashSet(Arrays.asList(new Object[]{srcItem1, srcItem2, srcItem3}));
         Map srcMap = writeItems(src);
@@ -317,6 +348,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.translate(tgtIw);
 
         assertEquals(expected, tgtIw.getItems());
+
+        // map from genomic:MicroArrayResult to mage:Feature
+        Map expResultToFeature = new HashMap();
+        expResultToFeature.put("58_762", "3_1");
+        assertEquals(expResultToFeature, translator.resultToFeature);
     }
 
 
@@ -329,12 +365,18 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         translator.resultToAssay.put("0_1", "1_1");
 
+        translator.resultToFeature.put("0_1", "2_1");
+        translator.featureToReporter.put("2_1", "3_1");
+
         Item expResult = createTgtItem("MicroArrayResult", "0_1", "");
         expResult.setReference("assay", "1_1");
+        expResult.setReference("reporter", "3_1");
         Set exp = new HashSet(Collections.singleton(expResult));
 
         translator.processMicroArrayResults();
         assertEquals(exp, translator.microArrayResults);
+
+
     }
 
 

@@ -114,7 +114,8 @@ public class MageDataTranslator extends DataTranslator
     protected Map sampleToLabeledExtract = new HashMap();
     // genomic:MicroArrayResult identifier to genomic:MicroArrayAssay identifier
     protected Map resultToAssay = new HashMap();
-
+    protected Map resultToFeature = new HashMap();
+    protected Map featureToReporter = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -244,8 +245,7 @@ public class MageDataTranslator extends DataTranslator
                     translateMicroArrayResult(srcItem, tgtItem);
                     storeTgtItem = false;
                 } else if (className.equals("Reporter")) {
-                    //setBioEntityMap(srcItem, tgtItem);
-                    storeTgtItem = false;
+                    translateReporter(srcItem, tgtItem);
                 } else if (className.equals("BioSequence")) {
                     //translateBioEntity(srcItem, tgtItem);
                     storeTgtItem = false;
@@ -440,23 +440,21 @@ public class MageDataTranslator extends DataTranslator
     public void translateMicroArrayResult(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
 
-        // TODO set isControl flag
+        // TODO set isControl flag - from Reporter??
 
         if (srcItem.hasAttribute("value")) {
             tgtItem.setAttribute("value", srcItem.getAttribute("value").getValue());
         }
         tgtItem.setReference("analysis", getExperimentId());
 
-        // TODO do we still need maer2FeatureMap?
 
         // PATH BioAssayDatum.designElement
         // PATH BioAssayDatum.quatitationType.scale
 
-        //create maer2Feature map, and maer set
         if (srcItem.hasReference("designElement")) {
-            maer2Feature.put(tgtItem.getIdentifier(),
+            // map from genomic:MicroArrayResult identifier to mage:Feature identifier
+            resultToFeature.put(tgtItem.getIdentifier(),
                          srcItem.getReference("designElement").getRefId());
-            //maerSet.add(tgtItem.getIdentifier());
         }
         // TODO mapping: MicroArrayResult.type = BioAssayDatum.quantitationType.name
         if (srcItem.hasReference("quantitationType")) {
@@ -496,6 +494,28 @@ public class MageDataTranslator extends DataTranslator
         }
 
         microArrayResults.add(tgtItem);
+    }
+
+
+    protected void translateReporter(Item srcItem, Item tgtItem) throws ObjectStoreException {
+
+        // PATH Reporter.featureReporterMaps.featureInformationsSources.feature
+        if (srcItem.hasCollection("featureReporterMaps")) {
+            // check is single element collection
+            Iterator frmIter = getCollection(srcItem, "featureReporterMaps");
+            while (frmIter.hasNext()) {
+                Item frm = (Item) frmIter.next();
+                if (frm.hasCollection("featureInformationSources")) {
+                    Iterator fisIter = getCollection(frm, "featureInformationSources");
+                    while (fisIter.hasNext()) {
+                        Item fis = (Item) fisIter.next();
+                        if (fis.hasReference("feature")) {
+                            featureToReporter.put(fis.getReference("feature").getRefId(), srcItem.getIdentifier());
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -939,6 +959,14 @@ public class MageDataTranslator extends DataTranslator
             Item maResult = (Item) resultIter.next();
             if (resultToAssay.containsKey(maResult.getIdentifier())) {
                 maResult.setReference("assay", (String) resultToAssay.get(maResult.getIdentifier()));
+            }
+
+            if (resultToFeature.containsKey(maResult.getIdentifier())) {
+                String featureId = (String) resultToFeature.get(maResult.getIdentifier());
+                if (featureToReporter.containsKey(featureId)) {
+                    maResult.setReference("reporter", (String) featureToReporter.get(featureId));
+                }
+
             }
         }
         return microArrayResults;
