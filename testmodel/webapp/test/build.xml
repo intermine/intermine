@@ -8,16 +8,17 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/db.xml"/>
   
-  <target name="-pre-pre-init" depends="library.-pre-pre-init">
-    <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false"/>
-    <ant antfile="../main/build.xml" target="build-db-userprofile" inheritAll="false"/>
-  </target>
-  
   <target name="-init-test" depends="tests.-init-test">
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.test.resources.dir}/intermine.properties"/>
     <copy file="${default.intermine.properties.file}"
           tofile="${build.test.resources.dir}/default.intermine.properties"/>
+    <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false">
+      <property name="no.dep" value="true"/>
+    </ant>
+    <ant antfile="../main/build.xml" target="build-db-userprofile" inheritAll="false">
+      <property name="no.dep" value="true"/>
+    </ant>
   </target>
   
 </project>
