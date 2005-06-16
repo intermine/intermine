@@ -8,6 +8,10 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/db.xml"/>
   
+  <target name="-pre-pre-init" depends="library.-pre-pre-init">
+    <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false"/>
+  </target>
+  
   <target name="-init-test" depends="tests.-init-test">
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.test.resources.dir}/intermine.properties"/>
