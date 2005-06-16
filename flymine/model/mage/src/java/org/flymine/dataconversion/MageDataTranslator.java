@@ -250,7 +250,7 @@ public class MageDataTranslator extends DataTranslator
                     //translateBioEntity(srcItem, tgtItem);
                     storeTgtItem = false;
                 } else if (className.equals("BioSource")) {
-                    translateSample(srcItem, tgtItem);
+                    result.addAll(translateSample(srcItem, tgtItem));
                     storeTgtItem = false;
                 } else if (className.equals("Treatment")) {
                     translateTreatment(srcItem, tgtItem);
@@ -392,7 +392,7 @@ public class MageDataTranslator extends DataTranslator
              }
          }
 
-         // set up map of MicroArrayAssay to LableedExtract - to be used when setting
+         // set up map of MicroArrayAssay to LabeleedExtract - to be used when setting
          // link between MicroArrayAssay and Sample
 
          // MeasuredBioAssay.featureExtraction.physicalBioAssaySource -> PhysicalBioAssay
@@ -609,9 +609,10 @@ public class MageDataTranslator extends DataTranslator
      * extra genomic:Organism item is created and saved in  organismMap
      * @throws ObjectStoreException if problem occured during translating
      */
-    protected void translateSample(Item srcItem, Item tgtItem)
+    protected Set translateSample(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
 
+        Set charItems = new HashSet();
         // TODO set interesting characteristic(s) to some attribute of sample - description?
         //      will need config to be passed in
         // TODO set identifier to be internal MAGE identifier?
@@ -632,7 +633,11 @@ public class MageDataTranslator extends DataTranslator
                             tgtItem.setReference("organism", organism.getIdentifier());
                         }
                     } else {
-                        list.add(charItem.getIdentifier());
+                        Item tgtCharItem = createItem(tgtNs + "SampleCharacteristic", "");
+                        tgtCharItem.setAttribute("type", charItem.getAttribute("category").getValue());
+                        tgtCharItem.setAttribute("value", charItem.getAttribute("value").getValue());
+                        charItems.add(tgtCharItem);
+                        list.add(tgtCharItem.getIdentifier());
                     }
                 }
             }
@@ -655,6 +660,8 @@ public class MageDataTranslator extends DataTranslator
         }
 
         samples.add(tgtItem);
+
+        return charItems;
     }
 
 
@@ -1381,7 +1388,6 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "LabeledExtract", descSet);
 
-
         descSet = new HashSet();
         path = new ItemPath("BioSource.characteristics", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1391,7 +1397,6 @@ public class MageDataTranslator extends DataTranslator
 
         path = new ItemPath("Treatment.action", srcNs);
         paths.put(srcNs + "Treatment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
-
 
         path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
         paths.put(srcNs + "Reporter", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
