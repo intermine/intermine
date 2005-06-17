@@ -143,6 +143,9 @@
     <action path="/results"
             forward="results.page"/>
     
+    <action path="/dataSet"
+            forward="dataSet.page"/>
+    
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
@@ -159,10 +162,11 @@
       <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
-    <action path="/loadExampleQuery"
+    <action path="/loadQuery"
             type="org.intermine.web.LoadQueryAction"
             parameter="method">
       <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
     </action>
     
     <action path="/logout"
@@ -483,6 +487,9 @@
 
     <action path="/initExport"
             type="org.intermine.web.ExportController"/>
+
+    <action path="/initDataSet"
+            type="org.intermine.web.DataSetController"/>
 
     <action path="/initBagBuild"
             type="org.intermine.web.BuildBagController"

@@ -15,7 +15,12 @@ a:hover { color:#CF4D23; text-decoration:underline }
 
 a:active { color:#58e; text-decoration:none }
 
-
+a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover {
+  background: url(images/extlink.gif) right center no-repeat;
+  padding-right: 15px;
+  margin-right: 15px;
+  white-space: nowrap;
+}
 
 #header
 {
@@ -53,7 +58,7 @@ a:active { color:#58e; text-decoration:none }
   padding-right: 5px;
   padding-bottom: 2px;
   padding-top: 2px;
-  background-color: #c55;
+  background-color: #4E9349;
   line-height: 170%;
   font-weight: bold;
   text-shadow: black 0px 0px 2px;
@@ -456,3 +461,67 @@ img.searchHeatImg {
   color: #555;
   font-style: italic;
 }
+
+
+/* data set hompage styles */
+
+.dsIconsElement {
+  background: white;
+  border: 1px solid #888;
+  padding: 7px;
+  margin: 4px;
+  float: left;
+  text-align: center;
+  font-size: 14px;
+}
+
+.dsIconLabel {
+  margin-top: 5px;
+}
+
+.dsIconDetail {
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.dsIconImage {
+  border: 1px solid #222;
+}
+
+.dataSetSources {
+  float: right;
+  clear: right;
+  border: 1px solid #888;
+  padding: 5px;
+  background-color: #f5f5f5;
+  margin: 5px;
+  margin-left: 10px;
+}
+
+.dataSetSourcesPopup {
+  float: right;
+  margin-left: 8px;
+}
+
+.dataSetSources ul {
+  margin-bottom: 3px;
+  margin-top: 5px;
+  margin-left: -10px;
+}
+
+.dataSetStartingPoints, .dataSetTile, .dataSetIntro {
+  padding-bottom: 8px;
+}
+
+.dataSetIntroImg {
+  margin-right: 10px;
+  margin-bottom: 5px;
+  margin-top: 3px;
+}
+
+.dataSetSelect {
+  font-size: 11px;
+}
+
+
+

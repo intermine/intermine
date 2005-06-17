@@ -110,6 +110,11 @@
     <put name="body" value="templateSearch.jsp"/>
     <put name="pageName" value="templateSearch"/>
   </definition>
+  <definition name="dataSet.page" extends="layout.template">
+    <put name="title" value="/dataSetTitle.jsp" />
+    <put name="body" value="dataSet.tile"/>
+    <put name="pageName" value="dataSet"/>
+  </definition>
   <definition name="waiting.page" path="/waiting.jsp"/>
   <!--tiles-->
   <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
@@ -134,6 +139,7 @@
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
   <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
+  <definition name="dataSet.tile" path="/dataSet.jsp" controllerUrl="/initDataSet.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
     <put name="preview" value="template.tile"/>

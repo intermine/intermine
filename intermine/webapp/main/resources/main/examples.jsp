@@ -23,7 +23,7 @@
           </span>
         </c:if>
         <span class="link">
-          <html:link action="/loadExampleQuery?method=load&amp;name=${exampleQuery.key}">
+          <html:link action="/loadQuery?method=loadExample&amp;name=${exampleQuery.key}">
             <img class="arrow" src="images/right-arrow.gif" alt="->"/>
           </html:link>
         </span>
