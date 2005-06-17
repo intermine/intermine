@@ -46,11 +46,15 @@ public class DataSetBinding
         digester.addObjectCreate("data-sets", "java.util.ArrayList");
         digester.addObjectCreate("data-sets/data-set", "org.intermine.web.dataset.DataSet");
         digester.addSetProperties("data-sets/data-set");
+        digester.addCallMethod("data-sets/data-set/subtitle", "setSubTitle", 0);
         digester.addCallMethod("data-sets/data-set/icon-image", "setIconImage", 0);
         digester.addCallMethod("data-sets/data-set/large-image", "setLargeImage", 0);
         digester.addCallMethod("data-sets/data-set/tile-name", "setTileName", 0);
         digester.addCallMethod("data-sets/data-set/intro-text", "setIntroText", 0);
-        digester.addCallMethod("data-sets/data-set/data-source", "addDataSetSource", 0);
+        digester.addCallMethod("data-sets/data-set/starting-points", "setStartingPoints", 0);
+        digester.addObjectCreate("data-sets/data-set/data-source", "org.intermine.web.dataset.DataSetSource");
+        digester.addSetProperties("data-sets/data-set/data-source");
+        digester.addSetNext("data-sets/data-set/data-source", "addDataSetSource", "org.intermine.web.dataset.DataSetSource");
         digester.addSetNext("data-sets/data-set", "add", "java.lang.Object");
         try {
             List list = (List) digester.parse(reader);

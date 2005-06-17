@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,7 +35,6 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -87,7 +87,7 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         
         loadWebConfig(servletContext, os);
-        //loadDataSetsConfig(servletContext, os);
+        loadDataSetsConfig(servletContext, os);
 
         loadClassCategories(servletContext, os);
         loadClassDescriptions(servletContext, os);
@@ -111,10 +111,12 @@ public class InitialiserPlugin implements PlugIn
         Map dataSets = new LinkedHashMap();
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/datasets.xml");
         if (is == null) {
-            throw new ServletException("Unable to find /WEB-INF/datasets.xml");
+            LOG.info("Unable to find /WEB-INF/datasets.xml, there will be no dataset homepages");
+            servletContext.setAttribute(Constants.DATASETS, Collections.EMPTY_MAP);
+        } else {
+            Map sets = DataSetBinding.unmarhsal(is);
+            servletContext.setAttribute(Constants.DATASETS, sets);
         }
-        Map sets = DataSetBinding.unmarhsal(is);
-        servletContext.setAttribute(Constants.DATASETS, sets);
     }
 
     /**

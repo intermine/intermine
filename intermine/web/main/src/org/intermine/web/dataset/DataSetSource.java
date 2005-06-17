@@ -17,19 +17,35 @@ package org.intermine.web.dataset;
 public class DataSetSource
 {
     /** Name of source. */
-    public String sourceName;
+    private String sourceName;
+    /** URL */
+    private String url;
 
     /**
      * @return Returns the sourceName.
      */
-    public String getSourceName() {
+    public String getName() {
         return sourceName;
     }
 
     /**
      * @param sourceName The sourceName to set.
      */
-    public void setSourceName(String sourceName) {
+    public void setName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    /**
+     * @return Returns the url.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * @param url The url to set.
+     */
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
