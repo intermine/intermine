@@ -113,9 +113,10 @@ public class MageDataTranslator extends DataTranslator
     protected Map sampleToTreatments = new HashMap();
     protected Map sampleToLabeledExtract = new HashMap();
     // genomic:MicroArrayResult identifier to genomic:MicroArrayAssay identifier
-    protected Map resultToAssay = new HashMap();
     protected Map resultToFeature = new HashMap();
     protected Map featureToReporter = new HashMap();
+    protected Map resultToBioAssayData = new HashMap();
+    protected Map bioAssayDataToAssay = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -171,11 +172,6 @@ public class MageDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
-
-//         i = processMaer().iterator();
-//         while (i.hasNext()) {
-//             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-//         }
 
         i = processMicroArrayResults().iterator();
         while (i.hasNext()) {
@@ -362,33 +358,12 @@ public class MageDataTranslator extends DataTranslator
 
          // set up map from mage:BioAssayDatum identifier to genomic:MicroArrayAssay
 
-         // PATH MeasuredBioAssay.measuredBioAssayData.bioDataValues.bioAssayTupleData
+         // PATH MeasuredBioAssay.measuredBioAssayData
          if (srcItem.hasCollection("measuredBioAssayData")) {
              Iterator iter = getCollection(srcItem, "measuredBioAssayData");
-
-             List datumList = new ArrayList();
-
              while (iter.hasNext()) {
                  Item mbadItem = (Item) iter.next();
-                 if (mbadItem.hasReference("bioDataValues")) {
-                     Item bioDataTuples = getReference(mbadItem, "bioDataValues");
-                     if (bioDataTuples.hasCollection("bioAssayTupleData")) {
-                         ReferenceList rl = bioDataTuples.getCollection("bioAssayTupleData");
-                         for (Iterator i = rl.getRefIds().iterator(); i.hasNext(); ) {
-                             // datumId is identifier of a BioAssayDatum object
-                             String datumId = (String) i.next();
-                             if (!datumList.contains(datumId)) {
-                                 resultToAssay.put(datumId, srcItem.getIdentifier());
-                             }
-                         }
-                     }
-                 }
-             }
-
-             if (datumList.size() > 0) {
-                 //assay2Maer.put(srcItem.getIdentifier(), datumList);
-                 // TODO only store MicroArrayAssay object if found some data??
-                 assaySet.add(tgtItem);
+                 bioAssayDataToAssay.put(mbadItem.getIdentifier(), tgtItem.getIdentifier());
              }
          }
 
@@ -448,7 +423,6 @@ public class MageDataTranslator extends DataTranslator
         tgtItem.setReference("analysis", getExperimentId());
 
 
-        // PATH BioAssayDatum.designElement
         // PATH BioAssayDatum.quatitationType.scale
 
         if (srcItem.hasReference("designElement")) {
@@ -491,6 +465,14 @@ public class MageDataTranslator extends DataTranslator
                     }
                 }
             }
+        }
+
+        // map from mage:MeasuredBioAssayData identifier to genomic:MicroArrayResult identifier
+        // duplicates collection available in MeasureBioAssayData but is much better for
+        // prefetch and memory useage
+        if (srcItem.hasReference("bioAssayData")) {
+            String bioAssayDataId = srcItem.getReference("bioAssayData").getRefId();
+            resultToBioAssayData.put(tgtItem.getIdentifier(), bioAssayDataId);
         }
 
         microArrayResults.add(tgtItem);
@@ -964,8 +946,12 @@ public class MageDataTranslator extends DataTranslator
         Iterator resultIter = microArrayResults.iterator();
         while (resultIter.hasNext()) {
             Item maResult = (Item) resultIter.next();
-            if (resultToAssay.containsKey(maResult.getIdentifier())) {
-                maResult.setReference("assay", (String) resultToAssay.get(maResult.getIdentifier()));
+            String maResultId = maResult.getIdentifier();
+            if (resultToBioAssayData.containsKey(maResultId)) {
+                String bioAssayDataId = (String) resultToBioAssayData.get(maResultId);
+                if (bioAssayDataToAssay.containsKey(bioAssayDataId)) {
+                    maResult.setReference("assay", (String) bioAssayDataToAssay.get(bioAssayDataId));
+                }
             }
 
             if (resultToFeature.containsKey(maResult.getIdentifier())) {
@@ -973,7 +959,6 @@ public class MageDataTranslator extends DataTranslator
                 if (featureToReporter.containsKey(featureId)) {
                     maResult.setReference("reporter", (String) featureToReporter.get(featureId));
                 }
-
             }
         }
         return microArrayResults;
@@ -1001,67 +986,6 @@ public class MageDataTranslator extends DataTranslator
         return samples;
     }
 
-
-    /**
-     * maer add reference of reporter, material(CDNAClone only), assay(MicroArrayAssay)
-     * add collection of genes and tissues(LabeledExtract)
-     * @return maerItem collections
-     */
-    protected Set processMaer() {
-        Set results = new HashSet();
-        maer2Reporter = createMaer2ReporterMap(maer2Feature, reporter2FeatureMap, maerSet);
-        maer2Assay =  createMaer2AssayMap();
-        maer2Tissue = createMaer2TissueMap(maer2Assay, assayToLabeledExtract, maerSet);
-        maer2Material = createMaer2MaterialMap(maer2Feature, bioEntity2Feature, maerSet, cdnaSet);
-        maer2Gene = createMaer2GeneMap(maer2Feature, bioEntity2Feature, bioEntity2Gene, maerSet);
-
-        for (Iterator i = maerSet.iterator(); i.hasNext(); ) {
-            Item maerItem = (Item) i.next();
-            String id = maerItem.getIdentifier();
-            if (maer2Reporter.containsKey(id)) {
-                String reporter =  (String) maer2Reporter.get(id);
-                if (reporter != null) {
-                    maerItem.addReference(new Reference("reporter", reporter));
-                }
-            }
-            // set MicroArrayResult.assay
-            if (maer2Assay.containsKey(id)) {
-                String assay = (String) maer2Assay.get(id);
-                if (assay != null) {
-                    maerItem.addReference(new Reference("assay", assay));
-                }
-            }
-            if (maer2Tissue.containsKey(id)) {
-                List tissue = (List) maer2Tissue.get(id);
-                if (tissue != null && !tissue.isEmpty()) {
-                    maerItem.addCollection(new ReferenceList("tissues", tissue));
-                }
-            }
-            if (maer2Material.containsKey(id)) {
-                String material = (String) maer2Material.get(id);
-                if (material != null) {
-                    maerItem.addReference(new Reference("material", material));
-                }
-            }
-
-            if (maer2Gene.containsKey(id)) {
-                String genes = (String) maer2Gene.get(id);
-                if (genes != null) {
-                    StringTokenizer st = new StringTokenizer(genes);
-                    List l = new ArrayList();
-                    while (st.hasMoreTokens()) {
-                        String gene = st.nextToken();
-                        l.add(gene);
-                    }
-                    maerItem.addCollection(new ReferenceList("genes", l));
-                }
-            }
-
-            results.add(maerItem);
-        }
-
-        return results;
-    }
 
     /**
      * @param maer2Feature = HashMap
@@ -1110,14 +1034,6 @@ public class MageDataTranslator extends DataTranslator
         return maer2Reporter;
     }
 
-    /**
-     * @return maer2Assay
-     */
-    protected Map createMaer2AssayMap() {
-        // Identifiers preserved when translating BioAssayDatum -> MicroArrayResilt
-        // so just use same map
-        return resultToAssay;
-    }
 
     /**
      * @param maer2Assay = HashMap
@@ -1368,15 +1284,13 @@ public class MageDataTranslator extends DataTranslator
         paths.put(srcNs + "Experiment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
 
         descSet = new HashSet();
-        path = new ItemPath("MeasuredBioAssay.measuredBioAssayData.bioDataValues.bioAssayTupleData", srcNs);
+        path = new ItemPath("MeasuredBioAssay.measuredBioAssayData", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("MeasuredBioAssay.featureExtraction.physicalBioAssaySource.bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "MeasuredBioAssay", descSet);
 
         descSet = new HashSet();
-        path = new ItemPath("BioAssayDatum.designElement", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("BioAssayDatum.quatitationType.scale", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "BioAssayDatum", descSet);
