@@ -39,7 +39,7 @@ import org.intermine.util.CombinedIterator;
 public class ObjectStoreItemReader extends AbstractItemReader
 {
     private ObjectStoreItemPathFollowingImpl os;
-    private int defaultBatchSize = 1000;
+    private int batchSize = 1000;
 
     /**
      * Constructs a new ObjectStoreItemReader.
@@ -70,48 +70,21 @@ public class ObjectStoreItemReader extends AbstractItemReader
     }
 
 
-
-    /**
-     * @see ItemReader#itemIterator
-     */
-    public Iterator itemIterator() {
-        return itemIterator(defaultBatchSize);
-    }
-
-
     /**
      * @see ItemReader#itemIterator
      * @param batchSize batch size for item retrieval
      *
      */
-    public Iterator itemIterator(int batchSize) {
-        /*Query cnQuery = new Query();
-        QueryClass cnQc = new QueryClass(Item.class);
-        cnQuery.addFrom(cnQc);
-        cnQuery.addToSelect(new QueryField(cnQc, "className"));
-        cnQuery.setDistinct(true);
-
-        SingletonResults cnRes = new SingletonResults(cnQuery, os, os.getSequence());
-        cnRes.setBatchSize(1000);
-        cnRes.setNoExplain();
-        cnRes.setNoOptimise();
-        Iterator cnIter = cnRes.iterator();
-        List iters = new ArrayList();
-        while (cnIter.hasNext()) {*/
-            Query q = new Query();
-            QueryClass qc = new QueryClass(Item.class);
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            //q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"),
-            //            ConstraintOp.EQUALS, new QueryValue((String) cnIter.next())));
-            SingletonResults res = new SingletonResults(q, os, os.getSequence());
-            res.setBatchSize(batchSize);
-            res.setNoExplain();
-            res.setNoOptimise();
-            return res.iterator();
-            /*iters.add(res.iterator());
-        }
-        return new CombinedIterator(iters);*/
+    public Iterator itemIterator() {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Item.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        res.setBatchSize(batchSize);
+        res.setNoExplain();
+        res.setNoOptimise();
+        return res.iterator();
     }
 
     /**
@@ -123,7 +96,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
      * @throws ObjectStoreException if anything goes wrong
      */
     public Iterator itemIterator(Query q) throws ObjectStoreException {
-        return itemIterator(q, defaultBatchSize);
+        return itemIterator(q, batchSize);
     }
 
    /**
@@ -165,5 +138,16 @@ public class ObjectStoreItemReader extends AbstractItemReader
      */
     public List getItemsByDescription(Set constraints) throws ObjectStoreException {
         return os.getItemsByDescription(constraints);
+    }
+
+
+    /**
+     * Set the size of batches retrieved from the source ObjectStore.  Large numbers
+     * should generally give better performance but require memory.  Default value
+     * is 1000.
+     * @param batchSize size of batches to read
+     */
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
     }
 }
