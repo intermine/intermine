@@ -2478,6 +2478,7 @@
       <include name="web.properties"/>
       <include name="objectstoresummary.properties"/>
       <include name="classDescriptions.properties"/>
+      <include name="datasets.xml"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
