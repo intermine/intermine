@@ -8,7 +8,10 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/db.xml"/>
   
-  <target name="-pre-test" depends="build-db-truncunittest, build-db-notxmlunittest, build-db-flatmodeunittest"/>
+  <target name="-pre-test" depends="build-db-unittest, create-indexes-unittest,
+                                    build-db-truncunittest, create-indexes-truncunittest,
+                                    build-db-notxmlunittest, create-indexes-notxmlunittest,
+                                    build-db-flatmodeunittest, create-indexes-flatmodeunittest"/>
   
   <target name="-init-test" depends="tests.-init-test">
     <copy file="${user.home}/${intermine.properties.file}"
@@ -34,7 +37,13 @@
       <path refid="main.class.path"/>
     </path>
   </target>
-
+  
+  <target name="build-db-unittest" depends="init, -init-deps, -init-db-tasks">
+    <imdbproj:build-db osname="os.unittest"
+                       dbname="db.unittest"
+                       model="testmodel"/>
+  </target>
+  
   <target name="build-db-truncunittest" depends="init, -init-deps, -init-db-tasks">
     <imdbproj:build-db osname="os.truncunittest"
                        dbname="db.truncunittest"
