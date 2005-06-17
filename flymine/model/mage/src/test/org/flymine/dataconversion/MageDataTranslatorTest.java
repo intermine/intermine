@@ -164,10 +164,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, tgtIw.getItems());
 
         // mage:BioAssayDatum to genomic:MicroArrayAssy
-        Map expResultToAssay = new HashMap();
-        expResultToAssay.put("58_740", "57_709");
-        expResultToAssay.put("58_744", "57_709");
-        assertEquals(expResultToAssay, translator.resultToAssay);
+        Map expBioAssayDataToAssay = new HashMap();
+        expBioAssayDataToAssay.put("58_710", "57_709");
+        assertEquals(expBioAssayDataToAssay, translator.bioAssayDataToAssay);
     }
 
 
@@ -312,9 +311,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
 
     public void testTranslateMicroArrayResult() throws Exception {
-        Item srcItem1= createSrcItem("BioAssayDatum", "58_762", "");
+        // can't use ItemFactory as bioAssayData reference not in model
+        Item srcItem1 = new Item("58_762", srcNs + "BioAssayDatum", "");
         srcItem1.setReference("quantitationType","40_620");
         srcItem1.setReference("designElement","3_1");
+        srcItem1.setReference("bioAssayData","4_1");
 
         Item srcItem2= createSrcItem("SpecializedQuantitationType", "40_620", "");
         srcItem2.setAttribute("name", "Log Ratio");
@@ -347,6 +348,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map expResultToFeature = new HashMap();
         expResultToFeature.put("58_762", "3_1");
         assertEquals(expResultToFeature, translator.resultToFeature);
+
+        // map from genomic:MicroArrayResult to mage:BioAssayDataData
+        Map expResultToBioAssayData = new HashMap();
+        expResultToBioAssayData.put("58_762", "4_1");
+        assertEquals(expResultToBioAssayData, translator.resultToBioAssayData);
     }
 
 
@@ -357,20 +363,19 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item result = createTgtItem("MicroArrayResult", "0_1", "");
         translator.microArrayResults.add(result);
 
-        translator.resultToAssay.put("0_1", "1_1");
+        translator.resultToBioAssayData.put("0_1", "1_1");
+        translator.bioAssayDataToAssay.put("1_1", "5_1");
 
         translator.resultToFeature.put("0_1", "2_1");
         translator.featureToReporter.put("2_1", "3_1");
 
         Item expResult = createTgtItem("MicroArrayResult", "0_1", "");
-        expResult.setReference("assay", "1_1");
+        expResult.setReference("assay", "5_1");
         expResult.setReference("reporter", "3_1");
         Set exp = new HashSet(Collections.singleton(expResult));
 
         translator.processMicroArrayResults();
         assertEquals(exp, translator.microArrayResults);
-
-
     }
 
 
