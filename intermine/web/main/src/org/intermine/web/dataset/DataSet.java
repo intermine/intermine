@@ -11,7 +11,10 @@ package org.intermine.web.dataset;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 
@@ -21,6 +24,8 @@ public class DataSet
 {
     /** Name of the DataSet. */
     public String name;
+    /** Subtitle. */
+    public String subTitle;
     /** Name of the tile to insert. */
     public String tileName;
     /** Introduction text. */
@@ -31,6 +36,8 @@ public class DataSet
     public String largeImage;
     /** List of DataSetSources. */
     public List dataSetSources = new ArrayList();
+    /** Comma seperated list of starting-point class names. */
+    public List startingPoints = new ArrayList();
     
     public String getName() {
         return name;
@@ -39,6 +46,14 @@ public class DataSet
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String getSubTitle() {
+        return subTitle;
+    }
+    
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
 
     public List getDataSetSources() {
         return dataSetSources;
@@ -46,12 +61,6 @@ public class DataSet
 
     public void addDataSetSource(DataSetSource dataSetSource) {
         this.dataSetSources.add(dataSetSource);
-    }
-    
-    public void addDataSetSource(String sourceName) {
-        DataSetSource dss = new DataSetSource();
-        dss.setSourceName(sourceName);
-        addDataSetSource(dss);
     }
 
     public String getIconImage() {
@@ -84,5 +93,15 @@ public class DataSet
 
     public void setTileName(String tileName) {
         this.tileName = tileName;
+    }
+    
+    public void setStartingPoints(String classnames) {
+        String classes[] = StringUtils.split(classnames);
+        classes = StringUtils.stripAll(classes);
+        startingPoints = Arrays.asList(classes);
+    }
+    
+    public List getStartingPoints() {
+        return startingPoints;
     }
 }
