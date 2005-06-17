@@ -49,7 +49,7 @@
         <c:set target="${deleteParams}" property="cancelAction" value="/begin" />
       </jsp:useBean>
       <html:link action="/confirm" name="deleteParams" title="${linkTitle}">
-        <img border="0" src="images/cross.gif" alt="x"/>
+        <img border="0" class="arrow" src="images/cross.gif" alt="x"/>
       </html:link>
       <c:remove var="deleteParams"/>
       <c:if test="${templateQuery.valid}">
