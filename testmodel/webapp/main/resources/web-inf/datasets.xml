@@ -1,0 +1,40 @@
+
+<data-sets>
+  <data-set name="People">
+    <subtitle>People sub-title</subtitle>
+    <icon-image>peopleIcon.jpg</icon-image>
+    <large-image>people.jpg</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+      As a term meaning "a body of persons sharing a culture," people is a singular
+      noun, as in As a people the Pueblo were noteworthy for their peacefulness.
+      Its plural is peoples: the many and varied peoples of West Africa. But when used
+      to mean "humans," people is plural and has no corresponding singular form.
+      English is not unique in this respect; Spanish, Italian, Russian, and many
+      other languages have a plural word meaning "people" that has no singular.
+    </intro-text>
+    <starting-points>Employee Manager CEO Contractor Secretary</starting-points>
+    <data-source name="Database One" url="http://www.databaseone.com"/>
+    <data-source name="Database Two" url="http://www.databasetwo.com"/>
+  </data-set>
+  <data-set name="Entities">
+    <subtitle>Entities sub-title</subtitle>
+    <icon-image>entitiesIcon.jpg</icon-image>
+    <large-image>entities.jpg</large-image>
+    <tile-name>entities.tile</tile-name>
+    <starting-points>Bank Address Department</starting-points>
+    <intro-text>
+      An entity is something that has a distinct, separate existence, though it
+      need not be a material existence. In particular, abstractions and legal
+      fictions are usually regarded as entities. In general, there is also no
+      presumption that an entity is animate.
+
+      An entity could be viewed as a set containing subsets. This set itself is among
+      other sets. In philosophy, these sets are said to be abstract objects as they do 
+      not refer to anything animate. The distinctive propriety of an entity rationally
+      yields the existence of the relatively distinct entities.
+    </intro-text>
+    <data-source name="Database One" url="http://www.databaseone.com"/>
+    <data-source name="Database Two" url="http://www.databasetwo.com"/>
+  </data-set>
+</data-sets>
