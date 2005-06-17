@@ -95,7 +95,7 @@ public class MageConverter extends FileConverter
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
-        File f = new File("build/tmp/mage/mageconvert.xml");
+        File f = File.createTempFile("mageconvert", "xml");
         try {
             Writer fileWriter = new FileWriter(f);
             int c;
