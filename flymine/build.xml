@@ -2167,7 +2167,7 @@
     </ant>
   </target>
 
-  <target name="mage-test" depends="prepare-build-model, prepare-test, merge-mage-model">
+  <target name="mage-test" depends="prepare-build-model, prepare-test, merge-mage-model, build-db-fulldatatest">
     <mkdir dir="${build.tmp}/mage"/>
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
