@@ -2,7 +2,9 @@
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="titleKey" required="false" %>
 <%@ attribute name="helpUrl" required="false" %>
+<%@ attribute name="topRightTile" required="false" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -12,20 +14,25 @@
 
 <c:if test="${!empty title}">
 <div style="width:100%">
-  <table class="box" width="100%" cellspacing="0" cellpadding="6" border="0" align="center">
+  <table class="box" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
     <tr>
       <th class="title" align="left">
         ${title}
       </th>
       <th class="help" align="right" nowrap="nowrap">
-        <c:if test="${empty helpUrl}">
-          &nbsp;
-        </c:if>
-        <c:if test="${!empty helpUrl}">
-          [<html:link href="${helpUrl}">
-            <fmt:message key="begin.link.help"/>
-          </html:link>]
-        </c:if>
+        <c:choose>
+          <c:when test="${!empty helpUrl}">
+            [<html:link href="${helpUrl}">
+              <fmt:message key="begin.link.help"/>
+            </html:link>]
+          </c:when>
+          <c:when test="${!empty topRightTile}">
+            <tiles:insert name="${topRightTile}"/>
+          </c:when>
+          <c:otherwise>
+          	&nbsp;
+          </c:otherwise>
+        </c:choose>
       </th>
     </tr>
     <tr>
