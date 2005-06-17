@@ -273,7 +273,7 @@
   </target>
 
   <target name="retrieve-metadata" depends="prepare">
-    <taskdef name="retrieve-metadata" classname="org.intermine.objectstore.intermine.RetrieveMetadataTask">
+    <taskdef name="retrieve-metadata" classname="org.intermine.task.RetrieveMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
     <retrieve-metadata database="${db.name}" destDir="${build.model.dir}"/>
@@ -376,7 +376,7 @@
     <copy todir="${build.webapp}/intermine/model" failonerror="false" >
       <fileset dir="${model}/${model.name}/src/web/jsp"/>
       <fileset dir="${model}/${model.name}/src/web/images"/>
-      <fileset file="${model}/${model.name}/resources/web/model.css"/>
+      <fileset file="${model.css.file}"/>
     </copy>
     <!-- Make a copy in order to rename file -->
     <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
