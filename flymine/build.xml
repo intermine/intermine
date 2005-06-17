@@ -583,7 +583,7 @@
 
   <!-- remove build/model/genomic/genomic_model.xml -->
   <target name="remove-genomic">
-    <delete file="${build.model}/genomic/genomic_model.xml"/>
+    <delete file="${build.model}/genomic/genomic_model.xml" failonerror="false"/>
   </target>
 
 
