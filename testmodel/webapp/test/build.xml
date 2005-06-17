@@ -13,6 +13,8 @@
           tofile="${build.test.resources.dir}/intermine.properties"/>
     <copy file="${default.intermine.properties.file}"
           tofile="${build.test.resources.dir}/default.intermine.properties"/>
+    <!-- Build and init user-profile and unittest databases, we switch dependency building off
+         because we will have just built all of the same dependencies -->
     <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false">
       <property name="no.dep" value="true"/>
     </ant>
