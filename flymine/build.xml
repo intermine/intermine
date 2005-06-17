@@ -125,7 +125,7 @@
   <target name="init-paths">
   
     <!-- build dependencies -->
-    <dependencies basedir=".."/>
+    <dependencies basedir="${basedir}/.."/>
   
     <!-- set the classpath for the build - basically everything in lib -->
     <path id="base.class.path">
