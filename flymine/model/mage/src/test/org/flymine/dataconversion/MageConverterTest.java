@@ -264,24 +264,28 @@ public class MageConverterTest extends TestCase
         Item d1=createItems(ns+"BioAssayDatum", "10_16","" );
         d1.addReference(createReference("designElement", "3_3"));
         d1.addReference(createReference("quantitationType", "7_9"));
+        d1.addReference(createReference("bioAssayData", "0_0"));
         d1.addAttribute(createAttribute("value", "1.006"));
         rl.addRefId(d1.getIdentifier());
 
         Item d2=createItems(ns+"BioAssayDatum", "10_17","" );
         d2.addReference(createReference("designElement", "3_3"));
         d2.addReference(createReference("quantitationType", "7_13"));
+        d2.addReference(createReference("bioAssayData", "0_0"));
         d2.addAttribute(createAttribute("value", "234"));
         rl.addRefId(d2.getIdentifier());
 
         Item d3=createItems(ns+"BioAssayDatum", "10_18","" );
         d3.addReference(createReference("designElement", "3_5"));
         d3.addReference(createReference("quantitationType", "7_9"));
+        d3.addReference(createReference("bioAssayData", "0_0"));
         d3.addAttribute(createAttribute("value", "435.223"));
         rl.addRefId(d3.getIdentifier());
 
         Item d4=createItems(ns+"BioAssayDatum", "10_19","" );
         d4.addReference(createReference("designElement", "3_5"));
         d4.addReference(createReference("quantitationType", "7_13"));
+        d4.addReference(createReference("bioAssayData", "0_0"));
         d4.addAttribute(createAttribute("value", "523"));
         rl.addRefId(d4.getIdentifier());
         d.addCollection(rl);

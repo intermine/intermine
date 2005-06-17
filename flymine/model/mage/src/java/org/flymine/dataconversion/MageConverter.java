@@ -270,6 +270,9 @@ public class MageConverter extends FileConverter
                         datum.setReference("quantitationType", createItem(qt).getIdentifier());
                         datum.setReference("designElement", createItem(feature).getIdentifier());
                         datum.setAttribute("value", value);
+                        // reference to BioAssayData is not in model but adding it makes translation
+                        // easier, avoids enormous amount of prefetch
+                        datum.setReference("bioAssayData", item.getIdentifier());
                         storeItem(datum);
                     }
                 }
