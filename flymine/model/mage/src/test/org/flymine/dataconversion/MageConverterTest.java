@@ -188,19 +188,10 @@ public class MageConverterTest extends TestCase
 
     public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        //Set qts = new HashSet(Arrays.asList(new String[] {"col1", "col3"}));
         MageConverter mc = new MageConverter(itemWriter);
         mc.setParam1("col1, col3");
         mc.setQTypes();
 
-        String exampleData = "1.006\t3.456\t234" + System.getProperty("line.separator")
-            + "435.223\t1.004\t523" + System.getProperty("line.separator");
-
-        f = new File("build/model/mage/resources/test/mage_example_data");
-        FileWriter fw = new FileWriter(f);
-        fw.write(exampleData);
-        fw.flush();
-        fw.close();
 
         DerivedBioAssayData dbad=new DerivedBioAssayData();
         BioDataCube bdc=new BioDataCube();
