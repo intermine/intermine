@@ -1,0 +1,105 @@
+
+<data-sets>
+  <data-set name="MicroArray">
+    <subtitle>microArray microArray</subtitle>
+    <icon-image>model/marray.gif</icon-image>
+    <large-image>model/marray.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points>MicroarrayOligo</starting-points>
+    <data-source name="INDAC microarray long oligo set (Version: 1.0)" url="http://www.indac.net/"/>
+  </data-set>
+  
+  <data-set name="Protein Interactions">
+    <subtitle>interactions interactions</subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points>ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
+  </data-set>
+  
+  <data-set name="Protein Structure">
+    <subtitle>structure structure</subtitle>
+    <icon-image>model/pstructure.gif</icon-image>
+    <large-image>model/pstructure.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points>ProteinStructure</starting-points>
+    <data-source name="D. melanogaster protein domain 3-D%3Cbr/%3Estructure predictions from Kenji Mizuguchi" url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
+  </data-set>
+  
+  <data-set name="Anopheles">
+    <subtitle>anopheles anopheles</subtitle>
+    <icon-image>model/anopheles.gif</icon-image>
+    <large-image>model/anopheles.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+  <data-set name="Binding Sites">
+    <subtitle>binding binding</subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+  <data-set name="INDAC">
+    <subtitle>indac indac</subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+  <data-set name="Tiling Path">
+    <subtitle>tiling tiling</subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+  <data-set name="Genomics">
+    <subtitle>genomics genomics</subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+  <data-set name="Gene Ontology">
+    <subtitle>ontology ontology</subtitle>
+    <icon-image>model/ontology.gif</icon-image>
+    <large-image>model/ontology.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+  <data-set name="Homophila">
+    <subtitle>homophila homophila</subtitle>
+    <icon-image>model/homophila.gif</icon-image>
+    <large-image>model/homophila.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+    </intro-text>
+    <starting-points></starting-points>
+  </data-set>
+  
+</data-sets>
