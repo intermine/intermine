@@ -11,8 +11,11 @@ package org.intermine.web.dataset;
  */
 
 /**
+ * Describes a source of data contributing to some data set. The sources names and
+ * hyperlinks are displayed on data set homepages.
  * 
  * @author Thomas Riley
+ * @see org.intermine.web.dataset.DataSet
  */
 public class DataSetSource
 {
@@ -22,28 +25,32 @@ public class DataSetSource
     private String url;
 
     /**
-     * @return Returns the sourceName.
+     * Get the source name.
+     * @return the source name
      */
     public String getName() {
         return sourceName;
     }
 
     /**
-     * @param sourceName The sourceName to set.
+     * Set the source name.
+     * @param sourceName source name
      */
     public void setName(String sourceName) {
         this.sourceName = sourceName;
     }
 
     /**
-     * @return Returns the url.
+     * Get the URL back to source website.
+     * @return URL
      */
     public String getUrl() {
         return url;
     }
 
     /**
-     * @param url The url to set.
+     * Set the URL to source website.
+     * @param url URL
      */
     public void setUrl(String url) {
         this.url = url;
