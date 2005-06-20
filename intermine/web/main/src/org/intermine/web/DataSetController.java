@@ -26,6 +26,9 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.dataset.DataSet;
 
 /**
+ * Contoller for a single data set tile embedded in a page. Expects the request parameter
+ * "name" to refer to a data set name. Places a reference to the corresponding DataSet object
+ * in the tile ComponentContext.
  * 
  * @author Thomas Riley
  */
