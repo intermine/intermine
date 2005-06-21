@@ -552,7 +552,10 @@ public class CreateReferences
                 newCollection = new ArrayList();
             }
 
-            newCollection.add(object2);
+            if (!object1.getId().equals(object2.getId())) {
+                // don't add the object to its own collection
+                newCollection.add(object2);
+            }
 
             lastObject = object1;
         }
