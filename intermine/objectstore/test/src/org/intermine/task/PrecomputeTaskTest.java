@@ -91,11 +91,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         summaryProperties = new Properties();
         summaryProperties.load(is);
 
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ObjectStoreSummary oss = new ObjectStoreSummary(os, summaryProperties);
-
-        
-        task.precomputeModel(os, oss);
+        task.execute();
 
         String[] expectedQueries = new String[] {
             "SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_) ORDER BY a1_, a2_, a3_",
@@ -139,67 +135,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
     }
 
-    public void testConstructQuerySingleRef() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-        Query actual = pt.constructQuery("Employee department Department");
-
-        Query q = new Query();
-        QueryClass qcEmpl = new QueryClass(Employee.class);
-        q.addToSelect(qcEmpl);
-        q.addFrom(qcEmpl);
-        q.addToOrderBy(qcEmpl);
-
-        QueryClass qcDept = new QueryClass(Department.class);
-        q.addToSelect(qcDept);
-        q.addFrom(qcDept);
-        q.addToOrderBy(qcDept);
-
-        QueryObjectReference ref = new QueryObjectReference(qcEmpl, "department");
-        ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcDept);
-        q.setConstraint(cc);
-
-        assertEquals(q, actual);
-    }
-
-
-    public void testConstructQueryTwoRefs() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-        Query actual = pt.constructQuery("Company departments Department manager Manager");
-
-        Query q = new Query();
-        QueryClass qcCom = new QueryClass(Company.class);
-        q.addToSelect(qcCom);
-        q.addFrom(qcCom);
-        q.addToOrderBy(qcCom);
-
-        QueryClass qcDept = new QueryClass(Department.class);
-        q.addToSelect(qcDept);
-        q.addFrom(qcDept);
-        q.addToOrderBy(qcDept);
-
-        QueryClass qcMan = new QueryClass(Manager.class);
-        q.addToSelect(qcMan);
-        q.addFrom(qcMan);
-        q.addToOrderBy(qcMan);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference col = new QueryCollectionReference(qcCom, "departments");
-        ContainsConstraint cc1 = new ContainsConstraint(col, ConstraintOp.CONTAINS, qcDept);
-        cs.addConstraint(cc1);
-
-        QueryObjectReference ref = new QueryObjectReference(qcDept, "manager");
-        ContainsConstraint cc2 = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcMan);
-        cs.addConstraint(cc2);
-
-        q.setConstraint(cs);
-
-        assertEquals(q, actual);
-    }
-
-
+ 
     public void testConstructQueries() throws Exception {
         PrecomputeTask pt = new PrecomputeTask();
         pt.os = os;
@@ -267,74 +203,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         compareQueryLists(queries, pt.getOrderedQueries(q1));
     }
 
-    public void testValidatePath() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-
-        try {
-            pt.validatePath("Company"); // too short
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        try {
-            pt.validatePath("Company departments Department manager");  // wrong length
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        try {
-            pt.validatePath("Department manager Monkey");  // no Monkeys
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        try {
-            pt.validatePath("Department teaboy Employee");  // no teaboys
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        // valid
-        pt.validatePath("Company departments Department");
-        pt.validatePath("Company address Address");  // inherited reference
-        pt.validatePath("Company departments Department manager Manager");
-    }
-
-
-    public void testExpandPathStart() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-        String original = "+Employee department Department";
-
-        String exp1 = "Employee department Department";
-        String exp2 = "CEO department Department";
-        String exp3 = "Manager department Department";
-
-        Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
-        assertEquals(expected, pt.expandPath(original));
-    }
-
-
-    public void testExpandPathEnd() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-        String original = "Company departments Department employees +Employee";
-
-        String exp1 = "Company departments Department employees Employee";
-        String exp2 = "Company departments Department employees Manager";
-        String exp3 = "Company departments Department employees CEO";
-
-        Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
-        assertEquals(expected, pt.expandPath(original));
-    }
-
-
-
-    public void testGetClassNames() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-        String clsName = "+Employee";
-        Set expected = new HashSet(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
-        assertEquals(expected, pt.getClassNames(clsName));
-    }
-
+    
     protected void compareQueryLists(List a, List b) {
         for (int i = 0; i< a.size(); i++) {
             assertEquals((Query) a.get(i), (Query) b.get(i));
@@ -343,7 +212,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
     class DummyPrecomputeTask extends PrecomputeTask {
         protected List queries = new ArrayList();
-        protected void precompute(ObjectStore os, Query query) {
+        protected void precompute(Query query) {
             queries.add(query);
         }
     }
