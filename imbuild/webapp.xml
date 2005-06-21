@@ -1,5 +1,5 @@
 
-<project name="webapp" default="default" basedir="." xmlns:imwebappproj="http://www.intermine.org/ns/im-webapp-proj/1">
+<project name="webapp" default="default" basedir="." xmlns:webapp="http://www.intermine.org/ns/im-webapp-proj/1">
 
   <dirname property="webapp.xml.basedir" file="${ant.file.webapp}"/>
   
@@ -32,7 +32,7 @@
   </target>
   
   <target name="do-jar" depends="-init-presetdef-war">
-    <imwebappproj:war/>
+    <webapp:war/>
   </target>
   
   <!-- RELEASE / REMOVE FROM TOMCAT -->

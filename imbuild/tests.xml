@@ -1,5 +1,6 @@
 
-<project name="tests" default="default" basedir="." xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
+<project name="tests" default="default" basedir="."
+  xmlns:tests="http://www.intermine.org/ns/im-tests-proj/1">
 
   <dirname property="tests.xml.basedir" file="${ant.file.tests}"/>
   
@@ -28,7 +29,7 @@
   <target name="-post-test"/>
   
   <target name="do-test" depends="-init-macrodef-junit">
-    <imtestsproj:junit/>
+    <tests:junit/>
   </target>
   
   <target name="test-report" depends="init" if="gen.report">

@@ -1,11 +1,11 @@
 
 <project name="application" default="default" basedir="."
-         xmlns:imapplproj="http://www.intermine.org/ns/im-appl-proj/1"
-         xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+         xmlns:appl="http://www.intermine.org/ns/im-appl-proj/1"
+         xmlns:task="http://www.intermine.org/ns/im-task-proj/1">
 
   <dirname property="application.xml.basedir" file="${ant.file.application}"/>
   <import file="${application.xml.basedir}/webapp.xml"/>
-  <import file="${application.xml.basedir}/db.xml"/>
+  <import file="${application.xml.basedir}/task.xml"/>
 
   <!-- Local webapp build/deploy properties -->
   <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
@@ -46,14 +46,12 @@
   </target>
 
   <target name="do-jar" depends="-init-presetdef-war">
-    <imapplproj:war/>
+    <appl:war/>
   </target>
 
   <!-- USER PROFILE -->
 
-  <target name="-init-build-db" depends="init, -init-deps-no-build">
-    <!-- Load db tasks -->
-    <runtarget target="-init-db-tasks"/>
+  <target name="-init-build-db" depends="init, -init-deps-no-build, -init-task-xml">
     <!-- Copy intermine.properties onto the task classpath -->
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.task.dir}/intermine.properties"/>
@@ -61,21 +59,15 @@
     <copy file="${default.intermine.properties.file}"
           tofile="${build.task.dir}/default.intermine.properties"/>
   </target>
-
-  <target name="-load-db-taskdefs" depends="db.-load-db-taskdefs">
-    <!-- Overriden to load web tasks -->
-    <taskdef resource="org/intermine/web/task/antlib-web.xml">
-      <classpath refid="db.class.path"/>
-    </taskdef>
-  </target>
-
-  <target name="build-db-userprofile" depends="-init-build-db">
-    <imdbproj:build-db osname="${userprofile.objectstore.name}"
+  
+  <target name="build-db-userprofile" depends="-do-build-db-userprofile, load-default-templates"/>
+  
+  <target name="-do-build-db-userprofile" depends="-init-build-db">
+    <task:build-db osname="${userprofile.objectstore.name}"
                        dbname="${userprofile.db.name}"
                        model="${userprofile.model.name}"/>
-    <runtarget target="load-default-templates"/>
   </target>
-
+  
   <target name="load-default-templates" depends="-init-build-db">
     <load-default-templates templatesXml="${default.template.queries}"
                             username="${superuser.account}" osAlias="${objectstore.name}"

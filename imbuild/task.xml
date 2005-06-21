@@ -1,0 +1,97 @@
+
+<project name="task" default="default" basedir="." xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
+
+  <dirname property="task.xml.basedir" file="${ant.file.task}"/>
+  
+  <!--
+     |
+     | Import this file and call the target -init-task-xml to have access
+     | to database/objectstore/web related tasks. The classpath used to load the
+     | tasks is called task.class.path and is defined with the target -define-task-classpath.
+     | By default, this classpath extends main.class.path and adds the location
+     | ${build.task.dir} directory. Put things in ${build.task.dir} that are expected
+     | to be on the classpath while running tasks. Override -define-task-classpath to
+     | alter the classpath defined.
+     |
+     | -init-task-xml tries to load the tasks defined in:
+     |
+     |    org/intermine/task/antlib-os.xml
+     |    org/intermine/task/antlib-int.xml
+     |    org/intermine/task/antlib-web.xml
+     |
+     | It only loads tasks from these xml files if they are available as resources
+     | on main.class.path.
+     |
+     | Before calling -init-task-xml, these properties should be defined:
+     |
+     |    ${build.dir}
+     |
+   -->
+  
+  <target name="-check-task-availability">
+    <available property="antlib-os-available" resource="org/intermine/task/antlib-os.xml" classpathref="task.class.path"/>
+    <available property="antlib-int-available" resource="org/intermine/task/antlib-int.xml" classpathref="task.class.path"/>
+    <available property="antlib-web-available" resource="org/intermine/web/task/antlib-web.xml" classpathref="task.class.path"/>
+  </target>
+  
+  <target name="-load-task-taskdefs" depends="-check-task-availability,
+                                              -load-os-tasks,
+                                              -load-int-tasks,
+                                              -load-web-tasks"/>
+  
+  <target name="-load-os-tasks" if="antlib-os-available">
+    <echo>Loading objectstore tasks</echo>
+    <taskdef resource="org/intermine/task/antlib-os.xml" classpathref="task.class.path"/>
+  </target>
+  
+  <target name="-load-int-tasks" if="antlib-int-available">
+    <echo>Loading integration tasks</echo>
+    <taskdef resource="org/intermine/task/antlib-int.xml" classpathref="task.class.path"/>
+  </target>
+  
+  <target name="-load-web-tasks" if="antlib-web-available">
+    <echo>Loading web tasks</echo>
+    <taskdef resource="org/intermine/web/task/antlib-web.xml" classpathref="task.class.path"/>
+  </target>
+  
+  <target name="-pre-define-task-classpath">
+     <property name="build.task.dir" location="${build.dir}/task"/>
+     <property name="build.tmp.dir" location="${build.dir}/tmp"/>
+     <mkdir dir="${build.task.dir}"/>
+     <mkdir dir="${build.tmp.dir}"/>
+     <copy file="${task.xml.basedir}/task.log4j.properties" toFile="${build.task.dir}/log4j.properties"/>
+  </target>
+  
+  <target name="-define-task-classpath">
+    <!-- Override to alter the classpath created -->
+    <path id="task.class.path">
+      <pathelement location="${build.task.dir}"/>
+      <path refid="main.class.path"/>
+    </path>
+  </target>
+
+  <target name="-init-task-xml" depends="-pre-define-task-classpath,
+                                         -define-task-classpath,
+                                         -load-task-taskdefs,
+                                         -init-macrodef-build-db"/>
+  
+  <!-- MACRODEF -->
+  
+  <target name="-init-macrodef-build-db">
+    <macrodef name="build-db" uri="http://www.intermine.org/ns/im-task-proj/1">
+      <attribute name="osname"/>
+      <attribute name="dbname"/>
+      <attribute name="model"/>
+      <sequential>
+        <build-torque osName="@{osname}"
+                      destFile="${build.task.dir}/@{osname}-schema.xml"/>
+        <build-db database="@{dbname}"
+                  tempdir="${build.tmp.dir}"
+                  schemafile="@{osname}-schema.xml"/>
+        <db-insert-model database="@{dbname}" modelName="@{model}"/>
+      </sequential>
+    </macrodef>
+  </target>
+
+  
+</project>
