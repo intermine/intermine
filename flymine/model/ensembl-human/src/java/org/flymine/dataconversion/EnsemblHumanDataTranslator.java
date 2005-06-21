@@ -144,6 +144,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                                                             // seq_region.coord-sys
                     location.addAttribute(new Attribute("strand", "0"));
                     result.add(location);
+                    if (srcItem.hasReference("seq_region")) {
+                        Item seq = (Item) getSeqItem(srcItem.getReference("seq_region").getRefId());
+                        tgtItem.addReference(new Reference("chromosome",
+                                                       seq.getIdentifier()));
+                    }
                 } else if ("exon".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
@@ -159,7 +164,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item comment = createComment(srcItem, tgtItem);
-                                                        // Nothing
                     if (comment != null) {
                         result.add(comment);
                     }
@@ -235,9 +239,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         tgtItem.addReference(getEnsemblRef());
                         tgtItem.addAttribute(new Attribute("type", "identifier"));
                     }
-                // } else if ("prediction_transcript".equals(className)) {
-                //   tgtItem.addReference(getOrgRef());
-                //    result.add(createLocation(srcItem, tgtItem, true));
                 } else if ("repeat_feature".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
@@ -705,8 +706,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                  && dbname != null && !dbname.equals("")) {
                 //dbname could be one of HUGO, RefSeq_dna, RefSeq_dna_predicted,
                 //RefSeq_peptide,RefSeq_peptide_predicted, Uniprot/SWISSPROT Uniprot/SPTREMBL
-                //HUGO identifier is used as gene Identifier, if no HUGO refed then ensembl_stable_id
-                //(eg ENSG???????????) used as identifier
+                //HUGO identifier is used as gene Identifier, if no HUGO refed
+                //then ensembl_stable_id(eg ENSG???????????) used as identifier
                 Item synonym = new Item();
                 if (dbname.equals("HUGO")) {
                     synonym = createSynonym(tgtItem.getIdentifier(),
@@ -724,7 +725,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                             "accession", accession, getRefSeqRef());
                     synonyms.add(synonym);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
- 
+
                     synonym = createSynonym(tgtItem.getIdentifier(),
                                             "identifier", geneIdentifier, getEnsemblRef());
                     synonyms.add(synonym);
@@ -739,9 +740,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     synonyms.add(synonym);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
- 
+
                 }
- 
+
             }
         }
         return synonyms;

@@ -230,6 +230,7 @@
 <item id="16_1" class="http://www.flymine.org/model/genomic#ChromosomeBand">
 <attribute name="identifier" value="p11.1"/>
 <attribute name="stain" value="acen"/>
+<reference name="chromosome" ref_id="-1_33"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>
