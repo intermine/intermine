@@ -10,6 +10,9 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -71,6 +74,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
     Map descriptiveCache = Collections.synchronizedMap(new CacheMap(
                 "ObjectStoreItemPathFollowingImpl DescriptiveCache"));
     Map classNameToDescriptors = null;
+    Set stackTraces = new HashSet();
 
     /**
      * Creates an instance, from another ObjectStore instance.
@@ -185,17 +189,33 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 }
             }
             q.setConstraint(cs);
-            LOG.debug("Fetching Items by description: " + description + ", query = "
-                    + q.toString());
+            //LOG.debug("Fetching Items by description: " + description + ", query = "
+            //        + q.toString());
             retval = new SingletonResults(q, os, os.getSequence());
             ((SingletonResults) retval).setBatchSize(1000);
             ((SingletonResults) retval).setNoExplain();
             ((SingletonResults) retval).setNoOptimise();
             descriptiveCache.put(description, retval);
-            if (ops % 100000 == 0) {
-                LOG.info("getItemsByDescription: ops = " + ops + ", misses = " + misses
-                        + " cache size: " + descriptiveCache.size());
+            try {
+                Exception e = new Exception("Prefetch cache miss");
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.fillInStackTrace();
+                e.printStackTrace(pw);
+                pw.close();
+                sw.close();
+                String stackTrace = sw.toString();
+                if (! stackTraces.contains(stackTrace)) {
+                    stackTraces.add(stackTrace);
+                    LOG.warn(stackTrace);
+                }
+            } catch (IOException e) {
+                // Shouldn't be possible
             }
+        }
+        if (ops % 100000 == 0) {
+            LOG.info("getItemsByDescription: ops = " + ops + ", misses = " + misses
+                    + " cache size: " + descriptiveCache.size());
         }
         return retval;
     }
