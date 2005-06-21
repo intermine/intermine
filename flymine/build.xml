@@ -143,6 +143,7 @@
     <path id="genomic.class.path">
       <path refid="base.class.path"/>
       <pathelement location="${build.model}/genomic"/>
+      <pathelement location="${build.model}/genomic/flymine"/>
     </path>
   
     <path id="webapp.class.path">
