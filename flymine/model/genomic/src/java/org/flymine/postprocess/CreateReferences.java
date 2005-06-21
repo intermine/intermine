@@ -70,9 +70,9 @@ public class CreateReferences
 
         // Intron.MRNAs / MRNA.introns
         insertCollectionField(MRNA.class, "subjects", SimpleRelation.class, "subject",
-                              Intron.class, "introns", false);
+                              Intron.class, "introns", true);
         insertCollectionField(Transcript.class, "subjects", SimpleRelation.class, "subject",
-                              Exon.class, "exons", false);
+                              Exon.class, "exons", true);
 
         LOG.info("insertReferences stage 2");
         // Gene.transcript / Transcript.gene
