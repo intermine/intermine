@@ -5,4 +5,5 @@ intermine.log*
 velocity.log*
 executeLog*
 .settings
-
+examples.log
+templates.log
