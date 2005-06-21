@@ -1,6 +1,7 @@
 
-<project name="objectstore" default="default" basedir="." xmlns:imosproj="http://www.intermine.org/ns/im-os-proj/1"
-    xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+<project name="objectstore" default="default" basedir="."
+    xmlns:os="http://www.intermine.org/ns/im-os-proj/1"
+    xmlns:task="http://www.intermine.org/ns/im-db-proj/1">
 
   <dirname property="objectstore.xml.basedir" file="${ant.file.objectstore}"/>
   
@@ -16,7 +17,9 @@
     <property name="objectstore.summary.properties" location="${main.build.classes.dir}/objectstoresummary.properties"/>
   </target>
   
-  <target name="-init-tasks" depends="model.-init-tasks">
+  <!-- BUILD DB -->
+  
+  <target name="-init-build-db" depends="init, -init-deps, -init-task-xml">
     <!-- Make directories -->
     <mkdir dir="${build.model.dir}"/>
     <!-- Copy intermine.properties onto the classpath -->
@@ -27,11 +30,15 @@
           tofile="${build.task.dir}/default.intermine.properties"/>
   </target>
   
-  <!-- BUILD DB -->
+  <target name="-pre-build-db"/>
   
-  <target name="build-db" depends="init, -init-deps, -init-tasks">
-    <imdbproj:build-db osname="${objectstore.name}" dbname="${db.name}" model="${model.name}"/>
+  <target name="-post-build-db"/>
+  
+  <target name="-do-build-db">
+    <task:build-db osname="${objectstore.name}" dbname="${db.name}" model="${model.name}"/>
   </target>
+  
+  <target name="build-db" depends="-init-build-db, -pre-build-db, -do-build-db, -post-build-db"/>
   
   <!-- GENERATE (FETCH) -->
   
@@ -42,7 +49,7 @@
     </condition>
   </target>
   
-  <target name="-pre-generate" depends="-init-tasks">
+  <target name="-pre-generate" depends="-init-task-xml">
     <!-- Retrieve model from database -->
     <retrieve-metadata database="${db.name}" destDir="${build.model.dir}"/>
     <!-- Summarise objectstore -->

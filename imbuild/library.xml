@@ -1,5 +1,5 @@
 
-<project name="library" default="default" basedir="." xmlns:imlibproj="http://www.intermine.org/ns/im-lib-proj/1" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project name="library" default="default" basedir="." xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1">
   
   <dirname property="library.xml.basedir" file="${ant.file.library}"/>
   
@@ -96,15 +96,15 @@
   <target name="-post-compile"/>
   
   <target name="do-compile-with-gen-src" if="gen.code">
-    <imlibproj:javac>
+    <lib:javac>
       <customize>
         <src path="${gen.src.dir}"/>
       </customize>
-    </imlibproj:javac>
+    </lib:javac>
   </target>
   
   <target name="do-compile-without-gen-src" unless="gen.code">
-    <imlibproj:javac/>
+    <lib:javac/>
   </target>
   
   <target name="do-compile" depends="-init-macrodef-javac, do-compile-with-gen-src, do-compile-without-gen-src">
@@ -126,7 +126,7 @@
   </target>
   
   <target name="do-jar" depends="-init-presetdef-jar">
-    <imlibproj:jar/>
+    <lib:jar/>
   </target>
   
   <target name="jar" depends="compile, -init-jar, -pre-jar, do-jar, -post-jar"/>
@@ -151,7 +151,7 @@
     </javadoc>
   </target>
   
-  <target name="javadoc" depends="-init-javadoc,-javadoc-build" description="Build Javadoc."/>
+  <target name="javadoc" depends="-init-javadoc,-javadoc-build"/>
   
   <!-- CLEAN -->
   

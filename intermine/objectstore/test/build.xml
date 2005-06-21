@@ -1,17 +1,17 @@
 
 <project name="intermine-objectstore-test" default="default" basedir="."
   xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
-  xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+  xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
   
   <description>build, test, package intermine-objectstore-test</description>
   
   <import file="../../../imbuild/tests.xml"/>
-  <import file="../../../imbuild/db.xml"/>
+  <import file="../../../imbuild/task.xml"/>
   
   <target name="-pre-test" depends="build-db-unittest, create-indexes-unittest,
                                     build-db-truncunittest, create-indexes-truncunittest,
                                     build-db-notxmlunittest, create-indexes-notxmlunittest,
-                                    build-db-flatmodeunittest, create-indexes-flatmodeunittest"/>
+                                    build-db-flatmodeunittest"/>
   
   <target name="-init-test" depends="tests.-init-test">
     <copy file="${user.home}/${intermine.properties.file}"
@@ -29,60 +29,62 @@
     </imtestsproj:junit>
   </target>
   
-  <target name="-define-db-classpath">
+  <target name="-define-task-classpath">
     <!-- Override to alter the classpath created -->
-    <path id="db.class.path">
+    <path id="task.class.path">
       <pathelement location="${build.task.dir}"/>
       <pathelement location="${build.test.resources.dir}"/>
       <path refid="main.class.path"/>
     </path>
   </target>
   
-  <target name="build-db-unittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="-init-build-db" depends="init, -init-deps, -init-task-xml"/>
+  
+  <target name="build-db-unittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.unittest"
                        dbname="db.unittest"
                        model="testmodel"/>
   </target>
   
-  <target name="build-db-truncunittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="build-db-truncunittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.truncunittest"
                        dbname="db.truncunittest"
                        model="testmodel"/>
   </target>
 
-  <target name="build-db-notxmlunittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="build-db-notxmlunittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.notxmlunittest"
                        dbname="db.notxmlunittest"
                        model="testmodel"/>
   </target>
 
-  <target name="build-db-flatmodeunittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="build-db-flatmodeunittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.flatmodeunittest"
                        dbname="db.flatmodeunittest"
                        model="testmodel"/>
   </target>
   
   <!-- index the unittest database -->
-  <target name="create-indexes-unittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="create-indexes-unittest" depends="-init-build-db">
     <create-indexes alias="os.unittest" attributeIndexes="false"/>
   </target>
 
   <!-- index the truncated unittest database -->
-  <target name="create-indexes-truncunittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="create-indexes-truncunittest" depends="-init-build-db">
     <create-indexes alias="os.truncunittest" attributeIndexes="false"/>
   </target>
 
   <!-- index the withNotXml unittest database -->
-  <target name="create-indexes-notxmlunittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="create-indexes-notxmlunittest" depends="-init-build-db">
     <create-indexes alias="os.notxmlunittest" attributeIndexes="false"/>
   </target>
 
   <!-- index the flatmode unittest database -->
-  <target name="create-indexes-flatmodeunittest" depends="init, -init-deps, -init-db-tasks">
+  <target name="create-indexes-flatmodeunittest" depends="-init-build-db">
     <create-indexes alias="os.flatmodeunittest" attributeIndexes="false"/>
   </target>
 
-  <target name="create-indexes-unittest-attribute" depends="init, -init-deps, -init-db-tasks">
+  <target name="create-indexes-unittest-attribute" depends="-init-build-db">
     <create-indexes alias="os.unittest" attributeIndexes="true"/>
   </target>
   

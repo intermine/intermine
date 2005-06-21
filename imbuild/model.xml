@@ -1,23 +1,18 @@
 
-<project name="model" default="default" basedir="." xmlns:immodelproj="http://www.intermine.org/ns/im-model-proj/1">
+<project name="model" default="default" basedir="." xmlns:model="http://www.intermine.org/ns/im-model-proj/1">
 
   <dirname property="model.xml.basedir" file="${ant.file.model}"/>
   
   <property name="generating.code" value="true"/>
   
   <import file="${model.xml.basedir}/library.xml"/>
-  <import file="${model.xml.basedir}/db.xml"/>
+  <import file="${model.xml.basedir}/task.xml"/>
   
   <target name="-pre-init" depends="library.-pre-init">
     <!-- Model specific -->
     <property name="model.name" value="${ant.project.name}"/>
     <property name="namespace" value="http://www.intermine.org/model"/>
     <property name="packagename" value="org.intermine.model"/>
-  </target>
-
-  <target name="-init-tasks">
-    <!-- Load db tasks -->
-    <runtarget target="-init-db-tasks"/>
   </target>
 
   <!-- CODE GENERATION -->
@@ -32,44 +27,44 @@
   </target>
   
   <target name="generate-model-java" if="regenerate.java" depends="-init-macrodef-model-output">
-    <immodelproj:model-output/>
+    <model:model-output/>
   </target>
   
   <target name="build-model-from-zargo" if="have.zargo">
     <echo>Found zargo file</echo>
-    <immodelproj:modeloutofdate source="${model.name}.zargo">
+    <model:modeloutofdate source="${model.name}.zargo">
       <then>
         <runtarget target="unpack-xmi-model"/>
-        <immodelproj:model-generation type="xmi" source="${build.dir}/${model.name}_.xmi"/>
+        <model:model-generation type="xmi" source="${build.dir}/${model.name}_.xmi"/>
         <!--antcall target="copy-keydefs"/-->
         <property name="regenerate.java" value="true"/>
       </then>
-    </immodelproj:modeloutofdate>
+    </model:modeloutofdate>
   </target>
   
   <target name="build-model-from-xml" if="have.xml">
     <echo>Found xml file</echo>
-    <immodelproj:modeloutofdate source="${model.name}_model.xml">
+    <model:modeloutofdate source="${model.name}_model.xml">
       <then>
         <copy file="${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
         <!--antcall target="copy-keydefs"/-->
         <property name="regenerate.java" value="true"/>
       </then>
-    </immodelproj:modeloutofdate>
+    </model:modeloutofdate>
   </target>
   
   <target name="build-model-from-xmlschema" if="have.xmlschema">
     <echo>Found xml-schema file</echo>
-    <immodelproj:modeloutofdate source="${model.name}.xsd">
+    <model:modeloutofdate source="${model.name}.xsd">
       <then>
-        <immodelproj:model-generation type="xmlschema" source="${model.name}.xsd"/>
+        <model:model-generation type="xmlschema" source="${model.name}.xsd"/>
         <!--antcall target="copy-keydefs"/-->
         <property name="regenerate.java" value="true"/>
       </then>
-    </immodelproj:modeloutofdate>
+    </model:modeloutofdate>
   </target>
   
-  <target name="-init-generate" depends="library.-init-generate, -init-tasks, -init-model-out-of-date, -init-macrodef-model-generation">
+  <target name="-init-generate" depends="library.-init-generate, -init-task-xml, -init-model-out-of-date, -init-macrodef-model-generation">
     <!-- Conditions -->
     <available file="${model.name}.zargo" property="have.zargo"/>
     <available file="${model.name}_model.xml" property="have.xml"/>
