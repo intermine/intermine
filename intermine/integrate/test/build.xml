@@ -1,12 +1,12 @@
 
 <project name="intermine-integrate-test" default="default" basedir="."
   xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
-  xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+  xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
   
   <description>build, test, package intermine-integrate-test</description>
   
   <import file="../../../imbuild/tests.xml"/>
-  <import file="../../../imbuild/db.xml"/>
+  <import file="../../../imbuild/task.xml"/>
 
   <target name="-pre-test" depends="build-db-fulldatatest"/>
 
@@ -17,16 +17,16 @@
           tofile="${build.test.resources.dir}/default.intermine.properties"/>
   </target>
   
-  <target name="-define-db-classpath">
+  <target name="-define-task-classpath">
     <!-- Override to alter the classpath created -->
-    <path id="db.class.path">
+    <path id="task.class.path">
       <pathelement location="${build.task.dir}"/>
       <pathelement location="${build.test.resources.dir}"/>
       <path refid="main.class.path"/>
     </path>
   </target>
   
-  <target name="build-db-fulldatatest" depends="init, -init-deps, -init-db-tasks">
+  <target name="build-db-fulldatatest" depends="init, -init-deps, -init-task-xml">
     <imdbproj:build-db osname="os.fulldatatest"
                        dbname="db.fulldatatest"
                        model="fulldata"/>
