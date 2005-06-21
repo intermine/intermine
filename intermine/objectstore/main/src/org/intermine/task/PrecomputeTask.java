@@ -31,25 +31,15 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryReference;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.TypeUtil;
+import org.intermine.util.PathQueryUtil;
 
 import org.apache.log4j.Logger;
 
@@ -65,15 +55,13 @@ public class PrecomputeTask extends Task
     private static final Logger LOG = Logger.getLogger(PrecomputeTask.class);
 
     protected String alias;
-    protected String summaryPropertiesFile;
     protected boolean testMode;
     protected int minRows = -1;
     // set by readProperties()
     protected Properties precomputeProperties = null;
-    protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
     private static final String TEST_QUERY_PREFIX = "test.query.";
-    private boolean selectAllFields = true;   // put all available fields on the select list
+    // private boolean selectAllFields = true;   // put all available fields on the select list
     private boolean createAllOrders = false;  // create same table with all possible orders
 
     /**
@@ -82,14 +70,6 @@ public class PrecomputeTask extends Task
      */
     public void setAlias(String alias) {
         this.alias = alias;
-    }
-
-    /**
-     * Set the name of the ObjectStore summary properties file.
-     * @param summaryPropertiesFile the new summaryPropertiesFile
-     */
-    public void setSummaryPropertiesFile(String summaryPropertiesFile) {
-        this.summaryPropertiesFile = summaryPropertiesFile;
     }
 
     /**
@@ -109,29 +89,21 @@ public class PrecomputeTask extends Task
             throw new BuildException("alias attribute is not set");
         }
 
-        if (summaryPropertiesFile == null) {
-            throw new BuildException("summaryPropertiesFile attribute is not set");
-        }
-
         if (minRows == -1) {
             throw new BuildException("minRows attribute is not set");
         }
 
-        ObjectStore objectStore;
-
         try {
-            objectStore = ObjectStoreFactory.getObjectStore(alias);
+            os = ObjectStoreFactory.getObjectStore(alias);
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
 
-        if (!(objectStore instanceof ObjectStoreInterMineImpl)) {
+        if (!(os instanceof ObjectStoreInterMineImpl)) {
             throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
         }
 
-        oss = createObjectStoreSummary();
-
-        precomputeModel(objectStore, oss);
+        precomputeModel();
     }
 
 
@@ -141,9 +113,7 @@ public class PrecomputeTask extends Task
      * @param os the ObjectStore to precompute in
      * @param oss the ObjectStoreSummary for os
      */
-    protected void precomputeModel(ObjectStore os, ObjectStoreSummary oss) {
-        this.os = os;
-
+    protected void precomputeModel() {
         readProperties();
 
         if (testMode) {
@@ -159,7 +129,7 @@ public class PrecomputeTask extends Task
                                  + " seconds");
         }
 
-        Map pq = getPrecomputeQueries(oss);
+        Map pq = getPrecomputeQueries();
         LOG.info("pq.size(): " + pq.size());
         Iterator iter = pq.entrySet().iterator();
 
@@ -185,7 +155,7 @@ public class PrecomputeTask extends Task
 
                 if (resultsInfo.getRows() >= minRows) {
                     LOG.info("precomputing " + key + " - " + query);
-                    precompute(os, query);
+                    precompute(query);
 
                     if (testMode) {
                         PrintStream outputStream = System.out;
@@ -220,7 +190,7 @@ public class PrecomputeTask extends Task
      * @param indexes the index QueryNodes
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query, Collection indexes)
+    protected void precompute(Query query, Collection indexes)
         throws BuildException {
         long start = System.currentTimeMillis();
 
@@ -243,7 +213,7 @@ public class PrecomputeTask extends Task
      * @param query the query to precompute
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query) throws BuildException {
+    protected void precompute(Query query) throws BuildException {
         long start = System.currentTimeMillis();
 
         try {
@@ -260,13 +230,12 @@ public class PrecomputeTask extends Task
 
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
-     * @param oss The ObjectStoreSummary to use when precomputing - used to ignore classes that
      * have no objects
      * @return a Map of keys to Query objects
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist
      */
-    protected Map getPrecomputeQueries(ObjectStoreSummary oss) throws BuildException {
+    protected Map getPrecomputeQueries() throws BuildException {
         Map returnMap = new TreeMap();
 
         // TODO - read selectAllFields and createAllOrders from properties
@@ -308,84 +277,6 @@ public class PrecomputeTask extends Task
 
 
     /**
-     * Given a class return a set with the unqualified class name in and if preceded by
-     * a '+' also the unqualified names of all subclasses.
-     * @param clsName an unqullified class name
-     * @return a set of class names
-     */
-    protected Set getClassNames(String clsName) {
-        Model model = os.getModel();
-
-        boolean useSubClasses = false;
-        if (clsName.startsWith("+")) {
-            clsName = clsName.substring(1);
-            useSubClasses = true;
-        }
-
-        ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
-                                                             + "." + clsName);
-        if (cld == null) {
-            throw new BuildException("cannot find ClassDescriptor for " + clsName
-                                     + " (read name from "
-                                     + getPropertiesFileName() + ")");
-        }
-
-        Set clsNames = new LinkedHashSet();
-        clsNames.add(clsName);
-
-        if (useSubClasses) {
-            Set clds = model.getAllSubs(cld);
-            Iterator cldIter = clds.iterator();
-            while (cldIter.hasNext()) {
-                clsNames.add(TypeUtil.unqualifiedName(((ClassDescriptor)
-                                                       cldIter.next()).getName()));
-            }
-        }
-        return clsNames;
-    }
-
-
-    /**
-     * Path should be of the form: Class1 ref1 Class2 ref2 Class3
-     * Where the number of elements is greater than one and an odd number.  Check
-     * that all classes anf references are valid in the model.
-     * @param path the path string
-     * @throws IllegalArgumentException if path not valid
-     */
-    protected void validatePath(String path) {
-        Model model = os.getModel();
-
-        // must be more than one element and odd number
-        String[] queryBits = path.split("[ \t]");
-        if (!(queryBits.length > 1) || (queryBits.length % 2 == 0)) {
-            throw new IllegalArgumentException("Construct query path does not have valid "
-                                               + " number of elements: " + path);
-        }
-
-        for (int i = 0; i + 2 < queryBits.length; i += 2) {
-            String start = model.getPackageName() + "." + queryBits[i];
-            String refName = queryBits[i + 1];
-            String end = model.getPackageName() + "." + queryBits[i + 2];
-
-            if (!model.hasClassDescriptor(start)) {
-                throw new IllegalArgumentException("Class not found in model: " + start);
-            } else if (!model.hasClassDescriptor(end)) {
-                throw new IllegalArgumentException("Class not found in model: " + end);
-            }
-
-            ClassDescriptor startCld = model.getClassDescriptorByName(start);
-            ReferenceDescriptor rd = startCld.getReferenceDescriptorByName(refName);
-            if ((startCld.getReferenceDescriptorByName(refName, true) == null)
-                && (startCld.getCollectionDescriptorByName(refName, true) == null)) {
-                throw new IllegalArgumentException("Cannot find descriptor for " + refName
-                                         + " in " + startCld.getName());
-            }
-            // TODO check type of end vs. referenced type
-        }
-    }
-
-
-    /**
      * Create queries for given path.  If path has a '+' next to any class then
      * expand to include all subclasses.
      * @param path the path to construct a query for
@@ -401,11 +292,11 @@ public class PrecomputeTask extends Task
         List queries = new ArrayList();
 
         // expand '+' to all subclasses in path
-        Set paths = expandPath(path);
+        Set paths = PathQueryUtil.expandPath(os, path);
         Iterator pathIter = paths.iterator();
         while (pathIter.hasNext()) {
             String nextPath = (String) pathIter.next();
-            Query q = constructQuery(nextPath);
+            Query q = PathQueryUtil.constructQuery(os, nextPath);
             if (createAllOrders) {
                 queries.addAll(getOrderedQueries(q));
             } else {
@@ -413,123 +304,6 @@ public class PrecomputeTask extends Task
             }
         }
         return queries;
-    }
-
-
-    /**
-     * Given a path return a set of paths replacing a path with a '+' preceding a class
-     * name with an additional path for every subclass of that class.
-     * @param path the path to expand
-     * @return a Set of paths
-     */
-    protected Set expandPath(String path) {
-        Set paths = new LinkedHashSet();
-
-        String clsName;
-        String refName = "";
-        int refEnd = 0;
-        if (path.indexOf(' ') != -1) {
-            int clsEnd = path.indexOf(' ');
-            clsName = path.substring(0, clsEnd);
-            refEnd = path.indexOf(' ', clsEnd + 1);
-            refName = path.substring(clsEnd, refEnd);
-        } else {
-            // at end, this is last clsName
-            clsName = path;
-        }
-
-        Set subs = getClassNames(clsName);
-        Iterator subIter = subs.iterator();
-        while (subIter.hasNext()) {
-            String subName = (String) subIter.next();
-            Set nextPaths = new LinkedHashSet();
-            if (refName != "") {
-                nextPaths.addAll(expandPath(path.substring(refEnd + 1).trim()));
-            } else {
-                nextPaths.addAll(subs);
-                return nextPaths;
-            }
-            Iterator pathIter = nextPaths.iterator();
-            while (pathIter.hasNext()) {
-                String nextPath = (String) pathIter.next();
-                paths.add((subName + refName + " " + nextPath).trim());
-            }
-        }
-        return paths;
-    }
-
-
-    /**
-     * Construct an objectstore query represented by the given path.
-     * @param path path to construct query for
-     * @return the constructed query
-     * @throws ClassNotFoundException if problem processing path
-     * @throws IllegalArgumentException if problem processing path
-     */
-    protected Query constructQuery(String path) throws ClassNotFoundException,
-                                                       IllegalArgumentException {
-        String[] queryBits = path.split("[ \t]");
-
-        // validate path against model
-        validatePath(path);
-
-        Model model = os.getModel();
-
-        Query q = new Query();
-        QueryClass qcLast = null;
-        for (int i = 0; i + 2 < queryBits.length; i += 2) {
-            QueryClass qcStart = new QueryClass(Class.forName(model.getPackageName()
-                                                              + "." + queryBits[i]));
-            String refName = queryBits[i + 1];
-            QueryClass qcEnd = new QueryClass(Class.forName(model.getPackageName()
-                                                            + "." + queryBits[i + 2]));
-            if (qcLast != null) {
-                qcStart = qcLast;
-            }
-            qcLast = addReferenceConstraint(q, qcStart, refName, qcEnd, (i == 0));
-        }
-
-        return q;
-    }
-
-
-    /**
-     * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
-     * Return qcEnd as it may need to be passed into mehod again as qcStart.
-     * @param q the query
-     * @param qcStart the QueryClass that contains the reference
-     * @param refName name of reference to qcEnd
-     * @param qcEnd the target QueryClass of refName
-     * @param first true if this is the first constraint added - qcStart needs to be added
-     * to the query
-     * @return QueryClass return qcEnd
-     */
-    protected QueryClass addReferenceConstraint(Query q, QueryClass qcStart, String refName,
-                                                QueryClass qcEnd, boolean first) {
-        if (first) {
-            q.addToSelect(qcStart);
-            q.addFrom(qcStart);
-            q.addToOrderBy(qcStart);
-        }
-        q.addToSelect(qcEnd);
-        q.addFrom(qcEnd);
-        q.addToOrderBy(qcEnd);
-
-        // already validated against model
-        ClassDescriptor startCld =
-            os.getModel().getClassDescriptorByName(qcStart.getType().getName());
-        FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
-
-        QueryReference qRef;
-        if (fd.isReference()) {
-            qRef = new QueryObjectReference(qcStart, refName);
-        } else {
-            qRef = new QueryCollectionReference(qcStart, refName);
-        }
-        ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
-        QueryHelper.addConstraint(q, cc);
-
-        return qcEnd;
     }
 
 
@@ -665,31 +439,6 @@ public class PrecomputeTask extends Task
                                      + propertiesFileName , e);
         }
     }
-
-
-    /**
-     * Create a ObjectStoreSummary from the summaryPropertiesFile.
-     * @return a new ObjectStoreSummary
-     */
-    protected ObjectStoreSummary createObjectStoreSummary() {
-        try {
-            InputStream summaryPropertiesStream =
-                PrecomputeTask.class.getClassLoader().getResourceAsStream(summaryPropertiesFile);
-
-            if (summaryPropertiesStream == null) {
-                throw new BuildException("Cannot find " + summaryPropertiesFile);
-            }
-
-            Properties summaryProperties = new Properties();
-            summaryProperties.load(summaryPropertiesStream);
-
-            return new ObjectStoreSummary(summaryProperties);
-        } catch (IOException e) {
-            throw new BuildException("Exception while reading properties from "
-                                     + summaryPropertiesFile , e);
-        }
-    }
-
 
     /**
      * Return the name of the properties file that passed to the constructor.
