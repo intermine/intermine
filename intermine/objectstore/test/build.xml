@@ -8,9 +8,9 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/task.xml"/>
   
-  <target name="-pre-test" depends="build-db-unittest, create-indexes-unittest,
-                                    build-db-truncunittest, create-indexes-truncunittest,
-                                    build-db-notxmlunittest, create-indexes-notxmlunittest,
+  <target name="-pre-test" depends="build-db-unittest,
+                                    build-db-truncunittest,
+                                    build-db-notxmlunittest,
                                     build-db-flatmodeunittest"/>
   
   <target name="-init-test" depends="tests.-init-test">
