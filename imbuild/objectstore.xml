@@ -1,7 +1,7 @@
 
 <project name="objectstore" default="default" basedir="."
     xmlns:os="http://www.intermine.org/ns/im-os-proj/1"
-    xmlns:task="http://www.intermine.org/ns/im-db-proj/1">
+    xmlns:task="http://www.intermine.org/ns/im-task-proj/1">
 
   <dirname property="objectstore.xml.basedir" file="${ant.file.objectstore}"/>
   
