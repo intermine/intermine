@@ -10,16 +10,6 @@
         <table>
           <tbody>
             <row>
-              <entry>18th May 2005</entry>
-              <entry>Richard</entry>
-              <entry>Extreme Programming</entry>
-            </row>
-            <row>
-              <entry>15th June 2005</entry>
-              <entry>Kim</entry>
-              <entry>SWT</entry>
-            </row>
-            <row>
               <entry>13th July 2005</entry>
               <entry>Tom</entry>
               <entry>TBA</entry>
@@ -41,6 +31,18 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>22nd June 2005</entry>
+              <entry>Kim</entry>
+              <entry>
+                <ulink url="kmr_eclipse_perl_talk/techtalk.html">Eclipse and Perl</ulink>
+              </entry>
+            </row>
+             <row>
+              <entry>18th May 2005</entry>
+              <entry>Richard</entry>
+              <entry>Extreme Programming</entry>
+            </row>
             <row>
               <entry>27th April 2005</entry>
               <entry>Matthew</entry>
