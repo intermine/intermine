@@ -1739,8 +1739,10 @@
       <fileset dir="${model}/${model.name}/resources">
         <include name="*.properties"/>
         <include name="*.sql"/>
-        <include name="flymine/*.properties"/>
-        <include name="flymine/*.sql"/>
+      </fileset>
+      <fileset dir="${model}/${model.name}/resources/flymine">
+        <include name="*.properties"/>
+        <include name="*.sql"/>
       </fileset>
     </copy>
   </target> 
@@ -1751,8 +1753,10 @@
       <fileset dir="${model}/${model.name}/resources">
         <include name="*.properties"/>
         <include name="*.sql"/>
-        <include name="t1dmine/*.properties"/>
-        <include name="t1dmine/*.sql"/>
+      </fileset>
+      <fileset dir="${model}/${model.name}/resources/t1dmine">
+        <include name="*.properties"/>
+        <include name="*.sql"/>
       </fileset>
     </copy>
   </target>
@@ -2420,7 +2424,9 @@
   <target name="build-production-webapp"
           depends="prepare-build-model, compile-flymine-java">
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
-    <property name ="web.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
+    <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
+    <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
+
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2467,10 +2473,10 @@
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
     <filter token="RELEASE_VERSION" value="${release.version}"/>
     <copy todir="${build.tmp}" filtering="true"
-          file="${web.properties.file}"
+          file="${webapp.properties.file}"
           overwrite="true" verbose="true"/>
     <concat destfile="${build.tmp}/web.properties">
-      <fileset file="${model}/genomic/resources/web/web.properties" />
+      <fileset file="${web.properties.file}" />
       <fileset file="${build.properties.local}" />
     </concat>
     <copy todir="${build.tmp}" file="${resources}/webapp/flymine/classDescriptions.properties"/>
@@ -3534,7 +3540,8 @@
 
   <target name ="t1dmine-model-style">
      <property name="model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
-     <property name="web.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
+     <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
+     <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
   </target>
 
 
