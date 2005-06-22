@@ -1,12 +1,11 @@
 
 <project name="testmodel-webapp-test" default="default" basedir="."
-  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
-  xmlns:imdbproj="http://www.intermine.org/ns/im-db-proj/1">
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
   
   <description>build, test, package intermine-objectstore-test</description>
   
   <import file="../../../imbuild/tests.xml"/>
-  <import file="../../../imbuild/db.xml"/>
+  <import file="../../../imbuild/task.xml"/>
   
   <target name="-init-test" depends="tests.-init-test">
     <copy file="${user.home}/${intermine.properties.file}"
