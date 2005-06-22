@@ -65,6 +65,17 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.DefinedRegion">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/synonymDisplayer.jsp"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
   <class className="org.flymine.model.genomic.Chromosome">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
