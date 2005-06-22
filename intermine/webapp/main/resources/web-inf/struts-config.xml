@@ -421,7 +421,7 @@
             input="iqlQuery"
             parameter="action">
       <forward name="iqlQuery" path="iqlQuery.page"/>
-      <forward name="results" path="results.page"/>
+      <forward name="results" path="/results.do" redirect="true"/>
     </action>
 
     <action path="/loginAction"

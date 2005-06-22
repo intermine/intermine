@@ -37,7 +37,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         getSession().setAttribute(Constants.PROFILE,
                                   new Profile(null, null, null, new HashMap(), new HashMap(), new HashMap()));
 
-        setRequestPathInfo("/loadExampleQuery");
+        setRequestPathInfo("/loadQuery");
 
         actionPerform();
         verifyNoActionErrors();
