@@ -58,6 +58,7 @@
      <property name="build.task.dir" location="${build.dir}/task"/>
      <property name="build.tmp.dir" location="${build.dir}/tmp"/>
      <mkdir dir="${build.task.dir}"/>
+     <delete dir="${build.tmp.dir}"/>
      <mkdir dir="${build.tmp.dir}"/>
      <copy file="${task.xml.basedir}/task.log4j.properties" toFile="${build.task.dir}/log4j.properties"/>
   </target>
@@ -83,6 +84,9 @@
       <attribute name="dbname"/>
       <attribute name="model"/>
       <sequential>
+        <delete>
+          <fileset dir="${build.tmp.dir}" includes="*"/>
+        </delete>
         <build-torque osName="@{osname}"
                       destFile="${build.task.dir}/@{osname}-schema.xml"/>
         <build-db database="@{dbname}"
