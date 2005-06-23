@@ -10,8 +10,10 @@ package org.intermine.web.task;
  *
  */
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.Test;
 
@@ -63,7 +65,17 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
 
     // test that correct query and list of indexes generate for pre-computing
     public void testPrecomputeTemplate() throws Exception {
+        InputStream webProps = PrecomputeTemplatesTask.class
+            .getClassLoader().getResourceAsStream("WEB-INF/web.properties");
+        Properties properties = new Properties();
+        properties.load(webProps);
+        String user = properties.getProperty("superuser.account");
+        
         PrecomputeTemplatesTask task = new PrecomputeTemplatesTask();
+        task.setAlias("os.unittest");
+        task.setUserProfileAlias("osw.userprofile-test");
+        task.setUsername(user);
+        
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Map templates = task.getPrecomputeTemplateQueries();
         TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
