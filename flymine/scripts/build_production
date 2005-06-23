@@ -2,6 +2,7 @@
 
 # Run the FlyMine production build and dump the database occasionally
 # Targets are listed at the end of the script
+# The database to dump will be found by reading the properties from $HOME/flymine.properties
 
 use strict;
 use warnings;
@@ -172,7 +173,8 @@ run: build-uniprot-production build-flybase-production
 
 dump: drosophila
 
-run: build-go-production build-psi-production build-rnai-production build-phenotype-production build-orthologues-production build-protein_structure-production
+run: build-go-production build-psi-production build-rnai-production
+run: build-phenotype-production build-orthologues-production build-protein_structure-production
 
 dump: load-stage1
 
