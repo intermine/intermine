@@ -10,8 +10,6 @@ package org.intermine.web.task;
  *
  */
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,17 +25,20 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.web.MainHelper;
 import org.intermine.web.PathNode;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
 import org.intermine.web.TemplateQuery;
-import org.intermine.web.TemplateQueryBinding;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -54,6 +55,8 @@ public class PrecomputeTemplatesTask extends Task
     protected int minRows = -1;
     protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
+    protected String userProfileAlias;
+    protected String username;
 
     /**
      * Set the ObjectStore alias
@@ -61,6 +64,14 @@ public class PrecomputeTemplatesTask extends Task
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+    
+    /**
+     * Set the alias of the userprofile object store.
+     * @param userProfileAlias the object store alias of the userprofile database
+     */
+    public void setUserProfileAlias(String userProfileAlias) {
+        this.userProfileAlias = userProfileAlias;
     }
 
     /**
@@ -72,6 +83,14 @@ public class PrecomputeTemplatesTask extends Task
         this.minRows = minRows.intValue();
     }
 
+    /**
+     * Set the account name to laod template to.
+     * @param user username to load templates into
+     */
+    public void setUsername(String user) {
+        username = user;
+    }
+    
     /**
      * @see Task#execute
      */
@@ -312,11 +331,23 @@ public class PrecomputeTemplatesTask extends Task
      * @throws BuildException if an IO error occurs loading the template queries
      */
     protected Map getPrecomputeTemplateQueries() throws BuildException {
-        TemplateQueryBinding binding = new TemplateQueryBinding();
-        ClassLoader cl = PrecomputeTemplatesTask.class.getClassLoader();
-        InputStream sin = cl.getResourceAsStream("default-template-queries.xml");
-        Map templates = binding.unmarshal(new InputStreamReader(sin));
-        return templates;
+        ObjectStore os;
+        ProfileManager pm;
+        ObjectStoreWriter userProfileOS;
+        try {
+            os = ObjectStoreFactory.getObjectStore(alias);
+            userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            pm = new ProfileManager(os, userProfileOS);
+        } catch (Exception err) {
+            throw new BuildException("Exception creating objectstore/profile manager", err);
+        }
+        if (!pm.hasProfile(username)) {
+            throw new BuildException("user profile doesn't exist for " + username);
+        } else {
+            LOG.warn("Profile for " + username + ", clearing template queries");
+            Profile profile = pm.getProfile(username, pm.getPassword(username));
+            return profile.getSavedTemplates();
+        }
     }
 
     /**
