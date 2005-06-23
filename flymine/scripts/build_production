@@ -1,0 +1,190 @@
+#!/usr/bin/perl
+
+# Run the FlyMine production build and dump the database occasionally
+# Targets are listed at the end of the script
+
+use strict;
+use warnings;
+
+use Expect;
+
+my $dump_file_prefix;
+
+sub usage
+{
+  die <<'EOF';
+usage:
+  $0 dump_file_prefix
+
+example:
+  $0 /tmp/production_dump
+EOF
+}
+
+if (@ARGV == 1) {
+  $dump_file_prefix = $ARGV[0];
+} else {
+  usage;
+}
+
+my $log_file = "pbuild.log";
+
+open LOG, ">>$log_file" or die "can't open $log_file: $!\n";
+
+my $flymine_properties = "$ENV{HOME}/flymine.properties";
+my @dump_command = qw[pg_dump -C];
+
+sub log_message
+{
+  my $message = shift;
+  my $verbose = shift;
+
+  if (defined $message) {
+    print LOG "$message\n";
+    if (defined $verbose && $verbose) {
+      print STDERR "$message\n";
+    }
+  } else {
+    print LOG "\n";
+  }
+}
+
+sub log_and_print
+{
+  log_message shift, 1;
+}
+
+# run a command and exit the script if it returns a non-zero
+sub run_and_check_status
+{
+  my $command_name = $_[0];
+
+  log_and_print "starting command: @_\n";
+
+  open F, "@_ |" or die "can't run @_: $?\n";
+  if ($? != 0) {
+    log_message "failed with exit code $?: @_\n";
+    exit $?;
+  }
+
+  while (<F>) {
+    log_message "  [$command_name] $_";
+  }
+
+  log_message "\n";
+}
+
+# gets a value from a properties file
+# usages: get_prop_val prop_name file_name
+sub get_prop_val
+{
+  my $key = shift;
+  my $file = shift;
+
+  open F, "$file" or die "cannot open $file: $!\n";
+
+  my $ret_val;
+
+  while (my $line = <F>) {
+    if ($line =~ /$key=(.*)/) {
+      $ret_val = $1;
+    }
+  }
+
+  close F;
+
+  return $ret_val;
+}
+
+sub dump_db
+{
+  my $db = shift;
+  my $user = shift;
+  my $pass = shift;
+  my $out_file = shift;
+
+  my @params = ('-U', $user, '-W', '-f', $out_file, $db);
+
+  log_and_print "\ndumping: @dump_command @params\n";
+
+
+  my $exp = new Expect;
+
+  $exp->raw_pty(1);
+  $exp->spawn(@dump_command, @params)
+    or die "Cannot spawn @dump_command @params: $!\n";
+
+  ## Doesn't work:
+  # $exp->slave->stty(qw(-echo));
+
+  $exp->expect(10, 'Password: ');
+  $exp->send("$pass\n");
+  $exp->soft_close();
+}
+
+
+my $prod_db = get_prop_val "db.production.datasource.databaseName", $flymine_properties;
+my $prod_user = get_prop_val "db.production.datasource.user", $flymine_properties;
+my $prod_pass = get_prop_val "db.production.datasource.password", $flymine_properties;
+
+log_message "read properties:";
+log_message "  prod_db: $prod_db";
+log_message "  prod_user: $prod_user";
+log_message "  prod_pass: $prod_pass";
+log_message;
+
+while (my $line = <DATA>) {
+  if ($line =~ m{
+                    ^\s*\#
+                   |
+                    ^\s*$
+                }x) {
+    next;
+  }
+
+  my ($action, @args) = split " ", $line;
+
+  if ($action eq "run:") {
+    run_and_check_status "ant", @args;
+  } else {
+    if ($action eq "dump:") {
+      if (@args != 1) {
+        die "dump: needs one parameter at: $line\n";
+      }
+      dump_db $prod_db, $prod_user, $prod_pass, $dump_file_prefix . ".$args[0]";
+    } else {
+      die "unknown action \"$action\"\n";
+    }
+  }
+}
+
+__END__
+
+# lines beginning with "run:" list ant targets to run
+# "dump:" lines give the suffix of the postgresql dump file
+# actions are executed in order
+
+run: load-static build-db-production create-indexes-production build-anopheles-production
+
+dump: anopheles
+
+run: build-uniprot-production build-flybase-production
+
+dump: drosophila
+
+run: build-go-production build-psi-production build-rnai-production build-phenotype-production build-orthologues-production build-protein_structure-production
+
+dump: load-stage1
+
+run: build-flyreg-production build-long_oligo_production build-tiling_path-production
+
+dump: load-stage2
+
+run: read-flybase-chromosome-fasta calculate-locations
+run: create-references
+run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
+run: create-overlap-relations create-indexes-production-attribute
+run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
+run: create-flybase-to-uniprot-refs update-publications
+
+dump: postprocess
