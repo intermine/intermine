@@ -10,28 +10,23 @@ package org.intermine.web;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessage;
-
-import org.apache.log4j.Logger;
-
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
 
@@ -40,7 +35,7 @@ import org.intermine.web.results.TableHelper;
  *
  * @author Andrew Varley
  */
-public class IqlQueryAction extends InterMineLookupDispatchAction
+public class IqlQueryAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(IqlQueryAction.class);
 
@@ -60,7 +55,7 @@ public class IqlQueryAction extends InterMineLookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward run(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                              ActionForm form,
                              HttpServletRequest request,
                              HttpServletResponse response)
@@ -93,17 +88,5 @@ public class IqlQueryAction extends InterMineLookupDispatchAction
 
             return mapping.findForward("iqlQuery");
         }
-    }
-
-    /**
-     * Distributes the actions to the necessary methods, by providing a Map from action to
-     * the name of a method.
-     *
-     * @return a Map
-     */
-    protected Map getKeyMethodMap() {
-        Map map = new HashMap();
-        map.put("button.run", "run");
-        return map;
     }
 }
