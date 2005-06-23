@@ -160,6 +160,9 @@
   <target name="clean" depends="init">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
+    <delete>
+      <fileset dir="." includes="velocity.log*, intermine.log*"/>
+    </delete>
   </target>
   
   <target name="clean-all" depends="init, clean">

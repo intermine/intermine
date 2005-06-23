@@ -103,8 +103,8 @@
   </target>
 
   <target name="precompute-templates" depends="-init-build-db">
-    <precompute-templates alias="${objectstore.name}" minRows="0"
-                          templatesFile="${default.template.queries}"/>
+    <precompute-templates alias="${objectstore.name}" userProfileAlias="${userprofile.objectstorewriter.name}"
+                          minRows="0" username="${superuser.account}"/>
   </target>
 
   <!-- MACRO DEFINITIONS -->
