@@ -76,12 +76,9 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         translator.translate(tgtIw);
 
         // print differences
-        String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
-        String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
-
-        if (expectedNotActual.length() > 25) {
-            System.out.println(expectedNotActual);
-            System.out.println(actualNotExpected);
+        String diff = printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
+        if (!diff.equals("")) {
+            System.out.println(diff);
         }
 
         // uncomment to write out a new target items file
