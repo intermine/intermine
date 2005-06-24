@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="build/resources/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
 	<classpathentry kind="src" path="build/model/chado"/>
 	<classpathentry kind="src" path="build/model/ensembl"/>
@@ -22,51 +23,9 @@
 	<classpathentry kind="src" path="model/psi/src/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/intermine/lib/xmlunit1.0.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/xercesImpl-2.6.1.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/wsdl4j.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/velocity-1.3.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/torque-gen-3.2-dev.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/torque-3.2-dev.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/strutstest-2.1.3.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/struts.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/stax-ri-1.0.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/stax-api-1.0.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/standard-1.1.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/servlet.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/saaj.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/postgresql.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/poi-2.5-final-20040302.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/nsuml.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/mockobjects-0.07-jdk1.4.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/mockobjects-0.07-core.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/mail.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/log4j.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/libreadline-java.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/jstl-1.1.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/jena-2.1.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/jaxrpc.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/jakarta-oro.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/icu4j.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/httpunit-1.5.4.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-validator.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-logging-1.0.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-lang-2.0.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-fileupload-1.0.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-discovery.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-digester.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-beanutils-1.6.1.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/checkstyle-all-3.0b1.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/cglib-full-2.0.1-patched.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/catalina-ant.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/castor-0.9.5.3-xml.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/biojava.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/axis.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/antlr.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/AntDoc.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/ant.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/activation.jar"/>
-	<classpathentry kind="lib" path="/intermine/lib/commons-collections-3.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
