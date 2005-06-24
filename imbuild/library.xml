@@ -164,7 +164,7 @@
       <fileset dir="${src.dir}">
         <include name="**/*.java" />
       </fileset>
-      <property key="checkstyle.header.file" value="${library.xml.basedir}/copyright_header.txt"/>
+      <property key="checkstyle.header.file" value="${library.xml.basedir}/checkstyle/copyright_header.txt"/>
     </checkstyle>
     <style in="${build.checkstyle.dir}/checkstyle_report.xml"
            out="${build.checkstyle.dir}/checkstyle_report.html"
