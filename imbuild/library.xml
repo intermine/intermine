@@ -24,29 +24,25 @@
     <property name="resources.dir" location="resources"/>
     <property name="dist.dir" location="dist"/>
     <property name="lib.dir" location="lib"/>
-    <property name="main.build.classes.dir" location="${build.dir}/classes"/>
-    <property name="test.build.classes.dir" location="${build.dir}/test/classes"/>
-    <property name="main.src.dir" location="${src.dir}/"/>
-    <property name="test.src.dir" location="${src.dir}/test"/>
+    <property name="build.classes.dir" location="${build.dir}/classes"/>
     <property name="gen.src.dir" location="${build.dir}/gen/src"/>
-    <property name="main.resources.dir" location="${resources.dir}/"/>
-    <property name="test.resources.dir" location="${resources.dir}/test"/>
     <property name="build.javadoc.dir" value="${build.dir}/javadoc"/>
     <!-- Compilation settings -->
     <property name="javac.source" value="1.4"/>
     <property name="javac.target" value="1.4"/>
     <property name="javac.debug" value="on"/>
     <property name="javac.debuglevel" value="lines,vars,source"/>
-    <property name="main.build.classes.excludes" value="**/*.java"/>
+    <property name="build.classes.excludes" value="**/*.java"/>
     <property name="javac.compilerargs" value=""/>
     <property name="generating.code" value="false"/>
     <!-- Packaging settings -->
-    <property name="main.dist.jar" location="${dist.dir}/${ant.project.name}.jar"/>
-    <property name="test.dist.jar" location="${dist.dir}/${ant.project.name}-test.jar"/>
+    <property name="dist.jar" location="${dist.dir}/${ant.project.name}.jar"/>
     <property name="jar.compress" value="off"/>
     <!-- Javadoc settings -->
     <property name="javadoc.windowtitle" value="${ant.project.name}"/>
     <property name="javadoc.additionalparam" value=""/>
+    <!-- Checkstyle settings -->
+    <property name="build.checkstyle.dir" value="${build.dir}/checkstyle"/>
     <!-- Conditions -->
     <condition property="gen.code">
       <and><istrue value="${generating.code}"/></and>
@@ -90,7 +86,7 @@
   <!-- COMPILE -->
   
   <target name="-init-compile" depends="init, -init-deps">
-    <mkdir dir="${main.build.classes.dir}"/>
+    <mkdir dir="${build.classes.dir}"/>
   </target>
   
   <target name="-pre-compile"/>
@@ -110,8 +106,8 @@
   </target>
   
   <target name="do-compile" depends="-init-macrodef-javac, do-compile-with-gen-src, do-compile-without-gen-src">
-    <copy todir="${main.build.classes.dir}">
-      <fileset dir="${main.src.dir}" excludes="${main.build.classes.excludes}"/>
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${src.dir}" excludes="${build.classes.excludes}"/>
     </copy>
   </target>
   
@@ -155,6 +151,27 @@
   
   <target name="javadoc" depends="-init-javadoc,-javadoc-build"/>
   
+  <!-- CHECKSTYLE -->
+  
+  <target name="checkstyle" depends="init, -init-deps-no-build">
+    <mkdir dir="${build.checkstyle.dir}"/>
+    <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-all-3.0b1.jar"/>
+    <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
+                failureProperty="checkstyle.failure"
+                failOnViolation="false">
+      <classpath refid="main.class.path"/>
+      <formatter type="xml" tofile="${build.checkstyle.dir}/checkstyle_report.xml" />
+      <fileset dir="${src.dir}">
+        <include name="**/*.java" />
+      </fileset>
+      <property key="checkstyle.header.file" value="${library.xml.basedir}/copyright_header.txt"/>
+    </checkstyle>
+    <style in="${build.checkstyle.dir}/checkstyle_report.xml"
+           out="${build.checkstyle.dir}/checkstyle_report.html"
+           style="${library.xml.basedir}/checkstyle/checkstyle-frames.xsl" />
+    <fail message="Some files do not adhere to InterMine coding standards" if="checkstyle.failure"/>
+  </target>
+  
   <!-- CLEAN -->
   
   <target name="clean" depends="init">
@@ -171,14 +188,12 @@
   
   <target name="-init-macrodef-javac">
     <macrodef name="javac" uri="http://www.intermine.org/ns/im-lib-proj/1">
-      <attribute name="srcdir" default="${main.src.dir}"/>
-      <attribute name="destdir" default="${main.build.classes.dir}"/>
+      <attribute name="srcdir" default="${src.dir}"/>
+      <attribute name="destdir" default="${build.classes.dir}"/>
       <attribute name="classpath" default="main.class.path"/>
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
-      <!-- property name="cp" refid="@{classpath}"/>
-      <echo message="main.class.path classpath is ${cp}"/ -->
         <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="modern"
            deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}"
            includeantruntime="false">
