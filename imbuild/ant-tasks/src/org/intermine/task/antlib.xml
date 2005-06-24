@@ -6,4 +6,7 @@
     <typedef
         name="dependencies"
         classname="org.intermine.task.Dependencies"/>
+    <typedef
+        name="xpath-select"
+        classname="org.intermine.task.XPathSelect"/>
 </antlib>
