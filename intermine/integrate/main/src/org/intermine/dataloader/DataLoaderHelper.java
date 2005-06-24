@@ -153,17 +153,21 @@ public class DataLoaderHelper
      * @return a Set of PrimaryKeys
      */
     public static Set getPrimaryKeys(ClassDescriptor cld, Source source) {
-        Properties keys = getKeyProperties(source);
-        Map map = PrimaryKeyUtil.getPrimaryKeys(cld);
         Set keySet = new HashSet();
-        String cldName = TypeUtil.unqualifiedName(cld.getName());
-        String keyList = (String) keys.get(cldName);
-        if (keyList != null) {
-            String[] tokens = keyList.split(",");
-            for (int i = 0; i < tokens.length; i++) {
-                String token = tokens[i].trim();
-                keySet.add(map.get(token));
+        Properties keys = getKeyProperties(source);
+        if (keys != null) {
+            Map map = PrimaryKeyUtil.getPrimaryKeys(cld);
+            String cldName = TypeUtil.unqualifiedName(cld.getName());
+            String keyList = (String) keys.get(cldName);
+            if (keyList != null) {
+                String[] tokens = keyList.split(",");
+                for (int i = 0; i < tokens.length; i++) {
+                    String token = tokens[i].trim();
+                    keySet.add(map.get(token));
+                }
             }
+        } else {
+            throw new IllegalArgumentException("Unable to find keys for source: " + source.getName());
         }
         return keySet;
     }
@@ -185,7 +189,7 @@ public class DataLoaderHelper
         }
         return keys;
     }
-    
+
     /**
      * Generates a query that searches for all objects in the database equivalent to a given
      * example object according to the primary keys defined for the given source.
@@ -204,7 +208,7 @@ public class DataLoaderHelper
         throws MetaDataException {
         return createPKQuery(model, obj, source, idMap, true);
     }
-    
+
     /**
      * Generates a query that searches for all objects in the database equivalent to a given
      * example object according to the primary keys defined for the given source.
@@ -252,7 +256,7 @@ public class DataLoaderHelper
             case 0:
                 if (queryNulls) {
                     return q;
-                } else { 
+                } else {
                     return null;
                 }
             case 1:
@@ -303,7 +307,7 @@ public class DataLoaderHelper
             if (!queryNulls && !objectPrimaryKeyNotNull(model, obj, cld, pk, source)) {
                 continue;
             }
-            
+
             Query query = new Query();
             query.setDistinct(false);
             QueryClass qc = new QueryClass(cld.getType());
@@ -351,7 +355,7 @@ public class DataLoaderHelper
                         }
                         Query refSubQuery =
                             createPKQuery(model, refObj, source, idMap, queryNulls);
-                        
+
                         ClassDescriptor referencedClassDescriptor =
                             ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
                         QueryClass qc2 = new QueryClass(referencedClassDescriptor.getType());
@@ -386,7 +390,7 @@ public class DataLoaderHelper
      * @param model the Model in which to find ClassDescriptors
      * @param obj the Object to check
      * @param cld one of the classes that obj is.  Only primary keys for this classes will be
-     * checked 
+     * checked
      * @param pk the primary key to check
      * @param source the Source database
      * @return true if the the given primary key is non-null for the given object
@@ -406,7 +410,7 @@ public class DataLoaderHelper
                 try {
                     value = TypeUtil.getFieldValue(obj, fieldName);
                 } catch (IllegalAccessException e) {
-                    throw new MetaDataException("Failed to get field " + fieldName 
+                    throw new MetaDataException("Failed to get field " + fieldName
                             + " for key " + pk + " from " + obj, e);
                 }
                 if (value == null) {
@@ -420,7 +424,7 @@ public class DataLoaderHelper
                 try {
                     refObj = (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
                 } catch (IllegalAccessException e) {
-                    throw new MetaDataException("Failed to get field " + fieldName 
+                    throw new MetaDataException("Failed to get field " + fieldName
                             + " for key " + pk + " from " + obj, e);
 
                 }
@@ -431,29 +435,29 @@ public class DataLoaderHelper
                 if (refObj instanceof ProxyReference) {
                     refObj = ((ProxyReference) refObj).getObject();
                 }
-                
+
                 boolean foundNonNullKey = false;
                 Set classDescriptors = model.getClassDescriptorsForClass(refObj.getClass());
                 Iterator cldIter = classDescriptors.iterator();
-                
+
               CLDS:
                 while (cldIter.hasNext()) {
                     ClassDescriptor refCld = (ClassDescriptor) cldIter.next();
 
                     Set primaryKeys;
-                
+
                     if (source == null) {
                         primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
                     } else {
                         primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source);
                     }
-                
+
                     Iterator pkSetIter = primaryKeys.iterator();
 
 
                     while (pkSetIter.hasNext()) {
                         PrimaryKey refPK = (PrimaryKey) pkSetIter.next();
-                    
+
                         if (objectPrimaryKeyNotNull(model, refObj, refCld, refPK, source)) {
                            foundNonNullKey = true;
                            break CLDS;
@@ -466,7 +470,7 @@ public class DataLoaderHelper
                 }
             }
         }
-        
+
         return true;
     }
 
