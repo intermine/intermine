@@ -45,6 +45,8 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
+        System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
+
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
