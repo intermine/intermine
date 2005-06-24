@@ -21,7 +21,7 @@
       <reference ref_id="-1_5"/>
     </collection>
   </item>
-  <item id="-1_14" class="http://www.flymine.org/model/genomic#Comment">
+  <item id="-1_15" class="http://www.flymine.org/model/genomic#Comment">
     <attribute name="text" value="11159 validated baits were obtained using predicted ORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly."/>
     <attribute name="type" value="comment"/>
     <reference name="source" ref_id="-1_2"/>
@@ -52,7 +52,7 @@
   <item id="-1_12" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="14605208"/>
   </item>
-  <item id="-1_15" class="http://www.flymine.org/model/genomic#Comment">
+  <item id="-1_14" class="http://www.flymine.org/model/genomic#Comment">
     <attribute name="text" value="The authors assign a numerical confidence value between 0 and 1 to each interaction. Interactions with a confidence of 0.5 or higher are considered as high confidence interactions. All others are considered as low confidence interactions. For simplified extraction of subsets, the &quot;high&quot; and &quot;low&quot; classification has been added in IntAct."/>
     <attribute name="type" value="confidence-mapping"/>
     <reference name="source" ref_id="-1_2"/>
