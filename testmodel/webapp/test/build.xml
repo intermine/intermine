@@ -7,7 +7,9 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/task.xml"/>
   
-  <target name="-pre-init-deps" depends="library.-pre-init-deps" unless="no.test.init">
+  <target name="test" depends="clear-dbs, tests.test"/>
+  
+  <target name="clear-dbs" unless="no.test.init">
     <!--
       Build and init user-profile and unittest databases early, before building dependencies
       (so that objectstore summary reflects new database).
