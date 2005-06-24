@@ -6,7 +6,7 @@
   
   <target name="do-generate">
     <mkdir dir="${gen.src.dir}/org/intermine/dataconversion"/>
-    <antlr target="${main.src.dir}/org/intermine/dataconversion/itempath.g"
+    <antlr target="${src.dir}/org/intermine/dataconversion/itempath.g"
            outputdirectory="${gen.src.dir}/org/intermine/dataconversion">
       <classpath refid="main.class.path"/>
     </antlr>

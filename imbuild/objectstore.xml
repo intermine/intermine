@@ -14,7 +14,7 @@
   
   <target name="-pre-init" depends="model.-pre-init">
     <property name="build.model.dir" location="${build.dir}/model"/>
-    <property name="objectstore.summary.properties" location="${main.build.classes.dir}/objectstoresummary.properties"/>
+    <property name="objectstore.summary.properties" location="${build.classes.dir}/objectstoresummary.properties"/>
   </target>
   
   <!-- BUILD DB -->
@@ -61,9 +61,9 @@
     <copy file="${build.model.dir}/${model.name}_model.xml"
           tofile="${model.name}_model.xml"
           preservelastmodified="true"/>
-    <mkdir dir="${main.build.classes.dir}"/>
+    <mkdir dir="${build.classes.dir}"/>
     <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
-          todir="${main.build.classes.dir}"/>
+          todir="${build.classes.dir}"/>
   </target>
   
   <target name="-post-generate">

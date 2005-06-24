@@ -70,7 +70,7 @@
         <customize/>
         <formatter type="xml"/>
         <batchtest todir="${test.results.dir}" fork="no">
-          <fileset dir="${main.build.classes.dir}" includes="@{includes}" excludes="@{excludes}">
+          <fileset dir="${build.classes.dir}" includes="@{includes}" excludes="@{excludes}">
             <depend targetdir="${test.results.dir}">
               <mapper type="package" from="*.class" to="TEST-*.xml" />
             </depend>
@@ -78,8 +78,8 @@
         </batchtest>
         <classpath>
           <path refid="main.class.path"/>
-          <pathelement location="${main.build.classes.dir}"/>
-          <pathelement location="${main.resources.dir}"/>
+          <pathelement location="${build.classes.dir}"/>
+          <pathelement location="${resources.dir}"/>
           <pathelement location="${build.test.resources.dir}"/>
         </classpath>
         <syspropertyset>
