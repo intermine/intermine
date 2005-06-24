@@ -253,7 +253,9 @@ public class UniprotDataTranslator extends DataTranslator
                     retval.add(comment);
                 }
             }
-            protein.addCollection(comments);
+            if (comments.getRefIds().size() > 0) {
+                protein.addCollection(comments);
+            }
 
             // 4. create a collection of Publications related to this protein
             // <entry><reference>*
