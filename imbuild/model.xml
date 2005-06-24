@@ -81,9 +81,9 @@
 
   <target name="-init-presetdef-jar">
     <presetdef name="jar" uri="http://www.intermine.org/ns/im-lib-proj/1">
-      <jar compress="${jar.compress}" jarfile="${main.dist.jar}">
-        <fileset dir="${main.build.classes.dir}"/>
-        <fileset dir="${main.resources.dir}"/>
+      <jar compress="${jar.compress}" jarfile="${dist.jar}">
+        <fileset dir="${build.classes.dir}"/>
+        <fileset dir="${resources.dir}"/>
         <fileset file="${build.task.dir}/${model.name}_model.xml"/>
       </jar>
     </presetdef>

@@ -153,24 +153,38 @@
   
   <!-- CHECKSTYLE -->
   
-  <target name="checkstyle" depends="init, -init-deps-no-build">
+  <target name="-init-checkstyle" depends="init, -init-deps-no-build">
     <mkdir dir="${build.checkstyle.dir}"/>
-    <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-all-3.0b1.jar"/>
-    <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
+  </target>
+  
+  <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
+    <lib:checkstyle/>
+  </target>
+  
+  <target name="checkstyle" depends="-init-checkstyle, do-checkstyle"/>
+  
+  <target name="-init-macrodef-checkstyle">
+    <macrodef name="checkstyle" uri="http://www.intermine.org/ns/im-lib-proj/1">
+      <attribute name="srcdir" default="${src.dir}"/>
+      <element name="customize" optional="true"/>
+      <sequential>
+        <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-all-3.0b1.jar"/>
+        <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
-      <classpath refid="main.class.path"/>
-      <formatter type="xml" tofile="${build.checkstyle.dir}/checkstyle_report.xml" />
-      <fileset dir="${src.dir}">
-        <include name="**/*.java" />
-      </fileset>
-      <property key="checkstyle.header.file" value="${library.xml.basedir}/checkstyle/copyright_header.txt"/>
-    </checkstyle>
-    <style in="${build.checkstyle.dir}/checkstyle_report.xml"
-           out="${build.checkstyle.dir}/checkstyle_report.html"
-           style="${library.xml.basedir}/checkstyle/checkstyle-frames.xsl" />
-    <fail message="Some files do not adhere to InterMine coding standards" if="checkstyle.failure"/>
+          <classpath refid="main.class.path"/>
+          <formatter type="xml" tofile="${build.checkstyle.dir}/checkstyle_report.xml" />
+          <customize/>
+          <property key="checkstyle.header.file" value="${library.xml.basedir}/checkstyle/copyright_header.txt"/>
+        </checkstyle>
+        <style in="${build.checkstyle.dir}/checkstyle_report.xml"
+               out="${build.checkstyle.dir}/checkstyle_report.html"
+               style="${library.xml.basedir}/checkstyle/checkstyle-frames.xsl"/>
+        <fail message="Some files do not adhere to InterMine coding standards" if="checkstyle.failure"/>
+      </sequential>
+    </macrodef>
   </target>
+
   
   <!-- CLEAN -->
   
@@ -207,9 +221,9 @@
   
   <target name="-init-presetdef-jar">
     <presetdef name="jar" uri="http://www.intermine.org/ns/im-lib-proj/1">
-      <jar compress="${jar.compress}" jarfile="${main.dist.jar}">
-        <fileset dir="${main.build.classes.dir}"/>
-        <fileset dir="${main.resources.dir}"/>
+      <jar compress="${jar.compress}" jarfile="${dist.jar}">
+        <fileset dir="${build.classes.dir}"/>
+        <fileset dir="${resources.dir}"/>
       </jar>
     </presetdef>
   </target>

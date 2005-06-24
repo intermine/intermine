@@ -1,5 +1,6 @@
 
-<project name="intermine-all" default="default" basedir=".">
+<project name="intermine-all" default="default" basedir="."
+  xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1">
   
   <description>wrapper project for build/testing/cleaning everything</description>
 
@@ -36,6 +37,19 @@
       </fileset>
       <report format="frames" todir="${test.results.dir}"/>
     </junitreport>
+  </target>
+  
+  <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
+    <lib:checkstyle>
+      <customize>
+        <fileset dir="../..">
+          <include name="intermine/objectstore/main/src/**/*.java"/>
+          <include name="intermine/integrate/main/src/**/*.java"/>
+          <include name="intermine/web/main/src/**/*.java"/>
+          <include name="intermine/webapp/main/src/**/*.java"/>
+        </fileset>
+      </customize>
+    </lib:checkstyle>
   </target>
   
   <target name="jar"/>

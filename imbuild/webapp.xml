@@ -6,12 +6,12 @@
   <import file="${webapp.xml.basedir}/library.xml"/>
   
   <target name="-pre-pre-init" depends="library.-pre-pre-init">
-    <property name="main.resources.dir" location="resources/main"/>
+    <property name="resources.dir" location="resources/main"/>
   </target>
   
   <target name="-pre-init" depends="library.-pre-init">
-    <property name="main.dist.war" location="${dist.dir}/${ant.project.name}.war"/>
-    <property name="webinf.dir" location="${resources.dir}/web-inf"/>
+    <property name="dist.war" location="${dist.dir}/${ant.project.name}.war"/>
+    <property name="webinf.dir" location="resources/web-inf"/>
     <property name="web.xml" location="${webinf.dir}/web.xml"/>
     <property name="web.lib.dir" location="${build.dir}/lib"/>
     <!-- War settings -->
@@ -44,7 +44,7 @@
                    username="${webapp.manager}" 
                    password="${webapp.password}"
                    path="/${webapp.path}" 
-                   war="file://${main.dist.war}"/>
+                   war="file://${dist.war}"/>
   </target>
 
   <target name="remove-webapp" depends="init">
@@ -61,11 +61,11 @@
   <target name="-init-presetdef-war">
     <macrodef name="war" uri="http://www.intermine.org/ns/im-webapp-proj/1">
       <sequential>
-        <war compress="${jar.compress}" warfile="${main.dist.war}" webxml="${web.xml}">
-          <classes dir="${main.build.classes.dir}"/>
+        <war compress="${jar.compress}" warfile="${dist.war}" webxml="${web.xml}">
+          <classes dir="${build.classes.dir}"/>
           <lib dir="${web.lib.dir}" excludes="${deploy.excludes}"/>
           <webinf dir="${webinf.dir}" excludes="web.xml"/>
-          <fileset dir="${main.resources.dir}"/>
+          <fileset dir="${resources.dir}"/>
         </war>
       </sequential>
     </macrodef>
