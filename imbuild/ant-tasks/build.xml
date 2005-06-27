@@ -4,7 +4,7 @@
   <import file="../library.xml"/>
   
   <target name="-post-jar">
-    <copy file="${main.dist.jar}" toDir="../lib"/>
+    <copy file="${dist.jar}" toDir="../lib"/>
   </target>
   
 </project>

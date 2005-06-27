@@ -1,4 +1,3 @@
-
 <project name="task" default="default" basedir="." xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
 
   <dirname property="task.xml.basedir" file="${ant.file.task}"/>
@@ -96,6 +95,4 @@
       </sequential>
     </macrodef>
   </target>
-
-  
 </project>
