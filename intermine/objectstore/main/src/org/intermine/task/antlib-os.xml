@@ -15,9 +15,6 @@
         name="retrieve-metadata"
         classname="org.intermine.task.RetrieveMetadataTask"/>
     <typedef
-        name="dot"
-        classname="org.intermine.task.InheritanceDotTask"/>
-    <typedef
         name="model-generation"
         classname="org.intermine.modelproduction.ModelGenerationTask"/>
     <typedef
