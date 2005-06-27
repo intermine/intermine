@@ -240,7 +240,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem1.addCollection(new ReferenceList("featureReporterMaps",
                                                  new ArrayList(Collections.singleton("1_1"))));
 
-
         Item srcItem2 = createSrcItem("FeatureReporterMap", "1_1", "");
         srcItem2.addCollection(new ReferenceList("featureInformationSources",
                                                  new ArrayList(Collections.singleton("2_1"))));
@@ -262,6 +261,69 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expFeatureToReporter.put("3_1", "0_1");
         assertEquals(expFeatureToReporter, translator.featureToReporter);
     }
+
+    public void testTranslateReporterControl() throws Exception {
+        Item srcItem1 = createSrcItem("Reporter", "0_1", "");
+        srcItem1.setReference("controlType", "1_1");
+
+        Item srcItem2 = createSrcItem("OntologyEntry", "1_1", "");
+        srcItem2.setAttribute("category", "ControlType");
+        srcItem2.setAttribute("value", "control_label");
+
+        Set src = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2}));
+        Map srcMap = writeItems(src);
+
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        Item expItem = createTgtItem("Reporter", "0_1", "");
+        expItem.setAttribute("isControl", "true");
+        expItem.setAttribute("controlType", "control_label");
+        Set expected = new HashSet(Collections.singleton(expItem));
+
+        translator.translate(tgtIw);
+        assertEquals(expected, tgtIw.getItems());
+    }
+
+
+    public void testTranslateReporterMaterial() throws Exception {
+        Item srcItem1 = createSrcItem("Reporter", "0_1", "");
+        srcItem1.setAttribute("name", "GH1234");
+        srcItem1.addCollection(new ReferenceList("immobilizedCharacteristics",
+                                                 new ArrayList(Arrays.asList(new Object[] {"1_1"}))));
+
+        Item srcItem2 = createSrcItem("BioSequence", "1_1", "");
+        srcItem2.setReference("type", "2_1");
+
+        Item srcItem3 = createSrcItem("OntologyEntry", "2_1", "");
+        srcItem3.setAttribute("category", "BioSequenceType");
+        srcItem3.setAttribute("value", "cDNA_clone");
+
+
+        Set src = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2, srcItem3}));
+        Map srcMap = writeItems(src);
+
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        Item expItem1 = createTgtItem("Reporter", "0_1", "");
+        expItem1.setAttribute("isControl", "false");
+        expItem1.setReference("material", "-1_1");
+
+        Item expItem2 = createTgtItem("CDNAClone", "-1_1", "");
+        expItem2.setAttribute("identifier", "GH1234");
+
+        Set expected = new HashSet(Arrays.asList(new Object[] {expItem1, expItem2}));
+
+        assertEquals(expected, tgtIw.getItems());
+    }
+
 
     public void testSearchTreatments() throws Exception {
 
@@ -313,6 +375,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslateMicroArrayResult() throws Exception {
         // can't use ItemFactory as bioAssayData reference not in model
         Item srcItem1 = new Item("58_762", srcNs + "BioAssayDatum", "");
+        srcItem1.setAttribute("value", "1.234");
         srcItem1.setReference("quantitationType","40_620");
         srcItem1.setReference("designElement","3_1");
         srcItem1.setReference("bioAssayData","4_1");
@@ -326,18 +389,22 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item srcItem4= createSrcItem("Feature", "3_1", "");
 
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem1, srcItem2, srcItem3}));
+        Item srcItem5 = new Item("58_763", srcNs + "BioAssayDatum", "");
+        srcItem5.setAttribute("value", "Error");
+
+        Set src = new HashSet(Arrays.asList(new Object[]{srcItem1, srcItem2, srcItem3, srcItem4, srcItem5}));
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
-        Item expectedItem = createTgtItem("MicroArrayResult", "58_762", "");
-        expectedItem.setAttribute("scale","log");
-        expectedItem.setAttribute("type","Log Ratio");
-        expectedItem.setReference("analysis","-1_1");
+        Item expItem1 = createTgtItem("MicroArrayResult", "58_762", "");
+        expItem1.setAttribute("value","1.234");
+        expItem1.setAttribute("scale","log");
+        expItem1.setAttribute("type","Log Ratio");
+        expItem1.setReference("analysis","-1_1");
 
-        HashSet expected = new HashSet(Collections.singleton(expectedItem));
+        HashSet expected = new HashSet(Arrays.asList(new Object[] {expItem1}));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -401,40 +468,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(exp, translator.samples);
     }
 
-    public void testMicroArrayResultError() throws Exception {
-        Item srcItem= createSrcItem("BioAssayDatum", "58_762", "");
-        srcItem.setReference("quantitationType","40_620");
-
-        Item srcItem1= createSrcItem("Error", "40_620", "");
-        srcItem1.setAttribute("name", "Signal st dev Cy3");
-        srcItem1.setReference("targetQuantitationType", "38_608");
-
-        Item srcItem2= createSrcItem("MeasuredSignal", "38_608", "");
-        srcItem2.setReference("scale", "1_611");
-
-        Item srcItem3= createSrcItem("OntologyEntry", "1_611", "");
-        srcItem3.setAttribute("value", "linear_scale");
-
-
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3}));
-        Map srcMap = writeItems(src);
-
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
-        Item expectedItem = createTgtItem("MicroArrayResult", "58_762", "");
-        expectedItem.setAttribute("type","Signal st dev Cy3");
-        expectedItem.setAttribute("scale","linear_scale");
-        expectedItem.setReference("analysis","-1_1");
-
-        HashSet expected=new HashSet(Collections.singleton(expectedItem));
-
-        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
-        translator.translate(tgtIw);
-
-        assertEquals(expected, tgtIw.getItems());
-    }
-
 
     public void testTranslateSample() throws Exception {
         Item srcItem1 = createSrcItem("BioSource", "0_1", "");
@@ -484,171 +517,13 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, tgtIw.getItems());
     }
 
-
-    public void XtestBioEntity() throws Exception {
-        Item srcItem= createSrcItem("BioSequence", "0_11", "");
-        srcItem.addReference(new Reference("type","1_13"));
-        srcItem.addCollection(new ReferenceList("sequenceDatabases",
-                   new ArrayList(Arrays.asList(new Object[]{"2_14", "2_15", "2_16", "2_17"}))));
-
-        Item srcItem1= createSrcItem("OntologyEntry", "1_13", "");
-        srcItem1.addAttribute(new Attribute("value", "cDNA_clone"));
-
-        Item srcItem2= createSrcItem("DatabaseEntry", "2_14", "");
-        srcItem2.addAttribute(new Attribute("accession", "FBgn0010173"));
-        srcItem2.addReference(new Reference("database", "3_7"));
-
-        Item srcItem3= createSrcItem("DatabaseEntry", "2_15", "");
-        srcItem3.addAttribute(new Attribute("accession", "AY069331"));
-        srcItem3.addReference(new Reference("database", "3_9"));
-
-        Item srcItem4= createSrcItem("DatabaseEntry", "2_16", "");
-        srcItem4.addAttribute(new Attribute("accession", "AA201663"));
-        srcItem4.addReference(new Reference("database", "3_9"));
-
-        Item srcItem5= createSrcItem("DatabaseEntry", "2_17", "");
-        srcItem5.addAttribute(new Attribute("accession", "AW941561"));
-        srcItem5.addReference(new Reference("database", "3_9"));
-
-        Item srcItem6= createSrcItem("Database", "3_7", "");
-        srcItem6.addAttribute(new Attribute("name", "flybase"));
-
-        Item srcItem7= createSrcItem("Database", "3_9", "");
-        srcItem7.addAttribute(new Attribute("name", "embl"));
-
-        Item srcItem10=createSrcItem("Reporter", "12_50", "");
-        srcItem10.addAttribute(new Attribute("name","LD04815"));
-        srcItem10.addCollection(new ReferenceList("featureReporterMaps",
-                   new ArrayList(Arrays.asList(new Object[]{"7_46"}))));
-        srcItem10.addCollection(new ReferenceList("immobilizedCharacteristics",
-                   new ArrayList(Arrays.asList(new Object[]{"0_11"}))));
-
-        Item srcItem11 = createSrcItem("FeatureReporterMap", "7_46", "");
-        srcItem11.addReference(new Reference("reporter", "12_50"));
-        srcItem11.addCollection(new ReferenceList("featureInformationSources",
-                   new ArrayList(Arrays.asList(new Object[]{"8_47"}))));
-
-        Item srcItem12= createSrcItem("FeatureInformation", "8_47", "");
-        srcItem12.addReference(new Reference("feature", "11_49"));
-
-        Item srcItem13= createSrcItem("Feature", "11_49", "");
-        srcItem13.addReference(new Reference("featureLocation", "9_480"));
-        srcItem13.addReference(new Reference("zone", "10_290"));
-
-        Item srcItem14= createSrcItem("FeatureLocation", "9_480", "");
-        srcItem14.addAttribute(new Attribute("column", "1"));
-        srcItem14.addAttribute(new Attribute("row", "3"));
-
-        Item srcItem15= createSrcItem("FeatureLocation", "10_290", "");
-        srcItem15.addAttribute(new Attribute("column", "2"));
-        srcItem15.addAttribute(new Attribute("row", "5"));
-
-
-        Item srcItem20= createSrcItem("BioAssayDatum", "58_828", "");
-        srcItem20.addReference(new Reference("designElement", "11_49"));
-
-        Item srcItem21= createSrcItem("BioAssayDatum", "58_821", "");
-        srcItem21.addReference(new Reference("designElement", "11_49"));
-
-        Item srcItem22= createSrcItem("BioAssayDatum", "58_823", "");
-        srcItem22.addReference(new Reference("designElement", "11_49"));
-
-        Item srcItem30=createSrcItem("PhysicalArrayDesign", "20_69", "");
-        srcItem30.addCollection(new ReferenceList("featureGroups", new ArrayList(Arrays.asList(new Object[]{ "17_63"}))));
-
-        Item srcItem31=createSrcItem("FeatureGroup", "17_63", "");
-        srcItem31.addCollection(new ReferenceList("features", new ArrayList(Arrays.asList(new Object[]{"11_49"}))));
-
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3, srcItem4, srcItem5, srcItem6, srcItem7, srcItem10, srcItem11, srcItem12, srcItem13, srcItem14, srcItem15, srcItem20, srcItem21, srcItem22, srcItem30, srcItem31 }));
-
-        Map srcMap = writeItems(src);
-
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
-        Item expectedItem = createTgtItem("CDNAClone", "0_11", "");
-        expectedItem.addAttribute(new Attribute("identifier","LD04815"));
-        expectedItem.addCollection(new ReferenceList("synonyms", new ArrayList(Arrays.asList(new Object[]{"2_15", "2_16", "2_17"}))));
-
-        Item expectedItem1 = createTgtItem("Gene", "2_14", "");
-        expectedItem1.addAttribute(new Attribute("organismDbId", "FBgn0010173"));
-
-
-        Item expectedItem2 = createTgtItem("Synonym", "2_15", "");
-        expectedItem2.addAttribute(new Attribute("type", "accession"));
-        expectedItem2.addAttribute(new Attribute("value", "AY069331"));
-        expectedItem2.addReference(new Reference("source", "-1_3"));
-        expectedItem2.addReference(new Reference("subject", "0_11"));
-
-        Item expectedItem3 = createTgtItem("Synonym", "2_16", "");
-        expectedItem3.addAttribute(new Attribute("type", "accession"));
-        expectedItem3.addAttribute(new Attribute("value", "AA201663"));
-        expectedItem3.addReference(new Reference("source",  "-1_3"));
-        expectedItem3.addReference(new Reference("subject", "0_11"));
-
-        Item expectedItem4 = createTgtItem("Synonym", "2_17", "");
-        expectedItem4.addAttribute(new Attribute("type", "accession"));
-        expectedItem4.addAttribute(new Attribute("value", "AW941561"));
-        expectedItem4.addReference(new Reference("source",  "-1_3"));
-        expectedItem4.addReference(new Reference("subject", "0_11"));
-
-        Item expectedItem5 = createTgtItem("OntologyTerm", "1_13", "");
-        expectedItem5.addAttribute(new Attribute("name", "cDNA_clone"));
-
-        Item expectedItem7 = createTgtItem("Database",  "-1_3", "");
-        expectedItem7.addAttribute(new Attribute("title", "embl"));
-
-        Item expectedItem10 = createTgtItem("MicroArrayResult", "58_821", "");
-        expectedItem10.addReference(new Reference("analysis","-1_1"));
-        expectedItem10.addReference(new Reference("material","0_11"));
-        expectedItem10.addReference(new Reference("reporter","12_50"));
-        expectedItem10.addCollection(new ReferenceList("genes",
-                                new ArrayList(Arrays.asList(new Object[]{"2_14"}))));
-
-        Item expectedItem11 = createTgtItem("MicroArrayResult", "58_823", "");
-        expectedItem11.addReference(new Reference("analysis","-1_1"));
-        expectedItem11.addReference(new Reference("material","0_11"));
-        expectedItem11.addReference(new Reference("reporter","12_50"));
-        expectedItem11.addCollection(new ReferenceList("genes",
-                                new ArrayList(Arrays.asList(new Object[]{"2_14"}))));
-
-        Item expectedItem12 = createTgtItem("MicroArrayResult", "58_828", "");
-        expectedItem12.addReference(new Reference("analysis","-1_1"));
-        expectedItem12.addReference(new Reference("material","0_11"));
-        expectedItem12.addReference(new Reference("reporter","12_50"));
-        expectedItem12.addCollection(new ReferenceList("genes",
-                                new ArrayList(Arrays.asList(new Object[]{"2_14"}))));
-
-        Item expectedItem13 = createTgtItem("Reporter", "12_50", "");
-        expectedItem13.addReference(new Reference("material", "0_11"));
-        expectedItem13.addReference(new Reference("location", "7_46"));
-
-        Item expectedItem14 = createTgtItem("MicroArraySlideDesign", "20_69", "");
-
-        Item expectedItem15 = createTgtItem("ReporterLocation", "7_46", "");
-        expectedItem15.addAttribute(new Attribute("localX", "1"));
-        expectedItem15.addAttribute(new Attribute("localY", "3"));
-        expectedItem15.addAttribute(new Attribute("zoneX", "2"));
-        expectedItem15.addAttribute(new Attribute("zoneY", "5"));
-        expectedItem15.addReference(new Reference("design", "20_69"));
-        expectedItem15.addReference(new Reference("reporter", "12_50"));
-
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem1, expectedItem2,expectedItem3, expectedItem4, expectedItem5,  expectedItem7,expectedItem10,  expectedItem11,  expectedItem12, expectedItem13, expectedItem14, expectedItem15 }));
-
-        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
-        translator.translate(tgtIw);
-
-        assertEquals(expected, tgtIw.getItems());
-
-    }
-
-
+    // just make sure no exception thrown
     public void testGetPrefetchDescriptors() throws Exception {
         MageDataTranslator.getPrefetchDescriptors();
 
     }
 
-    public void XtestBioEntity2MAER() throws Exception {
+    public void testBioEntity2MAER() throws Exception {
 
         Item srcItem= createSrcItem("Reporter", "12_45", "");
         srcItem.addCollection(new ReferenceList("featureReporterMaps",
@@ -680,41 +555,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 //         expected.put("0_3", "9_43");
 //         translator.setBioEntityMap(srcItem,tgtItem);
 //         assertEquals(expected, translator.bioEntity2Feature);
-
-    }
-
-    public void XtestBioEntity2Identifier() throws Exception {
-
-        Item srcItem= createSrcItem("Reporter", "12_45", "");
-        srcItem.addAttribute(new Attribute("name", "LD14383"));
-        srcItem.addCollection(new ReferenceList("immobilizedCharacteristics",
-                   new ArrayList(Arrays.asList(new Object[]{"0_3"}))));
-        srcItem.addCollection(new ReferenceList("featureReporterMaps",
-                   new ArrayList(Arrays.asList(new Object[]{"7_41"}))));
-
-        Item srcItem1= createSrcItem("FeatureReporterMap", "7_41", "");
-        srcItem1.addCollection(new ReferenceList("featureInformationSources",
-                    new ArrayList(Arrays.asList(new Object[]{"8_42"}))));
-
-        Item srcItem2= createSrcItem("FeatureInformation", "8_42", "");
-        srcItem2.addReference(new Reference("feature","11_44"));
-
-        Item srcItem3= createSrcItem("BioSequence", "0_3", "");
-        srcItem3.addReference(new Reference("type", "1_5"));
-
-        Item srcItem4 =createSrcItem("OntologyEntry", "1_5", "");
-        srcItem4.addAttribute(new Attribute("value", "CDNA_clone"));
-
-        Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem, srcItem1,srcItem2, srcItem3, srcItem4}));
-        Map itemMap = writeItems(srcItems);
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-        Item tgtItem = createSrcItem("CDNAClone", "0_3", "");
-
-        Map expected = new HashMap();
-//         expected.put("0_3", "LD14383");
-//         translator.setBioEntityMap(srcItem,tgtItem);
-//         assertEquals(expected, translator.bioEntity2IdentifierMap);
 
     }
 
@@ -763,5 +603,5 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     private Item createTgtItem(String className, String itemId, String implementation){
         return tgtItemFactory.makeItem(itemId, tgtNs + className, implementation);
-   }
+    }
 }
