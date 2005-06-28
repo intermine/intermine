@@ -2,6 +2,39 @@
 <classpath>
 	<classpathentry kind="lib" path="build/resources/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
+	<classpathentry kind="src" path="model/chado/src/java"/>
+	<classpathentry kind="src" path="model/chado/src/test"/>
+	<classpathentry kind="src" path="model/diseaseregion/src/java"/>
+	<classpathentry kind="src" path="model/diseaseregion/src/test"/>
+	<classpathentry kind="src" path="model/ensembl-disease/src/java"/>
+	<classpathentry kind="src" path="model/ensembl-disease/src/test"/>
+	<classpathentry kind="src" path="model/ensembl-human/src/java"/>
+	<classpathentry kind="src" path="model/ensembl-human/src/test"/>
+	<classpathentry kind="src" path="model/ensembl-variation/src/java"/>
+	<classpathentry kind="src" path="model/ensembl-variation/src/test"/>
+	<classpathentry kind="src" path="model/firstef/src/java"/>
+	<classpathentry kind="src" path="model/firstef/src/test"/>
+	<classpathentry kind="src" path="model/flyreg/src/java"/>
+	<classpathentry kind="src" path="model/go/src/java"/>
+	<classpathentry kind="src" path="model/go/src/test"/>
+	<classpathentry kind="src" path="model/long_oligo/src/java"/>
+	<classpathentry kind="src" path="model/mage/src/java"/>
+	<classpathentry kind="src" path="model/mage/src/test"/>
+	<classpathentry kind="src" path="model/orthologue/src/java"/>
+	<classpathentry kind="src" path="model/orthologue/src/test"/>
+	<classpathentry kind="src" path="model/region/src/java"/>
+	<classpathentry kind="src" path="model/region/src/test"/>
+	<classpathentry kind="src" path="model/rnai/src/java"/>
+	<classpathentry kind="src" path="model/rnai/src/test"/>
+	<classpathentry kind="src" path="model/taxonomy/src/java"/>
+	<classpathentry kind="src" path="model/taxonomy/src/test"/>
+	<classpathentry kind="src" path="model/tfbs/src/java"/>
+	<classpathentry kind="src" path="model/tfbs/src/test"/>
+	<classpathentry kind="src" path="model/tiling_path/src/java"/>
+	<classpathentry kind="src" path="model/ucsc/src/java"/>
+	<classpathentry kind="src" path="model/ucsc/src/test"/>
+	<classpathentry kind="src" path="model/uniprot/src/java"/>
+	<classpathentry kind="src" path="model/uniprot/src/test"/>
 	<classpathentry kind="src" path="build/model/chado"/>
 	<classpathentry kind="src" path="build/model/ensembl"/>
 	<classpathentry kind="src" path="build/model/fulldata"/>
@@ -23,9 +56,14 @@
 	<classpathentry kind="src" path="model/psi/src/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fulldata"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry kind="src" path="model/homophila/src/test"/>
+	<classpathentry kind="src" path="model/homophila/src/java"/>
+	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.0/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry kind="lib" path="model/homophila/resources"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
