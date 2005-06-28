@@ -38,9 +38,8 @@
       <para>
         FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>.
         Release 2.1 of FlyMine incorporates the following data sources:
-      
-        <sources sources="/sources.xml" version="2.1"/>
       </para>
+        <sources sources="/sources.xml" version="2.1"/>
     </section>
   </column>
   
@@ -49,9 +48,7 @@
       <title>
         FlyMine News:
       </title>
-      <para>
-        <news rss="/rss.xml" name="FlyMine news"/>
-      </para>
+        <news id="news"/> <!-- Source now defined in branding -->
     </section>
 
     <section>

@@ -14,6 +14,6 @@
     class="organism-name">Drosophila</span> and <span
     class="organism-name">Anopheles</span> genomics</headline>
 
-    <funding>FlyMine is funded by <a href="http://www.wellcome.ac.uk/">The
-    Wellcome Trust</a>.</funding> 
+    <funding>FlyMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>.</funding>
+    <rss file="rss.xml" id="news">PPP</rss>
 </brand>
