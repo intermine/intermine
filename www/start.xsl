@@ -8,7 +8,7 @@
     <br/>
     <div align="center">
       <a class="startbutton" href="{xsl:concat($webappprefix,'/begin.do')}">
-        <xsl:apply-templates/> <img src="images/right-arrow.gif" border="0"/>
+        <xsl:apply-templates/> <img src="images/right-arrow.gif" border="0" alt=""/>
       </a>
     </div>
   </xsl:template>

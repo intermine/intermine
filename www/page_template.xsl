@@ -27,13 +27,15 @@
       <head>
         <title><xsl:value-of select="$brand/title"/></title>
         <xsl:for-each select="$brand/stylesheet">
-          <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}"
-                media="screen,print"/>
+          <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}" media="screen,print"/>
         </xsl:for-each>
         <xsl:for-each select="$brand/meta">
           <meta>
             <xsl:copy-of select="@*"/>
           </meta>
+        </xsl:for-each>
+        <xsl:for-each select="$brand/rss">
+            <link rel="alternate" type="application/rss+xml" href="{concat($basedir, '/', @file)}" title="News"/>
         </xsl:for-each>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <!-- The ; below is for Netscape 4 (to avoid generating <script/>) -->
