@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+
+# script to download the latest go-annotation release into a directory like
+# go-annotation/2005-06-09
+# the date used in the directory name is the date on the file on the FTP server
+# the script should be run in /shared/data
+
+use strict;
+use warnings;
+
+use Net::FTP;
+
+my $go_server = "ftp.ebi.ac.uk";
+my $go_dir = "/pub/databases/GO/goa/UNIPROT/";
+my $go_file = "gene_association.goa_uniprot.gz";
+
+my $ftp = Net::FTP->new($go_server, Passive => 1)
+  or die "Cannot connect to $go_server: $@";
+
+$ftp->login("anonymous",'-anonymous@')
+  or die "Cannot login ", $ftp->message;
+
+$ftp->cwd($go_dir);
+
+my $date_stamp = $ftp->mdtm($go_file);
+
+my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) =
+  localtime($date_stamp);
+
+$month += 1;
+$year -= 100;
+$year += 2000;
+
+my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
+
+my $download_dir = "go-annotation/$date_string";
+
+if (-d $download_dir) {
+  die "$download_dir already exists - exiting\n";
+}
+
+mkdir $download_dir;
+
+print STDERR "getting $go_server/$go_dir/$go_file to $download_dir\n";
+
+$ftp->get($go_file, "$download_dir/$go_file");
