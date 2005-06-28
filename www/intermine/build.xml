@@ -1,4 +1,4 @@
-<project name="intermine-www" default="www-intermine" basedir=".">
+<project name="intermine-www" default="transform-site" basedir=".">
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="../site"/>
   <property name="src.doc" location="../../intermine/doc"/>
