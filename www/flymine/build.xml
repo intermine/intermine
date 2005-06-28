@@ -45,7 +45,7 @@
     <filter token="SOURCEREF" value="${build.www}"/>
 
     <copy todir="${build.www}/tmp" filtering="true">
-      <fileset dir="style">
+      <fileset dir="xslt">
         <include name="webapp_manual_params.xsl"/>
       </fileset>
     </copy>
@@ -188,7 +188,7 @@
 -->
 
     <exec executable="xmlto">
-      <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m style/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
+      <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m xslt/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
     </exec>
 
   </target>
