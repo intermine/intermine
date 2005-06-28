@@ -158,7 +158,11 @@
   </target>
   
   <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
-    <lib:checkstyle/>
+    <lib:checkstyle>
+      <customize>
+        <fileset dir="${src.dir}" includes="**/*.java"/>
+      </customize>
+    </lib:checkstyle>
   </target>
   
   <target name="checkstyle" depends="-init-checkstyle, do-checkstyle"/>
