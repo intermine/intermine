@@ -21,8 +21,9 @@
   <collection name="assays" referenced-type="org.flymine.model.genomic.MicroArrayAssay" ordered="true" reverse-reference="experiment"/>
 </class>
 <class name="org.flymine.model.genomic.Reporter" is-interface="true">
+  <attribute name="isControl" type="java.lang.Boolean"/>
   <attribute name="failType" type="java.lang.String"/>
-  <attribute name="type" type="java.lang.String"/>
+  <attribute name="controlType" type="java.lang.String"/>
   <reference name="material" referenced-type="org.flymine.model.genomic.BioEntity"/>
   <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" ordered="true" reverse-reference="reporter"/>
 </class>
@@ -36,15 +37,15 @@
   <attribute name="name" type="java.lang.String"/>
   <attribute name="description" type="java.lang.String"/>
   <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="samples"/>
-  <collection name="characteristics" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
+  <collection name="characteristics" referenced-type="org.flymine.model.genomic.SampleCharacteristic" ordered="true"/>
   <collection name="treatments" referenced-type="org.flymine.model.genomic.Treatment" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.MicroArrayResult" extends="org.flymine.model.genomic.ExperimentalResult" is-interface="true">
   <attribute name="scale" type="java.lang.String"/>
-  <attribute name="flag" type="java.lang.String"/>
   <attribute name="type" type="java.lang.String"/>
   <attribute name="isControl" type="java.lang.Boolean"/>
   <attribute name="value" type="java.lang.Float"/>
+  <reference name="sample" referenced-type="org.flymine.model.genomic.BioEntity"/>
   <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
   <reference name="reporter" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
   <reference name="material" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="results"/>
