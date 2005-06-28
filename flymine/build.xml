@@ -129,9 +129,9 @@
   
     <!-- set the classpath for the build - basically everything in lib -->
     <path id="base.class.path">
+      <pathelement path="${build.resources}"/>
       <path refid="main.class.path"/>
       <pathelement path="${build.java}"/>
-      <pathelement path="${build.resources}"/>
       <fileset dir="${lib}">
         <patternset refid="lib.build"/>
       </fileset>
@@ -198,6 +198,7 @@
       <pathelement location="${build.model}/diseaseregion"/>
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
+      <pathelement location="${build.model}/homophila"/>
   
       <fileset dir="${model}">
         <patternset refid="lib.models"/>
@@ -432,6 +433,13 @@
   <!-- merge rnai model additions with current genomic model -->
   <target name="merge-rnai-model" depends="prepare-genomic-model">
     <merge-genomic-additions additionsFile="${model}/rnai/rnai_additions.xml"/>
+  </target>
+
+  <!-- HOMOPHILA MODEL GENERATION -->
+
+  <!-- merge rnai model additions with current genomic model -->
+  <target name="merge-homophila-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/homophila/homophila_additions.xml"/>
   </target>
 
   <!-- SEQUENCE ONTOLOGY MODEL GENERATION -->
@@ -956,7 +964,37 @@
 
   <!-- load RNAI into production -->
   <target name="build-rnai-production" depends="retrieve-rnai, load-rnai"/>
+  
+  <!-- HOMOPHILA PIPELINE -->
+  
+  <!-- Build homophila tgt items database -->
+  
+  <target name="build-db-homophila-tgt-items" depends="prepare">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.homophila-tgt-items-std"/>
+    </ant>
+  </target>
+  
+  <target name="retrieve-homophila" depends="prepare, compile-homophila-java, build-db-homophila-tgt-items">
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <convert-file clsName="org.flymine.dataconversion.HomophilaConverter"
+                  osName="osw.homophila-tgt-items" model="homophila"
+                  param1="/Users/tom/Development/genes_synonyms">
+      <fileset dir="/Users/tom/Development/" includes="homophila_all_3.5k"/>
+    </convert-file>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.homophila-tgt-items-std"/>
+    </ant>
+  </target>
 
+  
 
   <!-- PHENOTYPE PIPELINE -->
 
@@ -2141,6 +2179,20 @@
   <target name="rnai-test" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+  
+  <target name="compile-homophila-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="homophila"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="homophila-test" depends="prepare-build-model, prepare-test">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="homophila"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
