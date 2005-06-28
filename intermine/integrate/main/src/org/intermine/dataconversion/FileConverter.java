@@ -66,6 +66,15 @@ public abstract class FileConverter extends DataConverter
     }
 
     /**
+     * Store a single Item
+     * @param item the Item
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    protected void store(Item item) throws ObjectStoreException {
+        writer.store(ItemHelper.convert(item));
+    }
+    
+    /**
      * Store a Collection of Items
      * @param c the Collection
      * @throws ObjectStoreException if an error occurs in storing
@@ -75,5 +84,4 @@ public abstract class FileConverter extends DataConverter
             writer.store(ItemHelper.convert((Item) i.next()));
         }
     }
-
 }
