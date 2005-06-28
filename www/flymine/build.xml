@@ -15,6 +15,8 @@
   <property name="branding" value="flymine"/>
 
   <target name="prepare">
+    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+    <property file="${build.properties.local}"/>
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <include name="**/*"/>
@@ -67,8 +69,6 @@
   </target>
 
   <target name="style-site" depends="prepare">
-    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
-    <property file="${build.properties.local}"/>
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${flymine.main.stylesheet}" includes="**/*.xml"
            force="false">
@@ -85,8 +85,6 @@
   </target>
 
   <target name="validate-site-xml" depends="prepare">
-    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
-    <property file="${build.properties.local}"/>
     <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
         <exclude name="internal/**"/>
@@ -103,8 +101,6 @@
 
   <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">
-    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
-    <property file="${build.properties.local}"/>
     <fixcrlf srcdir="${dist.www}"
        eol="crlf"
        includes="**/*.css"/>
