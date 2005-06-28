@@ -95,20 +95,34 @@ public class MageConverter extends FileConverter
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
-        File f = File.createTempFile("mageconvert", "xml");
+        File f = new File(new File(System.getProperty("java.io.tmpdir")), "mageconvert.xml");
+        File dtd = new File(new File(System.getProperty("java.io.tmpdir")), "MAGE-ML.dtd");
+        BufferedReader dtdReader =  new BufferedReader(new
+                InputStreamReader(getClass().getClassLoader().getResourceAsStream("MAGE-ML.dtd")));
         try {
+            // write temporary file, MAGEreader wants write access for some reason
             Writer fileWriter = new FileWriter(f);
             int c;
             while ((c = reader.read()) > 0) {
                 fileWriter.write(c);
             }
             fileWriter.close();
+
+            // copy MAGE-ML.dtd to the same place
+            fileWriter = new FileWriter(dtd);
+            while ((c = dtdReader.read()) > 0) {
+                fileWriter.write(c);
+            }
+            fileWriter.close();
+
             MAGEReader mageReader = new MAGEReader(f.getPath());
             createItem(mageReader.getMAGEobj());
         } finally {
             f.delete();
+            dtd.delete();
         }
     }
+
 
     protected void setQTypes() {
         // param1 is a comma separated list of QuantitationTypes to include,
@@ -243,8 +257,7 @@ public class MageConverter extends FileConverter
                 item = fItem;
             }
             storeItem = false;
-        } else if (className.equals("MeasuredBioAssayData")
-            || className.equals("DerivedBioAssayData")) {
+        } else if (className.equals("DerivedBioAssayData")) {
             BioAssayData bad = (BioAssayData) obj;
             String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                 .getFilenameURI();
