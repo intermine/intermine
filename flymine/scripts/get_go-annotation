@@ -11,7 +11,7 @@ use warnings;
 use Net::FTP;
 
 my $go_server = "ftp.ebi.ac.uk";
-my $go_dir = "/pub/databases/GO/goa/UNIPROT/";
+my $go_dir = "pub/databases/GO/goa/UNIPROT";
 my $go_file = "gene_association.goa_uniprot.gz";
 
 my $ftp = Net::FTP->new($go_server, Passive => 1)
@@ -44,3 +44,7 @@ mkdir $download_dir;
 print STDERR "getting $go_server/$go_dir/$go_file to $download_dir\n";
 
 $ftp->get($go_file, "$download_dir/$go_file");
+
+print STDERR "getting $go_server/$go_dir/README to $download_dir\n";
+
+$ftp->get("README", "$download_dir/README");
