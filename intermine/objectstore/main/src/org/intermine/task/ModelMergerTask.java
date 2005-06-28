@@ -10,6 +10,7 @@ package org.intermine.task;
  *
  */
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Set;
@@ -29,15 +30,15 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 
 public class ModelMergerTask extends Task
 {
-    protected String inputModelFile;
-    protected String additionsFile;
-    protected String outputModelFile;
+    protected File inputModelFile;
+    protected File additionsFile;
+    protected File outputModelFile;
     
     /**
      * Set the model to add additions to.
      * @param file path to model file
      */
-    public void setInputModelFile(String file) {
+    public void setInputModelFile(File file) {
         inputModelFile = file;
     }
     
@@ -45,7 +46,7 @@ public class ModelMergerTask extends Task
      * The file containing model additions.
      * @param file the additions file
      */
-    public void setAdditionsFile(String file) {
+    public void setAdditionsFile(File file) {
         additionsFile = file;
     }
     
@@ -53,7 +54,7 @@ public class ModelMergerTask extends Task
      * Path of file to write resulting model to. May be the same as <code>inputModelFile</code>.
      * @param file path to write resulting model to
      */
-    public void setOutputFile(String file) {
+    public void setOutputFile(File file) {
         outputModelFile = file;
     }
 
