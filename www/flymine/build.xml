@@ -1,4 +1,4 @@
-<project name="flymine-www" default="www-flymine" basedir=".">
+<project name="flymine-www" default="transform-site" basedir=".">
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="../site"/>
   <property name="src.doc" location="../../flymine/doc"/>
