@@ -95,9 +95,9 @@ public class ModelMergerTaskTest extends TestCase
 
     public void testExecute() throws Exception {
         ModelMergerTask task = new ModelMergerTask();
-        task.setAdditionsFile(addition.getAbsolutePath());
-        task.setInputModelFile(input.getAbsolutePath());
-        task.setOutputFile(output.getAbsolutePath());
+        task.setAdditionsFile(addition);
+        task.setInputModelFile(input);
+        task.setOutputFile(output);
         
         long startTime = System.currentTimeMillis();
         task.execute();
