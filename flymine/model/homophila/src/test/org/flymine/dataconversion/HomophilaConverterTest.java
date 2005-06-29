@@ -10,6 +10,8 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +20,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.xml.full.FullParser;
 
@@ -36,10 +37,16 @@ public class HomophilaConverterTest extends TestCase
     }
     
     public void testProcess() throws Exception {
+        File diseases = File.createTempFile("diseases", "");
+        FileOutputStream out = new FileOutputStream(diseases);
+        IOUtils.copy(getClass().getClassLoader().getResourceAsStream("test/HomophilaTestDiseaseInput"), out);
+        out.close();
+        
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("test/HomophilaConverterTestInput"));
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new HomophilaConverter(itemWriter);
+        HomophilaConverter converter = new HomophilaConverter(itemWriter);
+        converter.setDiseasefile(diseases);
         converter.process(new StringReader(input));
         converter.close();
         System.out.println(itemWriter.getItems());
