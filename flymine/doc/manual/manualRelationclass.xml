@@ -42,7 +42,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="relationClass1.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase>Relation Class</phrase></textobject>
     </mediaobject>
   </section>
 </article>

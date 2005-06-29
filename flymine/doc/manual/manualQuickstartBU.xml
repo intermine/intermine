@@ -29,7 +29,7 @@
           <mediaobject>
             <imageobject>
               <imagedata fileref="mainPage1.png" />
-            </imageobject>
+            </imageobject><textobject><phrase>Main Page</phrase></textobject>
           </mediaobject>
 
    </section>
@@ -131,7 +131,7 @@
             <mediaobject>
               <imageobject>
                 <imagedata fileref="classSelection2.png" />
-              </imageobject>
+              </imageobject><textobject><phrase>Class Selection</phrase></textobject>
             </mediaobject>
 
          <itemizedlist>
@@ -155,7 +155,7 @@
           <mediaobject>
             <imageobject>
               <imagedata fileref="../tutorials/classSelection1.png" />
-            </imageobject>
+            </imageobject><textobject><phrase>Class Selection</phrase></textobject>
           </mediaobject>
 
         <itemizedlist>
@@ -204,7 +204,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="queryBuilder1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase>Query Builder</phrase></textobject>
         </mediaobject>
 
          <orderedlist>
@@ -243,7 +243,7 @@
             <mediaobject>
               <imageobject>
                 <imagedata fileref="modelBrowser2.png" />
-              </imageobject>
+              </imageobject><textobject><phrase>Model Browser</phrase></textobject>
             </mediaobject>
           </listitem>
 
@@ -274,7 +274,7 @@
             <mediaobject>
               <imageobject>
                 <imagedata fileref="constraintsList1.png" />
-              </imageobject>
+              </imageobject><textobject><phrase>Constraints List</phrase></textobject>
             </mediaobject>
           </listitem>
 
@@ -302,7 +302,7 @@
             <mediaobject>
               <imageobject>
                 <imagedata fileref="fieldsSelected1.png" />
-              </imageobject>
+              </imageobject><textobject><phrase>Fields Selected</phrase></textobject>
             </mediaobject>
 
           </listitem>
@@ -343,7 +343,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="../tutorials/resultsQuery1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase>Results Query</phrase></textobject>
         </mediaobject>
      
   </section>
@@ -364,7 +364,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="modelBrowser_browsing1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase>Browsing</phrase></textobject>
         </mediaobject>
 
 
@@ -380,7 +380,7 @@
        <mediaobject>
           <imageobject>
             <imagedata fileref="resultsDetails1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase>Results Details</phrase></textobject>
         </mediaobject>
 
 

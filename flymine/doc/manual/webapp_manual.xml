@@ -55,6 +55,9 @@
         <imageobject>
           <imagedata fileref="mainQueryPage1.png" />
         </imageobject>
+        <textobject>
+            <phrase>Main Query Page</phrase>
+        </textobject>
       </mediaobject>
 
       <para>Different types of data in FlyMine are described by
@@ -184,6 +187,9 @@
         <imageobject>
           <imagedata fileref="classSelection1.png" />
         </imageobject>
+        <textobject>
+            <phrase>class Selection</phrase>
+        </textobject>
       </mediaobject>
 
       <para>
@@ -205,6 +211,9 @@
         <imageobject>
           <imagedata fileref="classSelectionAll1.png" />
         </imageobject>
+        <textobject>
+            <phrase>Class Selection All</phrase>
+        </textobject>
       </mediaobject>
 
       <para>
@@ -227,8 +236,10 @@
      <mediaobject>
         <imageobject>
           <imagedata fileref="browsingModel1.png" />
-
         </imageobject>
+        <textobject>
+            <phrase>Browsing Model</phrase>
+        </textobject>
       </mediaobject>
  
     </sect1>
@@ -264,6 +275,9 @@
         <imageobject>
           <imagedata fileref="queryBuilder1.png" />
         </imageobject>
+        <textobject>
+            <phrase>Query Builder</phrase>
+        </textobject>
       </mediaobject>
 
       <sect2>
@@ -304,6 +318,9 @@
           <imageobject>
             <imagedata fileref="modelBrowser1.png" />
           </imageobject>
+          <textobject>
+              <phrase>Model Browser</phrase>
+          </textobject>
         </mediaobject>
       </sect2>
 
@@ -335,8 +352,11 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="constraining1.png" />
+              <imagedata fileref="constraining1.png" />
           </imageobject>
+          <textobject>
+              <phrase>Constraining</phrase>
+            </textobject>
         </mediaobject>
       </sect2>
 
@@ -387,6 +407,9 @@
           <imageobject>
             <imagedata fileref="showFields1.png" />
           </imageobject>
+          <textobject>
+              <phrase>Show Fields</phrase>
+            </textobject>
         </mediaobject>
       </sect2>
   </sect1>
@@ -445,6 +468,9 @@
         <imageobject>
           <imagedata fileref="results1.png" />
         </imageobject>
+        <textobject>
+            <phrase>Results</phrase>
+        </textobject>
       </mediaobject>
 
       <sect1>
@@ -464,6 +490,9 @@
           <imageobject>
             <imagedata fileref="modelBrowserBrowsing1.png" />
           </imageobject>
+          <textobject>
+              <phrase>Model Browser Browsing</phrase>
+          </textobject>
         </mediaobject>
 
         <para>
@@ -493,6 +522,9 @@
         <imageobject>
           <imagedata fileref="resultsDetails1.png" />
         </imageobject>
+        <textobject>
+            <phrase>Results Details</phrase>
+        </textobject>
       </mediaobject>
       </sect1>
  
@@ -526,6 +558,9 @@
         <imageobject>
           <imagedata fileref="browsing1.png" />
         </imageobject>
+        <textobject>
+            <phrase>Browsing</phrase>
+        </textobject>
       </mediaobject>
 
     </chapter>
@@ -557,6 +592,9 @@
             <imageobject>
               <imagedata fileref="templates1.png" />
             </imageobject>
+            <textobject>
+                <phrase>Templates</phrase>
+            </textobject>
           </mediaobject>
 
         </listitem>
@@ -585,6 +623,9 @@
             <imageobject>
               <imagedata fileref="templates2.png" />
             </imageobject>
+            <textobject>
+                <phrase>Templates #2</phrase>
+            </textobject>
           </mediaobject>
 
         </listitem>
@@ -749,6 +790,9 @@
       <imageobject>
         <imagedata fileref="classSelection1.png" />
       </imageobject>
+      <textobject>
+          <phrase>Class Selection</phrase>
+      </textobject>
     </mediaobject>
 
     <para>
@@ -767,6 +811,9 @@
       <imageobject>
         <imagedata fileref="classSelectionAll1.png" />
       </imageobject>
+      <textobject>
+          <phrase>Class SelectionAll</phrase>
+      </textobject>
     </mediaobject>
 
     <sect2>
@@ -793,7 +840,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="browsingModel1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </sect2>
   </sect1>
@@ -831,7 +878,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="queryBuilder1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
    </sect1>
 
@@ -865,7 +912,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="modelBrowser1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     
 
@@ -934,7 +981,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="fields1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </sect2>
   </sect1>
@@ -966,7 +1013,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="constraining1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </sect1>
 
@@ -996,7 +1043,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="showFields1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </sect1>
 
@@ -1109,7 +1156,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="browsing1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </sect1>
 
@@ -1131,7 +1178,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="modelBrowserBrowsing1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
  
    </sect1>
@@ -1167,7 +1214,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="templates1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
 
     </sect1>
@@ -1192,7 +1239,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="templates1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -1219,7 +1266,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="templates2.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
       </listitem>
@@ -1286,7 +1333,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="tableResults1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
 
 
@@ -1311,7 +1358,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="tableResults2.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
         </sect1>
@@ -1335,7 +1382,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="geneDetails1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
        </sect1>
@@ -1368,7 +1415,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="resultsDetails1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
    </sect1>
 
@@ -1423,7 +1470,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="savingBags1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
    </sect1>
 
@@ -1440,7 +1487,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="createBag1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
 
 
@@ -1460,7 +1507,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="createBag2.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </sect1>
 
@@ -1483,7 +1530,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="logicalOps1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
 
     <para>
@@ -1499,7 +1546,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="constrain2Bag1.png" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
  
 
@@ -1763,13 +1810,13 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="classDiag3.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
 
     <mediaobject>
       <imageobject>
         <imagedata fileref="objectDiag1.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </chapter>
 
@@ -1794,7 +1841,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="constrainDiag2.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </chapter>
 
@@ -1819,7 +1866,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="constrainDiag1.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </chapter>
 
@@ -1839,7 +1886,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="constrainDiag3.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </chapter>
 

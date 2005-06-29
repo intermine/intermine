@@ -71,7 +71,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="classDiag2.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </section>
 
@@ -110,7 +110,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="constrainDiag1.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </section>
 
@@ -145,7 +145,7 @@
     <mediaobject>
       <imageobject>
         <imagedata fileref="classes.gif" />
-      </imageobject>
+      </imageobject><textobject><phrase> </phrase></textobject>
     </mediaobject>
   </section>
 </article>

@@ -35,7 +35,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_1.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -47,7 +47,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_2.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -60,7 +60,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_3.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -73,7 +73,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_4.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -97,7 +97,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_6.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -110,7 +110,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_7.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -122,7 +122,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_8.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -133,7 +133,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_9.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
 
@@ -159,7 +159,7 @@
       <mediaobject>
         <imageobject>
           <imagedata fileref="use_case_11.png" />
-        </imageobject>
+        </imageobject><textobject><phrase> </phrase></textobject>
       </mediaobject>
     </listitem>
   </itemizedlist>
