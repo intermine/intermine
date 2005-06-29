@@ -69,11 +69,31 @@
         <!-- necessary until we can accommodate "presentation" within docbook -->
         <exclude name="doc/presentations/index.xml"/>
       </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+          location="../dtd/sdocbook-1.0.dtd"/>
+      </xmlcatalog>
     </xmlvalidate>
   </target>
 
+  <target name="validate-site-xhtml"
+          depends="validate-site-xml, style-site">
+    <xmlvalidate warn="yes">
+      <fileset dir="${dist.www}" includes="**/*.html">
+        <exclude name="internal/**"/>
+        <exclude name="images/index.html"/>
+      </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
+          location="../dtd/xhtml1-transitional.dtd"/>
+        </xmlcatalog>
+   </xmlvalidate>
+  </target>
+
   <target name="transform-site"
-          depends="validate-site-xml, style-site"
+          depends="validate-site-xml, style-site, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
 
   <target name="release-www" depends="transform-site"
