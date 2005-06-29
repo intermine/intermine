@@ -1,9 +1,8 @@
 <?xml version='1.0' encoding="utf-8"?>
 <xsl:stylesheet
+   xmlns="http://www.w3.org/1999/xhtml"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   version='1.0'
-   xmlns:ni="xalan://org.apache.xalan.lib.NodeInfo"
-   exclude-result-prefixes="ni">
+   version='1.0'>
 
   <xsl:import href="../../ulink.xsl"/>
   <xsl:import href="../../menu.xsl"/>
@@ -50,7 +49,7 @@
               <td id="sidebar" valign="top" width="15%">
                 <xsl:call-template name="sidebar"/>
               </td>
-              <td cellpadding="0" id="static-content" valign="top" width="85%">
+              <td id="static-content" valign="top" width="85%">
                 <xsl:call-template name="body.attributes"/>
                 <xsl:call-template name="user.header.navigation"/>
 
@@ -83,17 +82,10 @@
 
   <!-- inserted in the HEAD element -->
   <xsl:template name="user.head.content">
-    <title><xsl:value-of select="$brand/title"/></title>
     <xsl:for-each select="$brand/stylesheet">
       <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}"
             media="screen,printer"/>
     </xsl:for-each>
-    <xsl:for-each select="$brand/meta">
-      <meta>
-        <xsl:copy-of select="@*"/>
-      </meta>
-    </xsl:for-each>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   </xsl:template>
 
   <xsl:template name="gentext.nav.home">

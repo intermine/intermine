@@ -201,7 +201,7 @@
 
   <target name="webapp-manual-html" depends="prepare">
     <antcall target="webapp-manual-process">
-      <param name="output.type" value="html"/>
+      <param name="output.type" value="xhtml"/>
     </antcall>
   </target>
 
