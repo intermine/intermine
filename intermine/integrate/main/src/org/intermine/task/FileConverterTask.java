@@ -14,6 +14,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -23,8 +26,10 @@ import org.intermine.dataconversion.FileConverter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.DynamicAttribute;
 import org.apache.tools.ant.types.FileSet;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -35,7 +40,7 @@ import org.apache.log4j.Logger;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class FileConverterTask extends ConverterTask
+public class FileConverterTask extends ConverterTask implements DynamicAttribute
 {
     protected static final Logger LOG = Logger.getLogger(FileConverterTask.class);
 
@@ -43,6 +48,7 @@ public class FileConverterTask extends ConverterTask
     protected String clsName;
     protected String param1 = null;
     protected String param2 = null;
+    protected Map dynamicAttrs = new HashMap();
 
     /**
      * Set the source specific subclass of FileConverter to run
@@ -109,11 +115,18 @@ public class FileConverterTask extends ConverterTask
             Constructor m = c.getConstructor(new Class[] {ItemWriter.class});
             FileConverter converter = (FileConverter) m.newInstance(new Object[] {writer});
             if (param1 != null) {
+                System.err .println("Using param1 - please dynamic properties"
+                        + "instead (see FileConverterTask)");
                 converter.setParam1(param1);
             }
             if (param2 != null) {
+                System.err .println("Using param2 - please dynamic properties"
+                        + "instead (see FileConverterTask)");
                 converter.setParam2(param2);
             }
+            
+            configureDynamicAttributes(converter);
+            
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
@@ -138,5 +151,37 @@ public class FileConverterTask extends ConverterTask
         } catch (Exception e) {
             throw new BuildException(e);
         }
+    }
+    
+    /**
+     * Call setters on the converter bean to pass any dynamic properties
+     * passed through from ant.
+     * @param bean the converter
+     */
+    private void configureDynamicAttributes(FileConverter bean) {
+        Iterator iter = dynamicAttrs.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String propName = (String) entry.getKey();
+            Object propValue = entry.getValue();
+            try {
+                Class propType = PropertyUtils.getPropertyType(bean, propName);
+                if (propType != null) {
+                    if (propType.equals(File.class)) {
+                        propValue = getProject().resolveFile((String) propValue);
+                    }
+                    PropertyUtils.setProperty(bean, propName, propValue);
+                } else {
+                    
+                }
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
+        }
+    }
+
+    public void setDynamicAttribute(String name, String value)
+        throws BuildException {
+        dynamicAttrs.put(name, value);
     }
 }
