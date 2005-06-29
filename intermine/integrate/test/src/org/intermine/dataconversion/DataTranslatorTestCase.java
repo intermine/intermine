@@ -65,7 +65,7 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
         if (ns.equals("http://www.flymine.org/model/genomic#")) {
             return Model.getInstanceByName("genomic");
         }
-         
+
         throw new RuntimeException("can't find Model for: " + ns);
     }
 
@@ -100,8 +100,27 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
     }
 
     /**
+     * If given expected and actual item sets differ return a string detailing items in expected
+     * and not in actual and in actual but not expected.
+     * @param expected the expected set of org.intermine.xml.full.Items
+     * @param actual the actual set of org.intermine.xml.full.Items
+     * @return the differences between the to
+     */
+    public String printCompareItemSets(Set expected, Set actual) {
+        String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, actual);
+        String actualNotExpected = "in actual, not expected: " + compareItemSets(actual, expected);
+
+        if ((expectedNotActual.length() > 27) || (actualNotExpected.length() > 27)) {
+            return expectedNotActual + System.getProperty("line.separator") + actualNotExpected;
+        }
+        return "";
+    }
+
+
+    /**
      * Get the source Model for this test.
      * @return the source Model
      */
     protected abstract String getSrcModelName();
 }
+
