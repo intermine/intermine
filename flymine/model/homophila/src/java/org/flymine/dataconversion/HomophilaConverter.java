@@ -11,6 +11,7 @@ package org.flymine.dataconversion;
  */
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -67,6 +68,8 @@ public class HomophilaConverter extends FileConverter
     protected int id = 0;
     protected int matchCount = 0;
 
+    protected File diseaseFile;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -117,6 +120,16 @@ public class HomophilaConverter extends FileConverter
     }
 
     /**
+     * Set the disease description input file. This file just contains OMIM ids and
+     * several lines of description for each id.
+     * 
+     * @param diseaseFile disease description input file
+     */
+    public void setDiseaseFile(File diseaseFile) {
+        this.diseaseFile = diseaseFile;
+    }
+    
+    /**
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
@@ -146,13 +159,17 @@ public class HomophilaConverter extends FileConverter
             if (homophilaEntries.size() > 0) {
                 String[] previous = (String[]) homophilaEntries.get(homophilaEntries.size() - 1);
                 if (equalEntry(array, previous)) {
-                    if (!array[DESC].equals(previous[DESC])) {
+                    if (array[DESC].indexOf(previous[DESC]) == -1) {
                         previous[DESC] += "; " + array[DESC];
                     }
                     continue;
                 }
             }
             homophilaEntries.add(array);
+            LOG.info(array[0] + "\t" + array[1] + "\t" +
+                     array[2] + "\t" + array[3] + "\t" +
+                     array[4] + "\t" + array[5] + "\t" +
+                     array[6] + "\t");
         }
         
         LOG.info("" + homophilaEntries.size() + " entries read.");
