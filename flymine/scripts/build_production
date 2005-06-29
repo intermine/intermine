@@ -16,14 +16,30 @@ sub usage
   die <<'EOF';
 usage:
   $0 dump_file_prefix
+or
+  $0 -v dump_file_prefix
+
+the -v flag is passed to ant
 
 example:
   $0 /tmp/production_dump
 EOF
 }
 
-if (@ARGV == 1) {
-  $dump_file_prefix = $ARGV[0];
+my $verbose = 0;
+
+if (@ARGV == 1 or @ARGV == 2) {
+  if (@ARGV == 2) {
+    if ($ARGV[0] eq '-v') {
+      $verbose = 1;
+    } else {
+      warn "unknown first argument $ARGV[0]\n";
+      usage;
+    }
+    $dump_file_prefix = $ARGV[1];
+  } else {
+    $dump_file_prefix = $ARGV[0];
+  }
 } else {
   usage;
 }
@@ -64,7 +80,8 @@ sub run_and_check_status
 
   open F, "@_ |" or die "can't run @_: $?\n";
   if ($? != 0) {
-    log_message "failed with exit code $?: @_\n";
+    log_and_print "failed with exit code $?: @_\n";
+    print STDERR "check log: $log_file\n";
     exit $?;
   }
 
@@ -146,7 +163,11 @@ while (my $line = <DATA>) {
   my ($action, @args) = split " ", $line;
 
   if ($action eq "run:") {
-    run_and_check_status "ant", @args;
+    if ($verbose) {
+      run_and_check_status "ant", @args;
+    } else {
+      run_and_check_status "ant", "-v", @args;
+    }
   } else {
     if ($action eq "dump:") {
       if (@args != 1) {
@@ -165,7 +186,7 @@ __END__
 # "dump:" lines give the suffix of the postgresql dump file
 # actions are executed in order
 
-run: load-static build-db-production create-indexes-production build-anopheles-production
+run: create-production-model compile-genomic-model jar-genomic build-db-production create-indexes-production load-static build-ensembl-anopheles-production
 
 dump: anopheles
 
