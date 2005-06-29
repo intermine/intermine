@@ -56,18 +56,17 @@ if (-d $download_dir) {
   die "$download_dir already exists - exiting\n";
 }
 
+print "creating $download_dir\n";
+
 mkdir $download_dir;
 
 $ftp->cwd("/$uniprot_full_path")
   or die "Cannot change working directory ", $ftp->message;
 
-for my $file ($ftp->ls) {
-  print "$file\n";
-}
-
 for my $file_to_get (@files_to_get) {
+  print "getting $file_to_get\n";
   $ftp->get($file_to_get, "$download_dir/$file_to_get")
-     or die "can't get $file_to_get from $uniprot_address/$uniprot_full_path: $?";
+    or die "can't get $file_to_get from $uniprot_address/$uniprot_full_path: $?";
 }
 
 print"gzip -dr $download_dir\n";
@@ -75,3 +74,5 @@ print"gzip -dr $download_dir\n";
 if ((system "gzip -dr $download_dir") != 0) {
   die qq|system "gzip -dr $download_dir" failed: $?\n|;
 }
+
+system "chmod -R a+r,g+w $download_dir";
