@@ -186,7 +186,7 @@ __END__
 # "dump:" lines give the suffix of the postgresql dump file
 # actions are executed in order
 
-run: create-production-model compile-genomic-model jar-genomic build-db-production create-indexes-production load-static build-ensembl-anopheles-production
+run: create-production-model compile-genomic-model jar-genomic build-db-production create-indexes-production load-static-flymine build-ensembl-anopheles-production
 
 dump: anopheles
 

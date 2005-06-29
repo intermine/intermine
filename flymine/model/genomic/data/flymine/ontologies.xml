@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<items>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#Ontology">
+    <attribute name="title" value="PSI-MI"/>
+    <attribute name="url" value="http://obo.sourceforge.net/cgi-bin/detail.cgi?cop"/>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/genomic#Ontology">
+    <attribute name="title" value="GO"/>
+    <attribute name="url" value="http://geneontology.org"/>
+  </item>
+  <item id="0_3" class="http://www.flymine.org/model/genomic#Ontology">
+    <attribute name="title" value="Phenotype"/>
+    <attribute name="url" value="http://flybase.bio.indiana.edu/docs/lk/controlled-vocabularies.txt"/>
+  </item>
+</items>

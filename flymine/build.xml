@@ -1672,16 +1672,18 @@
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
-  <target name="load-static" depends="prepare-build-model, copy-flymine-config">
+ <target name="load-static-flymine" depends="prepare-build-model, copy-flymine-config">
     <taskdef name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/databases.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/ontologies.xml" sourceName="static"/>
+    <property name="flymine.data" value="model/genomic/data/flymine"/>
+
+    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/databases.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/rnai-codes.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/ontologies.xml" sourceName="static"/>
   </target>
 
   <target name="filter-uniprot" depends="prepare-build-model, compile-uniprot-java">
@@ -1925,7 +1927,7 @@
                    jar-genomic,
                    build-db-production,
                    create-indexes-production,
-                   load-static,
+                   load-static-flymine,
                    build-flybase-production,
                    read-flybase-chromosome-fasta,
                    build-ensembl-anopheles-production,
@@ -2925,11 +2927,15 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/databases.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/human/static/ontologies.xml" sourceName="static"/>
-  </target>
+    <property name="t1dmine.data" value="model/genomic/data/t1dmine"/>
 
+    <load-xml-data integrationWriter="integration.production" 
+                   xmlFile="${t1dmine.data}/databases.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${t1dmine.data}/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" 
+                   xmlFile="${t1dmine.data}/ontologies.xml" sourceName="static"/>
+  </target>
 
   <!-- ENSEMBL HUMAN  CORE MODEL GENERATION -->
 
@@ -3057,7 +3063,7 @@
    <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="t1dmine-production-build"
           depends="create-t1dmine-production-model, compile-genomic-t1dmine-model,jar-genomic,
-                   build-db-production-t1dmine,create-indexes-production, load-static,
+                   build-db-production-t1dmine,create-indexes-production, load-static-t1dmine,
                    build-ensembl-human-production, build-go-human-production,
                    build-tfbs-production, build-firstef-production,
                    build-regions-production, build-disease-regions-production,
