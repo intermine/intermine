@@ -446,5 +446,13 @@
     <attribute name="name" value="D1S243"/>
     <reference name="marker" ref_id = "14_1"/>    
  </item>
+ <item id="18_4" class="http://www.flymine.org/model/ensembl-human#marker_synonym">
+    <attribute name="name" value="D1S243"/>
+    <reference name="marker" ref_id = "14_1"/>    
+ </item>
+ <item id="18_5" class="http://www.flymine.org/model/ensembl-human#marker_synonym">
+    <attribute name="name" value="Q243"/>
+    <reference name="marker" ref_id = "14_1"/>    
+ </item>
 
 </items>
