@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+# script to download the latest homophila release into a directory like
+# homophila/2.1
+# the version used in the directory name is the version mentioned on the Homophila web page
+# the script should be run in /shared/data
+
+use strict;
+use warnings;
+
+use IO::All;
+
+my $homophila_server = "http://superfly.ucsd.edu/homophila";
+my $homophila_data_file = "homophila_all.txt";
+my $homophila_matches_file = "homophila_matches.txt";
+my $homophila_diseases_file = "homophila_diseases.txt";
+
+my $version;
+
+my $homophila_page = io($homophila_server)->slurp();
+
+if ($homophila_page =~ /Version ([\d\.]+)/) {
+  $version = $1;
+} else {
+  die "can't find version number in page read from $homophila_server\n";
+}
+
+my $download_dir = "homophila/$version";
+
+if (-d $download_dir) {
+  die "$download_dir already exists - exiting\n";
+}
+
+mkdir $download_dir;
+
+print "getting $homophila_data_file\n";
+
+io("$homophila_server/$homophila_data_file.gz") > "$download_dir/$homophila_data_file";
+
+if ((system "gzip -dr $download_dir") != 0) {
+  die qq|system "gzip -dr $download_dir" failed: $?\n|;
+}
+
+open HOMOPHILA_DATA, "$download_dir/$homophila_data_file"
+  or die "can't open $download_dir/$homophila_data_file\n";
+
+open HOMOPHILA_MATCHES, ">$download_dir/$homophila_matches_file"
+  or die "can't open $download_dir/$homophila_matches_file\n";
+
+open HOMOPHILA_DISEASES, ">$download_dir/$homophila_diseases_file"
+  or die "can't open $download_dir/$homophila_diseases_file\n";
+
+my $line = <HOMOPHILA_DATA>;
+
+if ($line !~ /CG\tOMIM_ID/) {
+  die "expected first line of $download_dir/$homophila_data_file to be a header\n";
+}
+
+while ($line = <HOMOPHILA_DATA>) {
+  chomp $line;
+  my @bits = split /\t/, $line;
+
+  print HOMOPHILA_MATCHES join "\t", @bits[0..3];
+  print HOMOPHILA_DISEASES join "\t", @bits[1,6];
+  print HOMOPHILA_MATCHES "\n";
+  print HOMOPHILA_DISEASES "\n";
+}
+
+close HOMOPHILA_DATA;
+close HOMOPHILA_MATCHES;
+close HOMOPHILA_DISEASES;
