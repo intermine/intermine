@@ -117,6 +117,13 @@ public class HomophilaConverter extends FileConverter
         LOG.info("" + officialNames.size() + " synonyms read");
     }*/
     
+    /**
+     * Read omim ids and descriptions from reader. Input is two columns, tab seperated, first
+     * column is OMIM id and second column is a line of description. There may be several lines
+     * of description (with the same OMIM id) on adjacent lines.
+     * 
+     * @param reader reader
+     */
     protected void readDiseaseDescriptions(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         String line;
@@ -154,6 +161,8 @@ public class HomophilaConverter extends FileConverter
     }
     
     /**
+     * Reads disease description file first, then reads homophila matches file.
+     * 
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
@@ -195,16 +204,14 @@ public class HomophilaConverter extends FileConverter
             }
         }
     }
-    
-    private final boolean equalEntry(String[] first, String[] second) {
-        for (int i = 0; i < 6; i++) {
-            if (!ObjectUtils.equals(first[i], second[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
 
+    /**
+     * Create new BlastMatch item. Fills in all attributes and references.
+     * 
+     * @param array line of homophila matches file
+     * @return BlastMatch Item
+     * @throws ObjectStoreException if something goes wrong
+     */
     protected Item newBlastMatch(String array[]) throws ObjectStoreException {
         Item item = newItem("BlastMatch");
         item.addReference(new Reference("subject", findProtein(array).getIdentifier()));
@@ -215,6 +222,13 @@ public class HomophilaConverter extends FileConverter
         return item;
     }
     
+    /**
+     * Create new Translation item. Fills in all attributes and references.
+     * 
+     * @param array line of homophila matches file
+     * @return Translation Item
+     * @throws ObjectStoreException if something goes wrong
+     */
     protected Item findTranslation(String array[]) throws ObjectStoreException {
         Item translation = (Item) translations.get(array[TRANSLATION_ID]);
         if (translation == null) {
@@ -226,6 +240,14 @@ public class HomophilaConverter extends FileConverter
         }
         return translation;
     }
+    
+    /**
+     * Create new Protein item. Fills in all attributes and references.
+     * 
+     * @param array line of homophila matches file
+     * @return Protein Item
+     * @throws ObjectStoreException if something goes wrong
+     */
     
     protected Item findProtein(String array[]) throws ObjectStoreException {
         Item protein = (Item) proteins.get(array[PROTEIN_ID]);
@@ -253,6 +275,14 @@ public class HomophilaConverter extends FileConverter
         }
         return gene;
     }*/
+    
+    /**
+     * Create new Disease item. Fills in all attributes and references.
+     * 
+     * @param array line of homophila matches file
+     * @return Disease Item
+     * @throws ObjectStoreException if something goes wrong
+     */
     
     protected Item findDisease(String array[]) throws ObjectStoreException {
         Item disease = (Item) diseases.get(array[OMIM_ID]);
@@ -284,7 +314,8 @@ public class HomophilaConverter extends FileConverter
     }
 
     /**
-     * Convenience method for creating a new Item
+     * Convenience method for creating a new Item.
+     * 
      * @param className the name of the class
      * @return a new Item
      */
