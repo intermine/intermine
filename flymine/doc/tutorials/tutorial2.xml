@@ -37,7 +37,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="classSelection1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -50,7 +50,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="geneOrganism1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -66,7 +66,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="constrainOrganism1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -81,7 +81,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="showFields1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -92,7 +92,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="resultsQuery3.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
     </orderedlist>

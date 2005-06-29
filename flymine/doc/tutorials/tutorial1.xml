@@ -29,7 +29,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="classSelection1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -42,7 +42,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="geneClass1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -53,7 +53,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="resultsQuery1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
     </orderedlist>

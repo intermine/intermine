@@ -23,5 +23,8 @@
     <imageobject>
       <imagedata fileref="ontology_merging.png" />
     </imageobject>
+    <textobject>
+        <phrase>Ontology Merging</phrase>
+    </textobject>
   </mediaobject>
 </article>

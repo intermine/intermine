@@ -34,7 +34,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="classSelection1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -61,7 +61,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="constrainRelation1.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -75,7 +75,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="showFields2.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
 
@@ -86,7 +86,7 @@
         <mediaobject>
           <imageobject>
             <imagedata fileref="resultsQuery4.png" />
-          </imageobject>
+          </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
       </listitem>
     </orderedlist>
