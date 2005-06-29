@@ -85,6 +85,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Set contigSet = new HashSet();
     private Set cloneSet = new HashSet();
     private Map seqIdMap = new HashMap();
+    private Map markerSynonymMap = new HashMap();
 
 
     /**
@@ -268,27 +269,17 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     }
                     setNameAttribute(srcItem, tgtItem);
                                         // display_marker_synonym
-                } else if ("marker_synonym".equals(className)) {
-                    tgtItem.addAttribute(new Attribute("type", "identifier"));
-                    if (srcItem.hasAttribute("source")) {
-                        String source = srcItem.getAttribute("source").getValue();
-                        if (source.equals("genbank")) {
-                            tgtItem.addReference(getGenbankRef());
-                        } else  if (source.equals("gdb")) {
-                            tgtItem.addReference(getGdbRef());
-                        } else  if (source.equals("unists")) {
-                            tgtItem.addReference(getUnistsRef());
-                        } else {
-                            tgtItem.addReference(getEnsemblRef());
-                        }
-                    } else {
-                        tgtItem.addReference(getEnsemblRef());
-                    }
                 }
                 if (storeTgtItem) {
                     result.add(tgtItem);
                 }
             }
+        } else if ("marker_synonym".equals(className)) {
+            Item synonym = getMarkerSynonym(srcItem);
+            if (synonym != null) {
+                result.add(synonym);
+            }
+
         // assembly maps to null but want to create location on a supercontig
         } else if ("assembly".equals(className)) {
             Item location = createAssemblyLocation(srcItem);
@@ -773,8 +764,16 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         }
     }
 
+    /**
+     * Create synonym item
+     * @param subjectId = synonym reference to subject
+     * @param type = synonym type
+     * @param value = synonym value
+     * @param ref = synonym reference to source
+     * @return synonym item
+     */
     private Item createSynonym(String subjectId, String type, String value, Reference ref) {
-        Item synonym = createItem("Synonym");
+        Item synonym = createItem(tgtNs + "Synonym", "");
         synonym.addReference(new Reference("subject", subjectId));
         synonym.addAttribute(new Attribute("type", type));
         synonym.addAttribute(new Attribute("value", value));
@@ -783,6 +782,68 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     }
 
     /**
+     * Create synonym item for marker
+     * @param srcItem = marker_synonym
+     * marker_synonym in ensembl may have same marker_id, source and name
+     * but with different marker_synonym_id,
+     * check before create synonym
+     * @return synonym item
+     */
+    private Item getMarkerSynonym(Item srcItem) {
+        Item synonym = new Item();
+        String subjectId = srcItem.getReference("marker").getRefId();
+        Set synonymSet = new HashSet();
+        synonymSet = (HashSet) markerSynonymMap.get(subjectId);
+
+        String value = srcItem.getAttribute("name").getValue();
+        Reference ref = new Reference();
+        if (srcItem.hasAttribute("source")) {
+            String source = srcItem.getAttribute("source").getValue();
+            if (source.equals("genbank")) {
+                ref = getGenbankRef();
+            } else  if (source.equals("gdb")) {
+                ref = getGdbRef();
+            } else  if (source.equals("unists")) {
+                ref = getUnistsRef();
+            } else {
+                ref = getEnsemblRef();
+            }
+        } else {
+            ref = getEnsemblRef();
+        }
+
+        int createItem = 1;
+        int flag;
+        if (synonymSet == null) {
+            synonym = createSynonym(subjectId, "identifier", value, ref);
+            synonymSet = new HashSet(Arrays.asList(new Object[] {synonym}));
+            markerSynonymMap.put(subjectId, synonymSet);
+        } else {
+            Iterator i = synonymSet.iterator();
+            while (i.hasNext()) {
+                Item item = (Item) i.next();
+                if (item.getReference("source").getRefId().equals(ref.getRefId())
+                    && item.getAttribute("value").getValue().equalsIgnoreCase(value)) {
+                    flag = 0;
+                } else {
+                    flag = 1;
+                }
+                createItem = createItem * flag;
+            }
+
+            if (createItem == 1) {
+                synonym = createSynonym(subjectId, "identifier", value, ref);
+                synonymSet.add(synonym);
+                markerSynonymMap.put(subjectId, synonymSet);
+            } else {
+                synonym = null;
+            }
+        }
+        return synonym;
+    }
+
+
+   /**
      * change description class to comments
      * @param identifier  ensembl:gene srcItem identifier
      * @param tgtItem translate item flymine:Gene
