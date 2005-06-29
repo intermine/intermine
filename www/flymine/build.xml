@@ -72,6 +72,7 @@
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${flymine.main.stylesheet}" includes="**/*.xml"
            force="false">
+      <exclude name="doc/manual/webapp_manual.xml"/>
       <param name="branding" expression="flymine" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
@@ -92,11 +93,31 @@
         <exclude name="doc/presentations/index.xml"/>
         <exclude name="index.xml"/>
       </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+          location="../dtd/sdocbook-1.0.dtd"/>
+      </xmlcatalog>
+   </xmlvalidate>
+  </target>
+
+  <target name="validate-site-xhtml"
+          depends="validate-site-xml, style-site, webapp-manual-html">
+    <xmlvalidate warn="yes">
+      <fileset dir="${dist.www}" includes="**/*.html">
+        <exclude name="internal/**"/>
+        <exclude name="images/index.html"/>
+      </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
+          location="../dtd/xhtml1-transitional.dtd"/>
+        </xmlcatalog>
    </xmlvalidate>
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-site, webapp-manual-html"
+          depends="validate-site-xml, style-site, webapp-manual-html, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
 
   <target name="release-www" depends="transform-site"
