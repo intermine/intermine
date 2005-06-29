@@ -31,8 +31,6 @@
 	<classpathentry kind="src" path="model/tfbs/src/java"/>
 	<classpathentry kind="src" path="model/tfbs/src/test"/>
 	<classpathentry kind="src" path="model/tiling_path/src/java"/>
-	<classpathentry kind="src" path="model/ucsc/src/java"/>
-	<classpathentry kind="src" path="model/ucsc/src/test"/>
 	<classpathentry kind="src" path="model/uniprot/src/java"/>
 	<classpathentry kind="src" path="model/uniprot/src/test"/>
 	<classpathentry kind="src" path="build/model/chado"/>
@@ -65,5 +63,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="lib" path="model/homophila/resources"/>
+	<classpathentry kind="lib" path="lib/biojava-1.4cvs.jar"/>
+	<classpathentry kind="lib" path="model/mage/lib/MAGEstk-2004-11-29-v1.1-compatible.jar"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
