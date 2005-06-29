@@ -49,14 +49,12 @@ public class HomophilaConverter extends FileConverter
     private static final int OMIM_ID = 1;
     private static final int PROTEIN_ID = 2;
     private static final int E_VALUE = 3;
-    private static final int GENE_ID = 4;
-    private static final int GENE_NAME = 5;
-    private static final int DESC = 6;
         
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Map officialNames = new HashMap();
-    protected List homophilaEntries = new ArrayList(500000);
+    //protected Map officialNames = new HashMap();
+    protected Map diseaseDescriptions = new HashMap();
+    //protected List homophilaEntries = new ArrayList(500000);
     
     protected Map translations = new HashMap();
     protected Map proteins = new HashMap();
@@ -97,7 +95,7 @@ public class HomophilaConverter extends FileConverter
      * 
      * @param reader reader to read from
      * @throws IOException if an error ocuurs reading data
-     */
+     *
     protected void readGeneSynonyms(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         String line;
@@ -117,6 +115,32 @@ public class HomophilaConverter extends FileConverter
         }
         
         LOG.info("" + officialNames.size() + " synonyms read");
+    }*/
+    
+    protected void readDiseaseDescriptions(Reader reader) throws IOException {
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        
+        LOG.info("Reading disease descriptions...");
+        
+        String desc = "";
+        String omim = "";
+        while ((line = br.readLine()) != null) {
+            String fields[] = StringUtils.split(line, '\t');
+            if (omim.equals(fields[0])) {
+                desc += "; " + fields[1];
+                continue;
+            }
+            if (!StringUtils.isBlank(omim)) {
+                // New entry
+                diseaseDescriptions.put(omim, desc);
+            }
+            omim = fields[0];
+            desc = fields[1];
+        }
+        diseaseDescriptions.put(omim, desc); // last line
+        
+        LOG.info("" + diseaseDescriptions.size() + " descriptions read.");
     }
 
     /**
@@ -125,7 +149,7 @@ public class HomophilaConverter extends FileConverter
      * 
      * @param diseaseFile disease description input file
      */
-    public void setDiseaseFile(File diseaseFile) {
+    public void setDiseasefile(File diseaseFile) {
         this.diseaseFile = diseaseFile;
     }
     
@@ -134,54 +158,40 @@ public class HomophilaConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         
-        if (param1 == null) {
-            throw new NullPointerException("param1 should point to gene_synonym file");
+        if (diseaseFile == null) {
+            throw new NullPointerException("diseaseFile property not set");
         }
         
-        try {
+        /*try {
             readGeneSynonyms(new FileReader(param1));
         } catch (IOException e) {
             throw new RuntimeException("error reading gene synonyms", e);
-        }
+        }*/
         
-        LOG.info("Reading homophila entries...");
+        try {
+            readDiseaseDescriptions(new FileReader(diseaseFile));
+        } catch (IOException err) {
+            throw new RuntimeException("error reading disease descriptions", err);
+        }
         
         BufferedReader br = new BufferedReader(reader);
         br.readLine();
         String line;
-        while ((line = br.readLine()) != null) {
+        /*while ((line = br.readLine()) != null) {
             String array[] = StringUtils.split(line, '\t');
-            String official = (String) officialNames.get(array[GENE_ID]); // convert to official gene id
-            if (official != null) {
-                array[GENE_ID] = official;
-            }
-            array[GENE_NAME] = null; // don't care
-            if (homophilaEntries.size() > 0) {
-                String[] previous = (String[]) homophilaEntries.get(homophilaEntries.size() - 1);
-                if (equalEntry(array, previous)) {
-                    if (array[DESC].indexOf(previous[DESC]) == -1) {
-                        previous[DESC] += "; " + array[DESC];
-                    }
-                    continue;
-                }
-            }
             homophilaEntries.add(array);
-            LOG.info(array[0] + "\t" + array[1] + "\t" +
-                     array[2] + "\t" + array[3] + "\t" +
-                     array[4] + "\t" + array[5] + "\t" +
-                     array[6] + "\t");
         }
         
-        LOG.info("" + homophilaEntries.size() + " entries read.");
+        LOG.info("" + homophilaEntries.size() + " entries read.");*/
         
         int done = 0;
-        for (int i = 0; i < homophilaEntries.size(); i++) {
-            String[] array = (String[]) homophilaEntries.get(i);
+        while ((line = br.readLine()) != null) {
+            String array[] = StringUtils.split(line, '\t');
             
             newBlastMatch(array);
             
             if (++done % 10000 == 0) {
-                LOG.info("Processed " + done + " homophila entries");
+                LOG.info("Processed " + done + " homophila matches");
             }
         }
     }
@@ -223,14 +233,15 @@ public class HomophilaConverter extends FileConverter
             protein = newItem("Protein");
             protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
-            addToCollection(protein, "genes", findGene(array));
+            //addToCollection(protein, "genes", findGene(array));
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
         }
+        findDisease(array); // FIXME
         return protein;
     }
     
-    protected Item findGene(String array[]) throws ObjectStoreException {
+    /*protected Item findGene(String array[]) throws ObjectStoreException {
         Item gene = (Item) genes.get(array[GENE_ID]);
         if (gene == null) {
             gene = newItem("Gene");
@@ -241,7 +252,7 @@ public class HomophilaConverter extends FileConverter
             store(gene);
         }
         return gene;
-    }
+    }*/
     
     protected Item findDisease(String array[]) throws ObjectStoreException {
         Item disease = (Item) diseases.get(array[OMIM_ID]);
@@ -249,13 +260,13 @@ public class HomophilaConverter extends FileConverter
             disease = newItem("Disease");
             diseases.put(array[OMIM_ID], disease);
             disease.addAttribute(new Attribute("omimId", array[OMIM_ID]));
-            disease.addAttribute(new Attribute("description", array[DESC]));
-        } else {
-            String desc = disease.getAttribute("description").getValue();
-            if (desc.indexOf(array[DESC]) == -1) {
-                desc += "; " + array[DESC];
-                disease.addAttribute(new Attribute("description", desc));
+            String desc = (String) diseaseDescriptions.get(array[OMIM_ID]);
+            if (desc == null) {
+                LOG.error("no disease description for OMIM " + array[OMIM_ID]);
+                desc = "";
             }
+            disease.addAttribute(new Attribute("description", desc));
+            store(disease);
         }
         return disease;
     }
