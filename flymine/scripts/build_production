@@ -86,6 +86,7 @@ sub run_and_check_status
   }
 
   while (<F>) {
+    chomp;
     log_message "  [$command_name] $_";
   }
 
