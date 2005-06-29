@@ -71,6 +71,8 @@ public class XmlConverterTask extends ConverterTask
 
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
+        File toRead = null;
+        
         try {
             Model m = Model.getInstanceByName(model);
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
@@ -81,12 +83,16 @@ public class XmlConverterTask extends ConverterTask
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
-                File toRead = new File(ds.getBasedir(), files[i]);
+                toRead = new File(ds.getBasedir(), files[i]);
                 System.err .println("Processing file " + toRead.toString());
                 converter.process(new BufferedReader(new FileReader(toRead)));
             }
         } catch (Exception e) {
-            throw new BuildException(e);
+            if (toRead == null) {
+                throw new BuildException("Exception in XmlConverterTask", e);
+            } else {
+                throw new BuildException("Exception while reading from: " + toRead, e);
+            }
         } finally {
             try {
                 if (writer != null) {
