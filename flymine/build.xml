@@ -984,8 +984,8 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.HomophilaConverter"
                   osName="osw.homophila-tgt-items" model="homophila"
-                  param1="/Users/tom/Development/genes_synonyms">
-      <fileset dir="/Users/tom/Development/" includes="homophila_all_3.5k"/>
+                  diseaseFile="/shared/data/homophila/homophila_diseases.txt">
+      <fileset dir="/shared/data/homophila/" includes="homophila_stripped.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
