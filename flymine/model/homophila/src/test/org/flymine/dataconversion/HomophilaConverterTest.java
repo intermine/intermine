@@ -42,11 +42,17 @@ public class HomophilaConverterTest extends TestCase
         IOUtils.copy(getClass().getClassLoader().getResourceAsStream("test/HomophilaTestDiseaseInput"), out);
         out.close();
         
+        File proteinGene = File.createTempFile("diseases", "");
+        out = new FileOutputStream(proteinGene);
+        IOUtils.copy(getClass().getClassLoader().getResourceAsStream("test/HomophilaProteinGeneInput"), out);
+        out.close();
+        
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("test/HomophilaConverterTestInput"));
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         HomophilaConverter converter = new HomophilaConverter(itemWriter);
         converter.setDiseasefile(diseases);
+        converter.setProteingenefile(proteinGene);
         converter.process(new StringReader(input));
         converter.close();
         System.out.println(itemWriter.getItems());
