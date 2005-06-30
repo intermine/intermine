@@ -45,9 +45,8 @@ public class HomophilaConverter extends FileConverter
         
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    //protected Map officialNames = new HashMap();
     protected Map diseaseDescriptions = new HashMap();
-    //protected List homophilaEntries = new ArrayList(500000);
+    protected Map proteinToGene = new HashMap();
     
     protected Map translations = new HashMap();
     protected Map proteins = new HashMap();
@@ -60,6 +59,7 @@ public class HomophilaConverter extends FileConverter
     protected int matchCount = 0;
 
     protected File diseaseFile;
+    protected File proteinGeneFile;
 
     /**
      * Constructor
@@ -79,36 +79,6 @@ public class HomophilaConverter extends FileConverter
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
     }
-    
-    /**
-     * Read official gene name and synonyms from file and build a map from any
-     * synonym (including official name) to official name. The input data should be
-     * two fields per line seperated by a tab. The first field is the official gene
-     * name, the other field is a list of synonyms seperated by vertical bars.
-     * 
-     * @param reader reader to read from
-     * @throws IOException if an error ocuurs reading data
-     *
-    protected void readGeneSynonyms(Reader reader) throws IOException {
-        BufferedReader br = new BufferedReader(reader);
-        String line;
-        //Set officials = new HashSet();
-        
-        LOG.info("Reading " + param1 + "...");
-        
-        while ((line = br.readLine()) != null) {
-            String fields[] = StringUtils.split(line, '\t');
-            String synonyms[] = StringUtils.split(fields[1], '|');
-            for (int i = 0; i < synonyms.length; i++) {
-                if (!synonyms[i].equals("-")) {
-                    officialNames.put(synonyms[i], fields[0]);
-                }
-                //officials.add(fields[0]);
-            }
-        }
-        
-        LOG.info("" + officialNames.size() + " synonyms read");
-    }*/
     
     /**
      * Read omim ids and descriptions from reader. Input is two columns, tab seperated, first
@@ -144,6 +114,31 @@ public class HomophilaConverter extends FileConverter
     }
 
     /**
+     * Read mappings from protein id to gene id.
+     * 
+     * @param reader reader
+     */
+    protected void readProteinGeneFile(Reader reader) throws IOException {
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        int done = 1;
+        
+        LOG.info("Reading protein_gene mapping...");
+        
+        while ((line = br.readLine()) != null) {
+            String fields[] = StringUtils.split(line, '\t');
+            if (fields.length == 2) {
+                proteinToGene.put(fields[0], fields[1]);
+            } else {
+                LOG.warn("line " + done + " in protein_gene.txt contained " + fields.length + " columns");
+            }
+            done++;
+        }
+        
+        LOG.info("" + proteinToGene.size() + " proteins read.");
+    }
+    
+    /**
      * Set the disease description input file. This file just contains OMIM ids and
      * several lines of description for each id.
      * 
@@ -154,21 +149,27 @@ public class HomophilaConverter extends FileConverter
     }
     
     /**
+     * Set the protein to gene input file. This file contains two columns, the NP_ protein
+     * id followed by the gene id.
+     * 
+     * @param proteinGeneFile protein to gene input file
+     */
+    public void setProteingenefile(File proteinGeneFile) {
+        this.proteinGeneFile = proteinGeneFile;
+    }
+    
+    /**
      * Reads disease description file first, then reads homophila matches file.
      * 
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-        
+       
         if (diseaseFile == null) {
             throw new NullPointerException("diseaseFile property not set");
+        } else if (proteinGeneFile == null) {
+            throw new NullPointerException("proteinGeneFile property not set");
         }
-        
-        /*try {
-            readGeneSynonyms(new FileReader(param1));
-        } catch (IOException e) {
-            throw new RuntimeException("error reading gene synonyms", e);
-        }*/
         
         try {
             readDiseaseDescriptions(new FileReader(diseaseFile));
@@ -176,17 +177,17 @@ public class HomophilaConverter extends FileConverter
             throw new RuntimeException("error reading disease descriptions", err);
         }
         
+        try {
+            readProteinGeneFile(new FileReader(proteinGeneFile));
+        } catch (IOException err) {
+            throw new RuntimeException("error reading protein to gene file", err);
+        }
+        
         BufferedReader br = new BufferedReader(reader);
         br.readLine();
         String line;
-        /*while ((line = br.readLine()) != null) {
-            String array[] = StringUtils.split(line, '\t');
-            homophilaEntries.add(array);
-        }
-        
-        LOG.info("" + homophilaEntries.size() + " entries read.");*/
-        
         int done = 0;
+        
         while ((line = br.readLine()) != null) {
             String array[] = StringUtils.split(line, '\t');
             
@@ -241,33 +242,43 @@ public class HomophilaConverter extends FileConverter
      * @return Protein Item
      * @throws ObjectStoreException if something goes wrong
      */
-    
     protected Item findProtein(String array[]) throws ObjectStoreException {
         Item protein = (Item) proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = newItem("Protein");
             protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
-            //addToCollection(protein, "genes", findGene(array));
+            addToCollection(protein, "genes", findGene(array));
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
         }
-        findDisease(array); // FIXME
         return protein;
     }
     
-    /*protected Item findGene(String array[]) throws ObjectStoreException {
-        Item gene = (Item) genes.get(array[GENE_ID]);
+    /**
+     * Create new Gene item. Fills in all attributes and references.
+     * 
+     * @param array line of homophila matches file
+     * @return Gene Item
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected Item findGene(String array[]) throws ObjectStoreException {
+        String geneId = (String) proteinToGene.get(array[PROTEIN_ID]);
+        if (geneId == null) {
+            throw new IllegalStateException("protein id " + array[PROTEIN_ID]
+                    + " doesn't map to a gene id");
+        }
+        Item gene = (Item) genes.get(geneId);
         if (gene == null) {
             gene = newItem("Gene");
-            genes.put(array[GENE_ID], gene);
-            gene.addAttribute(new Attribute("identifier", array[GENE_ID]));
+            genes.put(geneId, gene);
+            gene.addAttribute(new Attribute("identifier", geneId));
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
             addToCollection(gene, "omimDiseases", findDisease(array));
             store(gene);
         }
         return gene;
-    }*/
+    }
     
     /**
      * Create new Disease item. Fills in all attributes and references.
@@ -276,7 +287,6 @@ public class HomophilaConverter extends FileConverter
      * @return Disease Item
      * @throws ObjectStoreException if something goes wrong
      */
-    
     protected Item findDisease(String array[]) throws ObjectStoreException {
         Item disease = (Item) diseases.get(array[OMIM_ID]);
         if (disease == null) {
