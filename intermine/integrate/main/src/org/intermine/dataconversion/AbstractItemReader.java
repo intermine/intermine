@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -24,7 +25,9 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Thomas Riley
  */
 public abstract class AbstractItemReader implements ItemReader
-{    
+{
+    private static final Logger LOG = Logger.getLogger(AbstractItemReader.class);
+    
     /**
      * @see ItemReader#getItemsByPath(ItemPath, Item, Object[])
      */
@@ -69,7 +72,13 @@ public abstract class AbstractItemReader implements ItemReader
         Item currentItem = startingPoint;
         
         while (ipd != null) {
-            Set constraints = new HashSet(ipd.getConstraint(currentItem));
+            Set constraints;
+            try {
+                constraints = new HashSet(ipd.getConstraint(currentItem));
+            } catch (IllegalArgumentException err) {
+                LOG.debug("caught IllegalArgumentException in getItemsByPath:", err);
+                return null;
+            }
             constraints.addAll(path.getFieldValueConstrainsts(ipd, variables));
             List items = getItemsByDescription(constraints);
             
