@@ -202,28 +202,24 @@
   </target>
 
   <target name="webapp-manual-process" depends="prepare">
-<!--    <style basedir="${build.webapp.manual.src}"
-           style="/usr/share/xml/docbook/stylesheet/nwalsh/html/chunk.xsl"
-           destdir="${build.webapp.manual.html}"
-           includes="webapp_manual.xml"/>
--->
-
     <exec executable="xmlto">
       <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m xslt/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
     </exec>
-
-  </target>
-
-  <target name="webapp-manual-pdf" depends="prepare">
-    <antcall target="webapp-manual-process">
-      <param name="output.type" value="pdf"/>
-    </antcall>
   </target>
 
   <target name="webapp-manual-html" depends="prepare">
     <antcall target="webapp-manual-process">
       <param name="output.type" value="xhtml"/>
     </antcall>
+  </target>
+
+  <target name="webapp-manual-pdf" depends="prepare">
+    <exec executable="xsltproc">
+      <arg line="--output ${build.www}/doc/manual/webapp_manual.fo --stringparam fop.extensions 1 --stringparam paper.type A4 /software/noarch/docbook-xsl/fo/docbook.xsl ${src.doc}/manual/webapp_manual.xml"/>
+    </exec>
+    <exec executable="fop.sh">
+      <arg line="-fo ${build.www}/doc/manual/webapp_manual.fo -pdf ${dist.www}/doc/manual/webapp_manual.pdf"/>
+    </exec>
   </target>
 
   <target name="clean">
