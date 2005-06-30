@@ -58,8 +58,9 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
      *
      * @param item the Item
      * @return a FieldNameAndValue object
+     * @throws IllegalArgumentException if an attribute or reference does not exist
      */
-    public FieldNameAndValue getConstraint(Item item) {
+    public FieldNameAndValue getConstraint(Item item) throws IllegalArgumentException {
         if (nearFieldName == ObjectStoreItemPathFollowingImpl.IDENTIFIER) {
             return new FieldNameAndValue(farFieldName, item.getIdentifier(), true);
         } else if (nearFieldName == ObjectStoreItemPathFollowingImpl.CLASSNAME) {
