@@ -7,8 +7,8 @@
   <property name="build.www" location="build"/>
   <property name="build.webapp.manual.html" location="dist/doc/manual"/>
   <property name="dist.www" location="dist"/>
-  <property name="flymine.main.stylesheet" location="../main.xsl"/>
-  <property name="flymine.frontpage.stylesheet" location="../front_page.xsl"/>
+  <property name="flymine.main.stylesheet" location="../xslt/main.xsl"/>
+  <property name="flymine.frontpage.stylesheet" location="../xslt/front_page.xsl"/>
 
   <property name="output.extension" value="html"/>
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
@@ -79,9 +79,6 @@
       <param name="outputext" expression="${output.extension}" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
-      <factory>
-        <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
-      </factory>
     </style>
   </target>
 
