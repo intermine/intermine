@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml">
 
-<xsl:variable name="menu" select="document(concat('../',$branding,'/menu.xml'))/menu"/>
+<xsl:variable name="menu" select="document(concat('../../',$branding,'/menu.xml'))/menu"/>
 
 <xsl:template name="sidebar">
   <xsl:for-each select="$menu/item">

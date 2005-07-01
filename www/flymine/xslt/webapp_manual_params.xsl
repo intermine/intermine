@@ -14,5 +14,4 @@
 <xsl:param name="webappprefix" select="'@WEBAPP_PREFIX@'"/>
 <xsl:param name="outputext" select="'@OUTPUT_EXTENSION@'"/>
 <xsl:param name="branding" select="'@BRANDING@'"/>
-<xsl:param name="sourceref" select="'@SOURCEREF@'"/>
 </xsl:stylesheet>

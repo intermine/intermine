@@ -4,15 +4,14 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    version='1.0'>
 
-  <xsl:import href="../../xslt/ulink.xsl"/>
-  <xsl:import href="../../xslt/menu.xsl"/>
-  <xsl:import href="../../xslt/page_template.xsl"/>
+  <xsl:import href="../../common/xslt/ulink.xsl"/>
+  <xsl:import href="../../common/xslt/menu.xsl"/>
+  <xsl:import href="../../common/xslt/page_template.xsl"/>
 
   <xsl:param name="outputext"/>
   <xsl:param name="basedir"/>
   <xsl:param name="branding"/>
   <xsl:param name="webappprefix"/>
-  <xsl:param name="sourceref"/>
 
   <!-- copied so that we can add header, sidebar and pagecontent DIVs -->
   <xsl:template name="chunk-element-content">

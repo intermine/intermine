@@ -1,20 +1,19 @@
 <project name="t1dmine-www" default="transform-site" basedir=".">
+  <property name="common" location="../common"/>
   <property name="src.www" location="site"/>
-  <property name="common.src.www" location="../site"/>
-  <property name="common.style" location="../style"/>
+  <property name="common.src.www" location="${common}/site"/>
   <property name="build.www" location="build"/>
   <property name="dist.www" location="dist"/>
-  <property name="t1dmine.main.stylesheet" location="../xslt/main.xsl"/>
-  <property name="t1dmine.frontpage.stylesheet" location="../xslt/front_page.xsl"/>
-
+  <property name="xslt" location="xslt"/>
+  <property name="common.xslt" location="${common}/xslt"/>
+  <property name="cache.dtd" location="${common}/dtd"/>
   <property name="output.extension" value="html"/>
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
   <property name="branding" value="t1dmine"/>
 
   <target name="prepare">
     <property name="build.properties.local" value="${user.home}/build.properties.t1dmine" />
-   <property file="${build.properties.local}"/>
-
+    <property file="${build.properties.local}"/>
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <include name="**/*"/>
@@ -24,11 +23,6 @@
       </fileset>
     </copy>
 
-    <!-- copy common style -->
-    <copy todir="${build.www}/style">
-      <fileset dir="${common.style}" includes="**/*"/>
-    </copy>
-
     <copy todir="${dist.www}">
       <fileset dir="${build.www}">
         <exclude name="**/*.xml"/>
@@ -36,19 +30,16 @@
       </fileset>
     </copy>
     
-    <mkdir dir="${build.www}/tmp"/>
   </target>
 
   <target name="style-site" depends="prepare">
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
-           style="${t1dmine.main.stylesheet}" includes="**/*.xml"
+           style="${common.xslt}/main.xsl" includes="**/*.xml"
            force="false">
-      <param name="branding" expression="t1dmine" />
+      <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
-      <param name="file" expression="systemId()" />
-      <param name="sourceref" expression="${build.www}" />
     </style>
   </target>
 
@@ -60,7 +51,7 @@
       <xmlcatalog>
         <dtd 
           publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
-          location="../dtd/sdocbook-1.0.dtd"/>
+          location="${cache.dtd}/sdocbook-1.0.dtd"/>
       </xmlcatalog>
     </xmlvalidate>
   </target>
@@ -75,7 +66,7 @@
       <xmlcatalog>
         <dtd 
           publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
-          location="../dtd/xhtml1-transitional.dtd"/>
+          location="${cache.dtd}/xhtml1-transitional.dtd"/>
         </xmlcatalog>
     </xmlvalidate>
   </target>

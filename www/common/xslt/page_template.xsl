@@ -14,10 +14,9 @@
 
   <xsl:param name="basedir"/>
   <xsl:param name="branding"/>
-  <xsl:variable name="brand" select="document(concat('../',$branding,'/branding.xml'))/brand"/>
+  <xsl:variable name="brand" select="document(concat('../../',$branding,'/branding.xml'))/brand"/>
   <xsl:param name="webappprefix"/>
   <xsl:param name="outputext"/>
-  <xsl:param name="sourceref"/>
 
   <xsl:template match="/">
     <html>
