@@ -203,13 +203,20 @@
     </antcall>
   </target>
 
+  <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+
   <target name="webapp-manual-pdf" depends="prepare">
-    <exec executable="xsltproc">
-      <arg line="--output ${build.www}/doc/manual/webapp_manual.fo --stringparam fop.extensions 1 --stringparam paper.type A4 /software/noarch/docbook-xsl/fo/docbook.xsl ${src.doc}/manual/webapp_manual.xml"/>
-    </exec>
-    <exec executable="fop.sh">
-      <arg line="-fo ${build.www}/doc/manual/webapp_manual.fo -pdf ${dist.www}/doc/manual/webapp_manual.pdf"/>
-    </exec>
+    <style basedir="${build.www}/doc/manual"
+           in="${build.www}/doc/manual/webapp_manual.xml"
+           out="${build.www}/doc/manual/webapp_manual.fo"
+           style="/software/noarch/docbook-xsl/fo/docbook.xsl"
+           force="false">
+      <param name="paper.type" expression="A4" />
+      <param name="fop.extensions" expression="1" />
+    </style>
+    <fop basedir="${build.www}/doc/manual"
+         fofile="${build.www}/doc/manual/webapp_manual.fo"
+         outfile="${dist.www}/doc/manual/webapp_manual.pdf"/>
   </target>
 
   <target name="clean">
