@@ -6,7 +6,7 @@
   
   <xsl:template match="news">
     <xsl:variable name="id" select="@id"/>
-    <xsl:variable name="items" select="document(concat($branding, '/', $brand/rss[@id=$id]/@file))/rss/channel"/>
+    <xsl:variable name="items" select="document(concat('../',$branding, '/', $brand/rss[@id=$id]/@file))/rss/channel"/>
     
     <xsl:for-each select="$items/item">
       <div class="news-item">

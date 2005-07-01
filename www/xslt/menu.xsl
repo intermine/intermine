@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml">
 
-<xsl:variable name="menu" select="document(concat($branding,'/menu.xml'))/menu"/>
+<xsl:variable name="menu" select="document(concat('../',$branding,'/menu.xml'))/menu"/>
 
 <xsl:template name="sidebar">
   <xsl:for-each select="$menu/item">
@@ -68,18 +68,6 @@
     </xsl:attribute>
     
     <xsl:value-of select="$title"/>
-    <!--
-    <xsl:choose>
-      <xsl:when test="substring($url,string-length($url)-2) = '.do'">
-        <xsl:text> </xsl:text>
-        <img border="0" class="arrow" alt="->" height="13" width="13">
-          <xsl:attribute name="src">
-            <xsl:value-of select="$webappprefix"/><xsl:text>/images/right-arrow.gif</xsl:text>
-          </xsl:attribute>
-        </img>
-      </xsl:when>
-    </xsl:choose>
-    -->
   </a>
 </xsl:template>
 

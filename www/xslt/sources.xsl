@@ -6,7 +6,7 @@
   
   <xsl:template match="sources">
     <xsl:variable name="imver" select="@version"/>
-    <xsl:variable name="items" select="document(concat($branding, @sources))/intermine-sources/sources[@version=$imver]"/>
+    <xsl:variable name="items" select="document(concat('../',$branding, @sources))/intermine-sources/sources[@version=$imver]"/>
     <ul>
     <xsl:for-each select="$items/source">
       <li>

@@ -3,9 +3,7 @@
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   version="1.0" 
-  xmlns:ni="xalan://org.apache.xalan.lib.NodeInfo"
-  xmlns="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="ni">
+  xmlns="http://www.w3.org/1999/xhtml">
   
   <xsl:output
     method="xml"
@@ -16,11 +14,10 @@
 
   <xsl:param name="basedir"/>
   <xsl:param name="branding"/>
-  <xsl:variable name="brand" select="document(concat($branding,'/branding.xml'))/brand"/>
+  <xsl:variable name="brand" select="document(concat('../',$branding,'/branding.xml'))/brand"/>
   <xsl:param name="webappprefix"/>
   <xsl:param name="outputext"/>
   <xsl:param name="sourceref"/>
-<!--<xsl:variable name="source" select="substring-after(ni:systemId(),concat($sourceref,'/'))"/>-->
 
   <xsl:template match="/">
     <html>
@@ -38,8 +35,6 @@
             <link rel="alternate" type="application/rss+xml" href="{concat($basedir, '/', @file)}" title="News"/>
         </xsl:for-each>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <!-- The ; below is for Netscape 4 (to avoid generating <script/>) -->
-        <script type="text/javascript" src="{$basedir}/style/footer.js">;</script>
       </head>
       
       <body>
@@ -54,12 +49,6 @@
           </p>
         </div>
         
-        <!-- <p>NI: <xsl:value-of select="ni:systemId()"/></p>
-             <p>Sourceref: <xsl:value-of select="$sourceref"/></p>
-             <p>Source file: <xsl:value-of select="$source"/></p>
-             <p>Menu path: <xsl:call-template name="menupath"/></p> -->
-             
-
         <div id="pagecontent">
           <table id="static-table" width="100%">
             <tr>

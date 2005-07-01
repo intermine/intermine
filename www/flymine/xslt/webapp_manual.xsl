@@ -4,9 +4,9 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    version='1.0'>
 
-  <xsl:import href="../../ulink.xsl"/>
-  <xsl:import href="../../menu.xsl"/>
-  <xsl:import href="../../page_template.xsl"/>
+  <xsl:import href="../../xslt/ulink.xsl"/>
+  <xsl:import href="../../xslt/menu.xsl"/>
+  <xsl:import href="../../xslt/page_template.xsl"/>
 
   <xsl:param name="outputext"/>
   <xsl:param name="basedir"/>

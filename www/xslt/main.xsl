@@ -3,9 +3,7 @@
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml"
-  version="1.0" 
-  xmlns:ni="xalan://org.apache.xalan.lib.NodeInfo"
-  exclude-result-prefixes="ni">
+  version="1.0">
   
   <xsl:output
     method="xml"
@@ -16,17 +14,16 @@
 
   <xsl:param name="basedir"/>
   <xsl:param name="branding"/>
-  <xsl:variable name="brand" select="document(concat($branding,'/branding.xml'))/brand"/>
+  <xsl:variable name="brand" select="document(concat('../',$branding,'/branding.xml'))/brand"/>
   <xsl:param name="webappprefix"/>
   <xsl:param name="outputext"/>
   <xsl:param name="sourceref"/>
-<!--  <xsl:variable name="source" select="substring-after(ni:systemId(),concat($sourceref,'/'))"/>-->
 
   <xsl:include href="menu.xsl"/>
   <xsl:include href="rss.xsl"/>
   <xsl:include href="sources.xsl"/>
   <xsl:include href="start.xsl"/>
-  <xsl:include href="docbook.xsl"/>
+  <xsl:include href="docbook-flymine.xsl"/>
   <xsl:include href="ulink.xsl"/>
   <xsl:include href="page_template.xsl"/>
 

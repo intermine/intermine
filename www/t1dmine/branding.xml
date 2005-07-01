@@ -4,9 +4,7 @@
     <stylesheet file="style/base.css"/>
     <stylesheet file="style/branding.css"/>
     <meta name="keywords" 
-          content="t1dbase, microarray, database, proteomics, search, homo, sapiens
-                   bioinformatics, genomics, OQL, integration,
-                   query optimiser"/>  
+          content="t1dbase, microarray, database, proteomics, search, homo, sapiens bioinformatics, genomics, OQL, integration, query optimiser"/>  
     <meta name="description" 
           content="Integrated queryable database for T1Dbase data"/> 
 

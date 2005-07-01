@@ -1,22 +1,20 @@
-<project name="t1dmine-www" default="www-t1dmine" basedir=".">
-  <property name="build.properties.local" value="${user.home}/build.properties.t1dmine" />
-
-  <property file="${build.properties.local}"/>
+<project name="t1dmine-www" default="transform-site" basedir=".">
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="../site"/>
-  <property name="src.doc" location="../../flymine/doc"/> <!--?-->
   <property name="common.style" location="../style"/>
   <property name="build.www" location="build"/>
-  <property name="build.webapp.manual.html" location="dist/doc/manual"/>
   <property name="dist.www" location="dist"/>
-  <property name="t1dmine.main.stylesheet" location="../main.xsl"/>
-  <property name="t1dmine.frontpage.stylesheet" location="../front_page.xsl"/>
+  <property name="t1dmine.main.stylesheet" location="../xslt/main.xsl"/>
+  <property name="t1dmine.frontpage.stylesheet" location="../xslt/front_page.xsl"/>
 
   <property name="output.extension" value="html"/>
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
   <property name="branding" value="t1dmine"/>
 
   <target name="prepare">
+    <property name="build.properties.local" value="${user.home}/build.properties.t1dmine" />
+   <property file="${build.properties.local}"/>
+
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <include name="**/*"/>
@@ -31,13 +29,6 @@
       <fileset dir="${common.style}" includes="**/*"/>
     </copy>
 
-    <copy todir="${build.www}/doc">
-      <fileset dir="${src.doc}">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
-
-    
     <copy todir="${dist.www}">
       <fileset dir="${build.www}">
         <exclude name="**/*.xml"/>
@@ -58,25 +49,39 @@
       <param name="outputext" expression="${output.extension}" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
-      <factory>
-        <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
-      </factory>
     </style>
   </target>
 
   <target name="validate-site-xml" depends="prepare">
     <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
-        <exclude name="internal/**"/>
-        <!-- necessary until we can accommodate "presentation" within docbook -->
-        <exclude name="doc/presentations/index.xml"/>
         <exclude name="index.xml"/>
       </fileset>
-   </xmlvalidate>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+          location="../dtd/sdocbook-1.0.dtd"/>
+      </xmlcatalog>
+    </xmlvalidate>
+  </target>
+
+  <target name="validate-site-xhtml"
+          depends="validate-site-xml, style-site">
+    <xmlvalidate warn="yes">
+      <fileset dir="${dist.www}" includes="**/*.html">
+        <exclude name="internal/**"/>
+        <exclude name="images/index.html"/>
+      </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
+          location="../dtd/xhtml1-transitional.dtd"/>
+        </xmlcatalog>
+    </xmlvalidate>
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-site, webapp-manual-html"
+          depends="validate-site-xml, style-site, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
 
   <target name="release-www" depends="transform-site"
@@ -146,31 +151,6 @@
     <ant dir="../../t1dmine-www" target="build-db-userprofile" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine-www/dist"/>
     </ant>
-  </target>
-
-  <target name="webapp-manual-process" depends="prepare">
-<!--    <style basedir="${build.webapp.manual.src}"
-           style="/usr/share/xml/docbook/stylesheet/nwalsh/html/chunk.xsl"
-           destdir="${build.webapp.manual.html}"
-           includes="webapp_manual.xml"/>
--->
-
-    <exec executable="xmlto">
-      <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m style/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
-    </exec>
-
-  </target>
-
-  <target name="webapp-manual-pdf" depends="prepare">
-    <antcall target="webapp-manual-process">
-      <param name="output.type" value="pdf"/>
-    </antcall>
-  </target>
-
-  <target name="webapp-manual-html" depends="prepare">
-    <antcall target="webapp-manual-process">
-      <param name="output.type" value="html"/>
-    </antcall>
   </target>
 
   <target name="clean">
