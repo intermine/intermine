@@ -13,7 +13,17 @@
 </class>
 <class name="org.flymine.model.genomic.Treatment" is-interface="true">
   <attribute name="action" type="java.lang.String"/>
-  <attribute name="protocol" type="java.lang.String"/>
+  <reference name="protocol" referenced-type="org.flymine.model.genomic.Protocol"/>
+  <collection name="parameters" referenced-type="org.flymine.model.genomic.Parameter" ordered="true"/>
+</class>
+<class name="org.flymine.model.genomic.Parameter" is-interface="true">
+  <attribute name="type" type="java.lang.String"/>
+  <attribute name="value" type="java.lang.String"/>
+  <attribute name="units" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.Protocol" is-interface="true">
+  <attribute name="name" type="java.lang.String"/>
+  <attribute name="description" type="java.lang.String"/>
 </class>
 <class name="org.flymine.model.genomic.MicroArrayExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
   <attribute name="description" type="java.lang.String"/>
@@ -45,11 +55,11 @@
   <attribute name="type" type="java.lang.String"/>
   <attribute name="isControl" type="java.lang.Boolean"/>
   <attribute name="value" type="java.lang.Float"/>
-  <reference name="sample" referenced-type="org.flymine.model.genomic.BioEntity"/>
   <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
   <reference name="reporter" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
   <reference name="material" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="results"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="microArrayResults"/>
+  <collection name="samples" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayResult" ordered="true" reverse-reference="genes"/>
