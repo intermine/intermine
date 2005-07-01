@@ -203,6 +203,8 @@
     </table>
     <c:if test="${empty previewTemplate}">
       <br/>
+      <html:hidden property="templateName"/>
+      <html:hidden property="templateType"/>
       <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
       <html:submit><fmt:message key="template.submitToQuery"/></html:submit>
     </c:if>

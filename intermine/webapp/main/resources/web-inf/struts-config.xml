@@ -319,6 +319,7 @@
             input="template">
       <forward name="waiting" path="/pollTemplateQuery.do" redirect="true"/>
       <forward name="query" path="query.page"/>
+      <forward name="template" path="template.page"/>
     </action>
     
     <action path="/importTemplates"

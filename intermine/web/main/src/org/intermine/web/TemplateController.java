@@ -41,13 +41,11 @@ import org.intermine.objectstore.query.BagConstraint;
 public class TemplateController extends TilesAction
 {
     /**
-     * Finds the correct template to display in one of three ways:
+     * Finds the correct template to display in the following ways:
      * <ol>
      *    <li>First, looks for a "name" request parameter and uses that for a the lookup.
      *    <li>If "name" parameter doesn't exist, looks for TemplateQuery in request attribute
      *        "previewTemplate".
-     *    <li>If no preview template exists (usually provided by template controller or
-     *        action) then look for template name in "queryName" session attribute.
      * </ol>
      * In all cases where a template name is provided (in other words, the template query
      * was not provided in the "previewTemplate" request attribute), the template is then
@@ -78,19 +76,18 @@ public class TemplateController extends TilesAction
         String type = request.getParameter("type");
         boolean populate = true;
         
-        if (type == null) {
-            type = TemplateHelper.GLOBAL_TEMPLATE;
+        if (queryName == null) {
+            queryName = request.getParameter("templateName");
         }
         
         // Look for session attribute "previewTemplate" which is set while building a template
         template = (TemplateQuery) request.getAttribute("previewTemplate");
+        
         if (queryName == null && template != null) {
             queryName = template.getName();
         } else {
-            if (queryName == null) {
-                //have been directed to this page as a result of validation failure
-                queryName = (String) session.getAttribute("queryName");
-                populate = false;
+            if (type == null) {
+                type = TemplateHelper.GLOBAL_TEMPLATE;
             }
             template = TemplateHelper.findTemplate(request, queryName, type);
         }
@@ -141,8 +138,8 @@ public class TemplateController extends TilesAction
             constraints.put(node, template.getConstraints(node));
         }
         
-        session.setAttribute("queryName", queryName);
-        session.setAttribute("templateType", type);
+        tf.setTemplateName(queryName);
+        tf.setTemplateType(type);
         request.setAttribute("templateQuery", template);
         request.setAttribute("names", names);
         request.setAttribute("constraints", constraints);

@@ -32,10 +32,9 @@ import org.apache.struts.util.MessageResources;
 public class TemplateAction extends InterMineAction
 {
     /**
-     * Build a query based on the template and the input from the user. The template to
-     * be run is identified by the "queryName" and "templateType" request parameters or,
-     * if they are not found there, session attributes. There are also some request
-     * parameters that, if present, effect the behaviour of the action. These are:
+     * Build a query based on the template and the input from the user.
+     * There are some request parameters that, if present, effect the behaviour of
+     * the action. These are:
      *
      * <dl>
      * <dt>skipBuilder</dt>
@@ -60,25 +59,18 @@ public class TemplateAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        TemplateForm tf = (TemplateForm) form;
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String queryName = request.getParameter("queryName");
-        String templateType = request.getParameter("templateType");
+        String templateName = tf.getTemplateName();
+        String templateType = tf.getTemplateType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
         boolean skipBuilder = (request.getParameter("skipBuilder") != null);
         
-        if (templateType == null) {
-            templateType = (String) session.getAttribute("templateType");
-        }
+        SessionMethods.logTemplateQueryUse(session, templateType, templateName);
         
-        if (queryName == null) {
-            queryName = (String) session.getAttribute("queryName");
-        }
-        
-        SessionMethods.logTemplateQueryUse(session, templateType, queryName);
-        
-        TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
-        PathQuery queryCopy = TemplateHelper.templateFormToQuery((TemplateForm) form, template);
+        TemplateQuery template = TemplateHelper.findTemplate(request, templateName, templateType);
+        PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
         SessionMethods.loadQuery(queryCopy, request.getSession());
         form.reset (mapping, request);
         

@@ -38,6 +38,7 @@ public class TemplateForm extends ActionForm
     /** Maps containing form state for each constraint. */
     protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
     protected Map selectedBags, bagOps;
+    protected String templateType, templateName;
     
     /**
      * Constructor
@@ -177,6 +178,22 @@ public class TemplateForm extends ActionForm
     public Object getParsedAttributeValues(String key) {
         return parsedAttributeValues.get(key);
     }
+    
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    public String getTemplateType() {
+        return templateType;
+    }
+
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
+    }
 
     /**
      * @see ActionForm#validate
@@ -184,16 +201,8 @@ public class TemplateForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String queryName = request.getParameter("queryName");
-        String templateType = request.getParameter("templateType");
-        
-        if (templateType == null) {
-            templateType = (String) session.getAttribute("templateType");
-        }
-        
-        if (queryName == null) {
-            queryName = (String) session.getAttribute("queryName");
-        }
+        String queryName = getTemplateName();
+        String templateType = getTemplateType();
         
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         ActionErrors errors = new ActionErrors();
@@ -259,5 +268,7 @@ public class TemplateForm extends ActionForm
         useBagConstraint = new HashMap();
         selectedBags = new HashMap();
         bagOps = new HashMap();
+        templateName = null;
+        templateType = null;
     }
 }
