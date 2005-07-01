@@ -81,6 +81,8 @@ public class MageDataTranslator extends DataTranslator
 
     protected Set microArrayResults = new HashSet();
     protected Set samples = new HashSet();
+    // keep track of Reporter identifiers that are controls to set MicroArrayResult.isContol
+    protected Set controls = new HashSet();
     protected Map labeledExtractToMeasuredBioAssay = new HashMap();
     protected Map sampleToTreatments = new HashMap();
     protected Map sampleToLabeledExtract = new HashMap();
@@ -90,7 +92,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map resultToBioAssayData = new HashMap();
     protected Map bioAssayDataToAssay = new HashMap();
     protected Map measuredBioAssayToMicroArrayAssay = new HashMap();
-    protected Map assayToSample = new HashMap();
+    protected Map assayToSamples = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -211,7 +213,7 @@ public class MageDataTranslator extends DataTranslator
                     result.addAll(translateSample(srcItem, tgtItem));
                     storeTgtItem = false;
                 } else if (className.equals("Treatment")) {
-                    translateTreatment(srcItem, tgtItem);
+                    result.addAll(translateTreatment(srcItem, tgtItem));
                 }
 
                 if (storeTgtItem) {
@@ -407,9 +409,6 @@ public class MageDataTranslator extends DataTranslator
     public void translateMicroArrayResult(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
 
-        // TODO set isControl flag - from Reporter??
-
-
         if (srcItem.hasAttribute("value")) {
             String value = srcItem.getAttribute("value").getValue();
             if (StringUtil.allDigits(value)) {
@@ -428,12 +427,11 @@ public class MageDataTranslator extends DataTranslator
             resultToFeature.put(tgtItem.getIdentifier(),
                          srcItem.getReference("designElement").getRefId());
         }
-        // TODO mapping: MicroArrayResult.type = BioAssayDatum.quantitationType.name
         if (srcItem.hasReference("quantitationType")) {
             Item qtItem = getReference(srcItem, "quantitationType");
 
             if (qtItem.hasAttribute("name")) {
-                tgtItem.setAttribute("type", qtItem.getAttribute("name").getValue());
+                tgtItem.setAttribute("type", "(Normalised) " + qtItem.getAttribute("name").getValue());
             } else {
                 LOG.error("srcItem ( " + qtItem.getIdentifier()
                           + " ) does not have name attribute");
@@ -505,6 +503,8 @@ public class MageDataTranslator extends DataTranslator
             Item controlType = getReference(srcItem, "controlType");
             tgtItem.setAttribute("isControl", "true");
             tgtItem.setAttribute("controlType", controlType.getAttribute("value").getValue());
+            // will be used to set MicroArrayResult.isControl
+            controls.add(tgtItem.getIdentifier());
         } else {
             tgtItem.setAttribute("isControl", "false");
             // Reporter.immobilizedCharacteristics.type
@@ -580,7 +580,6 @@ public class MageDataTranslator extends DataTranslator
         String sampleId = searchTreatments(srcItem, new ArrayList());
         LOG.error("sampleId: " + sampleId);
         // map from sample to top level LabeledExtract
-        // TODO is this needed for link from MicroArrayAssay to Sample??
         if (sampleId != null) {
             sampleToLabeledExtract.put(sampleId, srcItem.getIdentifier());
         }
@@ -701,7 +700,7 @@ public class MageDataTranslator extends DataTranslator
      * @param tgtItem = flymine:Treatment
      * @throws ObjectStoreException if problem occured during translating
      */
-    public void translateTreatment(Item srcItem, Item tgtItem)
+    public Set translateTreatment(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
 
         // TODO protocol - either attribute of treatment or reference to object
@@ -715,6 +714,62 @@ public class MageDataTranslator extends DataTranslator
                                action.getAttribute("value").getValue()));
             }
         }
+
+        Set params = new HashSet();
+        List paramIds = new ArrayList();
+
+        // Protocol:  Treatment.protocolApplications.protocol
+        if (srcItem.hasCollection("protocolApplications")) {
+            Iterator protIter = getCollection(srcItem, "protocolApplications");
+            while (protIter.hasNext()) {
+                Item appItem = (Item) protIter.next();
+                if (tgtItem.hasReference("protocol")) {
+                    throw new IllegalArgumentException("Treatment has more than one ProtocolApplication: "
+                                                       + srcItem.getAttribute("name").getValue()
+                                                       + ", " + srcItem.getIdentifier());
+                }
+                if (appItem.hasReference("protocol")) {
+                    tgtItem.setReference("protocol", appItem.getReference("protocol").getRefId());
+                }
+
+                if (appItem.hasCollection("parameterValues")) {
+                    Iterator paramIter = getCollection(appItem, "parameterValues");
+                    while (paramIter.hasNext()) {
+                        Item valueItem = (Item) paramIter.next();
+                        Item tgtParam = createItem(tgtNs + "Parameter", "");
+                        if (valueItem.hasAttribute("value")) {
+                            tgtParam.setAttribute("value", valueItem.getAttribute("value").getValue());
+                        }
+
+                        Item srcParam = getReference(valueItem, "parameterType");
+                        if (srcParam.hasAttribute("name")) {
+                            tgtParam.setAttribute("type", srcParam.getAttribute("name").getValue());
+                        }
+
+                        // set units
+                        if (srcParam.hasReference("defaultValue")) {
+                            Item defaultItem = getReference(srcParam, "defaultValue");
+                            if (defaultItem.hasReference("measurement")) {
+                                Item measItem = getReference(defaultItem, "measurement");
+                                if (measItem.hasReference("unit")) {
+                                    Item unitItem = getReference(measItem, "unit");
+                                    if (unitItem.hasAttribute("unitNameCV")) {
+                                        tgtParam.setAttribute("unit", unitItem.getAttribute("unitNameCV").getValue());
+                                    }
+                                }
+                            }
+                        }
+                        paramIds.add(tgtParam.getIdentifier());
+                        params.add(tgtParam);
+                    }
+                }
+            }
+        }
+
+        if (paramIds.size() > 0) {
+            tgtItem.addCollection(new ReferenceList("parameters", paramIds));
+        }
+        return params;
     }
 
 
@@ -745,8 +800,8 @@ public class MageDataTranslator extends DataTranslator
                 if (bioAssayDataToAssay.containsKey(bioAssayDataId)) {
                     String assayId = (String) bioAssayDataToAssay.get(bioAssayDataId);
                     maResult.setReference("assay", assayId);
-                    if (assayToSample.containsKey(assayId)) {
-                        maResult.setReference("sample", (String) assayToSample.get(assayId));
+                    if (assayToSamples.containsKey(assayId)) {
+                        maResult.addCollection(new ReferenceList("samples", (List) assayToSamples.get(assayId)));
                     }
                 }
             }
@@ -754,7 +809,13 @@ public class MageDataTranslator extends DataTranslator
             if (resultToFeature.containsKey(maResult.getIdentifier())) {
                 String featureId = (String) resultToFeature.get(maResult.getIdentifier());
                 if (featureToReporter.containsKey(featureId)) {
-                    maResult.setReference("reporter", (String) featureToReporter.get(featureId));
+                    String reporterId = (String)  featureToReporter.get(featureId);
+                    maResult.setReference("reporter", reporterId);
+                    if (controls.contains(reporterId)) {
+                        maResult.setAttribute("isControl", "true");
+                    } else {
+                        maResult.setAttribute("isControl", "false");
+                    }
                 }
             }
         }
@@ -779,13 +840,17 @@ public class MageDataTranslator extends DataTranslator
 
             if (sampleToLabeledExtract.containsKey(sampleId)) {
                 String extractId = (String) sampleToLabeledExtract.get(sampleId);
-                System.out.println("labeledExtract: " + extractId);
                 if (labeledExtractToMeasuredBioAssay.containsKey(extractId)) {
                     String mbaId = (String) labeledExtractToMeasuredBioAssay.get(extractId);
-                    System.out.println("mbaId: " + mbaId);
                     if (measuredBioAssayToMicroArrayAssay.containsKey(mbaId)) {
-                        sample.setReference("assay", (String) measuredBioAssayToMicroArrayAssay.get(mbaId));
-                        assayToSample.put((String) measuredBioAssayToMicroArrayAssay.get(mbaId), sampleId);
+                        String assayId = (String) measuredBioAssayToMicroArrayAssay.get(mbaId);
+                        sample.setReference("assay", assayId);
+                        List sampleIds = (List) assayToSamples.get(assayId);
+                        if (sampleIds == null) {
+                            sampleIds = new ArrayList();
+                            assayToSamples.put(assayId, sampleIds);
+                        }
+                        sampleIds.add(sampleId);
                     }
                 }
             }

@@ -11,3 +11,7 @@ Publication.volume = BibliographicReference.volume
 Reporter = Reporter
 Sample = BioSource
 Treatment = Treatment
+Protocol = Protocol
+Protocol.name = Protocol.name
+Protocol.description = Protocol.text
+
