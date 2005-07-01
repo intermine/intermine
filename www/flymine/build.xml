@@ -1,15 +1,15 @@
 <project name="flymine-www" default="transform-site" basedir=".">
+  <property name="common" location="../common"/>
   <property name="src.www" location="site"/>
-  <property name="common.src.www" location="../site"/>
+  <property name="common.src.www" location="${common}/site"/>
   <property name="src.doc" location="../../flymine/doc"/>
   <property name="src.internal" location="../../flymine-private/doc"/>
-  <property name="common.style" location="../style"/>
   <property name="build.www" location="build"/>
   <property name="build.webapp.manual.html" location="dist/doc/manual"/>
   <property name="dist.www" location="dist"/>
-  <property name="flymine.main.stylesheet" location="../xslt/main.xsl"/>
-  <property name="flymine.frontpage.stylesheet" location="../xslt/front_page.xsl"/>
-
+  <property name="xslt" location="xslt"/>
+  <property name="common.xslt" location="${common}/xslt"/>
+  <property name="cache.dtd" location="${common}/dtd"/>
   <property name="output.extension" value="html"/>
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
   <property name="branding" value="flymine"/>
@@ -24,11 +24,6 @@
       <fileset dir="${common.src.www}">
         <include name="**/*"/>
       </fileset>
-    </copy>
-
-    <!-- copy common style -->
-    <copy todir="${build.www}/style">
-      <fileset dir="${common.style}" includes="**/*"/>
     </copy>
 
     <copy todir="${build.www}/doc">
@@ -70,15 +65,13 @@
 
   <target name="style-site" depends="prepare">
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
-           style="${flymine.main.stylesheet}" includes="**/*.xml"
+           style="${common.xslt}/main.xsl" includes="**/*.xml"
            force="false">
       <exclude name="doc/manual/webapp_manual.xml"/>
-      <param name="branding" expression="flymine" />
+      <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
-      <param name="file" expression="systemId()" />
-      <param name="sourceref" expression="${build.www}" />
     </style>
   </target>
 
@@ -93,7 +86,7 @@
       <xmlcatalog>
         <dtd 
           publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
-          location="../dtd/sdocbook-1.0.dtd"/>
+          location="${cache.dtd}/sdocbook-1.0.dtd"/>
       </xmlcatalog>
    </xmlvalidate>
   </target>
@@ -108,7 +101,7 @@
       <xmlcatalog>
         <dtd 
           publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
-          location="../dtd/xhtml1-transitional.dtd"/>
+          location="${cache.dtd}/xhtml1-transitional.dtd"/>
         </xmlcatalog>
    </xmlvalidate>
   </target>

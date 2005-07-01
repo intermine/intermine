@@ -13,7 +13,6 @@
   <xsl:param name="basedir"/>
   <xsl:param name="branding"/>
   <xsl:param name="webappprefix"/>
-  <xsl:param name="sourceref"/>
 
   <!-- copied so that we can add header, sidebar and pagecontent DIVs -->
   <xsl:template name="chunk-element-content">
