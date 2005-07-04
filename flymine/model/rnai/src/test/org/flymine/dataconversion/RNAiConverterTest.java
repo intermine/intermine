@@ -24,7 +24,7 @@ import org.intermine.dataconversion.FileConverter;
 public class RNAiConverterTest extends TestCase
 {
     public void testProcess() throws Exception {
-        String ENDL = "\n";
+        String ENDL = System.getProperty("line.separator");
         String input = ",,Taxon ID,Gene ID,Phenotype,,CGC-approved gene name,PubMedId,,,,,,Other gene name 1,Other gene name2" + ENDL
             + ",,6239,AC7.1,Sck,,,pmid:12529635,,,,," + ENDL
             + ",,6239,AC7.1,Ste,,,pmid:12529635,,,,," + ENDL
@@ -33,7 +33,7 @@ public class RNAiConverterTest extends TestCase
             + ",,6239,Flibble,WT,,,pmid:876,," + ENDL
             + ",,6239,Flibble,WT,,,pmid:678,," + ENDL;
         input = input.replaceAll(",", "\t"); //just used commas for readibility
-        
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new RNAiConverter(itemWriter);
         converter.process(new StringReader(input));
