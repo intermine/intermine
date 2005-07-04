@@ -38,7 +38,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.PathQueryUtil;
 
 import org.apache.log4j.Logger;
@@ -110,8 +109,6 @@ public class PrecomputeTask extends Task
     /**
      * Create precomputed tables for the given ObjectStore.  This method is also called from
      * PrecomputeTaskTest.
-     * @param os the ObjectStore to precompute in
-     * @param oss the ObjectStoreSummary for os
      */
     protected void precomputeModel() {
         readProperties();
@@ -185,7 +182,6 @@ public class PrecomputeTask extends Task
 
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
-     * @param os the ObjectStore to call precompute() on
      * @param query the query to precompute
      * @param indexes the index QueryNodes
      * @throws BuildException if the query cannot be precomputed.
@@ -209,7 +205,6 @@ public class PrecomputeTask extends Task
 
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
-     * @param os the ObjectStore to call precompute() on
      * @param query the query to precompute
      * @throws BuildException if the query cannot be precomputed.
      */
@@ -265,7 +260,8 @@ public class PrecomputeTask extends Task
                     }
                 } else {
                     if (!precomputeKey.startsWith(TEST_QUERY_PREFIX)) {
-                        throw new BuildException("unknown key in properties file "
+                        throw new BuildException("unknown key: '" + precomputeKey
+                                                 + "' in properties file "
                                                  + getPropertiesFileName());
                     }
                 }
