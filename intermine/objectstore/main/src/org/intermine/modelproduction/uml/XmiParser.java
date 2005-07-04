@@ -103,10 +103,13 @@ public class XmiParser implements ModelParser
             collections.add(new CollectionDescriptor(name,
                                                      qualify(type.substring(0, index)),
                                                      null, true));
-        } else if (type.startsWith("any")) {
-            references.add(new ReferenceDescriptor(name, qualify(type), null));
         } else {
-            attributes.add(new AttributeDescriptor(name, qualify(type)));
+            if (type.equals("any")) {
+                type = "java.lang.String";
+            } else {
+                type = qualify(type);
+            }
+            attributes.add(new AttributeDescriptor(name, type));
         }
     }
 
