@@ -60,7 +60,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
         return referencedClassDesc;
     }
-    
+
     /**
      * Gets the name of the reverse reference field.
      * @return the name of the reverse reference field
@@ -76,7 +76,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     public String getReferencedClassName() {
         return referencedType;
     }
-    
+
     /**
      * Gets the field in the referenced object that refers back to this class.
      * Note that this will be null in a unidirectional relationship,
@@ -103,7 +103,8 @@ public class ReferenceDescriptor extends FieldDescriptor
 
         } else {
             throw new MetaDataException("Unable to find ClassDescriptor for '"
-                                            + referencedType + "' in model");
+                                        + referencedType + "' in model while processing: "
+                                        + cld.getName() + "." + name);
         }
 
         // find ReferenceDescriptor for the reverse reference
@@ -132,7 +133,7 @@ public class ReferenceDescriptor extends FieldDescriptor
             return N_ONE_RELATION;
         } else {
             return ONE_ONE_RELATION;
-        } 
+        }
     }
 
     /**
