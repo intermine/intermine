@@ -293,7 +293,6 @@
     </copy>
       
     <!-- taskdefs -->
-  
     <taskdef name="merge-additions" classname="org.intermine.task.ModelMergerTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -306,7 +305,6 @@
                        additionsFile="${additionsFile}"
                        outputFile="${build.model}/genomic/genomic_model.xml"/>
     </presetdef>
-    
   </target>
 
   <target name="prepare-test" depends="prepare">
@@ -1671,7 +1669,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3131,6 +3129,7 @@
                    build-ensembl-human-production, build-go-human-production,
                    build-tfbs-production, build-firstef-production,
                    build-regions-production, build-disease-regions-production,
+                   build-ensembl-disease-production,
                    analyse-db-production, grant-db-production"/>
 
 
@@ -3297,7 +3296,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3370,7 +3369,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3443,7 +3442,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
@@ -3516,7 +3515,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
     </ant>
 
     <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
