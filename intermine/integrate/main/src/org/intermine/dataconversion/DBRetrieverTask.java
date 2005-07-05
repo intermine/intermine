@@ -67,11 +67,15 @@ public class DBRetrieverTask extends ConverterTask
             reader.close();
         } catch (Exception e) {
             LOG.error("problem retrieving data: ", e);
-            throw new BuildException(e);
+            throw new BuildException("failed to read from " + database, e);
         } finally {
             try {
-                writer.close();
-                osw.close();
+                if (writer != null) {
+                    writer.close();
+                }
+                if (osw != null) {
+                    osw.close();
+                }
             } catch (Exception e) {
                 throw new BuildException(e);
             }
