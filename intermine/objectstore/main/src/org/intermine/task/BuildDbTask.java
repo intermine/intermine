@@ -47,6 +47,7 @@ public class BuildDbTask extends Task
     protected static final String SERIAL_SEQUENCE_NAME = "serial";
     protected File tempDir;
     protected Database database;
+    protected String databaseAlias;
     protected String schemaFile;
 
     /**
@@ -55,6 +56,7 @@ public class BuildDbTask extends Task
      */
     public void setDatabase(String database) {
         try {
+            this.databaseAlias = database;
             this.database = DatabaseFactory.getDatabase(database);
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,7 +166,12 @@ public class BuildDbTask extends Task
         isql.setOnerror(ea);
         isql.setSqlDbMap(tempDir + "/sqldb.map");
         isql.setSrcDir(tempDir.toString());
-        isql.execute();
+        try {
+            isql.execute();
+        } catch (BuildException e) {
+            throw new BuildException(e.getMessage() + " - for database: " + databaseAlias,
+                                     e.getCause());
+        }
 
         ea.setValue("abort"); // "abort", "continue" or "stop"
         isql.execute();
