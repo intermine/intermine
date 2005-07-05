@@ -47,6 +47,10 @@ if (@ARGV == 1 or @ARGV == 2) {
 my $log_file = "pbuild.log";
 
 open LOG, ">>$log_file" or die "can't open $log_file: $!\n";
+my $old_handle = select(LOG);
+$| = 1; # autoflush
+select $old_handle;
+
 
 my $flymine_properties = "$ENV{HOME}/flymine.properties";
 my @dump_command = qw[pg_dump -C];
@@ -76,6 +80,7 @@ sub run_and_check_status
 {
   my $command_name = $_[0];
 
+  log_and_print `date`, "\n\n";
   log_and_print "starting command: @_\n";
 
   open F, "@_ |" or die "can't run @_: $?\n";
@@ -90,7 +95,8 @@ sub run_and_check_status
     log_message "  [$command_name] $_";
   }
 
-  log_message "\n";
+  log_and_print "finished\n\n";
+  log_and_print `date`, "\n\n";
 }
 
 # gets a value from a properties file
