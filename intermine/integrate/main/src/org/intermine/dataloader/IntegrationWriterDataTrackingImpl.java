@@ -224,13 +224,27 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                 && (fieldSource.equals(source) || (fieldSource.equals(skelSource)
                                         && (type != SOURCE)))) {
                             if (type == SOURCE) {
-                                String errMessage = "Unequivalent objects have the same"
-                                    + " non-skeleton Source; o1 = \"" + o
-                                    + "\" (from source), o2 = \"" + obj + "\"("
-                                    + (dbIdsStored.contains(obj.getId()) ? "stored in this run"
-                                            : "from database") + "), source1 = \"" + source
-                                    + "\", source2 = \"" + fieldSource + "\" for field \""
-                                    + field.getName() + "\"";
+                                String errMessage;
+                                if (dbIdsStored.contains(obj.getId())) {
+                                    errMessage = "There is already an equivalent "
+                                        + "in the database from this source (" + source
+                                        + ") from *this* run; new object from source: \"" + o
+                                        + "\", object from database (read earlier in this run): \""
+                                        + obj
+                                        + "\"; noticed problem while merging field \""
+                                        + field.getName() + "\" originally read from source: " +
+                                        fieldSource;
+                                } else {
+                                    errMessage = "There is already an equivalent "
+                                        + "in the database from this source (" + source
+                                        + ") from a *previous* run; "
+                                        + "object from source in this run: \""
+                                        + o + "\", object from database: \"" + obj
+                                        + "\"; noticed problem while merging field \""
+                                        + field.getName() + "\" originally read from source: " +
+                                        fieldSource;
+                                }
+                                
                                 if (!ignoreDuplicates) {
                                     LOG.error(errMessage);
                                     throw new IllegalArgumentException(errMessage);
