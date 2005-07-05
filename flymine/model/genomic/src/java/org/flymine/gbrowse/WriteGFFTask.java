@@ -145,20 +145,23 @@ public class WriteGFFTask extends Task
                 }
 
                 currentChr = (Chromosome) os.getObjectById(resultChrId);
-                writeChromosomeFasta(destinationDirectory, currentChr);
 
-                File gffFile = chromosomeGFFFile(destinationDirectory, currentChr);
-                if (gffWriter != null) {
-                    gffWriter.close();
-                }
-                gffWriter = new PrintWriter(new FileWriter(gffFile));
+                if (!currentChr.getIdentifier().endsWith("_random")
+                    && !currentChr.getIdentifier().equals("M")) {
+                    writeChromosomeFasta(destinationDirectory, currentChr);
 
-                writeFeature(gffWriter, currentChr, currentChr, null, new Integer(0), null,
+                    File gffFile = chromosomeGFFFile(destinationDirectory, currentChr);
+                    if (gffWriter != null) {
+                        gffWriter.close();
+                    }
+                    gffWriter = new PrintWriter(new FileWriter(gffFile));
+
+                    writeFeature(gffWriter, currentChr, currentChr, null, new Integer(0), null,
                              synonymMap);
 
-                objectCounts = new HashMap();
-                currentChrId = resultChrId;
-
+                    objectCounts = new HashMap();
+                    currentChrId = resultChrId;
+                }
             }
 
             if (feature instanceof Transcript && !(feature instanceof NcRNA)) {
@@ -180,15 +183,20 @@ public class WriteGFFTask extends Task
                 continue;
             }
 
-            writeFeature(gffWriter, currentChr, feature, loc,
+            if (!currentChr.getIdentifier().endsWith("_random")
+                    && !currentChr.getIdentifier().equals("M")) {
+                writeFeature(gffWriter, currentChr, feature, loc,
                          (Integer) objectCounts.get(feature.getClass()), null, synonymMap);
-
+            }
 
             incrementCount(objectCounts, feature);
         }
 
-        writeTranscriptsAndExons(os, gffWriter, currentChr, seenTranscripts, seenTranscriptParts,
+        if (!currentChr.getIdentifier().endsWith("_random")
+                    && !currentChr.getIdentifier().equals("M")) {
+            writeTranscriptsAndExons(os, gffWriter, currentChr, seenTranscripts, seenTranscriptParts,
                                  synonymMap);
+        }
 
         gffWriter.close();
     }
@@ -376,8 +384,10 @@ public class WriteGFFTask extends Task
 
         if (bioEntity instanceof Transcript && !(bioEntity instanceof TRNA) && parent != null) {
             ArrayList geneNameList = new ArrayList();
-            geneNameList.add(parent.getIdentifier());
-            attributes.put("Gene", geneNameList);
+            if (parent.getIdentifier() != null) {
+                geneNameList.add(parent.getIdentifier());
+                attributes.put("Gene", geneNameList);
+            }
         }
 
         if (bioEntity instanceof ChromosomeBand) {
@@ -393,7 +403,6 @@ public class WriteGFFTask extends Task
         }
 
         lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
-
         gffWriter.println(lineBuffer.toString());
     }
 
@@ -493,6 +502,7 @@ public class WriteGFFTask extends Task
 //            SeqIOTools.writeFasta(outputStream, sequence);
 //         }
 
+
         printStream.println(">" + chromosomeFileNamePrefix(chr));
 
         String residues = chromosomeSequence.getResidues();
@@ -508,6 +518,7 @@ public class WriteGFFTask extends Task
 
         printStream.close();
         fileStream.close();
+
     }
 
 
@@ -522,5 +533,6 @@ public class WriteGFFTask extends Task
     private String chromosomeFileNamePrefix(Chromosome chr) {
         return chr.getOrganism().getGenus() + "_" + chr.getOrganism().getSpecies()
             + "_chr_" + chr.getIdentifier();
+
     }
 }
