@@ -1444,7 +1444,8 @@ public class CalculateLocations
 
     /**
      * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
-     * LocatedSequenceFeature.chromosomeLocation reference to be that Location.
+     * LocatedSequenceFeature.chromosomeLocation reference to be that Location and set the length
+     * field of the LocatedSequenceFeature to chromosomeLocation.end - chromosomeLocation.start + 1
      * @throws Exception if anything goes wrong
      */
     public void setChromosomeLocationsAndLengths() throws Exception {
