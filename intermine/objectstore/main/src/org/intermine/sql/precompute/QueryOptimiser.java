@@ -235,8 +235,7 @@ public class QueryOptimiser
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
             return bestQuery;
         } catch (RuntimeException e) {
-            // Query was not acceptable.
-            LOG.warn("Exception", e);
+            LOG.warn("Exception - query cannot be optimised: " + query, e);
         }
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
