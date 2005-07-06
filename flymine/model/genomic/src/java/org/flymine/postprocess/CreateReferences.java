@@ -10,9 +10,9 @@ package org.flymine.postprocess;
  *
  */
 
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -286,7 +286,7 @@ public class CreateReferences
                                          boolean createInFirstClass)
         throws Exception {
         InterMineObject lastDestObject = null;
-        List newCollection = new ArrayList();
+        Set newCollection = new HashSet();
 
         LOG.info("Beginning insertReferences("
                  + firstClass.getName() + ", "
@@ -327,8 +327,8 @@ public class CreateReferences
                     try {
                         InterMineObject tempObject =
                             PostProcessUtil.cloneInterMineObject(lastDestObject);
-                        List oldCollection =
-                            (List) TypeUtil.getFieldValue(tempObject, createFieldName);
+                        Set oldCollection = (Set) TypeUtil.getFieldValue(tempObject,
+                                createFieldName);
                         newCollection.addAll(oldCollection);
                         TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
                         count += newCollection.size();
@@ -339,7 +339,7 @@ public class CreateReferences
                     }
                 }
 
-                newCollection = new ArrayList();
+                newCollection = new HashSet();
             }
 
             newCollection.add(thisSourceObject);
@@ -388,7 +388,7 @@ public class CreateReferences
                  + newCollectionName + ")");
 
         InterMineObject lastObject = null;
-        List newCollection = new ArrayList();
+        Set newCollection = new HashSet();
         Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), thisClass,
                                                          collectionClass, oldCollectionName);
         // results will be: thisClass ; collectionClass  (ordered by thisClass)
@@ -411,7 +411,7 @@ public class CreateReferences
                     osw.store(tempObject);
                 }
 
-                newCollection = new ArrayList();
+                newCollection = new HashSet();
             }
 
             newCollection.add(collectionObject);
@@ -455,7 +455,7 @@ public class CreateReferences
                  + propertyClass.getName() + ", " + newCollectionName + ")");
 
         InterMineObject lastObject = null;
-        List newCollection = new ArrayList();
+        Set newCollection = new HashSet();
         Iterator resIter = PostProcessUtil.findProperties(osw.getObjectStore(), entityClass,
                                                          propertyClass);
         // results will be:  entityClass ; properyClass (ordered by entityClass)
@@ -478,7 +478,7 @@ public class CreateReferences
                     osw.store(tempObject);
                 }
 
-                newCollection = new ArrayList();
+                newCollection = new HashSet();
             }
 
             newCollection.add(thisProperty);
@@ -523,7 +523,7 @@ public class CreateReferences
                  + collectionFieldName + ")");
 
         InterMineObject lastObject = null;
-        List newCollection = new ArrayList();
+        Set newCollection = new HashSet();
         // results will be:  object1, relation, object2  (ordered by object1)
         Iterator resIter =
             PostProcessUtil.findSymmetricalRelation(osw.getObjectStore(), objectClass,
@@ -549,7 +549,7 @@ public class CreateReferences
                     osw.store(tempObject);
                 }
 
-                newCollection = new ArrayList();
+                newCollection = new HashSet();
             }
 
             if (!object1.getId().equals(object2.getId())) {

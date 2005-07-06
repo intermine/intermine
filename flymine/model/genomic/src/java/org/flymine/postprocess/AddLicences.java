@@ -11,9 +11,9 @@ package org.flymine.postprocess;
  */
 
 import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -84,7 +84,7 @@ public class AddLicences
             DynamicUtil.createObject(Collections.singleton(Comment.class));
         comment.setType(type);
         comment.setText(text);
-        List comments = new ArrayList(interaction.getComments());
+        HashSet comments = new HashSet(interaction.getComments());
         comments.add(comment);
         interaction.setComments(comments);
     }

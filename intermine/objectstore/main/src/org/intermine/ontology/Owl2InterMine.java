@@ -249,7 +249,7 @@ public class Owl2InterMine
             }
             AttributeDescriptor atd
                 = new AttributeDescriptor(OntologyUtil.generateFieldName(prop, domain),
-                                          javaType);
+                        javaType);
             HashSet atds = getFieldSetForClass(attributes, domain.getLocalName());
             atds.add(atd);
         } else if (isInverse || (invProp != null)
@@ -260,17 +260,14 @@ public class Owl2InterMine
             if (OntologyUtil.hasMaxCardinalityOne(ontModel, prop, domain)) {
                 ReferenceDescriptor rfd
                     = new ReferenceDescriptor(OntologyUtil.generateFieldName(prop, domain),
-                                              referencedType,
-                                              reverseRef);
+                            referencedType, reverseRef);
                 HashSet rfds = getFieldSetForClass(references, domain.getLocalName());
                 rfds.add(rfd);
             } else {
                 // TODO collection - cannot handle unordered
                 CollectionDescriptor cod
                     = new CollectionDescriptor(OntologyUtil.generateFieldName(prop, domain),
-                                               referencedType,
-                                               reverseRef,
-                                               true);
+                            referencedType, reverseRef);
                 HashSet cods = getFieldSetForClass(collections, domain.getLocalName());
                 cods.add(cod);
             }

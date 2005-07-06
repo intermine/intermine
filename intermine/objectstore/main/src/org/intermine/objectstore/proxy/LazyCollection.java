@@ -10,7 +10,7 @@ package org.intermine.objectstore.proxy;
  *
  */
 
-import java.util.List;
+import java.util.Set;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -21,7 +21,7 @@ import org.intermine.objectstore.query.ResultsInfo;
  *
  * @author Matthew Wakeling
  */
-public interface LazyCollection extends Lazy, List
+public interface LazyCollection extends Lazy, Set
 {
     /**
      * Sets this LazyCollection to bypass the optimiser

@@ -170,7 +170,7 @@ public class JavaModelOutputTest extends TestCase
         Set atts = new HashSet(Collections.singleton(atd1));
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null, true);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
@@ -183,9 +183,9 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public java.lang.String getAtd1() { return atd1; }" + ENDL
             + INDENT + "public void setAtd1(java.lang.String atd1) { this.atd1 = atd1; }" + ENDL + ENDL
             + INDENT + "// Col: package.name.Class1.cod1" + ENDL
-            + INDENT + "protected java.util.List cod1 = new java.util.ArrayList();" + ENDL
-            + INDENT + "public java.util.List getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
+            + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
+            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
             + INDENT + "public void addCod1(package.name.Class2 arg) { cod1.add(arg); }" + ENDL + ENDL
             + INDENT + "// Ref: package.name.Class1.rfd1" + ENDL
             + INDENT + "protected org.intermine.model.InterMineObject rfd1;" + ENDL
@@ -236,8 +236,8 @@ public class JavaModelOutputTest extends TestCase
         assertEquals(mo.generate(rfd1, true) + "\n" + expected, expected, mo.generate(rfd1, true));
     }
 
-    public void testGenerateCollectionDescriptorUnordered() throws Exception {
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null, false);
+    public void testGenerateCollectionDescriptor() throws Exception {
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null);
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
@@ -247,22 +247,6 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
             + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
             + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
-            + INDENT + "public void addCod1(Class2 arg) { cod1.add(arg); }" + ENDL + ENDL;
-
-        assertEquals(expected, mo.generate(cod1, true));
-    }
-
-    public void testGenerateCollectionDescriptorOrdered() throws Exception {
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null, true);
-        Set cols = new HashSet(Collections.singleton(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
-
-        String expected = INDENT + "// Col: Class1.cod1" + ENDL
-            + INDENT + "protected java.util.List cod1 = new java.util.ArrayList();" + ENDL
-            + INDENT + "public java.util.List getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL
             + INDENT + "public void addCod1(Class2 arg) { cod1.add(arg); }" + ENDL + ENDL;
 
         assertEquals(expected, mo.generate(cod1, true));
@@ -317,17 +301,15 @@ public class JavaModelOutputTest extends TestCase
         assertEquals("java.lang.String", mo.getType(atd1));
 
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null, true);
-        CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "Class2", null, false);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
-        Set cols = new HashSet(Arrays.asList(new Object[] {cod1, cod2}));
+        Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, cols);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         assertEquals("Class2", mo.getType(rfd1));
-        assertEquals("java.util.List", mo.getType(cod1));
-        assertEquals("java.util.Set", mo.getType(cod2));
+        assertEquals("java.util.Set", mo.getType(cod1));
     }
 
     public void testGenerateMultiInheritanceLegal() throws Exception {

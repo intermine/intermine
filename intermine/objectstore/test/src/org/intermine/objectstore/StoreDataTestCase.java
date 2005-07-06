@@ -38,6 +38,7 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
                     .getObjectStoreWriter("osw.unittest");
             }
             storeData();
+            //System.exit(1);
         } catch (Exception e) {
             if (storeDataWriter != null) {
                 storeDataWriter.close();
@@ -60,14 +61,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         }
         long start = new Date().getTime();
         try {
-            Iterator iter = data.entrySet().iterator();
-            while (iter.hasNext()) {
-                InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
-                    .getValue();
-                o.setId(null);
-            }
+            //Iterator iter = data.entrySet().iterator();
+            //while (iter.hasNext()) {
+            //    InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
+            //        .getValue();
+            //    o.setId(null);
+            //}
             storeDataWriter.beginTransaction();
-            iter = data.entrySet().iterator();
+            Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 InterMineObject o = (InterMineObject) entry.getValue();

@@ -11,9 +11,9 @@ package org.intermine.util;
  */
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -129,7 +129,7 @@ public class DynamicBean implements MethodInterceptor
                 retval = ((ProxyReference) retval).getObject();
             }
             if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
-                retval = new ArrayList();
+                retval = new HashSet();
                 map.put(method.getName().substring(3), retval);
             }
             return retval;
@@ -155,7 +155,7 @@ public class DynamicBean implements MethodInterceptor
                 && (method.getReturnType() == Void.TYPE)) {
             Collection col = (Collection) map.get(method.getName().substring(3));
             if (col == null) {
-                col = new ArrayList();
+                col = new HashSet();
                 map.put(method.getName().substring(3), col);
             }
             col.add(args[0]);

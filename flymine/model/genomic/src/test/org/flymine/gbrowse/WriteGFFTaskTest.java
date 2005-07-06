@@ -167,14 +167,14 @@ public class WriteGFFTaskTest extends TestCase
 
         storedExon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon1.setIdentifier("exon1");
-        storedExon1.setTranscripts(Arrays.asList(new Object[] {storedTranscript1}));
+        storedExon1.setTranscripts(new HashSet(Arrays.asList(new Object[] {storedTranscript1})));
         storedExon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon2.setIdentifier("exon2");
-        storedExon2.setTranscripts(Arrays.asList(new Object[] {storedTranscript1,
-                                                               storedTranscript2}));
+        storedExon2.setTranscripts(new HashSet(Arrays.asList(new Object[] {storedTranscript1,
+            storedTranscript2})));
         storedExon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon3.setIdentifier("exon3");
-        storedExon3.setTranscripts(Arrays.asList(new Object[] {storedTranscript2}));
+        storedExon3.setTranscripts(new HashSet(Arrays.asList(new Object[] {storedTranscript2})));
 
         storedTranscript1Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));

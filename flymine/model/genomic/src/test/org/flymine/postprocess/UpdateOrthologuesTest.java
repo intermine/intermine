@@ -104,7 +104,8 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         Gene subGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         subGene1.setId(new Integer(102));
 
-        setUpData(Orthologue.class, new ArrayList(Collections.singleton(objGene1)), new ArrayList(Collections.singleton(subGene1)));
+        setUpData(Orthologue.class, Collections.singleton(objGene1),
+                Collections.singleton(subGene1));
 
         UpdateOrthologues pp = new UpdateOrthologues(osw);
         pp.process();
@@ -125,7 +126,8 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         Gene subGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         subGene1.setId(new Integer(102));
 
-        setUpData(Paralogue.class, new ArrayList(Collections.singleton(objGene1)), new ArrayList(Collections.singleton(subGene1)));
+        setUpData(Paralogue.class, Collections.singleton(objGene1),
+                Collections.singleton(subGene1));
 
         UpdateOrthologues pp = new UpdateOrthologues(osw);
         pp.process();
@@ -151,8 +153,8 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         Gene subGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         subGene2.setId(new Integer(104));
 
-        setUpData(Orthologue.class, new ArrayList(Arrays.asList(new Object[] {objGene1, objGene2})),
-                  new ArrayList(Arrays.asList(new Object[] {subGene1, subGene2})));
+        setUpData(Orthologue.class, new HashSet(Arrays.asList(new Object[] {objGene1, objGene2})),
+                  new HashSet(Arrays.asList(new Object[] {subGene1, subGene2})));
 
         UpdateOrthologues pp = new UpdateOrthologues(osw);
         pp.process();
@@ -262,7 +264,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
 
     private Relation getExpectedData(Class relClass, Gene objGene, Gene subGene) {
         Relation rel = (Relation) DynamicUtil.createObject(Collections.singleton(relClass));
-        rel.setEvidence(new ArrayList());
+        rel.setEvidence(new HashSet());
         rel.setId(new Integer(1));
         Protein objProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         objProtein.setId(OBJ_PROTEIN_ID);
@@ -285,7 +287,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
 
     // create an [Ortho|Para]logue with object and subject Proteins that have objGenes and subGenes
     // in their respective genes collections
-    private void setUpData(Class relClass, List objGenes, List subGenes) throws Exception {
+    private void setUpData(Class relClass, Set objGenes, Set subGenes) throws Exception {
         Relation rel = (Relation) DynamicUtil.createObject(Collections.singleton(relClass));
         Protein objProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         objProtein.setId(OBJ_PROTEIN_ID);

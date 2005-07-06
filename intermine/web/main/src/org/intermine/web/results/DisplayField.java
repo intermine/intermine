@@ -80,7 +80,7 @@ public class DisplayField
                         // get the first batch to make sure that small collections have an accurate
                         // size
                         // see also ticket #267
-                        lazyCollection.get(0);
+                        lazyCollection.iterator().next();
                         size = lazyCollection.getInfo().getRows();
                     } catch (IndexOutOfBoundsException _) {
                         size = 0;

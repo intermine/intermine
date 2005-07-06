@@ -10,7 +10,7 @@ package org.intermine.objectstore.fastcollections;
  *
  */
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +22,7 @@ import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.Lazy;
+import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
@@ -56,8 +57,11 @@ public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplT
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
         Company c = (Company) rr.get(0);
-        assertTrue("Expected " + c.getContractors().getClass() + " to be an ArrayList object", c.getContractors() instanceof ArrayList);
-        Set contractors = new HashSet(c.getContractors());
+        Collection coll = c.getContractors();
+        assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
+        assertNotNull("Expected collection to be materialised", ((ProxyCollection) coll).getMaterialisedCollection());
+        assertTrue("Expected materialised collection to be a HashSet, but was " + ((ProxyCollection) coll).getMaterialisedCollection().getClass(), ((ProxyCollection) coll).getMaterialisedCollection() instanceof HashSet);
+        Set contractors = new HashSet(coll);
         Set expected1 = new HashSet();
         expected1.add(data.get("ContractorA"));
         expected1.add(data.get("ContractorB"));

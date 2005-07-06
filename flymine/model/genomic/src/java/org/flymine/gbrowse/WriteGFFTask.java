@@ -10,13 +10,15 @@ package org.flymine.gbrowse;
  *
  */
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.FileWriter;
@@ -214,7 +216,7 @@ public class WriteGFFTask extends Task
 
             writeFeature(gffWriter, chr, transcript, transcriptLocation, null, gene, synonymMap);
 
-            List exons = transcript.getExons();
+            Collection exons = transcript.getExons();
 
             ProxyCollection exonsResults = (ProxyCollection) exons;
 

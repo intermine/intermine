@@ -220,8 +220,8 @@ public class JavaModelOutput extends ModelOutput
      * @see ModelOutput#generate(CollectionDescriptor)
      */
     protected String generate(CollectionDescriptor col, boolean field) {
-        String type = col.isOrdered() ? "java.util.List" : "java.util.Set";
-        String impl = col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet";
+        String type = "java.util.Set";
+        String impl = "java.util.HashSet";
 
         StringBuffer sb = new StringBuffer();
         if (field) {
@@ -446,11 +446,7 @@ public class JavaModelOutput extends ModelOutput
         if (field instanceof AttributeDescriptor) {
             type = ((AttributeDescriptor) field).getType();
         } else if (field instanceof CollectionDescriptor) {
-            if (((CollectionDescriptor) field).isOrdered()) {
-                type = "java.util.List";
-            } else {
-                type = "java.util.Set";
-            }
+            type = "java.util.Set";
         } else {
             type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getName();
         }

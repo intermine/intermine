@@ -160,10 +160,11 @@ public class CalculateLocationsTest extends TestCase {
         while (resIter.hasNext()) {
             OverlapRelation overlap = (OverlapRelation) resIter.next();
 
-            java.util.List bioEntities = overlap.getBioEntities();
+            Set bioEntities = overlap.getBioEntities();
 
-            LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) bioEntities.get(0);
-            LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) bioEntities.get(1);
+            Iterator beIter = bioEntities.iterator();
+            LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) beIter.next();
+            LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) beIter.next();
 
             for (int i = 0; i < expectedOverlapObj1.length; i++) {
                 if (lsf1.getId().intValue() == expectedOverlapObj1[i] &&
@@ -307,8 +308,8 @@ public class CalculateLocationsTest extends TestCase {
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setId(new Integer(301));
 
-        exon1.setTranscripts(Arrays.asList(new Object [] {trans1}));
-        exon2.setTranscripts(Arrays.asList(new Object [] {trans1}));
+        exon1.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans1})));
+        exon2.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans1})));
         trans1.setGene(gene);
         trans2.setGene(gene);
 
@@ -331,13 +332,13 @@ public class CalculateLocationsTest extends TestCase {
         Transcript resTrans1 = (Transcript) os.getObjectById(new Integer(201));
 
         assertEquals(1, resTrans1.getObjects().size());
-        Location resTrans1Location = (Location) resTrans1.getObjects().get(0);
+        Location resTrans1Location = (Location) resTrans1.getObjects().iterator().next();
         assertEquals(51, resTrans1Location.getStart().intValue());
         assertEquals(250, resTrans1Location.getEnd().intValue());
 
         Gene resGene = (Gene) os.getObjectById(new Integer(301));
         assertEquals(1, resGene.getObjects().size());
-        Location resGeneLocation = (Location) resGene.getObjects().get(0);
+        Location resGeneLocation = (Location) resGene.getObjects().iterator().next();
         assertEquals(51, resGeneLocation.getStart().intValue());
         assertEquals(300, resGeneLocation.getEnd().intValue());
     }

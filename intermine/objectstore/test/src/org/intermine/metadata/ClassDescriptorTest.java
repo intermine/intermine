@@ -240,8 +240,8 @@ public class ClassDescriptorTest extends TestCase
 
     private Set getCollections() {
         Set collections = new HashSet();
-        CollectionDescriptor cld1 = new CollectionDescriptor("cld1", "String", "reverse1", false);
-        CollectionDescriptor cld2 = new CollectionDescriptor("cld2", "Integer", "reverse2", false);
+        CollectionDescriptor cld1 = new CollectionDescriptor("cld1", "String", "reverse1");
+        CollectionDescriptor cld2 = new CollectionDescriptor("cld2", "Integer", "reverse2");
         collections.add(cld1);
         collections.add(cld2);
         return collections;
@@ -289,7 +289,7 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceIllegalAttCol() throws Exception {
-        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null, false);
+        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null);
         Set atds1 = new HashSet(Collections.singleton(atd1));
         AttributeDescriptor atd2 = new AttributeDescriptor("atd1", "float");
         Set atds2 = new HashSet(Collections.singleton(atd2));
@@ -304,7 +304,7 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceIllegalRefCol() throws Exception {
-        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null, false);
+        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null);
         Set atds1 = new HashSet(Collections.singleton(atd1));
         ReferenceDescriptor atd2 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
         Set atds2 = new HashSet(Collections.singleton(atd2));
@@ -334,9 +334,9 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceIllegalCol() throws Exception {
-        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null, false);
+        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null);
         Set atds1 = new HashSet(Collections.singleton(atd1));
-        CollectionDescriptor atd2 = new CollectionDescriptor("atd1", "package.name.Class2", null, false);
+        CollectionDescriptor atd2 = new CollectionDescriptor("atd1", "package.name.Class2", null);
         Set atds2 = new HashSet(Collections.singleton(atd2));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), new HashSet(), atds1);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), new HashSet(), atds2);

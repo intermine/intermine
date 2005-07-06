@@ -102,7 +102,7 @@ public class XmiParser implements ModelParser
             int index = type.indexOf("[");
             collections.add(new CollectionDescriptor(name,
                                                      qualify(type.substring(0, index)),
-                                                     null, true));
+                                                     null));
         } else {
             if (type.equals("any")) {
                 type = "java.lang.String";
@@ -162,12 +162,10 @@ public class XmiParser implements ModelParser
             MMultiplicity m = ae.getMultiplicity();
             if (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m)) {
                 references.add(new ReferenceDescriptor(name, referencedType,
-                                                       reverseReference));
+                            reverseReference));
             } else {
-                boolean ordered = ae.getOrdering() != null
-                    && !ae.getOrdering().getName().equals("unordered");
                 collections.add(new CollectionDescriptor(name, referencedType,
-                                                         reverseReference, ordered));
+                            reverseReference));
             }
         }
     }

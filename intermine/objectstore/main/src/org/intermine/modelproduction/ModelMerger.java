@@ -345,13 +345,6 @@ public class ModelMerger
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
                 }
-                
-                if (merg.isOrdered() != orig.isOrdered()) {
-                    String fldName = original.getName() + "." + orig.getName();
-                    throw new ModelMergerException("mismatch between ordering of same collections: "
-                            + fldName + ":" + merg.isOrdered() + " != "
-                            + fldName + ":" + orig.isOrdered());
-                }
             }
             
             // New descriptor of no differences, so add merg to newSet
@@ -450,7 +443,7 @@ public class ModelMerger
     
     private static CollectionDescriptor cloneCollectionDescriptor(CollectionDescriptor ref) {
         return new CollectionDescriptor(ref.getName(), ref.getReferencedClassName(),
-                ref.getReverseReferenceFieldName(), ref.isOrdered());
+                ref.getReverseReferenceFieldName());
     }
     
     /**

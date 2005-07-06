@@ -22,28 +22,18 @@ import org.intermine.util.Util;
 
 public class CollectionDescriptor extends ReferenceDescriptor
 {
-    protected final boolean ordered;
-    protected final Class collectionClass;
-
     /**
      * Construct a CollectionDescriptor.  name and referencedType may not be null.
      * @param name name of this field in parent class
      * @param referencedType the fully qualified name of the business object type in this collection
      * @param reverseRefName name of field in the referenced class that points back to this class
      *                       (may be null)
-     * @param ordered true if the collection ordered
      * @throws IllegalArgumentException if arguments are null
      */
     public CollectionDescriptor(String name, String referencedType,
-                                   String reverseRefName, boolean ordered) {
+                                   String reverseRefName) {
         // should define type of collection properly somehow
         super(name, referencedType, reverseRefName);
-        this.ordered = ordered;
-        if (ordered) {
-            collectionClass = java.util.ArrayList.class;
-        } else {
-            collectionClass = java.util.HashSet.class;
-        }
     }
 
     /**
@@ -66,23 +56,6 @@ public class CollectionDescriptor extends ReferenceDescriptor
         return super.getReverseReferenceDescriptor();
     }
 
-
-    /**
-     * Get the class of collection this field represents
-     * @return the type of collection
-     */
-    public Class getCollectionClass() {
-        return this.collectionClass;
-    }
-
-    /**
-     * True if the collection is ordered.
-     * @return true if the collection is ordered
-     */
-    public boolean isOrdered() {
-        return ordered;
-    }
-    
     /**
      * @see FieldDescriptor#relationType
      */
@@ -104,8 +77,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
             return (cld == null || cld.getName().equals(ref.cld.getName()))
                 && name.equals(ref.name)
                 && referencedType.equals(ref.referencedType)
-                && Util.equals(reverseRefName, ref.reverseRefName)
-                && ordered == ref.ordered;
+                && Util.equals(reverseRefName, ref.reverseRefName);
         }
         return false;
     }
@@ -117,8 +89,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
         return 2 * (cld == null ? 0 : cld.getName().hashCode())
             + 3 * name.hashCode()
             + 7 * referencedType.hashCode()
-            + 11 * Util.hashCode(reverseRefName)
-            + 13 * (ordered ? 1 : 0);
+            + 11 * Util.hashCode(reverseRefName);
     }
 
     /**
@@ -127,7 +98,6 @@ public class CollectionDescriptor extends ReferenceDescriptor
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<collection name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
-            .append(" ordered=\"" + ordered + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
             .append("/>");
         return sb.toString();
