@@ -14,8 +14,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry exported="true" kind="lib" path="lib/struts-1.2.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/struts.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
