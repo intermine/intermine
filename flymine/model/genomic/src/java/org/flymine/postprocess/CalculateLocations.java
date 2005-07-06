@@ -585,6 +585,23 @@ public class CalculateLocations
             cs.addConstraint(idLessThanConstraint);
 
 
+            // temporary - only consider short objects - XXX FIXME TODO
+            int MAX_LENGTH = 100000;
+
+            QueryValue maxLengthQV = new QueryValue(new Integer(MAX_LENGTH));
+
+            QueryField qfLoc1Length = new QueryField(qcObj1, "length");
+            QueryField qfLoc2Length = new QueryField(qcObj2, "length");
+
+            SimpleConstraint loc1LengthConstraint =
+                new SimpleConstraint(qfLoc1Length, ConstraintOp.LESS_THAN_EQUALS, maxLengthQV);
+            SimpleConstraint loc2LengthConstraint =
+                new SimpleConstraint(qfLoc2Length, ConstraintOp.LESS_THAN_EQUALS, maxLengthQV);
+
+            cs.addConstraint(loc1LengthConstraint);
+            cs.addConstraint(loc2LengthConstraint);
+
+
             Results results = os.execute(q);
 
             Iterator resIter = results.iterator();
