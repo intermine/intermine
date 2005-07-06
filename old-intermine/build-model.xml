@@ -339,7 +339,6 @@
       <classpath refid="class.path"/>
     </taskdef>
     <precompute-queries alias="${objectstore.name}"
-                        summaryPropertiesFile="${summarise.output.properties.filename}"
                         minRows="${precompute.minRows}"/>
   </target>
 
@@ -348,7 +347,6 @@
       <classpath refid="class.path"/>
     </taskdef>
     <precompute-queries alias="${objectstore.name}" testMode="true"
-                        summaryPropertiesFile="${summarise.output.properties.filename}"
                         minRows="${precompute.minRows}"/>
   </target>
 
@@ -357,7 +355,8 @@
     <taskdef name="precompute-templates" classname="org.intermine.web.task.PrecomputeTemplatesTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-templates alias="${objectstore.name}" minRows="${precompute.minRows}"/>
+    <precompute-templates alias="${objectstore.name}" minRows="${precompute.minRows}" 
+                          userprofilealias="${userprofile.name}" username="${username}"/>
   </target>
 
   <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"
