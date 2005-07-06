@@ -10,6 +10,8 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -57,6 +59,7 @@ public class MageDataTranslator extends DataTranslator
 {
     protected static final Logger LOG = Logger.getLogger(MageDataTranslator.class);
 
+    protected Map config = new HashMap();
     protected Map synonymMap = new HashMap(); //key:itemId value:synonymItem
     protected Map synonymAccessionMap = new HashMap();//key:accession value:synonymItem
 
@@ -77,7 +80,7 @@ public class MageDataTranslator extends DataTranslator
     private String srcNs;
     private String tgtNs;
 
-    private Item expItem = new Item();//assume only one experiment item presented
+    private Map experiments = new HashMap();
 
     protected Set microArrayResults = new HashSet();
     protected Set samples = new HashSet();
@@ -93,17 +96,71 @@ public class MageDataTranslator extends DataTranslator
     protected Map bioAssayDataToAssay = new HashMap();
     protected Map measuredBioAssayToMicroArrayAssay = new HashMap();
     protected Map assayToSamples = new HashMap();
+    protected Map assayToExperiment = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
      */
     public MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
-                              Model tgtModel) {
+                              Model tgtModel) throws IOException {
         super(srcItemReader, mapping, srcModel, tgtModel);
         srcNs = srcModel.getNameSpace().toString();
         tgtNs = tgtModel.getNameSpace().toString();
+
+        readConfig();
+        LOG.error(config);
     }
 
+
+    protected void readConfig() throws IOException {
+        // create a map from experiment name to a map of config values
+        String propertiesFileName = "mage_config.properties";
+        InputStream is =
+            MageDataTranslator.class.getClassLoader().getResourceAsStream(propertiesFileName);
+
+        if (is == null) {
+            throw new IllegalArgumentException("Cannot find " + propertiesFileName
+                                               + " in the class path");
+        }
+
+        Properties properties = new Properties();
+        properties.load(is);
+
+        Iterator iter = properties.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            String exptName = key.substring(0, key.indexOf("."));
+            String propName = key.substring(key.indexOf(".") + 1);
+
+            addToConfig(exptName, propName, value);
+        }
+    }
+
+    private void addToConfig(String exptName, String propName, String value) {
+        Map exptConfig = (Map) config.get(exptName);
+        if (exptConfig == null) {
+            exptConfig = new HashMap();
+            config.put(exptName, exptConfig);
+        }
+        exptConfig.put(propName, value);
+    }
+
+
+    private String getConfig(String exptName, String propName) {
+        String value = null;
+        Map exptConfig = (Map) config.get(exptName);
+        if (exptConfig != null) {
+            value = (String) exptConfig.get(propName);
+            if (value == null) {
+                LOG.warn("No config found for experiment: " + exptName + ", property: " + propName);
+            }
+        } else {
+            LOG.warn("No config details found for experiment: " + exptName);
+        }
+        return value;
+    }
 
 
     // Set batch size to 100?
@@ -194,7 +251,7 @@ public class MageDataTranslator extends DataTranslator
                     }
                     storeTgtItem = false;
                 } else if (className.equals("Experiment")) {
-                    expItem = translateMicroArrayExperiment(srcItem, tgtItem);
+                    translateMicroArrayExperiment(srcItem, tgtItem);
                 } else if (className.equals("DerivedBioAssay")) {
                     translateMicroArrayAssay(srcItem, tgtItem);
                     //storeTgtItem = false;
@@ -261,9 +318,19 @@ public class MageDataTranslator extends DataTranslator
      */
     protected Item translateMicroArrayExperiment(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
+
+        String exptName = null;
         if (srcItem.hasAttribute("name")) {
-            tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
+            exptName = srcItem.getAttribute("name").getValue();
+            String propName = getConfig(exptName, "experimentName");
+            if (propName != null) {
+                tgtItem.setAttribute("name", propName);
+            }
         }
+
+        // may have already created references to experiment
+        tgtItem.setIdentifier(getExperimentId(exptName));
+
 
         // PATH Experiment.descriptions.bibliographicReferences
         if (srcItem.hasCollection("descriptions")) {
@@ -302,11 +369,6 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
         }
-
-        // may have already created references to experiment
-        if (expItem.getIdentifier() != "") {
-            tgtItem.setIdentifier(expItem.getIdentifier());
-        }
         return tgtItem;
     }
 
@@ -319,7 +381,9 @@ public class MageDataTranslator extends DataTranslator
      protected void translateMicroArrayAssay(Item srcItem, Item tgtItem)
          throws ObjectStoreException {
 
-         tgtItem.setReference("experiment", getExperimentId());
+         // TODO link assay to experiment??
+         // FieldNameAndValue query?
+         //tgtItem.setReference("experiment", getExperimentId());
 
 
          // create map from mage:MeasuredBioAssay to genomic:MicroArrayAssay (mage:DerivedBioAssay)
@@ -417,7 +481,9 @@ public class MageDataTranslator extends DataTranslator
                 microArrayResults.add(tgtItem);
             }
         }
-        tgtItem.setReference("analysis", getExperimentId());
+
+        // TODO need to set this at the end when we can relate to correct Experiment
+        //tgtItem.setReference("analysis", getExperimentId());
 
 
         // PATH BioAssayDatum.quatitationType.scale
@@ -795,6 +861,10 @@ public class MageDataTranslator extends DataTranslator
         while (resultIter.hasNext()) {
             Item maResult = (Item) resultIter.next();
             String maResultId = maResult.getIdentifier();
+
+
+            // MicroArrayResult.assay
+            // MicroArrayResult.samples
             if (resultToBioAssayData.containsKey(maResultId)) {
                 String bioAssayDataId = (String) resultToBioAssayData.get(maResultId);
                 if (bioAssayDataToAssay.containsKey(bioAssayDataId)) {
@@ -806,6 +876,7 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
 
+            // MicroArratResult.isControl
             if (resultToFeature.containsKey(maResult.getIdentifier())) {
                 String featureId = (String) resultToFeature.get(maResult.getIdentifier());
                 if (featureToReporter.containsKey(featureId)) {
@@ -818,6 +889,9 @@ public class MageDataTranslator extends DataTranslator
                     }
                 }
             }
+
+            // TODO MicroArrayResult.experiment
+
         }
         return microArrayResults;
     }
@@ -834,10 +908,6 @@ public class MageDataTranslator extends DataTranslator
                 sample.addCollection(new ReferenceList("treatments", (List) sampleToTreatments.get(sampleId)));
             }
 
-            LOG.error("sampleToLabeledExtract: " + sampleToLabeledExtract);
-            LOG.error("labeledExtractToMeasuredBioAssay: " + labeledExtractToMeasuredBioAssay);
-            LOG.error("measuredBioAssayToMicroArrayAssay: " + measuredBioAssayToMicroArrayAssay);
-
             if (sampleToLabeledExtract.containsKey(sampleId)) {
                 String extractId = (String) sampleToLabeledExtract.get(sampleId);
                 if (labeledExtractToMeasuredBioAssay.containsKey(extractId)) {
@@ -851,6 +921,11 @@ public class MageDataTranslator extends DataTranslator
                             assayToSamples.put(assayId, sampleIds);
                         }
                         sampleIds.add(sampleId);
+
+                        // TODO Sample.primaryCharacteristic - configured on a per experiment basis
+                        //String experiment = assayToExperiment.get(assayId);
+                        //primaryCharacteristic = config.get(experiment).get(primaryCharacteristic);
+                        //sample.setAttribute("primaryCharacteristic", (String) characteristics.get(sampleId).get(primaryCharacteristic));
                     }
                 }
             }
@@ -908,11 +983,13 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @return identifier for experimentItem assume only one experiment item presented
      */
-    private String getExperimentId() {
-        if (expItem.getIdentifier() == "") {
-            expItem = createItem(tgtNs + "MicroArrayExperiment", "");
+    private String getExperimentId(String expName) {
+        Item exp = (Item) experiments.get(expName);
+        if (exp == null) {
+            exp = createItem(tgtNs + "MicroArrayExperiment", "");
+            experiments.put(expName, exp);
         }
-        return expItem.getIdentifier();
+        return exp.getIdentifier();
     }
 
     // get an item by path and deal with conversion to/from fulldata items

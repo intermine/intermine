@@ -54,6 +54,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     private String srcNs = "http://www.flymine.org/model/mage#";
     private ItemFactory srcItemFactory;
     private ItemFactory tgtItemFactory;
+    private File file;
 
     public MageDataTranslatorTest(String arg) {
         super(arg);
@@ -63,8 +64,22 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         super.setUp();
         srcItemFactory = new ItemFactory(Model.getInstanceByName("mage"));
         tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+
+        String ENDL = System.getProperty("line.separator");
+        file = new File("build/model/mage/mage_config.properties");
+        String propertiesFile="P10005.experimentName=Experiment 1" + ENDL
+            + "P10005.primaryCharacteristic=blah" + ENDL;
+
+        FileWriter fw = new FileWriter(file);
+        fw.write(propertiesFile);
+        fw.close();
     }
 
+
+    public void tearDown() throws Exception {
+        super.tearDown();
+        file.delete();
+    }
 
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
@@ -124,7 +139,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
         Item expectedItem =createTgtItem("MicroArrayExperiment", "61_748", "");
-        expectedItem.addAttribute(new Attribute("name", "P10005"));
+        expectedItem.addAttribute(new Attribute("name", "Experiment 1"));
         expectedItem.addAttribute(new Attribute("description", "experiment description"));
         expectedItem.addReference(new Reference("publication", "62_751"));
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
