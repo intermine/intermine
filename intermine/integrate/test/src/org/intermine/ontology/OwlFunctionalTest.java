@@ -52,7 +52,7 @@ public class OwlFunctionalTest extends TestCase
                 AttributeDescriptor atd = (AttributeDescriptor) j.next();
 
                 AttributeDescriptor newAtd = new AttributeDescriptor(atd.getName(),
-                                                                     TypeUtil.instantiate(atd.getType()).getName());
+                        TypeUtil.instantiate(atd.getType()).getName());
                 atds.add(newAtd);
             }
             j = cld.getReferenceDescriptors().iterator();
@@ -64,8 +64,7 @@ public class OwlFunctionalTest extends TestCase
                     reverseRef = rfd.getReverseReferenceDescriptor().getName();
                 }
                 ReferenceDescriptor newRfd = new ReferenceDescriptor(rfd.getName(),
-                                                                     rfd.getReferencedClassDescriptor().getName(),
-                                                                     reverseRef);
+                        rfd.getReferencedClassDescriptor().getName(), reverseRef);
                 rfds.add(newRfd);
             }
             j = cld.getCollectionDescriptors().iterator();
@@ -77,9 +76,7 @@ public class OwlFunctionalTest extends TestCase
                     reverseRef = cod.getReverseReferenceDescriptor().getName();
                 }
                 CollectionDescriptor newCod = new CollectionDescriptor(cod.getName(),
-                                                                       cod.getReferencedClassDescriptor().getName(),
-                                                                       reverseRef,
-                                                                       true);
+                        cod.getReferencedClassDescriptor().getName(), reverseRef);
                 cods.add(newCod);
             }
 

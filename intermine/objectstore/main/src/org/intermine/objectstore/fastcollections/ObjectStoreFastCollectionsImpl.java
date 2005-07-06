@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
+import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -40,6 +41,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.util.CacheHoldingArrayList;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -98,7 +100,13 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
         try {
-            List retval = os.execute(q, start, limit, optimise, explain, sequence);
+            List results = os.execute(q, start, limit, optimise, explain, sequence);
+            CacheHoldingArrayList retval;
+            if (results instanceof CacheHoldingArrayList) {
+                retval = (CacheHoldingArrayList) results;
+            } else {
+                retval = new CacheHoldingArrayList(results);
+            }
             if (retval.size() > 1) {
                 QueryNode node = (QueryNode) q.getSelect().get(0);
                 if (node instanceof QueryClass) {
@@ -107,13 +115,12 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                     int highestId = Integer.MIN_VALUE;
                     Iterator rowIter = retval.iterator();
                     while (rowIter.hasNext()) {
-                        Object o = ((ResultsRow) rowIter.next()).get(0);
-                        bagMap.put(o, o);
+                        InterMineObject o = (InterMineObject) ((ResultsRow) rowIter.next()).get(0);
+                        bagMap.put(o.getId(), o);
                         int id = ((InterMineObject) o).getId().intValue();
                         lowestId = (lowestId < id ? lowestId : id);
                         highestId = (highestId > id ? highestId : id);
                     }
-                    Set bag = bagMap.keySet();
                     Class clazz = ((QueryClass) node).getType();
                     Map fieldDescriptors = getModel().getFieldDescriptorsForClass(clazz);
                     Iterator fieldIter = fieldDescriptors.entrySet().iterator();
@@ -121,22 +128,29 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                         Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
                         String fieldName = (String) fieldEntry.getKey();
                         FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
+                        Map collections = new HashMap();
                         if (field instanceof CollectionDescriptor) {
                             CollectionDescriptor coll = (CollectionDescriptor) field;
-                            Iterator bagIter = bag.iterator();
-                            if (HashSet.class.equals(coll.getCollectionClass())) {
-                                while (bagIter.hasNext()) {
-                                    TypeUtil.setFieldValue(bagIter.next(), fieldName,
-                                            new HashSet());
+                            Iterator bagIter = bagMap.entrySet().iterator();
+                            while (bagIter.hasNext()) {
+                                Map.Entry entry = (Map.Entry) bagIter.next();
+                                Integer id = (Integer) entry.getKey();
+                                InterMineObject o = (InterMineObject) entry.getValue();
+                                ProxyCollection pc = (ProxyCollection) TypeUtil
+                                    .getFieldValue(o, fieldName);
+                                Collection materialisedCollection = pc.getMaterialisedCollection();
+                                if (!(materialisedCollection instanceof HashSet)) {
+                                    materialisedCollection = new HashSet();
+                                    collections.put(id, materialisedCollection);
                                 }
-                            } else {
-                                while (bagIter.hasNext()) {
-                                    TypeUtil.setFieldValue(bagIter.next(), fieldName,
-                                            new ArrayList());
-                                }
+                                retval.addToHolder(materialisedCollection);
                             }
+                            Set bag = collections.keySet();
                             if ((q.getConstraint() == null) && q.getOrderBy().isEmpty()
                                     && q.getGroupBy().isEmpty()) {
+                                // This is a shortcut query. We know that the original query is
+                                // merely selecting everything from a certain class, ordered by id,
+                                // so we can skip the BagConstraint and bound the id instead.
                                 Query subQ = new Query();
                                 subQ.setDistinct(false);
                                 QueryClass qc1 = new QueryClass(clazz);
@@ -144,7 +158,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                         .getType());
                                 subQ.addFrom(qc1);
                                 subQ.addFrom(qc2);
-                                subQ.addToSelect(qc1);
+                                subQ.addToSelect(new QueryField(qc1, "id"));
                                 subQ.addToSelect(qc2);
                                 ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                                 subQ.setConstraint(cs);
@@ -167,7 +181,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     l.setNoExplain();
                                 }
                                 l.setBatchSize(limit * 2);
-                                insertResults(bagMap, l, fieldName);
+                                insertResults(collections, l, fieldName);
                             } else {
                                 List bagList = new ArrayList(bag);
                                 for (int i = 0; i < bagList.size(); i += 1000) {
@@ -178,7 +192,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                             .getReferencedClassDescriptor().getType());
                                     subQ.addFrom(qc1);
                                     subQ.addFrom(qc2);
-                                    subQ.addToSelect(qc1);
+                                    subQ.addToSelect(new QueryField(qc1, "id"));
                                     subQ.addToSelect(qc2);
                                     ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                                     subQ.setConstraint(cs);
@@ -186,7 +200,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                             fieldName);
                                     cs.addConstraint(new ContainsConstraint(qcr,
                                                 ConstraintOp.CONTAINS, qc2));
-                                    cs.addConstraint(new BagConstraint(qc1, ConstraintOp.IN,
+                                    cs.addConstraint(new BagConstraint(new QueryField(qc1, "id"),
+                                                ConstraintOp.IN,
                                                 bagList.subList(i, (i + 1000 < bagList.size()
                                                         ? i + 1000 : bagList.size()))));
                                     Results l = new Results(subQ, os, os.getSequence());
@@ -197,8 +212,18 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                         l.setNoExplain();
                                     }
                                     l.setBatchSize(limit * 2);
-                                    insertResults(bagMap, l, fieldName);
+                                    insertResults(collections, l, fieldName);
                                 }
+                            }
+                            Iterator iter = collections.entrySet().iterator();
+                            while (iter.hasNext()) {
+                                Map.Entry entry = (Map.Entry) iter.next();
+                                Integer id = (Integer) entry.getKey();
+                                Collection materialisedCollection = (Collection) entry.getValue();
+                                InterMineObject fromObj = (InterMineObject) bagMap.get(id);;
+                                ProxyCollection pc = (ProxyCollection) TypeUtil
+                                    .getFieldValue(fromObj, fieldName);
+                                pc.setMaterialisedCollection(materialisedCollection);
                             }
                         }
                     }
@@ -210,16 +235,16 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
         }
     }
 
-    private void insertResults(Map bagMap, List l, String fieldName) throws IllegalAccessException {
+    private void insertResults(Map collections, List l, String fieldName)
+        throws IllegalAccessException {
         Iterator lIter = l.iterator();
         while (lIter.hasNext()) {
             ResultsRow row = (ResultsRow) lIter.next();
-            InterMineObject fromObj = (InterMineObject)
-                bagMap.get(row.get(0));
-            InterMineObject toObj = (InterMineObject) row.get(1);
-            Collection fromCollection = (Collection) TypeUtil.getFieldValue(
-                    fromObj, fieldName);
-            fromCollection.add(toObj);
+            Collection fromCollection = (Collection) collections.get(row.get(0));
+            if (fromCollection != null) {
+                InterMineObject toObj = (InterMineObject) row.get(1);
+                fromCollection.add(toObj);
+            }
         }
     }
 }

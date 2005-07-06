@@ -148,9 +148,9 @@ public class InterMine2OwlTest extends TestCase
     }
 
     public void testProcessCollections() throws Exception {
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class1", null, false);
-        CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "Class3", "cod3", false);
-        CollectionDescriptor cod3 = new CollectionDescriptor("cod3", "Class2", "cod2", true);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class1", null);
+        CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "Class3", "cod3");
+        CollectionDescriptor cod3 = new CollectionDescriptor("cod3", "Class2", "cod2");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), Collections.singleton(cod1), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), Collections.singleton(cod2), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("Class3", null, false, new HashSet(), Collections.singleton(cod3), new HashSet());

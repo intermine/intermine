@@ -45,7 +45,7 @@ public class InterMineModelParserTest extends TestCase
 
 
     private String getModelXml() {
-        return "<model  name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" extends=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"><attribute name=\"name\" type=\"java.lang.String\"/><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class><class name=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"></class></model>";
+        return "<model  name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" extends=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"><attribute name=\"name\" type=\"java.lang.String\"/><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class><class name=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"></class></model>";
     }
 
     private Set getExpectedClds() {
@@ -54,7 +54,7 @@ public class InterMineModelParserTest extends TestCase
         ClassDescriptor intermineObject = new ClassDescriptor("org.intermine.model.InterMineObject", null, true,
                                                               new HashSet(Collections.singleton(id)), new HashSet(), new HashSet());
         AttributeDescriptor companyName = new AttributeDescriptor("name", "java.lang.String");
-        CollectionDescriptor companyDepartments = new CollectionDescriptor("departments", PKG + "Department", "company", true);
+        CollectionDescriptor companyDepartments = new CollectionDescriptor("departments", PKG + "Department", "company");
         ClassDescriptor company = new ClassDescriptor(PKG + "Company", PKG + "HasAddress", true,
                                                       new HashSet(Collections.singleton(companyName)),
                                                       new HashSet(),

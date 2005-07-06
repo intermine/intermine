@@ -71,14 +71,14 @@ public class CreateIndexesTaskTest extends TestCase
     // test that primary key indexes are created on subclasses
     public void testCreateIndexesSubclasses() throws Exception {
         List expected = new ArrayList();
-        expected.add("drop index CEO__ImportantPerson__key");
-        expected.add("create index CEO__ImportantPerson__key on CEO(seniority, id)");
-        expected.add("drop index CEO__ImportantPerson__key__nulls");
-        expected.add("create index CEO__ImportantPerson__key__nulls on CEO((seniority IS NULL))");
         expected.add("drop index Contractor__ImportantPerson__key");
         expected.add("create index Contractor__ImportantPerson__key on Contractor(seniority, id)");
         expected.add("drop index Contractor__ImportantPerson__key__nulls");
         expected.add("create index Contractor__ImportantPerson__key__nulls on Contractor((seniority IS NULL))");
+        expected.add("drop index CEO__ImportantPerson__key");
+        expected.add("create index CEO__ImportantPerson__key on CEO(seniority, id)");
+        expected.add("drop index CEO__ImportantPerson__key__nulls");
+        expected.add("create index CEO__ImportantPerson__key__nulls on CEO((seniority IS NULL))");
         expected.add("drop index ImportantPerson__ImportantPerson__key");
         expected.add("create index ImportantPerson__ImportantPerson__key on ImportantPerson(seniority, id)");
         expected.add("drop index ImportantPerson__ImportantPerson__key__nulls");

@@ -676,7 +676,7 @@ public class DataTranslatorTest extends TestCase
         ReferenceDescriptor ref1 =
             new ReferenceDescriptor("address", "org.intermine.source.Address", null);
         CollectionDescriptor col1 =
-            new CollectionDescriptor("departments", "org.intermine.source.Department", null, false);
+            new CollectionDescriptor("departments", "org.intermine.source.Department", null);
         ClassDescriptor cld2 =
             new ClassDescriptor("org.intermine.source.LtdCompany",
                                 "org.intermine.source.Organisation", false,
@@ -698,7 +698,7 @@ public class DataTranslatorTest extends TestCase
         ReferenceDescriptor ref1 =
             new ReferenceDescriptor("address", "org.intermine.target.Address", null);
         CollectionDescriptor col1 =
-            new CollectionDescriptor("departments", "org.intermine.target.Department", null, false);
+            new CollectionDescriptor("departments", "org.intermine.target.Department", null);
         ClassDescriptor cld1 =
             new ClassDescriptor("org.intermine.target.Company", null, false,
                                 new HashSet(Arrays.asList(new Object[] {att1})),
@@ -762,7 +762,7 @@ public class DataTranslatorTest extends TestCase
         ReferenceDescriptor ref1 =
             new ReferenceDescriptor("address", "org.intermine.target.Address", null);
         CollectionDescriptor col1 =
-            new CollectionDescriptor("departments", "org.intermine.target.Department", null, false);
+            new CollectionDescriptor("departments", "org.intermine.target.Department", null);
         ClassDescriptor cld1 =
             new ClassDescriptor("org.intermine.target.Company", null, false,
                                 new HashSet(Arrays.asList(new Object[] {att0, att1})),

@@ -12,9 +12,11 @@ package org.flymine.postprocess;
 
 import junit.framework.TestCase;
 
-import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.intermine.util.DynamicUtil;
 
@@ -59,7 +61,7 @@ public class PostProcessUtilTest extends TestCase {
 
         gene.setIdentifier("gene1");
         gene.setChromosome(chr);
-        List transcripts = Arrays.asList(new Object[] {tran1, tran2});
+        Set transcripts = new HashSet(Arrays.asList(new Object[] {tran1, tran2}));
         gene.setTranscripts(transcripts);
         return gene;
     }

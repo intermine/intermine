@@ -444,12 +444,12 @@ public class TransferSequencesTest extends TestCase
             storedExons[i].setIdentifier("exon_" + i);
         }
 
-        List transcript0Exons =
-            Arrays.asList(new Object[] {storedExons[1], storedExons[2], storedExons[3]});
-        storedTranscripts[0].setExons(transcript0Exons);
+        List transcript0Exons = Arrays.asList(new Object[] {storedExons[1], storedExons[2],
+            storedExons[3]});
+        storedTranscripts[0].setExons(new HashSet(transcript0Exons));
 
         List transcript1Exons = Arrays.asList(new Object[] {storedExons[7], storedExons[6]});
-        storedTranscripts[1].setExons(transcript1Exons);
+        storedTranscripts[1].setExons(new HashSet(transcript1Exons));
 
         for (int i = 0; i < transcript0Exons.size() ; i++) {
             RankedRelation rankedRelation =

@@ -53,14 +53,14 @@ public class XmlSchemaParserFunctionalTest extends TestCase
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("address", "org.intermine.model.xmlschematest.Address_Company", null);
         assertEquals(rfd1, companyCld.getReferenceDescriptorByName("address"));
         CollectionDescriptor cod1 = new CollectionDescriptor("departments", "org.intermine.model.xmlschematest.Department_Company",
-                                                             null, true);
+                                                             null);
         assertEquals(cod1, companyCld.getCollectionDescriptorByName("departments"));
 
         ClassDescriptor deptCld = model.getClassDescriptorByName("org.intermine.model.xmlschematest.Department_Company");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("manager", "org.intermine.model.xmlschematest.Employee", null);
         assertEquals(rfd2, deptCld.getReferenceDescriptorByName("manager"));
         CollectionDescriptor cod2 = new CollectionDescriptor("employees", "org.intermine.model.xmlschematest.Employee",
-                                                             null, true);
+                                                             null);
         assertEquals(cod2, deptCld.getCollectionDescriptorByName("employees"));
 
 

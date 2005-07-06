@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -162,13 +161,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                             .iterator().next())
                                                         && qf.getFieldName().equals("id")) {
                                                     Collection bag = bc.getBag();
-                                                    if (((CollectionDescriptor) field)
-                                                            .getCollectionClass()
-                                                            .equals(HashSet.class)) {
-                                                        fromColls.put(fieldName, new HashSet(bag));
-                                                    } else {
-                                                        fromColls.put(fieldName, bag);
-                                                    }
+                                                    fromColls.put(fieldName, new HashSet(bag));
                                                     toIds.addAll(bag);
                                                 }
                                             }

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
@@ -220,31 +221,31 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         types1.setDateObjType(new Date(7777777l));
 
         companyA.setAddress(address7);
-        companyA.setDepartments(Collections.singletonList(departmentA1));
-        companyA.setSecretarys(Arrays.asList(new Secretary[] {secretary1, secretary2, secretary3}));
-        companyA.setContractors(Arrays.asList(new Contractor[] {contractorA, contractorB}));
-        companyA.setOldContracts(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyA.setDepartments(Collections.singleton(departmentA1));
+        companyA.setSecretarys(new HashSet(Arrays.asList(new Secretary[] {secretary1, secretary2, secretary3})));
+        companyA.setContractors(new HashSet(Arrays.asList(new Contractor[] {contractorA, contractorB})));
+        companyA.setOldContracts(new HashSet(Arrays.asList(new Contractor[] {contractorA, contractorB})));
 
         contractorA.setPersonalAddress(address6);
         contractorA.setBusinessAddress(address5);
-        contractorA.setCompanys(Arrays.asList(new Company[] {companyA, companyB}));
-        contractorA.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
+        contractorA.setCompanys(new HashSet(Arrays.asList(new Company[] {companyA, companyB})));
+        contractorA.setOldComs(new HashSet(Arrays.asList(new Company[] {companyA, companyB})));
 
         companyB.setAddress(address3);
-        companyB.setDepartments(Arrays.asList(new Department[] {departmentB1, departmentB2}));
-        companyB.setSecretarys(Arrays.asList(new Secretary[] {secretary1, secretary2}));
-        companyB.setContractors(Arrays.asList(new Contractor[] {contractorA, contractorB}));
-        companyB.setOldContracts(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyB.setDepartments(new HashSet(Arrays.asList(new Department[] {departmentB1, departmentB2})));
+        companyB.setSecretarys(new HashSet(Arrays.asList(new Secretary[] {secretary1, secretary2})));
+        companyB.setContractors(new HashSet(Arrays.asList(new Contractor[] {contractorA, contractorB})));
+        companyB.setOldContracts(new HashSet(Arrays.asList(new Contractor[] {contractorA, contractorB})));
         companyB.setCEO(employeeB1);
 
         contractorB.setPersonalAddress(address2);
         contractorB.setBusinessAddress(address1);
-        contractorB.setCompanys(Arrays.asList(new Company[] {companyA, companyB}));
-        contractorB.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
+        contractorB.setCompanys(new HashSet(Arrays.asList(new Company[] {companyA, companyB})));
+        contractorB.setOldComs(new HashSet(Arrays.asList(new Company[] {companyA, companyB})));
 
         departmentB1.setCompany(companyB);
         departmentB1.setManager(employeeB1);
-        departmentB1.setEmployees(Arrays.asList(new Employee[] {employeeB1, employeeB2}));
+        departmentB1.setEmployees(new HashSet(Arrays.asList(new Employee[] {employeeB1, employeeB2})));
 
         employeeB1.setDepartment(departmentB1);
         employeeB1.setAddress(null);
@@ -255,14 +256,14 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         departmentB2.setCompany(companyB);
         departmentB2.setManager(employeeB3);
-        departmentB2.setEmployees(Collections.singletonList(employeeB3));
+        departmentB2.setEmployees(Collections.singleton(employeeB3));
 
         employeeB3.setDepartment(departmentB2);
         employeeB3.setAddress(address4);
 
         departmentA1.setCompany(companyA);
         departmentA1.setManager(employeeA1);
-        departmentA1.setEmployees(Arrays.asList(new Employee[] {employeeA1, employeeA2, employeeA3}));
+        departmentA1.setEmployees(new HashSet(Arrays.asList(new Employee[] {employeeA1, employeeA2, employeeA3})));
 
         employeeA1.setDepartment(departmentA1);
         employeeA1.setAddress(address8);
@@ -307,22 +308,28 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Iterator iter = c.iterator();
         while(iter.hasNext()) {
             Object o = iter.next();
-            Method name = null;
-            try {
-                name = o.getClass().getMethod("getName", new Class[] {});
-            } catch (Exception e) {
-                try {
-                    name = o.getClass().getMethod("getAddress", new Class[] {});
-                } catch (Exception e2) {
-                }
-            }
-            if (name != null) {
-                returnData.put((String)name.invoke(o, new Object[] {}), o);
-            } else {
-                returnData.put(new Integer(o.hashCode()), o);
-            }
+            returnData.put(objectToName(o), o);
         }
         return returnData;
+    }
+
+    public static Object objectToName(Object o) throws Exception {
+        Method name = null;
+        try {
+            name = o.getClass().getMethod("getName", new Class[] {});
+        } catch (Exception e) {
+            try {
+                name = o.getClass().getMethod("getAddress", new Class[] {});
+            } catch (Exception e2) {
+            }
+        }
+        if (name != null) {
+            return name.invoke(o, new Object[] {});
+        } else if (o instanceof InterMineObject) {
+            return new Integer(o.hashCode());
+        } else {
+            return o;
+        }
     }
 
     /*

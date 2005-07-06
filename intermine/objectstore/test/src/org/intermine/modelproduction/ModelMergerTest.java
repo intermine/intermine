@@ -271,20 +271,6 @@ public class ModelMergerTest extends TestCase
         
         assertEquals(expected.getCollectionDescriptors(), result);
 
-        // test bad ordering
-        addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">"
-                + "<collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"false\" reverse-reference=\"company\"/>"
-                + "</class>";
-
-        cld2 = (ClassDescriptor) parser.generateClassDescriptors(
-                new StringReader(addition)).iterator().next();
-        try {
-            ModelMerger.mergeCollections(cld1, cld2);
-            fail("Expected ModelMergerException with incorrect ordered attribute");
-        } catch (ModelMergerException e) {
-            e.printStackTrace();
-        }
-
         // test bad reverse reference
         addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">"
                 + "<collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"incorrect\"/>"

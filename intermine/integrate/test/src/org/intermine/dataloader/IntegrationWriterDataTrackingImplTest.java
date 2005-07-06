@@ -10,7 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -715,7 +714,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(rconD.getCompanys().contains(rca));
         assertTrue(rconZ.getCompanys().contains(rca));
 
-        conA.setCompanys(new ArrayList());
+        conA.setCompanys(new HashSet());
         iw.store(conA, source2, skelSource2);
         Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         assertNotNull(rconA);

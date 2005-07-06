@@ -121,7 +121,7 @@ public class FullRendererTest extends XMLTestCase
         Company c = (Company) o;
         c.setId(new Integer(1234));
         c.setName("BrokeCompany1");
-        c.setDepartments(Arrays.asList(new Object[] {d1, d2}));
+        c.setDepartments(new HashSet(Arrays.asList(new Object[] {d1, d2})));
 
         Broke b = (Broke) o;
         b.setDebt(10);
@@ -152,8 +152,6 @@ public class FullRendererTest extends XMLTestCase
     }
 
     public void testToItems() throws Exception {
-        List expected = getExampleItems();
-
         Address a1 = new Address();
         a1.setId(new Integer(2));
         a1.setAddress("\"Company's\" street");
@@ -170,11 +168,12 @@ public class FullRendererTest extends XMLTestCase
         c1.setName("Company1");
         c1.setAddress(a1);
         c1.setVatNumber(10);
-        c1.setDepartments(Arrays.asList(new Object[] {d1, d2}));
+        c1.setDepartments(new HashSet(Arrays.asList(new Object[] {d1, d2})));
 
         List objects = Arrays.asList(new Object[] {c1, a1, d1, d2});
 
-        assertEquals(expected, FullRenderer.toItems(objects, model));
+        List rendered = FullRenderer.toItems(objects, model);
+        assertTrue(rendered.toString(), rendered.equals(getExampleItems(true)) || rendered.equals(getExampleItems(false)));
 
     }
 
@@ -220,7 +219,7 @@ public class FullRendererTest extends XMLTestCase
         Company c = (Company) o;
         c.setId(new Integer(1234));
         c.setName("BrokeCompany1");
-        c.setDepartments(Arrays.asList(new Object[] {d1, d2}));
+        c.setDepartments(new HashSet(Arrays.asList(new Object[] {d1, d2})));
 
         Broke b = (Broke) o;
         b.setDebt(10);
@@ -299,6 +298,10 @@ public class FullRendererTest extends XMLTestCase
     }
 
     public List getExampleItems() {
+        return getExampleItems(true);
+    }
+    
+    public List getExampleItems(boolean reverseCollection) {
         String id1 = "1";
         String id2 = "2";
         String id3 = "3";
@@ -322,8 +325,13 @@ public class FullRendererTest extends XMLTestCase
         item1.addReference(ref1);
         ReferenceList col1 = new ReferenceList();
         col1.setName("departments");
-        col1.addRefId(id3);
+        if (reverseCollection) {
+            col1.addRefId(id3);
+        }
         col1.addRefId(id4);
+        if (! reverseCollection) {
+            col1.addRefId(id3);
+        }
         item1.addCollection(col1);
 
         Item item2 = new Item();

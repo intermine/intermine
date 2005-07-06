@@ -509,7 +509,7 @@ public class XmlSchemaParser implements ModelParser
                                 + ") for class: " + clsName);
                         CollectionDescriptor cod
                             = new CollectionDescriptor(fieldName, this.pkgName + "." + refType,
-                                                       null, true);
+                                                       null);
                         HashSet cods = getFieldSetForClass(collections, clsName);
                         cods.add(cod);
                     } else {
@@ -540,7 +540,7 @@ public class XmlSchemaParser implements ModelParser
                                 clsName);
                         CollectionDescriptor cod = new CollectionDescriptor(
                                 StringUtil.decapitalise(StringUtil.pluralise(fieldName)),
-                                this.pkgName + "." + subClassName, null, true);
+                                this.pkgName + "." + subClassName, null);
                         AttributeDescriptor atd = new AttributeDescriptor(
                                 generateJavaName(fieldName), XmlUtil.xmlToJavaType(type));
                         ClassDescriptor cld = new ClassDescriptor(this.pkgName + "." + subClassName,

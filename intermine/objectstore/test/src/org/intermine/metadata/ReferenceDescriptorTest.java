@@ -141,7 +141,7 @@ public class ReferenceDescriptorTest extends TestCase
     }
 
     public void testRelationTypeManyToOne() throws Exception {
-        CollectionDescriptor col = new CollectionDescriptor("col1", "Class1", null, false);
+        CollectionDescriptor col = new CollectionDescriptor("col1", "Class1", null);
         ReferenceDescriptor ref  = new ReferenceDescriptor("ref1", "Class1", "col1");
         Set cols = Collections.singleton(col);
         Set refs = Collections.singleton(ref);

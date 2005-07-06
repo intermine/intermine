@@ -182,25 +182,25 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
         r = new Object[][] { { data.get("ContractorA") },
                              { data.get("ContractorB") },
-                             { data.get("EmployeeB1") },
                              { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
                              { data.get("EmployeeA3") },
+                             { data.get("EmployeeB1") },
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("SelectInterfaceAndSubClasses", toList(r));
 
         r = new Object[][] { { data.get("CompanyA") },
-                             { data.get("DepartmentA1") },
                              { data.get("CompanyB") },
+                             { data.get("DepartmentA1") },
                              { data.get("DepartmentB1") },
                              { data.get("DepartmentB2") } };
         results.put("SelectInterfaceAndSubClasses2", toList(r));
 
         r = new Object[][] { { data.get("ContractorA") },
                              { data.get("ContractorB") },
-                             { data.get("EmployeeB1") },
                              { data.get("EmployeeA1") },
+                             { data.get("EmployeeB1") },
                              { data.get("EmployeeB3") } };
         results.put("SelectInterfaceAndSubClasses3", toList(r));
 
@@ -321,17 +321,17 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("LargeBagConstraint", NO_RESULT);
         results.put("LargeBagConstraintUsingTable", toList(r));
 
-        r = new Object[][] { { data.get("EmployeeB1") },
-                             { data.get("EmployeeA2") },
+        r = new Object[][] { { data.get("EmployeeA2") },
                              { data.get("EmployeeA3") },
+                             { data.get("EmployeeB1") },
                              { data.get("EmployeeB3") } };
         results.put("LargeBagNotConstraint", NO_RESULT);
         results.put("LargeBagNotConstraintUsingTable", toList(r));
 
-        r = new Object[][] { { data.get("EmployeeB1") },
-                             { data.get("EmployeeA1") },
+        r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
                              { data.get("EmployeeA3") },
+                             { data.get("EmployeeB1") },
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("NegativeNumbers", toList(r));
@@ -376,8 +376,34 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
             }
         } else {
             Results res = os.execute((Query)queries.get(type));
+            List expected = (List) results.get(type);
+            if ((expected != null) && (!expected.equals(res))) {
+                Set a = new HashSet(expected);
+                Set b = new HashSet(res);
+                if (a.equals(b)) {
+                    List la = resToNames(expected);
+                    List lb = resToNames(res);
+                    assertEquals(type + " has failed - wrong order", la, lb);
+                }
+            }
             assertEquals(type + " has failed", results.get(type), res);
         }
+    }
+
+    public static List resToNames(List res) throws Exception {
+        List aNames = new ArrayList();
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            List row = (List) resIter.next();
+            List toRow = new ArrayList();
+            Iterator rowIter = row.iterator();
+            while (rowIter.hasNext()) {
+                Object o = objectToName(rowIter.next());
+                toRow.add(o);
+            }
+            aNames.add(toRow);
+        }
+        return aNames;
     }
 
     public void testResults() throws Exception {

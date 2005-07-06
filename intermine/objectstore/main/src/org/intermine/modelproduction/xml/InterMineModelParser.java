@@ -21,6 +21,8 @@ import org.intermine.modelproduction.ModelParser;
 import org.intermine.metadata.*;
 import org.intermine.util.SAXParser;
 
+import org.apache.log4j.Logger;
+
 /**
  * Parse InterMine metadata XML to produce a InterMine Model
  *
@@ -28,6 +30,8 @@ import org.intermine.util.SAXParser;
  */
 public class InterMineModelParser implements ModelParser
 {
+    private static final Logger LOG = Logger.getLogger(InterMineModelParser.class);
+
     /**
      * Read source model information in InterMine XML format and
      * construct a InterMine Model object.
@@ -93,10 +97,13 @@ public class InterMineModelParser implements ModelParser
             } else if (qName.equals("collection")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("referenced-type");
-                boolean ordered = Boolean.valueOf(attrs.getValue("ordered")).booleanValue();
+                if (attrs.getValue("ordered") != null) {
+                    LOG.error("Deprecated \"ordered\" attribute on collection " + cls.name
+                            + "." + name);
+                }
                 String reverseReference = attrs.getValue("reverse-reference");
                 cls.collections.add(new CollectionDescriptor(name, type,
-                                                             reverseReference, ordered));
+                                                             reverseReference));
             }
         }
 
@@ -122,6 +129,7 @@ public class InterMineModelParser implements ModelParser
         Set attributes = new LinkedHashSet();
         Set references = new LinkedHashSet();
         Set collections = new LinkedHashSet();
+        
         /**
          * Constructor
          * @param name the fully qualified name of the described class

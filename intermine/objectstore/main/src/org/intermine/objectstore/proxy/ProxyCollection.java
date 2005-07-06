@@ -11,10 +11,9 @@ package org.intermine.objectstore.proxy;
  */
 
 import java.lang.ref.SoftReference;
-import java.util.AbstractList;
+import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -37,7 +36,7 @@ import org.apache.log4j.Logger;
  *
  * @author Matthew Wakeling
  */
-public class ProxyCollection extends AbstractList implements Set, LazyCollection
+public class ProxyCollection extends AbstractSet implements LazyCollection
 {
     private static final Logger LOG = Logger.getLogger(ProxyCollection.class);
 
@@ -84,29 +83,12 @@ public class ProxyCollection extends AbstractList implements Set, LazyCollection
     }
 
     /**
-     * Gets the element in the given numbered position.
-     *
-     * @param index the element number
-     * @return the relevant entry
-     */
-    public Object get(int index) {
-        return getCollection().get(index);
-    }
-
-    /**
      * Gets the number of elements in this collection
      *
      * @return the number of elements
      */
     public int size() {
         return getCollection().size();
-    }
-
-    /**
-     * @see List#subList
-     */
-    public List subList(int start, int end) {
-        return getCollection().subList(start, end);
     }
 
     /**
@@ -117,35 +99,37 @@ public class ProxyCollection extends AbstractList implements Set, LazyCollection
     }
 
     /**
-     * @see List#isEmpty
-     */
-    public boolean isEmpty() {
-        return getCollection().isEmpty();
-    }
-
-    /**
      * @see LazyCollection#getQuery
      */
     public Query getQuery() {
-        return getCollection().getQuery();
+        try {
+            return ((SingletonResults) getCollection()).getQuery();
+        } catch (ClassCastException e) {
+            return internalGetQuery();
+        }
     }
 
     /**
      * @see LazyCollection#getInfo
      */
     public ResultsInfo getInfo() throws ObjectStoreException {
-        return getCollection().getInfo();
+        Collection coll = getCollection();
+        try {
+            return ((SingletonResults) coll).getInfo();
+        } catch (ClassCastException e) {
+            return new ResultsInfo(0, 0, coll.size());
+        }
     }
 
     /**
      * @see LazyCollection#setNoOptimise
      */
-    public void setNoOptimise() {
+    public synchronized void setNoOptimise() {
         flags = flags | 2;
         if (collectionRef != null) {
-            SingletonResults collection = (SingletonResults) collectionRef.get();
-            if (collection != null) {
-                collection.setNoOptimise();
+            Collection collection = (Collection) collectionRef.get();
+            if ((collection != null) && (collection instanceof SingletonResults)) {
+                ((SingletonResults) collection).setNoOptimise();
             }
         }
     }
@@ -153,12 +137,12 @@ public class ProxyCollection extends AbstractList implements Set, LazyCollection
     /**
      * @see LazyCollection#setNoExplain
      */
-    public void setNoExplain() {
+    public synchronized void setNoExplain() {
         flags = flags | 4;
         if (collectionRef != null) {
-            SingletonResults collection = (SingletonResults) collectionRef.get();
-            if (collection != null) {
-                collection.setNoExplain();
+            Collection collection = (Collection) collectionRef.get();
+            if ((collection != null) && (collection instanceof SingletonResults)) {
+                ((SingletonResults) collection).setNoExplain();
             }
         }
     }
@@ -176,57 +160,86 @@ public class ProxyCollection extends AbstractList implements Set, LazyCollection
      *
      * @return a SingletonResults object
      */
-    private SingletonResults getCollection() {
-        SingletonResults collection = null;
+    private synchronized Collection getCollection() {
+        Collection collection = null;
         if (collectionRef == null) {
             usedCount++;
             maybeLog();
         }
         // WARNING - read this following line very carefully.
         if ((collectionRef == null)
-                || ((collection = ((SingletonResults) collectionRef.get())) == null)) {
+                || ((collection = ((Collection) collectionRef.get())) == null)) {
             evaluateCount++;
             maybeLog();
             // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
             //                         AND this = <this>
             // Or if we have a one-to-many collection, then:
             //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
-            Query q = new Query();
-            if ((flags % 2) == 1) {
-                QueryClass qc1 = new QueryClass(clazz);
-                q.addFrom(qc1);
-                q.addToSelect(qc1);
-                QueryObjectReference qor = new QueryObjectReference(qc1, fieldName);
-                ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, o);
-                q.setConstraint(cc);
-                q.addToOrderBy(qor);
-                q.setDistinct(false);
-            } else {
-                QueryClass qc1 = new QueryClass(o.getClass());
-                QueryClass qc2 = new QueryClass(clazz);
-                q.addFrom(qc1);
-                q.addFrom(qc2);
-                q.addToSelect(qc2);
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
-                                fieldName), ConstraintOp.CONTAINS, qc2));
-                cs.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, o));
-                q.setConstraint(cs);
-                q.setDistinct(false);
-            }
+            Query q = internalGetQuery();
             collection = new SingletonResults(q, os, os.getSequence());
             if (batchSize != 0) {
-                collection.setBatchSize(batchSize);
+                ((SingletonResults) collection).setBatchSize(batchSize);
             }
             if (((flags / 2) % 2) == 1) {
-                collection.setNoOptimise();
+                ((SingletonResults) collection).setNoOptimise();
             }
             if ((flags / 4) == 1) {
-                collection.setNoExplain();
+                ((SingletonResults) collection).setNoExplain();
             }
             collectionRef = new SoftReference(collection);
         }
         return collection;
+    }
+
+    /**
+     * Gets the collection if it is a real materialised collection.
+     *
+     * @return a Collection
+     */
+    public synchronized Collection getMaterialisedCollection() {
+        if (collectionRef != null) {
+            Collection collection = (Collection) collectionRef.get();
+            if ((collection != null) && (!(collection instanceof SingletonResults))) {
+                return collection;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the collection with a new materialised collection.
+     *
+     * @param coll the new Collection
+     */
+    public synchronized void setMaterialisedCollection(Collection coll) {
+        collectionRef = new SoftReference(coll);
+    }
+
+    private Query internalGetQuery() {
+        Query q = new Query();
+        if ((flags % 2) == 1) {
+            QueryClass qc1 = new QueryClass(clazz);
+            q.addFrom(qc1);
+            q.addToSelect(qc1);
+            QueryObjectReference qor = new QueryObjectReference(qc1, fieldName);
+            ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, o);
+            q.setConstraint(cc);
+            q.addToOrderBy(qor);
+            q.setDistinct(false);
+        } else {
+            QueryClass qc1 = new QueryClass(o.getClass());
+            QueryClass qc2 = new QueryClass(clazz);
+            q.addFrom(qc1);
+            q.addFrom(qc2);
+            q.addToSelect(qc2);
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
+                            fieldName), ConstraintOp.CONTAINS, qc2));
+            cs.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, o));
+            q.setConstraint(cs);
+            q.setDistinct(false);
+        }
+        return q;
     }
 
     private static void maybeLog() {
@@ -237,5 +250,14 @@ public class ProxyCollection extends AbstractList implements Set, LazyCollection
             LOG.debug("Created: " + createdCount + ", Used: " + usedCount + ", Evaluated: "
                     + evaluateCount);
         }
+    }
+
+    /**
+     * @see Object#toString
+     *
+     * We override this here in order to prevent possible infinite recursion.
+     */
+    public String toString() {
+        return "ProxyCollection";
     }
 }

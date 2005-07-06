@@ -10,7 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -549,7 +548,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertTrue(rconD.getCompanys().contains(rca));
         assertTrue(rconZ.getCompanys().contains(rca));
 
-        conA.setCompanys(new ArrayList());
+        conA.setCompanys(new HashSet());
         iw.store(conA, source, skelSource);
         Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         assertNotNull(rconA);
