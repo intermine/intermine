@@ -10,24 +10,18 @@ package org.intermine.dataconversion;
  *
  */
 
-import java.util.ArrayList;
+import org.intermine.model.fulldata.Item;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.intermine.model.fulldata.Item;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.CombinedIterator;
 
 /**
  * Provides an interface between a DataTranslator and the source Item ObjectStore which it wishes to
@@ -72,7 +66,6 @@ public class ObjectStoreItemReader extends AbstractItemReader
 
     /**
      * @see ItemReader#itemIterator
-     * @param batchSize batch size for item retrieval
      *
      */
     public Iterator itemIterator() {
