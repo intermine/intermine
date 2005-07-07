@@ -92,7 +92,7 @@
         <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
         <html:text property="attributeValues(1)"/>
         <input type="hidden" name="templateType" value="global"/>
-        <input type="hidden" name="queryName" value="${browseTemplateName}"/>
+        <input type="hidden" name="templateName" value="${browseTemplateName}"/>
         <input type="hidden" name="skipBuilder" value="1"/>
         <input type="hidden" name="noSaveQuery" value="1"/>
         <html:submit><fmt:message key="begin.input.submit"/></html:submit>
