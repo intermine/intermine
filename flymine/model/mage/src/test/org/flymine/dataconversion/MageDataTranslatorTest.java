@@ -138,7 +138,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
-        Item expectedItem =createTgtItem("MicroArrayExperiment", "61_748", "");
+        Item expectedItem =createTgtItem("MicroArrayExperiment", "-1_1", "");
         expectedItem.addAttribute(new Attribute("name", "Experiment 1"));
         expectedItem.addAttribute(new Attribute("description", "experiment description"));
         expectedItem.addReference(new Reference("publication", "62_751"));
@@ -173,7 +173,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
         Item expItem1 = createTgtItem("MicroArrayAssay", "57_709", "");
-        expItem1.setReference("experiment", "-1_1");
 
         Item expItem2 = createTgtItem("MicroArrayExperiment", "-1_1", "");
 
@@ -469,7 +468,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expItem1.setAttribute("value","1.234");
         expItem1.setAttribute("scale","log");
         expItem1.setAttribute("type","(Normalised) Log Ratio");
-        expItem1.setReference("analysis","-1_1");
 
         HashSet expected = new HashSet(Arrays.asList(new Object[] {expItem1}));
 
