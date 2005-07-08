@@ -12,6 +12,7 @@ package org.intermine.objectstore.fastcollections;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,6 +53,9 @@ import org.intermine.util.TypeUtil;
  */
 public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
 {
+    private boolean fetchAllFields = true;
+    private Set fieldExceptions = Collections.EMPTY_SET;
+    
     /**
      * Creates an instance, from another ObjectStore instance.
      *
@@ -85,6 +89,24 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                                + "' not found in properties");
         }
         return new ObjectStoreFastCollectionsImpl(objectStore);
+    }
+
+    /**
+     * Sets variables which determines which fields are prefetched. Set fetchAllFields to true if
+     * you want all fields except those mentioned in the fieldExceptions set to be fetched. Set
+     * fetchAllFields to false if you only want those fields mentioned in the fieldExceptions set
+     * to be fetched.
+     *
+     * @param fetchAllFields a boolean
+     * @param fieldExceptions a Set of FieldDescriptors
+     */
+    public void setFetchFields(boolean fetchAllFields, Set fieldExceptions) {
+        this.fetchAllFields = fetchAllFields;
+        this.fieldExceptions = fieldExceptions;
+    }
+
+    private boolean doThisField(FieldDescriptor field) {
+        return fetchAllFields != fieldExceptions.contains(field);
     }
 
     /**
@@ -129,7 +151,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                         String fieldName = (String) fieldEntry.getKey();
                         FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
                         Map collections = new HashMap();
-                        if (field instanceof CollectionDescriptor) {
+                        if (doThisField(field) && (field instanceof CollectionDescriptor)) {
                             CollectionDescriptor coll = (CollectionDescriptor) field;
                             Iterator bagIter = bagMap.entrySet().iterator();
                             while (bagIter.hasNext()) {
