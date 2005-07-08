@@ -55,4 +55,11 @@ public class Source
     public void setSkeleton(boolean skeleton) {
         this.skeleton = skeleton;
     }
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString() {
+        return "<Source: name=\"" + getName() + "\", skeleton=" + getSkeleton() + ">";
+    }
 }
