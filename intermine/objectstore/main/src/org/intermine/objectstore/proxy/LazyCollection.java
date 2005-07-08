@@ -10,6 +10,7 @@ package org.intermine.objectstore.proxy;
  *
  */
 
+import java.util.List;
 import java.util.Set;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,6 +41,12 @@ public interface LazyCollection extends Lazy, Set
      */
     public Query getQuery();
 
+    /**
+     * Return this Collection as a List.  This may create a new ArrayList if necessary so the
+     * returned List is not guaranteed to be consistent if the LazyCollection changes.
+     */
+    public List asList();
+    
     /**
      * Returns Returns the current best estimate of the characteristics of the LazyCollection
      *

@@ -10,7 +10,7 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.intermine.metadata.ClassDescriptor;
@@ -30,7 +30,7 @@ public class DisplayCollection extends DisplayField
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayCollection(List collection, ClassDescriptor cld,
+    public DisplayCollection(Collection collection, ClassDescriptor cld,
                              WebConfig webConfig, Map webProperties) throws Exception {
         super(collection, cld, webConfig, webProperties);
     }

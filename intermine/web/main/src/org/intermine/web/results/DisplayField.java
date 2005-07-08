@@ -10,13 +10,14 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.List;
+import java.util.NoSuchElementException;
 
-import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.web.config.WebConfig;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Class to represent a field of an object for the webapp
@@ -28,7 +29,7 @@ public class DisplayField
     ClassDescriptor cld;
     int size = -1;
     InlineResultsTable table = null;
-    List collection = null;
+    Collection collection = null;
     WebConfig webConfig = null;
     Map webProperties = null;
 
@@ -40,7 +41,7 @@ public class DisplayField
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayField(List collection, ClassDescriptor cld,
+    public DisplayField(Collection collection, ClassDescriptor cld,
                         WebConfig webConfig, Map webProperties) throws Exception {
         this.collection = collection;
         this.cld = cld;
@@ -83,6 +84,8 @@ public class DisplayField
                         lazyCollection.iterator().next();
                         size = lazyCollection.getInfo().getRows();
                     } catch (IndexOutOfBoundsException _) {
+                        size = 0;
+                    } catch (NoSuchElementException _) {
                         size = 0;
                     }
                 } catch (ObjectStoreException e) {
