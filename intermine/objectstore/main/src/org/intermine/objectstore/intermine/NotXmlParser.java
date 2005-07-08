@@ -66,13 +66,11 @@ public class NotXmlParser
         for (int i = 2; i < a.length; i += 2) {
             if (a[i].startsWith("a")) {
                 String fieldName = a[i].substring(1);
-                Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName)
-                    .getType();
+                Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName).getType();
                 StringBuffer string = new StringBuffer(i + 1 == a.length ? "" : a[i + 1]);
                 while ((i + 2 < a.length) && (a[i + 2].startsWith(ENCODED_DELIM))) {
                     i++;
-                    string.append(DELIM)
-                        .append(a[i + 1].substring(1));
+                    string.append(DELIM).append(a[i + 1].substring(1));
                 }
                 TypeUtil.setFieldValue(retval, fieldName,
                                        TypeUtil.stringToObject(fieldClass, string.toString()));
@@ -80,6 +78,10 @@ public class NotXmlParser
                 String fieldName = a[i].substring(1);
                 Integer id = Integer.valueOf(a[i + 1]);
                 ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(fieldName);
+                if (ref == null) {
+                    throw new RuntimeException("failed to get field " + fieldName
+                                               + " for object from XML: " + xml);
+                }
                 TypeUtil.setFieldValue(retval, fieldName,
                       new ProxyReference(os, id, ref.getReferencedClassDescriptor().getType()));
             }
