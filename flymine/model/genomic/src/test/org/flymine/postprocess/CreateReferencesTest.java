@@ -228,15 +228,13 @@ public class CreateReferencesTest extends TestCase {
 
         Set overlappingFeatures = resGene.getOverlappingFeatures();
 
-        assertEquals(2, overlappingFeatures.size());
+        assertEquals(1, overlappingFeatures.size());
 
         Set expectedIDs = new HashSet();
-        expectedIDs.add(storedGene1.getId());
         expectedIDs.add(storedGene2.getId());
 
         Set actualIDs = new HashSet();
         Iterator ofIter = overlappingFeatures.iterator();
-        actualIDs.add(((Gene) ofIter.next()).getId());
         actualIDs.add(((Gene) ofIter.next()).getId());
 
         assertEquals(expectedIDs, actualIDs);
