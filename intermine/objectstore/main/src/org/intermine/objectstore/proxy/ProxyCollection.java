@@ -12,8 +12,10 @@ package org.intermine.objectstore.proxy;
 
 import java.lang.ref.SoftReference;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -189,6 +191,18 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
             collectionRef = new SoftReference(collection);
         }
         return collection;
+    }
+
+    /**
+     * @see LazyCollection#asList()
+     */
+    public List asList() {
+        Collection collection = getCollection();
+        if (collection instanceof List) {
+            return (List) collection;
+        } else {
+            return new ArrayList(collection);
+        }
     }
 
     /**

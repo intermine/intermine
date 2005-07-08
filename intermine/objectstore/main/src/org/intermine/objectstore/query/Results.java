@@ -462,7 +462,14 @@ public class Results extends AbstractList implements LazyCollection
     protected int getBatchNoForRow(int row) {
         return (int) (row / batchSize);
     }
-
+    
+    /**
+     * @see LazyCollection#asList()
+     */
+    public List asList() {
+        return this;
+    }
+    
     /**
      * @see AbstractList#iterator
      */

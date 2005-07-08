@@ -10,6 +10,7 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
@@ -37,7 +39,8 @@ public class InlineResultsTable
 {
     protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
 
-    protected List results;
+    protected Collection results;
+    protected List resultsAsList;
     // just those objects that we will display
     protected List subList;
     protected ClassDescriptor cld;
@@ -56,9 +59,16 @@ public class InlineResultsTable
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      */
-    public InlineResultsTable(List results, ClassDescriptor cld,
+    public InlineResultsTable(Collection results, ClassDescriptor cld,
                               WebConfig webConfig, Map webProperties) {
         this.results = results;
+        if (results instanceof List) {
+            resultsAsList = (List) results;
+        } else {
+            if (results instanceof LazyCollection) {
+                this.resultsAsList = ((LazyCollection) results).asList();
+            }
+        }
         this.cld = cld;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
@@ -104,7 +114,7 @@ public class InlineResultsTable
      */
     public List getTypes() {
         List types = new ArrayList();
-        for (Iterator i = results.subList(0, getSize()).iterator(); i.hasNext();) {
+        for (Iterator i = resultsAsList.subList(0, getSize()).iterator(); i.hasNext();) {
             Object o = i.next();
             if (o instanceof ProxyReference) {
                 // special case for ProxyReference from DisplayReference objects
@@ -121,7 +131,7 @@ public class InlineResultsTable
      */
     public List getIds() {
         List ids = new ArrayList();
-        for (Iterator i = results.subList(0, getSize()).iterator(); i.hasNext();) {
+        for (Iterator i = resultsAsList.subList(0, getSize()).iterator(); i.hasNext();) {
             ids.add(((InterMineObject) i.next()).getId());
         }
         return ids;
@@ -150,7 +160,7 @@ public class InlineResultsTable
         columns = new ArrayList();
         subList = new ArrayList();
 
-        Iterator resultsIter = results.subList(0, getSize()).iterator();
+        Iterator resultsIter = resultsAsList.subList(0, getSize()).iterator();
 
         while (resultsIter.hasNext()) {
             Object o = resultsIter.next();
@@ -254,7 +264,7 @@ public class InlineResultsTable
         size = maxInlineTableSize;
 
         try {
-            results.get(size);
+            resultsAsList.get(size);
         } catch (IndexOutOfBoundsException e) {
             size = results.size();
         }

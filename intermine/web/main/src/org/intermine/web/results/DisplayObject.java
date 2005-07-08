@@ -10,28 +10,28 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-import org.intermine.model.InterMineObject;
-import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.PrimaryKeyUtil;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.web.config.FieldConfigHelper;
-import org.intermine.web.config.FieldConfig;
-import org.intermine.web.config.WebConfig;
-
 import org.intermine.util.TypeUtil;
+import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Class to represent an object for display in the webapp
@@ -243,7 +243,7 @@ public class DisplayObject
                         ClassDescriptor refCld =
                             ((CollectionDescriptor) fd).getReferencedClassDescriptor();
                         DisplayCollection newCollection =
-                            new DisplayCollection((List) fieldValue, refCld,
+                            new DisplayCollection((Collection) fieldValue, refCld,
                                                   webConfig, webProperties);
                         if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
