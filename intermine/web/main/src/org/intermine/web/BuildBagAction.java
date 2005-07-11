@@ -89,7 +89,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
 
         String thisLine;
         while ((thisLine = reader.readLine()) != null) {
-            StringTokenizer st = new StringTokenizer(thisLine, " \n\t");
+            StringTokenizer st = new StringTokenizer(thisLine, " \n\t,");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
                 bag.add(token);
