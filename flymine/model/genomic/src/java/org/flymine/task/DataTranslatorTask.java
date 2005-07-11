@@ -154,7 +154,8 @@ public class DataTranslatorTask extends Task
             } else if ("org.flymine.dataconversion.ChadoDataTranslator".equals(translator)
                        || "org.flymine.dataconversion.PsiDataTranslator".equals(translator)
                        || "org.flymine.dataconversion.MageDataTranslator".equals(translator)
-                       || "org.flymine.dataconversion.UniprotDataTranslator".equals(translator)) {
+                       || "org.flymine.dataconversion.UniprotDataTranslator".equals(translator)
+                       || "org.flymine.dataconversion.DrosdelDataTranslator".equals(translator)) {
                 types = new Class[] {ItemReader.class, Properties.class, Model.class, Model.class};
                 args = new Object[] {reader, mappingProps, src, tgt};
             }

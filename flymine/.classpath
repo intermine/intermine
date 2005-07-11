@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="lib" path="build/resources/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
+	<classpathentry kind="src" path="model/drosdel/src/test"/>
+	<classpathentry kind="src" path="model/drosdel/src/java"/>
 	<classpathentry kind="src" path="model/chado/src/java"/>
 	<classpathentry kind="src" path="model/chado/src/test"/>
 	<classpathentry kind="src" path="model/diseaseregion/src/java"/>
@@ -33,6 +35,7 @@
 	<classpathentry kind="src" path="model/tiling_path/src/java"/>
 	<classpathentry kind="src" path="model/uniprot/src/java"/>
 	<classpathentry kind="src" path="model/uniprot/src/test"/>
+	<classpathentry kind="src" path="build/model/drosdel"/>
 	<classpathentry kind="src" path="build/model/chado"/>
 	<classpathentry kind="src" path="build/model/ensembl"/>
 	<classpathentry kind="src" path="build/model/fulldata"/>
