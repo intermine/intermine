@@ -10,25 +10,24 @@ package org.flymine.postprocess;
  *
  */
 
-import java.io.File;
-import java.io.Writer;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
-
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
-
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Transcript;
-import org.flymine.model.genomic.Exon;
+import java.io.Writer;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Transcript;
+
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -179,6 +178,9 @@ public class PostProcessTask extends Task
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
                 cr.populateOrthologuesCollection();
+            } else if ("homophila-post-process".equals(operation)) {
+                HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
+                hpp.connectDrosophilaGenesToHumanDiseases();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
