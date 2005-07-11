@@ -40,6 +40,14 @@
     <attribute name="genus" value="Anopheles"/>
     <attribute name="species" value="gambiae"/>
   </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Homo sapiens"/>
+    <attribute name="shortName" value="H. sapiens"/>
+    <attribute name="taxonId" value="9606"/>
+    <attribute name="abbreviation" value="HS"/>
+    <attribute name="genus" value="Homo"/>
+    <attribute name="species" value="sapiens"/>
+  </item>
 <!--
   <item id="0_6" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="name" value="Drosophila pseudoobscura"/>

@@ -118,15 +118,18 @@ public class CreateReferences
         // CDS.gene / Gene.CDSs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
                              CDS.class, "gene");
-
+        
+        LOG.info("insertReferences stage 10");
+        // Gene.CDSs.polypeptides
+        insertReferenceField(Gene.class, "CDSs", CDS.class, "polypeptides",
+                             Translation.class, "gene");
 
         ObjectStore os = osw.getObjectStore();
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-
-        LOG.info("insertReferences stage 10");
+        
         // Protein.interactions
         insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
         LOG.info("insertReferences stage 11");

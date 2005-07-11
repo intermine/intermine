@@ -38,6 +38,7 @@ public class HomophilaConverter extends FileConverter
 {
     private static final Logger LOG = Logger.getLogger(HomophilaConverter.class);
     
+    /* Indexes into tab seperated array. */
     private static final int TRANSLATION_ID = 0;
     private static final int OMIM_ID = 1;
     private static final int PROTEIN_ID = 2;
@@ -53,16 +54,22 @@ public class HomophilaConverter extends FileConverter
     protected Map diseases = new HashMap();
     protected Map genes = new HashMap();
 
-    protected Item orgHuman;
-    protected Item orgDrosophila;
     protected int id = 0;
     protected int matchCount = 0;
+    protected int annotationCount = 0;
 
+    /* Singleton items. */
+    protected Item orgHuman;
+    protected Item orgDrosophila;
+    protected Item homophilaDb;
+    protected Item pub1, pub2;
+    
     protected File diseaseFile;
     protected File proteinGeneFile;
 
     /**
-     * Constructor
+     * Construct a new instance of HomophilaCnoverter.
+     * 
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
@@ -70,14 +77,24 @@ public class HomophilaConverter extends FileConverter
         super(writer);
 
         orgHuman = newItem("Organism");
-        orgHuman.addAttribute(new Attribute("abbreviation", "HS"));
         orgHuman.addAttribute(new Attribute("taxonId", "9606"));
         store(orgHuman);
         
         orgDrosophila = newItem("Organism");
-        orgDrosophila.addAttribute(new Attribute("abbreviation", "DM"));
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
+        
+        homophilaDb = newItem("Database");
+        homophilaDb.addAttribute(new Attribute("title", "Homophila"));
+        store(homophilaDb);
+        
+        pub1 = newItem("Publication");
+        pub1.addAttribute(new Attribute("pubMedId", "11381037"));
+        store(pub1);
+        
+        pub2 = newItem("Publication");
+        pub2.addAttribute(new Attribute("pubMedId", "11752278"));
+        store(pub2);
     }
     
     /**
@@ -86,6 +103,7 @@ public class HomophilaConverter extends FileConverter
      * of description (with the same OMIM id) on adjacent lines.
      * 
      * @param reader reader
+     * @throws IOException if the file cannot be found/read
      */
     protected void readDiseaseDescriptions(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
@@ -117,6 +135,7 @@ public class HomophilaConverter extends FileConverter
      * Read mappings from protein id to gene id.
      * 
      * @param reader reader
+     * @throws IOException if the file cannot be found/read
      */
     protected void readProteinGeneFile(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
@@ -162,6 +181,7 @@ public class HomophilaConverter extends FileConverter
      * Reads disease description file first, then reads homophila matches file.
      * 
      * @see DataConverter#process
+     * @throws Exception if something goes wrong
      */
     public void process(Reader reader) throws Exception {
        
@@ -210,7 +230,7 @@ public class HomophilaConverter extends FileConverter
         Item item = newItem("BlastMatch");
         item.addReference(new Reference("subject", findProtein(array).getIdentifier()));
         item.addReference(new Reference("object", findTranslation(array).getIdentifier()));
-        item.addAttribute(new Attribute("eValue", array[E_VALUE]));
+        item.addAttribute(new Attribute("EValue", array[E_VALUE]));
         store(item);
         matchCount++;
         return item;
@@ -276,8 +296,29 @@ public class HomophilaConverter extends FileConverter
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
             addToCollection(gene, "omimDiseases", findDisease(array));
             store(gene);
+            newAnnotation(gene, findDisease(array));
         }
         return gene;
+    }
+    
+    /**
+     * Create new Annotation item. Adds the Homophila database and the two publications
+     * as evidence. The subject is the gene and the property is the disease.
+     * 
+     * @param array line of homophila matches file
+     * @return Gene Item
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected Item newAnnotation(Item gene, Item disease) throws ObjectStoreException {
+        Item annotation = newItem("Annotation");
+        annotation.addReference(new Reference("subject", gene.getIdentifier()));
+        annotation.addReference(new Reference("property", disease.getIdentifier()));
+        addToCollection(annotation, "evidence", homophilaDb);
+        addToCollection(annotation, "evidence", pub1);
+        addToCollection(annotation, "evidence", pub2);
+        store(annotation);
+        annotationCount++;
+        return annotation;
     }
     
     /**
@@ -313,6 +354,7 @@ public class HomophilaConverter extends FileConverter
         LOG.info("proteins.size() == " + proteins.size());
         LOG.info("diseases.size() == " + diseases.size());
         LOG.info("matches.size() == " + matchCount);
+        LOG.info("annotation.size() == " + annotationCount);
         super.close();
     }
 

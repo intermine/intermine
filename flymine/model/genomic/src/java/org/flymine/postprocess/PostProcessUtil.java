@@ -268,7 +268,6 @@ public class PostProcessUtil
         return res.iterator();
     }
 
-
     /**
      * Return an iterator over all objects of the given class in the ObjectStore provided.
      * @param os an ObjectStore to query

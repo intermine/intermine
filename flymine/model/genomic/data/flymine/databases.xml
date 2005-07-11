@@ -79,6 +79,11 @@
     <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
   </item>
   <item id="0_17" class="http://www.flymine.org/model/genomic#Database">
+    <attribute name="title" value="Homophila"/>
+    <attribute name="description" value="Homophila: Human Disease to Drosophila Gene Database"/>
+    <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
+  </item>
+  <item id="0_18" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="DrosDel"/>
     <attribute name="description" value="An isogenic deficiency kit for Drosophila melanogaster"/>
     <attribute name="url" value="http://www.drosdel.org.uk/"/>
