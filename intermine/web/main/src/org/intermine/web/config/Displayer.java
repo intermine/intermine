@@ -90,9 +90,16 @@ public class Displayer
      * @return a String version of this WebConfig object
      */
     public String toString() {
-        return "<displayer src=\"" + src + "\"/>";
+        return toString("displayer");
     }
 
-
+    /**
+     * Return an XML String of this Type object
+     *
+     * @return a String version of this WebConfig object
+     */
+    public String toString(String elementName) {
+        return "<" + elementName + " src=\"" + src + "\"/>";
+    }
 }
 

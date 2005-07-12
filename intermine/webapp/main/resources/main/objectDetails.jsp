@@ -99,6 +99,7 @@
             <im:heading id="further">
               <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
             </im:heading>
+            <im:vspacer height="3"/>
             <im:body id="further">
               <c:forEach items="${WEBCONFIG.types[cld.name].longDisplayers}" var="displayer">
                 <c:set var="object_bak" value="${object}"/>
