@@ -472,7 +472,7 @@
 
     <action path="/initTable"
             type="org.intermine.web.results.TableController"
-            name="changeResultsSizeForm"/>
+            name="changeTableSizeForm"/>
             
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
