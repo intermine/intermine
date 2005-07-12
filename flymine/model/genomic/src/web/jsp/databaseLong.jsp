@@ -1,7 +1,14 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- databaseLong.jsp -->
-<html:link href="${object.url}" target="view_window">
-  ${object.title}
-</html:link>
+
+<div style="margin-left: 20px">
+  
+  <html:link href="${object.url}"
+             title="${object.url}"
+             target="view_window">
+    <html:img src="model/${object.title}_logo_large.png" align="middle" border="0"/>
+  </html:link>
+</div>
+
 <!-- /databaseLong.jsp -->

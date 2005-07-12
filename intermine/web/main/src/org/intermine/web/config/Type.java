@@ -28,6 +28,7 @@ public class Type
     private String className;
     private ListOrderedSet fieldConfigs = new ListOrderedSet();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
+    private Displayer tableDisplayer;
 
     /**
      * Set the fully-qualified class name for this Type
@@ -73,6 +74,15 @@ public class Type
     public void addLongDisplayer(Displayer disp) {
         longDisplayers.add(disp);
     }
+    
+    /**
+     * Set the table displayer for this Type
+     *
+     * @param disp the Displayer
+     */
+    public void setTableDisplayer(Displayer disp) {
+        tableDisplayer = disp;
+    }
 
     /**
      * Get the List of long Displayers
@@ -81,6 +91,15 @@ public class Type
      */
     public Set getLongDisplayers() {
         return Collections.unmodifiableSet(this.longDisplayers);
+    }
+    
+    /**
+     * Get the table Displayer
+     *
+     * @return the table Displayer
+     */
+    public Displayer getTableDisplayer() {
+        return tableDisplayer;
     }
 
     /**
@@ -97,7 +116,8 @@ public class Type
         Type typeObj = (Type) obj;
         
         return fieldConfigs.equals(typeObj.fieldConfigs)
-            && longDisplayers.equals(typeObj.longDisplayers);
+            && longDisplayers.equals(typeObj.longDisplayers)
+            && tableDisplayer.equals(typeObj.tableDisplayer);
     }
 
     /**
@@ -106,7 +126,7 @@ public class Type
      * @return the hashCode for this Type object
      */
     public int hashCode() {
-        return fieldConfigs.hashCode() + 3 * longDisplayers.hashCode();
+        return fieldConfigs.hashCode() + 3 * longDisplayers.hashCode() + 5 * tableDisplayer.hashCode();
     }
 
     /**
@@ -127,6 +147,9 @@ public class Type
             sb.append(iter.next().toString());
         }
         sb.append("</fieldconfigs>");
+        if (tableDisplayer != null) {
+            sb.append(tableDisplayer.toString("tabledisplayer"));
+        }
         sb.append("<longdisplayers>");
         iter = longDisplayers.iterator();
         while (iter.hasNext()) {

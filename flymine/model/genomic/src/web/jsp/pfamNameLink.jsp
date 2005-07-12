@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<!-- geneLong.jsp -->
+<!-- pfamNameLink.jsp -->
 <fmt:setBundle basename="model"/>
 
 <c:if test="${!empty object.name}">
@@ -17,4 +17,4 @@
     </html:link>
   </div>
 </c:if>
-<!-- /geneLong.jsp -->
+<!-- /pfamNameLink.jsp -->

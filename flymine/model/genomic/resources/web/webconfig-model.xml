@@ -1,4 +1,14 @@
 <webconfig>
+  
+  <class className="org.flymine.model.genomic.Disease">
+    <fields>
+      <fieldconfig fieldExpr="omimId"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/disease.jsp"/>
+    </longdisplayers>
+  </class>
+  
   <class className="org.flymine.model.genomic.ModelledProteinStructure">
     <fields>
       <fieldconfig fieldExpr="ZScore"/>
@@ -24,6 +34,7 @@
     <longdisplayers>
       <displayer src="/model/databaseLong.jsp"/>
     </longdisplayers>
+    <tabledisplayer src="/model/databaseShort.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.Organism">

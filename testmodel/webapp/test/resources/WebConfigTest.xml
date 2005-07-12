@@ -22,6 +22,7 @@
     <longdisplayers>
       <displayer src="/model/manager.jsp"/>
     </longdisplayers>
+    <tabledisplayer src="/model/tableManager.jsp"/>
   </class>
   <exporter id="myExporter" actionPath="/somePath" className="java.lang.String"/>
 </webconfig>

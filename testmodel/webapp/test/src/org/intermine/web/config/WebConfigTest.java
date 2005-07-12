@@ -42,11 +42,14 @@ public class WebConfigTest extends TestCase
 
         Displayer managerDisplayer = new Displayer();
         managerDisplayer.setSrc("/model/manager.jsp");
-
+        Displayer tdisp = new Displayer();
+        tdisp.setSrc("/model/tableManager.jsp");
+        
         Type managerType = new Type();
         managerType.setClassName("org.intermine.model.testmodel.Manager");
         managerType.addLongDisplayer(managerDisplayer);
-
+        managerType.setTableDisplayer(tdisp);
+        
         FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
         managerType.addFieldConfig(df3);

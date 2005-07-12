@@ -65,6 +65,14 @@ public class WebConfig
         digester.addSetProperties("webconfig/class", "className", "className");
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
+        digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);
+        digester.addSetProperties("webconfig/class/tabledisplayer", "src", "src");
+        digester.addSetNext("webconfig/class/tabledisplayer", "setTableDisplayer");
+        
+        digester.addCallMethod("webconfig/class/tabledisplayer/param", "addParam", 2);
+        digester.addCallParam("webconfig/class/tabledisplayer/param", 0, "name");
+        digester.addCallParam("webconfig/class/tabledisplayer/param", 1, "value");
+        
         digester.addObjectCreate("webconfig/class/fields/fieldconfig", FieldConfig.class);
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
@@ -205,6 +213,10 @@ public class WebConfig
                             Displayer ld = (Displayer) longDisplayerIter.next();
                             thisClassType.addLongDisplayer(ld);
                         }
+                    }
+                    
+                    if (thisClassType.getTableDisplayer() == null) {
+                        thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
                     }
                 }
             }
