@@ -42,6 +42,7 @@ public class ModelMerger
      * Creates a new instance of ModelMerger.
      */
     private ModelMerger() {
+       // empty
     }
     
     /**

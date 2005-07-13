@@ -455,6 +455,7 @@ public class DatabaseUtil
     }
 
     private DatabaseUtil() {
+        // empty
     }
 
     /**
@@ -545,7 +546,6 @@ public class DatabaseUtil
                                                + "many-to-many relation");
         }
 
-        String cldName = col.getClassDescriptor().getName();
         String name1 = getInwardIndirectionColumnName(col);
         String name2 = getOutwardIndirectionColumnName(col);
         return name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;

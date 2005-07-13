@@ -199,7 +199,7 @@ public class XmlSchemaParser implements ModelParser
 
         while (structures.hasMoreElements()) {
             ElementDecl e = (ElementDecl) structures.nextElement();
-            processElementDecl((ElementDecl) e);
+            processElementDecl(e);
         }
 
         structures = schema.getModelGroups();
@@ -419,7 +419,7 @@ public class XmlSchemaParser implements ModelParser
                 // Need to determine the type using the keyref and key
                 String key = xmlInfo.getReferencingKeyName(path, fieldName);
                 String clsPath = xmlInfo.getKeyPath(key);
-                String refType = (String) xmlInfo.getClsNameFromXPath(clsPath);
+                String refType = xmlInfo.getClsNameFromXPath(clsPath);
                 fieldName = StringUtil.decapitalise(fieldName);
                 LOG.debug("creating reference attribute at: " + path + " field:" + fieldName
                       + " referencing: " + clsPath);

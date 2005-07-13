@@ -186,8 +186,6 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         // name to a Set of ids of objects that should be in the collection.
                         // toIds is a Set of all the IDs that we need to fetch in our query.
 
-                        int toIdSize = toIds.size();
-
                         // Find all the objects we have in the cache.
 
                         Map idToObj = new HashMap();
@@ -200,8 +198,6 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 toIdIter.remove();
                             }
                         }
-
-                        int toIdSizeAfterCache = toIds.size();
 
                         // Now, we don't need to load in objects that the dataloader has already
                         // handled. That includes basically everything we have seen ever.

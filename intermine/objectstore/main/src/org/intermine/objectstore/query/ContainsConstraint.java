@@ -163,9 +163,9 @@ public class ContainsConstraint extends Constraint
      * @param obj the object to compare with
      * @return true if objects are equal
      */
-    public boolean equals(Object obj) {
-        if (obj instanceof ContainsConstraint) {
-            ContainsConstraint cc = (ContainsConstraint) obj;
+    public boolean equals(Object obj1) {
+        if (obj1 instanceof ContainsConstraint) {
+            ContainsConstraint cc = (ContainsConstraint) obj1;
             return this.ref.equals(cc.ref)
                     && this.op == cc.op
                     && Util.equals(this.obj, cc.obj)

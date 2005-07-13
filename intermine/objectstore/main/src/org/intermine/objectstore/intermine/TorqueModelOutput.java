@@ -156,8 +156,7 @@ public class TorqueModelOutput
             Iterator fieldIter = fields.getAttributes().iterator();
             while (fieldIter.hasNext()) {
                 AttributeDescriptor field = (AttributeDescriptor) fieldIter.next();
-                sb.append(generateColumn(DatabaseUtil.getColumnName(field),
-                            ((AttributeDescriptor) field).getType()));
+                sb.append(generateColumn(DatabaseUtil.getColumnName(field), field.getType()));
             }
             fieldIter = fields.getReferences().iterator();
             while (fieldIter.hasNext()) {

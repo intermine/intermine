@@ -107,6 +107,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
+                        // ignore
                     }
                 }
             }
@@ -190,6 +191,7 @@ public class BuildDbTask extends Task
                 try {
                     c.close();
                 } catch (SQLException e) {
+                    // ignore
                 }
             }
         }
@@ -209,6 +211,7 @@ public class BuildDbTask extends Task
                 try {
                     c.close();
                 } catch (SQLException e) {
+                    // ignore
                 }
             }
         }
