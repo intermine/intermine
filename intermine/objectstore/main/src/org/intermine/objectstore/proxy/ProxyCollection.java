@@ -70,7 +70,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
         this.o = o;
         this.fieldName = fieldName;
         this.clazz = clazz;
-        this.flags = (useReverseRelation ? 1 : 0);
+        this.flags = (useReverseRelation ? 1 : 0) | 2 | 4;
         createdCount++;
         maybeLog();
     }

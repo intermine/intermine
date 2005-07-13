@@ -38,7 +38,7 @@ public class Model
 {
     private static Map models = new HashMap();
 
-    private final String name;
+    private final String modelName;
     private final URI nameSpace;
     private final Map cldMap = new LinkedHashMap();
     private final Map subMap = new LinkedHashMap();
@@ -51,7 +51,7 @@ public class Model
      * @return the relevant metadata
      * @throws MetaDataException if there is problem parsing the model xml
      */
-    public static Model getInstanceByName(String name) throws MetaDataException {
+    public static Model getInstanceByName(String name) {
         if (!models.containsKey(name)) {
             models.put(name, MetadataManager.loadModel(name));
         }
@@ -87,7 +87,7 @@ public class Model
             throw new NullPointerException("Model ClassDescriptors list cannot be null");
         }
 
-        this.name = name;
+        this.modelName = name;
 
         this.nameSpace = new URI(XmlUtil.correctNamespace(nameSpace));
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
@@ -208,7 +208,7 @@ public class Model
      * @return name of the model
      */
     public String getName() {
-        return this.name;
+        return this.modelName;
     }
 
     /**
@@ -225,7 +225,7 @@ public class Model
     public boolean equals(Object obj) {
         if (obj instanceof Model) {
             Model model = (Model) obj;
-            return name.equals(model.name)
+            return modelName.equals(model.modelName)
                 && cldMap.equals(model.cldMap);
         }
         return false;
@@ -235,7 +235,7 @@ public class Model
      * @see Object#hashCode
      */
     public int hashCode() {
-        return 3 * name.hashCode()
+        return 3 * modelName.hashCode()
             + 5 * cldMap.hashCode();
     }
 
@@ -244,7 +244,7 @@ public class Model
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + name + "\" namespace=\"" + nameSpace + "\">");
+        sb.append("<model name=\"" + modelName + "\" namespace=\"" + nameSpace + "\">");
         for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {

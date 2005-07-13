@@ -326,7 +326,7 @@ public class XmlMetaData
 
         while (structures.hasMoreElements()) {
             ElementDecl e = (ElementDecl) structures.nextElement();
-            processElementDecl((ElementDecl) e, false);
+            processElementDecl(e, false);
         }
     }
 
@@ -552,7 +552,7 @@ public class XmlMetaData
         while (iter.hasNext()) {
             Object path = iter.next();
             sb.append(path + endl);
-            sb.append("\t\t" + keyFields.get((String) path) + endl);
+            sb.append("\t\t" + keyFields.get(path) + endl);
         }
         iter = keyrefFields.keySet().iterator();
         sb.append("\n\n ========= keyrefFields ========= " + endl);

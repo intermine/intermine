@@ -584,7 +584,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Overrides Object.finalize - release the DB log connection.
      */
     protected synchronized void finalize() {
-        LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequence
+        LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequenceNumber
                 + " and Database " + getDatabase().getURL());
         try {
             close();
@@ -600,7 +600,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException in subclasses
      */
     public synchronized void close() throws ObjectStoreException {
-        LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequence
+        LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequenceNumber
                 + ", time spent: SQL Gen: " + statsGenTime + ", SQL Optimise: " + statsOptTime
                 + ", Nulls: " + statsNulTime + ", Estimate: " + statsEstTime
                 + ", Execute: " + statsExeTime + ", Results Convert: " + statsConTime);
@@ -635,7 +635,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Called by the ShutdownHook on shutdown.
      */
     public synchronized void shutdown() {
-        LOG.info("Shutting down open ObjectStoreInterMineImpl with sequence = " + sequence
+        LOG.info("Shutting down open ObjectStoreInterMineImpl with sequence = " + sequenceNumber
                 + " and Database " + getDatabase().getURL());
         try {
             close();

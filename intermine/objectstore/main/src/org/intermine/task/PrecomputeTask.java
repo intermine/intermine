@@ -397,12 +397,10 @@ public class PrecomputeTask extends Task
                                    + (System.currentTimeMillis() - start) / 1000 + " seconds");
                 if (resultsSize > 0) {
                     start = System.currentTimeMillis();
-                    List resultsRow1 = (List) results.get(0);
                     outputStream.println("  first row in "
                                          + (System.currentTimeMillis() - start) / 1000
                                          + " seconds");
                     start = System.currentTimeMillis();
-                    List resultsRow2 = (List) results.get(resultsSize - 1);
                     outputStream.println("  last row in "
                                          + (System.currentTimeMillis() - start) / 1000
                                          + " seconds");

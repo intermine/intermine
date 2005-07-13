@@ -227,6 +227,7 @@ public class SqlGenerator
                     try {
                         lastKey = (Integer) headMap.lastKey();
                     } catch (NoSuchElementException e) {
+                        // ignore
                     }
                     if (lastKey != null) {
                         int offset = lastKey.intValue();
@@ -310,6 +311,7 @@ public class SqlGenerator
                 try {
                     lastKey = (Integer) headMap.lastKey();
                 } catch (NoSuchElementException e) {
+                    // ignore
                 }
                 if (lastKey != null) {
                     int offset = lastKey.intValue();
@@ -693,7 +695,7 @@ public class SqlGenerator
         if (c instanceof ConstraintSet) {
             constraintSetToString(state, (ConstraintSet) c, q, schema);
         } else if (c instanceof SimpleConstraint) {
-            simpleConstraintToString(state, (SimpleConstraint) c, q, schema);
+            simpleConstraintToString(state, (SimpleConstraint) c, q);
         } else if (c instanceof SubqueryConstraint) {
             subqueryConstraintToString(state, (SubqueryConstraint) c, q, schema);
         } else if (c instanceof ClassConstraint) {
@@ -751,8 +753,8 @@ public class SqlGenerator
      * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+    protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q)
+        throws ObjectStoreException {
         queryEvaluableToString(state.getWhereBuffer(), c.getArg1(), q, state);
         state.addToWhere(" " + c.getOp().toString());
         if (c.getArg2() != null) {
@@ -1398,6 +1400,7 @@ public class SqlGenerator
         private Map bagTableNames = new HashMap();
         
         public State() {
+            // empty
         }
 
         public String getWhere() {

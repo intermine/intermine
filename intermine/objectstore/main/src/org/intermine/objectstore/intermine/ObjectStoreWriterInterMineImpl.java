@@ -106,7 +106,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         int index = createSituation.indexOf("at junit.framework.TestCase.runBare");
         createSituation = (index < 0 ? createSituation : createSituation.substring(0, index));
         recentSequences = Collections.synchronizedMap(new CacheMap(getClass().getName()
-                    + " with sequence = " + sequence + ", model = \"" + model.getName()
+                    + " with sequence = " + sequenceNumber + ", model = \"" + model.getName()
                     + "\" recentSequences cache"));
         batch = new Batch(new BatchWriterPostgresCopyImpl());
         tableToInfo = new HashMap();
@@ -222,6 +222,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             try {
                 wait(1000L);
             } catch (InterruptedException e) {
+                // ignore
             }
             LOG.debug("Notified or timed out");
             loops++;
@@ -265,6 +266,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             try {
                 os.releaseConnection(c);
             } catch (Exception e) {
+                // ignore
             }
         } else if (c == conn) {
             connInUse = false;
@@ -283,7 +285,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected synchronized void finalize() {
         if (conn != null) {
             LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
-                    + sequence + " and Database " + os.getDatabase().getURL()
+                    + sequenceNumber + " and Database " + os.getDatabase().getURL()
                     + ", createSituation: " + createSituation);
             try {
                 close();
@@ -326,6 +328,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             try {
                 os.releaseConnection(conn);
             } catch (Exception e) {
+                // ignore
             }
             conn = null;
             connInUse = true;
@@ -974,7 +977,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     public synchronized void shutdown() {
         if (conn != null) {
             LOG.error("Shutting down open ObjectStoreWriterInterMineImpl with sequence = "
-                    + sequence + " and Database " + os.getDatabase().getURL()
+                    + sequenceNumber + " and Database " + os.getDatabase().getURL()
                     + ", createSituation = " + createSituation);
             try {
                 close();

@@ -10,20 +10,17 @@ package org.intermine.metadata;
  *
  */
 
-import java.io.FileReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.File;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
@@ -129,8 +126,6 @@ public class MetadataManager
      * @throws IOException if an error occurs
      */
     public static void saveModel(Model model, File destDir) throws IOException {
-        File file = new File(destDir, getFilename(MODEL, model.getName()));
-        
         write(model.toString(), new File(destDir, getFilename(MODEL, model.getName())));
     }
 

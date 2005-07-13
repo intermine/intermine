@@ -36,6 +36,7 @@ public class DynamicBean implements MethodInterceptor
      * Construct the interceptor
      */
     public DynamicBean() {
+        // empty
     }
 
     /**

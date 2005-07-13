@@ -29,7 +29,7 @@ import org.intermine.util.TypeUtil;
  */
 public class ClassDescriptor
 {
-    private final String name;        // name of this class
+    private final String className;        // name of this class
 
     private final String supers;
     private final Set superNames = new LinkedHashSet();
@@ -64,7 +64,7 @@ public class ClassDescriptor
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
 
-        this.name = name;
+        this.className = name;
 
         if (supers != null && supers.equals("")) {
             throw new IllegalArgumentException("'supers' parameter must be null or a valid"
@@ -110,7 +110,7 @@ public class ClassDescriptor
      * @return qualified name of the described Class
      */
     public String getName() {
-        return name;
+        return className;
     }
 
     /**
@@ -119,7 +119,7 @@ public class ClassDescriptor
      */
     public Class getType() {
         try {
-            return Class.forName(name);
+            return Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Can't find class for class descriptor", e);
         }
@@ -141,7 +141,7 @@ public class ClassDescriptor
      * @return unqualified name of the described Class
      */
     public String getUnqualifiedName() {
-        return TypeUtil.unqualifiedName(name);
+        return TypeUtil.unqualifiedName(className);
     }
 
     /**
@@ -527,7 +527,7 @@ public class ClassDescriptor
     public boolean equals(Object obj) {
         if (obj instanceof ClassDescriptor) {
             ClassDescriptor cld = (ClassDescriptor) obj;
-            return name.equals(cld.name)
+            return className.equals(cld.className)
                 && superNames.equals(cld.superNames)
                 && isInterface == cld.isInterface
                 && fieldDescriptors.equals(cld.fieldDescriptors);
@@ -539,7 +539,7 @@ public class ClassDescriptor
      * @see Object#hashCode
      */
     public int hashCode() {
-        return 3 * name.hashCode()
+        return 3 * className.hashCode()
             + 7 * superNames.hashCode()
             + 11 * (isInterface ? 1 : 0)
             + 13 * fieldDescriptors.hashCode();
@@ -550,7 +550,7 @@ public class ClassDescriptor
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<class name=\"" + name + "\"")
+        sb.append("<class name=\"" + className + "\"")
             .append(supers != null ? " extends=\"" + supers + "\"" : "")
             .append(" is-interface=\"" + isInterface + "\">");
         Set l = new LinkedHashSet();
@@ -572,7 +572,7 @@ public class ClassDescriptor
      */
     public String getHumanReadableText() {
         StringBuffer retval = new StringBuffer(isInterface ? "Interface " : "Class ")
-            .append(terseClass(name));
+            .append(terseClass(className));
         if (supers != null) {
             retval.append(" extends ").append(terseClasses(supers));
         }

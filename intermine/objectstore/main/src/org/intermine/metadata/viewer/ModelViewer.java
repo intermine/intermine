@@ -43,7 +43,6 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
 {
     private Model model;
     private JLabel cldLabel;
-    private JPanel treePanel;
     private JTree tree;
 
 

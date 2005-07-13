@@ -51,12 +51,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int getObjectOps = 0;
     protected int getObjectHits = 0;
     protected int getObjectPrefetches = 0;
-    protected int sequence;
+    protected int sequenceNumber;
 
     /**
      * No-arg constructor for testing purposes
      */
     protected ObjectStoreAbstractImpl() {
+        // empty
     }
 
     /**
@@ -71,11 +72,11 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         maxOffset = Integer.parseInt((String) props.get("max-offset"));
         maxTime = Long.parseLong((String) props.get("max-time"));
         synchronized (rand) {
-            sequence = rand.nextInt();
+            sequenceNumber = rand.nextInt();
         }
-        LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequence
+        LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
                 + ", model = \"" + model.getName() + "\"");
-        cache = new CacheMap(getClass().getName() + " with sequence = " + sequence + ", model = \""
+        cache = new CacheMap(getClass().getName() + " with sequence = " + sequenceNumber + ", model = \""
                 + model.getName() + "\" getObjectById cache");
     }
 
@@ -209,7 +210,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void invalidateObjectById(Integer id) {
         synchronized (cache) {
             cache.remove(id);
-            sequence++;
+            sequenceNumber++;
         }
     }
 
@@ -229,7 +230,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void flushObjectById() {
         synchronized (cache) {
             cache.clear();
-            sequence++;
+            sequenceNumber++;
         }
     }
 
@@ -325,7 +326,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @return an integer
      */
     public int getSequence() {
-        return sequence;
+        return sequenceNumber;
     }
 
     /**
