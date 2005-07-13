@@ -135,6 +135,7 @@ public class DataTranslatorTask extends Task
             }
             Model src = Model.getInstanceByName(srcModel);
             Model tgt = Model.getInstanceByName(tgtModel);
+            //TODO: Fix this hard coded bodgieness ???
             if ("org.flymine.dataconversion.EnsemblDataTranslator".equals(translator)
                 || "org.flymine.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
                 if (organism == null) {
@@ -143,6 +144,8 @@ public class DataTranslatorTask extends Task
                 types = new Class[]
                     {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
                 args = new Object[] {reader, mappingProps, src, tgt, organism};
+
+            //TODO: Fix this hard coded bodgieness ???
             } else if ("org.flymine.dataconversion.ProteinStructureDataTranslator"
                        .equals(translator)) {
                 if (dataLocation == null) {
@@ -151,11 +154,7 @@ public class DataTranslatorTask extends Task
                 types = new Class[]
                     {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
                 args = new Object[] {reader, mappingProps, src, tgt, dataLocation};
-            } else if ("org.flymine.dataconversion.ChadoDataTranslator".equals(translator)
-                       || "org.flymine.dataconversion.PsiDataTranslator".equals(translator)
-                       || "org.flymine.dataconversion.MageDataTranslator".equals(translator)
-                       || "org.flymine.dataconversion.UniprotDataTranslator".equals(translator)
-                       || "org.flymine.dataconversion.DrosdelDataTranslator".equals(translator)) {
+            } else {
                 types = new Class[] {ItemReader.class, Properties.class, Model.class, Model.class};
                 args = new Object[] {reader, mappingProps, src, tgt};
             }
