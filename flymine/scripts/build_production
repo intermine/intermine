@@ -53,7 +53,7 @@ select $old_handle;
 
 
 my $flymine_properties = "$ENV{HOME}/flymine.properties";
-my @dump_command = qw[pg_dump -C];
+my @dump_command = qw[pg_dump -c];
 
 sub log_message
 {
