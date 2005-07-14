@@ -236,15 +236,8 @@ public class ResultsConverter
                 TypeUtil.setFieldValue(retval, fieldName, value);
             } else if (fd instanceof CollectionDescriptor) {
                 CollectionDescriptor cd = (CollectionDescriptor) fd;
-                Collection lazyColl = null;
-                if (cd.relationType() == CollectionDescriptor.ONE_N_RELATION) {
-                    ReferenceDescriptor reverse = cd.getReverseReferenceDescriptor();
-                    lazyColl = new ProxyCollection(os, retval, reverse.getName(),
-                            reverse.getClassDescriptor().getType(), true);
-                } else {
-                    lazyColl = new ProxyCollection(os, retval, cd.getName(),
-                            cd.getReferencedClassDescriptor().getType(), false);
-                }
+                Collection lazyColl = new ProxyCollection(os, retval, cd.getName(),
+                        cd.getReferencedClassDescriptor().getType());
                 TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
             } else if (fd instanceof ReferenceDescriptor) {
                 ReferenceDescriptor rd = (ReferenceDescriptor) fd;

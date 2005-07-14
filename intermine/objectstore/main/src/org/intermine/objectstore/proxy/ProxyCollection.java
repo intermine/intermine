@@ -46,7 +46,8 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     private InterMineObject o;
     private String fieldName;
     private Class clazz;
-    private int flags; // 1 = useReverseRelation, 2 = noOptimise, 4 = noExplain
+    private boolean noOptimise;
+    private boolean noExplain;
     private SoftReference collectionRef = null;
     private int batchSize = 0;
 
@@ -59,18 +60,16 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      *
      * @param os the ObjectStore from which to retrieve the collection
      * @param o the object containing the collection
-     * @param fieldName the name of the collection, or if useReverseRelation is true, the name of
-     * the reverse field
+     * @param fieldName the name of the collection
      * @param clazz the Class of the objects in the collection
-     * @param useReverseRelation if the collection query should use the reverse relationship
      */
-    public ProxyCollection(ObjectStore os, InterMineObject o, String fieldName, Class clazz,
-            boolean useReverseRelation) {
+    public ProxyCollection(ObjectStore os, InterMineObject o, String fieldName, Class clazz) {
         this.os = os;
         this.o = o;
         this.fieldName = fieldName;
         this.clazz = clazz;
-        this.flags = (useReverseRelation ? 1 : 0) | 2 | 4;
+        noOptimise = true;
+        noExplain = true;
         createdCount++;
         maybeLog();
     }
@@ -127,7 +126,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      * @see LazyCollection#setNoOptimise
      */
     public synchronized void setNoOptimise() {
-        flags = flags | 2;
+        noOptimise = true;
         if (collectionRef != null) {
             Collection collection = (Collection) collectionRef.get();
             if ((collection != null) && (collection instanceof SingletonResults)) {
@@ -140,7 +139,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      * @see LazyCollection#setNoExplain
      */
     public synchronized void setNoExplain() {
-        flags = flags | 4;
+        noExplain = true;
         if (collectionRef != null) {
             Collection collection = (Collection) collectionRef.get();
             if ((collection != null) && (collection instanceof SingletonResults)) {
@@ -182,10 +181,10 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
             if (batchSize != 0) {
                 ((SingletonResults) collection).setBatchSize(batchSize);
             }
-            if (((flags / 2) % 2) == 1) {
+            if (noOptimise) {
                 ((SingletonResults) collection).setNoOptimise();
             }
-            if ((flags / 4) == 1) {
+            if (noExplain) {
                 ((SingletonResults) collection).setNoExplain();
             }
             collectionRef = new SoftReference(collection);
@@ -231,28 +230,12 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
 
     private Query internalGetQuery() {
         Query q = new Query();
-        if ((flags % 2) == 1) {
-            QueryClass qc1 = new QueryClass(clazz);
-            q.addFrom(qc1);
-            q.addToSelect(qc1);
-            QueryObjectReference qor = new QueryObjectReference(qc1, fieldName);
-            ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, o);
-            q.setConstraint(cc);
-            q.addToOrderBy(qor);
-            q.setDistinct(false);
-        } else {
-            QueryClass qc1 = new QueryClass(o.getClass());
-            QueryClass qc2 = new QueryClass(clazz);
-            q.addFrom(qc1);
-            q.addFrom(qc2);
-            q.addToSelect(qc2);
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
-                            fieldName), ConstraintOp.CONTAINS, qc2));
-            cs.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, o));
-            q.setConstraint(cs);
-            q.setDistinct(false);
-        }
+        QueryClass qc1 = new QueryClass(clazz);
+        q.addFrom(qc1);
+        q.addToSelect(qc1);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(o, fieldName),
+                        ConstraintOp.CONTAINS, qc1));
+        q.setDistinct(false);
         return q;
     }
 
