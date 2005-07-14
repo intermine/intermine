@@ -32,7 +32,6 @@ import org.biojava.bio.Annotation;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.util.StringUtil;
-import org.intermine.web.Constants;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
