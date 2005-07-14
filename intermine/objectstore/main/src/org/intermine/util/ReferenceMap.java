@@ -207,6 +207,13 @@ public abstract class ReferenceMap implements Map
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
+    
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return subMap.toString();
+    }
 
     /**
      * Interface for entries in the map.
