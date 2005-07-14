@@ -444,6 +444,11 @@ hr.tmplSeperator {
   white-space: nowrap;
 }
 
+.objectTrailLinkResults {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
 img.searchHeatImg {
 }
 
