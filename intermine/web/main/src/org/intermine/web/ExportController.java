@@ -29,6 +29,8 @@ import org.intermine.web.config.WebConfig;
 import org.intermine.web.config.Exporter;
 import org.intermine.web.results.PagedTable;
 
+import org.apache.log4j.Logger;
+
 /**
  * Controller to initialise for the export.tile
  *
@@ -37,6 +39,8 @@ import org.intermine.web.results.PagedTable;
 
 public class ExportController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(ExportController.class);
+
     /**
      * @see TilesAction#execute
      */
@@ -53,6 +57,11 @@ public class ExportController extends TilesAction
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
+        if (pt == null) {
+            LOG.error("PagedTable " + request.getParameter("table") + " is null");
+            return null;
+        }
+        
         Map allExporters = wc.getExporters();
         Map usableExporters = new HashMap();
 
