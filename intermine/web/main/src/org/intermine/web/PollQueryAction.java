@@ -16,14 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.model.InterMineObject;
+import org.intermine.web.results.PagedTable;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.model.InterMineObject;
-import org.intermine.web.results.PagedResults;
 
 /**
  * Repeatedly poll the status of a running query and forward client to appropriate page
@@ -83,7 +85,7 @@ public class PollQueryAction extends InterMineAction
         } else if (controller.isCompleted()) {
             LOG.debug("query qid " + qid + " complete");
             // Look at results, if only one result, go straight to object details page
-            PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
+            PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             if (followSingleResult && pr.getSize () == 1
                     && ((List) pr.getAllRows ().get(0)).size() == 1) {
                 Object o = ((List) pr.getAllRows ().get(0)).get(0);
@@ -93,7 +95,8 @@ public class PollQueryAction extends InterMineAction
                             + "&trail=_" + ((InterMineObject) o).getId(), true);
                 }
             }
-            return mapping.findForward("results");
+            return new ForwardParameters(mapping.findForward("results"))
+                .addParameter("table", "results." + qid).forward();
         } else {
             LOG.debug("query qid " + qid + " still running, making client wait");
             request.setAttribute("qid", request.getParameter("qid"));

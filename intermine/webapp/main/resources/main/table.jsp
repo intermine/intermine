@@ -286,7 +286,7 @@
                           <c:set var="viewType" value="detail" scope="request"/>
                         </c:otherwise>
                       </c:choose>
-                      <tiles:get name="objectView.tile" />
+                      <tiles:insert name="objectView.tile" />
                     </td>
                   </c:when>
                   <c:otherwise>
@@ -335,7 +335,7 @@
         <p><tiles:insert page="/tablePageLinks.jsp"/></p>
       </c:if>
 
-      <%-- Return to main results link --%>
+      <%-- Return to main results link
       <c:if test="${resultsTable.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
         <p>
           <html:link action="/results?table=results">
@@ -343,6 +343,7 @@
           </html:link>
         </p>
       </c:if>
+	--%>
 
       </div> <%-- end of main results table body div --%>
    

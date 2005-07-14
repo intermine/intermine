@@ -3,12 +3,21 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- objectTrail.jsp -->
+
 <html:xhtml/>
 <c:if test="${!empty trailElements}">
   <div class="body objectTrail">
     Trail: <c:forEach items="${trailElements}" var="item" varStatus="status">
-      <html:link action="/objectDetails?id=${item.objectId}&amp;trail=${item.trail}"
+      <c:choose>
+        <c:when test="${item.table}">
+          <html:link action="/results?table=${item.tableId}"
+                 styleClass="objectTrailLink"><i>Results</i></html:link>
+        </c:when>
+        <c:otherwise>
+          <html:link action="/objectDetails?id=${item.objectId}&amp;trail=${item.trail}"
                  styleClass="objectTrailLink">${item.label}</html:link>
+        </c:otherwise>
+      </c:choose>
       <c:if test="${!status.last}">
         &gt;
       </c:if>

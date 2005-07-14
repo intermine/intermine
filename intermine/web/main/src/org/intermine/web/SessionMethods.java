@@ -85,13 +85,15 @@ public class SessionMethods
      * @param resources message resources
      * @param saveQuery if true, query will be saved automatically
      * @param monitor   object that will receive a periodic call while the query runs
+     * @param quid      the query id
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */
     public static boolean runQuery(final HttpSession session,
                                    final MessageResources resources,
                                    final boolean saveQuery,
-                                   final QueryMonitor monitor)
+                                   final QueryMonitor monitor,
+                                   final String qid)
         throws Exception {
         final ServletContext servletContext = session.getServletContext();
         final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -181,7 +183,7 @@ public class SessionMethods
         }
         
         PagedResults pr = runnable.getPagedResults();
-        session.setAttribute(Constants.QUERY_RESULTS, pr);
+        SessionMethods.setResultsTable(session, "results." + qid, pr);
 
         if (saveQuery) {
             String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
@@ -392,7 +394,7 @@ public class SessionMethods
                 public void run () {
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
-                        SessionMethods.runQuery(session, messages, saveQuery, monitor);
+                        SessionMethods.runQuery(session, messages, saveQuery, monitor, qid);
                         // pause because we don't want to remove the monitor from the
                         // session until client has retrieved it in order to work out
                         // where to go next
@@ -429,16 +431,13 @@ public class SessionMethods
     }
 
     /**
-     * 
+     * Given a table identifier, return the cached PagedTable.
      * 
      * @param session the current session
      * @param identifier table identifier
      * @return PagedTable identified by identifier
      */
     public static PagedTable getResultsTable(HttpSession session, String identifier) {
-        if ("results".equals(identifier)) {
-            return (PagedTable) session.getAttribute(Constants.QUERY_RESULTS);
-        }
         Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
         if (tables != null) {
             return (PagedTable) tables.get(identifier);

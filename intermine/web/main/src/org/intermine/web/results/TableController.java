@@ -63,7 +63,7 @@ public class TableController extends TilesAction
         
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         if (pt == null) {
-            LOG.error("PagedTable is null");
+            LOG.error("PagedTable for " + request.getParameter("table") + " is null");
             return null;
         }
         request.setAttribute("resultsTable", pt);

@@ -24,7 +24,10 @@
       </c:choose>
     </c:when>
     <c:otherwise>
-      <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${param.trail}_${object.id}" scope="request"/>
+      <c:if test="${fn:substring(param.table, 0, 7) == 'results'}">
+        <c:set var="prepend" value="_${param.table}"/>
+      </c:if>
+      <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
       <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
@@ -37,28 +40,23 @@
       <div style="margin-left: 8px">
         <c:forEach items="${DISPLAY_OBJECT_CACHE[object].fieldExprs}" var="expr">
           <im:eval evalExpression="object.${expr}" evalVariable="outVal"/>
-          <c:choose>
-            <c:when test="${fn:length(outVal) > 25}">
-              <c:if test="${fn:length(outVal) > 60}">
-                <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..."/>
-              </c:if>
-              <div>
-            </c:when>
-            <c:otherwise>
-              <div style="white-space:nowrap">
-            </c:otherwise>
-          </c:choose>
+          <c:set var="style" value="white-space:nowrap"/>
+          <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 60}">
+            <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..."/>
+            <c:set var="style" value=""/>
+          </c:if>
+          <div style="${style}">
             <span class="attributeField">${expr}</span>
             <span>${outVal}</span>
           </div>
         </c:forEach>
         <c:forEach items="${leafClds}" var="cld">
-        <c:if test="${WEBCONFIG.types[cld.name].tableDisplayer != null}">
-          <div>
-            <c:set var="cld" value="${cld}" scope="request"/>
-            <tiles:insert page="${WEBCONFIG.types[cld.name].tableDisplayer.src}"/>
-          </div>
-        </c:if>
+          <c:if test="${WEBCONFIG.types[cld.name].tableDisplayer != null}">
+            <div>
+              <c:set var="cld" value="${cld}" scope="request"/>
+              <tiles:insert page="${WEBCONFIG.types[cld.name].tableDisplayer.src}"/>
+            </div>
+          </c:if>
         </c:forEach>
       </div>
     </c:otherwise>

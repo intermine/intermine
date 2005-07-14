@@ -21,7 +21,7 @@
         <fmt:message key="export.tabdelimited"/>
       </html:link>
     </li>
-    <c:if test="${RESULTS_TABLE.size <= WEB_PROPERTIES['max.excel.export.size']}">
+    <c:if test="${resultsTable.size <= WEB_PROPERTIES['max.excel.export.size']}">
       <li>
         <html:link action="/exportAction?table=${param.table}&amp;type=excel">
           <fmt:message key="export.excel">
