@@ -376,6 +376,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { "EMPLOYEEB3" } };
         results.put("Upper", toList(r));
 
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") } };
+        results.put("CollectionQueryOneMany", toList(r));
+
+        r = new Object[][] { { data.get("Secretary1") },
+                             { data.get("Secretary2") } };
+        results.put("CollectionQueryManyMany", toList(r));
     }
 
     /**

@@ -179,5 +179,11 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("NegativeNumbers", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.age > -51", null));
         results.put("Lower", new IqlQuery("SELECT LOWER(a1_.name) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("Upper", new IqlQuery("SELECT UPPER(a1_.name) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ?.employees CONTAINS a1_", null);
+        fq.setParameters(Collections.singletonList(data.get("DepartmentA1")));
+        results.put("CollectionQueryOneMany", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Secretary AS a1_ WHERE ?.secretarys CONTAINS a1_", null);
+        fq.setParameters(Collections.singletonList(data.get("CompanyB")));
+        results.put("CollectionQueryManyMany", fq);
     }
 }

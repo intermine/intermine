@@ -216,6 +216,11 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("Employee"));
+        results.put("CollectionQueryOneMany", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND " + id3 + " = a1_.departmentId ORDER BY a1_.id");
+        results2.put("CollectionQueryOneMany", Collections.singleton("Employee"));
+        Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
+        results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id, a1_.name AS a1_name FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
+        results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
     }
 
     protected DatabaseSchema getSchema() throws Exception {
