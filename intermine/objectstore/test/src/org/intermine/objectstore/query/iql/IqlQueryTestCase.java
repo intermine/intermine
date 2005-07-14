@@ -14,6 +14,7 @@ import junit.framework.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,6 +51,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
      * Set up all the results expected for a given subset of queries
      */
     public static void setUpResults() {
+        results = new HashMap();
         results.put("SelectSimpleObject", new IqlQuery("SELECT Alias FROM org.intermine.model.testmodel.Company AS Alias", null));
         results.put("SubQuery", new IqlQuery("SELECT DISTINCT \"All\".Array.name AS a1_, \"All\".Alias AS Alias FROM (SELECT DISTINCT Array, 5 AS Alias FROM org.intermine.model.testmodel.Company AS Array) AS \"All\"", null));
         results.put("WhereSimpleEquals", new IqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber = 1234", null));
@@ -72,10 +74,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("Contains1N", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a1_.name = 'CompanyA')", null));
         results.put("ContainsN1", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.name = 'CompanyA')", null));
         results.put("ContainsMN", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Contractor AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.companys CONTAINS a2_ AND a1_.name = 'ContractorA')", null));
+        results.put("ContainsNotMN", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Contractor AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.companys DOES NOT CONTAIN a2_ AND a1_.name = 'ContractorA')", null));
         results.put("ContainsDuplicatesMN", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Contractor AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE a1_.oldComs CONTAINS a2_", null));
-        fq = new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.manager CONTAINS ?", null);
-        fq.setParameters(Collections.singletonList(data.get("EmployeeA1")));
-        results.put("ContainsObject", fq);
         results.put("SimpleGroupBy", new IqlQuery("SELECT DISTINCT a1_, COUNT(*) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a3_ WHERE a1_.departments CONTAINS a3_ GROUP BY a1_", null));
         results.put("MultiJoin", new IqlQuery("SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Manager AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.departments CONTAINS a2_ AND a2_.manager CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a3_.name = 'EmployeeA1')", null));
         results.put("SelectComplex", new IqlQuery("SELECT DISTINCT AVG(a1_.vatNumber) + 20 AS a3_, a2_.name AS a4_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ GROUP BY a2_", null));
@@ -146,6 +146,24 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("DynamicClassConstraint", res);
         results.put("ContainsConstraintNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NULL", null));
         results.put("ContainsConstraintNotNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NOT NULL", null));
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.department CONTAINS ?", null);
+        fq.setParameters(Collections.singletonList(data.get("DepartmentA1")));
+        results.put("ContainsConstraintObjectRefObject", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.department DOES NOT CONTAIN ?", null);
+        fq.setParameters(Collections.singletonList(data.get("DepartmentA1")));
+        results.put("ContainsConstraintNotObjectRefObject", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees CONTAINS ?", null);
+        fq.setParameters(Collections.singletonList(data.get("EmployeeB1")));
+        results.put("ContainsConstraintCollectionRefObject", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN ?", null);
+        fq.setParameters(Collections.singletonList(data.get("EmployeeB1")));
+        results.put("ContainsConstraintNotCollectionRefObject", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.contractors CONTAINS ?", null);
+        fq.setParameters(Collections.singletonList(data.get("ContractorA")));
+        results.put("ContainsConstraintMMCollectionRefObject", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.contractors DOES NOT CONTAIN ?", null);
+        fq.setParameters(Collections.singletonList(data.get("ContractorA")));
+        results.put("ContainsConstraintNotMMCollectionRefObject", fq);
         results.put("SimpleConstraintNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE a1_.title IS NULL", null));
         results.put("SimpleConstraintNotNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE a1_.title IS NOT NULL", null));
         results.put("TypeCast", new IqlQuery("SELECT DISTINCT (a1_.age)::String AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));

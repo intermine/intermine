@@ -49,7 +49,6 @@ public class Model
      * Return a Model for specified model name (loading Model if necessary)
      * @param name the name of the model
      * @return the relevant metadata
-     * @throws MetaDataException if there is problem parsing the model xml
      */
     public static Model getInstanceByName(String name) {
         if (!models.containsKey(name)) {

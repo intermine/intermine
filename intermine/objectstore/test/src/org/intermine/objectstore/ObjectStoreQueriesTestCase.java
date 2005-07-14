@@ -168,6 +168,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Contains1N", contains1N());
         queries.put("ContainsN1", containsN1());
         queries.put("ContainsMN", containsMN());
+        queries.put("ContainsNotMN", containsNotMN());
         queries.put("ContainsDuplicatesMN", containsDuplicatesMN());
         queries.put("SimpleGroupBy", simpleGroupBy());
         queries.put("MultiJoin", multiJoin());
@@ -567,7 +568,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
       select department, manager
       from Department, Manager
-      where department.manager = manager
+      where department.manager CONTAINS manager
       and department.name = "DepartmentA1"
     */
 
@@ -594,7 +595,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
       select department, manager
       from Department, Manager
-      where department.manager != manager
+      where department.manager DOES NOT CONTAIN manager
       and department.name = "DepartmentA1"
     */
 
@@ -621,7 +622,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
       select department, manager
       from Department, Manager
-      where (not department.manager = manager)
+      where (not department.manager CONTAINS manager)
       and department.name = "DepartmentA1"
     */
 
@@ -675,7 +676,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
       select department, company
       from Department, company
-      where department.company = company
+      where department.company CONTAINS company
       and company.name = "CompanyA"
     */
       public static Query containsN1() throws Exception {
@@ -744,6 +745,32 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
+      select contractor, company
+      from Contractor, Company
+      where contractor.companys DOES NOT CONTAIN company
+      and contractor.name = "ContractorA"
+    */
+    public static Query containsNotMN() throws Exception {
+        QueryClass qc1 = new QueryClass(Contractor.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "companys");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.DOES_NOT_CONTAIN, qc2);
+        QueryValue v1 = new QueryValue("ContractorA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+    }
+
+    /*
       select company, count(*)
       from Company, Department
       where company contains department
@@ -768,8 +795,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       select company, department, manager, address
       from Company, Department, Manager, Address
       where company contains department
-      and department.manager = manager
-      and manager.address = address
+      and department.manager CONTAINS manager
+      and manager.address CONTAINS address
       and manager.name = "EmployeeA1"
     */
     public static Query multiJoin() throws Exception {

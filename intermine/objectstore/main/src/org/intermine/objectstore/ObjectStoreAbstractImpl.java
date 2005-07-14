@@ -76,8 +76,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         }
         LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
                 + ", model = \"" + model.getName() + "\"");
-        cache = new CacheMap(getClass().getName() + " with sequence = " + sequenceNumber + ", model = \""
-                + model.getName() + "\" getObjectById cache");
+        cache = new CacheMap(getClass().getName() + " with sequence = " + sequenceNumber
+                + ", model = \"" + model.getName() + "\" getObjectById cache");
     }
 
     /**
