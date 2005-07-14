@@ -224,6 +224,11 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("InterMineObject"));
+        results.put("CollectionQueryOneMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND " + id3 + " = a1_.departmentId ORDER BY a1_.id");
+        results2.put("CollectionQueryOneMany", Collections.singleton("InterMineObject"));
+        Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
+        results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, HasSecretarysSecretarys AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Secretary' AND (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
+        results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
     }
 
     protected DatabaseSchema getSchema() {

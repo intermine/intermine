@@ -222,6 +222,11 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("Employee"));
+        results.put("CollectionQueryOneMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE " + id3 + " = a1_.departmentId ORDER BY a1_.id");
+        results2.put("CollectionQueryOneMany", Collections.singleton("Employee"));
+        Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
+        results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
+        results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
     }
 
     protected DatabaseSchema getSchema() {

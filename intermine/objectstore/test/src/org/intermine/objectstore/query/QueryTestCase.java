@@ -226,7 +226,11 @@ public class QueryTestCase extends OneTimeTestCase
     }
 
     protected void checkQueryReferences(String msg, QueryReference qr1, QueryReference qr2, Query q1, Query q2) {
-        checkQueryNodes(msg, qr1.getQueryClass(), qr2.getQueryClass(), q1, q2);
+        if ((qr1.getQueryClass() != null) || (qr2.getQueryClass() != null)) {
+            checkQueryNodes(msg, qr1.getQueryClass(), qr2.getQueryClass(), q1, q2);
+        } else {
+            assertEquals(msg + ": collection origin is not equal", ((QueryCollectionReference) qr1).getQcObject(), ((QueryCollectionReference) qr2).getQcObject());
+        }
         assertEquals(msg + ": QueryReference types are not equal", qr1.getType(), qr2.getType());
         assertEquals(msg + ": QueryReference fieldnames are not equal", qr1.getFieldName(), qr2.getFieldName());
     }

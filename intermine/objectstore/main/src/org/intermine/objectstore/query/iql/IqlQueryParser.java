@@ -790,8 +790,8 @@ public class IqlQueryParser
                 QueryReference leftc = null;
                 AST subSubAST = subAST.getFirstChild();
                 String firstString = unescape(subSubAST.getText());
-                FromElement firstObj = (FromElement) q.getReverseAliases().get(firstString);
-                if (firstObj instanceof QueryClass) {
+                if ("?".equals(firstString)) {
+                    // Grab object from parameters
                     subSubAST = subSubAST.getNextSibling();
                     if (subSubAST != null) {
                         String secondString = unescape(subSubAST.getText());
@@ -799,25 +799,16 @@ public class IqlQueryParser
                             throw new IllegalArgumentException("Path expression " + firstString
                                     + "." + secondString + "."
                                     + subSubAST.getNextSibling().getText() + " extends beyond a "
-                                    + "collection or object reference");
+                                    + " collection");
                         }
-                        QueryReference ref = null;
+                        QueryCollectionReference ref = null;
                         try {
-                            try {
-                                // See if it is an object reference.
-                                ref = new QueryObjectReference((QueryClass) firstObj, secondString);
-                            } catch (IllegalArgumentException e) {
-                                // Okay, it wasn't. See if it is a collection.
-                                ref = new QueryCollectionReference((QueryClass) firstObj,
-                                        secondString);
-                            }
+                            ref = new QueryCollectionReference((InterMineObject) iterator.next(),
+                                    secondString);
                         } catch (IllegalArgumentException e) {
-                            throw new IllegalArgumentException("Object "
-                                            + firstString + "." + secondString + " does not exist"
-                                            + ", or is not a collection or object reference");
+                            throw new IllegalArgumentException("Object " + firstString + "."
+                                    + secondString + " does not exist, or is not a collection");
                         }
-                        // Now we have a collection or object reference. Now we need a class or
-                        // object.
                         if (subAST.getNextSibling().getType() == IqlTokenTypes.QUESTION_MARK) {
                             return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
                                     (InterMineObject) iterator.next());
@@ -827,21 +818,72 @@ public class IqlQueryParser
                                 return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
                                         (QueryClass) qc);
                             } else {
-                                throw new IllegalArgumentException("Collection or object reference "
-                                        + firstString + "." + secondString + " cannot contain "
-                                        + "anything but a QueryClass or InterMineObject");
+                                throw new IllegalArgumentException("Collection " + firstString
+                                        + "." + secondString + " cannot contain anything but a "
+                                        + "QueryClass or InterMineObject");
                             }
                         }
                     } else {
                         throw new IllegalArgumentException("Path expression for collection cannot "
                                 + "end on a QueryClass");
                     }
-                } else if (firstObj instanceof Query) {
-                    throw new IllegalArgumentException("Cannot access a collection or object "
-                            + "reference inside subquery " + firstString);
                 } else {
-                    throw new IllegalArgumentException("No such object " + firstString + " while "
-                            + "looking for a collection or object reference");
+                    FromElement firstObj = (FromElement) q.getReverseAliases().get(firstString);
+                    if (firstObj instanceof QueryClass) {
+                        subSubAST = subSubAST.getNextSibling();
+                        if (subSubAST != null) {
+                            String secondString = unescape(subSubAST.getText());
+                            if (subSubAST.getNextSibling() != null) {
+                                throw new IllegalArgumentException("Path expression " + firstString
+                                        + "." + secondString + "."
+                                        + subSubAST.getNextSibling().getText() + " extends beyond a"
+                                        + " collection or object reference");
+                            }
+                            QueryReference ref = null;
+                            try {
+                                try {
+                                    // See if it is an object reference.
+                                    ref = new QueryObjectReference((QueryClass) firstObj,
+                                            secondString);
+                                } catch (IllegalArgumentException e) {
+                                    // Okay, it wasn't. See if it is a collection.
+                                    ref = new QueryCollectionReference((QueryClass) firstObj,
+                                            secondString);
+                                }
+                            } catch (IllegalArgumentException e) {
+                                throw new IllegalArgumentException("Object "
+                                                + firstString + "." + secondString + " does not "
+                                                + "exist, or is not a collection or object "
+                                                + "reference");
+                            }
+                            // Now we have a collection or object reference. Now we need a class or
+                            // object.
+                            if (subAST.getNextSibling().getType() == IqlTokenTypes.QUESTION_MARK) {
+                                return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
+                                        (InterMineObject) iterator.next());
+                            } else {
+                                QueryNode qc = processNewQueryNode(subAST.getNextSibling(), q);
+                                if (qc instanceof QueryClass) {
+                                    return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
+                                            (QueryClass) qc);
+                                } else {
+                                    throw new IllegalArgumentException("Collection or object "
+                                            + "reference " + firstString + "." + secondString
+                                            + " cannot contain anything but a QueryClass or "
+                                            + "InterMineObject");
+                                }
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Path expression for collection "
+                                    + "cannot end on a QueryClass");
+                        }
+                    } else if (firstObj instanceof Query) {
+                        throw new IllegalArgumentException("Cannot access a collection or object "
+                                + "reference inside subquery " + firstString);
+                    } else {
+                        throw new IllegalArgumentException("No such object " + firstString
+                                + " while looking for a collection or object reference");
+                    }
                 }
             case IqlTokenTypes.BAG_CONSTRAINT:
                 subAST = ast.getFirstChild();

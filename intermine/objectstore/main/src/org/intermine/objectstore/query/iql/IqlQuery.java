@@ -283,16 +283,21 @@ public class IqlQuery
             ContainsConstraint c = (ContainsConstraint) cc;
             QueryReference ref = c.getReference();
             ConstraintOp op = c.getOp();
+            String refString = null;
+            if (ref.getQueryClass() == null) {
+                refString = "?";
+                parameters.add(((QueryCollectionReference) ref).getQcObject());
+            } else {
+                refString = (String) q.getAliases().get(ref.getQueryClass());
+            }
             if (op.equals(ConstraintOp.IS_NULL) || op.equals(ConstraintOp.IS_NOT_NULL)) {
-                return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName() + " "
-                    + op.toString();
+                return refString + "." + ref.getFieldName() + " " + op.toString();
             } else if (c.getQueryClass() == null) {
                 parameters.add(c.getObject());
-                return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName()
-                    + " " + op.toString() + " ?";
+                return refString + "." + ref.getFieldName() + " " + op.toString() + " ?";
             } else {
-                return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName()
-                    + " " + op.toString() + " " + q.getAliases().get(c.getQueryClass());
+                return refString + "." + ref.getFieldName() + " " + op.toString() + " "
+                    + q.getAliases().get(c.getQueryClass());
             }
         } else if (cc instanceof ConstraintSet) {
             ConstraintSet c = (ConstraintSet) cc;

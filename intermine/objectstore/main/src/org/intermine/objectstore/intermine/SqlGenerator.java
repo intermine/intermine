@@ -529,8 +529,7 @@ public class SqlGenerator
             QueryReference ref = cc.getReference();
             if (ref instanceof QueryCollectionReference) {
                 ReferenceDescriptor refDesc = (ReferenceDescriptor) schema.getModel()
-                    .getFieldDescriptorsForClass(ref.getQueryClass().getType())
-                    .get(ref.getFieldName());
+                    .getFieldDescriptorsForClass(ref.getQcType()).get(ref.getFieldName());
                 if (refDesc.relationType() == FieldDescriptor.M_N_RELATION) {
                     tablenames.add(DatabaseUtil.getIndirectionTableName((CollectionDescriptor)
                                 refDesc));
@@ -831,7 +830,7 @@ public class SqlGenerator
         QueryClass arg2 = c.getQueryClass();
         InterMineObject arg2Obj = c.getObject();
         Map fieldNameToFieldDescriptor = schema.getModel().getFieldDescriptorsForClass(arg1
-                .getQueryClass().getType());
+                .getQcType());
         ReferenceDescriptor arg1Desc = (ReferenceDescriptor)
             fieldNameToFieldDescriptor.get(arg1.getFieldName());
         if (arg1Desc == null) {
@@ -855,6 +854,8 @@ public class SqlGenerator
                 }
             }
         } else if (arg1 instanceof QueryCollectionReference) {
+            InterMineObject arg1Obj = ((QueryCollectionReference) arg1).getQcObject();
+            QueryClass arg1Qc = arg1.getQueryClass();
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 if (arg2 == null) {
                     ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
@@ -868,16 +869,24 @@ public class SqlGenerator
                                 + reverse.getClassDescriptor().getType().getName() + "' AND ");
                     }
                     state.addToWhere("(");
-                    queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema,
-                            ID_ONLY, state);
+                    if (arg1Qc == null) {
+                        state.addToWhere("" + arg1Obj.getId());
+                    } else {
+                        queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY,
+                                state);
+                    }
                     state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                             + indirectTableAlias + "." + DatabaseUtil.getColumnName(reverse)
                             + " AND " + indirectTableAlias + ".id = " + arg2Obj.getId() + ")");
                 } else {
                     String arg2Alias = (String) state.getFieldToAlias(arg2)
                         .get(arg1Desc.getReverseReferenceDescriptor().getName());
-                    queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema,
-                            ID_ONLY, state);
+                    if (arg1Qc == null) {
+                        state.addToWhere("" + arg1Obj.getId());
+                    } else {
+                        queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY,
+                                state);
+                    }
                     state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                             + arg2Alias + "."
                             + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
@@ -892,8 +901,11 @@ public class SqlGenerator
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
                 state.addToWhere("(");
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema,
-                        ID_ONLY, state);
+                if (arg1Qc == null) {
+                    state.addToWhere("" + arg1Obj.getId());
+                } else {
+                    queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY, state);
+                }
                 state.addToWhere(" = " + indirectTableAlias + "."
                         + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc) + " AND "
                         + indirectTableAlias + "."

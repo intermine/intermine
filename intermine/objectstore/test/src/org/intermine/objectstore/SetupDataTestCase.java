@@ -83,6 +83,8 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("ContainsConstraintNotCollectionRefObject", containsConstraintNotCollectionRefObject());
         queries.put("ContainsConstraintMMCollectionRefObject", containsConstraintMMCollectionRefObject());
         queries.put("ContainsConstraintNotMMCollectionRefObject", containsConstraintNotMMCollectionRefObject());
+        queries.put("CollectionQueryOneMany", collectionQueryOneMany());
+        queries.put("CollectionQueryManyMany", collectionQueryManyMany());
     }
 
     public static Collection setUpData() throws Exception {
@@ -525,6 +527,32 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addToSelect(qc);
         q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "contractors"),
                     ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("ContractorA")));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE <deptA1>.employees CONTAINS a1_
+     */
+    public static Query collectionQueryOneMany() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, qc));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Secretary AS a1_ WHERE <CompanyB>.secretarys CONTAINS a1_
+     */
+    public static Query collectionQueryManyMany() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Secretary.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("CompanyB"), "secretarys"), ConstraintOp.CONTAINS, qc));
         q1.setDistinct(false);
         return q1;
     }

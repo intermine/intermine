@@ -237,7 +237,11 @@ bag_constraint: (abstract_value "in" )=> abstract_value "in"! QUESTION_MARK!
         { #bag_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint)); }
     ;
 
-contains_constraint: (thing "contains" QUESTION_MARK)=> thing "contains"! QUESTION_MARK
+contains_constraint: (collection_from_question_mark "contains" )=> collection_from_question_mark "contains"! thing
+        { #contains_constraint = #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint); }
+        | (collection_from_question_mark "does" "not" "contain" )=> collection_from_question_mark "does"! "not"! "contain"! thing
+        { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }
+        | (thing "contains" QUESTION_MARK)=> thing "contains"! QUESTION_MARK
         { #contains_constraint = #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"],
                 #contains_constraint); }
         | (thing "contains" )=> thing "contains"! thing
@@ -247,6 +251,10 @@ contains_constraint: (thing "contains" QUESTION_MARK)=> thing "contains"! QUESTI
         { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }
         | thing "does"! "not"! "contain"! thing
         { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }
+    ;
+
+collection_from_question_mark: QUESTION_MARK DOT! IDENTIFIER
+        { #collection_from_question_mark = #([FIELD, "FIELD"], #collection_from_question_mark); }
     ;
 
 comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like" | "not" "like" { #comparison_op = #[NOTLIKE, "NOTLIKE"]; };

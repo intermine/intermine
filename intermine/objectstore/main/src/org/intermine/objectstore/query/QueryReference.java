@@ -18,7 +18,7 @@ package org.intermine.objectstore.query;
  */
 public abstract class QueryReference
 {
-    protected QueryClass qc;
+    protected QueryClass qc = null;
     protected String fieldName;
     protected Class type;
     
@@ -47,5 +47,14 @@ public abstract class QueryReference
      */
     public String getFieldName() {
         return fieldName;
+    }
+
+    /**
+     * Returns the type of the queryclass of this reference
+     *
+     * @return a Class
+     */
+    public Class getQcType() {
+        return qc.getType();
     }
 }

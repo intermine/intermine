@@ -89,8 +89,12 @@ public class QueryCloner
                     origR.getFieldName());
         } else if (orig instanceof QueryCollectionReference) {
             QueryCollectionReference origR = (QueryCollectionReference) orig;
-            return new QueryCollectionReference((QueryClass)
-                    fromElementMap.get(origR.getQueryClass()), origR.getFieldName());
+            if (origR.getQueryClass() == null) {
+                return new QueryCollectionReference(origR.getQcObject(), origR.getFieldName());
+            } else {
+                return new QueryCollectionReference((QueryClass)
+                        fromElementMap.get(origR.getQueryClass()), origR.getFieldName());
+            }
         } else if (orig instanceof QueryValue) {
             return new QueryValue(((QueryValue) orig).getValue());
         } else if (orig instanceof QueryFunction) {
