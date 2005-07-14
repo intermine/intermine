@@ -168,12 +168,12 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
 
         // expect idToFnavs to empty but clone anyway
         if (!idToFnavs.isEmpty()) {
-            LOG.error("idToFnavs was not empty: " + nearFieldName + ", " + farFieldName);
+            LOG.debug("idToFnavs was not empty: " + nearFieldName + ", " + farFieldName);
 
             Iterator iter = idToFnavs.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                String identifier = (String) entry.getValue();
+                String identifier = (String) entry.getKey();
                 Set fnavs = new HashSet();
                 Iterator fnavIter = ((Set) entry.getValue()).iterator();
                 while (fnavIter.hasNext()) {
