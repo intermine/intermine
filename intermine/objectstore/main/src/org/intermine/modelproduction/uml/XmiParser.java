@@ -52,6 +52,8 @@ import org.intermine.modelproduction.ModelParser;
 import org.intermine.util.StringUtil;
 import org.intermine.metadata.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * Translates a model representation in XMI to InterMine metadata (Java)
  *
@@ -63,6 +65,8 @@ public class XmiParser implements ModelParser
 
     private Set attributes, references, collections;
     private Set classes = new LinkedHashSet();
+
+    private static final Logger LOG = Logger.getLogger(XmiParser.class);
 
     /**
      * Constructor that takes the modelName
@@ -95,7 +99,11 @@ public class XmiParser implements ModelParser
      * @param attr the attribute
      */
     protected void generateAttribute(MAttribute attr) {
+
         String name = attr.getName();
+
+        LOG.debug("generateAttribute(.) -- Attibute Name: " + name);
+
         //String type = qualify(attr.getType().getName());
         String type = attr.getType().getName();
         if (type.indexOf("[") > 0) {
