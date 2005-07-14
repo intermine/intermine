@@ -73,17 +73,17 @@ public class NotXmlParser
                     string.append(DELIM).append(a[i + 1].substring(1));
                 }
                 TypeUtil.setFieldValue(retval, fieldName,
-                                       TypeUtil.stringToObject(fieldClass, string.toString()));
+                        TypeUtil.stringToObject(fieldClass, string.toString()));
             } else if (a[i].startsWith("r")) {
                 String fieldName = a[i].substring(1);
                 Integer id = Integer.valueOf(a[i + 1]);
                 ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(fieldName);
                 if (ref == null) {
                     throw new RuntimeException("failed to get field " + fieldName
-                                               + " for object from XML: " + xml);
+                            + " for object from XML: " + xml);
                 }
                 TypeUtil.setFieldValue(retval, fieldName,
-                      new ProxyReference(os, id, ref.getReferencedClassDescriptor().getType()));
+                        new ProxyReference(os, id, ref.getReferencedClassDescriptor().getType()));
             }
         }
 
@@ -93,20 +93,8 @@ public class NotXmlParser
             Object maybeColl = collEntry.getValue();
             if (maybeColl instanceof CollectionDescriptor) {
                 CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
-                // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
-                //                         AND this = <this>
-                // Or if we have a one-to-many collection, then:
-                //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
-                Collection lazyColl = null;
-                if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
-                    ReferenceDescriptor reverse = coll.getReverseReferenceDescriptor();
-                    lazyColl = new ProxyCollection(os, retval, reverse.getName(),
-                                                   reverse.getClassDescriptor().getType(), true);
-                } else {
-                    lazyColl = new ProxyCollection(os, retval, coll.getName(),
-                                                   coll.getReferencedClassDescriptor().getType(),
-                                                   false);
-                }
+                Collection lazyColl = new ProxyCollection(os, retval, coll.getName(),
+                        coll.getReferencedClassDescriptor().getType());
                 TypeUtil.setFieldValue(retval, coll.getName(), lazyColl);
             }
         }
