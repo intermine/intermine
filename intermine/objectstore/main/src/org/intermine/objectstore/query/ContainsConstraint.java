@@ -85,10 +85,6 @@ public class ContainsConstraint extends Constraint
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
-        if (!(ref instanceof QueryObjectReference)) {
-            throw new IllegalArgumentException("Cannot compare a collection reference to an"
-                    + " object");
-        }
         if (op == null) {
             throw new NullPointerException("op cannot be null");
         }
@@ -160,7 +156,7 @@ public class ContainsConstraint extends Constraint
     /**
      * Test whether two ContainsConstraints are equal, overrides Object.equals()
      *
-     * @param obj the object to compare with
+     * @param obj1 the object to compare with
      * @return true if objects are equal
      */
     public boolean equals(Object obj1) {

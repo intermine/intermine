@@ -44,6 +44,8 @@ public interface LazyCollection extends Lazy, Set
     /**
      * Return this Collection as a List.  This may create a new ArrayList if necessary so the
      * returned List is not guaranteed to be consistent if the LazyCollection changes.
+     *
+     * @return a List
      */
     public List asList();
     

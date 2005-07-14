@@ -77,7 +77,12 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("BagConstraint2", bagConstraint2());
         queries.put("InterfaceReference", interfaceReference());
         queries.put("InterfaceCollection", interfaceCollection());
-        queries.put("ContainsObject", containsObject());
+        queries.put("ContainsConstraintObjectRefObject", containsConstraintObjectRefObject());
+        queries.put("ContainsConstraintNotObjectRefObject", containsConstraintNotObjectRefObject());
+        queries.put("ContainsConstraintCollectionRefObject", containsConstraintCollectionRefObject());
+        queries.put("ContainsConstraintNotCollectionRefObject", containsConstraintNotCollectionRefObject());
+        queries.put("ContainsConstraintMMCollectionRefObject", containsConstraintMMCollectionRefObject());
+        queries.put("ContainsConstraintNotMMCollectionRefObject", containsConstraintNotMMCollectionRefObject());
     }
 
     public static Collection setUpData() throws Exception {
@@ -441,18 +446,86 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     /*
-      select department
-      from Department
-      where department.manager = <manager>
-    */
-      public static Query containsObject() throws Exception {
-        QueryClass qc1 = new QueryClass(Department.class);
-        QueryReference qr1 = new QueryObjectReference(qc1, "manager");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA1"));
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.department CONTAINS <deptA>
+     */
+    public static Query containsConstraintObjectRefObject() throws Exception {
         Query q1 = new Query();
-        q1.addToSelect(qc1);
-        q1.addFrom(qc1);
-        q1.setConstraint(cc1);
+        QueryClass qc = new QueryClass(Employee.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "department"),
+                    ConstraintOp.CONTAINS, (InterMineObject) data.get("DepartmentA1")));
+        q1.setDistinct(false);
         return q1;
-      }
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.department DOES NOT CONTAIN <deptA>
+     */
+    public static Query containsConstraintNotObjectRefObject() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "department"),
+                    ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("DepartmentA1")));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees CONTAINS <empB1>
+     */
+    public static Query containsConstraintCollectionRefObject() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "employees"),
+                    ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeB1")));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN <empB1>
+     */
+    public static Query containsConstraintNotCollectionRefObject() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "employees"),
+                    ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("EmployeeB1")));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors CONTAINS <cont1>
+     */
+    public static Query containsConstraintMMCollectionRefObject() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "contractors"),
+                    ConstraintOp.CONTAINS, (InterMineObject) data.get("ContractorA")));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors DOES NOT CONTAIN <cont1>
+     */
+    public static Query containsConstraintNotMMCollectionRefObject() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "contractors"),
+                    ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("ContractorA")));
+        q1.setDistinct(false);
+        return q1;
+    }
 }

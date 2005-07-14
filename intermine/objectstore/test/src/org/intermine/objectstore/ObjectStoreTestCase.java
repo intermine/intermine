@@ -157,8 +157,8 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("ContractorB"), data.get("CompanyB") } };
         results.put("ContainsDuplicatesMN", toList(r));
 
-        r = new Object[][] { { data.get("DepartmentA1") } };
-        results.put("ContainsObject", toList(r));
+        results.put("ContainsNotMN", NO_RESULT); //TODO: Fix this (ticket #445)
+        //results.put("ContainsNotMN", Collections.EMPTY_LIST);
 
         r = new Object[][] { { data.get("CompanyA"), new Long(1) },
                              { data.get("CompanyB"), new Long(2) } };
@@ -266,6 +266,30 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("ContainsConstraintNotNull", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") } };
+        results.put("ContainsConstraintObjectRefObject", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeB1") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") } };
+        results.put("ContainsConstraintNotObjectRefObject", toList(r));
+
+        r = new Object[][] { { data.get("DepartmentB1") } };
+        results.put("ContainsConstraintCollectionRefObject", toList(r));
+
+        r = new Object[][] { { data.get("DepartmentA1") },
+                             { data.get("DepartmentB2") } };
+        results.put("ContainsConstraintNotCollectionRefObject", toList(r));
+
+        r = new Object[][] { { data.get("CompanyA") },
+                             { data.get("CompanyB") } };
+        results.put("ContainsConstraintMMCollectionRefObject", toList(r));
+
+        results.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT); //TODO: Fix this (ticket #445)
+        //results.put("ContainsConstraintNotMMCollectionRefObject", Collections.EMPTY_LIST);
 
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeB3") } };

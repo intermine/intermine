@@ -91,9 +91,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "CompanysContractors"})));
         results.put("ContainsDuplicatesMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS indirect0 WHERE (a1_.id = indirect0.OldComs AND indirect0.OldContracts = a2_.id) ORDER BY a1_.id, a2_.id");
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "OldComsOldContracts"})));
+        results.put("ContainsNotMN", NO_RESULT); //TODO: Fix this (ticket #445)
         id1 = (Integer) TypeUtil.getFieldValue(data.get("EmployeeA1"), "id");
-        results.put("ContainsObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_ WHERE a1_.managerId = " + id1 + " ORDER BY a1_.id");
-        results2.put("ContainsObject", Collections.singleton("Department"));
         results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results2.put("SimpleGroupBy", new HashSet(Arrays.asList(new String[] {"Department", "Company"})));
         results.put("MultiJoin", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Company AS a1_, Department AS a2_, Manager AS a3_, Address AS a4_ WHERE (a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1') ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
@@ -173,6 +172,19 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsConstraintNull", Collections.singleton("Employee"));
         results.put("ContainsConstraintNotNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NOT NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNotNull", Collections.singleton("Employee"));
+        results.put("ContainsConstraintObjectRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.departmentId = 5 ORDER BY a1_.id");
+        results2.put("ContainsConstraintObjectRefObject", new HashSet(Arrays.asList(new String[] {"Employee"})));
+        results.put("ContainsConstraintNotObjectRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.departmentId != 5 ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotObjectRefObject", new HashSet(Arrays.asList(new String[] {"Employee"})));
+        results.put("ContainsConstraintCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_, Employee AS indirect0 WHERE (a1_.id = indirect0.departmentId AND indirect0.id = 11) ORDER BY a1_.id");
+        results2.put("ContainsConstraintCollectionRefObject", new HashSet(Arrays.asList(new String[] {"Department", "Employee"})));
+        results.put("ContainsConstraintNotCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_, Employee AS indirect0 WHERE (a1_.id != indirect0.departmentId AND indirect0.id = 11) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotCollectionRefObject", new HashSet(Arrays.asList(new String[] {"Department", "Employee"})));
+        results.put("ContainsConstraintMMCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE (a1_.id = indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
+        results2.put("ContainsConstraintMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"Company", "CompanysContractors"})));
+        results.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT); //TODO: Fix this (ticket #445)
+        //results.put("ContainsConstraintNotMMCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE (a1_.id != indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
+        //results2.put("ContainsConstraintNotMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"Company", "CompanysContractors"})));
         results.put("SimpleConstraintNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NULL ORDER BY a1_.id");
         results2.put("SimpleConstraintNull", Collections.singleton("Manager"));
         results.put("SimpleConstraintNotNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NOT NULL ORDER BY a1_.id");

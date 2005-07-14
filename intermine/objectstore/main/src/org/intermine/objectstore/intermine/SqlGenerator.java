@@ -534,6 +534,9 @@ public class SqlGenerator
                 if (refDesc.relationType() == FieldDescriptor.M_N_RELATION) {
                     tablenames.add(DatabaseUtil.getIndirectionTableName((CollectionDescriptor)
                                 refDesc));
+                } else if (cc.getQueryClass() == null) {
+                    tablenames.add(DatabaseUtil.getTableName(schema.getTableMaster(
+                                    refDesc.getReferencedClassDescriptor())));
                 }
             }
         }
@@ -750,7 +753,6 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the SimpleConstraint object
      * @param q the Query
-     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q)
@@ -854,27 +856,54 @@ public class SqlGenerator
             }
         } else if (arg1 instanceof QueryCollectionReference) {
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
-                String arg2Alias = (String) state.getFieldToAlias(arg2)
-                    .get(arg1Desc.getReverseReferenceDescriptor().getName());
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema, ID_ONLY,
-                        state);
-                state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ") + arg2Alias
-                        + "."
-                        + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
+                if (arg2 == null) {
+                    ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
+                    String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
+                    ClassDescriptor tableMaster = schema.getTableMaster(reverse
+                            .getClassDescriptor());
+                    state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
+                            + indirectTableAlias);
+                    if (schema.isTruncated(tableMaster)) {
+                        state.addToWhere(indirectTableAlias + ".class = '"
+                                + reverse.getClassDescriptor().getType().getName() + "' AND ");
+                    }
+                    state.addToWhere("(");
+                    queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema,
+                            ID_ONLY, state);
+                    state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                            + indirectTableAlias + "." + DatabaseUtil.getColumnName(reverse)
+                            + " AND " + indirectTableAlias + ".id = " + arg2Obj.getId() + ")");
+                } else {
+                    String arg2Alias = (String) state.getFieldToAlias(arg2)
+                        .get(arg1Desc.getReverseReferenceDescriptor().getName());
+                    queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema,
+                            ID_ONLY, state);
+                    state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                            + arg2Alias + "."
+                            + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
+                }
             } else {
+                if (c.getOp().equals(ConstraintOp.DOES_NOT_CONTAIN)) {
+                    throw new ObjectStoreException("Cannot represent many-to-many collection DOES"
+                            + " NOT CONTAIN in SQL");
+                }
                 CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
                 String indirectTableAlias = state.getIndirectAlias();
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
-                state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? "(" : "( NOT (");
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema, ID_ONLY,
-                        state);
+                state.addToWhere("(");
+                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema,
+                        ID_ONLY, state);
                 state.addToWhere(" = " + indirectTableAlias + "."
                         + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc) + " AND "
                         + indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
-                queryClassToString(state.getWhereBuffer(), arg2, q, schema, ID_ONLY, state);
-                state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? ")" : "))");
+                if (arg2 == null) {
+                    state.addToWhere("" + arg2Obj.getId());
+                } else {
+                    queryClassToString(state.getWhereBuffer(), arg2, q, schema, ID_ONLY, state);
+                }
+                state.addToWhere(")");
             }
         }
     }
@@ -1002,7 +1031,8 @@ public class SqlGenerator
         String alias = (String) q.getAliases().get(qc);
         if (alias == null) {
             throw new NullPointerException("A QueryClass is referenced by elements of a query,"
-                    + " but the QueryClass is not in the FROM list of that query");
+                    + " but the QueryClass is not in the FROM list of that query. QueryClass: "
+                    + qc + ", aliases: " + q.getAliases());
         }
         if (kind == QUERY_SUBQUERY_CONSTRAINT) {
             buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
