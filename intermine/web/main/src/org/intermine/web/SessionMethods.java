@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.intermine.objectstore.ObjectStore;
@@ -456,7 +457,7 @@ public class SessionMethods
     public static void setResultsTable(HttpSession session, String identifier, PagedTable table) {
         Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
         if (tables == null) {
-            tables = Collections.synchronizedMap(new CacheMap());
+            tables = Collections.synchronizedMap(new LRUMap(100));
             session.setAttribute(Constants.TABLE_MAP, tables);
         }
         tables.put(identifier, table);
