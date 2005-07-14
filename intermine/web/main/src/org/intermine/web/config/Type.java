@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.Collections;
 
 import org.apache.commons.collections.set.ListOrderedSet;
+import org.apache.commons.lang.ObjectUtils;
 
 /**
  * Configuration object for displaying a class
@@ -117,7 +118,7 @@ public class Type
         
         return fieldConfigs.equals(typeObj.fieldConfigs)
             && longDisplayers.equals(typeObj.longDisplayers)
-            && tableDisplayer.equals(typeObj.tableDisplayer);
+            && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer);
     }
 
     /**
@@ -126,7 +127,11 @@ public class Type
      * @return the hashCode for this Type object
      */
     public int hashCode() {
-        return fieldConfigs.hashCode() + 3 * longDisplayers.hashCode() + 5 * tableDisplayer.hashCode();
+        int hash = fieldConfigs.hashCode() + 3 * longDisplayers.hashCode();
+        if (tableDisplayer != null) {
+             hash += 5 * tableDisplayer.hashCode();
+        }
+        return hash;
     }
 
     /**
