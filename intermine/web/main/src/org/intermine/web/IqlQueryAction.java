@@ -39,6 +39,8 @@ public class IqlQueryAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(IqlQueryAction.class);
 
+    private static int qid = 0;
+    
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -71,9 +73,13 @@ public class IqlQueryAction extends InterMineAction
             Query q = new IqlQuery(queryform.getQuerystring(),
                                    ((Model) os.getModel()).getPackageName()).toQuery();
             PagedTable table = TableHelper.makeTable(os, q);
-            session.setAttribute(Constants.QUERY_RESULTS, TableHelper.makeTable(os, q));
+            String id;
+            synchronized (session) {
+                id = "iql." + qid++;
+            }
+            SessionMethods.setResultsTable(session, id, table);
             return new ForwardParameters(mapping.findForward("results"))
-                    .addParameter("table", "results").forward();
+                .addParameter("table", id).forward();
         } catch (java.lang.IllegalArgumentException e) {
             recordError(new ActionMessage("errors.iqlquery.illegalargument",
                                           e.getMessage()), request, e, LOG);

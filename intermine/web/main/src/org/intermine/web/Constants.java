@@ -117,7 +117,7 @@ public interface Constants
     /**
      * Session attribute used to store the results of running the current query
      */
-    public static final String QUERY_RESULTS = "QUERY_RESULTS";
+    //public static final String QUERY_RESULTS = "QUERY_RESULTS";
     
     /**
      * Session attribute storing a bean exposing the user's trail through the object details

@@ -36,6 +36,8 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.objectstore.ObjectStore;
 
+import org.apache.log4j.Logger;
+
 /**
  * Implementation of <strong>TilesAction</strong> that assembles data for displaying an object.
  *
@@ -44,6 +46,8 @@ import org.intermine.objectstore.ObjectStore;
  */
 public class ObjectViewController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(ObjectViewController.class);
+    
     /**
      * Assembles data for displaying an object.
      *
@@ -68,10 +72,8 @@ public class ObjectViewController extends TilesAction
         Model model = (Model) os.getModel();
         Object o = request.getAttribute("object");
         
-        // Make sure there is an ObjectDetailsTrail in the session
-        //SessionMethods.getObjectDetailsTrail(session);
-        
         if (o == null) {
+            LOG.info("object attribute is null");
             String objectId = (String) request.getParameter("id");
             if (objectId != null) {
                 o = os.getObjectById(new Integer(objectId));
@@ -83,6 +85,7 @@ public class ObjectViewController extends TilesAction
         }
         
         if (o == null) {
+            LOG.info("object attribute is still null");
             //this wouldn't be necessary if objectdetails was tidier
             session.removeAttribute("object");
         } else {

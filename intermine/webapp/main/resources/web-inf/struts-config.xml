@@ -253,7 +253,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/query.do" redirect="true"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do?table=results" redirect="true"/>
+      <forward name="results" path="/results.do" redirect="true"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
@@ -269,7 +269,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/query.do" redirect="true"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do?table=results" redirect="true"/>
+      <forward name="results" path="/results.do" redirect="true"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
@@ -285,7 +285,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/begin.do" redirect="true"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do?table=results" redirect="true"/>
+      <forward name="results" path="/results.do" redirect="true"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>

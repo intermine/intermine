@@ -72,19 +72,23 @@ public class ObjectTrailController extends TilesAction
         
         for (int i = 0; i < ids.length; i++) {
             elementTrail += "_" + ids[i];
-            InterMineObject o = null;
-            try {
-                o = os.getObjectById(new Integer(ids[i]));
-            } catch (NumberFormatException err) {
-                LOG.warn("bad object id " + ids[i]);
-                continue;
+            if (ids[i].startsWith("results")) {
+                elements.add(new TrailElement(ids[i]));
+            } else {
+                InterMineObject o = null;
+                try {
+                    o = os.getObjectById(new Integer(ids[i]));
+                } catch (NumberFormatException err) {
+                    LOG.warn("bad object id " + ids[i]);
+                    continue;
+                }
+                if (o == null) {
+                    LOG.warn("failed to getObjectById " + ids[i]);
+                    continue;
+                }
+                String label = createTrailLabel(o, model);
+                elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
-            if (o == null) {
-                LOG.warn("failed to getObjectById " + ids[i]);
-                continue;
-            }
-            String label = createTrailLabel(o, model);
-            elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
         }
         
         request.setAttribute("trailElements", elements);
@@ -115,11 +119,45 @@ public class ObjectTrailController extends TilesAction
         private String label;
         private String trail;
         private int id;
+        private boolean table;
+        private String tableId;
         
+        /**
+         * Construct an object trail element.
+         * @param label link label
+         * @param trail partial trail
+         * @param id object id
+         */
         private TrailElement(String label, String trail, int id) {
             this.label = label;
             this.trail = trail;
             this.id = id;
+        }
+        
+        /**
+         * Construct a table trail element.
+         * @param tableId table identifier
+         */
+        private TrailElement(String tableId) {
+            this.table = true;
+            this.tableId = tableId;
+        }
+        
+        /**
+         * Return whether or not this trail element refers to a table.
+         * @return true if this element refers to a table
+         */
+        public boolean isTable() {
+            return table;
+        }
+        
+        /**
+         * Return the table identifier if isTable==true. If isTable==false this method
+         * will return null.
+         * @return table identifier
+         */
+        public String getTableId() {
+            return tableId;
         }
         
         /**

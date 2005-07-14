@@ -52,7 +52,7 @@ public class DisplayObject
     Map refsAndCollections = null;
     List keyAttributes = null;
     List keyReferences = null;
-    List fieldExprs = null;
+    private List fieldExprs = null;
 
     Map verbosity = new HashMap();
 

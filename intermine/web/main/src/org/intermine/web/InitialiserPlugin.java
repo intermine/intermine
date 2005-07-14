@@ -333,7 +333,8 @@ public class InitialiserPlugin implements PlugIn
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             profileManager = new ProfileManager(os, userProfileOS);
         } catch (ObjectStoreException e) {
-            throw new ServletException("Unable to create profile manager", e);
+            throw new ServletException("Unable to create profile manager - please check that the "
+                    + "userprofile database is available", e);
         }
         servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
     }
