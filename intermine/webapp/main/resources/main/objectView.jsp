@@ -41,8 +41,10 @@
         <c:forEach items="${DISPLAY_OBJECT_CACHE[object].fieldExprs}" var="expr">
           <im:eval evalExpression="object.${expr}" evalVariable="outVal"/>
           <c:set var="style" value="white-space:nowrap"/>
-          <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 60}">
-            <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..."/>
+          <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
+            <c:if test="${fn:length(outVal) > 65}">
+              <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..."/>
+            </c:if>
             <c:set var="style" value=""/>
           </c:if>
           <div style="${style}">
