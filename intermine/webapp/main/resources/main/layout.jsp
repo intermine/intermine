@@ -67,12 +67,20 @@
            </a>
       	</div>
       </div>
+      
       <div id="feedbackFormDiv" style="display:none">
           <im:vspacer height="11"/>
           <im:box titleKey="feedbackBox.title">
             <tiles:get name="feedbackForm"/>
           </im:box>
       </div>
+      
+      <c:if test="${param.debug != null}">
+        <im:vspacer height="11"/>
+        <im:box title="Debug">
+          <tiles:insert page="/session.jsp"/>
+        </im:box>
+      </c:if>
       
     </div>
     

@@ -1,9 +1,13 @@
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <h3>Application</h3>
 <c:forEach var="item" items="${applicationScope}">
-  <c:out value="${item}"/>
-  <br/>
+  <c:if test="${fn:indexOf(item.key, 'classpath') == -1}">
+    <c:out value="${item}"/>
+    <br/>
+  </c:if>
 </c:forEach>
 <h3>Session</h3>
 <c:forEach var="item" items="${sessionScope}">
@@ -30,3 +34,4 @@
   <c:out value="${item}"/>
   <br/>
 </c:forEach>
+
