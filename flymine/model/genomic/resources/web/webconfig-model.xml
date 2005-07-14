@@ -3,6 +3,7 @@
   <class className="org.flymine.model.genomic.Disease">
     <fields>
       <fieldconfig fieldExpr="omimId"/>
+      <fieldconfig fieldExpr="description"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/disease.jsp"/>
