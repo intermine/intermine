@@ -80,7 +80,7 @@ public class GFF3Converter
         this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         this.organism = getOrganism();
-        this.infoSource = createItem("InfoSource");
+        this.infoSource = createItem("Database");
         infoSource.addAttribute(new Attribute("title", infoSourceTitle));
 
         handler.setItemFactory(itemFactory);
