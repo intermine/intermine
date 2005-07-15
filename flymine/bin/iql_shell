@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# The following environment variables need to be set
+# INTERMINE: location of local InterMine installation
+# FLYMINE: location of local InterMine installation
+
+cd $INTERMINE
+
+CP=$CLASSPATH
+
+CP=$CP:$FLYMINE/build/model/genomic/:$FLYMINE/build/resources:~
+
+for i in $INTERMINE/objectstore/main/lib/*.jar ; do
+    CP=$CP:$i
+done
+
+for i in $INTERMINE/objectstore/main/dist/*.jar ; do
+    CP=$CP:$i
+done
+
+CP=$CP:.
+
+if test -z "$LD_LIBRARY_PATH" ; then
+    export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
+else
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/lib:/usr/lib/jni
+fi
+
+echo "Using classpath: $CP"
+echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+
+java -cp $CP org.intermine.objectstore.query.iql.IqlShell $*
