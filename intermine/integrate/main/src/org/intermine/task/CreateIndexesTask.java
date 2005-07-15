@@ -203,13 +203,13 @@ public class CreateIndexesTask extends Task
                     if (doNulls) {
                         dropIndex(tableName + "__" + cldTableName + "__" + keyName + "__nulls");
                         createIndex(tableName + "__" + cldTableName + "__" + keyName + "__nulls",
-                                tableName, "(" + fieldNames.get(0) + " IS NULL)");
+                                    tableName, "(" + fieldNames.get(0) + " IS NULL)");
                     }
                     doneFieldNames.add(fieldNames.get(0));
                 }
             }
         }
-
+        
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
         for (Iterator i = cld.getAllReferenceDescriptors().iterator(); i.hasNext();) {
@@ -217,8 +217,7 @@ public class CreateIndexesTask extends Task
             ClassDescriptor refMaster = ref.getClassDescriptor();
             ClassDescriptor tableMaster = schema.getTableMaster(cld);
             String tableName = DatabaseUtil.getTableName(tableMaster);
-            if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
-                    && (ref.getReverseReferenceDescriptor() != null)) {
+            if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     String fieldName = DatabaseUtil.getColumnName(ref);
                     if (!doneFieldNames.contains(fieldName)) {
@@ -229,7 +228,7 @@ public class CreateIndexesTask extends Task
                 }
             }
         }
-
+        
         //finally add an index to all M-to-N indirection table columns
         //for (Iterator i = cld.getAllCollectionDescriptors().iterator(); i.hasNext();) {
         for (Iterator i = cld.getCollectionDescriptors().iterator(); i.hasNext();) {
@@ -239,13 +238,13 @@ public class CreateIndexesTask extends Task
                 String columnName = DatabaseUtil.getInwardIndirectionColumnName(col);
                 String columnName2 = DatabaseUtil.getOutwardIndirectionColumnName(col);
                 if ((columnName.compareTo(columnName2) < 0)
-                        || (col.getReverseReferenceDescriptor() == null)) {
+                    || (col.getReverseReferenceDescriptor() == null)) {
                     dropIndex(tableName + "__"  + columnName);
                     dropIndex(tableName + "__"  + columnName2);
                     createIndex(tableName + "__"  + columnName, tableName,
-                            columnName + ", " + columnName2);
+                                columnName + ", " + columnName2);
                     createIndex(tableName + "__"  + columnName2, tableName,
-                            columnName2 + ", " + columnName);
+                                columnName2 + ", " + columnName);
                 }
             }
         }
