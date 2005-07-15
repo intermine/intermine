@@ -130,9 +130,6 @@ public class ResidueFieldExporter implements FieldExporter
         cs.addConstraint(new SimpleConstraint(seqIdQf, ConstraintOp.EQUALS, seqIdQv));
         q.setConstraint(cs);
 
-        org.intermine.web.LogMe.log("rfe", "query: " + q);
-
-
         Results results = new Results(q, os, os.getSequence());
 
         if (results.size() == 1) {
