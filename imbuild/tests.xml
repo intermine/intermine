@@ -9,6 +9,8 @@
   <target name="-pre-init" depends="library.-pre-init">
     <property name="test.results.dir" location="${build.dir}/test/results"/>
     <property name="test.excludes" location=""/>
+    <property name="test.fork" value="no"/>
+    <property name="test.forkmode" value="once"/>
     <property name="build.test.resources.dir" location="${build.dir}/test/resources"/>
     <property name="generate.report" value="true"/>
     <condition property="gen.report">
@@ -62,11 +64,13 @@
     <macrodef name="junit" uri="http://www.intermine.org/ns/im-tests-proj/1">
     <attribute name="includes" default="**/*Test.class"/>
     <attribute name="excludes" default="${test.excludes}"/>
-    <attribute name="fork" default="no"/>
+    <attribute name="fork" default="${test.fork}"/>
+    <attribute name="forkmode" default="${test.forkmode}"/>
     <element name="customize" optional="true"/>
     <sequential>
       <junit showoutput="true" reloading="false" printsummary="yes"
-             failureproperty="tests.failed" errorproperty="tests.failed">
+             failureproperty="tests.failed" errorproperty="tests.failed"
+             fork="@{fork}" forkmode="@{forkmode}">
         <customize/>
         <formatter type="xml"/>
         <batchtest todir="${test.results.dir}" fork="no">
