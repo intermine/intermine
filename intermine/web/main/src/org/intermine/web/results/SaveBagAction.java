@@ -95,7 +95,7 @@ public class SaveBagAction extends InterMineAction
         //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm crf = (SaveBagForm) form;
-        
+
         InterMineBag bag = null;
         boolean storingIds = false;
         int defaultMax = 10000;
@@ -106,14 +106,14 @@ public class SaveBagAction extends InterMineAction
         int index = selected.indexOf(",");
         int col = Integer.parseInt(index == -1 ? selected : selected.substring(0, index));
         Object type = ((Column) pt.getColumns().get(col)).getType();
-    
+
         if (type instanceof ClassDescriptor) {
             bag = new InterMineIdBag();
             storingIds = true;
         } else {
             bag = new InterMinePrimitiveBag();
         }
-        
+
         // Go through the selected items and add to the set
         for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
              itemIterator.hasNext();) {
@@ -122,7 +122,7 @@ public class SaveBagAction extends InterMineAction
             int commaIndex = selectedObject.indexOf(",");
             if (commaIndex == -1) {
                 int column = Integer.parseInt(selectedObject);
-                
+
                 List allRows = pt.getAllRows();
 
                 if (allRows instanceof Results) {
@@ -132,7 +132,7 @@ public class SaveBagAction extends InterMineAction
                         ActionMessage actionMessage =
                             new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                         recordError(actionMessage, request);
-                        
+
                         return mapping.findForward("results");
                     }
 
@@ -142,7 +142,7 @@ public class SaveBagAction extends InterMineAction
                         // we copy because setBatchSize() throws an exception if size() has already
                         // been called
                         Results newResults = results.getObjectStore().execute(results.getQuery());
-                    
+
                         if (maxBagSize > results.getObjectStore().getMaxLimit()) {
                             newResults.setBatchSize(results.getObjectStore().getMaxLimit());
                         } else {
@@ -179,7 +179,7 @@ public class SaveBagAction extends InterMineAction
                     } else {
                         bag.add(thisRow.get(column));
                     }
-                    
+
                     if (bag.size() > maxBagSize) {
                         ActionMessage actionMessage =
                             new ActionMessage("bag.tooBig", new Integer(maxBagSize));

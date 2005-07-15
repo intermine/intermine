@@ -49,15 +49,17 @@
         <im:body id="summary">
           <table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
             <c:forEach items="${object.fieldExprs}" var="expr">
-              <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
-              <tr>
-                <td>
-                  <span class="attributeField">${expr}</span>
-                </td>
-                <td>
-                  ${outVal}
-                </td>
-              </tr>
+              <c:if test="${object.fieldConfigMap[expr].showInSummary}">
+                <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
+                <tr>
+                  <td>
+                    <span class="attributeField">${expr}</span>
+                  </td>
+                  <td>
+                    ${outVal}
+                  </td>
+                </tr>
+              </c:if>
             </c:forEach>
           </table>
         </im:body>
@@ -68,27 +70,34 @@
           <im:body id="fields">
             <table border="0">
               <c:forEach items="${object.attributes}" var="entry">
-                <tr>
-                  <td>
-                    <span class="attributeField">${entry.key}</span>
-                  </td>
-                  <td>
-                    <c:set var="maxLength" value="60"/>
-                    <c:choose>
-                      <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
-                        <span class="value">${fn:substring(entry.value, 0, maxLength/2)}<br/>
-                        <span class="value" style="white-space:nowrap">${fn:substring(entry.value, maxLength/2, maxLength)}
-                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-                            <fmt:message key="objectDetails.viewall"/>
-                          </html:link>
-                        </span>
-                      </c:when>
-                      <c:otherwise>
-                        <span class="value">${entry.value}</span>
-                      </c:otherwise>
-                    </c:choose>
-                  </td>
-                </tr>
+                <c:if test="${! object.fieldConfigMap[entry.key].showInSummary}">
+                  <tr>
+                    <td>
+                      <span class="attributeField">${entry.key}</span>
+                    </td>
+                    <td>
+                      <c:set var="maxLength" value="60"/>
+                      <c:choose>
+                        <c:when test="${entry.value.class.name ==
+                                      'java.lang.String' && fn:length(entry.value) > maxLength
+                                      && ! object.fieldConfigMap[entry.key].doNotTruncate}">
+                          <span class="value">
+                            ${fn:substring(entry.value, 0, maxLength/2)}
+                          </span>
+                          <span class="value" style="white-space:nowrap">
+                            ${fn:substring(entry.value, maxLength/2, maxLength)}
+                            <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                              <fmt:message key="objectDetails.viewall"/>
+                            </html:link>
+                          </span>
+                        </c:when>
+                        <c:otherwise>
+                          <span class="value">${entry.value}</span>
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                  </tr>
+                </c:if>
               </c:forEach>
             </table>
           </im:body>

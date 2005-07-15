@@ -36,7 +36,7 @@ import org.intermine.metadata.ClassDescriptor;
 public class WebConfig
 {
     private Map types = new HashMap();
-    private Map exporters = new HashMap();
+    private Map tableExportConfigs = new HashMap();
 
     /**
      * Parse a WebConfig XML file
@@ -87,12 +87,12 @@ public class WebConfig
 
         digester.addSetNext("webconfig/class", "addType");
         
-        digester.addObjectCreate("webconfig/exporter", Exporter.class);
-        digester.addSetProperties("webconfig/exporter", "id", "id");
-        digester.addSetProperties("webconfig/exporter", "actionPath", "actionPath");
-        digester.addSetProperties("webconfig/exporter", "className", "className");
+        digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);
+        digester.addSetProperties("webconfig/tableExportConfig", "id", "id");
+        digester.addSetProperties("webconfig/tableExportConfig", "actionPath", "actionPath");
+        digester.addSetProperties("webconfig/tableExportConfig", "className", "className");
 
-        digester.addSetNext("webconfig/exporter", "addExporter");
+        digester.addSetNext("webconfig/tableExportConfig", "addTableExportConfig");
 
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
@@ -121,20 +121,20 @@ public class WebConfig
     }
 
     /**
-     * Add an Exporter to the Map of Exporters in this WebConfig using exporter.getId() as the Map
-     * key.
-     * @param exporter the Exporter to add
+     * Add an TableExportConfig to the Map of TableExportConfig objects using
+     * tableExportConfig.getId() as the Map key.
+     * @param tableExportConfig the TableExportConfig to add
      */
-    public void addExporter(Exporter exporter) {
-        exporters.put(exporter.getId(), exporter);
+    public void addTableExportConfig(TableExportConfig tableExportConfig) {
+        tableExportConfigs.put(tableExportConfig.getId(), tableExportConfig);
     }
 
     /**
-     * Return the Map of Exporters.
-     * @return the Exporters Map 
+     * Return a Map of TableExportConfig.id to TableExportConfig objects.
+     * @return the TableExportConfig Map 
      */
-    public Map getExporters() {
-        return exporters;
+    public Map getTableExportConfigs() {
+        return tableExportConfigs;
     }
 
     /**
@@ -149,7 +149,9 @@ public class WebConfig
         }
 
         WebConfig webConfigObj = (WebConfig) obj;
-        return types.equals(webConfigObj.types) && exporters.equals(webConfigObj.exporters);
+
+        return types.equals(webConfigObj.types)
+            && tableExportConfigs.equals(webConfigObj.tableExportConfigs);
     }
 
     /**
@@ -235,13 +237,12 @@ public class WebConfig
         while (typesIter.hasNext()) {
             sb.append(typesIter.next().toString());
         }
-        Iterator exporterIter = exporters.values().iterator();
-        while (exporterIter.hasNext()) {
-            sb.append(exporterIter.next().toString());
+        Iterator tableExportConfigIter = tableExportConfigs.values().iterator();
+        while (tableExportConfigIter.hasNext()) {
+            sb.append(tableExportConfigIter.next().toString());
         }
         sb.append("</webconfig>");
         return sb.toString();
     }
 
 }
-

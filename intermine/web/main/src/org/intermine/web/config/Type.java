@@ -10,7 +10,11 @@ package org.intermine.web.config;
  *
  */
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
 
@@ -27,13 +31,12 @@ public class Type
     // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
-    private ListOrderedSet fieldConfigs = new ListOrderedSet();
+    private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private Displayer tableDisplayer;
 
     /**
      * Set the fully-qualified class name for this Type
-     *
      * @param className the name of the Type
      */
     public void setClassName(String className) {
@@ -42,7 +45,6 @@ public class Type
 
     /**
      * Get the class name
-     *
      * @return the name
      */
     public String getClassName() {
@@ -51,25 +53,30 @@ public class Type
 
     /**
      * Add a FieldConfig for this Type
-     *
      * @param df the FieldConfig to add
      */
     public void addFieldConfig(FieldConfig df) {
-        fieldConfigs.add(df);
+        fieldConfigMap.put(df.getFieldExpr(), df);
     }
 
     /**
      * Get the List of FieldConfig objects
-     *
      * @return the List of FieldConfig objects
      */
-    public Set getFieldConfigs() {
-        return Collections.unmodifiableSet(this.fieldConfigs);
+    public Collection getFieldConfigs() {
+        return Collections.unmodifiableCollection(fieldConfigMap.values());
+    }
+
+    /**
+     * Return a Map from FieldConfig.fieldName to FieldConfig objects.
+     * @return the FieldConfig Map
+     */
+    public Map getFieldConfigMap() {
+        return Collections.unmodifiableMap(fieldConfigMap);
     }
 
    /**
      * Add a long displayer for this Type
-     *
      * @param disp the Displayer to add
      */
     public void addLongDisplayer(Displayer disp) {
@@ -78,7 +85,6 @@ public class Type
     
     /**
      * Set the table displayer for this Type
-     *
      * @param disp the Displayer
      */
     public void setTableDisplayer(Displayer disp) {
@@ -87,7 +93,6 @@ public class Type
 
     /**
      * Get the List of long Displayers
-     *
      * @return the List of long Displayers
      */
     public Set getLongDisplayers() {
@@ -96,7 +101,6 @@ public class Type
     
     /**
      * Get the table Displayer
-     *
      * @return the table Displayer
      */
     public Displayer getTableDisplayer() {
@@ -105,7 +109,6 @@ public class Type
 
     /**
      * @see Object#equals
-     *
      * @param obj the Object to compare with
      * @return true if this is equal to obj
      */
@@ -116,18 +119,17 @@ public class Type
 
         Type typeObj = (Type) obj;
         
-        return fieldConfigs.equals(typeObj.fieldConfigs)
+        return fieldConfigMap.equals(typeObj.fieldConfigMap)
             && longDisplayers.equals(typeObj.longDisplayers)
             && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer);
     }
 
     /**
      * @see Object#hashCode
-     *
      * @return the hashCode for this Type object
      */
     public int hashCode() {
-        int hash = fieldConfigs.hashCode() + 3 * longDisplayers.hashCode();
+        int hash = fieldConfigMap.hashCode() + 3 * longDisplayers.hashCode();
         if (tableDisplayer != null) {
              hash += 5 * tableDisplayer.hashCode();
         }
@@ -136,7 +138,6 @@ public class Type
 
     /**
      * Return an XML String of this Type object
-     *
      * @return a String version of this WebConfig object
      */
     public String toString() {
@@ -147,7 +148,7 @@ public class Type
         }
         sb.append(">");
         sb.append("<fieldconfigs>");
-        Iterator iter = fieldConfigs.iterator();
+        Iterator iter = getFieldConfigs().iterator();
         while (iter.hasNext()) {
             sb.append(iter.next().toString());
         }

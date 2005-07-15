@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,19 +40,20 @@ import org.intermine.web.config.WebConfig;
  */
 public class DisplayObject
 {
-    InterMineObject object;
-    WebConfig webConfig;
-    Map webProperties;
-    Model model;
+    private InterMineObject object;
+    private WebConfig webConfig;
+    private Map webProperties;
+    private Model model;
 
-    Set clds;
+    private Set clds;
 
-    Map attributes = null;
-    Map references = null;
-    Map collections = null;
-    Map refsAndCollections = null;
-    List keyAttributes = null;
-    List keyReferences = null;
+    private Map attributes = null;
+    private Map references = null;
+    private Map collections = null;
+    private Map refsAndCollections = null;
+    private List keyAttributes = null;
+    private List keyReferences = null;
+    private Map fieldConfigMap = null;
     private List fieldExprs = null;
 
     Map verbosity = new HashMap();
@@ -173,6 +175,18 @@ public class DisplayObject
         if (fieldExprs == null) {
             fieldExprs = new ArrayList();
 
+            for (Iterator i = getFieldConfigMap().keySet().iterator(); i.hasNext();) {
+                String fieldExpr = (String) i.next();
+                fieldExprs.add(fieldExpr);
+            }
+        }
+        return fieldExprs;
+    }
+
+    public Map getFieldConfigMap() {
+        if (fieldConfigMap == null) {
+            fieldConfigMap = new LinkedHashMap();
+            
             for (Iterator i = clds.iterator(); i.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) i.next();
                 List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
@@ -181,11 +195,12 @@ public class DisplayObject
                 while (cldFieldConfigIter.hasNext()) {
                     FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
 
-                    fieldExprs.add(fc.getFieldExpr());
+                    fieldConfigMap.put(fc.getFieldExpr(), fc);
                 }
             }
         }
-        return fieldExprs;
+            
+        return fieldConfigMap;
     }
 
     /**

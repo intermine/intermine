@@ -16,12 +16,12 @@ package org.intermine.web.config;
  * @author Kim Rutherford
  */
 
-public class Exporter
+public class TableExportConfig
 {
     String id, actionPath, className;
 
     /**
-     * Return the id of this Exporter.
+     * Return the id of this TableExportConfig.
      * @return the id
      */
     public String getId() {
@@ -29,7 +29,7 @@ public class Exporter
     }
 
     /**
-     * Set the id of this Exporter
+     * Set the id of this TableExportConfig
      * @param id the new id
      */
     public void setId(String id) {
@@ -45,7 +45,7 @@ public class Exporter
     }
 
     /**
-     * Set the actionPath of this Exporter
+     * Set the actionPath of this TableExportConfig
      * @param actionPath the new actionPath
      */
     public void setActionPath(String actionPath) {
@@ -61,7 +61,7 @@ public class Exporter
     }
 
     /**
-     * Set the className of this Exporter
+     * Set the className of this TableExportConfig
      * @param className the new className
      */
     public void setClassName(String className) {
@@ -75,8 +75,8 @@ public class Exporter
      * @return true if this is equal to obj
      */
     public boolean equals (Object obj) {
-        if (obj instanceof Exporter) {
-            Exporter exporterObj = (Exporter) obj;
+        if (obj instanceof TableExportConfig) {
+            TableExportConfig exporterObj = (TableExportConfig) obj;
             return exporterObj.id.equals(id) && exporterObj.actionPath.equals(actionPath) 
                 && exporterObj.className.equals(className);
         } else {
@@ -87,7 +87,7 @@ public class Exporter
     /**
      * @see Object#hashCode
      *
-     * @return the hashCode for this Exporter object
+     * @return the hashCode for this TableExportConfig object
      */
     public int hashCode() {
         return id.hashCode() * 5 + actionPath.hashCode() + 3 * className.hashCode();
@@ -97,7 +97,7 @@ public class Exporter
      * @see java.lang.String#toString
      */
     public String toString() {
-        return "<exporter id=\"" + id + "\" actionPath=\"" + actionPath
+        return "<tableExportConfig id=\"" + id + "\" actionPath=\"" + actionPath
             + "\" className=\"" + className + "\"/>";
     }
 }

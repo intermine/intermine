@@ -1,8 +1,10 @@
 <webconfig>
   <class className="org.intermine.model.testmodel.Employable">
     <fields>
-      <fieldconfig fieldExpr="class1field1"/>
-      <fieldconfig fieldExpr="class1field2.field"/>
+      <fieldconfig fieldExpr="class1field1"
+                   showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="class1field2.field"
+                   showInSummary="true" showInInlineCollection="true" showInResults="true"/> 
     </fields>
     <longdisplayers>
       <displayer src="/model/employee.jsp"/>
@@ -16,13 +18,20 @@
   </class>
   <class className="org.intermine.model.testmodel.Manager">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="seniority"/>
+      <fieldconfig fieldExpr="name" showInSummary="true"
+                   showInInlineCollection="true" showInResults="true"/> 
+      <fieldconfig fieldExpr="seniority"
+                   showInSummary="true" showInInlineCollection="true" showInResults="true"/> 
+
+      <!-- doNotTruncate means don't add a [View all...] link for long fields,
+           display the whole field inline --> 
+      <fieldconfig fieldExpr="title" doNotTruncate="true"/> 
     </fields>
     <longdisplayers>
       <displayer src="/model/manager.jsp"/>
     </longdisplayers>
     <tabledisplayer src="/model/tableManager.jsp"/>
   </class>
-  <exporter id="myExporter" actionPath="/somePath" className="java.lang.String"/>
+
+  <tableExportConfig id="myExporter" actionPath="/somePath" className="java.lang.String"/>
 </webconfig>

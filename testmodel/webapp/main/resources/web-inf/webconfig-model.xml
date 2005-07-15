@@ -1,9 +1,9 @@
 <webconfig>
   <class className="org.intermine.model.testmodel.Company">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="vatNumber"/>
-      <fieldconfig fieldExpr="address.address"/>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="vatNumber" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="address.address" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/companiesHouse.jsp"/>
@@ -12,10 +12,11 @@
 
   <class className="org.intermine.model.testmodel.Employee">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="department.name"/>
-      <fieldconfig fieldExpr="department.company.name"/>
-      <fieldconfig fieldExpr="age"/>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/employeeName.jsp"/>
@@ -27,12 +28,32 @@
        can be overridden in base classes (Manager overrides Employee -->
   <class className="org.intermine.model.testmodel.Manager">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="seniority"/>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="fullTime" showInSummary="false" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="seniority" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <!-- the doNotTruncate flag, when set to true, stops the object details
+           page from truncating long fields and putting a [View all...] link -->
+      <fieldconfig fieldExpr="title" doNotTruncate="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/managerSeniority.jsp"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.testmodel.Address">
+    <fields>
+      <fieldconfig fieldExpr="address" doNotTruncate="true"
+                   fieldExporter="org.intermine.model.testmodel.web.CommaFieldExporter"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.testmodel.Department">
+    <fields>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+    </fields>
   </class>
 
   <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
@@ -47,6 +68,6 @@
     </longdisplayers>
   </class>
 
-  <exporter id="employeeExporter" actionPath="/exportAction?type=employeeExporter"
-            className="org.intermine.model.testmodel.web.EmployeeExporter"/>
+  <tableExportConfig id="employeeExporter" actionPath="/exportAction?type=employeeExporter"
+                     className="org.intermine.model.testmodel.web.EmployeeExporter"/>
 </webconfig>
