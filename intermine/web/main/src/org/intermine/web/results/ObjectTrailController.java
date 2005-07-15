@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForm;
@@ -92,6 +93,13 @@ public class ObjectTrailController extends TilesAction
                 String label = createTrailLabel(o, model);
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
+        }
+        
+        String tableParam = request.getParameter("table");
+        
+        if (ids.length == 0 && tableParam != null && tableParam.startsWith("results")
+                && SessionMethods.getResultsTable(session, tableParam) != null) {
+            elements.add(new TrailElement(tableParam));
         }
         
         request.setAttribute("trailElements", elements);
@@ -185,6 +193,16 @@ public class ObjectTrailController extends TilesAction
          */
         public int getObjectId() {
             return id;
+        }
+        
+        /**
+         * @see Object#toString()
+         */
+        public String toString() {
+            return new ToStringBuilder(this)
+                .append("isTable", table)
+                .append("tableId", tableId)
+                .append("objectId", id).toString();
         }
     }
 }
