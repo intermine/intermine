@@ -208,7 +208,7 @@ run: build-phenotype-production build-orthologues-production build-protein_struc
 
 dump: load-stage1
 
-run: build-flyreg-production build-long_oligo_production build-tiling_path-production
+run: build-flyreg-production build-long_oligo-production build-tiling_path-production build-drosdel-production
 
 dump: load-stage2
 
