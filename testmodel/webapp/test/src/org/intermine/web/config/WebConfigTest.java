@@ -35,9 +35,15 @@ public class WebConfigTest extends TestCase
         employableType.addLongDisplayer(employeeDisplayer);
         FieldConfig df1 = new FieldConfig();
         df1.setFieldExpr("class1field1");
+        df1.setShowInInlineCollection(true);
+        df1.setShowInResults(true);
+        df1.setShowInSummary(true);
         employableType.addFieldConfig(df1);
         FieldConfig df2 = new FieldConfig();
         df2.setFieldExpr("class1field2.field");
+        df2.setShowInInlineCollection(true);
+        df2.setShowInResults(true);
+        df2.setShowInSummary(true);
         employableType.addFieldConfig(df2);
 
         Displayer managerDisplayer = new Displayer();
@@ -52,10 +58,20 @@ public class WebConfigTest extends TestCase
         
         FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
+        df3.setShowInInlineCollection(true);
+        df3.setShowInResults(true);
+        df3.setShowInSummary(true);
         managerType.addFieldConfig(df3);
         FieldConfig df4 = new FieldConfig();
         df4.setFieldExpr("seniority");
+        df4.setShowInInlineCollection(true);
+        df4.setShowInResults(true);
+        df4.setShowInSummary(true);
         managerType.addFieldConfig(df4);
+        FieldConfig df5 = new FieldConfig();
+        df5.setFieldExpr("title");
+        df5.setDoNotTruncate(true);
+        managerType.addFieldConfig(df5);
 
         Displayer disp2 = new Displayer();
         disp2.setSrc("/model/page4.jsp");
@@ -67,16 +83,16 @@ public class WebConfigTest extends TestCase
         thingType.addLongDisplayer(disp2);
         thingType.addLongDisplayer(disp3);
 
-        Exporter exporter = new Exporter();
-        exporter.setId("myExporter");
-        exporter.setActionPath("/somePath");
-        exporter.setClassName("java.lang.String");
+        TableExportConfig tableExportConfig = new TableExportConfig();
+        tableExportConfig.setId("myExporter");
+        tableExportConfig.setActionPath("/somePath");
+        tableExportConfig.setClassName("java.lang.String");
 
         WebConfig wc2 = new WebConfig();
         wc2.addType(employableType);
         wc2.addType(managerType);
         wc2.addType(thingType);
-        wc2.addExporter(exporter);
+        wc2.addTableExportConfig(tableExportConfig);
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
 
         assertEquals(1, managerType.getLongDisplayers().size());

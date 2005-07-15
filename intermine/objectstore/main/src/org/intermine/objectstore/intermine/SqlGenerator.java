@@ -388,6 +388,8 @@ public class SqlGenerator
             .append(state.getWhere())
             .append(buildGroupBy(q, schema, state))
             .append(orderBy);
+
+        LOG.info("generate() generated: " + retval.toString());
         return retval.toString();
     }
 

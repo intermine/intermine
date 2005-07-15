@@ -168,7 +168,7 @@
                 <c:choose>
                   <c:when test="${status.first}">
                     <%-- since this blank GIF is displayed only to balance
-                         the right arrow at the other end of the div, it's
+                         the right arrow at the other end of the div, it is
                          not needed if there is no arrow --%>
                     <c:if test="${not status.last}">
                       <img style="margin-right: 5px" border="0" align="middle" 
@@ -218,7 +218,7 @@
                 <c:choose>
                   <c:when test="${status.last}">
                     <%-- since this blank GIF is displayed only to balance
-                         the left arrow at the other end of the div, it's
+                         the left arrow at the other end of the div, it is
                          not needed if there is no arrow --%>
                     <c:if test="${not status.last}">
                       <img style="margin-left: 5px" border="0" align="middle" 

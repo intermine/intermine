@@ -26,7 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.web.config.WebConfig;
-import org.intermine.web.config.Exporter;
+import org.intermine.web.config.TableExportConfig;
 import org.intermine.web.results.PagedTable;
 
 import org.apache.log4j.Logger;
@@ -62,18 +62,18 @@ public class ExportController extends TilesAction
             return null;
         }
         
-        Map allExporters = wc.getExporters();
+        Map allExporters = wc.getTableExportConfigs();
         Map usableExporters = new HashMap();
 
         for (Iterator i = allExporters.keySet().iterator(); i.hasNext(); ) {
             String exporterId = (String) i.next();
-            Exporter exporter = (Exporter) allExporters.get(exporterId);
+            TableExportConfig tableExportConfig = (TableExportConfig) allExporters.get(exporterId);
 
             TableExporter tableExporter =
-                (TableExporter) Class.forName(exporter.getClassName()).newInstance();
+                (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
 
             if (tableExporter.canExport(pt)) {
-                usableExporters.put(exporterId, exporter);
+                usableExporters.put(exporterId, tableExportConfig);
             }
         }
 

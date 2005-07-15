@@ -230,7 +230,17 @@ public class InlineResultsTable
         while (classDescriptorsIter.hasNext()) {
             ClassDescriptor thisClassDescriptor = (ClassDescriptor) classDescriptorsIter.next();
 
-            returnFieldConfigs.addAll(getClassFieldConfigs(thisClassDescriptor));
+            List fieldConfigs = getClassFieldConfigs(thisClassDescriptor);
+
+            Iterator fieldConfigIterator = fieldConfigs.iterator();
+
+            while (fieldConfigIterator.hasNext()) {
+                FieldConfig fc = (FieldConfig) fieldConfigIterator.next();
+
+                if (fc.getShowInInlineCollection()) {
+                    returnFieldConfigs.add(fc);
+                }
+            }
         }
 
         return returnFieldConfigs;

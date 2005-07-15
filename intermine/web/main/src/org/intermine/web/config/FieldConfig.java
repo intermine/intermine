@@ -19,6 +19,11 @@ package org.intermine.web.config;
 public class FieldConfig
 {
     private String fieldExpr;
+    private boolean doNotTruncate;
+    private boolean showInSummary;
+    private boolean showInInlineCollection;
+    private boolean showInResults;
+    private String fieldExporter;
 
     /**
      * Set the JSTL expression for this field which will be evalutated in the request context when
@@ -38,11 +43,112 @@ public class FieldConfig
     }
 
     /**
+     * If set to true, don't truncate long fields or put in a [View all...] link in the object
+     * details page.
+     * @param doNotTruncate do not truncate if true
+     */
+    public void setDoNotTruncate(boolean doNotTruncate) {
+        this.doNotTruncate = doNotTruncate;
+    }
+
+    /**
+     * Return the value of the doNotTruncate flag.
+     * @return the value of the flag
+     */
+    public boolean getDoNotTruncate() {
+        return doNotTruncate;
+    }
+
+    /**
+     * Set the showInSummary flag.  If true, show this field in the summary section of the object
+     * details page.
+     * @param showInSummary the new value of the flag
+     */
+    public void setShowInSummary(boolean showInSummary) {
+        this.showInSummary = showInSummary;
+    }
+
+    /**
+     * Return the value of the showInSummary flag
+     * @return the value of the flag
+     */
+    public boolean getShowInSummary() {
+        return showInSummary;
+    }
+
+    /**
+     * Set the showInInlineCollection flag.  If true, show this field in inline collections on the
+     * object details page. 
+     * @param showInInlineCollection the new value of the flag
+     */
+    public void setShowInInlineCollection(boolean showInInlineCollection) {
+        this.showInInlineCollection = showInInlineCollection;
+    }
+
+    /**
+     * Return the value of the showInInlineCollection flag
+     *
+     * @return the value of the flag
+     */
+    public boolean getShowInInlineCollection() {
+        return showInInlineCollection;
+    }
+
+    /**
+     * Set the showInResults flag.  If true, show this field when the corresponding object is shown
+     * in a results table.
+     * @param showInResults the new value of the flag
+     */
+    public void setShowInResults(boolean showInResults) {
+        this.showInResults = showInResults;
+    }
+
+    /**
+     * Return the value of the showInResults flag
+     * @return the value of the flag
+     */
+    public boolean getShowInResults() {
+        return showInResults;
+    }
+
+    /**
+     * Set the class name of the FieldExporter to use when this field is viewed.
+     * @param fieldExporter the FieldExporter name
+     */
+    public void setFieldExporter(String fieldExporter) {
+        this.fieldExporter = fieldExporter;
+    }
+
+    /**
+     * Return the class name of the FieldExporter to use when this field is viewed.
+     * @return the FieldExporter name
+     */
+    public String getFieldExporter() {
+        return fieldExporter;
+    }
+
+    /**
      * @see Object#equals
      */
     public boolean equals(Object otherObject) {
         if (otherObject instanceof FieldConfig) {
-            return ((FieldConfig) otherObject).fieldExpr.equals(fieldExpr);
+            FieldConfig otherFc = (FieldConfig) otherObject;
+
+            if (otherFc.fieldExporter == null && fieldExporter != null ||
+                otherFc.fieldExporter != null && fieldExporter == null) {
+                return false;
+            }
+
+            if (otherFc.fieldExporter != null) {
+                if (!otherFc.fieldExporter.equals(fieldExporter)) {
+                    return false;
+                }
+            }
+
+            return otherFc.fieldExpr.equals(fieldExpr)
+                && otherFc.showInSummary == showInSummary
+                && otherFc.showInInlineCollection == showInInlineCollection
+                && otherFc.showInResults == showInResults;
         } else {
             return false;
         }
@@ -59,6 +165,9 @@ public class FieldConfig
      * @see java.lang.String#toString
      */
     public String toString() {
-        return "<fieldconfig fieldExpr=\"" + fieldExpr + "\"/>";
+        return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" doNotTruncate=\"" + doNotTruncate
+               + "\" showInSummary=\"" + showInSummary + "\" showInInlineCollection=\"" 
+               + showInInlineCollection + "\" showInResults=\"" + showInResults
+            + "\"" + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
     }
 }

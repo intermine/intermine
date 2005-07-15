@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.*;
 
 import org.intermine.web.config.WebConfig;
-import org.intermine.web.config.Exporter;
+import org.intermine.web.config.TableExportConfig;
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.Column;
 import org.intermine.util.TextFileUtil;
@@ -76,13 +76,14 @@ public class ExportAction extends InterMineAction
 
         WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        Exporter exporter = (Exporter) wc.getExporters().get(type);
+        TableExportConfig tableExportConfig = 
+            (TableExportConfig) wc.getTableExportConfigs().get(type);
 
-        if (exporter == null) {
+        if (tableExportConfig == null) {
             return mapping.findForward("error");
         } else {
             TableExporter tableExporter =
-                (TableExporter) Class.forName(exporter.getClassName()).newInstance();
+                (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
 
             return tableExporter.export(mapping, form, request, response);
         }
