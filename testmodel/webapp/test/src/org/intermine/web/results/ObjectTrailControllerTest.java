@@ -21,6 +21,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.Constants;
+import org.intermine.web.SessionMethods;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 
@@ -49,6 +50,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         d.setId(new Integer(44));
         os.cacheObjectById(new Integer(44), d);
         ((ObjectStoreDummyImpl) os).setModel(Model.getInstanceByName("testmodel"));
+        
+        SessionMethods.initSession(getSession());
     }
 
     public void tearDown() throws Exception {
@@ -108,6 +111,86 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertEquals(44, e2.getObjectId());
     }
     
+    public void testTableParameter() {
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+        addRequestParameter("table", "results.0");
+        SessionMethods.setResultsTable(getSession(), "results.0", new PagedObject("", null));
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+
+        actionPerform();
+  
+        List c = (List) getRequest().getAttribute("trailElements");
+        assertEquals(1, c.size());
+        
+        ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
+        assertTrue(e0.isTable());
+        assertEquals("results.0", e0.getTableId());
+        
+        verifyNoActionErrors();
+    }
+    
+    public void testTableParameterDoesNotExist() {
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+        addRequestParameter("table", "results.0");
+        
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+
+        actionPerform();
+        
+        List c = (List) getRequest().getAttribute("trailElements");
+        assertEquals(0, c.size());
+        
+        verifyNoActionErrors();
+    }
+    
+    public void testTableInTrail() {
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+        addRequestParameter("trail", "_results.0_42");
+        
+        SessionMethods.setResultsTable(getSession(), "results.0", new PagedObject("", null));
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        
+        actionPerform();
+               
+        List c = (List) getRequest().getAttribute("trailElements");
+        assertEquals(2, c.size());
+        
+        ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
+        assertTrue(e0.isTable());
+        assertEquals("results.0", e0.getTableId());
+        
+        ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(1);
+        assertFalse(e1.isTable());
+        assertEquals(42, e1.getObjectId());
+        
+        verifyNoActionErrors();
+    }
+    
+    public void testTableInTrailDoesNotExist() {
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+        addRequestParameter("trail", "_results.0_42");
+
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+
+        actionPerform();
+        
+        List c = (List) getRequest().getAttribute("trailElements");
+        assertEquals(1, c.size());
+        
+        ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(0);
+        assertFalse(e1.isTable());
+        assertEquals(42, e1.getObjectId());
+        
+        verifyNoActionErrors();
+    }
     
     public void testNoTrailParameter() {
         ComponentContext componentContext = new ComponentContext();
