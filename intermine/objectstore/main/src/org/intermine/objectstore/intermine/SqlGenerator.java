@@ -389,7 +389,6 @@ public class SqlGenerator
             .append(buildGroupBy(q, schema, state))
             .append(orderBy);
 
-        LOG.info("generate() generated: " + retval.toString());
         return retval.toString();
     }
 
@@ -542,7 +541,7 @@ public class SqlGenerator
             }
         }
     }
-    
+
     /**
      * Builds the FROM list for the SQL query.
      *
@@ -922,13 +921,13 @@ public class SqlGenerator
         }
     }
 
-    
+
     /**
      * The maximum size a bag in a BagConstraint can be before we consider using a temporary table
      * instead.
      */
     public static final int MAX_BAG_INLINE_SIZE = 100;
-    
+
     /**
      * Converts a BagConstraint object into a String suitable for putting on an SQL query.
      *
@@ -1442,7 +1441,7 @@ public class SqlGenerator
         // a Map from BagConstraints to table names, where the table contains the contents of the
         // bag that are relevant for the BagConstraint
         private Map bagTableNames = new HashMap();
-        
+
         public State() {
             // empty
         }
@@ -1509,7 +1508,7 @@ public class SqlGenerator
         public Map getBagTableNames() {
             return bagTableNames;
         }
-        
+
         public void setDb(Database db) {
             this.db = db;
         }
