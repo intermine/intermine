@@ -142,7 +142,7 @@ public class CreateIndexesTask extends Task
 
             // Drop all the indexes first, then re-create them.  That ensures that if we try to
             // create an index with the same name twice we get an exception.  Postgresql has a 
-            // limit on index name length (63) and will truncate longer names with a notice rather
+            // limit on index name length (63) and will truncate longer names with a NOTICE rather
             // than an error.
 
             Iterator statementsIter = statements.keySet().iterator();
