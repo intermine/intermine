@@ -10,9 +10,6 @@ package org.intermine.task;
  *
  */
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,15 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.dataloader.DataLoaderHelper;
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.PrimaryKey;
-import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.PrimaryKey;
+import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -41,8 +41,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.StringUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Task to create indexes on a database holding objects conforming to a given model by
@@ -57,14 +55,14 @@ import org.apache.log4j.Logger;
  */
 public class CreateIndexesTask extends Task
 {
-    protected String alias;
-    protected Connection c;
-    protected boolean attributeIndexes = false;
-    protected DatabaseSchema schema = null;
-    protected Database database = null;
+    private String alias;
+    private Connection c;
+    private boolean attributeIndexes = false;
+    private DatabaseSchema schema = null;
+    private Database database = null;
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
-    protected Map tableIndexesDone = new HashMap();
-    protected Set indexesMade = new HashSet();
+    private Map tableIndexesDone = new HashMap();
+    private Set indexesMade = new HashSet();
 
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
@@ -119,35 +117,59 @@ public class CreateIndexesTask extends Task
     public void execute() throws BuildException {
         setUp();
         Model m = schema.getModel();
+        Map statements = new HashMap();
 
-        ClassDescriptor tmpCldA = null;
-        ClassDescriptor tmpCldB = null;
+        ClassDescriptor cld = null;
+        try {
+            for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
+                cld = (ClassDescriptor) i.next();
+                if (attributeIndexes) {
+                    getAttributeIndexStatements(cld, statements);
+                } else {
+                    getStandardIndexStatements(cld, statements);
+                }
+            }
+        } catch (Exception e) {
+            String message = "Error creating indexes for " + cld.getType();
+            throw new BuildException(message, e);
+        }
+
+        IndexStatement indexStatement = null;
+
         try {
             c = database.getConnection();
             c.setAutoCommit(true);
-            for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
-                ClassDescriptor cld = (ClassDescriptor) i.next();
-                tmpCldA = cld;
-                tmpCldB = schema.getTableMaster(tmpCldA);
 
-                //if (cld == schema.getTableMaster(cld)) {
-                    if (attributeIndexes) {
-                        createAttributeIndexes(cld);
-                    } else {
-                        createStandardIndexes(cld);
-                    }
-                //}
+            // Drop all the indexes first, then re-create them.  That ensures that if we try to
+            // create an index with the same name twice we get an exception.  Postgresql has a 
+            // limit on index name length (63) and will truncate longer names with a notice rather
+            // than an error.
+
+            Iterator statementsIter = statements.keySet().iterator();
+
+            while (statementsIter.hasNext()) {
+                String indexName = (String) statementsIter.next();
+                indexStatement = (IndexStatement) statements.get(indexName);
+                dropIndex(indexName);
+            }
+
+            statementsIter = statements.keySet().iterator();
+
+            while (statementsIter.hasNext()) {
+                String indexName = (String) statementsIter.next();
+                indexStatement = (IndexStatement) statements.get(indexName);
+                createIndex(indexName, indexStatement);
             }
         } catch (Exception e) {
-            System.out .println("Error creating indexes for " + tmpCldA.getType()
-                    + ", table master = " + tmpCldB.getType());
-            e.printStackTrace(System.out);
-            throw new BuildException(e);
+            String message = "Error creating indexes for " + indexStatement.cld.getType()
+                + ", table master = " + indexStatement.tableMaster.getType();
+            throw new BuildException(message, e);
         } finally {
             if (c != null) {
                 try {
                     c.close();
                 } catch (Exception e) {
+                    // empty
                 }
             }
         }
@@ -157,11 +179,12 @@ public class CreateIndexesTask extends Task
      * Add indexes for primary keys, indirection tables and 1-N relations to the relevant tables for
      * a given ClassDescriptor
      * @param cld the ClassDescriptor
-     * @throws SQLException if an error occurs
+     * @param statements the index creation statements for the given cld are added to this Map.
+     * The key is the index name, the value is a IndexStatement.
      * @throws MetaDataException if a field os not found in model
      */
-    protected void createStandardIndexes(ClassDescriptor cld)
-        throws SQLException, MetaDataException {
+    protected void getStandardIndexStatements(ClassDescriptor cld, Map statements)
+        throws MetaDataException {
         // Set of fieldnames that already are the first element of an index.
         Set doneFieldNames = new HashSet();
         String cldTableName = DatabaseUtil.getTableName(cld);
@@ -197,38 +220,38 @@ public class CreateIndexesTask extends Task
                 ClassDescriptor tableMaster = schema.getTableMaster(nextCld);
                 String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
-                    dropIndex(tableName + "__" + cldTableName + "__" + keyName);
-                    createIndex(tableName + "__" + cldTableName + "__" + keyName, tableName,
-                                StringUtil.join(fieldNames, ", ") + ", id");
+                    addStatement(statements,
+                                 tableName + "__" + keyName, tableName,
+                                 StringUtil.join(fieldNames, ", ") + ", id", nextCld, tableMaster);
                     if (doNulls) {
-                        dropIndex(tableName + "__" + cldTableName + "__" + keyName + "__nulls");
-                        createIndex(tableName + "__" + cldTableName + "__" + keyName + "__nulls",
-                                    tableName, "(" + fieldNames.get(0) + " IS NULL)");
+                        addStatement(statements,
+                                     tableName + "__" + keyName + "__nulls",
+                                     tableName, "(" + fieldNames.get(0) + " IS NULL)",
+                                     nextCld, tableMaster);
                     }
                     doneFieldNames.add(fieldNames.get(0));
                 }
             }
         }
-        
+
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
         for (Iterator i = cld.getAllReferenceDescriptors().iterator(); i.hasNext();) {
             ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
-            ClassDescriptor refMaster = ref.getClassDescriptor();
             ClassDescriptor tableMaster = schema.getTableMaster(cld);
             String tableName = DatabaseUtil.getTableName(tableMaster);
             if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     String fieldName = DatabaseUtil.getColumnName(ref);
                     if (!doneFieldNames.contains(fieldName)) {
-                        dropIndex(cldTableName + "__"  + ref.getName());
-                        createIndex(cldTableName + "__"  + ref.getName(), tableName,
-                                    fieldName + ", id");
+                        addStatement(statements,
+                                     cldTableName + "__"  + ref.getName(), tableName,
+                                     fieldName + ", id", cld, tableMaster);
                     }
                 }
             }
         }
-        
+
         //finally add an index to all M-to-N indirection table columns
         //for (Iterator i = cld.getAllCollectionDescriptors().iterator(); i.hasNext();) {
         for (Iterator i = cld.getCollectionDescriptors().iterator(); i.hasNext();) {
@@ -239,12 +262,12 @@ public class CreateIndexesTask extends Task
                 String columnName2 = DatabaseUtil.getOutwardIndirectionColumnName(col);
                 if ((columnName.compareTo(columnName2) < 0)
                     || (col.getReverseReferenceDescriptor() == null)) {
-                    dropIndex(tableName + "__"  + columnName);
-                    dropIndex(tableName + "__"  + columnName2);
-                    createIndex(tableName + "__"  + columnName, tableName,
-                                columnName + ", " + columnName2);
-                    createIndex(tableName + "__"  + columnName2, tableName,
-                                columnName2 + ", " + columnName);
+                    addStatement(statements,
+                                 tableName + "__"  + columnName, tableName,
+                                 columnName + ", " + columnName2, cld, null);
+                    addStatement(statements,
+                                 tableName + "__"  + columnName2, tableName,
+                                 columnName2 + ", " + columnName, cld, null);
                 }
             }
         }
@@ -254,11 +277,10 @@ public class CreateIndexesTask extends Task
      * Add indexes for all fields to the relevant tables for a given ClassDescriptor.  Skip those
      * fields that have indexes created by createStandardIndexes().
      * @param cld the ClassDescriptor
-     * @throws SQLException if an error occurs
-     * @throws MetaDataException if a field os not found in model
+     * @param statements the index creation statements for the given cld are added to this Map.
+     * The key is the index name, the value is a IndexStatement.
      */
-    protected void createAttributeIndexes(ClassDescriptor cld)
-        throws SQLException, MetaDataException {
+    protected void getAttributeIndexStatements(ClassDescriptor cld, Map statements) {
 
         Map primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
         String tableName = DatabaseUtil.getTableName(cld);
@@ -268,13 +290,13 @@ public class CreateIndexesTask extends Task
             for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
                     attributeIter.hasNext();) {
                 AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
-                
+
                 if (att.getName().equals("id")) {
                     continue;
                 }
-                
+
                 String fieldName = DatabaseUtil.getColumnName(att);
-                
+
                 if (!att.getType().equals("java.lang.String")) {
                     // if the attribute is the first column of a primary key, don't bother creating
                     // another index for it - unless it's a String attribute in which case we want
@@ -282,49 +304,61 @@ public class CreateIndexesTask extends Task
                     for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
                             primaryKeyIter.hasNext();) {
                         Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
-                        String keyName = (String) primaryKeyEntry.getKey();
                         PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
-                        
-                        String firstKeyField = (String) ((Set) key.getFieldNames()).iterator()
+
+                        String firstKeyField = (String) key.getFieldNames().iterator()
                             .next();
-                        
+
                         if (firstKeyField.equals(att.getName())) {
                             continue ATTRIBUTE;
                         }
                     }
                 }
-                
+
                 String indexName = tableName + "__"  + att.getName();
                 LOG.info("creating index: " + indexName);
-                dropIndex(indexName);
                 if (att.getType().equals("java.lang.String")) {
-                    try {
-                        createIndex(indexName, tableName, "lower(" + fieldName + ")");
-                    } catch (SQLException e) {
-                        if (e.getMessage().matches("ERROR: index row requires \\d+ bytes, "
-                                    + "maximum size is 8191")) {
-                            // ignore - we just don't create this index
-                            LOG.error("failed to create index for "
-                                    + tableName + "(" + fieldName + ")");
-                        } else {
-                            throw e;
-                        }
-                    }
+                    addStatement(statements, indexName, tableName, "lower(" + fieldName + ")",
+                                 cld, null);
                 } else {
-                    createIndex(indexName, tableName, fieldName);
+                    addStatement(statements, indexName, tableName, fieldName, cld, null);
                 }
                 if (!att.isPrimitive()) {
-                    dropIndex(indexName + "__nulls");
-                    createIndex(indexName + "__nulls", tableName, "(" + fieldName + " IS NULL)");
+                    addStatement(statements,
+                                 indexName + "__nulls", tableName, "(" + fieldName + " IS NULL)",
+                                 cld, null);
                 }
             }
         }
     }
 
     /**
+     * Create an IndexStatement object and add it to the statements Map.
+     * @param the Map to add to
+     * @param indexName the key to use in the Map - an IllegalArgumentException is thrown if an
+     * Entry already exists for the indexName.
+     * @param tableName the name of the table we are creating the index for
+     * @param columns the columns to index
+     * @param cld the ClassDescriptor describing the objects stored in tableName
+     * @param tableMaster the master table class for cld
+     */
+    private void addStatement(Map statements, String indexName, String tableName,
+                              String columnNames,
+                              ClassDescriptor cld, ClassDescriptor tableMaster) {
+        IndexStatement indexStatement =
+            new IndexStatement(tableName, columnNames, cld, tableMaster);
+        if (statements.containsKey(indexName)) {
+            throw new IllegalArgumentException("Tried to created two indexes with the same name: "
+                                               + indexName);
+        }
+
+        statements.put(indexName, indexStatement);
+    }
+
+    /**
      * Drop an index by name, ignoring any resulting errors
      * @param indexName the index name
-    */
+     */
     protected void dropIndex(String indexName) {
         try {
             if (!indexesMade.contains(indexName)) {
@@ -338,23 +372,38 @@ public class CreateIndexesTask extends Task
     /**
      * Create an named index on the specified columns of a table
      * @param indexName the index name
-     * @param tableName the table name
-     * @param columnNames the column names
+     * @param indexStatement the IndexStatement
      * @throws SQLException if an error occurs
      */
-    protected void createIndex(String indexName, String tableName, String columnNames)
+    protected void createIndex(String indexName, IndexStatement indexStatement)
         throws SQLException {
+        if (indexName.length() > 63) {
+            throw new IllegalArgumentException("length of index name (" + indexName + ": "
+                                               + indexName.length() + ") is greater than the "
+                                               + "Postgresql maximum");
+        }
+
+        String tableName = indexStatement.getTableName();
         Set indexesForTable = (Set) tableIndexesDone.get(tableName);
         if (indexesForTable == null) {
             indexesForTable = new HashSet();
             tableIndexesDone.put(tableName, indexesForTable);
         }
-        String indexText = "create index " + indexName + " on " + tableName + "(" + columnNames
-            + ")";
-        if (!indexesForTable.contains(columnNames)) {
-            execute(indexText);
+        if (!indexesForTable.contains(indexStatement.columnNames)) {
+            try {
+                execute(indexStatement.getStatementString(indexName));
+            } catch (SQLException e) {
+                if (e.getMessage().matches("ERROR: index row requires \\d+ bytes, "
+                                           + "maximum size is 8191")) {
+                    // ignore - we just don't create this index
+                    LOG.error("failed to create index for "
+                              + tableName + "(" + indexStatement.getColumnNames() + ")");
+                } else {
+                    throw e;
+                }
+            }
         }
-        indexesForTable.add(columnNames);
+        indexesForTable.add(indexStatement.columnNames);
         indexesMade.add(indexName);
     }
 
@@ -365,5 +414,38 @@ public class CreateIndexesTask extends Task
      */
     protected void execute(String sql) throws SQLException {
         c.createStatement().execute(sql);
+    }
+}
+
+class IndexStatement {
+    String tableName;
+    String columnNames;
+    ClassDescriptor cld;
+    ClassDescriptor tableMaster;
+
+    /**
+     * Return an IndexStatement that can be used to create an index on the specified columns of a
+     * table.
+     * @param tableName the table name
+     * @param columnNames the column names
+     */
+    IndexStatement(String tableName, String columnNames, ClassDescriptor cld,
+                          ClassDescriptor tableMaster) {
+        this.tableName = tableName;
+        this.columnNames = columnNames;
+        this.cld = cld;
+        this.tableMaster = tableMaster;
+    }
+
+    String getColumnNames() {
+        return columnNames;
+    }
+
+    String getTableName() {
+      return tableName;
+    }
+
+    String getStatementString(String indexName) {
+        return "create index " + indexName + " on " + tableName + "(" + columnNames + ")";
     }
 }
