@@ -215,7 +215,7 @@ dump: load-stage2
 run: read-flybase-chromosome-fasta calculate-locations
 run: create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
-run: create-overlap-relations create-indexes-production-attribute
+run: create-indexes-production-attribute create-overlap-relations
 run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
 run: create-flybase-to-uniprot-refs update-publications
 
