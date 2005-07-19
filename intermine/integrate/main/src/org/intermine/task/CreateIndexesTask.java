@@ -63,7 +63,8 @@ public class CreateIndexesTask extends Task
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
     private Map tableIndexesDone = new HashMap();
     private Set indexesMade = new HashSet();
-
+    private final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
+    
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
      * @param alias the ObjectStore alias
@@ -134,6 +135,8 @@ public class CreateIndexesTask extends Task
             throw new BuildException(message, e);
         }
 
+        checkForIndexNameClashes(statements);
+            
         IndexStatement indexStatement = null;
 
         try {
@@ -171,6 +174,30 @@ public class CreateIndexesTask extends Task
                 } catch (Exception e) {
                     // empty
                 }
+            }
+        }
+    }
+
+    private void checkForIndexNameClashes(Map statements) throws BuildException {
+        // index names truncated to 63 characters
+        Map truncNames = new HashMap();
+
+        Iterator statementsIter = statements.keySet().iterator();
+
+        while (statementsIter.hasNext()) {
+            String indexName = (String) statementsIter.next();
+            String truncName;
+            if (indexName.length() > POSTGRESQL_INDEX_NAME_LIMIT) {
+                truncName = indexName.substring(0, POSTGRESQL_INDEX_NAME_LIMIT);
+            } else {
+                truncName = indexName;
+            }
+            if (truncNames.containsKey(truncName)) {
+                throw new BuildException("tried to create a non-unique index name: "
+                                           + truncName + " from " + indexName + " and "
+                                           + truncNames.get(truncName));
+            } else {
+                truncNames.put(truncName, indexName);
             }
         }
     }
@@ -220,12 +247,18 @@ public class CreateIndexesTask extends Task
                 ClassDescriptor tableMaster = schema.getTableMaster(nextCld);
                 String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
-                    addStatement(statements,
-                                 tableName + "__" + keyName, tableName,
+                    String indexNameBase;
+                    if (tableName.equals(cldTableName)) {
+                        indexNameBase = tableName + "__" + keyName;
+
+                    } else { 
+                        indexNameBase = tableName + "__" + cldTableName + "__" + keyName;
+                    }
+                    addStatement(statements, indexNameBase, tableName,
                                  StringUtil.join(fieldNames, ", ") + ", id", nextCld, tableMaster);
                     if (doNulls) {
                         addStatement(statements,
-                                     tableName + "__" + keyName + "__nulls",
+                                     indexNameBase + "__nulls",
                                      tableName, "(" + fieldNames.get(0) + " IS NULL)",
                                      nextCld, tableMaster);
                     }
@@ -345,12 +378,18 @@ public class CreateIndexesTask extends Task
     private void addStatement(Map statements, String indexName, String tableName,
                               String columnNames,
                               ClassDescriptor cld, ClassDescriptor tableMaster) {
+        if (statements.containsKey(indexName)) {
+            IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
+  
+            if (!indexStatement.columnNames.equals(columnNames) ||
+                !indexStatement.tableName.equals(tableName)) {
+                throw new IllegalArgumentException("Tried to created two indexes with the same name: "
+                                                   + indexName);
+            }
+        }
+
         IndexStatement indexStatement =
             new IndexStatement(tableName, columnNames, cld, tableMaster);
-        if (statements.containsKey(indexName)) {
-            throw new IllegalArgumentException("Tried to created two indexes with the same name: "
-                                               + indexName);
-        }
 
         statements.put(indexName, indexStatement);
     }
@@ -377,12 +416,6 @@ public class CreateIndexesTask extends Task
      */
     protected void createIndex(String indexName, IndexStatement indexStatement)
         throws SQLException {
-        if (indexName.length() > 63) {
-            throw new IllegalArgumentException("length of index name (" + indexName + ": "
-                                               + indexName.length() + ") is greater than the "
-                                               + "Postgresql maximum");
-        }
-
         String tableName = indexStatement.getTableName();
         Set indexesForTable = (Set) tableIndexesDone.get(tableName);
         if (indexesForTable == null) {
