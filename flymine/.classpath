@@ -69,5 +69,9 @@
 	<classpathentry kind="lib" path="model/homophila/resources"/>
 	<classpathentry kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry kind="lib" path="model/mage/lib/MAGEstk-2004-11-29-v1.0-compatible.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
