@@ -237,6 +237,11 @@ public class PrecomputedTable implements SQLStringable, Comparable
      * @throws ClassCastException if obj is not a PrecomputedTable
      */
     public int compareTo(Object obj) {
-        return name.compareTo(((PrecomputedTable) obj).name);
+        PrecomputedTable objPt = (PrecomputedTable) obj;
+        int retval = objPt.q.getFrom().size() - q.getFrom().size();
+        if (retval == 0) {
+            retval = name.compareTo(objPt.name);
+        }
+        return retval;
     }
 }
