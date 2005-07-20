@@ -11,13 +11,14 @@ package org.intermine.sql.precompute;
  */
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.sql.*;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.sql.Database;
@@ -36,7 +37,7 @@ public class PrecomputedTableManager
 {
     private static final Logger LOG = Logger.getLogger(PrecomputedTableManager.class);
 
-    protected Set precomputedTables = new HashSet();
+    protected TreeSet precomputedTables = new TreeSet();
     protected Database database = null;
     protected Connection conn = null;
     protected Set queryStrings = new HashSet();

@@ -15,7 +15,9 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.*;
 
@@ -148,5 +150,36 @@ public class PrecomputedTableTest extends TestCase
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
         pt = new PrecomputedTable(q1, "name", con);
+    }
+
+    public void testCompareTo() throws Exception {
+        Query q1 = new Query("SELECT a.b AS c FROM a");
+        PrecomputedTable pt1 = new PrecomputedTable(q1, "fred", con);
+
+        Query q2 = new Query("SELECT a.b AS c FROM a, b");
+        PrecomputedTable pt2 = new PrecomputedTable(q2, "fred", con);
+
+        Query q3 = new Query("SELECT a.b AS c FROM a");
+        PrecomputedTable pt3 = new PrecomputedTable(q3, "bob", con);
+
+        Query q4 = new Query("SELECT a.b AS c FROM a, b");
+        PrecomputedTable pt4 = new PrecomputedTable(q4, "bob", con);
+
+        TreeSet ts = new TreeSet();
+        ts.add(pt1);
+        ts.add(pt2);
+        ts.add(pt3);
+        ts.add(pt4);
+
+        Iterator iter = ts.iterator();
+        assertTrue(iter.hasNext());
+        assertEquals(pt4, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(pt2, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(pt3, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(pt1, iter.next());
+        assertFalse(iter.hasNext());
     }
 }
