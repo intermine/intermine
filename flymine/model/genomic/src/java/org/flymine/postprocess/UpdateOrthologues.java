@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class UpdateOrthologues
 {
-    private static final Logger LOG = Logger.getLogger(CreateReferences.class);
+    private static final Logger LOG = Logger.getLogger(UpdateOrthologues.class);
 
     protected ObjectStoreWriter osw;
     protected ObjectStore os;
