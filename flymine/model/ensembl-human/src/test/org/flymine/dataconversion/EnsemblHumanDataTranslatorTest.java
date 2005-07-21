@@ -105,13 +105,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         exp1.addReference(new Reference("source", "-1_1"));
         exp1.addReference(new Reference("subject", "4_1"));
 
-        Item exp2 = createTgtItem(tgtNs + "Synonym", "-1_4", "");
-        exp2.addAttribute(new Attribute("value", "ENSG00001"));
-        exp2.addAttribute(new Attribute("type", "identifier"));
-        exp2.addReference(new Reference("source", "-1_3"));
-        exp2.addReference(new Reference("subject", "4_1"));
-
-        Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2}));
+        Set expected = new HashSet(Arrays.asList(new Object[] {exp1}));
         Item tgtItem = createTgtItem(tgtNs + "Gene", "4_1", "");
         assertEquals(expected, translator.setGeneSynonyms(gene, tgtItem, srcNs,"ENSG00001"));
     }
