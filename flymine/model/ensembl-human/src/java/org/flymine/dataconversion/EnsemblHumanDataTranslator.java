@@ -716,28 +716,19 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                             "accession", accession, getRefSeqRef());
                     synonyms.add(synonym);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-
-                    synonym = createSynonym(tgtItem.getIdentifier(),
-                                            "identifier", geneIdentifier, getEnsemblRef());
-                    synonyms.add(synonym);
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     tgtItem.addAttribute(new Attribute("accession", accession));
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
                 } else if (dbname.equals("Uniprot/SWISSPROT") || dbname.equals("Uniprot/SPTREMBL")
                     || dbname.equals("RefSeq_peptide")
                     || dbname.equals("RefSeq_peptide_predicted")) {
-                    synonym = createSynonym(tgtItem.getIdentifier(),
-                                            "identifier", geneIdentifier, getEnsemblRef());
-                    synonyms.add(synonym);
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
 
                 }
-
             }
         }
         return synonyms;
     }
+
 
     /**
      * Find stable_id for various ensembl type
