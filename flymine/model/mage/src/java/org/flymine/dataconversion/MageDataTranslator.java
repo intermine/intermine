@@ -96,7 +96,18 @@ public class MageDataTranslator extends DataTranslator
     protected Map bioAssayDataToAssay = new HashMap();
     protected Map measuredBioAssayToMicroArrayAssay = new HashMap();
     protected Map assayToSamples = new HashMap();
+
+    // geneomic:MicroArrayAssay -> experiment name
+    protected Map assayToExpName = new HashMap();
+
+    // geneomic:MicroArrayAssay -> genomic:MicroArraayExperiment
     protected Map assayToExperiment = new HashMap();
+
+    // genomic:Sample -> genomic:SampleCharacteristics
+    protected Map sampleToChars = new HashMap();
+
+
+    protected Map clones = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -134,17 +145,17 @@ public class MageDataTranslator extends DataTranslator
             String exptName = key.substring(0, key.indexOf("."));
             String propName = key.substring(key.indexOf(".") + 1);
 
-            addToConfig(exptName, propName, value);
+            addToMap(config, exptName, propName, value);
         }
     }
 
-    private void addToConfig(String exptName, String propName, String value) {
-        Map exptConfig = (Map) config.get(exptName);
+    private void addToMap(Map config, String group, String key, String value) {
+        Map exptConfig = (Map) config.get(group);
         if (exptConfig == null) {
             exptConfig = new HashMap();
-            config.put(exptName, exptConfig);
+            config.put(group, exptConfig);
         }
-        exptConfig.put(propName, value);
+        exptConfig.put(key, value);
     }
 
 
@@ -206,6 +217,10 @@ public class MageDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
+        i = clones.values().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
 
     }
 
@@ -233,18 +248,19 @@ public class MageDataTranslator extends DataTranslator
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
                 // mage: BibliographicReference flymine:Publication
-                if (className.equals("BibliographicReference")) {
-                    Set authors = createAuthors(srcItem);
-                    List authorIds = new ArrayList();
-                    Iterator j = authors.iterator();
-                    while (j.hasNext()) {
-                        Item author = (Item) j.next();
-                        authorIds.add(author.getIdentifier());
-                        result.add(author);
-                    }
-                    ReferenceList authorsRef = new ReferenceList("authors", authorIds);
-                    tgtItem.addCollection(authorsRef);
-                } else if (className.equals("Database")) {
+//                 if (className.equals("BibliographicReference")) {
+//                     Set authors = createAuthors(srcItem);
+//                     List authorIds = new ArrayList();
+//                     Iterator j = authors.iterator();
+//                     while (j.hasNext()) {
+//                         Item author = (Item) j.next();
+//                         authorIds.add(author.getIdentifier());
+//                         result.add(author);
+//                     }
+//                     ReferenceList authorsRef = new ReferenceList("authors", authorIds);
+//                     tgtItem.addCollection(authorsRef);
+//                 } else
+                    if (className.equals("Database")) {
                     Attribute attr = srcItem.getAttribute("name");
                     if (attr != null) {
                         getDb(attr.getValue());
@@ -259,10 +275,7 @@ public class MageDataTranslator extends DataTranslator
                     translateMicroArrayResult(srcItem, tgtItem);
                     storeTgtItem = false;
                 } else if (className.equals("Reporter")) {
-                    Item material = translateReporter(srcItem, tgtItem);
-                    if (material != null) {
-                        result.add(material);
-                    }
+                    translateReporter(srcItem, tgtItem);
                 } else if (className.equals("BioSequence")) {
                     //translateBioEntity(srcItem, tgtItem);
                     storeTgtItem = false;
@@ -348,27 +361,42 @@ public class MageDataTranslator extends DataTranslator
                         desFlag = true;
                     }
                 }
-                if (desItem.hasCollection("bibliographicReferences")) {
-                    ReferenceList publication = desItem.getCollection(
-                                                  "bibliographicReferences");
-                    if (publication != null) {
-                        if (!isSingleElementCollection(publication)) {
-                            throw new IllegalArgumentException("Experiment description collection ("
-                                + desItem.getIdentifier()
-                                + ") has more than one bibliographicReference");
-                        } else {
-                            if (pubFlag) {
-                                LOG.error("Already set publication for MicroArrayExperiment, "
-                                      + " srcItem = " + srcItem.getIdentifier());
-                            } else {
-                                tgtItem.setReference("publication", getFirstId(publication));
-                                pubFlag = true;
-                            }
-                        }
-                    }
+//                 if (desItem.hasCollection("bibliographicReferences")) {
+//                     ReferenceList publication = desItem.getCollection(
+//                                                   "bibliographicReferences");
+//                     if (publication != null) {
+//                         if (!isSingleElementCollection(publication)) {
+//                             throw new IllegalArgumentException("Experiment description collection ("
+//                                 + desItem.getIdentifier()
+//                                 + ") has more than one bibliographicReference");
+//                         } else {
+//                             if (pubFlag) {
+//                                 LOG.error("Already set publication for MicroArrayExperiment, "
+//                                       + " srcItem = " + srcItem.getIdentifier());
+//                             } else {
+//                                 tgtItem.setReference("publication", getFirstId(publication));
+//                                 pubFlag = true;
+//                             }
+//                         }
+//                     }
+//                 }
+            }
+        }
+
+        // PATH Experiment.bioAssays
+
+        // create map from mage:DerivedBioAssay to experiment name (String)
+        if (srcItem.hasCollection("bioAssays")) {
+            Iterator assayIter = getCollection(srcItem, "bioAssays");
+            while (assayIter.hasNext()) {
+                Item bioAssayItem = (Item) assayIter.next();
+                if (bioAssayItem.getClassName().equals(srcNs + "DerivedBioAssay")) {
+                    assayToExperiment.put(bioAssayItem.getIdentifier(), tgtItem.getIdentifier());
+                    assayToExpName.put(bioAssayItem.getIdentifier(), exptName);
                 }
             }
         }
+
         return tgtItem;
     }
 
@@ -539,7 +567,7 @@ public class MageDataTranslator extends DataTranslator
     }
 
 
-    protected Item translateReporter(Item srcItem, Item tgtItem) throws ObjectStoreException {
+    protected void translateReporter(Item srcItem, Item tgtItem) throws ObjectStoreException {
 
         // PATH Reporter.featureReporterMaps.featureInformationSources.feature
         if (srcItem.hasCollection("featureReporterMaps")) {
@@ -583,12 +611,17 @@ public class MageDataTranslator extends DataTranslator
                     if (bioSequence.hasReference("type")) {
                         String type = getReference(bioSequence, "type").getAttribute("value").getValue();
                         if (type.toLowerCase().equals("cdna_clone")) {
-                            material = createItem(tgtNs + "CDNAClone", "");
-                            material.setAttribute("identifier", srcItem.getAttribute("name").getValue());
+                            String cloneId = srcItem.getAttribute("name").getValue();
+                            material = (Item) clones.get(cloneId);
+                            if (material == null) {
+                                material = createItem(tgtNs + "CDNAClone", "");
+                                material.setAttribute("identifier", cloneId);
+                                clones.put(cloneId, material);
+                            }
+                            tgtItem.setReference("material", material.getIdentifier());
                         } else {
                             throw new ObjectStoreException("Unknown BioSequence type: " + type);
                         }
-                        tgtItem.setReference("material", material.getIdentifier());
                     }
                 }
             }
@@ -604,8 +637,6 @@ public class MageDataTranslator extends DataTranslator
                 tgtItem.setAttribute("failType", fail.getAttribute("value").getValue());
             }
         }
-
-        return material;
     }
 
 
@@ -672,8 +703,6 @@ public class MageDataTranslator extends DataTranslator
             return bioMaterial.getIdentifier();
         }
 
-
-
         if (bioMaterial.hasCollection("treatments")) {
             Iterator treatmentIter = getCollection(bioMaterial, "treatments");
             while (treatmentIter.hasNext()) {
@@ -722,19 +751,21 @@ public class MageDataTranslator extends DataTranslator
                 Item charItem = (Item) charIter.next();
                 if (charItem.hasAttribute("category")) {
                     String category = charItem.getAttribute("category").getValue();
+                    String value = charItem.getAttribute("value").getValue();
                     if (category.equals("Organism")) {
                         if (charItem.hasAttribute("value")) {
-                            String organismName = charItem.getAttribute("value").getValue();
-                            organism = createOrganism("Organism", "", organismName);
+                            organism = createOrganism("Organism", "", value);
                             tgtItem.setReference("organism", organism.getIdentifier());
                         }
                     } else {
                         Item tgtCharItem = createItem(tgtNs + "SampleCharacteristic", "");
                         tgtCharItem.setAttribute("type", charItem.getAttribute("category").getValue());
-                        tgtCharItem.setAttribute("value", charItem.getAttribute("value").getValue());
+                        tgtCharItem.setAttribute("value", value);
                         charItems.add(tgtCharItem);
                         list.add(tgtCharItem.getIdentifier());
                     }
+                    HashMap charMap = new HashMap();
+                    addToMap(sampleToChars, tgtItem.getIdentifier(), category, value);
                 }
             }
             if (list.size() > 0) {
@@ -802,7 +833,8 @@ public class MageDataTranslator extends DataTranslator
                     Iterator paramIter = getCollection(appItem, "parameterValues");
                     while (paramIter.hasNext()) {
                         Item valueItem = (Item) paramIter.next();
-                        Item tgtParam = createItem(tgtNs + "Parameter", "");
+                        Item tgtParam = createItem(tgtNs + "TreatmentParameter", "");
+                        tgtParam.setReference("treatment", tgtItem.getIdentifier());
                         if (valueItem.hasAttribute("value")) {
                             tgtParam.setAttribute("value", valueItem.getAttribute("value").getValue());
                         }
@@ -811,6 +843,7 @@ public class MageDataTranslator extends DataTranslator
                         if (srcParam.hasAttribute("name")) {
                             tgtParam.setAttribute("type", srcParam.getAttribute("name").getValue());
                         }
+
 
                         // set units
                         if (srcParam.hasReference("defaultValue")) {
@@ -832,9 +865,9 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
-        if (paramIds.size() > 0) {
-            tgtItem.addCollection(new ReferenceList("parameters", paramIds));
-        }
+//         if (paramIds.size() > 0) {
+//             tgtItem.addCollection(new ReferenceList("parameters", paramIds));
+//         }
         return params;
     }
 
@@ -873,10 +906,13 @@ public class MageDataTranslator extends DataTranslator
                     if (assayToSamples.containsKey(assayId)) {
                         maResult.addCollection(new ReferenceList("samples", (List) assayToSamples.get(assayId)));
                     }
+                    if (assayToExperiment.containsKey(assayId)) {
+                        maResult.setReference("experiment", (String) assayToExperiment.get(assayId));
+                    }
                 }
             }
 
-            // MicroArratResult.isControl
+            // MicroArrayResult.isControl
             if (resultToFeature.containsKey(maResult.getIdentifier())) {
                 String featureId = (String) resultToFeature.get(maResult.getIdentifier());
                 if (featureToReporter.containsKey(featureId)) {
@@ -889,9 +925,6 @@ public class MageDataTranslator extends DataTranslator
                     }
                 }
             }
-
-            // TODO MicroArrayResult.experiment
-
         }
         return microArrayResults;
     }
@@ -923,9 +956,23 @@ public class MageDataTranslator extends DataTranslator
                         sampleIds.add(sampleId);
 
                         // TODO Sample.primaryCharacteristic - configured on a per experiment basis
-                        //String experiment = assayToExperiment.get(assayId);
-                        //primaryCharacteristic = config.get(experiment).get(primaryCharacteristic);
-                        //sample.setAttribute("primaryCharacteristic", (String) characteristics.get(sampleId).get(primaryCharacteristic));
+                        String expName = (String) assayToExpName.get(assayId);
+                        String primaryCharacteristic = getConfig(expName, "primaryCharacteristic");
+                        System.out.println("expName: " + expName);
+                        System.out.println("primaryCharacteristic: " + primaryCharacteristic);
+
+                        Map chars = (Map) sampleToChars.get(sampleId);
+                        if (chars != null) {
+                            System.out.println("chars: " + chars);
+                            Iterator charIter = chars.entrySet().iterator();
+                            while (charIter.hasNext()) {
+                                Map.Entry entry = (Map.Entry) charIter.next();
+                                if (entry.getKey().equals(primaryCharacteristic)) {
+                                    sample.setAttribute("primaryCharacteristicType", primaryCharacteristic);
+                                    sample.setAttribute("primaryCharacteristic", (String) entry.getValue());
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -997,6 +1044,14 @@ public class MageDataTranslator extends DataTranslator
         return ItemHelper.convert(srcItemReader.getItemByPath(path, ItemHelper.convert(startItem)));
     }
 
+    public Iterator getItemsByPath(ItemPath path, Item start) throws ObjectStoreException {
+        List items = new ArrayList();
+        Iterator iter = srcItemReader.getItemsByPath(path, ItemHelper.convert(start)).iterator();
+        while (iter.hasNext()) {
+            items.add(ItemHelper.convert((org.intermine.model.fulldata.Item) iter.next()));
+        }
+        return items.iterator();
+    }
 
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
