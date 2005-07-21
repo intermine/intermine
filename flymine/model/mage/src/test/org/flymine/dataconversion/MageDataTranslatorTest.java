@@ -172,6 +172,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem3.addCollection(new ReferenceList("bioAssayTupleData", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744"}))));
 
         Item srcItem4 = createSrcItem("Experiment", "61_748", "");
+        srcItem4.addCollection(new ReferenceList("bioAssays", new ArrayList(Arrays.asList(new Object[]{"57_709"}))));
 
         Item srcItem5 = createSrcItem("BioAssayMap", "1_1", "");
         srcItem5.addCollection(new ReferenceList("sourceBioAssays", new ArrayList(Arrays.asList(new Object[]{"2_1"}))));
@@ -185,6 +186,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
         Item expItem1 = createTgtItem("MicroArrayAssay", "57_709", "");
+        expItem1.setReference("experiment", "-1_1");
 
         Item expItem2 = createTgtItem("MicroArrayExperiment", "-1_1", "");
 
@@ -194,6 +196,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.translate(tgtIw);
 
         assertEquals(expected, tgtIw.getItems());
+
+        Set expAssays = new HashSet();
+        expAssays.add(expItem1);
+        assertEquals(expAssays, translator.assays);
 
         // mage:BioAssayDatum to genomic:MicroArrayAssay
         Map expBioAssayDataToAssay = new HashMap();

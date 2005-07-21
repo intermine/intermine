@@ -105,7 +105,7 @@ public class MageDataTranslator extends DataTranslator
 
     // genomic:Sample -> genomic:SampleCharacteristics
     protected Map sampleToChars = new HashMap();
-
+    protected Set assays = new HashSet();
 
     protected Map clones = new HashMap();
 
@@ -217,6 +217,12 @@ public class MageDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
+
+        i = processMicroArrayAssays().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
         i = clones.values().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
@@ -270,7 +276,7 @@ public class MageDataTranslator extends DataTranslator
                     translateMicroArrayExperiment(srcItem, tgtItem);
                 } else if (className.equals("DerivedBioAssay")) {
                     translateMicroArrayAssay(srcItem, tgtItem);
-                    //storeTgtItem = false;
+                    storeTgtItem = false;
                 } else if (className.equals("BioAssayDatum")) {
                     translateMicroArrayResult(srcItem, tgtItem);
                     storeTgtItem = false;
@@ -410,9 +416,6 @@ public class MageDataTranslator extends DataTranslator
          throws ObjectStoreException {
 
          // TODO link assay to experiment??
-         // FieldNameAndValue query?
-         //tgtItem.setReference("experiment", getExperimentId());
-
 
          // create map from mage:MeasuredBioAssay to genomic:MicroArrayAssay (mage:DerivedBioAssay)
 
@@ -446,6 +449,7 @@ public class MageDataTranslator extends DataTranslator
                  }
              }
          }
+         assays.add(tgtItem);
      }
 
 
@@ -884,6 +888,18 @@ public class MageDataTranslator extends DataTranslator
             results.add(organism);
         }
         return results;
+    }
+
+    protected Set processMicroArrayAssays() {
+        Iterator assayIter = assays.iterator();
+        while (assayIter.hasNext()) {
+            Item assay = (Item) assayIter.next();
+            String assayId = assay.getIdentifier();
+            if (assayToExperiment.containsKey(assayId)) {
+                assay.setReference("experiment", (String) assayToExperiment.get(assayId));
+            }
+        }
+        return assays;
     }
 
 
