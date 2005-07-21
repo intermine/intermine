@@ -1332,6 +1332,9 @@
     <copy todir="${build.tmp}/mage">
       <fileset dir="/shared/data/mage/E-FLYC-1"/>
       <fileset dir="/shared/data/mage/E-FLYC-2"/>
+      <fileset dir="/shared/data/mage/E-FLYC-3"/>
+      <fileset dir="/shared/data/mage/E-FLYC-4"/>
+      <fileset dir="/shared/data/mage/E-FLYC-5"/>
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
@@ -1933,6 +1936,7 @@
       <property name="db.name" value="db.production"/>
       <property name="objectstore.name" value="os.production"/>
     </ant>
+    <antcall target="create-indexes-production"/>
   </target>
 
   <target name="create-indexes-production"
