@@ -199,7 +199,11 @@ run: create-production-model compile-genomic-model jar-genomic build-db-producti
 
 dump: anopheles
 
-run: build-uniprot-production build-flybase-production
+run: build-uniprot-production
+
+dump: uniprot
+
+run: build-flybase-production
 
 dump: drosophila
 
