@@ -113,6 +113,7 @@ public class CalculateLocationsTest extends TestCase {
             int start = i * 9000 + 1;
             int end = i * 9000 + 9900 + i;
             exons[i].setLength(new Integer(end - start + 1));
+            exons[i].setChromosome(chr);
             exonLocs[i] = createLocation(chr, exons[i], 1, start, end, Location.class);
             exonLocs[i].setId(new Integer(1000 + i));
         }
@@ -123,6 +124,7 @@ public class CalculateLocationsTest extends TestCase {
             (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exons[exonsSoFar].setId(new Integer(250));
         exons[exonsSoFar].setLength(new Integer(45000 - 25000 + 1));
+        exons[exonsSoFar].setChromosome(chr);
         exonLocs[exonsSoFar] =
             createLocation(chr, exons[exons.length - 1], 1, 25000, 45000, Location.class);
         exonLocs[exonsSoFar].setId(new Integer(1500));
