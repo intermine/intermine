@@ -108,6 +108,7 @@ public class MageDataTranslator extends DataTranslator
     protected Set assays = new HashSet();
 
     protected Map clones = new HashMap();
+    protected Map reporterToMaterial = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -623,6 +624,7 @@ public class MageDataTranslator extends DataTranslator
                                 clones.put(cloneId, material);
                             }
                             tgtItem.setReference("material", material.getIdentifier());
+                            reporterToMaterial.put(tgtItem.getIdentifier(), material.getIdentifier());
                         } else {
                             throw new ObjectStoreException("Unknown BioSequence type: " + type);
                         }
@@ -939,9 +941,16 @@ public class MageDataTranslator extends DataTranslator
                     } else {
                         maResult.setAttribute("isControl", "false");
                     }
+                    if (reporterToMaterial.containsKey(reporterId)) {
+                        maResult.setReference("material", (String) reporterToMaterial.get(reporterId));
+                    }
                 }
             }
         }
+
+        // MicroArrayResult.material
+
+
         return microArrayResults;
     }
 

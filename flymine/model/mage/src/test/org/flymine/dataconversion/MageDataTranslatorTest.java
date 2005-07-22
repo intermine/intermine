@@ -405,6 +405,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set expected = new HashSet(Arrays.asList(new Object[] {expItem1, expItem2}));
 
         assertEquals(expected, tgtIw.getItems());
+
+        Map expReporterToMaterial = new HashMap();
+        expReporterToMaterial.put("0_1", "-1_1");
+        assertEquals(expReporterToMaterial, translator.reporterToMaterial);
+
     }
 
 
@@ -520,12 +525,14 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.resultToFeature.put("0_1", "2_1");
         translator.featureToReporter.put("2_1", "3_1");
         translator.assayToExperiment.put("5_1", "6_1");
+        translator.reporterToMaterial.put("3_1", "7_1");
 
         Item expResult = createTgtItem("MicroArrayResult", "0_1", "");
         expResult.setAttribute("isControl", "true");
         expResult.setReference("assay", "5_1");
         expResult.setReference("reporter", "3_1");
         expResult.setReference("experiment", "6_1");
+        expResult.setReference("material", "7_1");
         expResult.addCollection(new ReferenceList("samples", new ArrayList(Collections.singleton("6_1"))));
         Set exp = new HashSet(Collections.singleton(expResult));
 
