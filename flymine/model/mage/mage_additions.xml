@@ -40,7 +40,7 @@
   <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="reporter"/>
 </class>
 <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="assay"/>
+  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="material"/>
 </class>
 <class name="org.flymine.model.genomic.NuclearDNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
