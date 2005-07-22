@@ -73,6 +73,10 @@ public class ObjectStoreSummary
             }
             String className = key.substring(0, key.lastIndexOf("."));
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
+            if (cld == null) {
+                throw new RuntimeException("a class mentioned in ObjectStore summary properties "
+                                           + "file (" + className + ") is not in the model");
+            }
             List fieldNames = Arrays.asList(value.split(" "));
             processFields(cld, fieldNames, os, maxValues);
             for (Iterator j = os.getModel().getAllSubs(cld).iterator(); j.hasNext();) {
