@@ -22,7 +22,9 @@ import java.util.ArrayList;
 
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.Attribute;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 
@@ -45,6 +47,12 @@ public class GFF3RecordHandler
     private ItemFactory itemFactory;
     private Map identifierMap;
     private Item organism;
+
+    protected Map tgtSeqs = new HashMap();
+    private Item tgtOrganism;
+    private Reference tgtOrgRef;
+    private Item tgtSequence;
+    private int itemid = 0;
 
     /**
      * Construct with the model to create items in (for type checking).
@@ -215,6 +223,47 @@ public class GFF3RecordHandler
         return this.infoSource;
     }
 
+     /**
+     * Get the tgtOrganism item to use in this handler
+     * @param tgtOrganism the tgtOrganism item
+     */
+    public void setTgtOrganism(Item tgtOrganism) {
+        items.put("_tgtOrganism", tgtOrganism);
+    }
+
+    /**
+     * Return the tgtOrganism Item set by setTgtOrganism()
+     * @return the tgtOrganism Item
+     */
+    protected Item getTgtOrganism() {
+        return tgtOrganism;
+    }
+
+
+    /**
+     * Set tgtSequence item created for this record, should not be edited in handler.
+     * @param tgtSequence the sequence item
+     */
+    public void setTgtSequence(Item tgtSequence) {
+        items.put("_tgtSequence", tgtSequence);
+    }
+
+
+    /**
+     * Set the tgtLocation item for this record.
+     * @param tgtLocation the location item
+     */
+    public void setTgtLocation(Item tgtLocation) {
+        items.put("_tgtLocation", tgtLocation);
+    }
+
+    /**
+     * Return the tgtLocation Item set by setTgtLocation()
+     * @return the tgtLocation Item
+     */
+    protected Item getTgtLocation() {
+        return (Item) items.get("_tgtLocation");
+    }
     /**
      * Set the ItemFactory to use in this handler.
      * @param itemFactory the ItemFactory
@@ -298,8 +347,99 @@ public class GFF3RecordHandler
         }
     }
 
+    /**
+     * if the feature is CrossGenomeMatch, more specific properties added to
+     * the feature through the handler.
+     * @param feature item feature
+     * @param orgAbb string organism abbreviation
+     * @param seqIdentifier sequence identifier
+     * @param seqClsName sequence classname
+     * @param locString location string got from converter
+     */
+    protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
+              String seqClsName, String locString) {
+        String clsName = classFromURI(feature.getClassName());
+        if (clsName.equals("CrossGenomeMatch")) {
+            if (orgAbb != null) {
+                tgtOrganism = getTargetOrganism(orgAbb);
+
+                Item targetSeq = getTargetSeq(seqIdentifier, seqClsName, orgAbb);
+
+                String locChr = locString.split(" ")[0];
+                String locStart = locString.split(" ")[1];
+                String locEnd = locString.split(" ")[2];
+                String locStrand = locString.split(" ")[3];
+
+                Item targetLocation = createItem("Location", createIdentifier());
+                targetLocation.setAttribute("start", locStart);
+                targetLocation.setAttribute("end", locEnd);
+
+                if (locStrand != null && locStrand.equals("+")) {
+                    targetLocation.setAttribute("strand", "1");
+                } else if (locStrand != null && locStrand.equals("-")) {
+                    targetLocation.setAttribute("strand", "-1");
+                } else {
+                    targetLocation.setAttribute("strand", "0");
+                }
+
+                targetLocation.setReference("object", targetSeq.getIdentifier());
+                targetLocation.setReference("subject", feature.getIdentifier());
+                setTgtLocation(targetLocation);
+
+                feature.setReference("chromosomeLocation", getLocation().getIdentifier());
+                feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
+                feature.setReference("targetChromosome", targetSeq.getIdentifier());
+                feature.setReference("targetChromosomeLocation", targetLocation.getIdentifier());
+            } else {
+                throw new NullPointerException("No target organism for " + feature);
+            }
+        }
+    }
+
+     private Item getTargetSeq(String identifier, String seqClsName, String orgAbb) {
+        Item tseq = (Item) tgtSeqs.get(identifier);
+        if (tseq == null) {
+            tseq = createItem(seqClsName, createIdentifier());
+            tseq.setAttribute("identifier", identifier);
+            tseq.addReference(getTargetOrgRef(orgAbb));
+            tgtSeqs.put(identifier, tseq);
+            setTgtSequence(tseq);
+
+        }
+        return tseq;
+    }
+
+    private Item getTargetOrganism(String orgAbb) {
+        if (tgtOrganism == null) {
+            tgtOrganism = createItem("Organism", createIdentifier());
+            tgtOrganism.addAttribute(new Attribute("abbreviation", orgAbb));
+            setTgtOrganism(tgtOrganism);
+        }
+        return tgtOrganism;
+    }
+
+    private Reference getTargetOrgRef(String orgAbb) {
+        if (tgtOrgRef == null) {
+            tgtOrgRef = new Reference("organism", getTargetOrganism(orgAbb).getIdentifier());
+        }
+        return tgtOrgRef;
+    }
 
     private String classFromURI(String uri) {
         return uri.split("#")[1].split("[.]")[0];
+    }
+
+     /**
+     * Create an item with given className and item identifier
+     * @param className
+     * @param implementations
+     * @return the created item
+     */
+    private Item createItem(String className, String identifier) {
+        return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
+    }
+
+    private String createIdentifier() {
+        return "1_" + itemid++;
     }
 }
