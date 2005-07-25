@@ -10,6 +10,9 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringReader;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
@@ -17,25 +20,24 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
 
 /**
- * Form bean representing template import form.
+ * Form bean representing query import form.
  *
  * @author  Thomas Riley
  */
-public class TemplatesImportForm extends ValidatorForm
+public class ImportQueryForm extends ValidatorForm
 {
     private String xml;
-    private boolean overwriting = false;
     
     /**
-     * Creates a new instance of TemplatesImportForm.
+     * Creates a new instance of ImportQueryForm.
      */
-    public TemplatesImportForm() {
+    public ImportQueryForm() {
         reset();
     }
     
     /**
      * Get the xml.
-     * @return templates in xml format
+     * @return query in xml format
      */
     public String getXml() {
         return xml;
@@ -43,26 +45,10 @@ public class TemplatesImportForm extends ValidatorForm
 
     /**
      * Set the xml.
-     * @param xml templates in xml format
+     * @param xml query in xml format
      */
     public void setXml(String xml) {
         this.xml = xml;
-    }
-    
-    /**
-     * Get the overwrite flag.
-     * @return  true to overwrite existing template, false to add
-     */
-    public boolean isOverwriting() {
-        return overwriting;
-    }
-    
-    /**
-     * Set the overwriting flag.
-     * @param overwriting true to overwrite existing templates, false to add
-     */
-    public void setOverwriting(boolean overwriting) {
-        this.overwriting = overwriting;
     }
     
     /**
@@ -78,7 +64,6 @@ public class TemplatesImportForm extends ValidatorForm
      */
     protected void reset() {
         xml = "";
-        overwriting = false;
     }
 
     /**
@@ -92,13 +77,20 @@ public class TemplatesImportForm extends ValidatorForm
             return errors;
         }
         try {
-           TemplateHelper.xmlToTemplateMap(getXml());
+           Map map = PathQueryBinding.unmarshal(new StringReader(getXml()));
+           if (map.size() != 1) {
+               if (errors == null) {
+                   errors = new ActionErrors();
+               }
+               errors.add(ActionErrors.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.importQuery.notone"));
+           }
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                        new ActionMessage("errors.badtemplatexml", err.getMessage()));
+                        new ActionMessage("errors.badqueryxml", err.getMessage()));
         }
         return errors;
     }

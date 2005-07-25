@@ -40,7 +40,6 @@ import org.intermine.objectstore.ObjectStoreException;
  *
  * @author Kim Rutherford
  */
-
 public class ExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(ExportAction.class);

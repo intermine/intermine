@@ -90,10 +90,16 @@
     <put name="body" value="importTemplates.jsp"/>
     <put name="pageName" value="importTemplates"/>
   </definition>
+  <definition name="importQuery.page" extends="layout.template">
+    <put name="body" value="importQuery.jsp"/>
+    <put name="pageName" value="importQuery"/>
+  </definition>
+<!-- Remove me?
   <definition name="documentation.page" extends="layout.template">
     <put name="body" value="docbook.jsp"/>
     <put name="pageName" value="documentation"/>
   </definition>
+-->
   <definition name="tree.page" extends="layout.template">
     <put name="body" value="tree.tile"/>
     <put name="pageName" value="tree"/>
