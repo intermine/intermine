@@ -230,6 +230,19 @@ public class GFF3Converter
         feature.addCollection(evidence);
         handler.setFeature(feature);
 
+        String orgAbb = null;
+        String tgtSeqIdentifier = null;
+        if (record.getAttributes().get("Organism") != null) {
+            orgAbb = (String) ((List) record.getAttributes().get("Organism")).get(0);
+        }
+        if (record.getAttributes().get(seqClsName) != null) {
+            tgtSeqIdentifier = (String) ((List) record.getAttributes().get(seqClsName)).get(0);
+        }
+        String tgtLocation = record.getTarget();
+        if (orgAbb != null && tgtSeqIdentifier != null && tgtLocation != null) {
+            handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seqClsName, tgtLocation);
+        }
+
         handler.process(record);
 
         if (feature.hasAttribute("identifier")) {
