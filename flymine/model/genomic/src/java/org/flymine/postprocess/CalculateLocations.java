@@ -433,6 +433,9 @@ public class CalculateLocations
      * Create OverlapRelation objects for locations that have the given subject.
      */
     private void createSubjectOverlapRelations(Chromosome subject) throws Exception {
+        LOG.info("Creating overlaps for " + subject + ", identifier: "
+                 + subject.getIdentifier());
+
         Iterator overlapIterator = OverlapUtil.findOverlaps(os, subject);
 
         int count = 0;
