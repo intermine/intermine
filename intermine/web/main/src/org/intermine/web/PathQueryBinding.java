@@ -104,7 +104,7 @@ public class PathQueryBinding
      * @param reader the saved queries
      * @return a Map from query name to PathQuery
      */
-    public Map unmarshal(Reader reader) {
+    public static Map unmarshal(Reader reader) {
         Map queries = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries));

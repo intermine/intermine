@@ -528,5 +528,12 @@ img.searchHeatImg {
   font-size: 11px;
 }
 
+.saveQueryForm {
+  margin-bottom: 5px;
+}
 
+.exportQueryLink {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 

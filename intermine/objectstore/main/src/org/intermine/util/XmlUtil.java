@@ -1,5 +1,10 @@
 package org.intermine.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+
+import org.apache.commons.lang.StringUtils;
+
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -134,6 +139,47 @@ public class XmlUtil
             return "java.lang.String";
         } else {
             throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
+        }
+    }
+    
+    /**
+     * Apply some indentiation to some XML. This method is not very sophisticated and will
+     * not cope well with anything but the simplest XML (no CDATA etc). The algorithm used does
+     * not look at element names and does not actually parse the XML. It also assumes that the
+     * forward slash and greater-than at the end of a self-terminating tag and not seperated by
+     * ant whitespace.
+     * 
+     * @param xmlString input XML fragment
+     * @return indented XML fragment
+     */
+    public static String indentXmlSimple(String xmlString) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        int indent = 0;
+        char bytes[] = xmlString.toCharArray();
+        int i = 0;
+        while (i < bytes.length) {
+            if (bytes[i] == '<' && bytes[i+1] == '/') {
+                os.write('\n');
+                writeIndentation(os, --indent);
+            } else if (bytes[i] == '<') {
+                if (i > 0) {
+                    os.write('\n');
+                }
+                writeIndentation(os, indent++);
+            } else if (bytes[i] == '/' && bytes[i+1] == '>') {
+                indent--;
+            } else if (bytes[i] == '>') {
+                
+            }
+            os.write(bytes[i++]);
+        }
+        return os.toString();
+    }
+    
+    private static void writeIndentation(ByteArrayOutputStream os, int indent) {
+        for (int j = 0; j < indent; j++) {
+            os.write(' ');
+            os.write(' ');
         }
     }
 }

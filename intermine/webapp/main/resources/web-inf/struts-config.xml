@@ -63,7 +63,10 @@
     
     <form-bean name="templateSearchForm"
                type="org.intermine.web.TemplateSearchForm"/>
-               
+    
+    <form-bean name="importQueryForm"
+               type="org.intermine.web.ImportQueryForm"/>
+                         
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -146,6 +149,9 @@
     <action path="/dataSet"
             forward="dataSet.page"/>
     
+    <action path="/importQuery"
+            forward="importQuery.page"/>
+    
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
@@ -153,6 +159,9 @@
 
     <action path="/exportTemplates"
             type="org.intermine.web.TemplatesExportAction"/>
+    
+    <action path="/exportQuery"
+            type="org.intermine.web.ExportQueryAction"/>
             
     <!-- Actions invoked using links -->
     
@@ -178,7 +187,7 @@
             type="org.intermine.web.ConfirmAction">
       <forward name="confirm" path="confirm.page"/>
     </action>
-
+    
     <action path="/collectionDetails"
             type="org.intermine.web.results.CollectionDetailsAction">
       <forward name="results" path="/results.do" redirect="true"/>
@@ -192,7 +201,7 @@
     <action path="/userTemplateAction"
             type="org.intermine.web.UserTemplateAction"
             parameter="method">
-      <forward name="begin" path="/begin.do" redirect="true"/> <!-- need to redirect -->
+      <forward name="begin" path="/begin.do" redirect="true"/>
       <forward name="template" path="template.page"/>
     </action>
 
@@ -331,6 +340,15 @@
       <forward name="begin" path="/begin.do" redirect="true"/>
     </action>
     
+    <action path="/importQueryAction"
+            type="org.intermine.web.ImportQueryAction"
+            scope="request"
+            name="importQueryForm"
+            input="importQuery">
+      <forward name="importQuery" path="importQuery.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
+    </action>
+    
     <action path="/browseAction"
             type="org.intermine.web.TemplateAction"
             name="browseForm"
@@ -389,7 +407,7 @@
             name="buildTemplateForm"
             input="templateBuilder">
       <forward name="templateBuilder" path="templateBuilder.page"/>
-      <forward name="finish" path="/begin.do" redirect="true"/> <!-- need to redirect -->
+      <forward name="finish" path="/begin.do" redirect="true"/>
     </action>
 
     <action path="/templateSearch"

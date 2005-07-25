@@ -10,6 +10,8 @@
 <!-- view.jsp -->
 <html:xhtml/>
 
+<a name="showing"></a>
+
   <div class="heading">
     <fmt:message key="view.notEmpty.description"/><im:helplink key="view.help.output"/>
   </div>
@@ -110,11 +112,11 @@
       <div style="width: 100%"> <%-- IE table width bug workaround --%>
       <table width="100%">
         <tr>
-          <td align="left">
+          <td align="left" valign="top">
             <tiles:get name="saveQuery"/>
           </td>
           <c:if test="${!empty PROFILE.username}">
-            <td align="right">
+            <td align="right" valign="top">
               <tiles:get name="createTemplate"/>
             </td>
           </c:if>

@@ -47,7 +47,8 @@ public class ViewChange extends DispatchAction
 
         query.getView().remove(path);
 
-        return mapping.findForward("query");
+        return new ForwardParameters(mapping.findForward("query"))
+            .addAnchor("showing").forward();
     }
 
     /**
@@ -73,7 +74,8 @@ public class ViewChange extends DispatchAction
         view.set(index - 1, view.get(index));
         view.set(index, o);
 
-        return mapping.findForward("query");
+        return new ForwardParameters(mapping.findForward("query"))
+            .addAnchor("showing").forward();
     }
 
     /**
@@ -99,6 +101,7 @@ public class ViewChange extends DispatchAction
         view.set(index + 1, view.get(index));
         view.set(index, o);
 
-        return mapping.findForward("query");
+        return new ForwardParameters(mapping.findForward("query"))
+            .addAnchor("showing").forward();
     }
 }
