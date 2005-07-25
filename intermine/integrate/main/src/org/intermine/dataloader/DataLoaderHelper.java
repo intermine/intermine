@@ -12,7 +12,6 @@ package org.intermine.dataloader;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,7 +26,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
-import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
@@ -64,8 +62,6 @@ public class DataLoaderHelper
 
     protected static Map sourceKeys = new HashMap();
     protected static Map modelDescriptors = new HashMap();
-
-    private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
 
     /**
      * Compare the priorities of two sources over a field.
@@ -225,8 +221,8 @@ public class DataLoaderHelper
      */
     public static Query createPKQuery(Model model, InterMineObject obj,
                                       Source source, IntToIntMap idMap, boolean queryNulls)
-        throws MetaDataException {
-        try {
+         throws MetaDataException {
+
             int subCount = 0;
             Query q = new Query();
             q.setDistinct(false);
@@ -264,12 +260,7 @@ public class DataLoaderHelper
             default:
                 return q;
             }
-        } catch (Exception e) {
-            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
-                      + "[" + obj.getId() + "]");
-            LOG.error(e);
-            throw new MetaDataException("createPKQuery() failed for: " + obj, e);
-        }
+   
     }
 
     /**
@@ -290,7 +281,7 @@ public class DataLoaderHelper
     private static Set createPKQueriesForClass(Model model, InterMineObject obj, Source source,
                                                IntToIntMap idMap, boolean queryNulls,
                                                ClassDescriptor cld)
-        throws Exception {
+        throws MetaDataException {
         Set primaryKeys;
         if (source == null) {
             primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
@@ -320,7 +311,13 @@ public class DataLoaderHelper
                 String fieldName = (String) pkIter.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
                 if (fd instanceof AttributeDescriptor) {
-                    Object value = TypeUtil.getFieldValue(obj, fieldName);
+                    Object value;
+                    try {
+                        value = TypeUtil.getFieldValue(obj, fieldName);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("failed to get field value for field name: "
+                                                   + fieldName + " in " + obj, e);
+                    }
                     if (value == null) {
                         cs.addConstraint(new SimpleConstraint(new QueryField(qc,
                                                                              fieldName),
@@ -335,8 +332,13 @@ public class DataLoaderHelper
                     throw new MetaDataException("A collection cannot be part of"
                                                 + " a primary key");
                 } else if (fd instanceof ReferenceDescriptor) {
-                    InterMineObject refObj =
-                        (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
+                    InterMineObject refObj;
+                    try {
+                        refObj = (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("failed to get field proxy for field name: "
+                                                   + fieldName + " in " + obj, e);
+                    }
                     if (refObj == null) {
                         QueryObjectReference queryObjectReference =
                             new QueryObjectReference(qc, fieldName);
