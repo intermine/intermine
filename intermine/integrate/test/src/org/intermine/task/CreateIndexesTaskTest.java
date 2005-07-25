@@ -76,14 +76,14 @@ public class CreateIndexesTaskTest extends TestCase
     // test that primary key indexes are created on subclasses
     public void testCreateIndexesSubclasses() throws Exception {
         List expected = new ArrayList();
-        expected.add("create index Contractor__key on Contractor(seniority, id)");
-        expected.add("create index Contractor__key__nulls on Contractor((seniority IS NULL))");
-        expected.add("create index CEO__key on CEO(seniority, id)");
-        expected.add("create index CEO__key__nulls on CEO((seniority IS NULL))");
+        expected.add("create index Contractor__ImportantPerson__key on Contractor(seniority, id)");
+        expected.add("create index Contractor__ImportantPerson__key__nulls on Contractor((seniority IS NULL))");
+        expected.add("create index CEO__ImportantPerson__key on CEO(seniority, id)");
+        expected.add("create index CEO__ImportantPerson__key__nulls on CEO((seniority IS NULL))");
         expected.add("create index ImportantPerson__key on ImportantPerson(seniority, id)");
         expected.add("create index ImportantPerson__key__nulls on ImportantPerson((seniority IS NULL))");
-        expected.add("create index Manager__key on Manager(seniority, id)");
-        expected.add("create index Manager__key__nulls on Manager((seniority IS NULL))");
+        expected.add("create index Manager__ImportantPerson__key on Manager(seniority, id)");
+        expected.add("create index Manager__ImportantPerson__key__nulls on Manager((seniority IS NULL))");
 
         CreateIndexesTask task = new CreateIndexesTask();
         task.setAlias("os.unittest");
