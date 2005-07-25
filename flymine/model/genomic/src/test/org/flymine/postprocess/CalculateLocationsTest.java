@@ -97,37 +97,51 @@ public class CalculateLocationsTest extends TestCase {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setIdentifier("X");
-        chr.setLength(new Integer(1000000));
+        chr.setLength(new Integer(1000));
         chr.setId(new Integer(101));
 
         Set toStore = new HashSet();
 
         toStore.add(chr);
 
-        Exon[] exons = new Exon[10];
-        Location[] exonLocs = new Location[10];
+        int [][] exonInfo = {
+            { 1000, 1, 1 },
+            { 1001, 2, 10 },
+            { 1002, 10, 15 },
+            { 1003, 16, 19 },
+            { 1004, 16, 19 },
+            { 1005, 20, 29 },
+            { 1006, 30, 100 },
+            { 1007, 30, 34 },
+            { 1008, 32, 95 },
+            { 1009, 38, 53 },
+            { 1010, 40, 50 },
+            { 1011, 44, 44 },
+            { 1012, 54, 54 },
+            { 1013, 54, 54 },
+            { 1014, 60, 70 },
+            { 1015, 120, 140 },
+            { 1016, 141, 145 },
+            { 1017, 146, 180 },
+            { 1018, 220, 240 },
+            { 1019, 240, 245 },
+            { 1020, 245, 280 },
+        };
 
-        for (int i = 0; i<exons.length - 1; i++) {
+        Exon[] exons = new Exon[exonInfo.length];
+        Location[] exonLocs = new Location[exonInfo.length];
+
+        for (int i = 0; i < exons.length; i++) {
             exons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-            exons[i].setId(new Integer(200 + i));
-            int start = i * 9000 + 1;
-            int end = i * 9000 + 9900 + i;
+            int exonId = exonInfo[i][0];
+            int start = exonInfo[i][1];
+            int end = exonInfo[i][2];
+            exons[i].setId(new Integer(exonId));
             exons[i].setLength(new Integer(end - start + 1));
             exons[i].setChromosome(chr);
             exonLocs[i] = createLocation(chr, exons[i], 1, start, end, Location.class);
-            exonLocs[i].setId(new Integer(1000 + i));
+            exonLocs[i].setId(new Integer(1000 + exonId));
         }
-
-        int exonsSoFar = exons.length - 1;
-
-        exons[exonsSoFar] =
-            (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        exons[exonsSoFar].setId(new Integer(250));
-        exons[exonsSoFar].setLength(new Integer(45000 - 25000 + 1));
-        exons[exonsSoFar].setChromosome(chr);
-        exonLocs[exonsSoFar] =
-            createLocation(chr, exons[exons.length - 1], 1, 25000, 45000, Location.class);
-        exonLocs[exonsSoFar].setId(new Integer(1500));
 
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
@@ -145,8 +159,31 @@ public class CalculateLocationsTest extends TestCase {
 
         ///////////////////////////////
 
-        int [] expectedOverlapObj1 = {200, 201, 202, 202, 203, 203, 204, 204, 205, 206, 207};
-        int [] expectedOverlapObj2 = {201, 202, 203, 250, 204, 250, 250, 205, 206, 207, 208};
+        int [][] expectedOverlaps = {
+            { 1001, 1002 },
+            { 1003, 1004 },
+            { 1006, 1007 },
+            { 1006, 1008 },
+            { 1006, 1009 },
+            { 1006, 1010 },
+            { 1006, 1011 },
+            { 1006, 1012 },
+            { 1006, 1013 },
+            { 1006, 1014 },
+            { 1007, 1008 },
+            { 1008, 1009 },
+            { 1008, 1010 },
+            { 1008, 1011 },
+            { 1008, 1012 },
+            { 1008, 1013 },
+            { 1008, 1014 },
+            { 1009, 1010 },
+            { 1009, 1011 },
+            { 1010, 1011 },
+            { 1012, 1013 },
+            { 1018, 1019 },
+            { 1019, 1020 },
+        };
 
         Query q = new Query();
         QueryClass qc = new QueryClass(OverlapRelation.class);
@@ -155,7 +192,7 @@ public class CalculateLocationsTest extends TestCase {
         SingletonResults res =
             new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore().getSequence());
 
-        assertEquals(expectedOverlapObj1.length, res.size());
+        assertEquals(expectedOverlaps.length, res.size());
 
         Iterator resIter = res.iterator();
       RESULTS:
@@ -168,11 +205,11 @@ public class CalculateLocationsTest extends TestCase {
             LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) beIter.next();
             LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) beIter.next();
 
-            for (int i = 0; i < expectedOverlapObj1.length; i++) {
-                if (lsf1.getId().intValue() == expectedOverlapObj1[i] &&
-                    lsf2.getId().intValue() == expectedOverlapObj2[i] ||
-                    lsf1.getId().intValue() == expectedOverlapObj2[i] &&
-                    lsf2.getId().intValue() == expectedOverlapObj1[i]) {
+            for (int i = 0; i < expectedOverlaps.length; i++) {
+                if (lsf1.getId().intValue() == expectedOverlaps[i][0] &&
+                    lsf2.getId().intValue() == expectedOverlaps[i][1] ||
+                    lsf1.getId().intValue() == expectedOverlaps[i][0] &&
+                    lsf2.getId().intValue() == expectedOverlaps[i][1]) {
                     continue RESULTS;
                 }
             }

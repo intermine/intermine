@@ -29,8 +29,6 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 
 import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.*;
-import org.flymine.util.OverlapUtil;
-
 import org.apache.log4j.Logger;
 
 
@@ -460,52 +458,6 @@ public class CalculateLocations
 
         LOG.info("Stored " + count + " overlaps for " + subject + ", identifier: "
                  + subject.getIdentifier());
-    }
-
-    /**
-     * Find the length of the longest feature located on the given subject.
-     * @param subject find max length of objects located on this BioEntity
-     * @return the length of the longest feature
-     */
-    public int getMaxObjectLength(Chromosome subject) {
-        Query q = new Query();
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        q.setConstraint(cs);
-
-        QueryClass qcObj = new QueryClass(LocatedSequenceFeature.class);
-        q.addFrom(qcObj);
-
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-
-        QueryClass qcSub = new QueryClass(BioEntity.class);
-        q.addFrom(qcSub);
-
-        QueryField subIdQF = new QueryField(qcSub, "id");
-        SimpleConstraint chrConstraint =
-            new SimpleConstraint(subIdQF, ConstraintOp.EQUALS, new QueryValue(subject.getId()));
-
-        cs.addConstraint(chrConstraint);
-
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
-        cs.addConstraint(cc1);
-
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
-        cs.addConstraint(cc2);
-
-
-        QueryField qfObjLength = new QueryField(qcObj, "length");
-
-        QueryFunction maxFunc = new QueryFunction(qfObjLength, QueryFunction.MAX);
-
-        q.addToSelect(maxFunc);
-
-        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
-        Integer maxLength = (Integer) sr.iterator().next();
-
-        return maxLength.intValue();
     }
 
     /**
