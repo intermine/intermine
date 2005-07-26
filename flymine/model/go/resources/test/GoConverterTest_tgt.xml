@@ -1,88 +1,87 @@
 <items>
-  <item id="2_7" class="http://www.flymine.org/model/genomic#GOEvidence">
-    <attribute name="code" value="ISS"/>
-  </item>
   <item id="0_0" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="UniProt"/>
   </item>
-  <item id="5_15" class="http://www.flymine.org/model/genomic#GOTerm">
+  <item id="4_12" class="http://www.flymine.org/model/genomic#GOTerm">
     <attribute name="identifier" value="GO:0030122"/>
   </item>
-  <item id="6_19" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_18"/>
-    <reference name="subject" ref_id="7_14"/>
+  <item id="5_16" class="http://www.flymine.org/model/genomic#GOAnnotation">
+    <attribute name="identifier" value="GO:0006901"/>
+    <attribute name="name" value="vesicle coating"/>
+    <attribute name="evidenceCode" value="TAS"/>
+    <reference name="property" ref_id="4_15"/>
+    <reference name="subject" ref_id="6_11"/>
     <collection name="evidence">
-      <reference ref_id="2_2"/>
-      <reference ref_id="0_11"/>
-      <reference ref_id="1_17"/>
+      <reference ref_id="0_9"/>
+      <reference ref_id="1_14"/>
     </collection>
   </item>
-  <item id="0_11" class="http://www.flymine.org/model/genomic#Database">
+  <item id="0_9" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="FlyBase"/>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="3_3" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="At4g36380"/>
-    <reference name="organism" ref_id="3_3"/>
+    <reference name="organism" ref_id="2_2"/>
   </item>
-  <item id="1_17" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="1_14" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="10218159"/>
   </item>
-  <item id="2_2" class="http://www.flymine.org/model/genomic#GOEvidence">
-    <attribute name="code" value="TAS"/>
-  </item>
-  <item id="5_9" class="http://www.flymine.org/model/genomic#GOTerm">
+  <item id="4_7" class="http://www.flymine.org/model/genomic#GOTerm">
     <attribute name="identifier" value="GO:0019825"/>
   </item>
-  <item id="3_3" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="3702"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="9694802"/>
   </item>
-  <item id="6_6" class="http://www.flymine.org/model/genomic#Annotation">
+  <item id="5_5" class="http://www.flymine.org/model/genomic#GOAnnotation">
+    <attribute name="identifier" value="GO:0008395"/>
+    <attribute name="name" value="steroid hydroxylase activity"/>
+    <attribute name="evidenceCode" value="TAS"/>
     <attribute name="qualifier" value="NOT"/>
-    <reference name="property" ref_id="5_5"/>
-    <reference name="subject" ref_id="4_4"/>
+    <reference name="property" ref_id="4_4"/>
+    <reference name="subject" ref_id="3_3"/>
     <collection name="evidence">
-      <reference ref_id="2_2"/>
       <reference ref_id="0_0"/>
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="6_10" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_9"/>
-    <reference name="subject" ref_id="4_8"/>
+  <item id="5_8" class="http://www.flymine.org/model/genomic#GOAnnotation">
+    <attribute name="identifier" value="GO:0019825"/>
+    <attribute name="name" value="oxygen binding"/>
+    <attribute name="evidenceCode" value="ISS"/>
+    <reference name="property" ref_id="4_7"/>
+    <reference name="subject" ref_id="3_6"/>
     <collection name="evidence">
-      <reference ref_id="2_7"/>
       <reference ref_id="0_0"/>
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="7_14" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="6_11" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="FBgn0015567"/>
-    <reference name="organism" ref_id="3_13"/>
+    <reference name="organism" ref_id="2_10"/>
   </item>
-  <item id="4_8" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="3_6" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="At4g36380"/>
   </item>
-  <item id="6_16" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_15"/>
-    <reference name="subject" ref_id="7_14"/>
+  <item id="5_13" class="http://www.flymine.org/model/genomic#GOAnnotation">
+    <attribute name="identifier" value="GO:0030122"/>
+    <attribute name="name" value="AP-2 adaptor complex"/>
+    <attribute name="evidenceCode" value="NAS"/>
+    <reference name="property" ref_id="4_12"/>
+    <reference name="subject" ref_id="6_11"/>
     <collection name="evidence">
-      <reference ref_id="2_12"/>
-      <reference ref_id="0_11"/>
+      <reference ref_id="0_9"/>
     </collection>
   </item>
-  <item id="3_13" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="2_10" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="5_5" class="http://www.flymine.org/model/genomic#GOTerm">
+  <item id="4_4" class="http://www.flymine.org/model/genomic#GOTerm">
     <attribute name="identifier" value="GO:0008395"/>
   </item>
-  <item id="5_18" class="http://www.flymine.org/model/genomic#GOTerm">
+  <item id="4_15" class="http://www.flymine.org/model/genomic#GOTerm">
     <attribute name="identifier" value="GO:0006901"/>
-  </item>
-  <item id="2_12" class="http://www.flymine.org/model/genomic#GOEvidence">
-    <attribute name="code" value="NAS"/>
   </item>
 </items>

@@ -22,6 +22,7 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.ontology.DagParser;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 
@@ -36,9 +37,9 @@ public class GoConverter extends FileConverter
     protected ItemWrapper product = null;
     protected Map goTerms = new HashMap();
     protected Map databases = new HashMap();
-    protected Map evidenceCodes = new HashMap();
     protected Map publications = new HashMap();
     protected Map organisms = new HashMap();
+    protected Map termIdNameMap = new HashMap();
     protected int id = 0;
 
     /**
@@ -46,8 +47,11 @@ public class GoConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public GoConverter(ItemWriter writer) throws ObjectStoreException {
+    public GoConverter(ItemWriter writer, Reader goReader) throws Exception {
         super(writer);
+        DagParser parser = new DagParser();
+        termIdNameMap = parser.getTermIdNameMap(goReader);
+        System.out.println("termIdNameMap.size(): " + termIdNameMap.size());
     }
 
     /**
@@ -64,7 +68,7 @@ public class GoConverter extends FileConverter
             Item annotation = newAnnotation(array[3],
                                             newDatabase(array[14]),
                                             newPublication(array[5]),
-                                            newEvidenceCode(array[6]),
+                                            array[6],
                                             newProduct(array[1], array[11], newOrganism(array[12])),
                                             newGoTerm(array[4]));
             writer.store(ItemHelper.convert(annotation));
@@ -77,7 +81,6 @@ public class GoConverter extends FileConverter
     public void close() throws ObjectStoreException {
         store(goTerms.values());
         store(databases.values());
-        store(evidenceCodes.values());
         store(publications.values());
         store(organisms.values());
     }
@@ -93,17 +96,22 @@ public class GoConverter extends FileConverter
      * @param goTerm the goTerm
      * @return the annotation
      */
-    protected Item newAnnotation(String qualifier, Item database, Item publication, Item goEvidence,
+    protected Item newAnnotation(String qualifier, Item database, Item publication, String goEvidence,
                                  Item product, Item goTerm) {
-        Item item = newItem("Annotation");
+        Item item = newItem("GOAnnotation");
         if (!"".equals(qualifier)) {
             item.addAttribute(new Attribute("qualifier", qualifier));
         }
-        item.addReference(new Reference("subject", product.getIdentifier()));
-        item.addReference(new Reference("property", goTerm.getIdentifier()));
+        String goId = goTerm.getAttribute("identifier").getValue();
+        item.setAttribute("identifier", goId);
+        if (termIdNameMap.containsKey(goId)) {
+            item.setAttribute("name", (String) termIdNameMap.get(goId));
+        }
+        item.setAttribute("evidenceCode", goEvidence);
+        item.setReference("subject", product.getIdentifier());
+        item.setReference("property", goTerm.getIdentifier());
         ReferenceList references = new ReferenceList();
         references.setName("evidence");
-        references.addRefId(goEvidence.getIdentifier());
         references.addRefId(database.getIdentifier());
         if (publication != null) {
             references.addRefId(publication.getIdentifier());
@@ -201,20 +209,6 @@ public class GoConverter extends FileConverter
         return item;
     }
 
-    /**
-     * Create a new evidence code given a code
-     * @param code the code
-     * @return the evidence code
-     */
-    protected Item newEvidenceCode(String code) {
-        Item item = (Item) evidenceCodes.get(code);
-        if (item == null) {
-            item = newItem("GOEvidence");
-            item.addAttribute(new Attribute("code", code));
-            evidenceCodes.put(code, item);
-        }
-        return item;
-    }
 
     /**
      * Create a new publication given list of codes
