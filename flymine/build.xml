@@ -541,8 +541,8 @@
                 merge-go-model, merge-uniprot-model,
                 merge-protein_structure-model, merge-so-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
-                merge-chado-model, merge-homophila-model,
-                merge-drosdel-model, merge-shortcuts">
+                merge-chado-model, merge-homophila-model, merge-mage-model,
+                merge-bdgp_clone-model, merge-drosdel-model, merge-shortcuts">
   </target>
 
   <!-- create class files from a model in an ObjectStore -->
@@ -1509,6 +1509,9 @@
   </target>
 
   <target name="retrieve-go-annotation" depends="prepare-build-model, compile-go-java">
+    
+    <copy file="${model}/go/go-combined.ontology" toDir="${build.model}/go"/>
+
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1521,9 +1524,10 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic" 
+                  ontology="${build}/model/go/go-combined.ontology">
       <fileset dir="/shared/data/go-annotation">
-        <include name="gene_association*"/>
+        <include name="gene_association_*"/>
       </fileset>
     </convert-file>
 
@@ -2477,7 +2481,7 @@
     </ant>
   </target>
 
-  <target name="compile-genomic-java" depends="compile-flymine-java, compile-genomic-model">
+  <target name="compile-genomic-java" depends="prepare, compile-flymine-java, compile-genomic-model">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>

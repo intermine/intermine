@@ -10,7 +10,9 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.File;
 import java.io.Reader;
+import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,23 +43,32 @@ public class GoConverter extends FileConverter
     protected Map organisms = new HashMap();
     protected Map termIdNameMap = new HashMap();
     protected int id = 0;
+    protected File ontology;
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public GoConverter(ItemWriter writer, Reader goReader) throws Exception {
+    public GoConverter(ItemWriter writer) throws Exception {
         super(writer);
-        DagParser parser = new DagParser();
-        termIdNameMap = parser.getTermIdNameMap(goReader);
-        System.out.println("termIdNameMap.size(): " + termIdNameMap.size());
+    }
+
+
+    public void setOntology(File ontology) {
+        this.ontology = ontology;
     }
 
     /**
      * @see FileConverter#process
      */
     public void process(Reader reader) throws ObjectStoreException, IOException {
+        DagParser parser = new DagParser();
+        try {
+            termIdNameMap = parser.getTermIdNameMap(new FileReader(ontology));
+        } catch (Exception e) {
+            throw new IOException("" + e);
+        }
         BufferedReader br = new BufferedReader(reader);
         String line;
         while ((line = br.readLine()) != null) {
