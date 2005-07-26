@@ -143,7 +143,6 @@
     <path id="genomic.class.path">
       <path refid="base.class.path"/>
       <pathelement location="${build.model}/genomic"/>
-      <pathelement location="${build.model}/genomic/flymine"/>
     </path>
 
     <path id="webapp.class.path">
@@ -3243,10 +3242,18 @@
       <!--antcall target="analyse-db-production"/-->
       <!--antcall target="create-indexes-production-attribute"/-->
       <!--antcall target="analyse-db-production"/-->
+      <!--antcall target="create-chromosome-locations-and-lengths"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="create-overlap-relations"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="create-symmetrical-relation-references"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="make-spanning-locations"/>
+      <antcall target="analyse-db-production"/-->
   </target>
 
 
-  <!--COMPILATION AND TESTING TARGETS -->
+  <!-- COMPILATION AND TESTING TARGETS -->
   <target name="compile-ensembl-human-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ensembl-human"/>
@@ -3718,6 +3725,61 @@
 
   <target name="build-ensembl-disease-production"
           depends="retrieve-ensembl-disease, load-ensembl-disease"/>
+
+
+
+  <!-- comparativeGenomics model is added to model/genomic/shortcuts.xml -->
+  
+  
+  <!--load comparativeGenomics mouseChain GFF3 data from UCSC-->
+  <target name="retrieve-mousechain" depends="prepare-build-model, compile-genomic-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="UCSC"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
+      <fileset dir ="/shared/data/human/comparativeGenomics">
+        <include name ="mouseChain.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-mousechain" depends="copy-t1dmine-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.production"
+               source="os.gff3-translated"
+               sourceName="mousechain"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-mousechain-production" depends="retrieve-mousechain, load-mousechain"/>
 
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
