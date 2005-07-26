@@ -13,6 +13,7 @@ package org.intermine.ontology;
 import java.util.Stack;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Iterator;
@@ -64,6 +65,23 @@ public class DagParser
         readTerms(new BufferedReader(replaceRelationStrings(in)));
         fixOrphans();
         return rootTerms;
+    }
+
+    /**
+     * Parse a DAG file to produce a set map from ontology term id to name.
+     * @param in text in DAG format
+     * @return a map from ontology term identifier to name
+     * @throws Exception if anything goes wrong
+     */
+    public Map getTermIdNameMap(Reader in) throws Exception {
+        readTerms(new BufferedReader(replaceRelationStrings(in)));
+
+        Map termIdNameMap = new HashMap();
+        Iterator rootIter = rootTerms.iterator();
+        while (rootIter.hasNext()) {
+            createTermIdNameMap(termIdNameMap, (DagTerm) rootIter.next());
+        }
+        return termIdNameMap;
     }
 
     /**
@@ -290,6 +308,22 @@ public class DagParser
             readTree((DagTerm) iter.next(), isas, partofs);
         }
     }
+
+    protected void createTermIdNameMap(Map termIdNameMap, DagTerm term) {
+        if (!termIdNameMap.containsKey(term.getId())) {
+            Iterator iter = term.getChildren().iterator();
+            while (iter.hasNext()) {
+                createTermIdNameMap(termIdNameMap, (DagTerm) iter.next());
+            }
+
+            iter = term.getComponents().iterator();
+            while (iter.hasNext()) {
+                createTermIdNameMap(termIdNameMap, (DagTerm) iter.next());
+            }
+            termIdNameMap.put(term.getId(), term.getName());
+        }
+    }
+
 
     /**
      * Inner class to identify a DagTerm by its name and id.  If the same id has two different
