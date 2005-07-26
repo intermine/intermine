@@ -211,11 +211,6 @@ public class TorqueModelOutput
             .append("\">" + ENDL)
             .append(generateColumn(column1, "int"))
             .append(generateColumn(column2, "int"))
-            .append(INDENT + INDENT + "<unique name=\"" + column1 + "_"
-                    + column2 + "_unique_constraint\">" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<unique-column name=\"" + column1 + "\"/>" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<unique-column name=\"" + column2 + "\"/>" + ENDL)
-            .append(INDENT + INDENT + "</unique>" + ENDL)
             .append(INDENT + "</table>" + ENDL);
         return sb.toString();
     }
