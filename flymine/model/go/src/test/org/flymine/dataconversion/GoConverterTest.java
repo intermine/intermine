@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.TargetItemsTestCase;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.xml.full.FullParser;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -34,10 +35,13 @@ public class GoConverterTest extends TargetItemsTestCase
 
     public void testTranslate() throws Exception {
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/GoConverterTest_src.txt"));
+        Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/go-tiny.ontology"));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        FileConverter converter = new GoConverter(writer);
+        FileConverter converter = new GoConverter(writer, goReader);
         converter.process(reader);
         converter.close();
+
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
         assertEquals(new HashSet(getExpectedItems()), writer.getItems());
     }
 
