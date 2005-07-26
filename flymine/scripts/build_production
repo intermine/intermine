@@ -137,7 +137,7 @@ sub dump_db
   my $exp = new Expect;
 
   $exp->raw_pty(1);
-  $exp->spawn(@dump_command, @params)
+  $exp->spawn("@dump_command @params; echo __DUMP_FINISHED__")
     or die "Cannot spawn @dump_command @params: $!\n";
 
   ## Doesn't work:
@@ -145,6 +145,7 @@ sub dump_db
 
   $exp->expect(10, 'Password: ');
   $exp->send("$pass\n");
+  $exp->expect(9999999, '__DUMP_FINISHED__\n');
   $exp->soft_close();
 }
 
