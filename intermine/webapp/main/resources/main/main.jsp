@@ -249,6 +249,11 @@
                                title="${removeConstraintTitle}">
                       <img border="0" src="images/cross.gif" width="13" height="13" alt="x"/>
                     </html:link>
+                    <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
+                    <html:link action="/mainChange?method=editConstraint&amp;path=${node.path}&amp;index=${status.index}"
+                               title="${editConstraintTitle}">
+                      <img border="0" src="images/edit.gif" width="13" height="13" alt="x"/>
+                    </html:link>
                   </div>
                 </c:forEach>
               </div>
@@ -330,7 +335,9 @@
           if (attrOptsElement == null)
             return;
           
-          attrValElement.value = attrOptsElement.value;
+          var init = '${editingConstraintValue}';
+          attrValElement.value = (init != '') ? init : attrOptsElement.value;
+            
           updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
         }
         
@@ -354,6 +361,9 @@
         
         <html:form action="/mainAction">
           <html:hidden property="path" value="${editingNode.path}"/>
+          <c:if test="${editingConstraintIndex != null}">
+            <html:hidden property="cindex" value="${editingConstraintIndex}"/>
+          </c:if>
           <c:choose>
             <c:when test="${editingNode.attribute}">
               <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" height="65">
@@ -370,15 +380,19 @@
                       <td valign="top">
                         <html:select property="attributeOp" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue)">
                           <c:forEach items="${validOps}" var="op">
-                            <html:option value="${op.key}">
+                            <option value="${op.key}"
+                              <c:if test="${editingConstraintOperand == op.key}">
+                                selected
+                              </c:if>
+                            >
                               <c:out value="${op.value}"/>
-                            </html:option>
+                            </option>
                           </c:forEach>
                         </html:select>
                       </td>
                       <td valign="top" align="center">
                         <span id="operandEditSpan0">
-                          <html:text property="attributeValue"/>
+                          <html:text property="attributeValue" value="${editingConstraintValue}"/>
                           <%-- might want to show up arrow --%>
                           <c:if test="${!empty options}">
                             <br/><im:vspacer height="2"/>
@@ -389,7 +403,11 @@
                         <c:if test="${!empty options}">
                           <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
                           <c:forEach items="${options}" var="option">
-                            <option value="${option}">
+                            <option value="${option}"
+                              <c:if test="${editingConstraintValue == option}">
+                                selected
+                              </c:if>
+                            >
                               <c:out value="${option}"/>
                             </option>
                           </c:forEach>
