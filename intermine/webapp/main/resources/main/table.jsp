@@ -141,7 +141,18 @@
               </c:choose>
             </c:set>
           
-            <th align="center" rowspan="2">
+            <c:choose>
+              <c:when test="${fn:length(resultsTable.columns) > 1}">
+                <c:set var="headerStyle" value="border-bottom: none"/>
+                <c:set var="headerRowspan" value="2"/>
+              </c:when>
+              <c:otherwise>
+                <c:set var="headerStyle" value=""/>
+                <c:set var="headerRowspan" value="1"/>
+              </c:otherwise>
+            </c:choose>
+
+            <th align="center" rowspan="${headerRowspan}">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
                              onclick="selectColumnCheckbox(${status.index}, '${dataType}')"
                              disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
@@ -149,7 +160,7 @@
               </html:multibox>
             </th>
 
-            <th align="center" valign="top" style="border-bottom: none">
+            <th align="center" valign="top" style="${headerStyle}">
               <div>
                 <c:out value="${fn:replace(column.name, '.', ' > ')}"/>
               </div>
@@ -157,7 +168,10 @@
           </c:forEach>
         </tr>
 
-        <tr>
+        <c:if test="${fn:length(resultsTable.columns) > 1}">
+          <%-- put in left, right, hide and show buttons --%>
+        
+          <tr>
           <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
             <th align="center">
               <div style="white-space:nowrap">
@@ -239,7 +253,8 @@
               </div>
             </th>
           </c:forEach>
-        </tr>
+          </tr>
+        </c:if>
 
         <%-- The data --%>
 
