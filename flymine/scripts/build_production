@@ -10,14 +10,15 @@ use warnings;
 use Expect;
 
 my $dump_file_prefix;
+my $dump_host;
 
 sub usage
 {
   die <<'EOF';
 usage:
-  $0 dump_file_prefix
+  $0 dump_host dump_file_prefix
 or
-  $0 -v dump_file_prefix
+  $0 -v dump_host dump_file_prefix
 
 the -v flag is passed to ant
 
@@ -28,18 +29,16 @@ EOF
 
 my $verbose = 0;
 
-if (@ARGV == 1 or @ARGV == 2) {
-  if (@ARGV == 2) {
-    if ($ARGV[0] eq '-v') {
-      $verbose = 1;
-    } else {
-      warn "unknown first argument $ARGV[0]\n";
-      usage;
-    }
-    $dump_file_prefix = $ARGV[1];
-  } else {
-    $dump_file_prefix = $ARGV[0];
+if (@ARGV > 0) {
+  if ($ARGV[0] eq '-v') {
+    $verbose = 1;
+    shift;
   }
+}
+
+if (@ARGV == 2) {
+  $dump_host = $ARGV[0];
+  $dump_file_prefix = $ARGV[1];
 } else {
   usage;
 }
@@ -137,7 +136,7 @@ sub dump_db
   my $exp = new Expect;
 
   $exp->raw_pty(1);
-  $exp->spawn("@dump_command @params; echo __DUMP_FINISHED__")
+  $exp->spawn("ssh", $dump_host, "@dump_command @params; echo __DUMP_FINISHED__")
     or die "Cannot spawn @dump_command @params: $!\n";
 
   ## Doesn't work:
