@@ -29,6 +29,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Action to handle links on main tile
@@ -163,7 +164,10 @@ public class MainChange extends DispatchAction
         String path = request.getParameter("path");
 
         session.setAttribute("editingNode", query.getNodes().get(path));
-
+        session.removeAttribute("editingConstraintIndex");
+        session.removeAttribute("editingConstraintValue");
+        session.removeAttribute("editingConstraintOperand");
+        
         return mapping.findForward("query");
     }
 
@@ -190,6 +194,43 @@ public class MainChange extends DispatchAction
 
         return mapping.findForward("query");
     }
+    
+    /**
+     * Edit a constraint (identified by index) from a Node
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward editConstraint(ActionMapping mapping,
+                                        ActionForm form,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String path = request.getParameter("path");
+        int index = Integer.parseInt(request.getParameter("index"));
+
+        session.setAttribute("editingNode", query.getNodes().get(path));
+        session.setAttribute("editingConstraintIndex", new Integer(index));
+        
+        PathNode pn = (PathNode) query.getNodes().get(path);
+        Constraint c = (Constraint) pn.getConstraints().get(index);
+        ConstraintOp op = c.getOp();
+        if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL &&
+                op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
+            session.setAttribute("editingConstraintValue", c.getValue());
+            session.setAttribute("editingConstraintOperand", c.getOp().getIndex());
+        } else {
+            session.removeAttribute("editingConstraintValue");
+            session.removeAttribute("editingConstraintOperand");
+        }
+        
+        return mapping.findForward("query");
+    }                               
 
     /**
      * Add a Node to the query
@@ -218,6 +259,9 @@ public class MainChange extends DispatchAction
         }
         //automatically start editing node
         session.setAttribute("editingNode", node);
+        session.removeAttribute("editingConstraintIndex");
+        session.removeAttribute("editingConstraintValue");
+        session.removeAttribute("editingConstraintOperand");
         //and change metadata view if relevant
         if (!node.isAttribute()) {
             session.setAttribute("prefix", path);

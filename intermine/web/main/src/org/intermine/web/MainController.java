@@ -96,6 +96,7 @@ public class MainController extends TilesAction
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         request.setAttribute("viewPaths", listToMap(query.getView()));
+        request.setAttribute("viewPathOrder", createIndexMap(query.getView()));
         request.setAttribute("viewPathTypes", getPathTypes(query.getView(), query));
         Map prefixes = getViewPathLinkPaths(query);
         request.setAttribute("viewPathLinkPrefixes", prefixes);
@@ -119,6 +120,20 @@ public class MainController extends TilesAction
         request.setAttribute("navigationPaths", navigationPaths);
 
         return null;
+    }
+
+    /**
+     * Given a input List, return a Map from list element value to list index.
+     * 
+     * @param list a List
+     * @return Map from list element values to list index Integer
+     */
+    protected static Map createIndexMap(List list) {
+        HashMap map = new HashMap();
+        for (int i = 0; i < list.size(); i++) {
+            map.put(list.get(i), new Integer(i));
+        }
+        return map;
     }
 
     /**

@@ -47,6 +47,16 @@ public class MainAction extends InterMineAction
 
         PathNode node = (PathNode) query.getNodes().get(mf.getPath());
 
+        Integer cindex = (request.getParameter("cindex") != null) ?
+                new Integer(request.getParameter("cindex")) : null;
+        if (cindex != null) {
+            // We're updating an existing constraint, just remove the old one
+            node.removeConstraint((Constraint) node.getConstraints().get(cindex.intValue()));
+            session.removeAttribute("editingConstraintIndex");
+            session.removeAttribute("editingConstraintValue");
+            session.removeAttribute("editingConstraintOperand");
+        }
+        
         if (request.getParameter("attribute") != null) {
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getAttributeOp()));
