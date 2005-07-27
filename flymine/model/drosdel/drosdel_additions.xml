@@ -8,8 +8,7 @@
     <reference name="element2" 
                referenced-type="org.flymine.model.genomic.TransposableElementInsertionSite"/>
   </class>
-  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" 
-         extends="org.flymine.model.genomic.Deletion" is-interface="true">
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
     <attribute name="type" type="java.lang.String"/> 
     <attribute name="subType" type="java.lang.String"/> 
   </class>
