@@ -3,8 +3,10 @@
 <class name="org.flymine.model.genomic.MicroArrayAssay" is-interface="true">
   <attribute name="name" type="java.lang.String"/>
   <attribute name="description" type="java.lang.String"/>
+  <attribute name="sample1" type="java.lang.String"/>
+  <attribute name="sample2" type="java.lang.String"/>
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="assays"/> 
- <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"  reverse-reference="assay"/>
+  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"  reverse-reference="assay"/>
   <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" reverse-reference="assay"/>
 </class>
 <class name="org.flymine.model.genomic.SampleCharacteristic" is-interface="true">
@@ -64,7 +66,7 @@
   <reference name="reporter" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
   <reference name="material" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="results"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="microArrayResults"/>
-  <collection name="samples" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true"/>
+  <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="genes"/>

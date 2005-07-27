@@ -84,6 +84,7 @@ public class MageDataTranslator extends DataTranslator
 
     protected Set microArrayResults = new HashSet();
     protected Set samples = new HashSet();
+    protected Map samplesById = new HashMap();
     // keep track of Reporter identifiers that are controls to set MicroArrayResult.isContol
     protected Set controls = new HashSet();
     protected Map labeledExtractToMeasuredBioAssay = new HashMap();
@@ -209,6 +210,7 @@ public class MageDataTranslator extends DataTranslator
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
 
+        // needs to be called before other processXX methods
         i = processSamples().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
@@ -792,6 +794,7 @@ public class MageDataTranslator extends DataTranslator
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
         }
 
+        samplesById.put(tgtItem.getIdentifier(), tgtItem);
         samples.add(tgtItem);
 
         return charItems;
@@ -900,10 +903,37 @@ public class MageDataTranslator extends DataTranslator
             if (assayToExperiment.containsKey(assayId)) {
                 assay.setReference("experiment", (String) assayToExperiment.get(assayId));
             }
+            if (assayToSamples.containsKey(assayId)) {
+                List sampleIds = (List) assayToSamples.get(assayId);
+                if (sampleIds.get(0) != null) {
+                    String summary =  getSampleSummary((String) sampleIds.get(0));
+                    if (summary != null) {
+                        assay.setAttribute("sample1", summary);
+                    }
+                }
+                if (sampleIds.get(1) != null) {
+                    String summary =  getSampleSummary((String) sampleIds.get(1));
+                    if (summary != null) {
+                        assay.setAttribute("sample2", summary);
+                    }
+                }
+            }
         }
         return assays;
     }
 
+
+    private String getSampleSummary(String id) {
+        Item sample = (Item) samplesById.get(id);
+        String summary = "";
+        if (sample != null
+            && sample.getAttribute("primaryCharacteristicType") != null
+            && sample.getAttribute("primaryCharacteristic") != null) {
+            return sample.getAttribute("primaryCharacteristicType").getValue()
+            + ": " + sample.getAttribute("primaryCharacteristic").getValue();
+        }
+        return null;
+    }
 
     // set MicroArrayResult.assay
     // call processSamples first to set MicroArrayResult.sample
@@ -941,16 +971,13 @@ public class MageDataTranslator extends DataTranslator
                     } else {
                         maResult.setAttribute("isControl", "false");
                     }
+                    // MicroArrayResult.material
                     if (reporterToMaterial.containsKey(reporterId)) {
                         maResult.setReference("material", (String) reporterToMaterial.get(reporterId));
                     }
                 }
             }
         }
-
-        // MicroArrayResult.material
-
-
         return microArrayResults;
     }
 
@@ -980,7 +1007,6 @@ public class MageDataTranslator extends DataTranslator
                         }
                         sampleIds.add(sampleId);
 
-                        // TODO Sample.primaryCharacteristic - configured on a per experiment basis
                         String expName = (String) assayToExpName.get(assayId);
                         String primaryCharacteristic = getConfig(expName, "primaryCharacteristic");
                         System.out.println("expName: " + expName);

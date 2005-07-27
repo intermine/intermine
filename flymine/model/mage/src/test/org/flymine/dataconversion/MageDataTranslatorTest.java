@@ -569,6 +569,32 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(exp, translator.samples);
     }
 
+    public void testProcessMicroArrayAssays() throws Exception {
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+        Item assay = createTgtItem("MicroArrayAssay", "0_1", "");
+        translator.assays.add(assay);
+
+        translator.assayToSamples.put("0_1", Arrays.asList(new String[] {"1_1", "1_2"}));
+        Item sample1 = createTgtItem("Sample", "1_1", "");
+        sample1.setAttribute("primaryCharacteristicType", "colour");
+        sample1.setAttribute("primaryCharacteristic", "pink");
+        translator.samplesById.put(sample1.getIdentifier(), sample1);
+
+        Item sample2 = createTgtItem("Sample", "1_2", "");
+        sample2.setAttribute("primaryCharacteristicType", "colour");
+        sample2.setAttribute("primaryCharacteristic", "green");
+        translator.samplesById.put(sample2.getIdentifier(), sample2);
+
+        Item expAssay = createTgtItem("MicroArrayAssay", "0_1", "");
+        expAssay.setAttribute("sample1", "colour: pink");
+        expAssay.setAttribute("sample2", "colour: green");
+        Set expected = new HashSet(Collections.singleton(expAssay));
+
+        translator.processMicroArrayAssays();
+        assertEquals(expected, translator.assays);
+    }
+
 
     public void testTranslateSample() throws Exception {
         Item srcItem1 = createSrcItem("BioSource", "0_1", "");
