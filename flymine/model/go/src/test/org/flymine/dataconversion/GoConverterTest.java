@@ -14,6 +14,8 @@ import junit.framework.TestCase;
 
 import java.io.Reader;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -27,29 +29,43 @@ import org.intermine.xml.full.FullParser;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-public class GoConverterTest extends TargetItemsTestCase
+public class GoConverterTest extends TestCase
 {
+    private File goFile;
+
     public GoConverterTest(String arg) {
         super(arg);
     }
 
+    public void setUp() throws Exception {
+        goFile = File.createTempFile("go-tiny", "ontology");
+        Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/go-tiny.ontology"));
+
+        FileWriter fileWriter = new FileWriter(goFile);
+        int c;
+        while ((c = goReader.read()) > 0) {
+            fileWriter.write(c);
+        }
+        fileWriter.close();
+    }
+
+    public void tearDown() throws Exception {
+        goFile.delete();
+    }
+
     public void testTranslate() throws Exception {
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/GoConverterTest_src.txt"));
-        Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/go-tiny.ontology"));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        FileConverter converter = new GoConverter(writer, goReader);
+        GoConverter converter = new GoConverter(writer);
+        converter.setOntology(goFile);
         converter.process(reader);
         converter.close();
 
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
+        //System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
         assertEquals(new HashSet(getExpectedItems()), writer.getItems());
     }
 
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/GoConverterTest_tgt.xml"));
-    }
-
-    protected String getModelName() {
-        return "genomic";
     }
 }
