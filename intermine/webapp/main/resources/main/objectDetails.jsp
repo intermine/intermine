@@ -47,7 +47,7 @@
         </im:heading>
 
         <im:body id="summary">
-          <table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
+          <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
             <c:forEach items="${object.fieldExprs}" var="expr">
               <c:if test="${object.fieldConfigMap[expr].showInSummary}">
                 <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
@@ -56,7 +56,15 @@
                     <b><span class="attributeField">${expr}</span></b>
                   </td>
                   <td>
-                    <b>${outVal}</b>
+                    <c:choose>                      
+                      <c:when test="${empty outVal}">
+                        <%-- add a space so that IE renders the borders --%>
+                        &nbsp
+                      </c:when>
+                      <c:otherwise>
+                        <span class="value"><b>${outVal}</b></span>
+                      </c:otherwise>
+                    </c:choose>
                   </td>
                 </tr>
               </c:if>
