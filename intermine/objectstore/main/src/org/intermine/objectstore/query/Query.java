@@ -211,7 +211,7 @@ public class Query implements FromElement
                 }
             } else if (node instanceof QueryField) {
                 FromElement qc = ((QueryField) node).getFromElement();
-                if (qc instanceof QueryClass) {
+                if ((qc instanceof QueryClass) || (qc instanceof QueryClassBag)) {
                     if (!seenQueryClasses.contains(qc)) {
                         if ("id".equals(((QueryField) node).getFieldName())) {
                             seenQueryClasses.add(qc);

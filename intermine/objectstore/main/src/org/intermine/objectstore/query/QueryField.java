@@ -117,6 +117,18 @@ public class QueryField implements QueryEvaluable
     }
 
     /**
+     * Constructs the id QueryField for the given QueryClassBag.
+     *
+     * @param qcb the QueryClassBag
+     */
+    public QueryField(QueryClassBag qcb) {
+        this.qc = qcb;
+        this.fieldName = "id";
+        this.secondFieldName = null;
+        this.type = Integer.class;
+    }
+
+    /**
      * Constructs a QueryField object - intended for cloning operations.
      *
      * @param qc the FromElement

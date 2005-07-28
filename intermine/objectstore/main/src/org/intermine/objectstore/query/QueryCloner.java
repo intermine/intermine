@@ -10,10 +10,14 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is a static class that provides a method to clone a Query object.
@@ -41,6 +45,9 @@ public class QueryCloner
                     newFrom = new QueryClass(((QueryClass) origFrom).getType());
                 } else if (origFrom instanceof Query) {
                     newFrom = cloneQuery((Query) origFrom);
+                } else if (origFrom instanceof QueryClassBag) {
+                    newFrom = new QueryClassBag(((QueryClassBag) origFrom).getType(),
+                            (Collection) cloneThing(((QueryClassBag) origFrom).getBag(), null));
                 } else {
                     throw new IllegalArgumentException("Unknown type of FromElement " + origFrom);
                 }
@@ -89,11 +96,14 @@ public class QueryCloner
                     origR.getFieldName());
         } else if (orig instanceof QueryCollectionReference) {
             QueryCollectionReference origR = (QueryCollectionReference) orig;
-            if (origR.getQueryClass() == null) {
-                return new QueryCollectionReference(origR.getQcObject(), origR.getFieldName());
-            } else {
+            if (origR.getQueryClass() != null) {
                 return new QueryCollectionReference((QueryClass)
                         fromElementMap.get(origR.getQueryClass()), origR.getFieldName());
+            } else if (origR.getQcb() != null) {
+                return new QueryCollectionReference((QueryClassBag)
+                        fromElementMap.get(origR.getQcb()), origR.getFieldName());
+            } else {
+                return new QueryCollectionReference(origR.getQcObject(), origR.getFieldName());
             }
         } else if (orig instanceof QueryValue) {
             return new QueryValue(((QueryValue) orig).getValue());
@@ -182,6 +192,10 @@ public class QueryCloner
             BagConstraint origC = (BagConstraint) orig;
             return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(), fromElementMap),
                                      origC.getOp(), new HashSet(origC.getBag()));
+        } else if (orig instanceof Set) {
+            return new HashSet((Set) orig);
+        } else if (orig instanceof List) {
+            return new ArrayList((List) orig);
         }
         throw new IllegalArgumentException("Unknown object type: " + orig);
     }

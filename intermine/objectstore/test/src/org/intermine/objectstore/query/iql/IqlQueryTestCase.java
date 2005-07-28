@@ -185,5 +185,31 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Secretary AS a1_ WHERE ?.secretarys CONTAINS a1_", null);
         fq.setParameters(Collections.singletonList(data.get("CompanyB")));
         results.put("CollectionQueryManyMany", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE a1_.employees CONTAINS a2_", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
+        results.put("QueryClassBag", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.HasSecretarys AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")})));
+        results.put("QueryClassBagMM", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::(org.intermine.model.testmodel.CEO, org.intermine.model.testmodel.Broke) AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_", null);
+        fq.setParameters(Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
+        results.put("QueryClassBagDynamic", fq);
+        res = new HashSet();
+        Set bag = new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}));
+        //fq = new IqlQuery("SELECT a1_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employable) AS a1_ WHERE a1_ IN ?", null);
+        //fq.setParameters(Collections.singletonList(bag));
+        //res.add(fq);
+        //fq = new IqlQuery("SELECT a1_ FROM (org.intermine.model.testmodel.Employable, org.intermine.model.testmodel.Broke) AS a1_ WHERE a1_ IN ?", null);
+        //fq.setParameters(Collections.singletonList(bag));
+        //res.add(fq);
+        //results.put("DynamicBagConstraint", res); // See ticket #469
+        res = new HashSet();
+        fq = new IqlQuery("SELECT a1_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.CEO) AS a1_ WHERE a1_ IN ?", null);
+        fq.setParameters(Collections.singletonList(bag));
+        res.add(fq);
+        fq = new IqlQuery("SELECT a1_ FROM (org.intermine.model.testmodel.CEO, org.intermine.model.testmodel.Broke) AS a1_ WHERE a1_ IN ?", null);
+        fq.setParameters(Collections.singletonList(bag));
+        res.add(fq);
+        results.put("DynamicBagConstraint2", res);
     }
 }

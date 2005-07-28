@@ -165,7 +165,7 @@ public class IqlQueryParser
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.TABLE:
-                    processNewTable(ast.getFirstChild(), q, modelPackage);
+                    processNewTable(ast.getFirstChild(), q, modelPackage, iterator);
                     break;
                 case IqlTokenTypes.SUBQUERY:
                     processNewSubQuery(ast.getFirstChild(), q, modelPackage, iterator);
@@ -184,11 +184,17 @@ public class IqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      */
-    private static void processNewTable(AST ast, Query q, String modelPackage) {
+    private static void processNewTable(AST ast, Query q, String modelPackage, Iterator iterator) {
         String tableAlias = null;
         String tableName = null;
         Set classes = new HashSet();
+        boolean isBag = false;
+        if (ast.getType() == IqlTokenTypes.QUESTION_MARK) {
+            isBag = true;
+            ast = ast.getNextSibling();
+        }
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.TABLE_NAME:
@@ -225,16 +231,26 @@ public class IqlQueryParser
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        QueryClass qc = new QueryClass(classes);
         if (tableAlias == null) {
             if (classes.size() == 1) {
-                tableAlias = tableName;
+                int index = tableName.lastIndexOf('.');
+                if (index == -1) {
+                    tableAlias = tableName;
+                } else {
+                    tableAlias = tableName.substring(index + 1);
+                }
             } else {
                 throw new IllegalArgumentException("Dynamic classes in the FROM clause must have"
                         + " an alias");
             }
         }
-        q.addFrom(qc, tableAlias);
+        if (isBag) {
+            QueryClassBag qcb = new QueryClassBag(classes, (Collection) iterator.next());
+            q.addFrom(qcb, tableAlias);
+        } else {
+            QueryClass qc = new QueryClass(classes);
+            q.addFrom(qc, tableAlias);
+        }
     }
 
     /**
@@ -388,18 +404,25 @@ public class IqlQueryParser
         }
         Object obj = q.getReverseAliases().get(unescape(ast.getText()));
 
-        if (obj instanceof QueryClass) {
+        if ((obj instanceof QueryClass) || (obj instanceof QueryClassBag)) {
             AST secondAst = ast.getNextSibling();
             if (secondAst == null) {
                 return (QueryClass) obj;
             } else {
                 AST thirdAst = secondAst.getNextSibling();
                 if (thirdAst == null) {
-                    try {
-                        return new QueryField((QueryClass) obj, unescape(secondAst.getText()));
-                    } catch (IllegalArgumentException e) {
-                        return new QueryObjectReference((QueryClass) obj, unescape(secondAst
-                                    .getText()));
+                    if (obj instanceof QueryClass) {
+                        try {
+                            return new QueryField((QueryClass) obj, unescape(secondAst.getText()));
+                        } catch (IllegalArgumentException e) {
+                            return new QueryObjectReference((QueryClass) obj, unescape(secondAst
+                                        .getText()));
+                        }
+                    } else if ("id".equals(secondAst.getText())) {
+                        return new QueryField((QueryClassBag) obj);
+                    } else {
+                        throw new IllegalArgumentException("Can only access the \"id\" attribute of"
+                                + " a QueryClassBag");
                     }
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."
@@ -829,7 +852,7 @@ public class IqlQueryParser
                     }
                 } else {
                     FromElement firstObj = (FromElement) q.getReverseAliases().get(firstString);
-                    if (firstObj instanceof QueryClass) {
+                    if ((firstObj instanceof QueryClass) || (firstObj instanceof QueryClassBag)) {
                         subSubAST = subSubAST.getNextSibling();
                         if (subSubAST != null) {
                             String secondString = unescape(subSubAST.getText());
@@ -841,21 +864,27 @@ public class IqlQueryParser
                             }
                             QueryReference ref = null;
                             try {
-                                try {
-                                    // See if it is an object reference.
-                                    ref = new QueryObjectReference((QueryClass) firstObj,
-                                            secondString);
-                                } catch (IllegalArgumentException e) {
-                                    // Okay, it wasn't. See if it is a collection.
-                                    ref = new QueryCollectionReference((QueryClass) firstObj,
+                                if (firstObj instanceof QueryClass) {
+                                    try {
+                                        // See if it is an object reference.
+                                        ref = new QueryObjectReference((QueryClass) firstObj,
+                                                secondString);
+                                    } catch (IllegalArgumentException e) {
+                                        // Okay, it wasn't. See if it is a collection.
+                                        ref = new QueryCollectionReference((QueryClass) firstObj,
+                                                secondString);
+                                    }
+                                } else {
+                                    ref = new QueryCollectionReference((QueryClassBag) firstObj,
                                             secondString);
                                 }
                             } catch (IllegalArgumentException e) {
                                 throw new IllegalArgumentException("Object "
-                                                + firstString + "." + secondString + " does not "
-                                                + "exist, or is not a collection or object "
-                                                + "reference");
+                                                + firstString + "." + secondString
+                                                + " does not exist, or is not a collection or "
+                                                + "object reference");
                             }
+
                             // Now we have a collection or object reference. Now we need a class or
                             // object.
                             if (subAST.getNextSibling().getType() == IqlTokenTypes.QUESTION_MARK) {

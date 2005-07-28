@@ -26,6 +26,7 @@ import junit.framework.Test;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.Failure;
 import org.intermine.objectstore.ObjectStoreException;
@@ -250,6 +251,27 @@ public class SqlGeneratorTest extends SetupDataTestCase
         Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
         results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
         results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
+        Integer id5 = (Integer) ((Department) data.get("DepartmentA1")).getId();
+        Integer id6 = (Integer) ((Department) data.get("DepartmentB1")).getId();
+        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.id AS a2_id FROM Employee AS a2_ WHERE (a2_.departmentId IN (" + id5 + ", " + id6 + ")) ORDER BY a2_.departmentId, a2_.id");
+        results2.put("QueryClassBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        Integer companyAId = (Integer) ((Company) data.get("CompanyA")).getId();
+        Integer companyBId = (Integer) ((Company) data.get("CompanyB")).getId();
+        Integer employeeB1Id = (Integer) ((Employee) data.get("EmployeeB1")).getId();
+        results.put("QueryClassBagMM", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE ((indirect0.Secretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
+        results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
+        results.put("QueryClassBagDynamic", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE ((indirect0.Secretarys IN (" + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
+        results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
+        //res = new HashSet()
+        //res.add("SELECT a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        //res.add("SELECT a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        //results.put("DynamicBagConstraint", res);
+        //results2.put("DynamicBagConstraint", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Broke", "CEO"}))); // See ticket #469
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id FROM CEO AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        res.add("SELECT a1_.id AS a1_id FROM Broke AS a1_, CEO AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        results.put("DynamicBagConstraint2", res);
+        results2.put("DynamicBagConstraint2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Broke", "CEO"})));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

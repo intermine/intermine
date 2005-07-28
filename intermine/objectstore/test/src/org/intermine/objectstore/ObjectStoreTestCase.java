@@ -26,6 +26,7 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.HasSecretarys;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Secretary;
 import org.intermine.model.testmodel.Types;
@@ -384,6 +385,25 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("Secretary1") },
                              { data.get("Secretary2") } };
         results.put("CollectionQueryManyMany", toList(r));
+
+        r = new Object[][] { { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB1") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB2") } };
+        results.put("QueryClassBag", toList(r));
+
+        r = new Object[][] { { ((HasSecretarys) data.get("CompanyA")).getId(), data.get("Secretary1") },
+                             { ((HasSecretarys) data.get("CompanyA")).getId(), data.get("Secretary2") },
+                             { ((HasSecretarys) data.get("CompanyA")).getId(), data.get("Secretary3") },
+                             { ((HasSecretarys) data.get("CompanyB")).getId(), data.get("Secretary1") },
+                             { ((HasSecretarys) data.get("CompanyB")).getId(), data.get("Secretary2") } };
+        results.put("QueryClassBagMM", toList(r));
+
+        results.put("QueryClassBagDynamic", Collections.EMPTY_LIST);
+
+        // results.put("DynamicBagConstraint", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1")))); // See ticket #469
+        results.put("DynamicBagConstraint2", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
     }
 
     /**

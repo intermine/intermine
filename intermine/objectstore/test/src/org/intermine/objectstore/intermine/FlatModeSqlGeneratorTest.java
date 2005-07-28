@@ -20,6 +20,9 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
@@ -221,6 +224,19 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
         results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id, a1_.name AS a1_name FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
         results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
+        Integer id5 = (Integer) ((Department) data.get("DepartmentA1")).getId();
+        Integer id6 = (Integer) ((Department) data.get("DepartmentB1")).getId();
+        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.companyId AS a2_companyId, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.seniority AS a2_seniority, a2_.title AS a2_title, a2_.objectclass AS a2_objectclass FROM Employee AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND (a2_.departmentId IN (" + id5 + ", " + id6 + ")) ORDER BY a2_.departmentId, a2_.id");
+        results2.put("QueryClassBag", Collections.singleton("Employee"));
+        Integer companyAId = (Integer) ((Company) data.get("CompanyA")).getId();
+        Integer companyBId = (Integer) ((Company) data.get("CompanyB")).getId();
+        Integer employeeB1Id = (Integer) ((Employee) data.get("EmployeeB1")).getId();
+        results.put("QueryClassBagMM", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id, a2_.name AS a2_name FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE ((indirect0.Secretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
+        results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
+        results.put("QueryClassBagDynamic", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id, a2_.name AS a2_name FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE ((indirect0.Secretarys IN (" + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
+        results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
+        //results.put("DynamicBagConstraint", NO_RESULT); // See ticket #469
+        results.put("DynamicBagConstraint2", NO_RESULT);
     }
 
     protected DatabaseSchema getSchema() throws Exception {

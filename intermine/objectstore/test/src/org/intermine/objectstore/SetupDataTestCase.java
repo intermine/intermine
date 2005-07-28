@@ -34,6 +34,7 @@ import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employable;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.HasAddress;
 import org.intermine.model.testmodel.HasSecretarys;
@@ -47,6 +48,8 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
@@ -85,6 +88,11 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("ContainsConstraintNotMMCollectionRefObject", containsConstraintNotMMCollectionRefObject());
         queries.put("CollectionQueryOneMany", collectionQueryOneMany());
         queries.put("CollectionQueryManyMany", collectionQueryManyMany());
+        queries.put("QueryClassBag", queryClassBag());
+        queries.put("QueryClassBagMM", queryClassBagMM());
+        queries.put("QueryClassBagDynamic", queryClassBagDynamic());
+        //queries.put("DynamicBagConstraint", dynamicBagConstraint()); // See ticket #469
+        queries.put("DynamicBagConstraint2", dynamicBagConstraint2());
     }
 
     public static Collection setUpData() throws Exception {
@@ -555,5 +563,80 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("CompanyB"), "secretarys"), ConstraintOp.CONTAINS, qc));
         q1.setDistinct(false);
         return q1;
+    }
+
+    /*
+     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE a1_.employees CONTAINS a2_
+     */
+    public static Query queryClassBag() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id, a2_ FROM ?::HasSecretarys AS a1_, Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_
+     */
+    public static Query queryClassBagMM() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(HasSecretarys.class, Arrays.asList(new Object[] {data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")}));
+        QueryClass qc = new QueryClass(Secretary.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.CONTAINS, qc));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id, a2_ FROM ?::(CEO, Broke) AS a1_, Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_
+     */
+    public static Query queryClassBagDynamic() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(new HashSet(Arrays.asList(new Class[] {CEO.class, Broke.class})), Collections.singletonList(data.get("EmployeeB1")));
+        QueryClass qc = new QueryClass(Secretary.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.CONTAINS, qc));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM (Broke, Employable) AS a1_ WHERE a1_ IN ?
+     */
+    /* See ticket #469
+    public static Query dynamicBagConstraint() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[] {Broke.class, Employable.class})));
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}))));
+        q.setDistinct(false);
+        return q;
+    }*/
+
+    /*
+     * SELECT a1_ FROM (Broke, CEO) AS a1_ WHERE a1_ IN ?
+     */
+    public static Query dynamicBagConstraint2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}))));
+        q.setDistinct(false);
+        return q;
     }
 }
