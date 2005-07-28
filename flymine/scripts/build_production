@@ -9,6 +9,8 @@ use warnings;
 
 use Expect;
 
+my $ant_command = "ant";
+
 my $dump_file_prefix;
 my $dump_host;
 
@@ -89,8 +91,8 @@ sub run_and_check_status
     log_message "  [$command_name] $_";
   }
 
-  log_and_print "finished\n\n";
   log_and_print `date`, "\n\n";
+  log_and_print "finished\n\n";
 
   close F;
 
@@ -176,9 +178,9 @@ while (my $line = <DATA>) {
 
   if ($action eq "run:") {
     if ($verbose) {
-      run_and_check_status "ant", "-v", @args;
+      run_and_check_status $ant_command, "-v", @args;
     } else {
-      run_and_check_status "ant", @args;
+      run_and_check_status $ant_command, @args;
     }
   } else {
     if ($action eq "dump:") {
