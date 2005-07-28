@@ -1309,7 +1309,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.mage-src-items"/>
+      <property name="db.name" value="db.common-src-items"/>
       <property name="objectstore.name" value="os.mage-src-items-std"/>
     </ant>
   </target>
@@ -1319,7 +1319,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.mage-tgt-items-std"/>
     </ant>
   </target>
@@ -1373,7 +1373,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.mage-tgt-items-std"/>
     </ant>
     <copy file="${model}/mage/mage_mappings" toDir="${build.model}/mage"/>
@@ -1392,7 +1392,7 @@
       <property name="os.alias" value="os.mage-tgt-items-std"/>
     </ant>
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
