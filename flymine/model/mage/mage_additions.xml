@@ -68,7 +68,7 @@
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="microArrayResults"/>
   <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" ordered="true"/>
 </class>
-<class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="genes"/>
 </class>
 </classes>
