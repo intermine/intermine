@@ -9,13 +9,18 @@
   <target name="-pre-init" depends="library.-pre-init">
     <property name="test.results.dir" location="${build.dir}/test/results"/>
     <property name="test.excludes" location=""/>
-    <property name="test.fork" value="no"/>
+    <property name="test.fork" value="yes"/>
     <property name="test.forkmode" value="once"/>
     <property name="build.test.resources.dir" location="${build.dir}/test/resources"/>
     <property name="generate.report" value="true"/>
     <condition property="gen.report">
       <and><istrue value="${generate.report}"/></and>
     </condition>
+    <!-- emma properties -->
+    <property name="emma.enabled" value="true"/>
+    <property name="build.coverage.dir" location="${build.dir}/coverage"/>
+    <property name="build.coverage.results.dir" location="${build.coverage.dir}"/>
+    <property name="build.instrumented.dir" location="${build.dir}/instrumented"/>
   </target>
   
   <!-- RUN TESTS -->
@@ -26,9 +31,23 @@
     <copy file="${tests.xml.basedir}/test.log4j.properties" toFile="${build.test.resources.dir}/log4j.properties"/>
   </target>
   
+  <target name="-init-emma" depends="init">
+    <property name="emma.lib.path" value="${tests.xml.basedir}/lib/emma.jar:${tests.xml.basedir}/lib/emma_ant.jar"/>
+    <mkdir dir="${build.instrumented.dir}"/>
+    <mkdir dir="${build.coverage.dir}"/>
+    <mkdir dir="${build.coverage.results.dir}"/>
+    <taskdef resource="emma_ant.properties" classpath="${emma.lib.path}"/>
+  </target>
+  
   <target name="-pre-test"/>
   
   <target name="-post-test"/>
+  
+  <target name="instrument" depends="-init-emma">
+    <emma enabled="${emma.enabled}">
+      <instr instrpath="${instrument.path}" destdir="${build.instrumented.dir}" metadatafile="${build.coverage.dir}/coverage.em" merge="true"/>
+    </emma>
+  </target>
   
   <target name="do-test" depends="-init-macrodef-junit">
     <tests:junit/>
@@ -43,7 +62,16 @@
     </junitreport>
   </target>
   
-  <target name="test" depends="-init-test, library.default, -pre-test, do-test, test-report, -post-test"/>
+  <target name="coverage-report" depends="-init-emma">
+    <emma enabled="${emma.enabled}">
+      <report sourcepath="${instrument.src.path}">
+        <fileset dir="${build.coverage.dir}" includes="*.ec, *.em"/>
+        <html outfile="${build.coverage.results.dir}/index.html"/>
+      </report>
+    </emma>
+  </target>
+  
+  <target name="test" depends="-init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
   
   <target name="test-all" depends="init, -init-deps, jar">
     <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
@@ -73,7 +101,7 @@
              fork="@{fork}" forkmode="@{forkmode}">
         <customize/>
         <formatter type="xml"/>
-        <batchtest todir="${test.results.dir}" fork="no">
+        <batchtest todir="${test.results.dir}" fork="@{fork}">
           <fileset dir="${build.classes.dir}" includes="@{includes}" excludes="@{excludes}">
             <depend targetdir="${test.results.dir}">
               <mapper type="package" from="*.class" to="TEST-*.xml" />
@@ -81,15 +109,19 @@
           </fileset>
         </batchtest>
         <classpath>
+          <pathelement location="${build.instrumented.dir}"/>
           <path refid="main.class.path"/>
           <pathelement location="${build.classes.dir}"/>
           <pathelement location="${resources.dir}"/>
           <pathelement location="${build.test.resources.dir}"/>
+          <pathelement path="${emma.lib.path}"/>
         </classpath>
         <syspropertyset>
           <propertyref prefix="test-sys-prop."/>
           <mapper to="*" from="test-sys-prop.*" type="glob"/>
         </syspropertyset>
+        <sysproperty key="emma.coverage.out.file" value="${build.coverage.dir}/coverage.ec" />
+        <sysproperty key="emma.coverage.out.merge" value="false" />
       </junit>
     </sequential>
     </macrodef>
