@@ -35,6 +35,17 @@
   <item id="11_2" class="http://www.flymine.org/model/ensembl#analysis">
     <attribute name="created" value="1022243471000"/>
     <attribute name="gff_feature" value="repeat"/>
+    <attribute name="gff_source" value="trf"/>
+    <attribute name="logic_name" value="TRF"/>
+    <attribute name="module" value="TRF"/>
+    <attribute name="module_version" value="1"/>
+    <attribute name="parameters" value="-lib anopheles.lib"/>
+    <attribute name="program" value="trf"/>
+    <attribute name="program_version" value="1"/>
+  </item>
+  <item id="11_3" class="http://www.flymine.org/model/ensembl#analysis">
+    <attribute name="created" value="1022243471000"/>
+    <attribute name="gff_feature" value="repeat"/>
     <attribute name="gff_source" value="RepeatMasker"/>
     <attribute name="logic_name" value="RepeatMask"/>
     <attribute name="module" value="RepeatMasker"/>
@@ -99,6 +110,17 @@
     <attribute name="repeat_start" value="1"/>
     <attribute name="score" value="23.0"/>
     <reference name="analysis" ref_id="11_2"/>
+    <reference name="contig" ref_id="1_11167"/>
+    <reference name="repeat_consensus" ref_id="25_259"/>
+  </item>
+  <item id="24_78816" class="http://www.flymine.org/model/ensembl#repeat_feature">
+    <attribute name="contig_end" value="1000"/>
+    <attribute name="contig_start" value="500"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="repeat_end" value="23"/>
+    <attribute name="repeat_start" value="1"/>
+    <attribute name="score" value="12.0"/>
+    <reference name="analysis" ref_id="11_3"/>
     <reference name="contig" ref_id="1_11167"/>
     <reference name="repeat_consensus" ref_id="25_259"/>
   </item>

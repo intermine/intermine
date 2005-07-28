@@ -52,6 +52,9 @@
     <reference name="subject" ref_id="1_11168"/>
   </item>
   <item id="11_2" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+    <attribute name="algorithm" value="TRF"/>
+  </item>
+  <item id="11_3" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="RepeatMask"/>
   </item>
   <item id="-1_24" class="http://www.flymine.org/model/genomic#SimpleRelation">
