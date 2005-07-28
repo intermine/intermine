@@ -200,7 +200,11 @@ __END__
 # "dump:" lines give the suffix of the postgresql dump file
 # actions are executed in order
 
-run: create-production-model compile-genomic-model jar-genomic build-db-production load-static-flymine build-ensembl-anopheles-production
+run: create-production-model compile-genomic-model jar-genomic build-db-production load-static-flymine
+
+dump: static
+
+run: build-ensembl-anopheles-production
 
 dump: anopheles
 
@@ -215,17 +219,26 @@ dump: drosophila
 run: build-go-production build-psi-production build-rnai-production
 run: build-phenotype-production build-orthologues-production build-protein_structure-production
 
-dump: load-stage1
+dump: load-stage-1
 
-run: build-flyreg-production build-long_oligo-production build-tiling_path-production build-drosdel-production
+run: build-flyreg-production build-long_oligo-production build-tiling_path-production
 
-dump: load-stage2
+dump: load-stage-2
+
+run: build-drosdel-production
+
+dump: load-stage-3-drosdel
 
 run: read-flybase-chromosome-fasta calculate-locations
 run: create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
-run: create-indexes-production-attribute create-overlap-relations
+run: create-indexes-production-attribute
+
+dump: postprocess-1
+
+run: create-overlap-relations
 run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
 run: create-flybase-to-uniprot-refs update-publications
 
-dump: postprocess
+dump: postprocess-2
+
