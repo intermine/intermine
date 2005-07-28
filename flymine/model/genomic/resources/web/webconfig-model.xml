@@ -290,6 +290,13 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.MicroArrayAssay">
+    <fields>
+      <fieldconfig fieldExpr="sample1" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="sample2" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+    </fields>
+  </class>
+
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
