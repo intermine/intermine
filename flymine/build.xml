@@ -3220,7 +3220,8 @@
     <pathelement location="${model}/ensembl-human/resources"/>
   </path>
 
-  <target name="retrieve-gene-synonyms-for-entrezgene" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+  <target name="retrieve-gene-synonyms-for-entrezgene" 
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3266,6 +3267,106 @@
 
   <target name="build-gene-synonyms-for-entrezgene-production"
           depends="retrieve-gene-synonyms-for-entrezgene, load-gene-synonyms-for-entrezgene"/>
+
+
+  <!--Retrieve gene synonyms for CCDS, file is tab separated format -->
+  <target name="retrieve-gene-synonyms-for-ccds" 
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gene-synonym-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="ensemblhuman.class.path"/>
+    </taskdef>
+
+    <convert-file clsName="org.flymine.dataconversion.RetrieveGeneSynonym"
+                   osName="osw.gene-synonym-tgt-items"
+                   model="ensembl-human"
+                   synonymtype="ccds">
+      <fileset dir ="/shared/data/human/geneSynonym/">
+        <include name ="ensembl_ccds.tsv"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gene-synonym-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-gene-synonyms-for-ccds" depends="copy-t1dmine-config">
+    <taskdef name="load-gene-synonyms" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gene-synonyms integrationWriter="integration.genomic-test"
+               source="os.gene-synonym-translated"
+               sourceName="gene-synonym"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-gene-synonyms-for-ccds-production"
+          depends="retrieve-gene-synonyms-for-ccds, load-gene-synonyms-for-ccds"/>
+
+
+<!--Retrieve gene synonyms for embl, file is tab separated format -->
+  <target name="retrieve-gene-synonyms-for-embl" 
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gene-synonym-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="ensemblhuman.class.path"/>
+    </taskdef>
+
+    <convert-file clsName="org.flymine.dataconversion.RetrieveGeneSynonym"
+                   osName="osw.gene-synonym-tgt-items"
+                   model="ensembl-human"
+                   synonymtype="embl">
+      <fileset dir ="/shared/data/human/geneSynonym/">
+        <include name ="ensembl_embl.tsv"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gene-synonym-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-gene-synonyms-for-embl" depends="copy-t1dmine-config">
+    <taskdef name="load-gene-synonyms" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gene-synonyms integrationWriter="integration.genomic-test"
+               source="os.gene-synonym-translated"
+               sourceName="gene-synonym"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-gene-synonyms-for-embl-production"
+          depends="retrieve-gene-synonyms-for-embl, load-gene-synonyms-for-embl"/>
 
 
  <!-- BUILD PRODUCTION DATABASE -->
@@ -3896,6 +3997,7 @@
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
     
   </target>
+
 
 </project>
 
