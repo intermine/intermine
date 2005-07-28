@@ -22,7 +22,7 @@ RankedRelation = exon_transcript
 RankedRelation.object = exon_transcript.transcript
 RankedRelation.rank = exon_transcript.rank
 RankedRelation.subject = exon_transcript.exon
-RepeatRegion = repeat_feature
+RepeatRegion = repeat_feature  [analysis.logic_name = TRF]
 RepeatRegion.contig = repeat_feature.contig
 RepeatRegion.end = repeat_feature.repeat_end
 RepeatRegion.start = repeat_feature.repeat_start
