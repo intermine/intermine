@@ -60,7 +60,7 @@
   <item id="22_327" class="http://www.flymine.org/model/ensembl-human#gene_stable_id">
     <attribute name="created_date" value="1095634800000"/>
     <attribute name="modified_date" value="1095634800000"/>
-    <attribute name="stable_id" value=" ENSG00000100109"/>
+    <attribute name="stable_id" value="ENSG00000100109"/>
     <attribute name="version" value="3"/>
     <reference name="gene" ref_id="4_327"/>
   </item>
@@ -72,6 +72,26 @@
     <reference name="gene" ref_id="4_949"/>
   </item>
 
+  <item id="11_2" class="http://www.flymine.org/model/ensembl-human#analysis">
+    <attribute name="logic_name" value="TRF"/>
+    <attribute name="db_version" value="1"/>
+    <attribute name="created" value="1052125456000"/>
+    <attribute name="gff_feature" value="tandem_repeat"/>
+    <attribute name="gff_source" value="trf"/>
+    <attribute name="module" value="trf"/>
+    <attribute name="program" value="trf"/>
+    <attribute name="program_file" value="trf"/>
+  </item>
+    <item id="11_3" class="http://www.flymine.org/model/ensembl-human#analysis">
+    <attribute name="logic_name" value="RepeatMask"/>
+    <attribute name="db_version" value="1"/>
+    <attribute name="created" value="1052125456000"/>
+    <attribute name="gff_feature" value="repeat"/>
+    <attribute name="gff_source" value="RepeatMasker"/>
+    <attribute name="module" value="RepeatMasker"/>
+    <attribute name="program" value="RepeatMasker"/>
+    <attribute name="program_version" value="1"/>
+  </item>
   <item id="11_4" class="http://www.flymine.org/model/ensembl-human#analysis">
     <attribute name="logic_name" value="tRNAscan"/>
     <attribute name="db_version" value="1"/>
@@ -131,6 +151,17 @@
   </item>
   
   <item id="23_1" class="http://www.flymine.org/model/ensembl-human#repeat_feature">
+    <attribute name="seq_region_end" value="4986"/>
+    <attribute name="seq_region_start" value="4766"/>
+    <attribute name="seq_region_strand" value="1"/>
+    <attribute name="repeat_end" value="23"/>
+    <attribute name="repeat_start" value="1"/>
+    <attribute name="score" value="23.0"/>
+    <reference name="analysis" ref_id="11_3"/>
+    <reference name="seq_region" ref_id="1_635245"/>
+    <reference name="repeat_consensus" ref_id="24_1"/>
+  </item> 
+  <item id="23_2" class="http://www.flymine.org/model/ensembl-human#repeat_feature">
     <attribute name="seq_region_end" value="498"/>
     <attribute name="seq_region_start" value="476"/>
     <attribute name="seq_region_strand" value="1"/>
@@ -140,8 +171,8 @@
     <reference name="analysis" ref_id="11_2"/>
     <reference name="seq_region" ref_id="1_635245"/>
     <reference name="repeat_consensus" ref_id="24_1"/>
-  </item>
- 
+  </item> 
+
   <item id="3_478" class="http://www.flymine.org/model/ensembl-human#transcript">
     <attribute name="seq_region_start" value="25211745"/>
     <attribute name="seq_region_end" value="25233004"/>

@@ -64,7 +64,7 @@
 <item id="4_327" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value="17165"/>
 <attribute name="name" value="TFIP11"/>
-<attribute name="organismDbId" value=" ENSG00000100109"/>
+<attribute name="organismDbId" value="ENSG00000100109"/>
 <reference name="organism" ref_id="-1_1"/>
 <reference name="comment" ref_id="-1_15"/>
 <collection name="evidence">
@@ -160,7 +160,7 @@
 </item>
 <item id="22_327" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value=" ENSG00000100109"/>
+<attribute name="value" value="ENSG00000100109"/>
 <reference name="source" ref_id="-1_2"/>
 <reference name="subject" ref_id="4_327"/>
 </item>
@@ -169,6 +169,13 @@
 <attribute name="value" value="ENSG00000184032"/>
 <reference name="source" ref_id="-1_2"/>
 <reference name="subject" ref_id="4_949"/>
+</item>
+
+<item id="11_2" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+<attribute name="algorithm" value="TRF"/>
+</item>
+<item id="11_3" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+<attribute name="algorithm" value="RepeatMask"/>
 </item>
 <item id="11_4" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
 <attribute name="algorithm" value="tRNAscan"/>
@@ -242,7 +249,7 @@
 <reference name="subject" ref_id="16_1"/>
 </item>
 
-<item id="23_1" class="http://www.flymine.org/model/genomic#RepeatRegion">
+<item id="23_2" class="http://www.flymine.org/model/genomic#RepeatRegion">
 <attribute name="consensus" value="N"/>
 <attribute name="end" value="23"/>
 <attribute name="identifier" value="AT_rich"/>
@@ -269,7 +276,7 @@
 <attribute name="startIsPartial" value="false"/>
 <attribute name="strand" value="1"/>
 <reference name="object" ref_id="-1_35"/>
-<reference name="subject" ref_id="23_1"/>
+<reference name="subject" ref_id="23_2"/>
 </item>
 
 <item id="3_478" class="http://www.flymine.org/model/genomic#Transcript">
@@ -576,5 +583,7 @@
 <reference name="object" ref_id="-1_50"/>
 <reference name="subject" ref_id="-1_35"/>
 </item>
+
+
 </items>
 
