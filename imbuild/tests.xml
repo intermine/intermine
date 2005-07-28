@@ -21,6 +21,7 @@
     <property name="build.coverage.dir" location="${build.dir}/coverage"/>
     <property name="build.coverage.results.dir" location="${build.coverage.dir}"/>
     <property name="build.instrumented.dir" location="${build.dir}/instrumented"/>
+    <property environment="ENV"/>
   </target>
   
   <!-- RUN TESTS -->
@@ -96,9 +97,11 @@
     <attribute name="forkmode" default="${test.forkmode}"/>
     <element name="customize" optional="true"/>
     <sequential>
+      <echo>${ENV.ANT_OPTS}</echo>
       <junit showoutput="true" reloading="false" printsummary="yes"
              failureproperty="tests.failed" errorproperty="tests.failed"
              fork="@{fork}" forkmode="@{forkmode}">
+        <jvmarg value="${ENV.ANT_OPTS}"/>
         <customize/>
         <formatter type="xml"/>
         <batchtest todir="${test.results.dir}" fork="@{fork}">
