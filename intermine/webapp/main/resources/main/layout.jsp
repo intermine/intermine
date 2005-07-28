@@ -17,10 +17,17 @@
     <html:base/>
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
+    
+    <script type="text/javascript" src="prototype.js"></script>
+    <script type="text/javascript" src="effects.js"></script>
+    <script type="text/javascript" src="dragdrop.js"></script>
+    <script type="text/javascript" src="controls.js"></script>
+    
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
+    
     <title>
       <tiles:get name="title"/>
     </title>
