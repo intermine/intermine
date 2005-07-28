@@ -2637,8 +2637,9 @@
           depends="prepare-build-model, compile-flymine-java">
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
+    <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
     <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
-
+    
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2691,6 +2692,7 @@
       <fileset file="${web.properties.file}" />
       <fileset file="${build.properties.local}" />
     </concat>
+    
     <copy todir="${build.tmp}" file="${resources}/webapp/flymine/classDescriptions.properties"/>
     <patternset id="flymine-global-web-properties-patternset">
       <include name="global.web.properties"/>
@@ -2703,6 +2705,19 @@
       <property name="war" value="${dist.webapp}/flymine.war"/>
       <property name="file.dir" value="${build.tmp}"/>
       <reference torefid="file.names" refid="flymine-global-web-properties-patternset"/>
+    </ant>
+    
+    <filter token="LOG_DIR" value="${webapp.logdir}"/>
+    <copy todir="${build.tmp}" filtering="true" overwrite="true">
+      <fileset file="${log4j.properties.file}"/>
+    </copy>
+    <patternset id="flymine-logging-properties-patternset">
+      <include name="log4j.properties"/>
+    </patternset>
+    <ant antfile="${build}/build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/>
+      <property name="file.dir" value="${build.tmp}"/>
+      <reference torefid="file.names" refid="flymine-logging-properties-patternset"/>
     </ant>
   </target>
 
@@ -3878,6 +3893,8 @@
      <property name="model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
+     <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
+    
   </target>
 
 </project>
