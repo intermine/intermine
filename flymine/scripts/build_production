@@ -176,9 +176,9 @@ while (my $line = <DATA>) {
 
   if ($action eq "run:") {
     if ($verbose) {
-      run_and_check_status "ant", @args;
-    } else {
       run_and_check_status "ant", "-v", @args;
+    } else {
+      run_and_check_status "ant", @args;
     }
   } else {
     if ($action eq "dump:") {
