@@ -1,8 +1,0 @@
-
-<project name="intermine-web" default="default" basedir=".">
-  
-  <description>build, test, package intermine-web</description>
-  <import file="../../../imbuild/library.xml"/>
-  
-</project>
-
