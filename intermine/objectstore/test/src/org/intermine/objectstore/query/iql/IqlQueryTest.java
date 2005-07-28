@@ -47,8 +47,8 @@ public class IqlQueryTest extends IqlQueryTestCase
             IqlQuery fq = (IqlQuery) res;
 
             // This is testing whether new IqlQuery(Query) gives the IqlQueries above
-            assertEquals(type + " has failed", fq.getQueryString(), fqGenerated.getQueryString());
-            assertEquals(type + " has failed", fq.getParameters(), fqGenerated.getParameters());
+            assertEquals(type + " has failed: " + fqGenerated.getQueryString(), fq.getQueryString(), fqGenerated.getQueryString());
+            assertEquals(type + " has failed: " + fq.getParameters().getClass().getName() + " versus " + fqGenerated.getParameters().getClass().getName(), fq.getParameters(), fqGenerated.getParameters());
         } else {
             Iterator resIter = ((Collection) res).iterator();
             boolean passed = false;

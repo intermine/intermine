@@ -38,6 +38,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
@@ -625,7 +626,7 @@ public class SqlGenerator
                         ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
                         String alias = (String) aliasEntry.getValue();
                         if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode()) {
-                            fieldToAlias.put(name, alias);
+                            fieldToAlias.put(name, alias + "." + DatabaseUtil.getColumnName(field));
                             break;
                         }
                     }
@@ -639,16 +640,16 @@ public class SqlGenerator
                         String alias = (String) aliasEntry.getValue();
                         ClassDescriptor tableMaster = schema.getTableMaster(cld);
                         if (InterMineObject.class.equals(tableMaster.getType())) {
-                            fieldToAlias.put("OBJECT", alias);
+                            fieldToAlias.put("OBJECT", alias + ".OBJECT");
                             break;
                         }
                     }
                 } else if (schema.isFlatMode()) {
                     // We never want an OBJECT column in this case. However, we may want an
                     // objectclass column.
-                    fieldToAlias.put("objectclass", baseAlias);
+                    fieldToAlias.put("objectclass", baseAlias + ".objectclass");
                 } else {
-                    fieldToAlias.put("OBJECT", baseAlias);
+                    fieldToAlias.put("OBJECT", baseAlias + ".OBJECT");
                 }
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema,
@@ -659,6 +660,16 @@ public class SqlGenerator
                 state.setFieldToAlias(fromElement, new AlwaysMap(DatabaseUtil
                             .generateSqlCompatibleName((String) (q.getAliases()
                                     .get(fromElement)))));
+            } else if (fromElement instanceof QueryClassBag) {
+                // The problem here is:
+                // We do not know the column name for the "id" field, because this will use a
+                // table like an indirection table or other class table. We need to have this id
+                // column name available for QueryFields and for extra tables added to the query
+                // that need to be tied to the original copy via the id column. This id column
+                // name must be filled in by the ContainsConstraint code.
+                // Therefore, we do nothing here.
+            } else {
+                throw new ObjectStoreException("Unknown FromElement: " + fromElement.getClass());
             }
         }
     }
@@ -843,11 +854,9 @@ public class SqlGenerator
                     .getName());
             if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
                         .IS_NOT_NULL)) {
-                state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
-                        + " " + c.getOp().toString());
+                state.addToWhere(arg1Alias + " " + c.getOp().toString());
             } else {
-                state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
-                        + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
+                state.addToWhere(arg1Alias + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
                 if (arg2 == null) {
                     objectToString(state.getWhereBuffer(), arg2Obj);
                 } else {
@@ -857,10 +866,20 @@ public class SqlGenerator
         } else if (arg1 instanceof QueryCollectionReference) {
             InterMineObject arg1Obj = ((QueryCollectionReference) arg1).getQcObject();
             QueryClass arg1Qc = arg1.getQueryClass();
+            QueryClassBag arg1Qcb = ((QueryCollectionReference) arg1).getQcb();
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 if (arg2 == null) {
                     ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
                     String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
+                    Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
+                    if (arg1Qcb != null) {
+                        if (!fieldToAlias.containsKey("id")) {
+                            fieldToAlias.put("id", indirectTableAlias + "."
+                                    + DatabaseUtil.getColumnName(reverse));
+                        }
+                    }
+                    String farFieldName = indirectTableAlias + "."
+                        + DatabaseUtil.getColumnName(reverse);
                     ClassDescriptor tableMaster = schema.getTableMaster(reverse
                             .getClassDescriptor());
                     state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
@@ -870,27 +889,48 @@ public class SqlGenerator
                                 + reverse.getClassDescriptor().getType().getName() + "' AND ");
                     }
                     state.addToWhere("(");
-                    if (arg1Qc == null) {
-                        state.addToWhere("" + arg1Obj.getId());
-                    } else {
+                    if (arg1Qc != null) {
                         queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY,
                                 state);
+                        state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                                + farFieldName);
+                    } else if (arg1Qcb != null) {
+                        if (!farFieldName.equals(fieldToAlias.get("id"))) {
+                            state.addToWhere(farFieldName + " = " + fieldToAlias.get("id"));
+                        } else {
+                            bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
+                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema);
+                        }
+                    } else {
+                        state.addToWhere(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
+                                    ? " = " : " != ") + farFieldName);
                     }
-                    state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
-                            + indirectTableAlias + "." + DatabaseUtil.getColumnName(reverse)
-                            + " AND " + indirectTableAlias + ".id = " + arg2Obj.getId() + ")");
+                    state.addToWhere(" AND " + indirectTableAlias + ".id = " + arg2Obj.getId()
+                            + ")");
                 } else {
                     String arg2Alias = (String) state.getFieldToAlias(arg2)
                         .get(arg1Desc.getReverseReferenceDescriptor().getName());
-                    if (arg1Qc == null) {
-                        state.addToWhere("" + arg1Obj.getId());
-                    } else {
+                    if (arg1Qc != null) {
                         queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY,
                                 state);
+                        state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                                + arg2Alias);
+                    } else if (arg1Qcb != null) {
+                        Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
+                        if (!fieldToAlias.containsKey("id")) {
+                            fieldToAlias.put("id", arg2Alias);
+                            bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
+                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema);
+                        } else {
+                            state.addToWhere(arg2Alias + " = " + fieldToAlias.get("id"));
+                        }
+                    } else {
+                        state.addToWhere("" + arg1Obj.getId()
+                                + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                                + arg2Alias);
                     }
-                    state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
-                            + arg2Alias + "."
-                            + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
                 }
             } else {
                 if (c.getOp().equals(ConstraintOp.DOES_NOT_CONTAIN)) {
@@ -899,17 +939,28 @@ public class SqlGenerator
                 }
                 CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
                 String indirectTableAlias = state.getIndirectAlias();
+                String arg2Alias = indirectTableAlias + "."
+                    + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc);
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
                 state.addToWhere("(");
-                if (arg1Qc == null) {
-                    state.addToWhere("" + arg1Obj.getId());
-                } else {
+                if (arg1Qc != null) {
                     queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY, state);
+                    state.addToWhere(" = " + arg2Alias);
+                } else if (arg1Qcb != null) {
+                    Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
+                    if (fieldToAlias.containsKey("id")) {
+                        state.addToWhere(arg2Alias + " = " + fieldToAlias.get("id"));
+                    } else {
+                        fieldToAlias.put("id", arg2Alias);
+                        bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
+                                    (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                     : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema);
+                    }
+                } else {
+                    state.addToWhere(arg1Obj.getId() + " = " + arg2Alias);
                 }
-                state.addToWhere(" = " + indirectTableAlias + "."
-                        + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc) + " AND "
-                        + indirectTableAlias + "."
+                state.addToWhere(" AND " + indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
                 if (arg2 == null) {
                     state.addToWhere("" + arg2Obj.getId());
@@ -957,9 +1008,11 @@ public class SqlGenerator
         while (bagIter.hasNext()) {
             Object bagItem = bagIter.next();
             if (type.isInstance(bagItem)) {
-                StringBuffer constraint = new StringBuffer();
-                objectToString(constraint, bagItem);
-                filteredBag.add(constraint.toString());
+                if (bagItem instanceof InterMineObject) {
+                    filteredBag.add(((InterMineObject) bagItem).getId());
+                } else {
+                    filteredBag.add(bagItem);
+                }
             }
         }
         if (filteredBag.isEmpty()) {
@@ -979,7 +1032,8 @@ public class SqlGenerator
                         state.addToWhere(", ");
                     }
                     needComma++;
-                    state.addToWhere((String) orIter.next());
+                    StringBuffer constraint = new StringBuffer();
+                    objectToString(state.getWhereBuffer(), orIter.next());
                 }
                 state.addToWhere(c.getOp() == ConstraintOp.IN ? "))" : ")))");
             } else {
@@ -1042,6 +1096,7 @@ public class SqlGenerator
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
             DatabaseSchema schema, int kind, State state) throws ObjectStoreException {
         String alias = (String) q.getAliases().get(qc);
+        Map fieldToAlias = state.getFieldToAlias(qc);
         if (alias == null) {
             throw new NullPointerException("A QueryClass is referenced by elements of a query,"
                     + " but the QueryClass is not in the FROM list of that query. QueryClass: "
@@ -1054,8 +1109,7 @@ public class SqlGenerator
             boolean needComma = false;
             String objectAlias = (String) state.getFieldToAlias(qc).get("OBJECT");
             if (objectAlias != null) {
-                buffer.append(objectAlias)
-                    .append(".OBJECT");
+                buffer.append(objectAlias);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
                     buffer.append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
@@ -1102,9 +1156,7 @@ public class SqlGenerator
                         buffer.append(", ");
                     }
                     needComma = true;
-                    buffer.append((String) state.getFieldToAlias(qc).get(field.getName()))
-                        .append(".")
-                        .append(columnName);
+                    buffer.append((String) fieldToAlias.get(field.getName()));
                     if (kind == QUERY_SUBQUERY_FROM) {
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
@@ -1118,8 +1170,8 @@ public class SqlGenerator
                 }
                 if (schema.isFlatMode() && schema.isTruncated(schema.getTableMaster(cld))) {
                     buffer.append(", ")
-                        .append((String) state.getFieldToAlias(qc).get("objectclass"))
-                        .append(".objectclass AS ")
+                        .append((String) fieldToAlias.get("objectclass"))
+                        .append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias) + "objectclass"
                                 : "\"" + DatabaseUtil.generateSqlCompatibleName(alias)
@@ -1152,13 +1204,17 @@ public class SqlGenerator
         if (node instanceof QueryField) {
             QueryField nodeF = (QueryField) node;
             FromElement nodeClass = nodeF.getFromElement();
-            String classAlias = (String) state.getFieldToAlias(nodeClass).get(nodeF.getFieldName());
+            Map aliasMap = state.getFieldToAlias(nodeClass);
+            String classAlias = (String) aliasMap.get(nodeF.getFieldName());
 
-            buffer.append(classAlias)
-                .append(".")
-                .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
-                .append(nodeF.getSecondFieldName() == null
-                        ? "" : DatabaseUtil.generateSqlCompatibleName(nodeF.getSecondFieldName()));
+            buffer.append(classAlias);
+            if (aliasMap instanceof AlwaysMap) {
+                buffer.append(".")
+                    .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
+                    .append(nodeF.getSecondFieldName() == null
+                            ? "" : DatabaseUtil.generateSqlCompatibleName(nodeF
+                                .getSecondFieldName()));
+            }
         } else if (node instanceof QueryExpression) {
             QueryExpression nodeE = (QueryExpression) node;
             if (nodeE.getOperation() == QueryExpression.SUBSTRING) {
@@ -1375,9 +1431,7 @@ public class SqlGenerator
                     ReferenceDescriptor refDesc = (ReferenceDescriptor) fieldNameToFieldDescriptor
                         .get(ref.getFieldName());
                     buffer.append((String) state.getFieldToAlias(ref.getQueryClass())
-                            .get(ref.getFieldName()))
-                        .append(".")
-                        .append(DatabaseUtil.getColumnName(refDesc));
+                            .get(ref.getFieldName()));
                     retval.append(buffer.toString());
                     if (q.isDistinct()) {
                         if (q.getSelect().contains(ref.getQueryClass())) {

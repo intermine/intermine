@@ -94,7 +94,7 @@ select_value:
     ;
 
 abstract_table:
-        table | subquery | multitable
+        table | subquery | multitable | query_class_bag | query_class_bag_multi
     ;
 
 abstract_value:
@@ -134,6 +134,16 @@ multitable:
 table_name:
         ( IDENTIFIER DOT! )* IDENTIFIER
         { #table_name = #([TABLE_NAME, "TABLE_NAME"], #table_name); }
+    ;
+
+query_class_bag:
+        QUESTION_MARK COLONTYPE! table_name "as"! table_alias
+        { #query_class_bag = #([TABLE, "TABLE"], #query_class_bag); }
+    ;
+
+query_class_bag_multi:
+        QUESTION_MARK COLONTYPE! OPEN_PAREN! table_name ( COMMA! table_name )* CLOSE_PAREN! "as"! table_alias
+        { #query_class_bag_multi = #([TABLE, "TABLE"], #query_class_bag_multi); }
     ;
 
 subquery:

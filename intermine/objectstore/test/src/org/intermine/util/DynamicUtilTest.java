@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +18,9 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employable;
 import org.intermine.model.testmodel.Employee;
@@ -218,5 +221,45 @@ public class DynamicUtilTest extends TestCase
         public int hashCode() {
             return name.hashCode();
         }
+    }*/
+
+    public void testClassHeirarchyBrokeCEOIsBroke() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        assertTrue(Broke.class.isAssignableFrom(brokeCEO));
+    }
+
+    public void testClassHeirarchyBrokeCEOIsCEO() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        assertTrue(CEO.class.isAssignableFrom(brokeCEO));
+    }
+
+    /* See ticket #469
+    public void testClassHeirarchyBrokeCEOIsBrokeManager() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        Class brokeManager = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, Manager.class})));
+        assertTrue(brokeManager.isAssignableFrom(brokeCEO));
+    }
+
+    public void testClassHeirarchyBrokeCEOIsBrokeDynamic() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        Class broke = DynamicUtil.composeClass(Collections.singleton(Broke.class));
+        assertTrue(broke.isAssignableFrom(brokeCEO));
+    }
+
+    public void testClassHeirarchyBrokeCEOIsBrokeHasSecretarysManager() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        Class brokeHasSecretarysManager = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, HasSecretarys.class, Manager.class})));
+        assertTrue(brokeHasSecretarysManager.isAssignableFrom(brokeCEO));
+    }
+
+    public void testClassHeirarchyBrokeCEOIsImportantPersonEmployable() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        Class importantPersonEmployable = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employable.class})));
+        assertTrue(importantPersonEmployable.isAssignableFrom(brokeCEO));
+    }
+
+    public void testClassHeirarchyContractorIsImportantPersonEmployable() throws Exception {
+        Class importantPersonEmployable = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employable.class})));
+        assertTrue(importantPersonEmployable.isAssignableFrom(Contractor.class));
     }*/
 }

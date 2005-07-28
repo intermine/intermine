@@ -25,6 +25,7 @@ import org.intermine.util.TypeUtil;
 public class QueryCollectionReference extends QueryReference
 {
     protected InterMineObject qcObj = null;
+    protected QueryClassBag qcb = null;
 
     /**
      * Constructs a QueryCollectionReference representing the specified field of a QueryClass
@@ -33,7 +34,7 @@ public class QueryCollectionReference extends QueryReference
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
      * @throws IllegalArgumentException if the field is not a collection or does not exist
-     */    
+     */
     public QueryCollectionReference(QueryClass qc, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
@@ -48,6 +49,32 @@ public class QueryCollectionReference extends QueryReference
                     + " is not a collection type");
         }
         this.qc = qc;
+        this.fieldName = fieldName;
+        this.type = field.getReturnType();
+    }
+
+    /**
+     * Constructs a QueryCollectionReference representing the specified field of a QueryClassBag
+     *
+     * @param qcb the QueryClassBag
+     * @param fieldName the name of the relevant field
+     * @throws NullPointerException if the field name is null
+     * @throws IllegalArgumentException if the field is not a collection or does not exist
+     */
+    public QueryCollectionReference(QueryClassBag qcb, String fieldName) {
+        if (fieldName == null) {
+            throw new NullPointerException("Field name parameter is null");
+        }
+        Method field = TypeUtil.getGetter(qcb.getType(), fieldName);
+        if (field == null) {
+            throw new IllegalArgumentException("Field " + fieldName + " not found in "
+                    + qcb.getType());
+        }
+        if (!java.util.Collection.class.isAssignableFrom(field.getReturnType())) {
+            throw new IllegalArgumentException("Field " + fieldName + " in " + qcb.getType()
+                    + " is not a collection type");
+        }
+        this.qcb = qcb;
         this.fieldName = fieldName;
         this.type = field.getReturnType();
     }
@@ -88,13 +115,24 @@ public class QueryCollectionReference extends QueryReference
     }
 
     /**
+     * Gets the QueryClassBag of this QueryReference.
+     *
+     * @return a QueryClassBag
+     */
+    public QueryClassBag getQcb() {
+        return qcb;
+    }
+
+    /**
      * @see QueryReference#getQcType
      */
     public Class getQcType() {
-        if (qc == null) {
+        if (qc != null) {
+            return qc.getType();
+        } else if (qcObj != null) {
             return qcObj.getClass();
         } else {
-            return qc.getType();
+            return qcb.getType();
         }
     }
 }

@@ -67,19 +67,33 @@ public class QueryTestCase extends OneTimeTestCase
                     checkQueryNodes(msg + ": query nodes are not the same", (QueryNode) qc1, (QueryNode) qc2, q1, q2);
                 } else if (qc2 instanceof Query) {
                     fail(msg + ": QueryNode does not match Subquery");
+                } else if (qc2 instanceof QueryClassBag) {
+                    fail(msg + ": QueryNode does not match QueryClassBag");
                 } else {
-                    fail(msg + ": Unknown type of Object in list");
+                    fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
                 }
             } else if (qc1 instanceof Query) {
                 if (qc2 instanceof QueryNode) {
                     fail(msg + ": Subquery does not match QueryNode");
                 } else if (qc2 instanceof Query) {
                     assertEquals(msg + ": subquery", (Query) qc1, (Query) qc2);
+                } else if (qc2 instanceof QueryClassBag) {
+                    fail(msg + ": Subquery does not match QueryClassBag");
                 } else {
-                    fail(msg + ": Unknown type of Object in list");
+                    fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
+                }
+            } else if (qc1 instanceof QueryClassBag) {
+                if (qc2 instanceof QueryClassBag) {
+                    checkQueryClassBags(msg + ": QueryClassBags are not equivalent", (QueryClassBag) qc1, (QueryClassBag) qc2, q1, q2);
+                } else if (qc2 instanceof QueryNode) {
+                    fail(msg + ": QueryClassBag does not match QueryNode");
+                } else if (qc2 instanceof Query) {
+                    fail(msg + ": QueryClassBag does not match Subquery");
+                } else {
+                    fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
                 }
             } else {
-                fail(msg + ": Unknown type of Object in list");
+                fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());
             }
         }
 
@@ -240,5 +254,11 @@ public class QueryTestCase extends OneTimeTestCase
         IqlQuery fq2 = new IqlQuery(q2);
         assertEquals(msg, fq1.getQueryString(), fq2.getQueryString());
         assertEquals(msg, fq1.getParameters(), fq2.getParameters());
+    }
+
+    protected void checkQueryClassBags(String msg, QueryClassBag qcb1, QueryClassBag qcb2, Query q1, Query q2) {
+        assertEquals(msg + ": QueryClassBags do not refer to the same class", qcb1.getType(), qcb2.getType());
+        assertEquals(msg + ": QueryClassBags do not have the same alias", q1.getAliases().get(qcb1), q2.getAliases().get(qcb2));
+        assertEquals(msg + ": QueryClassBags do not have the same bags", qcb1.getIds(), qcb2.getIds());
     }
 }

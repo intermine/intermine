@@ -54,7 +54,7 @@ public class QueryClass implements QueryNode, FromElement
     /**
      * Gets the Java class represented by this QueryClass
      *
-     * @return the class name
+     * @return the Class
      */
     public Class getType() {
         return type;

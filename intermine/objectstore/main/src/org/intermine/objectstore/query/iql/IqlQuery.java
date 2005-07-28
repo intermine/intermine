@@ -102,6 +102,9 @@ public class IqlQuery
             needComma = true;
             if (fe instanceof QueryClass) {
                 retval += fe.toString() + (classAlias == null ? "" : " AS " + classAlias);
+            } else if (fe instanceof QueryClassBag) {
+                retval += fe.toString() + (classAlias == null ? "" : " AS " + classAlias);
+                parameters.add(((QueryClassBag) fe).getBag());
             } else {
                 retval += "(" + fe.toString() + ")" + (classAlias == null ? "" : " AS "
                         + classAlias);
@@ -284,11 +287,17 @@ public class IqlQuery
             QueryReference ref = c.getReference();
             ConstraintOp op = c.getOp();
             String refString = null;
-            if (ref.getQueryClass() == null) {
-                refString = "?";
-                parameters.add(((QueryCollectionReference) ref).getQcObject());
-            } else {
+            if (ref.getQueryClass() != null) {
                 refString = (String) q.getAliases().get(ref.getQueryClass());
+            } else if (((QueryCollectionReference) ref).getQcb() != null) {
+                refString = (String) q.getAliases().get(((QueryCollectionReference) ref).getQcb());
+            } else {
+                refString = "?";
+                Object param = ((QueryCollectionReference) ref).getQcObject();
+                if (param == null) {
+                    param = ((QueryCollectionReference) ref).getQcb();
+                }
+                parameters.add(param);
             }
             if (op.equals(ConstraintOp.IS_NULL) || op.equals(ConstraintOp.IS_NOT_NULL)) {
                 return refString + "." + ref.getFieldName() + " " + op.toString();

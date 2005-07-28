@@ -19,8 +19,11 @@ import java.util.Set;
 
 import junit.framework.Test;
 
-import org.intermine.testing.OneTimeTestCase;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.TypeUtil;
 
 public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
@@ -229,6 +232,27 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
         results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, HasSecretarysSecretarys AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Secretary' AND (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
         results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
+        Integer id5 = (Integer) ((Department) data.get("DepartmentA1")).getId();
+        Integer id6 = (Integer) ((Department) data.get("DepartmentB1")).getId();
+        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND (a2_.departmentId IN (" + id5 + ", " + id6 + ")) ORDER BY a2_.departmentId, a2_.id");
+        results2.put("QueryClassBag", Collections.singleton("InterMineObject"));
+        Integer companyAId = (Integer) ((Company) data.get("CompanyA")).getId();
+        Integer companyBId = (Integer) ((Company) data.get("CompanyB")).getId();
+        Integer employeeB1Id = (Integer) ((Employee) data.get("EmployeeB1")).getId();
+        results.put("QueryClassBagMM", "SELECT indirect0.Secretarys AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a2_.class = 'org.intermine.model.testmodel.Secretary' AND ((indirect0.Secretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
+        results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
+        results.put("QueryClassBagDynamic", "SELECT indirect0.Secretarys AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a2_.class = 'org.intermine.model.testmodel.Secretary' AND ((indirect0.Secretarys IN (" + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
+        results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
+        //res = new HashSet()
+        //res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Employable' AND a1__1.class = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        //res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Broke' AND a1__1.class = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        //results.put("DynamicBagConstraint", res);
+        //results2.put("DynamicBagConstraint", Collections.singleton("InterMineObject")); // See ticket #469
+        res = new HashSet();
+        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.CEO' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.Broke' AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.CEO' AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        results.put("DynamicBagConstraint2", res);
+        results2.put("DynamicBagConstraint2", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {
