@@ -905,13 +905,13 @@ public class MageDataTranslator extends DataTranslator
             }
             if (assayToSamples.containsKey(assayId)) {
                 List sampleIds = (List) assayToSamples.get(assayId);
-                if (sampleIds.get(0) != null) {
+                if (sampleIds.size() > 0) {
                     String summary =  getSampleSummary((String) sampleIds.get(0));
                     if (summary != null) {
                         assay.setAttribute("sample1", summary);
                     }
                 }
-                if (sampleIds.get(1) != null) {
+                if (sampleIds.size() > 1) {
                     String summary =  getSampleSummary((String) sampleIds.get(1));
                     if (summary != null) {
                         assay.setAttribute("sample2", summary);
