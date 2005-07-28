@@ -11,7 +11,7 @@
   <reference name="objectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
   <reference name="subjectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
 </class>
-<class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
 </class>
 </classes>

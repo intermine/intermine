@@ -6,7 +6,7 @@
   <attribute name="length" type="java.lang.Integer"/>
   <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="microarrayOligos"/>
 </class>
-<class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.Transcript" is-interface="true">
   <collection name="microarrayOligos" referenced-type="org.flymine.model.genomic.MicroarrayOligo" ordered="true" reverse-reference="transcript"/>
 </class>
 </classes>

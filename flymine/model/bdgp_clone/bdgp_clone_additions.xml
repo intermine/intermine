@@ -3,7 +3,7 @@
   <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="clones"/>
   </class>
-  <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <class name="org.flymine.model.genomic.Gene" is-interface="true">
     <collection name="clones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="gene" ordered="true"/>
   </class>
 </classes>

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.PCRProduct" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.PCRProduct" is-interface="true">
   <attribute name="promoter" type="java.lang.Boolean"/>
   <!--reference name="forwardPrimer" referenced-type="org.flymine.model.genomic.ForwardPrimer"/-->
   <!--reference name="reversePrimer" referenced-type="org.flymine.model.genomic.ReversePrimer"/-->
   <reference name="tilingPathSpan" referenced-type="org.flymine.model.genomic.TilingPathSpan" reverse-reference="pcrProducts"/>
   <collection name="primers" referenced-type="org.flymine.model.genomic.Primer" reverse-reference="pcrProduct" ordered="true"/>
 </class>
-<class name="org.flymine.model.genomic.Primer" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.Primer" is-interface="true">
   <reference name="pcrProduct" referenced-type="org.flymine.model.genomic.PCRProduct" reverse-reference="primers"/>
   <attribute name="name" type="java.lang.String"/>
 </class>

@@ -9,7 +9,7 @@
   <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="evidenceCode" type="java.lang.String"/>
 </class>
-<class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="GOTerms" referenced-type="org.flymine.model.genomic.GOTerm" ordered="true" reverse-reference="genes"/>
 </class>
 </classes>
