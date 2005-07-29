@@ -185,4 +185,32 @@ public class TextFileUtilTest extends TestCase
 
         assertEquals("\"null\"", baos.toString());
     }
+
+    public void testParseTabDelimitedReader() throws Exception {
+        String inputString =
+            "1.1\t1.2\t1.3\n"
+            + "2.1\t2.2\t2.3\n"
+            + "3.1\t3.2\t3.3\n";
+
+        StringReader sr = new StringReader(inputString);
+
+        Iterator iterator = TextFileUtil.parseTabDelimitedReader(sr);
+
+        assertTrue(iterator.hasNext());
+        String[] line0 = {
+            "1.1", "1.2", "1.3"
+        };
+        assertTrue(Arrays.equals(line0, (Object[]) iterator.next()));
+        assertTrue(iterator.hasNext());
+        String[] line1 = {
+            "2.1", "2.2", "2.3"
+        };
+        assertTrue(Arrays.equals(line1, (Object[]) iterator.next()));
+        assertTrue(iterator.hasNext());
+        String[] line2 = {
+            "3.1", "3.2", "3.3"
+        };
+        assertTrue(Arrays.equals(line2, (Object[]) iterator.next()));
+        assertFalse(iterator.hasNext());
+    }
 }

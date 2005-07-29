@@ -10,13 +10,19 @@ package org.intermine.util;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Reader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+
+import org.apache.xml.utils.UnImplNode;
 
 /**
  * Utility methods for dealing with text files.
@@ -178,5 +184,44 @@ public abstract class TextFileUtil
      */
     public static void writeUnQuoted(PrintStream printStream, Object o) {
         printStream.print(o.toString());
+    }
+
+    /**
+     * Return an Iterator over a tab delimited file.  Iterator.next() splits the current line at the
+     * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
+     */
+    public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
+        final BufferedReader bufferedReader = new BufferedReader(reader);
+
+        return new Iterator() {
+            String line = null;
+
+            {
+                line = bufferedReader.readLine();
+            }
+
+            public boolean hasNext() {
+                return line != null;
+            }
+
+            public Object next() {
+                if (line == null) {
+                    throw new NoSuchElementException();
+                } else {
+                    String currentLine = line;
+                    try {
+                        line = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        throw new RuntimeException("error while reading from " + reader, e);
+                    }
+
+                    return StringUtil.split(currentLine, "\t");
+                }
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }
