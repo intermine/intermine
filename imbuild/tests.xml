@@ -63,7 +63,7 @@
     </junitreport>
   </target>
   
-  <target name="coverage-report" depends="-init-emma">
+  <target name="coverage-report" depends="-init-emma" if="produce.emma.report">
     <emma enabled="${emma.enabled}">
       <report sourcepath="${instrument.src.path}">
         <fileset dir="${build.coverage.dir}" includes="*.ec, *.em"/>
@@ -123,9 +123,10 @@
           <propertyref prefix="test-sys-prop."/>
           <mapper to="*" from="test-sys-prop.*" type="glob"/>
         </syspropertyset>
-        <sysproperty key="emma.coverage.out.file" value="${build.coverage.dir}/coverage.ec" />
-        <sysproperty key="emma.coverage.out.merge" value="false" />
+        <sysproperty key="emma.coverage.out.file" value="${build.coverage.dir}/coverage.ec"/>
+        <sysproperty key="emma.coverage.out.merge" value="false"/>
       </junit>
+      <available property="produce.emma.report" file="${build.coverage.dir}/coverage.ec"/>
     </sequential>
     </macrodef>
   </target>
