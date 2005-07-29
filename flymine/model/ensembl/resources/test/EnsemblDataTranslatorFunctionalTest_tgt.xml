@@ -97,9 +97,7 @@
   </item>
   <item id="24_78815" class="http://www.flymine.org/model/genomic#RepeatRegion">
     <attribute name="consensus" value="N"/>
-    <attribute name="end" value="23"/>
     <attribute name="identifier" value="GC_rich"/>
-    <attribute name="start" value="1"/>
     <attribute name="type" value="Low_complexity"/>
     <reference name="contig" ref_id="1_11167"/>
     <reference name="organism" ref_id="-1_1"/>
