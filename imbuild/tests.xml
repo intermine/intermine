@@ -97,7 +97,7 @@
     <attribute name="forkmode" default="${test.forkmode}"/>
     <element name="customize" optional="true"/>
     <sequential>
-      <echo>${ENV.ANT_OPTS}</echo>
+      <echo>ANT_OPTS = ${ENV.ANT_OPTS}</echo>
       <junit showoutput="true" reloading="false" printsummary="yes"
              failureproperty="tests.failed" errorproperty="tests.failed"
              fork="@{fork}" forkmode="@{forkmode}">
