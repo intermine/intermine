@@ -17,7 +17,7 @@
         </c:when>
         <c:otherwise>
           <html:link action="/objectDetails?id=${item.objectId}&amp;trail=${item.trail}"
-                 styleClass="objectTrailLink">${item.label}</html:link>
+                 styleClass="objectTrailLink" title="ID = ${item.objectId}">${item.label}</html:link>
         </c:otherwise>
       </c:choose>
       <c:if test="${!status.last}">
