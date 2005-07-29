@@ -8,6 +8,7 @@ use strict;
 use warnings;
 
 use Expect;
+use Getopt::Std;
 
 my $ant_command = "ant";
 
@@ -22,7 +23,9 @@ usage:
 or
   $0 -v dump_host dump_file_prefix
 
-the -v flag is passed to ant
+flags:
+ -v is passed to ant
+ -r attempt to restart by reading the last dump file
 
 example:
   $0 /tmp/production_dump
@@ -30,12 +33,18 @@ EOF
 }
 
 my $verbose = 0;
+my $restart = 0;
 
-if (@ARGV > 0) {
-  if ($ARGV[0] eq '-v') {
-    $verbose = 1;
-    shift;
-  }
+my %opts = ();
+
+getopts('vr', \%opts);
+
+if ($opts{v}) {
+  $verbose = 1;
+}
+
+if ($opts{r}) {
+  $restart = 1;
 }
 
 if (@ARGV == 2) {
@@ -55,6 +64,7 @@ select $old_handle;
 
 my $flymine_properties = "$ENV{HOME}/flymine.properties";
 my @dump_command = qw[pg_dump -c];
+my @psql_command = qw[psql -q];
 
 sub log_message
 {
@@ -135,7 +145,9 @@ sub dump_db
 
   my @params = ('-U', $user, '-h', $host, '-W', '-f', $out_file, $db);
 
+  log_and_print `date`, "\n\n";
   log_and_print "\ndumping: @dump_command @params\n";
+
 
 
   my $exp = new Expect;
@@ -144,13 +156,94 @@ sub dump_db
   $exp->spawn("ssh", $dump_host, "@dump_command @params; echo __DUMP_FINISHED__")
     or die "Cannot spawn @dump_command @params: $!\n";
 
-  ## Doesn't work:
-  # $exp->slave->stty(qw(-echo));
-
   $exp->expect(10, 'Password: ');
   $exp->send("$pass\n");
   $exp->expect(9999999, '__DUMP_FINISHED__\n');
   $exp->soft_close();
+  log_and_print `date`, "\n\n";
+  log_and_print "finished dump\n\n";
+}
+
+sub load_db
+{
+  my $db = shift;
+  my $user = shift;
+  my $pass = shift;
+  my $host = shift;
+  my $in_file = shift;
+
+  my @params = ('-U', $user, '-h', $host, '-f', $in_file, $db);
+
+  log_and_print `date`, "\n\n";
+  log_and_print "\nloading: @psql_command @params\n";
+
+  my $exp = new Expect;
+
+  $exp->raw_pty(1);
+  $exp->spawn("ssh", $dump_host, "@psql_command @params; echo __LOAD_FINISHED__")
+    or die "Cannot spawn @psql_command @params: $!\n";
+
+  $exp->expect(10, 'Password: ');
+  $exp->send("$pass\n");
+  $exp->expect(9999999, '__LOAD_FINISHED__\n');
+  $exp->soft_close();
+  log_and_print `date`, "\n\n";
+  log_and_print "finished load\n\n";
+}
+
+sub get_actions
+{
+  my @actions = ();
+
+  while (my $line = <DATA>) {
+    if ($line =~ m{
+                   ^\s*\#
+                   |
+                   ^\s*$
+                 }x) {
+      next;
+    }
+
+    my ($action_type, @args) = split " ", $line;
+
+    $action_type =~ s/:$//;
+
+    push @actions, {type => $action_type, args => [@args]};
+  }
+
+  return @actions;
+}
+
+# find the last existing dump file
+sub get_restart_dump_suffix
+{
+  my ($dump_file_prefix, @actions) = @_;
+
+  my %remote_suffixes = ();
+
+  open REMOTE, qq{ssh $dump_host "ls -1 $dump_file_prefix.*"|};
+
+  while (my $line = <REMOTE>) {
+    chomp $line;
+    if ($line =~ /$dump_file_prefix.(.*)/) {
+      $remote_suffixes{$1} = 1;
+    }
+  }
+
+  my $restart_dump_suffix = undef;
+
+  for my $action (@actions) {
+    my $action_type = $action->{type};
+    my @action_args = @{$action->{args}};
+
+    if ($action_type eq 'dump') {
+      if (exists $remote_suffixes{$action_args[0]}) {
+        $restart_dump_suffix = $action_args[0];
+      }
+    }
+  }
+
+  return $restart_dump_suffix;
 }
 
 my $prod_host = get_prop_val "db.production.datasource.serverName", $flymine_properties;
@@ -165,34 +258,61 @@ log_message "  prod_user: $prod_user";
 log_message "  prod_pass: $prod_pass";
 log_message;
 
-while (my $line = <DATA>) {
-  if ($line =~ m{
-                    ^\s*\#
-                   |
-                    ^\s*$
-                }x) {
-    next;
+my @actions = get_actions();
+
+my $restart_dump_suffix = undef;
+
+if ($restart) {
+  $restart_dump_suffix = get_restart_dump_suffix($dump_file_prefix, @actions);
+
+  my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
+
+  if (defined $restart_dump_suffix) {
+    log_and_print "restarting from $dump_file_name\n";
+    load_db $prod_db, $prod_user, $prod_pass, $prod_host, $dump_file_name;
+  } else {
+    warn "no dump file found with prefix $dump_file_prefix\n";
   }
+}
 
-  my ($action, @args) = split " ", $line;
+my $seen_start_action = 0;
 
-  if ($action eq "run:") {
-    if ($verbose) {
-      run_and_check_status $ant_command, "-v", @args;
+if (!$restart || !defined $restart_dump_suffix) {
+  # always start at the beggining of the command list if we aren't restarting
+  $seen_start_action = 1;
+}
+
+for my $action (@actions) {
+  my $action_type = $action->{type};
+  my @action_args = @{$action->{args}};
+
+  if ($seen_start_action) {
+    if ($action_type eq 'run') {
+      if ($verbose) {
+        run_and_check_status $ant_command, "-v", @action_args;
+      } else {
+        run_and_check_status $ant_command, @action_args;
+      }
     } else {
-      run_and_check_status $ant_command, @args;
+      if ($action eq 'dump') {
+        if (@action_args != 1) {
+          die "dump: needs one parameter at: $action: @action_args\n";
+        }
+        dump_db $prod_db, $prod_user, $prod_pass, $prod_host, "$dump_file_prefix.$action_args[0]";
+      } else {
+        die qq{unknown action "$action_type"\n};
+      }
     }
   } else {
-    if ($action eq "dump:") {
-      if (@args != 1) {
-        die "dump: needs one parameter at: $line\n";
-      }
-      dump_db $prod_db, $prod_user, $prod_pass, $prod_host, $dump_file_prefix . ".$args[0]";
-    } else {
-      die "unknown action \"$action\"\n";
+    print "$action_type $action_args[0] eq $restart_dump_suffix\n";
+
+    if ($action_type eq 'dump' && $action_args[0] eq $restart_dump_suffix) {
+      $seen_start_action = 1;
     }
   }
 }
+
+
 
 __END__
 
@@ -238,7 +358,7 @@ dump: postprocess-1
 
 run: create-overlap-relations
 run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
-run: create-flybase-to-uniprot-refs update-publications
+prun: create-flybase-to-uniprot-refs update-publications
 
 dump: postprocess-2
 
