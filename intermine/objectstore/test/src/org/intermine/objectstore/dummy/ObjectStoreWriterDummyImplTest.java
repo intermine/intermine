@@ -52,9 +52,14 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         assertEquals(5, storedObjects.size());
         
         assertTrue(storedObjects.get(new Integer(0)) == o1);
+        assertTrue(((Company) storedObjects.get(new Integer(0))).getId().equals(new Integer(0)));
         assertTrue(storedObjects.get(new Integer(1)) == o2);
+        assertTrue(((Company) storedObjects.get(new Integer(1))).getId().equals(new Integer(1)));
         assertTrue(storedObjects.get(new Integer(2)) == o3);
+        assertTrue(((Company) storedObjects.get(new Integer(2))).getId().equals(new Integer(2)));
         assertTrue(storedObjects.get(new Integer(3)) == o5);
+        assertTrue(((Company) storedObjects.get(new Integer(3))).getId().equals(new Integer(3)));
         assertTrue(storedObjects.get(new Integer(100)) == o4);
+        assertTrue(((Company) storedObjects.get(new Integer(100))).getId().equals(new Integer(100)));
     }
 }
