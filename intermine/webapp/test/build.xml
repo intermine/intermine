@@ -1,9 +1,0 @@
-
-<project name="intermine-webapp-test" default="default" basedir="."
-  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
-  
-  <description>build, test, package intermine-webapp-test</description>
-  <import file="../../../imbuild/tests.xml"/>
-  
-</project>
-
