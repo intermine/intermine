@@ -358,7 +358,7 @@ dump: postprocess-1
 
 run: create-overlap-relations
 run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
-prun: create-flybase-to-uniprot-refs update-publications
+run: create-flybase-to-uniprot-refs update-publications
 
 dump: postprocess-2
 
