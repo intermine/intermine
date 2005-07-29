@@ -31,7 +31,7 @@
       </c:if>
       <br/>
       
-      <div id="viewDivs">
+      <div>
         <c:forEach var="path" items="${QUERY.view}" varStatus="status">
           <im:viewableDiv path="${path}" viewPaths="${viewPaths}" idPrefix="showing">
             <div>
@@ -43,24 +43,24 @@
               <span class="type"><small>${viewPathTypes[path]}</small></span>
             </div>
             <div style="white-space:nowrap">
-              <%--<c:choose>
+              <c:choose>
                 <c:when test="${status.first}">
                   <img style="margin-right: 5px" border="0" align="middle" 
                        src="images/blank13x13.gif" alt=" " width="13" height="13" />
                 </c:when>
-                <c:otherwise>--%>
+                <c:otherwise>
                   <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
                     <fmt:param value="${path}"/>
                   </fmt:message>
                   <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
                   <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
-                             title="${moveLeftTitle}" onclick="moveLeft(this.parentNode.parentNode);return false;">
+                             title="${moveLeftTitle}">
                     <img style="margin-right: 5px" border="0" align="middle" 
                          src="images/left-arrow-square.gif" width="13" height="13" 
-                         alt="${moveLeftString}"/>
+                         alt="${moveRightString}"/>
                   </html:link>
-             <%--   </c:otherwise>
-              </c:choose>    --%>
+                </c:otherwise>
+              </c:choose>                
 
               <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
                 <fmt:param value="${path}"/>
@@ -73,57 +73,28 @@
                      alt="${removeFromViewString}"/>
               </html:link>
               
-           <%--   <c:choose>
+              <c:choose>
                 <c:when test="${status.last}">
                   <img style="margin-left: 5px" border="0" align="middle" 
                        src="images/blank13x13.gif" alt=" " width="13" height="13" />
                 </c:when>
-                <c:otherwise> --%>
+                <c:otherwise>
                   <fmt:message key="view.moveRightHelp" var="moveRightTitle">
                     <fmt:param value="${path}"/>
                   </fmt:message>
                   <fmt:message key="view.moveRightSymbol" var="moveRightString"/>
                   <html:link action="/viewChange?method=moveRight&amp;index=${status.index}"
-                             title="${moveRightTitle}" onclick="moveRight(this.parentNode.parentNode);return false;">
+                             title="${moveRightTitle}">
                     <img style="margin-left: 5px" border="0" align="middle"
                          src="images/right-arrow-square.gif" width="13" height="13" 
                          alt="${moveRightString}"/>
                   </html:link>
-           <%--     </c:otherwise>
-              </c:choose> --%>
+                </c:otherwise>
+              </c:choose>
             </div>
           </im:viewableDiv>
         </c:forEach>
       </div>
-      
-      <p><span id="ser"></span></p>
-      
-      <script type="text/javascript">
-        Sortable.create('viewDivs', {
-          tag:'div', constraint:'horizontal', overlap:'horizontal',
-          onUpdate:function() {
-            reorderOnServer();
-          }
-        });
-        
-        function moveLeft(element) {
-          var container = element.parentNode;
-          container.insertBefore(element, element.previousSibling);
-          reorderOnServer();
-        }
-        
-        function moveRight(element) {
-          var container = element.parentNode;
-          container.insertAfter(element, element.previousSibling);
-          reorderOnServer();
-        }
-        
-        function reorderOnServer() {
-          $('ser').innerHTML=Sortable.serialize('viewDivs');
-        }
-        
-      </script>
-      
       <div style="clear:left">
         <br/>
         <html:form action="/viewAction">
