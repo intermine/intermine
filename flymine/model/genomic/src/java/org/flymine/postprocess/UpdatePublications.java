@@ -147,6 +147,7 @@ public class UpdatePublications
         /**
          * Constructor
          * @param toStore a set in which the new publication items are stored
+         * @param itemFactory the factory
          */
         public Handler(Set toStore, ItemFactory itemFactory) {
             this.toStore = toStore;
