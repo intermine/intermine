@@ -240,7 +240,7 @@ public class GFF3Converter
         }
         String tgtLocation = record.getTarget();
         if (orgAbb != null && tgtSeqIdentifier != null && tgtLocation != null) {
-            handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seqClsName, tgtLocation);
+            handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seq, tgtLocation);
         }
 
         handler.process(record);
