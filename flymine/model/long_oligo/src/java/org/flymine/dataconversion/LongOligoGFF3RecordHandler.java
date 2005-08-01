@@ -11,8 +11,6 @@ package org.flymine.dataconversion;
  */
 
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
