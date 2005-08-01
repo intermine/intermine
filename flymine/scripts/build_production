@@ -294,7 +294,7 @@ for my $action (@actions) {
         run_and_check_status $ant_command, @action_args;
       }
     } else {
-      if ($action eq 'dump') {
+      if ($action_type eq 'dump') {
         if (@action_args != 1) {
           die "dump: needs one parameter at: $action: @action_args\n";
         }
