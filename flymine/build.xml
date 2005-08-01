@@ -3512,6 +3512,42 @@
   <target name="build-go-human-production"
           depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
 
+
+<!-- GO ANNOTATION -->
+  <target name="retrieve-go-annotation-mouse" depends="prepare-build-model, compile-go-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.go-dag-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <convert-file osName="osw.go-annotation-tgt-items"
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
+      <fileset dir="/shared/data/go-annotation/mouse">
+        <include name="gene_association*"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.go-annotation-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="build-go-mouse-production"
+          depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-mouse, load-go-annotation"/>
+
 <!-- UCSC MODEL GENERATION -->
 
   <!-- merge ucsc model additions with current genomic model -->
