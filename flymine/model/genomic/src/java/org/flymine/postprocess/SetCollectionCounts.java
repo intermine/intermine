@@ -1,11 +1,20 @@
 package org.flymine.postprocess;
 
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
-import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -16,18 +25,6 @@ import org.flymine.model.genomic.Transcript;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-
-/*
- * Copyright (C) 2002-2005 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
 
 /**
  * SetCollectionCounts class
@@ -53,12 +50,20 @@ public class SetCollectionCounts
     /**
      * Set the count fields by looking at collection sizes (eg. set exonCount by getting 
      * exons.size()) 
-     * @throws Exception
+     * @throws Exception if an error occurs
      */
     public void setCollectionCount() throws Exception {
         setCollectionCountField(Transcript.class, "exons", "exonCount");
     }
 
+    /**
+     * Count a collection and set an Integer field with the count.
+     * @param c the Class to find the fields in
+     * @param collectionName the name of the collection to count
+     * @param countFieldName the Integer field to set
+     * @throws ObjectStoreException if an ObjectStore method fails
+     * @throws IllegalAccessException if a field cannot be accessed
+     */
     void setCollectionCountField(Class c, String collectionName, String countFieldName)
         throws ObjectStoreException, IllegalAccessException {
         Query q = new Query();

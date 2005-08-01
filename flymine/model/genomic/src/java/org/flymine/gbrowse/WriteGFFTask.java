@@ -13,7 +13,6 @@ package org.flymine.gbrowse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -196,8 +195,8 @@ public class WriteGFFTask extends Task
 
         if (!currentChr.getIdentifier().endsWith("_random")
                     && !currentChr.getIdentifier().equals("M")) {
-            writeTranscriptsAndExons(os, gffWriter, currentChr, seenTranscripts, seenTranscriptParts,
-                                 synonymMap);
+            writeTranscriptsAndExons(os, gffWriter, currentChr, seenTranscripts,
+                                     seenTranscriptParts, synonymMap);
         }
 
         gffWriter.close();
