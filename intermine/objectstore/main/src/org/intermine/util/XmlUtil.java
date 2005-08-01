@@ -1,10 +1,5 @@
 package org.intermine.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-
-import org.apache.commons.lang.StringUtils;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -14,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * General-purpose methods for manipulating URIs and XML schema types
@@ -158,7 +155,7 @@ public class XmlUtil
         char bytes[] = xmlString.toCharArray();
         int i = 0;
         while (i < bytes.length) {
-            if (bytes[i] == '<' && bytes[i+1] == '/') {
+            if (bytes[i] == '<' && bytes[i + 1] == '/') {
                 os.write('\n');
                 writeIndentation(os, --indent);
             } else if (bytes[i] == '<') {
@@ -166,7 +163,7 @@ public class XmlUtil
                     os.write('\n');
                 }
                 writeIndentation(os, indent++);
-            } else if (bytes[i] == '/' && bytes[i+1] == '>') {
+            } else if (bytes[i] == '/' && bytes[i + 1] == '>') {
                 indent--;
             } else if (bytes[i] == '>') {
                 

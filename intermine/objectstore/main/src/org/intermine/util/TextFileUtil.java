@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import org.apache.xml.utils.UnImplNode;
-
 /**
  * Utility methods for dealing with text files.
  *
@@ -191,6 +189,8 @@ public abstract class TextFileUtil
      * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
      * Lines beginning with # are ignored.
      * @param reader the Reader to read from
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error whiel reading from the Reader
      */
     public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);

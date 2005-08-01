@@ -83,7 +83,8 @@ public class HomophilaPostProcess
         
         homophilaDb = (Database) DynamicUtil.createObject(Collections.singleton(Database.class));
         homophilaDb.setTitle("Homophila");
-        homophilaDb = (Database) osw.getObjectByExample(homophilaDb, Collections.singleton("title"));
+        homophilaDb =
+            (Database) osw.getObjectByExample(homophilaDb, Collections.singleton("title"));
         
         if (homophilaDb == null) {
             LOG.error("Failed to find homophila Database object");
@@ -137,9 +138,9 @@ public class HomophilaPostProcess
     /**
      * Run a query that returns the drosophila Genes and associated Diseases matched via
      * homophila BlastMatches.
-     * 
      * @param os the objectstore
      * @return the Results object
+     * @throws ObjectStoreException if there is an error while reading from the ObjectStore
      */
     protected static Results findHomophilaGenesDiseases(ObjectStore os)
         throws ObjectStoreException {

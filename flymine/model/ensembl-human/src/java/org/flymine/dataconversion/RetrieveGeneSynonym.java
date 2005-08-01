@@ -13,15 +13,12 @@ package org.flymine.dataconversion;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -41,7 +38,10 @@ public class RetrieveGeneSynonym extends FileConverter
     protected int id = 0;
     protected String synonymtype = null;
 
-
+    /**
+     * Set the value the Synonym.type field should have when retrieving Synonym.
+     * @param synonymtype the Synonym type
+     */
     public void setSynonymtype(String synonymtype) {
         this.synonymtype = synonymtype;
     }
@@ -75,9 +75,10 @@ public class RetrieveGeneSynonym extends FileConverter
 
             while ((line = br.readLine()) != null) {
                 String[] array = line.split("\t", -1); //keep trailing empty Strings
-                if (array[0] != null && array[1].length() > 0 ) {
+                if (array[0] != null && array[1].length() > 0) {
                     Item gene = getGene(array[0]);
-                    Item synonym = getSynonym(array[1], synonymtype.concat("Id"), gene.getIdentifier());
+                    Item synonym =
+                        getSynonym(array[1], synonymtype.concat("Id"), gene.getIdentifier());
                 }
             }
         }
@@ -91,6 +92,12 @@ public class RetrieveGeneSynonym extends FileConverter
         store(synonyms.values());
     }
 
+    /**
+     * Return the Gene Item by organismDbId.
+     * @param organismDbId the key to use to retrieve the Item
+     * @return the Item
+     * @throws ObjectStoreException if an error occurs while reading
+     */
     protected Item getGene(String organismDbId) throws ObjectStoreException {
         Item item = (Item) genes.get(organismDbId);
         if (item == null) {
@@ -101,8 +108,16 @@ public class RetrieveGeneSynonym extends FileConverter
         return item;
     }
 
-
-    protected Item getSynonym(String value, String type, String subjectId ) throws ObjectStoreException {
+    /**
+     * Create and return a new synonym Item.
+     * @param value the value attribute of the new Item
+     * @param type the type attribute
+     * @param subjectId the subjectId
+     * @return the Item
+     * @throws ObjectStoreException if an error occurs while reading
+     */
+    protected Item getSynonym(String value, String type, String subjectId)
+        throws ObjectStoreException {
         Item item = (Item) synonyms.get(value);
         if (item == null) {
             item = createItem("Synonym");
