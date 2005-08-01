@@ -181,6 +181,9 @@ public class PostProcessTask extends Task
             } else if ("homophila-post-process".equals(operation)) {
                 HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
                 hpp.connectDrosophilaGenesToHumanDiseases();
+            } else if ("set-collection-counts".equals(operation)) {
+                SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
+                setCounts.setCollectionCount();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
