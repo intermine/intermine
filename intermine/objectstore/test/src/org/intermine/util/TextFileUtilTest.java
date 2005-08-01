@@ -188,8 +188,10 @@ public class TextFileUtilTest extends TestCase
 
     public void testParseTabDelimitedReader() throws Exception {
         String inputString =
-            "1.1\t1.2\t1.3\n"
+            "# some comment\n"
+            + "1.1\t1.2\t1.3\n"
             + "2.1\t2.2\t2.3\n"
+            + "# another some comment\n"
             + "3.1\t3.2\t3.3\n";
 
         StringReader sr = new StringReader(inputString);
@@ -212,5 +214,12 @@ public class TextFileUtilTest extends TestCase
         };
         assertTrue(Arrays.equals(line2, (Object[]) iterator.next()));
         assertFalse(iterator.hasNext());
+
+        try {
+            iterator.next();
+            fail("expected NoSuchElementException");
+        } catch (NoSuchElementException e) {
+            // expected
+        }
     }
 }

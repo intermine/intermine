@@ -189,38 +189,57 @@ public abstract class TextFileUtil
     /**
      * Return an Iterator over a tab delimited file.  Iterator.next() splits the current line at the
      * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
      */
     public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
 
         return new Iterator() {
-            String line = null;
+            String currentLine = null;
 
             {
-                line = bufferedReader.readLine();
+                currentLine = getNextNonCommentLine();
             }
 
             public boolean hasNext() {
-                return line != null;
+                return currentLine != null;
             }
 
             public Object next() {
-                if (line == null) {
+                if (currentLine == null) {
                     throw new NoSuchElementException();
                 } else {
-                    String currentLine = line;
+                    String lastLine = currentLine;
                     try {
-                        line = bufferedReader.readLine();
+                        currentLine = getNextNonCommentLine();
                     } catch (IOException e) {
                         throw new RuntimeException("error while reading from " + reader, e);
                     }
 
-                    return StringUtil.split(currentLine, "\t");
+                    return StringUtil.split(lastLine, "\t");
                 }
             }
 
             public void remove() {
                 throw new UnsupportedOperationException();
+            }
+
+            private String getNextNonCommentLine() throws IOException {
+                String line = null;
+
+                while (true) {
+                    line = bufferedReader.readLine();
+                    if (line == null) {
+                        break;
+                    } else {
+                        if (!line.startsWith("#")) {
+                            break;
+                        }
+                    }
+                }
+
+                return line;
             }
         };
     }
