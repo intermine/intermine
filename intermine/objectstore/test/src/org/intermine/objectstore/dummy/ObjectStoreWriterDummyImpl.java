@@ -92,7 +92,8 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         throw new UnsupportedOperationException();
     }
 
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain, int sequence) throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+                        int sequence) throws ObjectStoreException {
         throw new UnsupportedOperationException();
     }
 
@@ -140,7 +141,7 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         return os.getModel();
     }
 
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames) throws ObjectStoreException {
+    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames) {
         throw new UnsupportedOperationException();
     }
 
