@@ -197,6 +197,7 @@
       <pathelement location="${build.model}/diseaseregion"/>
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
+      <pathelement location="${build.model}/opposumchain"/>
       <pathelement location="${build.model}/homophila"/>
       <pathelement location="${build.model}/bdgp_clone"/>
 
@@ -3128,7 +3129,7 @@
                 merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
-                merge-ensembl-disease-model,
+                merge-ensembl-disease-model,merge-opposumchain-model,
                 merge-chado-model, merge-shortcuts">
   </target>
 
@@ -3906,7 +3907,6 @@
 
   <!-- comparativeGenomics model is added to model/genomic/shortcuts.xml -->
   
-  
   <!--load comparativeGenomics mouseChain GFF3 data from UCSC-->
   <target name="retrieve-mousechain" depends="prepare-build-model, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -3958,6 +3958,82 @@
   <target name="build-mousechain-production" depends="retrieve-mousechain, load-mousechain"/>
 
 
+  <!-- merge opposum model additions with current genomic model -->
+  <path id="opposumchain.class.path">
+    <path refid="models.class.path"/>
+    <pathelement location="${model}/opposumchain/resources"/>
+  </path>
+  <target name="merge-opposumchain-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/opposumchain/opposumchain_additions.xml"/>
+  </target>
+
+  <target name="opposumchain-test"
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="opposumchain"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-opposumchain-java"
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="opposumchain"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <!--load comparativeGenomics opposumChain GFF3 data from UCSC-->
+  <target name="retrieve-opposumchain" depends="prepare-build-model, compile-genomic-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="opposumchain.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="UCSC"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
+      <fileset dir ="/shared/data/human/comparativeGenomics">
+        <include name ="opposumChain.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-opposumchain" depends="copy-t1dmine-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.genomic-test"
+               source="os.gff3-translated"
+               sourceName="opposumchain"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-opposumchain-production" depends="retrieve-opposumchain, load-opposumchain"/>
+
+
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
     <copy todir="${build.resources}"
@@ -3997,7 +4073,6 @@
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
     
   </target>
-
 
 </project>
 

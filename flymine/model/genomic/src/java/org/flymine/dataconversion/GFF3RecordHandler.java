@@ -10,7 +10,6 @@ package org.flymine.dataconversion;
  *
  */
 
-
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class GFF3RecordHandler
     protected Map tgtSeqs = new HashMap();
     private Item tgtOrganism;
     private Reference tgtOrgRef;
-    private Item tgtSequence;
+    protected Item tgtSequence;
     private int itemid = 0;
 
     /**
@@ -248,6 +247,10 @@ public class GFF3RecordHandler
         items.put("_tgtSequence", tgtSequence);
     }
 
+    protected Item getTgtSequence() {
+        return tgtSequence;
+    }
+
 
     /**
      * Set the tgtLocation item for this record.
@@ -357,8 +360,9 @@ public class GFF3RecordHandler
      * @param locString location string got from converter
      */
     protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
-              String seqClsName, String locString) {
+              Item  seq,  String locString) {
         String clsName = classFromURI(feature.getClassName());
+        String seqClsName = classFromURI(seq.getClassName());
         if (clsName.equals("CrossGenomeMatch")) {
             if (orgAbb != null) {
                 tgtOrganism = getTargetOrganism(orgAbb);
@@ -386,10 +390,11 @@ public class GFF3RecordHandler
                 targetLocation.setReference("subject", feature.getIdentifier());
                 setTgtLocation(targetLocation);
 
+                feature.setReference("chromosome", seq.getIdentifier());
                 feature.setReference("chromosomeLocation", getLocation().getIdentifier());
                 feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
-                feature.setReference("targetChromosome", targetSeq.getIdentifier());
-                feature.setReference("targetChromosomeLocation", targetLocation.getIdentifier());
+                feature.setReference("targetLocatedSequenceFeature", targetSeq.getIdentifier());
+                feature.setReference("targetLocatedSequenceFeatureLocation", targetLocation.getIdentifier());
             } else {
                 throw new NullPointerException("No target organism for " + feature);
             }
@@ -399,12 +404,16 @@ public class GFF3RecordHandler
      private Item getTargetSeq(String identifier, String seqClsName, String orgAbb) {
         Item tseq = (Item) tgtSeqs.get(identifier);
         if (tseq == null) {
-            tseq = createItem(seqClsName, createIdentifier());
-            tseq.setAttribute("identifier", identifier);
+            if (identifier.startsWith("scaffold_")) {
+                tseq = createItem("Scaffold", createIdentifier());
+                tseq.setAttribute("identifier", identifier.substring("scaffold_".length()));
+            } else {
+                tseq = createItem(seqClsName, createIdentifier());
+                tseq.setAttribute("identifier", identifier);
+            }
             tseq.addReference(getTargetOrgRef(orgAbb));
             tgtSeqs.put(identifier, tseq);
             setTgtSequence(tseq);
-
         }
         return tseq;
     }
