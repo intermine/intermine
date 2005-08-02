@@ -288,11 +288,11 @@ public class PrecomputeTask extends Task
         List queries = new ArrayList();
 
         // expand '+' to all subclasses in path
-        Set paths = PathQueryUtil.expandPath(os, path);
+        Set paths = PathQueryUtil.expandPath(os.getModel(), path);
         Iterator pathIter = paths.iterator();
         while (pathIter.hasNext()) {
             String nextPath = (String) pathIter.next();
-            Query q = PathQueryUtil.constructQuery(os, nextPath);
+            Query q = PathQueryUtil.constructQuery(os.getModel(), nextPath);
             if (createAllOrders) {
                 queries.addAll(getOrderedQueries(q));
             } else {

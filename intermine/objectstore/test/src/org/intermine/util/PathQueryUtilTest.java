@@ -50,7 +50,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
         return buildSuite(PrecomputeTaskTest.class);
     }
     public void testConstructQuerySingleRef() throws Exception {
-        Query actual = PathQueryUtil.constructQuery(os, "Employee department Department");
+        Query actual = PathQueryUtil.constructQuery(os.getModel(), "Employee department Department");
 
         Query q = new Query();
         QueryClass qcEmpl = new QueryClass(Employee.class);
@@ -72,7 +72,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
 
 
     public void testConstructQueryTwoRefs() throws Exception {
-        Query actual = PathQueryUtil.constructQuery(os, "Company departments Department manager Manager");
+        Query actual = PathQueryUtil.constructQuery(os.getModel(), "Company departments Department manager Manager");
 
         Query q = new Query();
         QueryClass qcCom = new QueryClass(Company.class);
@@ -109,29 +109,29 @@ public class PathQueryUtilTest extends StoreDataTestCase {
     
     public void testValidatePath() throws Exception {
         try {
-            PathQueryUtil.validatePath("Company", os); // too short
+            PathQueryUtil.validatePath("Company", os.getModel()); // too short
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         try {
-            PathQueryUtil.validatePath("Company departments Department manager", os);  // wrong length
+            PathQueryUtil.validatePath("Company departments Department manager", os.getModel());  // wrong length
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         try {
-            PathQueryUtil.validatePath("Department manager Monkey", os);  // no Monkeys
+            PathQueryUtil.validatePath("Department manager Monkey", os.getModel());  // no Monkeys
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         try {
-            PathQueryUtil.validatePath("Department teaboy Employee", os);  // no teaboys
+            PathQueryUtil.validatePath("Department teaboy Employee", os.getModel());  // no teaboys
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         // valid
-        PathQueryUtil.validatePath("Company departments Department", os);
-        PathQueryUtil.validatePath("Company address Address", os);  // inherited reference
-        PathQueryUtil.validatePath("Company departments Department manager Manager", os);
+        PathQueryUtil.validatePath("Company departments Department", os.getModel());
+        PathQueryUtil.validatePath("Company address Address", os.getModel());  // inherited reference
+        PathQueryUtil.validatePath("Company departments Department manager Manager", os.getModel());
     }
 
 
@@ -144,7 +144,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
         String exp3 = "Manager department Department";
 
         Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
-        assertEquals(expected, PathQueryUtil.expandPath(os, original));
+        assertEquals(expected, PathQueryUtil.expandPath(os.getModel(), original));
     }
 
 
@@ -157,7 +157,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
         String exp3 = "Company departments Department employees CEO";
 
         Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
-        assertEquals(expected, PathQueryUtil.expandPath(os, original));
+        assertEquals(expected, PathQueryUtil.expandPath(os.getModel(), original));
     }
 
 
@@ -166,7 +166,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
         PrecomputeTask pt = new PrecomputeTask();
         String clsName = "+Employee";
         Set expected = new HashSet(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
-        assertEquals(expected, PathQueryUtil.getClassNames(os, clsName));
+        assertEquals(expected, PathQueryUtil.getClassNames(os.getModel(), clsName));
     }
 
 }
