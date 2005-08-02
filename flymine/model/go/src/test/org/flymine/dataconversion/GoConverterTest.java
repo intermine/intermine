@@ -19,12 +19,17 @@ import java.io.FileWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.TargetItemsTestCase;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.metadata.Model;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -32,6 +37,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public class GoConverterTest extends TestCase
 {
     private File goFile;
+    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     public GoConverterTest(String arg) {
         super(arg);
@@ -61,8 +67,23 @@ public class GoConverterTest extends TestCase
         converter.process(reader);
         converter.close();
 
-        //System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
         assertEquals(new HashSet(getExpectedItems()), writer.getItems());
+    }
+
+    public void testCreateWithObjects() throws Exception {
+        MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+        GoConverter converter = new GoConverter(writer);
+
+        List expected = new ArrayList();
+        ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+        Item gene1 = tgtItemFactory.makeItem("0_0", GENOMIC_NS + "Gene", "");
+        gene1.setAttribute("organismDbId", "FBgn0026430");
+        expected.add(gene1);
+        Item gene2 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
+        gene2.setAttribute("organismDbId", "FBgn0001612");
+        expected.add(gene2);
+        assertEquals(expected, converter.createWithObjects("FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612"));
     }
 
     protected Collection getExpectedItems() throws Exception {

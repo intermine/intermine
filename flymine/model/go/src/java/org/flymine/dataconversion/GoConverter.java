@@ -17,6 +17,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -44,17 +48,24 @@ public class GoConverter extends FileConverter
     protected Map termIdNameMap = new HashMap();
     protected int id = 0;
     protected File ontology;
+    protected Map withTypes = new HashMap();
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public GoConverter(ItemWriter writer) throws Exception {
+    public GoConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
+
+        addWithType("FB", "Gene", "organismDbId");
+        addWithType("UniProt", "Protein", "primaryAccession");
     }
 
-
+    /**
+     * Set the GO ontology file to be read from DAG format.
+     * @param ontology the GO ontology file
+     */
     public void setOntology(File ontology) {
         this.ontology = ontology;
     }
@@ -81,7 +92,8 @@ public class GoConverter extends FileConverter
                                             newPublication(array[5]),
                                             array[6],
                                             newProduct(array[1], array[11], newOrganism(array[12])),
-                                            newGoTerm(array[4]));
+                                            newGoTerm(array[4]),
+                                            array[7]);
             writer.store(ItemHelper.convert(annotation));
         }
     }
@@ -105,11 +117,14 @@ public class GoConverter extends FileConverter
      * @param goEvidence the goEvidence
      * @param product the product
      * @param goTerm the goTerm
+     * @param withText String from the 'with' column of gene_associationfile
      * @return the annotation
+     * @throws ObjectStoreException if problem storing 'with' BioEntities
      */
-    protected Item newAnnotation(String qualifier, Item database, Item publication, String goEvidence,
-                                 Item product, Item goTerm) {
-        Item item = newItem("GOAnnotation");
+    protected Item newAnnotation(String qualifier, Item database, Item publication,
+                                 String goEvidence, Item product, Item goTerm,
+                                 String withText) throws ObjectStoreException {
+        Item item = createItem("GOAnnotation");
         if (!"".equals(qualifier)) {
             item.addAttribute(new Attribute("qualifier", qualifier));
         }
@@ -121,6 +136,21 @@ public class GoConverter extends FileConverter
         item.setAttribute("evidenceCode", goEvidence);
         item.setReference("subject", product.getIdentifier());
         item.setReference("property", goTerm.getIdentifier());
+        if (!"".equals(withText)) {
+            item.setAttribute("withText", withText);
+            List with = createWithObjects(withText);
+            if (with.size() != 0) {
+                List idList = new ArrayList();
+                Iterator withIter = with.iterator();
+                while (withIter.hasNext()) {
+                    Item withObject = (Item) withIter.next();
+                    writer.store(ItemHelper.convert(withObject));
+                    idList.add(withObject.getIdentifier());
+                }
+                item.addCollection(new ReferenceList("with", idList));
+            }
+        }
+
         ReferenceList references = new ReferenceList();
         references.setName("evidence");
         references.addRefId(database.getIdentifier());
@@ -130,6 +160,40 @@ public class GoConverter extends FileConverter
         item.addCollection(references);
         return item;
     }
+
+
+    private void addWithType(String prefix, String clsName, String fieldName) {
+        withTypes.put(prefix, new WithType(clsName, fieldName));
+    }
+
+
+
+    /**
+     * Given the 'with' text from a gene_association entry parse for recognised identifier
+     * types and create Gene or Protein items accordingly.
+     * @param withText string from the gene_association entry
+     * @return a list of Items
+     */
+    protected List createWithObjects(String withText) {
+        List with = new ArrayList();
+        StringTokenizer st = new StringTokenizer(withText, ";,");
+        while (st.hasMoreTokens()) {
+            String entry = st.nextToken().trim();
+            String prefix = entry.substring(0, entry.indexOf(':'));
+            String value = entry.substring(entry.indexOf(':') + 1);
+
+            if (withTypes.containsKey(prefix)) {
+
+                WithType wt = (WithType) withTypes.get(prefix);
+                Item item = createItem(wt.clsName);
+                item.setAttribute(wt.fieldName, value);
+                with.add(item);
+
+            }
+        }
+        return with;
+    }
+
 
     /**
      * Create a new product of a certain type (gene or protein) of a certain organism
@@ -158,7 +222,7 @@ public class GoConverter extends FileConverter
         }
         Item item;
         if (product == null || !product.key.equals(key)) {
-            item = newItem(type);
+            item = createItem(type);
             item.addAttribute(new Attribute(idField, identifier));
             if (organism != null) {
                 item.addReference(new Reference("organism", organism.getIdentifier()));
@@ -179,7 +243,7 @@ public class GoConverter extends FileConverter
     protected Item newGoTerm(String identifier) {
         Item item = (Item) goTerms.get(identifier);
         if (item == null) {
-            item = newItem("GOTerm");
+            item = createItem("GOTerm");
             item.addAttribute(new Attribute("identifier", identifier));
             goTerms.put(identifier, item);
         }
@@ -194,7 +258,7 @@ public class GoConverter extends FileConverter
     protected Item newDatabase(String code) {
         Item item = (Item) databases.get(code);
         if (item == null) {
-            item = newItem("Database");
+            item = createItem("Database");
             String title = null;
             if ("UniProt".equals(code)) {
                 title = "UniProt";
@@ -234,7 +298,7 @@ public class GoConverter extends FileConverter
                 String code = array[i].substring(5);
                 item = (Item) publications.get(code);
                 if (item == null) {
-                    item = newItem("Publication");
+                    item = createItem("Publication");
                     item.addAttribute(new Attribute("pubMedId", code));
                     publications.put(code, item);
                 }
@@ -256,7 +320,7 @@ public class GoConverter extends FileConverter
         taxonId = taxonId.split(":")[1];
         Item item = (Item) organisms.get(taxonId);
         if (item == null) {
-            item = newItem("Organism");
+            item = createItem("Organism");
             item.addAttribute(new Attribute("taxonId", taxonId));
             organisms.put(taxonId, item);
         }
@@ -268,7 +332,7 @@ public class GoConverter extends FileConverter
      * @param className the name of the class
      * @return a new Item
      */
-    protected Item newItem(String className) {
+    protected Item createItem(String className) {
         Item item = new Item();
         item.setIdentifier(alias(className) + "_" + (id++));
         item.setClassName(GENOMIC_NS + className);
@@ -292,6 +356,26 @@ public class GoConverter extends FileConverter
         ItemWrapper(String key, Item item) {
             this.key = key;
             this.item = item;
+        }
+    }
+
+    /**
+     * Class to hold information about a BioEntity item to create for a particular
+     * identifier prefix in the gene_association 'with' column'.
+     */
+    class WithType
+    {
+        String clsName;
+        String fieldName;
+
+        /**
+         * Constructor
+         * @param clsName the classname
+         * @param fieldName name of field to set
+         */
+        WithType(String clsName, String fieldName) {
+            this.clsName = clsName;
+            this.fieldName = fieldName;
         }
     }
 }
