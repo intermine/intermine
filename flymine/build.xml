@@ -1510,7 +1510,7 @@
   </target>
 
   <target name="retrieve-go-annotation" depends="prepare-build-model, compile-go-java">
-    
+
     <copy file="${model}/go/go-combined.ontology" toDir="${build.model}/go"/>
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -1525,7 +1525,7 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" model="genomic" 
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic"
                   ontology="${build}/model/go/go-combined.ontology">
       <fileset dir="/shared/data/go-annotation">
         <include name="gene_association_*"/>
@@ -2180,7 +2180,7 @@
     <fb-uniprot-refs linkFile="${flybase.uniprot.link.file}"
                      objectStoreWriter="osw.production"/>
   </target>
-  
+
   <target name="homophila-post-process" depends="compile-genomic-java-from-db">
     <taskdef name="homophila-post-process" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
@@ -2533,8 +2533,9 @@
   </target>
 
   <target name="test-models-inc"
-          depends="mage-test, ensembl-test, rnai-test, homophila-test, psi-test, orthologue-test, go-test,
-                   drosdel-test, taxonomy-test, uniprot-test, protein_structure-test">
+          depends="mage-test, ensembl-test, rnai-test, homophila-test,
+                   psi-test, orthologue-test, go-test, drosdel-test,
+                   taxonomy-test, uniprot-test, protein_structure-test">
     <antcall target="test-report"/>
   </target>
 
@@ -2568,8 +2569,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="org.flymine.model.genomic.Chromosome" 
-                organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-chromosome-*.fasta"/>
       </fileset>
@@ -2582,8 +2583,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="org.flymine.model.genomic.Chromosome"
-                organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-4-chromosome-*.fasta"/>
       </fileset>
@@ -2596,7 +2597,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="Gene" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="Gene" keyFieldName="identifier"
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-gene-*.fasta"/>
       </fileset>
@@ -2609,7 +2611,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="CDS" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="CDS" keyFieldName="identifier"
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-CDS-*.fasta"/>
       </fileset>
@@ -2649,7 +2652,7 @@
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
     <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
     <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
-    
+
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2702,7 +2705,7 @@
       <fileset file="${web.properties.file}" />
       <fileset file="${build.properties.local}" />
     </concat>
-    
+
     <copy todir="${build.tmp}" file="${resources}/webapp/flymine/classDescriptions.properties"/>
     <patternset id="flymine-global-web-properties-patternset">
       <include name="global.web.properties"/>
@@ -2716,7 +2719,7 @@
       <property name="file.dir" value="${build.tmp}"/>
       <reference torefid="file.names" refid="flymine-global-web-properties-patternset"/>
     </ant>
-    
+
     <filter token="LOG_DIR" value="${webapp.logdir}"/>
     <copy todir="${build.tmp}" filtering="true" overwrite="true">
       <fileset file="${log4j.properties.file}"/>
@@ -3230,7 +3233,7 @@
     <pathelement location="${model}/ensembl-human/resources"/>
   </path>
 
-  <target name="retrieve-gene-synonyms-for-entrezgene" 
+  <target name="retrieve-gene-synonyms-for-entrezgene"
           depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -3280,7 +3283,7 @@
 
 
   <!--Retrieve gene synonyms for CCDS, file is tab separated format -->
-  <target name="retrieve-gene-synonyms-for-ccds" 
+  <target name="retrieve-gene-synonyms-for-ccds"
           depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -3330,7 +3333,7 @@
 
 
 <!--Retrieve gene synonyms for embl, file is tab separated format -->
-  <target name="retrieve-gene-synonyms-for-embl" 
+  <target name="retrieve-gene-synonyms-for-embl"
           depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -3951,7 +3954,7 @@
 
 
   <!-- comparativeGenomics model is added to model/genomic/shortcuts.xml -->
-  
+
   <!--load comparativeGenomics mouseChain GFF3 data from UCSC-->
   <target name="retrieve-mousechain" depends="prepare-build-model, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -4116,7 +4119,7 @@
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
-    
+
   </target>
 
 </project>

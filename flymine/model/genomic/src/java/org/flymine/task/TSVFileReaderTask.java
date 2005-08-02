@@ -61,14 +61,17 @@ public class TSVFileReaderTask extends FileReadTask
             throw new BuildException("organismAbbreviation not set");
         }
 
-        if (getOsAlias() == null) {
-            throw new BuildException("osAlias not set");
+        if (getOswAlias() == null) {
+            throw new BuildException("oswAlias not set");
         }
 
         if (configurationFile == null) {
             throw new BuildException("configurationFile not set");
         }
 
+        if (getKeyFieldName() == null) {
+            throw new BuildException("keyFieldName not set");
+        }
 
         Model model = getObjectStoreWriter().getModel();
 
