@@ -71,8 +71,9 @@ public class RetrieveMetadataTask extends Task
             File localModel = new File(destDir,
                     MetadataManager.getFilename(MetadataManager.MODEL, model.getName()));
             
-            if (localModel.exists() && IOUtils.contentEquals(new FileReader(localModel), new StringReader(modelXml))) {
-                System.out.println("Model in database is identical to local model.");
+            if (localModel.exists()
+                && IOUtils.contentEquals(new FileReader(localModel), new StringReader(modelXml))) {
+                System.err .println("Model in database is identical to local model.");
                 return;
             }
             
@@ -80,7 +81,7 @@ public class RetrieveMetadataTask extends Task
             MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
-            System.out.println("Failed to retrieve metadata - maybe you need to run build-db?");
+            System.err .println("Failed to retrieve metadata - maybe you need to run build-db?");
             throw new BuildException(e);
         }
     }
