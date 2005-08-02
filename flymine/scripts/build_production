@@ -304,8 +304,6 @@ for my $action (@actions) {
       }
     }
   } else {
-    print "$action_type $action_args[0] eq $restart_dump_suffix\n";
-
     if ($action_type eq 'dump' && $action_args[0] eq $restart_dump_suffix) {
       $seen_start_action = 1;
     }
