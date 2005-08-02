@@ -165,8 +165,8 @@ public class CreateIndexesTask extends Task
                 createIndex(indexName, indexStatement);
             }
         } catch (Exception e) {
-            String message = "Error creating indexes for " + indexStatement.cld.getType()
-                + ", table master = " + indexStatement.tableMaster.getType();
+            String message = "Error creating indexes for " + indexStatement.getCld().getType()
+                + ", table master = " + indexStatement.getTableMaster().getType();
             throw new BuildException(message, e);
         } finally {
             if (c != null) {
