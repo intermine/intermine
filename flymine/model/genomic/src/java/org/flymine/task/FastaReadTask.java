@@ -93,12 +93,16 @@ public class FastaReadTask extends FileReadTask
             throw new BuildException("organismAbbreviation not set");
         }
 
-        if (getOsAlias() == null) {
-            throw new BuildException("osAlias not set");
+        if (getOswAlias() == null) {
+            throw new BuildException("oswAlias not set");
         }
 
         if (getClassName() == null) {
             throw new BuildException("className not set");
+        }
+        
+        if (getKeyFieldName() == null) {
+            throw new BuildException("keyFieldName not set");
         }
         
         ObjectStore os = getObjectStoreWriter().getObjectStore();

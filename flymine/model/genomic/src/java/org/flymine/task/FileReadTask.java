@@ -51,24 +51,24 @@ public class FileReadTask extends Task
     private String organismAbbreviation;
     private String className;
     private String keyFieldName;
-    private String osAlias;
+    private String oswAlias;
     private List fileSets = new ArrayList();
     private ObjectStoreWriter osw;
 
     /**
      * The ObjectStoreWriter alias to use when querying and creating objects.
-     * @param osAlias the ObjectStoreWriter alias
+     * @param oswAlias the ObjectStoreWriter alias
      */
-    public void setOsAlias(String osAlias) {
-        this.osAlias = osAlias;
+    public void setOswAlias(String oswAlias) {
+        this.oswAlias = oswAlias;
     }
     
     /**
-     * Return the osAlias set by setOsAlias()
+     * Return the oswAlias set by setOsAlias()
      * @return the object store alias
      */
-    public String getOsAlias() {
-        return osAlias;
+    public String getOswAlias() {
+        return oswAlias;
     }
     
     /**
@@ -101,14 +101,14 @@ public class FileReadTask extends Task
      * @throws BuildException if there is an error while processing
      */
     protected ObjectStoreWriter getObjectStoreWriter() throws BuildException {
-        if (osAlias == null) {
-            throw new BuildException("osAlias attribute is not set");
+        if (oswAlias == null) {
+            throw new BuildException("oswAlias attribute is not set");
         }
         if (osw == null) {
            try {
-               osw = ObjectStoreWriterFactory.getObjectStoreWriter(osAlias);
+               osw = ObjectStoreWriterFactory.getObjectStoreWriter(oswAlias);
            } catch (ObjectStoreException e) {
-               throw new BuildException("cannot get ObjectStoreWriter for: " + osAlias, e);
+               throw new BuildException("cannot get ObjectStoreWriter for: " + oswAlias, e);
            }
         }
         return osw;
