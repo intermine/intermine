@@ -118,7 +118,7 @@ public class CreateReferences
         // CDS.gene / Gene.CDSs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
                              CDS.class, "gene");
-        
+
         LOG.info("insertReferences stage 10");
         // Gene.CDSs.polypeptides
         insertReferenceField(Gene.class, "CDSs", CDS.class, "polypeptides",
@@ -129,7 +129,7 @@ public class CreateReferences
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-        
+
         // Protein.interactions
         insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
         LOG.info("insertReferences stage 11");
@@ -150,7 +150,9 @@ public class CreateReferences
         }
         LOG.info("insertReferences stage 13");
         // Gene.GOTerms
-        insertReferences(Gene.class, GOTerm.class, "GOTerms");
+        //insertReferences(Gene.class, GOTerm.class, "GOTerms");
+        createGOAnnotationCollection();
+
         LOG.info("insertReferences stage 14");
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
@@ -172,7 +174,7 @@ public class CreateReferences
                                             "overlappingFeatures");
     }
 
-    
+
     /**
      * Fill in the "orthologues" collection of Gene.  Needs to be run after
      * UpdateOrthologues which in turn relies on CreateReferences -> so has
@@ -580,7 +582,7 @@ public class CreateReferences
             ClassDescriptor cld = model.getClassDescriptorByName(objectClass.getName());
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
-        
+
     }
 
     /**
@@ -622,6 +624,87 @@ public class CreateReferences
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
+
+
+    protected void createGOAnnotationCollection() throws Exception {
+        Query q = new Query();
+
+        q.setDistinct(false);
+
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        q.addToOrderBy(qcGene);
+
+        QueryClass qcGOAnnotation = new QueryClass(GOAnnotation.class);
+        q.addFrom(qcGOAnnotation);
+        q.addToSelect(qcGOAnnotation);
+        q.addToOrderBy(qcGOAnnotation);
+
+        QueryClass qcAnnotation = new QueryClass(Annotation.class);
+        q.addFrom(qcAnnotation);
+        q.addToSelect(qcAnnotation);
+
+        QueryCollectionReference geneAnnCol =
+            new QueryCollectionReference(qcGene, "annotations");
+        ContainsConstraint ccGeneAnnotations =
+            new ContainsConstraint(geneAnnCol, ConstraintOp.CONTAINS, qcGOAnnotation);
+        q.setConstraint(ccGeneAnnotations);
+
+        ObjectStore os = osw.getObjectStore();
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+
+        int count = 0;
+        Gene lastGene = null;
+        Set newCollection = new HashSet();
+
+        osw.beginTransaction();
+
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Gene thisGene = (Gene) rr.get(0);
+            GOAnnotation goAnnotation = (GOAnnotation) rr.get(1);
+
+            if (lastGene == null || !thisGene.getId().equals(lastGene.getId())) {
+                if (lastGene != null) {
+                    // clone so we don't change the ObjectStore cache
+                    Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+                    TypeUtil.setFieldValue(tempGene, "goAnnotation", newCollection);
+                    osw.store(tempGene);
+                    count++;
+                }
+
+                newCollection = new HashSet();
+            }
+
+            newCollection.add(goAnnotation);
+
+            lastGene = thisGene;
+        }
+
+        if (lastGene != null) {
+            // clone so we don't change the ObjectStore cache
+            Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+            TypeUtil.setFieldValue(tempGene, "goAnnotation", newCollection);
+            osw.store(tempGene);
+            count++;
+        }
+        LOG.info("Created " + count + " Gene.goAnnotation collections in");
+        osw.commitTransaction();
+
+
+        // now ANALYSE tables relating to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(GOAnnotation.class.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
 
     /**
      * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene, Protein and
@@ -676,4 +759,7 @@ public class CreateReferences
 
         return res.iterator();
     }
+
+
+
 }

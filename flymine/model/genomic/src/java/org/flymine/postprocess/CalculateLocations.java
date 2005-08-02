@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
  * back in originating ObjectStore.
  *
  * @author Richard Smith
+ * @author Kim Rutherford
  */
 public class CalculateLocations
 {
@@ -442,10 +443,10 @@ public class CalculateLocations
 
         while (overlapIterator.hasNext()) {
             Location overlapLocations[] = (Location[]) overlapIterator.next();
-            
+
             Location location1 = overlapLocations[0];
             Location location2 = overlapLocations[1];
-            
+
             LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) location1.getSubject();
             LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) location2.getSubject();
 

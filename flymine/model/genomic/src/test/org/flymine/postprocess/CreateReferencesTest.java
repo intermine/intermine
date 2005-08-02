@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Annotation;
+import org.flymine.model.genomic.GOAnnotation;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Evidence;
 import org.flymine.model.genomic.Exon;
@@ -94,7 +95,7 @@ public class CreateReferencesTest extends TestCase {
     private Orthologue storedOrthologue2 = null;
     private GOTerm storedGOTerm = null;
     private Phenotype storedPhenotype = null;
-    private Annotation storedGOTermAnnotation = null;
+    private GOAnnotation storedGOAnnotation = null;
     private Annotation storedPhenotypeAnnotation = null;
     private Evidence storedPhenotypeEvidence = null;
     private OverlapRelation storedOverlapRelation = null;
@@ -148,11 +149,11 @@ public class CreateReferencesTest extends TestCase {
         compareInsertGeneAnnotationReferencesToExpected();
     }
 
-    public void testGeneGOTermsCollection() throws Exception {
+    public void testGeneGOAnnotationCollection() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
         cr.insertGeneAnnotationReferences();
-        cr.insertReferences(Gene.class, GOTerm.class, "GOTerms");
-        compareGeneGOTermsToExpected();
+        cr.createGOAnnotationCollection();
+        compareGeneGOAnnotationToExpected();
     }
 
     public void testInsertGeneTranscriptReferences() throws Exception {
@@ -210,7 +211,7 @@ public class CreateReferencesTest extends TestCase {
         cr.insertSymmetricalRelationReferences();
 
         ObjectStore os = osw.getObjectStore();
-        
+
         Query q = new Query();
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
@@ -261,7 +262,7 @@ public class CreateReferencesTest extends TestCase {
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         expectedTranscript.setId(storedTranscript.getId());
         Transcript expectedTranscript1 =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class)); 
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         expectedTranscript1.setId(storedTranscript1.getId());
         Transcript expectedTranscript2 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
@@ -394,7 +395,7 @@ public class CreateReferencesTest extends TestCase {
         Location expectedGeneLocation1 =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         expectedGeneLocation1.setId(storedGeneLocation1.getId());
-        
+
         Gene expectedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene1.setIdentifier("gene1");
         expectedGene1.setId(storedGene1.getId());
@@ -546,7 +547,7 @@ public class CreateReferencesTest extends TestCase {
         Location expectedTranscriptLocation =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         expectedTranscriptLocation.setId(storedTranscriptLocation.getId());
-        
+
         SimpleRelation expectedTranscriptRelation =
             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
         expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
@@ -685,7 +686,7 @@ public class CreateReferencesTest extends TestCase {
         compareItemsCollectionOrderInsensitive(expGeneItem, resGeneItem);
     }
 
-    private void compareGeneGOTermsToExpected() throws Exception {
+    private void compareGeneGOAnnotationToExpected() throws Exception {
         osw.flushObjectById();
         ObjectStore os = osw.getObjectStore();
 
@@ -709,10 +710,10 @@ public class CreateReferencesTest extends TestCase {
         Gene resGene = (Gene) row.get(0);
         Item resGeneItem = toItem(resGene);
 
-        Set resGOTerms = resGene.getGOTerms();
+        Set resGOAnnotation = resGene.getGoAnnotation();
 
-        assertEquals(1, resGOTerms.size());
-        assertEquals(storedGOTerm, resGOTerms.iterator().next());
+        // goAnnotation collection empty before running insertGeneAnnotationReferences
+        assertEquals(1, resGOAnnotation.size());
     }
 
     private void compareResultsToExpected() throws Exception {
@@ -726,7 +727,7 @@ public class CreateReferencesTest extends TestCase {
         Transcript expectedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         Transcript expectedTranscript1 =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class)); 
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         Transcript expectedTranscript2 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         Transcript expectedTranscript3 =
@@ -741,9 +742,9 @@ public class CreateReferencesTest extends TestCase {
             (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         expectedOrthologue2.setId(storedOrthologue2.getId());
 
-        Annotation expectedGOTermAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedGOTermAnnotation.setId(storedGOTermAnnotation.getId());
+        GOAnnotation expectedGOAnnotation =
+            (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+        expectedGOAnnotation.setId(storedGOAnnotation.getId());
 
         Annotation expectedPhenotypeAnnotation =
             (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
@@ -809,9 +810,9 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedChromosomeGeneLocation, expectedOrthologue2})));
         expectedGene.setOrthologues(Collections.singleton(expectedOrthologue1));
         expectedGene.setAnnotations(new HashSet(Arrays.asList(new Object[] {expectedPhenotypeAnnotation,
-                                                                expectedGOTermAnnotation})));
+                                                                expectedGOAnnotation})));
         expectedGene.setPhenotypes(Collections.singleton(expectedPhenotype));
-        expectedGene.setGOTerms(Collections.singleton(expectedGOTerm));
+        expectedGene.setGoAnnotation(Collections.singleton(expectedGOAnnotation));
         expectedGene.setProteins(Collections.singleton(expectedProtein));
 
         expectedGene1.setId(storedGene1.getId());
@@ -862,7 +863,7 @@ public class CreateReferencesTest extends TestCase {
         expectedChromosome.addFeatures(expectedGene1);
         expectedChromosome.addFeatures(expectedGene);
         expectedChromosome.addFeatures(expectedExon);
-        
+
         Relation expectedChromosomeRelation =
             (Relation) DynamicUtil.createObject(Collections.singleton(Relation.class));
         expectedChromosomeRelation.setId(storedExonLocation.getId());
@@ -939,16 +940,16 @@ public class CreateReferencesTest extends TestCase {
         // object
         Set resGeneAnnotations = resGene.getAnnotations();
 
-        Annotation newGOTermAnnotation;
+        GOAnnotation newGOAnnotation;
         Iterator rgaIter = resGeneAnnotations.iterator();
         Annotation rga0 = (Annotation) rgaIter.next();
         Annotation rga1 = (Annotation) rgaIter.next();
         if (rga0.equals(expectedPhenotypeAnnotation)) {
-            newGOTermAnnotation = rga1;
+            newGOAnnotation = (GOAnnotation) rga1;
         } else {
-            newGOTermAnnotation = rga0;
+            newGOAnnotation = (GOAnnotation) rga0;
         }
-        expectedGOTermAnnotation.setId(newGOTermAnnotation.getId());
+        expectedGOAnnotation.setId(newGOAnnotation.getId());
 
 
         Item expGeneItem = toItem(expectedGene);
@@ -997,9 +998,9 @@ public class CreateReferencesTest extends TestCase {
             (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         expectedOrthologue2.setId(storedOrthologue2.getId());
 
-        Annotation expectedGOTermAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedGOTermAnnotation.setId(storedGOTermAnnotation.getId());
+        GOAnnotation expectedGOAnnotation =
+            (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+        expectedGOAnnotation.setId(storedGOAnnotation.getId());
 
         Annotation expectedPhenotypeAnnotation =
             (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
@@ -1025,7 +1026,7 @@ public class CreateReferencesTest extends TestCase {
             expectedTranscriptRelation})));
         expectedGene.setTranscripts(Collections.singleton(expectedTranscript));
         expectedGene.setAnnotations(new HashSet(Arrays.asList(new Object[] {
-            expectedPhenotypeAnnotation, expectedGOTermAnnotation})));
+            expectedPhenotypeAnnotation, expectedGOAnnotation})));
         expectedGene.setProteins(Collections.singleton(expectedProtein));
 
         Item expGeneItem = toItem(expectedGene);
@@ -1054,28 +1055,28 @@ public class CreateReferencesTest extends TestCase {
         Gene resGene = (Gene) row.get(0);
         Item resGeneItem = toItem(resGene);
 
-        // the difference should be that expectedGOTermAnnotation has a different ID
+        // the difference should be that expectedGOAnnotation has a different ID
         assertFalse(expGeneItem.equals(resGeneItem));
         Set resGeneAnnotations = resGene.getAnnotations();
         assertEquals(2, resGeneAnnotations.size());
         assertTrue(resGeneAnnotations.contains(expectedPhenotypeAnnotation));
-        assertFalse(resGeneAnnotations.contains(expectedGOTermAnnotation));
+        assertFalse(resGeneAnnotations.contains(expectedGOAnnotation));
 
-        Annotation newGOTermAnnotation;
+        GOAnnotation newGOAnnotation;
 
         Iterator rgaIter = resGeneAnnotations.iterator();
         Annotation rga0 = (Annotation) rgaIter.next();
         Annotation rga1 = (Annotation) rgaIter.next();
         if (rga0.equals(expectedPhenotypeAnnotation)) {
-            newGOTermAnnotation = rga1;
+            newGOAnnotation = (GOAnnotation) rga1;
         } else {
-            newGOTermAnnotation = rga0;
+            newGOAnnotation = (GOAnnotation) rga0;
         }
 
-        assertEquals(storedGOTermAnnotation.getProperty(), newGOTermAnnotation.getProperty());
-        assertEquals(storedGOTermAnnotation.getEvidence(), newGOTermAnnotation.getEvidence());
-        assertEquals(storedGOTermAnnotation.getQualifier(), newGOTermAnnotation.getQualifier());
-        assertEquals(expectedGene, newGOTermAnnotation.getSubject());
+        assertEquals(storedGOAnnotation.getProperty(), newGOAnnotation.getProperty());
+        assertEquals(storedGOAnnotation.getEvidence(), newGOAnnotation.getEvidence());
+        assertEquals(storedGOAnnotation.getQualifier(), newGOAnnotation.getQualifier());
+        assertEquals(expectedGene, newGOAnnotation.getSubject());
     }
 
     private void createData() throws Exception {
@@ -1158,17 +1159,17 @@ public class CreateReferencesTest extends TestCase {
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         storedTranscriptLocation.setObject(storedChromosome);
         storedTranscriptLocation.setSubject(storedTranscript);
-        
+
         storedTranscriptLocation1 =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         storedTranscriptLocation1.setObject(storedChromosome);
         storedTranscriptLocation1.setSubject(storedTranscript1);
-        
+
         storedTranscriptLocation2 =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         storedTranscriptLocation2.setObject(storedChromosome);
         storedTranscriptLocation2.setSubject(storedTranscript2);
-        
+
         storedTranscriptLocation3 =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         storedTranscriptLocation3.setObject(storedChromosome);
@@ -1201,14 +1202,14 @@ public class CreateReferencesTest extends TestCase {
         storedPhenotypeAnnotation.setProperty(storedPhenotype);
         storedPhenotypeAnnotation.setSubject(storedGene);
 
-        storedGOTermAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        storedGOTermAnnotation.setSubject(storedProtein);
+        storedGOAnnotation =
+            (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+        storedGOAnnotation.setSubject(storedProtein);
 
         storedGOTerm = (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
         storedGOTerm.setIdentifier("GOTerm1");
-        storedGOTermAnnotation.setProperty(storedGOTerm);
-        storedGOTermAnnotation.setSubject(storedProtein);
+        storedGOAnnotation.setProperty(storedGOTerm);
+        storedGOAnnotation.setSubject(storedProtein);
 
         // in gene1 subject collection
         storedOrthologue1 =
@@ -1247,7 +1248,7 @@ public class CreateReferencesTest extends TestCase {
                 storedTranscript2, storedTranscript3,
                 storedExon, storedExonRankedRelation,
                 storedChromosome, storedOrthologue1,
-                storedOrthologue2, storedGOTermAnnotation,
+                storedOrthologue2, storedGOAnnotation,
                 storedGOTerm, storedPhenotype,
                 storedPhenotypeAnnotation, storedProtein,
                 storedProtein1, storedProtein2, storedProtein3,
