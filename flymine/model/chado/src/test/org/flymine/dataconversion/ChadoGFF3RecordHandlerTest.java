@@ -102,7 +102,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         assertEquals(expectedGene, actualGene);
     }
 
-    // test that Gene->Pseudogene->Exon get changes to Pseudogene->Transcript->Exon
+    // test that Gene->Pseudogene->Exon get changed to Pseudogene->Transcript->Exon
     public void testHandlePseudoGene() throws Exception {
         String gff =
             "4\t.\tgene\t26994\t32391\t.\t-\t.\tID=CR32011;Dbxref=FlyBase:FBan0032011,FlyBase:FBgn0052011;cyto_range=102A1-102A1;gbunit=AE003845;synonym=CR32011;synonym_2nd=CG32011"
