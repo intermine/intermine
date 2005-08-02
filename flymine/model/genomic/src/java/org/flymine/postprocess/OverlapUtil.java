@@ -1,5 +1,15 @@
 package org.flymine.postprocess;
 
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -29,16 +39,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-
-/*
- * Copyright (C) 2002-2005 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
 
 /**
  * Utility methods for finding overlaps.
@@ -115,11 +115,7 @@ public abstract class OverlapUtil
 
             Location location = (Location) rr.get(0);
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
-            SimpleLoc simpleLoc = new SimpleLoc(location);
-
-            if (lsf.getLength() == null) {
-                throw new RuntimeException("found a LocatedSequenceFeature with a null length");
-            }
+            SimpleLoc simpleLoc = new SimpleLoc(location, lsf);
 
             locationsByLength.put(simpleLoc, simpleLoc);
             locationsByStartPos.put(simpleLoc, simpleLoc);
@@ -131,14 +127,15 @@ public abstract class OverlapUtil
     /**
      * The Iterator returned by findOverlaps().
      */
-    private static final class OverlappingFeaturesIterator implements Iterator {
+    private static final class OverlappingFeaturesIterator implements Iterator
+    {
         private final ObjectStore os;
         private final TreeMap locationsByStartPos;
         private Iterator locationsByLengthIter = null;
         private Iterator otherLocationIter = null;
         private Location currentLocation = null;
 
-        private OverlappingFeaturesIterator(ObjectStore os, TreeMap locationsByLengthMap, 
+        private OverlappingFeaturesIterator(ObjectStore os, TreeMap locationsByLengthMap,
                                             TreeMap locationsByStartPos) {
             super();
             this.os = os;
@@ -152,32 +149,26 @@ public abstract class OverlapUtil
             } else {
                 while (locationsByLengthIter.hasNext()) {
                     Map.Entry entry = (Entry) locationsByLengthIter.next();
-        
+
                     SimpleLoc simpleLoc = (SimpleLoc) entry.getValue();
                     Integer length = new Integer(simpleLoc.length);
-        
-                    try {
-                        currentLocation =
-                            (Location) os.getObjectById(new Integer(simpleLoc.id));
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException("A Location has gone missing during "
-                                                   + "processing", e);
-                    }
-        
+
+                    currentLocation = simpleLoc.location;
+
                     List overlappingLocations =
                         getOverlappingLocations(simpleLoc, length.intValue());
-        
+
                     // remove from the locationsByStartPos Map so that we find each overlapping
                     // pair once only
                     removeFromLocationsFromStartPos(simpleLoc);
-        
+
                     otherLocationIter = overlappingLocations.iterator();
-        
+
                     if (otherLocationIter.hasNext()) {
                         return true;
                     }
                 }
-        
+
                 return false;
             }
         }
@@ -197,11 +188,11 @@ public abstract class OverlapUtil
             Map subMap = locationsByStartPos.subMap(new Integer(simpleLoc.start),
                                                     new Integer(simpleLoc.end + 1));
             Iterator subMapIter = subMap.entrySet().iterator();
-        
+
             while (subMapIter.hasNext()) {
                 Map.Entry entry = (Map.Entry) subMapIter.next();
                 SimpleLoc thisSimpleLoc = (SimpleLoc) entry.getValue();
-        
+
                 if (simpleLoc == thisSimpleLoc) {
                     subMapIter.remove();
                 }
@@ -213,33 +204,26 @@ public abstract class OverlapUtil
         // locations in reverse length order
         private List getOverlappingLocations(SimpleLoc thisSimpleLoc, int length) {
             List overlappingLocations = new ArrayList();
-        
+
             Map subRange =
                 locationsByStartPos.subMap(new Integer(thisSimpleLoc.start - length),
                                            new Integer(thisSimpleLoc.end + 1));
-        
+
             Iterator subRangeIter = subRange.values().iterator();
-        
+
             while (subRangeIter.hasNext()) {
                 SimpleLoc otherSimpleLoc = (SimpleLoc) subRangeIter.next();
-        
-                if (thisSimpleLoc != otherSimpleLoc &&
-                    (thisSimpleLoc.start <= otherSimpleLoc.start &&
-                     thisSimpleLoc.end >= otherSimpleLoc.start ||
-                     thisSimpleLoc.start <= otherSimpleLoc.end &&
-                     thisSimpleLoc.end >= otherSimpleLoc.end)) {
-                    Location originalLocation;
-                    try {
-                        originalLocation =
-                            (Location) os.getObjectById(new Integer(otherSimpleLoc.id));
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException("A Location has gone missing during "
-                                                   + "processing", e);
-                    }
+
+                if (thisSimpleLoc != otherSimpleLoc
+                    && (thisSimpleLoc.start <= otherSimpleLoc.start
+                        && thisSimpleLoc.end >= otherSimpleLoc.start
+                        || thisSimpleLoc.start <= otherSimpleLoc.end
+                        && thisSimpleLoc.end >= otherSimpleLoc.end)) {
+                    Location originalLocation = otherSimpleLoc.location;
                     overlappingLocations.add(originalLocation);
                 }
             }
-        
+
             return overlappingLocations;
         }
     }
@@ -248,7 +232,8 @@ public abstract class OverlapUtil
      * A Comparator that compares SimpleLoc objects by start position, or by id for pairs of
      * SimpleLoc objects that have the same start position.
      */
-    static private class SimpleLocStartComparator implements Comparator {
+    private static class SimpleLocStartComparator implements Comparator
+    {
         public int compare(Object o1, Object o2) {
             int loc1Start = -1;
             int loc2Start = -1;
@@ -285,10 +270,10 @@ public abstract class OverlapUtil
                         return 1;
                     }
 
-                    if (loc1.id < loc2.id) {
+                    if (loc1.location.getId().intValue() < loc2.location.getId().intValue()) {
                         return -1;
                     } else {
-                        if (loc1.id > loc2.id) {
+                        if (loc1.location.getId().intValue() > loc2.location.getId().intValue()) {
                             return 1;
                         } else {
                             return 0;
@@ -303,7 +288,8 @@ public abstract class OverlapUtil
      * A Comparator that compares SimpleLoc objects by length, or by id for pairs of
      * SimpleLoc objects that have the same length position.  Longer locations are ordered first.
      */
-    static private class SimpleLocLengthComparator implements Comparator {
+    private static class SimpleLocLengthComparator implements Comparator
+    {
         public int compare(Object o1, Object o2) {
             if (o1 instanceof SimpleLoc && o2 instanceof SimpleLoc) {
                 SimpleLoc loc1 = (SimpleLoc) o1;
@@ -314,10 +300,11 @@ public abstract class OverlapUtil
                     if (loc1.length < loc2.length) {
                         return 1;
                     } else {
-                        if (loc1.id < loc2.id) {
+                        if (loc1.location.getId().intValue() < loc2.location.getId().intValue()) {
                             return -1;
                         } else {
-                            if (loc1.id > loc2.id) {
+                            if (loc1.location.getId().intValue()
+                                > loc2.location.getId().intValue()) {
                                 return 1;
                             } else {
                                 return 0;
@@ -335,17 +322,20 @@ public abstract class OverlapUtil
     /**
      * A simplified Location object that is much smaller than a DynamicBean.
      */
-    static private class SimpleLoc {
+    private static class SimpleLoc
+    {
         int start;
         int end;
         int length;
-        int id;
+        Location location;
+        LocatedSequenceFeature lsf;
 
-        public SimpleLoc(Location location) {
+        public SimpleLoc(Location location, LocatedSequenceFeature lsf) {
             start = location.getStart().intValue();
             end = location.getEnd().intValue();
             length = end - start + 1;
-            id = location.getId().intValue();
+            this.location = location;
+            this.lsf = lsf;
         }
     }
 }
