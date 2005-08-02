@@ -2188,6 +2188,13 @@
     <homophila-post-process operation="homophila-post-process" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="set-collection-counts" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="set-collection-counts" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
