@@ -83,10 +83,10 @@
   <property name="create.attribute.indexes" value="false"/>
 
   <!-- file data sources -->
-  <property name="flybase.chado.melanogaster" location="/shared/data/flybase/release_4_0"/>
+  <property name="flybase.chado.melanogaster" location="/shared/data/flybase/release_4_2"/>
   <property name="flybase.chado.melanogaster.fasta" location="${flybase.chado.melanogaster}/fasta"/>
   <property name="flybase.chado.melanogaster.gff" location="${flybase.chado.melanogaster}/gff"/>
-  <property name="flybase.chado.pseudoobscura" location="/shared/data/flybase/release_4_0"/>
+  <property name="flybase.chado.pseudoobscura" location="/shared/data/flybase/release_4_2"/>
   <property name="flybase.chado.pseudoobscura.fasta" location="${flybase.chado.pseudoobscura}/fasta"/>
   <property name="flybase.chado.pseudoobscura.gff" location="${flybase.chado.pseudoobscura}/gff"/>
   <property name="flybase.uniprot.link.file" location="${flybase.chado.melanogaster}/cg2uniprot.txt"/>
@@ -808,7 +808,7 @@
     </taskdef>
 
     <filter-chado tgtDir="${build.tmp}">
-      <fileset dir="/shared/data/flybase/release_4_0/gff">
+      <fileset dir="${flybase.chado.melanogaster.gff}">
         <include name="*.gff"/>
       </fileset>
     </filter-chado>
@@ -823,7 +823,7 @@
     </taskdef>
 
     <filter-chado tgtDir="${build.tmp}">
-      <fileset dir="/shared/data/flybase/release_4_0/gff">
+      <fileset dir="${flybase.chado.melanogaster.gff}">
         <include name="*-4-*.gff"/>
       </fileset>
     </filter-chado>
@@ -2568,7 +2568,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Chromosome" 
+                organismAbbreviation="DM" alias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-chromosome-*.fasta"/>
       </fileset>
@@ -2581,7 +2582,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Chromosome"
+                organismAbbreviation="DM" alias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-4-chromosome-*.fasta"/>
       </fileset>

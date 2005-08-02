@@ -10,6 +10,7 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,11 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     private static final Logger LOG = Logger.getLogger(ChadoGFF3RecordHandler.class);
     private String tgtNs;
     private Map sources = new HashMap();
+    private Set pseudogeneIds = new HashSet();
+
+    // items that need extra processing that can only be done after all other GFF features have
+    // been read
+    private Collection finalItems = new ArrayList();
 
     /**
      * Create a new FlyBaseGFF3RecordHandler for the given target model.
@@ -59,11 +65,11 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         references.put("Intron", "transcripts");
         // release 4.0 gff3 is inconsistent with parents of RNAs
         // Gene.transcripts collection set in post-processing
-        //references.put("MRNA", "gene");
-        //references.put("NcRNA", "gene");
-        //references.put("SnRNA", "gene");
-        //references.put("SnoRNA", "gene");
-        //references.put("TRNA", "gene");
+        references.put("MRNA", "gene");
+        references.put("NcRNA", "gene");
+        references.put("SnRNA", "gene");
+        references.put("SnoRNA", "gene");
+        references.put("TRNA", "gene");
         references.put("PointMutation", "gene");
         references.put("PolyASite", "processedTranscripts");
         // Region is inherited by loads of things, causes conflicts
@@ -84,14 +90,11 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
         Item feature = getFeature();
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
-        String tgtNs = getTargetModel().getNameSpace().toString();
-        boolean storeItems = true;
-
 
         // set Gene.organismDbId
         // name set in core - if no name symbol is CGxx?
         // create some synonyms
-        if ("Gene".equals(clsName) || "Pseudogene".equals(clsName)) {
+        if ("Gene".equals(clsName)) {
             Iterator fbgnIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
             while (fbgnIter.hasNext()) {
                 String organismDbId = (String) fbgnIter.next();
@@ -99,26 +102,6 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                     feature.setAttribute("organismDbId", organismDbId);
                 }
                 addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
-            }
-            if (!feature.hasAttribute("organismDbId")) {
-                feature.setAttribute("organismDbId", feature.getAttribute("identifier").getValue());
-                // if no FBgn found look in dbxref_2nd - does not seem to be in order but
-                // nothing else we can do
-//                 fbgnIter = parseFlyBaseId((List) record.getAttributes().get("dbxref_2nd"),
-//                                           "FBgn").iterator();
-//                 while (fbgnIter.hasNext()) {
-//                     String organismDbId = (String) fbgnIter.next();
-//                     if (!feature.hasAttribute("organismDbId")) {
-//                         feature.setAttribute("organismDbId", organismDbId);
-//                     }
-//                     addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
-//                 }
-                // if still no FBgn then don't create the gene!
-                //if (!feature.hasAttribute("organismDbId")) {
-//                 LOG.warn("FlyBase gene with no FBgn: "
-//                          + feature.getAttribute("identifier").getValue());
-//                 storeItems = false;
-                //}
             }
 
             // if no name set for gene then use CGxx (FlyBase symbol rules)
@@ -129,25 +112,18 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
-        // release 4.0 GFF3 is incorrect for some insertion_sites - have Parent reference
-        // to an unknown integer istead of a CG/CR number
-        if (record.getParents() != null) {
-            Iterator parentIter = record.getParents().iterator();
-            while (parentIter.hasNext()) {
-                String parentId = (String) parentIter.next();
-                if (!parentId.startsWith("C")) {
-                    LOG.warn("removing parent relation for " + clsName
-                             + " (" + feature.getIdentifier() + ")"
-                             + " because it has Parent=" + parentId);
-                    Iterator relIter = getParentRelations().iterator();
-                    while (relIter.hasNext()) {
-                        Item relation = (Item) relIter.next();
-                        items.remove("_relation" + relation.getIdentifier());
-                    }
-                }
-            }
-        }
+        // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
+        // We fix this by changing the pseudogene to a transcript and then fixing the gene
+        // class names later
+        if ("Pseudogene".equals(clsName)) {
+            String className = tgtNs + "Transcript";
+            // Transcript doesn't have a name attribute
+            getFeature().removeAttribute("name");
 
+            getFeature().setClassName(className);
+
+            pseudogeneIds.addAll(record.getParents());
+        }
 
         // set MRNA.organismDbId
         if ("MRNA".equals(clsName)) {
@@ -172,48 +148,6 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                     feature.setAttribute("organismDbId", organismDbId);
                 }
                 addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
-            }
-        }
-
-        // create additional referenced gene - this is parent of
-        if ("SnRNA".equals(clsName) || "NcRNA".equals(clsName) || "SnoRNA".equals(clsName)
-            || "TRNA".equals(clsName)) {
-            Item gene = getItemFactory().makeItem(null, tgtNs + "Gene", "");
-            gene.setReference("organism", getOrganism().getIdentifier());
-            gene.addCollection(new ReferenceList("evidence",
-                    Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
-            Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
-            while (fbIter.hasNext()) {
-                String organismDbId = (String) fbIter.next();
-                if (!gene.hasAttribute("organismDbId")) {
-                    gene.setAttribute("organismDbId", organismDbId);
-                    addItem(gene);
-                    feature.setReference("gene", gene.getIdentifier());
-
-                    // add SimpleRelation between ?RNA and Gene
-                    Item simpleRelation = getItemFactory().makeItem(null,
-                                                                    tgtNs + "SimpleRelation", "");
-                    simpleRelation.setReference("object", gene.getIdentifier());
-                    simpleRelation.setReference("subject", feature.getIdentifier());
-                    addItem(simpleRelation);
-                }
-                addItem(createSynonym(gene, "identifier", organismDbId, "FlyBase"));
-
-                // look in synonyms for a CG identifier for gene
-                List list = (List) record.getAttributes().get("synonym_2nd");
-                if (list != null) {
-                    Iterator iter = list.iterator();
-                    while (iter.hasNext()) {
-                        String synonym = (String) iter.next();
-                        if (synonym.startsWith("CG") && Character.isDigit(synonym.charAt(2))) {
-                            // first CG as identifier, rest as synonyms
-                            if (!gene.hasAttribute("identifier")) {
-                                gene.setAttribute("identifier", synonym);
-                            }
-                            addItem(createSynonym(gene, "identifier", synonym, "FlyBase"));
-                        }
-                    }
-                }
             }
         }
 
@@ -293,14 +227,47 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
-        // set references from parent relations
-        setReferences(references);
-        if (!storeItems) {
-            clear();
+        if ("Gene".equals(clsName)) {
+            finalItems .add(getFeature());
+
+            // unset the feature in the Item set so that it doesn't get stored automatically
+            removeFeature();
+        } else {
+            // set references from parent relations
+            setReferences(references);
         }
     }
 
+    /**
+     * Return items that need extra processing that can only be done after all other GFF features
+     * have been read.  For ChadoGFF3RecordHandler, the Gene and Pseudogene objects are returned.
+     * @return the final Items
+     */
+    public Collection getFinalItems() {
+        Iterator finalItemIter = finalItems.iterator();
 
+        while (finalItemIter.hasNext()) {
+            Item thisItem = (Item) finalItemIter.next();
+
+            if (pseudogeneIds.contains(thisItem.getAttribute("identifier").getValue())) {
+                thisItem.setClassName(tgtNs + "Pseudogene");
+            }
+        }
+
+        return finalItems;
+    }
+
+
+    /**
+     * Clear the list of final items.
+     */
+    public void clearFinalItems() {
+        finalItems.clear();
+    }
+
+    /**
+     * Create a synonym Item from the given information.
+     */
     private Item createSynonym(Item subject, String type, String value, String sourceName) {
         Item synonym = getItemFactory().makeItem(null, tgtNs + "Synonym", "");
         synonym.setAttribute("type", type);

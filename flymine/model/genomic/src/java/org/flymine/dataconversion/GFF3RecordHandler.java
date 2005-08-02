@@ -155,6 +155,13 @@ public class GFF3RecordHandler
     }
 
     /**
+     * Remove the feature item that was set with setFeature().
+     */
+    protected void removeFeature() {
+        items.remove("_feature");
+    }
+    
+    /**
      * Set the ComputationalAnalysis item created for this record, should not be edited in handler.
      * @param analysis the ComputationalAnalysis item
      */
@@ -247,10 +254,13 @@ public class GFF3RecordHandler
         items.put("_tgtSequence", tgtSequence);
     }
 
+    /**
+     * Get the target Sequence Item set by setTgtSequence().
+     * @return the target Sequence Item
+     */
     protected Item getTgtSequence() {
         return tgtSequence;
     }
-
 
     /**
      * Set the tgtLocation item for this record.
@@ -293,7 +303,7 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Return all items set and created in handler - excludes sequence and
+     * Return all items set and created in handler in this run - excludes sequence and
      * ComputationalAnalysis items.
      * @return a set of items
      */
@@ -309,6 +319,23 @@ public class GFF3RecordHandler
         items.put(item.getIdentifier(), item);
     }
 
+    
+    /**
+     * Return items that need extra processing that can only be done after all other GFF features
+     * have been read.
+     * @return extra Items
+     */
+    public Collection getFinalItems() {
+        return new ArrayList();
+    }
+    
+    /**
+     * Clear the list of final items.
+     */
+    public void clearFinalItems() {
+        // do nothing
+    }
+
 
     /**
      * Given a map from class name to reference name populate the reference for
@@ -321,8 +348,8 @@ public class GFF3RecordHandler
         // set additional references from parents according to references map
         String clsName = classFromURI(feature.getClassName());
         if (references.containsKey(clsName) && getParentRelations() != null) {
-            ClassDescriptor cld = tgtModel.getClassDescriptorByName(tgtModel
-                .getPackageName() + "." + clsName);
+            ClassDescriptor cld =
+                tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
 
             String refName = (String) references.get(clsName);
             Iterator parentIter = getParentRelations().iterator();
@@ -356,11 +383,11 @@ public class GFF3RecordHandler
      * @param feature item feature
      * @param orgAbb string organism abbreviation
      * @param seqIdentifier sequence identifier
-     * @param seqClsName sequence classname
+     * @param seq the Sequence 
      * @param locString location string got from converter
      */
     protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
-              Item  seq,  String locString) {
+                                       Item seq,  String locString) {
         String clsName = classFromURI(feature.getClassName());
         String seqClsName = classFromURI(seq.getClassName());
         if (clsName.equals("CrossGenomeMatch")) {
@@ -394,7 +421,8 @@ public class GFF3RecordHandler
                 feature.setReference("chromosomeLocation", getLocation().getIdentifier());
                 feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
                 feature.setReference("targetLocatedSequenceFeature", targetSeq.getIdentifier());
-                feature.setReference("targetLocatedSequenceFeatureLocation", targetLocation.getIdentifier());
+                feature.setReference("targetLocatedSequenceFeatureLocation",
+                                     targetLocation.getIdentifier());
             } else {
                 throw new NullPointerException("No target organism for " + feature);
             }

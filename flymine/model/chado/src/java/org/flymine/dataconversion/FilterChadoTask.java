@@ -97,6 +97,15 @@ public class FilterChadoTask extends Task
         while (iter.hasNext()) {
             GFF3Record record = (GFF3Record) iter.next();
             if (typeToKeep(record.getType())) {
+                // if the Name is just the ID plus "-hsp", set the ID to the Name and then remove
+                // the Name
+                if (record.getNames() != null && record.getNames().size() == 1
+                    && record.getId() != null
+                    && record.getId().equals(record.getNames().get(0) + "-hsp")) {
+                    record.getAttributes().remove("ID");
+                    record.getAttributes().put("ID", record.getNames());
+                    record.getAttributes().remove("Name");
+                }
                 out.write(record.toGFF3());
             }
         }
@@ -108,8 +117,8 @@ public class FilterChadoTask extends Task
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
             || type.equals("scaffold") || type.equals("chromosome_arm")
             || type.equals("chromosome") || type.equals("mature_peptide")
-//            || type.equals("orthologous_region") || type.equals("syntenic_region")
-            ) {
+            || type.equals("oligo") || type.equals("BAC")
+            || type.equals("chromosome_band")) {
             return false;
         }
         return true;
