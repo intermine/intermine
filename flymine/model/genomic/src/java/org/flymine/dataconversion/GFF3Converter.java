@@ -47,7 +47,7 @@ public class GFF3Converter
 
     private Item organism;
     private Reference orgRef;
-    protected ItemWriter writer;
+    private ItemWriter writer;
     private String seqClsName;
     private String orgAbbrev;
     private Item infoSource;
@@ -130,6 +130,14 @@ public class GFF3Converter
         while (iter.hasNext()) {
             writer.store(ItemHelper.convert((Item) iter.next()));
         }
+
+        iter = handler.getFinalItems().iterator();
+        
+        while (iter.hasNext()) {
+            writer.store(ItemHelper.convert((Item) iter.next()));
+        }
+
+        handler.clearFinalItems();
     }
 
     /**

@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
@@ -99,6 +100,74 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
             }
         }
         assertEquals(expectedGene, actualGene);
+    }
+
+    // test that Gene->Pseudogene->Exon get changes to Pseudogene->Transcript->Exon
+    public void testHandlePseudoGene() throws Exception {
+        String gff =
+            "4\t.\tgene\t26994\t32391\t.\t-\t.\tID=CR32011;Dbxref=FlyBase:FBan0032011,FlyBase:FBgn0052011;cyto_range=102A1-102A1;gbunit=AE003845;synonym=CR32011;synonym_2nd=CG32011"
+            + "4\t.\tpseudogene\t26994\t32391\t.\t-\t.\tID=CR32011-RA;Dbxref=FlyBase:FBtr0089182,FlyBase:FBgn0052011;Parent=CR32011;dbxref_2nd=Gadfly:CR32011-RA;synonym=CR32011-RA"
+            + "4\t.\texon\t27167\t27349\t.\t-\t.\tID=CR32011:7;Parent=CR32011-RA";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+
+        Iterator iter = GFF3Parser.parse(srcReader);
+
+        List featureIdentifiers = new ArrayList();
+        
+        while (iter.hasNext()) {
+
+            GFF3Record record = (GFF3Record) iter.next();
+
+            String term = record.getType();
+            String className = TypeUtil.javaiseClassName(term);
+
+            Item feature = itemFactory.makeItem(null, tgtNs + className, "");
+
+            handler.setFeature(feature);
+            handler.process(record);
+            
+            featureIdentifiers.add(feature.getIdentifier());
+        }
+
+        Item expectedGene =
+            itemFactory.makeItem((String) featureIdentifiers.get(0), tgtNs + "Pseudogene", "");
+        expectedGene.setAttribute("organismDbId", "FBgn0052011");
+        expectedGene.setAttribute("identifier", "CR32011");
+        expectedGene.setAttribute("name", "CR32011");
+
+        Item expectedTranscript = itemFactory.makeItem((String) featureIdentifiers.get(1),
+                                                       tgtNs + "Transcript", "");
+        expectedTranscript.setAttribute("identifier", "CR32011-RA");
+
+        Item expectedExon = itemFactory.makeItem((String) featureIdentifiers.get(2), 
+                                                 tgtNs + "Exon", "");
+        expectedExon.setAttribute("identifier", "CR32011:7");
+
+        assertEquals(12, handler.getItems().size());
+
+        Item actualGene = null;
+        Item actualTranscript = null;
+        Item actualExon = null;
+
+        iter = handler.getItems().iterator();
+
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                actualGene = item;
+            }
+            if (item.getClassName().equals(tgtNs + "Transcript")) {
+                actualTranscript = item;
+            }
+            if (item.getClassName().equals(tgtNs + "Exon")) {
+                actualExon = item;
+            }
+        }
+        
+        assertEquals(expectedGene, actualGene);
+        assertEquals(expectedTranscript, actualTranscript);
+        assertEquals(expectedExon, actualExon);
     }
 
 
