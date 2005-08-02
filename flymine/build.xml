@@ -2460,6 +2460,14 @@
     </ant>
   </target>
 
+  <target name="flyreg-test" 
+          depends="prepare-test, prepare-build-model, build-db-fulldatatest, compile-genomic-java">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="flyreg"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
   <target name="compile-taxonomy-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="taxonomy"/>
@@ -2534,7 +2542,7 @@
 
   <target name="test-models-inc"
           depends="mage-test, ensembl-test, rnai-test, homophila-test,
-                   psi-test, orthologue-test, go-test, drosdel-test,
+                   psi-test, orthologue-test, go-test, drosdel-test, flyreg-test,
                    taxonomy-test, uniprot-test, protein_structure-test">
     <antcall target="test-report"/>
   </target>
