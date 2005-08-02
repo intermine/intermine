@@ -1,10 +1,15 @@
 package org.intermine.util;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.ObjectStore;
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -14,23 +19,31 @@ import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 
-public class PathQueryUtil {
-
+/**
+ * Utility methods for paths.
+ * @author Kim Rutherford
+ */
+public class PathQueryUtil
+{
     /**
      * Given a class return a set with the unqualified class name in and if preceded by
      * a '+' also the unqualified names of all subclasses.
      * @param clsName an unqullified class name
+     * @param model the Model use to find meta data   
      * @return a set of class names
      */
-    protected static Set getClassNames(ObjectStore os, String clsName) {
-        Model model = os.getModel();
-    
+    protected static Set getClassNames(Model model, String clsName) {
         boolean useSubClasses = false;
         if (clsName.startsWith("+")) {
             clsName = clsName.substring(1);
@@ -62,11 +75,10 @@ public class PathQueryUtil {
      * Where the number of elements is greater than one and an odd number.  Check
      * that all classes anf references are valid in the model.
      * @param path the path string
+     * @param model the Model use to find meta data
      * @throws IllegalArgumentException if path not valid
      */
-    protected static void validatePath(String path, ObjectStore os) {
-        Model model = os.getModel();
-    
+    protected static void validatePath(String path, Model model) {
         // must be more than one element and odd number
         String[] queryBits = path.split("[ \t]");
         if (!(queryBits.length > 1) || (queryBits.length % 2 == 0)) {
@@ -99,10 +111,11 @@ public class PathQueryUtil {
     /**
      * Given a path return a set of paths replacing a path with a '+' preceding a class
      * name with an additional path for every subclass of that class.
+     * @param model the Model use to find meta data
      * @param path the path to expand
      * @return a Set of paths
      */
-    public static Set expandPath(ObjectStore os, String path) {
+    public static Set expandPath(Model model, String path) {
         Set paths = new LinkedHashSet();
     
         String clsName;
@@ -120,7 +133,7 @@ public class PathQueryUtil {
     
         Set subs;
         try {
-            subs = getClassNames(os, clsName);
+            subs = getClassNames(model, clsName);
         } catch (IllegalArgumentException e) {
             throw new BuildException("Cannot find class names", e);
         }
@@ -129,7 +142,7 @@ public class PathQueryUtil {
             String subName = (String) subIter.next();
             Set nextPaths = new LinkedHashSet();
             if (refName != "") {
-                nextPaths.addAll(expandPath(os, path.substring(refEnd + 1).trim()));
+                nextPaths.addAll(expandPath(model, path.substring(refEnd + 1).trim()));
             } else {
                 nextPaths.addAll(subs);
                 return nextPaths;
@@ -145,20 +158,19 @@ public class PathQueryUtil {
 
     /**
      * Construct an objectstore query represented by the given path.
+     * @param model the Model use to find meta data 
      * @param path path to construct query for
      * @return the constructed query
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
      */
-    public static Query constructQuery(ObjectStore os, String path) throws ClassNotFoundException,
-                                                                       IllegalArgumentException {
+    public static Query constructQuery(Model model, String path)
+        throws ClassNotFoundException, IllegalArgumentException {
         String[] queryBits = path.split("[ \t]");
     
         // validate path against model
-        validatePath(path, os);
-    
-        Model model = os.getModel();
-    
+        validatePath(path, model);
+
         Query q = new Query();
         QueryClass qcLast = null;
         for (int i = 0; i + 2 < queryBits.length; i += 2) {
@@ -170,7 +182,7 @@ public class PathQueryUtil {
             if (qcLast != null) {
                 qcStart = qcLast;
             }
-            qcLast = addReferenceConstraint(os, q, qcStart, refName, qcEnd, (i == 0));
+            qcLast = addReferenceConstraint(model, q, qcStart, refName, qcEnd, (i == 0));
         }
     
         return q;
@@ -179,6 +191,7 @@ public class PathQueryUtil {
     /**
      * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
      * Return qcEnd as it may need to be passed into mehod again as qcStart.
+     * @param model the Model use to find meta data
      * @param q the query
      * @param qcStart the QueryClass that contains the reference
      * @param refName name of reference to qcEnd
@@ -187,7 +200,7 @@ public class PathQueryUtil {
      * to the query
      * @return QueryClass return qcEnd
      */
-    protected static QueryClass addReferenceConstraint(ObjectStore os,
+    protected static QueryClass addReferenceConstraint(Model model,
                                                 Query q, QueryClass qcStart, String refName,
                                                 QueryClass qcEnd, boolean first) {
         if (first) {
@@ -200,8 +213,7 @@ public class PathQueryUtil {
         q.addToOrderBy(qcEnd);
     
         // already validated against model
-        ClassDescriptor startCld =
-            os.getModel().getClassDescriptorByName(qcStart.getType().getName());
+        ClassDescriptor startCld = model.getClassDescriptorByName(qcStart.getType().getName());
         FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
     
         QueryReference qRef;
