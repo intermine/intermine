@@ -8,6 +8,8 @@
   <attribute name="name" type="java.lang.String"/>
   <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="evidenceCode" type="java.lang.String"/>
+  <attribute name="withText" type="java.lang.String"/>
+  <collection name="with" referenced-type="org.flymine.model.genomic.BioEntity"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="GOTerms" referenced-type="org.flymine.model.genomic.GOTerm" ordered="true" reverse-reference="genes"/>
