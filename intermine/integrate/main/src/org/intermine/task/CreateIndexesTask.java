@@ -52,6 +52,7 @@ import org.intermine.util.StringUtil;
  * Note that all "id" columns are indexed automatically by virtue of InterMineTorqueModelOuput
  * specifying them as primary key columns.
  * @author Mark Woodbridge
+ * @author Kim Rutherford
  */
 public class CreateIndexesTask extends Task
 {
@@ -63,7 +64,7 @@ public class CreateIndexesTask extends Task
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
     private Map tableIndexesDone = new HashMap();
     private Set indexesMade = new HashSet();
-    private final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
+    private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
     
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
@@ -381,10 +382,10 @@ public class CreateIndexesTask extends Task
         if (statements.containsKey(indexName)) {
             IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
   
-            if (!indexStatement.columnNames.equals(columnNames) ||
-                !indexStatement.tableName.equals(tableName)) {
-                throw new IllegalArgumentException("Tried to created two indexes with the same name: "
-                                                   + indexName);
+            if (!indexStatement.getColumnNames().equals(columnNames)
+                || !indexStatement.getTableName().equals(tableName)) {
+                throw new IllegalArgumentException("Tried to created two indexes with the "
+                                                   + "same name: " + indexName);
             }
         }
 
@@ -422,7 +423,7 @@ public class CreateIndexesTask extends Task
             indexesForTable = new HashSet();
             tableIndexesDone.put(tableName, indexesForTable);
         }
-        if (!indexesForTable.contains(indexStatement.columnNames)) {
+        if (!indexesForTable.contains(indexStatement.getColumnNames())) {
             try {
                 execute(indexStatement.getStatementString(indexName));
             } catch (SQLException e) {
@@ -436,7 +437,7 @@ public class CreateIndexesTask extends Task
                 }
             }
         }
-        indexesForTable.add(indexStatement.columnNames);
+        indexesForTable.add(indexStatement.getColumnNames());
         indexesMade.add(indexName);
     }
 
@@ -450,34 +451,70 @@ public class CreateIndexesTask extends Task
     }
 }
 
-class IndexStatement {
-    String tableName;
-    String columnNames;
-    ClassDescriptor cld;
-    ClassDescriptor tableMaster;
+/**
+ * A simple representation of an SQL index statement.
+ * @author Kim Rutherford
+ */
+class IndexStatement
+{
+    private String tableName;
+    private String columnNames;
+    private ClassDescriptor cld;
+    private ClassDescriptor tableMaster;
 
     /**
      * Return an IndexStatement that can be used to create an index on the specified columns of a
      * table.
      * @param tableName the table name
      * @param columnNames the column names
+     * @param cld the class descriptor of the class to index 
+     * @param tableMaster the class descriptor of the table master to index
      */
     IndexStatement(String tableName, String columnNames, ClassDescriptor cld,
-                          ClassDescriptor tableMaster) {
+                   ClassDescriptor tableMaster) {
         this.tableName = tableName;
         this.columnNames = columnNames;
         this.cld = cld;
         this.tableMaster = tableMaster;
     }
 
+    /**
+     * Return the columnNames argument that was passed to the constructor.
+     * @return the columnNames
+     */
     String getColumnNames() {
         return columnNames;
     }
 
+    /**
+     * Return the tableName argument that was passed to the constructor.
+     * @return the tableName
+     */
     String getTableName() {
-      return tableName;
+        return tableName;
     }
 
+    /**
+     * Return the cld argument that was passed to the constructor.
+     * @return the cld
+     */
+    ClassDescriptor getCld() {
+        return cld;
+    }
+    
+    /**
+     * Return the tableMaster that was passed to the constructor.
+     * @return the tableMaster
+     */
+    ClassDescriptor getTableMaster() {
+        return tableMaster;
+    }
+
+    /**
+     * Return the SQL String to use to create the index.
+     * @param indexName the index name to substitute into the statement.
+     * @return the SQL String
+     */
     String getStatementString(String indexName) {
         return "create index " + indexName + " on " + tableName + "(" + columnNames + ")";
     }
