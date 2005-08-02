@@ -67,7 +67,7 @@ public class GoConverterTest extends TestCase
         converter.process(reader);
         converter.close();
 
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
+        //System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
         assertEquals(new HashSet(getExpectedItems()), writer.getItems());
     }
 
