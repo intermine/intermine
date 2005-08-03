@@ -24,11 +24,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>dot-intermine-test</name>
-			<type>2</type>
-			<location>DOT_INTERMINE/intermine-test</location>
-		</link>
-	</linkedResources>
 </projectDescription>
