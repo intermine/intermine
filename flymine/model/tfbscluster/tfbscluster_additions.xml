@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.TFBSCluster" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <attribute name="identifier" type="java.lang.String"/>
+  <attribute name="type" type="java.lang.String"/>
+  <reference name="location" referenced-type="org.flymine.model.genomic.Location"/>
+  <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
+  <collection name="geneDistances" referenced-type="org.flymine.model.genomic.DistanceRelation" ordered="true"/>
+</class>
+<class name="org.flymine.model.genomic.DistanceRelation" extends="org.flymine.model.genomic.Relation" is-interface="true">
+  <attribute name="type" type="java.lang.String"/>
+  <attribute name="distance" type="java.lang.Integer"/>
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+</class>
+</classes>
