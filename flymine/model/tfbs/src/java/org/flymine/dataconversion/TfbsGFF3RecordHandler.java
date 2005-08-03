@@ -154,7 +154,7 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
     private Item getUniprotDb() {
         if (uniprotDb == null) {
             uniprotDb = getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
-                        + "InfoSource");
+                        + "Database");
             uniprotDb.setAttribute("title", "UniProt");
             addItem(uniprotDb);
             //uniprotDb.setAttribute("url", "http://www.uniprot.org/");
@@ -191,7 +191,7 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
     private Item getTransfacDb() {
         if (transfacDb == null) {
             transfacDb = getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
-                        + "InfoSource");
+                        + "Database");
             transfacDb.setAttribute("title", "transfac");
             addItem(transfacDb);
             //transfacDb.setAttribute("url", "http://www.gene-regulation.com/pub/databases.html");
