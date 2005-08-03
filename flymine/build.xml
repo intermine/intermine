@@ -1490,7 +1490,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-go-dag file="${model}/go/go-combined.ontology" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" dagName="GO"/>
+    <retrieve-go-dag file="${model}/go/gene_ontology.obo" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" dagName="GO"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1514,7 +1514,7 @@
 
   <target name="retrieve-go-annotation" depends="prepare-build-model, compile-go-java">
 
-    <copy file="${model}/go/go-combined.ontology" toDir="${build.model}/go"/>
+    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1529,7 +1529,7 @@
 
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
-                  ontology="${build}/model/go/go-combined.ontology">
+                  ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="/shared/data/go-annotation">
         <include name="gene_association_*"/>
       </fileset>

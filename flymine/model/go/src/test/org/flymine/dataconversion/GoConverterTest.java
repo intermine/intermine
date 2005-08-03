@@ -44,8 +44,8 @@ public class GoConverterTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        goFile = File.createTempFile("go-tiny", "ontology");
-        Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/go-tiny.ontology"));
+        goFile = File.createTempFile("go-tiny", ".ontology");
+        Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.ontology"));
 
         FileWriter fileWriter = new FileWriter(goFile);
         int c;
@@ -60,7 +60,7 @@ public class GoConverterTest extends TestCase
     }
 
     public void testTranslate() throws Exception {
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/GoConverterTest_src.txt"));
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/GoConverterTest_src.txt"));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
         converter.setOntology(goFile);
@@ -87,6 +87,6 @@ public class GoConverterTest extends TestCase
     }
 
     protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/GoConverterTest_tgt.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("resources/test/GoConverterTest_tgt.xml"));
     }
 }

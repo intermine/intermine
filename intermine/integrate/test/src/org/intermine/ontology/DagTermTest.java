@@ -21,16 +21,48 @@ public class DagTermTest extends TestCase
     public void testEquals() {
         DagTerm d1 = new DagTerm("name", "id");
         DagTerm d2 = new DagTerm("name", "id");
+        DagTerm d3 = new DagTerm("name", "id3");
 
-        assertTrue(d1.equals(d2));
-        assertTrue(d2.equals(d1));
+        assertTrue(equalDagTerms(d1, d2));
+        assertTrue(equalDagTerms(d2, d1));
 
         d1.addSynonym("s1");
         d1.addSynonym("s2");
-        assertFalse(d1.equals(d2));
+        
+        assertFalse(equalDagTerms(d1, d2));
+        assertFalse(equalDagTerms(d2, d1));
+        
         d2.addSynonym("s1");
         d2.addSynonym("s2");
-        assertTrue(d1.equals(d2));
-
+        
+        assertTrue(equalDagTerms(d1, d2));
+        assertTrue(equalDagTerms(d2, d1));
+        
+        d1.addChild(d3);
+        
+        assertFalse(equalDagTerms(d1, d2));
+        assertFalse(equalDagTerms(d2, d1));
+        
+        d2.addChild(d3);
+        
+        assertTrue(equalDagTerms(d1, d2));
+        assertTrue(equalDagTerms(d2, d1));
+        
+        d1.addComponent(d3);
+        
+        assertFalse(equalDagTerms(d1, d2));
+        assertFalse(equalDagTerms(d2, d1));
+        
+        d2.addComponent(d3);
+        
+        assertTrue(equalDagTerms(d1, d2));
+        assertTrue(equalDagTerms(d2, d1));
+    }
+    
+    public static boolean equalDagTerms(DagTerm t1, DagTerm t2) {
+        return t1.getId().equals(t2.getId()) && t1.getName().equals(t2.getName()) &&
+            t1.getChildren().equals(t2.getChildren()) &&
+            t1.getComponents().equals(t2.getComponents()) &&
+            t1.getSynonyms().equals(t2.getSynonyms());
     }
 }

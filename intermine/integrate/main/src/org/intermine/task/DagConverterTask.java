@@ -15,6 +15,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.DagConverter;
+import org.intermine.dataconversion.OboConverter;
 
 
 import org.apache.tools.ant.Task;
@@ -92,7 +93,14 @@ public class DagConverterTask extends Task
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             writer = new ObjectStoreItemWriter(osw);
 
-            DagConverter converter = new DagConverter(writer, file, dagName, termClass);
+            DagConverter converter;
+            if (file.endsWith(".ontology")) {
+                converter = new DagConverter(writer, file, dagName, termClass);
+            } else if (file.endsWith(".obo")) {
+                converter = new OboConverter(writer, file, dagName, termClass);
+            } else {
+                throw new IllegalArgumentException("Don't know how to deal with file " + file);
+            }
             converter.process();
         } catch (Exception e) {
             throw new BuildException(e);
