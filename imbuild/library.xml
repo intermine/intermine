@@ -212,7 +212,7 @@
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
-        <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="modern"
+        <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="jikes"
            deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}"
            includeantruntime="false">
           <classpath refid="@{classpath}"/>
