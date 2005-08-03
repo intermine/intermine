@@ -32,16 +32,17 @@ public class RetrieveGeneSynonym extends FileConverter
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     protected Map genes = new HashMap();
-    protected Map synonyms = new HashMap()
-;
+    protected Map synonyms = new HashMap();
     protected Item db;
     protected int id = 0;
     protected String synonymtype = null;
+
 
     /**
      * Set the value the Synonym.type field should have when retrieving Synonym.
      * @param synonymtype the Synonym type
      */
+
     public void setSynonymtype(String synonymtype) {
         this.synonymtype = synonymtype;
     }
@@ -77,8 +78,8 @@ public class RetrieveGeneSynonym extends FileConverter
                 String[] array = line.split("\t", -1); //keep trailing empty Strings
                 if (array[0] != null && array[1].length() > 0) {
                     Item gene = getGene(array[0]);
-                    Item synonym =
-                        getSynonym(array[1], synonymtype.concat("Id"), gene.getIdentifier());
+                    Item synonym = getSynonym(array[1], synonymtype.concat("Id"),
+                                   gene.getIdentifier());
                 }
             }
         }
@@ -92,11 +93,12 @@ public class RetrieveGeneSynonym extends FileConverter
         store(synonyms.values());
     }
 
+
     /**
      * Return the Gene Item by organismDbId.
-     * @param organismDbId the key to use to retrieve the Item
-     * @return the Item
+     * @param organismDbId set a map genes with organismDbId as key and geneItem as value
      * @throws ObjectStoreException if an error occurs while reading
+     * @return gene item
      */
     protected Item getGene(String organismDbId) throws ObjectStoreException {
         Item item = (Item) genes.get(organismDbId);
@@ -108,15 +110,15 @@ public class RetrieveGeneSynonym extends FileConverter
         return item;
     }
 
+
     /**
-     * Create and return a new synonym Item.
-     * @param value the value attribute of the new Item
-     * @param type the type attribute
-     * @param subjectId the subjectId
-     * @return the Item
+     * @param value set synonym map with value as key and synonym item as value
+     * @param type synonym type
+     * @param subjectId synonym subject reference
      * @throws ObjectStoreException if an error occurs while reading
+     * @return synonym item
      */
-    protected Item getSynonym(String value, String type, String subjectId)
+    protected Item getSynonym(String value, String type, String subjectId )
         throws ObjectStoreException {
         Item item = (Item) synonyms.get(value);
         if (item == null) {
