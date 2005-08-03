@@ -65,7 +65,7 @@ public class CreateIndexesTask extends Task
     private Map tableIndexesDone = new HashMap();
     private Set indexesMade = new HashSet();
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
-    
+
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
      * @param alias the ObjectStore alias
@@ -137,7 +137,7 @@ public class CreateIndexesTask extends Task
         }
 
         checkForIndexNameClashes(statements);
-            
+
         IndexStatement indexStatement = null;
 
         try {
@@ -145,7 +145,7 @@ public class CreateIndexesTask extends Task
             c.setAutoCommit(true);
 
             // Drop all the indexes first, then re-create them.  That ensures that if we try to
-            // create an index with the same name twice we get an exception.  Postgresql has a 
+            // create an index with the same name twice we get an exception.  Postgresql has a
             // limit on index name length (63) and will truncate longer names with a NOTICE rather
             // than an error.
 
@@ -229,8 +229,12 @@ public class CreateIndexesTask extends Task
             for (Iterator j = key.getFieldNames().iterator(); j.hasNext();) {
                 String fieldName = (String) j.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                if (firstOne && (fd instanceof AttributeDescriptor)) {
-                    doNulls = !((AttributeDescriptor) fd).isPrimitive();
+                if (firstOne) {
+                    if (fd instanceof AttributeDescriptor) {
+                        doNulls = !((AttributeDescriptor) fd).isPrimitive();
+                    } else if (fd instanceof ReferenceDescriptor) {
+                        doNulls = true;
+                    }
                 }
                 if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
@@ -252,7 +256,7 @@ public class CreateIndexesTask extends Task
                     if (tableName.equals(cldTableName)) {
                         indexNameBase = tableName + "__" + keyName;
 
-                    } else { 
+                    } else {
                         indexNameBase = tableName + "__" + cldTableName + "__" + keyName;
                     }
                     addStatement(statements, indexNameBase, tableName,
@@ -381,7 +385,7 @@ public class CreateIndexesTask extends Task
                               ClassDescriptor cld, ClassDescriptor tableMaster) {
         if (statements.containsKey(indexName)) {
             IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
-  
+
             if (!indexStatement.getColumnNames().equals(columnNames)
                 || !indexStatement.getTableName().equals(tableName)) {
                 throw new IllegalArgumentException("Tried to created two indexes with the "
@@ -467,7 +471,7 @@ class IndexStatement
      * table.
      * @param tableName the table name
      * @param columnNames the column names
-     * @param cld the class descriptor of the class to index 
+     * @param cld the class descriptor of the class to index
      * @param tableMaster the class descriptor of the table master to index
      */
     IndexStatement(String tableName, String columnNames, ClassDescriptor cld,
@@ -501,7 +505,7 @@ class IndexStatement
     ClassDescriptor getCld() {
         return cld;
     }
-    
+
     /**
      * Return the tableMaster that was passed to the constructor.
      * @return the tableMaster
