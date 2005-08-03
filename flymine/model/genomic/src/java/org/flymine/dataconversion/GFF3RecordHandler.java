@@ -160,7 +160,7 @@ public class GFF3RecordHandler
     protected void removeFeature() {
         items.remove("_feature");
     }
-    
+
     /**
      * Set the ComputationalAnalysis item created for this record, should not be edited in handler.
      * @param analysis the ComputationalAnalysis item
@@ -254,6 +254,7 @@ public class GFF3RecordHandler
         items.put("_tgtSequence", tgtSequence);
     }
 
+
     /**
      * Get the target Sequence Item set by setTgtSequence().
      * @return the target Sequence Item
@@ -277,6 +278,7 @@ public class GFF3RecordHandler
     protected Item getTgtLocation() {
         return (Item) items.get("_tgtLocation");
     }
+
     /**
      * Set the ItemFactory to use in this handler.
      * @param itemFactory the ItemFactory
@@ -319,7 +321,7 @@ public class GFF3RecordHandler
         items.put(item.getIdentifier(), item);
     }
 
-    
+
     /**
      * Return items that need extra processing that can only be done after all other GFF features
      * have been read.
@@ -328,7 +330,7 @@ public class GFF3RecordHandler
     public Collection getFinalItems() {
         return new ArrayList();
     }
-    
+
     /**
      * Clear the list of final items.
      */
@@ -383,11 +385,11 @@ public class GFF3RecordHandler
      * @param feature item feature
      * @param orgAbb string organism abbreviation
      * @param seqIdentifier sequence identifier
-     * @param seq the Sequence 
+     * @param seq item sequence
      * @param locString location string got from converter
      */
     protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
-                                       Item seq,  String locString) {
+                                       Item seq, String locString) {
         String clsName = classFromURI(feature.getClassName());
         String seqClsName = classFromURI(seq.getClassName());
         if (clsName.equals("CrossGenomeMatch")) {
@@ -422,13 +424,20 @@ public class GFF3RecordHandler
                 feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
                 feature.setReference("targetLocatedSequenceFeature", targetSeq.getIdentifier());
                 feature.setReference("targetLocatedSequenceFeatureLocation",
-                                     targetLocation.getIdentifier());
+                                      targetLocation.getIdentifier());
             } else {
                 throw new NullPointerException("No target organism for " + feature);
             }
         }
     }
 
+    /**
+     * @param identifier target sequence identifier
+     * @param seqClsName passed by converter param, normally chromosome,
+     * in case of opposumchain, it is scaffold
+     * @param orgAbb organism abbreivation
+     * @return target sequence
+     */
      private Item getTargetSeq(String identifier, String seqClsName, String orgAbb) {
         Item tseq = (Item) tgtSeqs.get(identifier);
         if (tseq == null) {
@@ -446,6 +455,10 @@ public class GFF3RecordHandler
         return tseq;
     }
 
+    /**
+     * @param orgAbb organism abbreivation
+     * @return tgtOrganism
+     */
     private Item getTargetOrganism(String orgAbb) {
         if (tgtOrganism == null) {
             tgtOrganism = createItem("Organism", createIdentifier());
@@ -455,6 +468,10 @@ public class GFF3RecordHandler
         return tgtOrganism;
     }
 
+    /**
+     * @param orgAbb organism abbreivation
+     * @return tgtOrganismReference
+     */
     private Reference getTargetOrgRef(String orgAbb) {
         if (tgtOrgRef == null) {
             tgtOrgRef = new Reference("organism", getTargetOrganism(orgAbb).getIdentifier());
@@ -462,11 +479,15 @@ public class GFF3RecordHandler
         return tgtOrgRef;
     }
 
+    /**
+     * @param uri string
+     * @return classname
+     */
     private String classFromURI(String uri) {
         return uri.split("#")[1].split("[.]")[0];
     }
 
-     /**
+    /**
      * Create an item with given className and item identifier
      * @param className
      * @param implementations
@@ -476,6 +497,10 @@ public class GFF3RecordHandler
         return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
     }
 
+    /**
+     * create item identifier
+     * @return identifier
+     */
     private String createIdentifier() {
         return "1_" + itemid++;
     }
