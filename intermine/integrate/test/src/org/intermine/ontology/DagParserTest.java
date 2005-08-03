@@ -97,7 +97,7 @@ public class DagParserTest extends TestCase
         DagTerm term = new DagTerm("id", "name");
 
         assertTrue(parent.getChildren().size() == 0);
-        assertTrue(term.equals(parser.makeDagTerm(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.makeDagTerm(test)));
         assertTrue(parent.getChildren().size() == 1);
     }
 
@@ -110,7 +110,7 @@ public class DagParserTest extends TestCase
         DagTerm term = new DagTerm("id", "name");
 
         assertTrue(whole.getComponents().size() == 0);
-        assertTrue(term.equals(parser.makeDagTerm(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.makeDagTerm(test)));
         assertTrue(whole.getComponents().size() == 1);
     }
 
@@ -119,7 +119,7 @@ public class DagParserTest extends TestCase
 
         DagTerm term = new DagTerm("id", "name");
 
-        assertTrue(term.equals(parser.makeDagTerm(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.makeDagTerm(test)));
         assertEquals(1, parser.rootTerms.size());
         assertEquals(2, parser.seenTerms.size());
     }
@@ -133,7 +133,7 @@ public class DagParserTest extends TestCase
         DagTerm term = new DagTerm("id", "name");
 
         assertTrue(parent1.getChildren().size() == 0);
-        assertTrue(term.equals(parser.makeDagTerm(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.makeDagTerm(test)));
         assertTrue(parent1.getChildren().size() == 1);
 
         DagParser.Identifier i2 = parser.new Identifier("id2", "parent2");
@@ -153,7 +153,7 @@ public class DagParserTest extends TestCase
         term.addSynonym("s1");
         term.addSynonym("s2");
 
-        assertTrue(term.equals(parser.dagTermFromString(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.dagTermFromString(test)));
         assertTrue(parser.seenTerms.size() == 1);
     }
 
@@ -173,7 +173,7 @@ public class DagParserTest extends TestCase
         term.addSynonym("old1");
         term.addChild(child);
 
-        assertTrue(term.equals(parser.dagTermFromString(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.dagTermFromString(test)));
         assertTrue(parser.seenTerms.size() == 1);
     }
 
@@ -224,7 +224,7 @@ public class DagParserTest extends TestCase
 
         DagTerm term = new DagTerm("GO:0045944", "positive regulation of transcription from Pol II promoter");
 
-        assertTrue(term.equals(parser.dagTermFromString(test)));
+        assertTrue(DagTermTest.equalDagTerms(term, parser.dagTermFromString(test)));
     }
 
 
@@ -254,5 +254,4 @@ public class DagParserTest extends TestCase
         assertEquals("<term1",
                      new BufferedReader(parser.replaceRelationStrings(new StringReader("@derived_from@term1"))).readLine());
     }
-
 }

@@ -107,34 +107,6 @@ public class DagTerm
     }
 
     /**
-     * Test for equality with given object, terms are equal if id, name, synonyms
-     * and direct children and components are the same.
-     * @param o an object to test for equality
-     * @return true if equal
-     */
-    public boolean equals(Object o) {
-        if (o instanceof DagTerm) {
-            DagTerm d = (DagTerm) o;
-            return name.equals(d.name)
-                && id.equals(d.id)
-                && children.equals(d.children)
-                && components.equals(d.components)
-                && synonyms.equals(d.synonyms);
-        }
-        return false;
-    }
-
-    /**
-     * Generate a hashCode for the DagTerm.
-     * @return a hashCode
-     */
-    public int hashCode() {
-        return 3 * id.hashCode() + 5 * name.hashCode()
-            + 7 * synonyms.hashCode() + 11 * children.hashCode()
-            + 13 * components.hashCode();
-    }
-
-    /**
      * Create a string representation of the term.
      * @return a string represenation of the term
      */

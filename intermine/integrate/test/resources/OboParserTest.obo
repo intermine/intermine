@@ -1,0 +1,42 @@
+format-version: 1.0
+date: 28:07:2005 15:19
+saved-by: midori
+auto-generated-by: DAG-Edit 1.419 rev 3
+default-namespace: gene_ontology
+subsetdef: goslim_yeast "Yeast GO slim"
+subsetdef: goslim_goa "GOA and proteome slim"
+subsetdef: goslim_plant "Plant GO slim"
+subsetdef: goslim_generic "Generic GO slim"
+subsetdef: gosubset_prok "Prokaryotic GO subset"
+
+[Term]
+id: GO:0000001
+name: mitochondrion inheritance
+def: "iosis\, mediated byhe cytoskeleton." [PMID:10873824, PMID:11389764, SGD:mcc]
+
+[Term]
+id: GO:0000002
+name: mitochondrial genome maintenance
+def: "The maintenance of the structure and integrity of the mitochondrial genome." [GO:ai]
+is_a: GO:0000001 ! mitochondrion organization and biogenesis
+! random comment
+relationship: unknown_rel asdf
+namespace: other_namespace
+
+[IgnoreMe]
+id: foo
+name: goo
+
+[Term]
+id: GO:0000003
+name: reproduction
+alt_id: GO:0019952
+def: "The produ inherited from that organism." [GO:curators, ISBN:0198506732]
+subset: goslim_generic
+is_a: GO:0000002 ! biological_process
+relationship: part_of GO:0000001 ! DNA recombination
+synonym: "some_value" [VEH:391840]
+exact_synonym: "exact_value" [VEH:391840]
+broad_synonym: "broad_value" [VEH:391840]
+related_synonym: "related_value" [VEH:391840]
+narrow_synonym: "narrow_value" [VEH:391840]

@@ -29,6 +29,7 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.ontology.DagParser;
+import org.intermine.ontology.OboParser;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 
@@ -74,9 +75,15 @@ public class GoConverter extends FileConverter
      * @see FileConverter#process
      */
     public void process(Reader reader) throws ObjectStoreException, IOException {
-        DagParser parser = new DagParser();
         try {
-            termIdNameMap = parser.getTermIdNameMap(new FileReader(ontology));
+            if (ontology.getName().endsWith(".ontology")) {
+                termIdNameMap = new DagParser().getTermIdNameMap(new FileReader(ontology));
+            } else if (ontology.getName().endsWith(".obo")) {
+                termIdNameMap = new OboParser().getTermIdNameMap(new FileReader(ontology));
+            } else {
+                throw new IllegalArgumentException("Don't know how to deal with ontology file"
+                        + ontology.getAbsolutePath());
+            }
         } catch (Exception e) {
             throw new IOException("" + e);
         }

@@ -10,6 +10,7 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.Map;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.ontology.DagParser;
 import org.intermine.ontology.DagTerm;
+import org.intermine.ontology.OboParser;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
@@ -71,7 +73,18 @@ public class DagConverter extends DataConverter
      */
     public void process() throws Exception {
         nameToTerm = new HashMap();
-        process(new DagParser().processForLabellingOntology(new FileReader(dagFilename)));
+        process(findRootTerms(new File(dagFilename)));
+    }
+    
+    /**
+     * Parse root DagTerms from the input ontology.
+     * 
+     * @param inputFile 
+     * @return
+     * @throws Exception
+     */
+    protected Collection findRootTerms(File inputFile) throws Exception {
+        return new DagParser().processForLabellingOntology(new FileReader(inputFile));
     }
 
     /**
@@ -104,28 +117,7 @@ public class DagConverter extends DataConverter
             item = itemFactory.makeItem("0_" + (uniqueId++));
             item.setClassName(termClass);
             item.setImplementations("");
-            item.addAttribute(new Attribute("name", term.getName()));
-            item.addReference(new Reference("ontology", ontology.getIdentifier()));
-            if (term.getId() != null) {
-                item.addAttribute(new Attribute("identifier", term.getId()));
-            }
-            ReferenceList parentRelations = new ReferenceList("parentRelations");
-            item.addCollection(parentRelations);
-            ReferenceList childRelations = new ReferenceList("childRelations");
-            item.addCollection(childRelations);
-            nameToTerm.put(termId, item);
-            Iterator iter = term.getChildren().iterator();
-            while (iter.hasNext()) {
-                DagTerm subTerm = (DagTerm) iter.next();
-                Item subItem = process(subTerm);
-                relate(item, subItem, "is_a");
-            }
-            iter = term.getComponents().iterator();
-            while (iter.hasNext()) {
-                DagTerm subTerm = (DagTerm) iter.next();
-                Item subItem = process(subTerm);
-                relate(item, subItem, "part_of");
-            }
+            configureItem(termId, item, term);
         } else {
             if ((!term.getName().equals(item.getAttribute("name").getValue()))
                     || ((item.getAttribute("identifier") == null) && (term.getId() != null))
@@ -138,6 +130,44 @@ public class DagConverter extends DataConverter
             }
         }
         return item;
+    }
+    
+    /**
+     * Set up attributes and references for the Item created from a DagTerm. Subclasses
+     * can override this method to perform extra setup, for example by casting the
+     * DagTerm to some someclass and retrieving extra attributes. Subclasses should call this
+     * inherited method first. This method will call process() for each child/component term,
+     * resulting in recursion.
+     * 
+     * @param termId the term id
+     * @param item the Item created (see termClass field for type)
+     * @param term the source DagTerm
+     * @throws ObjectStoreException if an error occurs while writing to the itemWriter
+     */
+    protected void configureItem(String termId, Item item, DagTerm term)
+        throws ObjectStoreException {
+        item.addAttribute(new Attribute("name", term.getName()));
+        item.addReference(new Reference("ontology", ontology.getIdentifier()));
+        if (term.getId() != null) {
+            item.addAttribute(new Attribute("identifier", term.getId()));
+        }
+        ReferenceList parentRelations = new ReferenceList("parentRelations");
+        item.addCollection(parentRelations);
+        ReferenceList childRelations = new ReferenceList("childRelations");
+        item.addCollection(childRelations);
+        nameToTerm.put(termId, item);
+        Iterator iter = term.getChildren().iterator();
+        while (iter.hasNext()) {
+            DagTerm subTerm = (DagTerm) iter.next();
+            Item subItem = process(subTerm);
+            relate(item, subItem, "is_a");
+        }
+        iter = term.getComponents().iterator();
+        while (iter.hasNext()) {
+            DagTerm subTerm = (DagTerm) iter.next();
+            Item subItem = process(subTerm);
+            relate(item, subItem, "part_of");
+        }
     }
 
     /**
