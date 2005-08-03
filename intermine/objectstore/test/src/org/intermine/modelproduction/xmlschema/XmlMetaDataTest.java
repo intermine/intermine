@@ -1,4 +1,4 @@
-package org.intermine.dataconversion;
+package org.intermine.modelproduction.xmlschema;
 
 /*
  * Copyright (C) 2002-2005 FlyMine

@@ -25,6 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.*;
+import org.intermine.modelproduction.xmlschema.XmlMetaData;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.SAXParser;
