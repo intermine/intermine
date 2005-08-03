@@ -116,7 +116,7 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
                         synonym.addReference(getUniprotRef());
                         addItem(synonym);
                     }
-                    if ( !factors.contains(protein.getIdentifier())) {
+                    if (!factors.contains(protein.getIdentifier())) {
                         factors.add(protein.getIdentifier());
                     }
                     feature.addCollection(new ReferenceList("factors", factors));
