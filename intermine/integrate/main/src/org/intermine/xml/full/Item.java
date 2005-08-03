@@ -534,6 +534,6 @@ public class Item
     * @see Object#toString
     */
     public String toString() {
-        return FullRenderer.render(this);
+        return XmlUtil.indentXmlSimple(FullRenderer.render(this));
     }
 }
