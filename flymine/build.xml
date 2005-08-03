@@ -176,7 +176,6 @@
       <pathelement location="${build.model}/chado"/>
       <pathelement location="${build.model}/so"/>
       <pathelement location="${build.model}/ensembl"/>
-      <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/rnai"/>
       <pathelement location="${build.model}/long_oligo"/>
       <pathelement location="${build.model}/tiling_path"/>
@@ -190,16 +189,20 @@
       <pathelement location="${build.model}/taxonomy"/>
       <pathelement location="${build.model}/uniprot"/>
       <pathelement location="${build.model}/protein_structure"/>
+      <pathelement location="${build.model}/homophila"/>
+      <pathelement location="${build.model}/bdgp_clone"/>
+
+      <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/ucsc"/>
       <pathelement location="${build.model}/firstef"/>
       <pathelement location="${build.model}/tfbs"/>
+      <pathelement location="${build.model}/tfbscluster"/>
       <pathelement location="${build.model}/region"/>
       <pathelement location="${build.model}/diseaseregion"/>
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
       <pathelement location="${build.model}/opposumchain"/>
-      <pathelement location="${build.model}/homophila"/>
-      <pathelement location="${build.model}/bdgp_clone"/>
+     
 
       <fileset dir="${model}">
         <patternset refid="lib.models"/>
@@ -3150,6 +3153,7 @@
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-ensembl-disease-model,merge-opposumchain-model,
+                merge-tfbscluster-model,
                 merge-chado-model, merge-shortcuts">
   </target>
 
@@ -3410,7 +3414,9 @@
                    build-ensembl-human-production, build-go-human-production,
                    build-tfbs-production, build-firstef-production,
                    build-regions-production, build-disease-regions-production,
-                   build-ensembl-disease-production,
+                   build-ensembl-disease-production, 
+                   build-mousechain-production, build-opposumchain-production,
+                   build-tfbscluster-production,
                    analyse-db-production, grant-db-production"/>
 
 
@@ -3469,7 +3475,8 @@
 
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
-                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test">
+                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test, 
+                   opposumchain-test, tfbsculster-test">
     <antcall target="test-report"/>
   </target>
 
@@ -3547,7 +3554,8 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
+                  clsName="org.flymine.dataconversion.GoConverter" 
+                  model="genomic">
       <fileset dir="/shared/data/go-annotation/mouse">
         <include name="gene_association*"/>
       </fileset>
@@ -4088,6 +4096,80 @@
   </target>
 
   <target name="build-opposumchain-production" depends="retrieve-opposumchain, load-opposumchain"/>
+
+
+<!-- TFBSCluster MODEL GENERATION -->
+
+  <!-- merge tfbsCluster model additions with current genomic model -->
+  <target name="merge-tfbscluster-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/tfbscluster/tfbscluster_additions.xml"/>
+  </target>
+
+  <target name="tfbscluster-test"
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="tfbscluster"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-tfbscluster-java"
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="tfbscluster"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <!--load TFBSCluster GFF3 data from UCSC-->
+  <target name="retrieve-tfbscluster" depends="prepare-build-model, compile-tfbscluster-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="HSCL"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.TfbsClusterGFF3RecordHandler">
+      <fileset dir ="/shared/data/human/tfbscluster">
+        <include name ="*.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-tfbscluster" depends="copy-t1dmine-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.production"
+               source="os.gff3-translated"
+               sourceName="tfbscluster"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-tfbscluster-production" depends="retrieve-tfbscluster, load-tfbscluster"/>
 
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
