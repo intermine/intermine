@@ -11,6 +11,7 @@ package org.intermine.ontology;
  */
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 
@@ -26,7 +27,7 @@ public class DagTerm
     private final String id;
     private String name;
     private Set children = new HashSet();
-    private Set synonyms = new HashSet();
+    private Set synonyms = new LinkedHashSet();
     private Set components = new HashSet();
 
     /**
@@ -91,10 +92,10 @@ public class DagTerm
     }
 
     /**
-     * Add a synonym for this term, stored as Strings.
+     * Add a synonym for this term.
      * @param synonym the synonym for this term
      */
-    public void addSynonym(String synonym) {
+    public void addSynonym(DagTermSynonym synonym) {
         this.synonyms.add(synonym);
     }
 

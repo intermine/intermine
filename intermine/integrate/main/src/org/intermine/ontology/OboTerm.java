@@ -19,7 +19,8 @@ package org.intermine.ontology;
  */
 public class OboTerm extends DagTerm
 {
-    private String namespace;
+    private String namespace = "";
+    private String description = "";
     
     /**
      * Construct with an id and name.
@@ -44,5 +45,21 @@ public class OboTerm extends DagTerm
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    /**
+     * Get the term description.
+     * @return the description for this term
+     */
+    public String getDescription() {
+        return description;
+    }
+    
+    /**
+     * Set the term description.
+     * @param description the term description
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

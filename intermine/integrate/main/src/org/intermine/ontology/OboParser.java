@@ -189,23 +189,23 @@ public class OboParser
         
         List synonyms = (List) tagValues.get("synonym");
         if (synonyms != null) {
-            addSynonyms(term, synonyms);
+            addSynonyms(term, synonyms, "synonym");
         }
         synonyms = (List) tagValues.get("related_synonym");
         if (synonyms != null) {
-            addSynonyms(term, synonyms);
+            addSynonyms(term, synonyms, "related_synonym");
         }
         synonyms = (List) tagValues.get("exact_synonym");
         if (synonyms != null) {
-            addSynonyms(term, synonyms);
+            addSynonyms(term, synonyms, "exact_synonym");
         }
         synonyms = (List) tagValues.get("broad_synonym");
         if (synonyms != null) {
-            addSynonyms(term, synonyms);
+            addSynonyms(term, synonyms, "broad_synonym");
         }
         synonyms = (List) tagValues.get("narrow_synonym");
         if (synonyms != null) {
-            addSynonyms(term, synonyms);
+            addSynonyms(term, synonyms, "narrow_synonym");
         }
         
         // Set namespace
@@ -214,6 +214,18 @@ public class OboParser
             term.setNamespace((String) nsl.get(0));
         } else {
             term.setNamespace(defaultNS);
+        }
+        
+        // Set description
+        List defl = (List) tagValues.get("def");
+        if (defl != null && defl.size() > 0) {
+            String def = (String) defl.get(0);
+            synMatcher.reset(def);
+            if (synMatcher.matches()) {
+                term.setDescription(unescape(synMatcher.group(1)));
+            } else {
+                LOG.error("Failed to parse def of term " + id + " def: " + def);
+            }
         }
         
         return term;
@@ -244,12 +256,12 @@ public class OboParser
      * @param term the DagTerm
      * @param synonyms List of synonyms (Strings)
      */
-    protected void addSynonyms(DagTerm term, List synonyms) {
+    protected void addSynonyms(DagTerm term, List synonyms, String type) {
         for (Iterator iter = synonyms.iterator(); iter.hasNext(); ) {
             String line = (String) iter.next();
             synMatcher.reset(line);
             if (synMatcher.matches()) {
-                term.addSynonym(unescape(synMatcher.group(1)));
+                term.addSynonym(new OboTermSynonym(unescape(synMatcher.group(1)), type));
             } else {
                 LOG.error("Could not match synonym value from: " + line);
             }

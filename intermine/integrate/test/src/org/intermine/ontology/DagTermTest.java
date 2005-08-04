@@ -26,14 +26,14 @@ public class DagTermTest extends TestCase
         assertTrue(equalDagTerms(d1, d2));
         assertTrue(equalDagTerms(d2, d1));
 
-        d1.addSynonym("s1");
-        d1.addSynonym("s2");
+        d1.addSynonym(new DagTermSynonym("s1"));
+        d1.addSynonym(new DagTermSynonym("s2"));
         
         assertFalse(equalDagTerms(d1, d2));
         assertFalse(equalDagTerms(d2, d1));
         
-        d2.addSynonym("s1");
-        d2.addSynonym("s2");
+        d2.addSynonym(new DagTermSynonym("s1"));
+        d2.addSynonym(new DagTermSynonym("s2"));
         
         assertTrue(equalDagTerms(d1, d2));
         assertTrue(equalDagTerms(d2, d1));
