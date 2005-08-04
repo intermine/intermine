@@ -100,8 +100,8 @@ public class DrosdelDataTranslator extends DataTranslator
                         if (available.equals("1")) {
                             tgtItem.setAttribute("available", "true");
                         } else {
-                            throw new RuntimeException("unknown value for deletion.available: " +
-                                                       available);
+                            throw new RuntimeException("unknown value for deletion.available: "
+                                                       + available);
                         }
                     }
                     Item location = createLocation(srcItem, tgtItem, "deletion");
@@ -120,14 +120,13 @@ public class DrosdelDataTranslator extends DataTranslator
 
                } else if ("element".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    tgtItem.setAttribute("name", srcItem.getAttribute("name").getValue());
+                    tgtItem.setAttribute("symbol", srcItem.getAttribute("name").getValue());
                     addReferencedItem(tgtItem, drosdelDb, "evidence", true, "", false);
                     Item location = createLocation(srcItem, tgtItem, "element");
                     result.add(location);
 
 
-
-                    Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
+                    Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
                                                  tgtItem.getAttribute("identifier").getValue(),
                                                  drosdelRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
