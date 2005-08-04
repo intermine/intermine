@@ -312,12 +312,24 @@ public class GFF3Converter
      * @throws Exception if an error occurs
      */
     public void close() throws Exception {
+        // empty - overridden as necessary
     }
 
     /**
-     * @return organism item, for homo_sapiens, abbreviation is HS
+     * Return the InfoSource Item created for this GFF3Converter from the info source name passed
+     * to the constructor.
+     * @return the InfoSource item
      */
-    private Item getOrganism() {
+    public Item getInfoSource() {
+        return infoSource;
+    }
+
+    /**
+     * Return the organism Item created for this GFF3Converter from the organism abbreviation passed
+     * to the constructor.
+     * @return the organism item
+     */
+    public Item getOrganism() {
         if (organism == null) {
             organism = createItem("Organism");
             organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
