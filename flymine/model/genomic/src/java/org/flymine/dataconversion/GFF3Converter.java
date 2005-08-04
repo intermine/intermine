@@ -167,13 +167,13 @@ public class GFF3Converter
         }
 
         if (names != null) {
-            feature.addAttribute(new Attribute("name", (String) names.get(0)));
+            feature.addAttribute(new Attribute("symbol", (String) names.get(0)));
             for (Iterator i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
                 Item synonym = createItem("Synonym");
                 synonym.addReference(new Reference("subject", feature.getIdentifier()));
                 synonym.addAttribute(new Attribute("value", recordName));
-                synonym.addAttribute(new Attribute("type", "name"));
+                synonym.addAttribute(new Attribute("type", "symbol"));
                 synonym.addReference(new Reference("source", infoSource.getIdentifier()));
                 handler.addItem(synonym);
             }
