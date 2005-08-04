@@ -12,6 +12,7 @@ package org.intermine.xml.full;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -288,6 +289,16 @@ public class Item
         return (ReferenceList) collections.get(collectionName);
     }
 
+    
+    /**
+     * em
+     * @param collectionName
+     * @param refIds
+     */
+    public void setCollection(String collectionName, List refIds) {
+        addCollection(new ReferenceList(collectionName, refIds));
+    }   
+    
     /**
      * Add an attribute to this item
      * @param name the name of the attribute
@@ -304,6 +315,15 @@ public class Item
      */
     public void setReference(String name, String refId) {
         addReference(new Reference(name, refId));
+    }
+    
+    /**
+     * Add a reference to this item
+     * @param name the name of the attribute
+     * @param refId the value of the attribute
+     */
+    public void setReference(String name, Item item) {
+        addReference(new Reference(name, item.getIdentifier()));
     }
 
     /**

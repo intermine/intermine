@@ -141,7 +141,7 @@ public class ItemTest extends TestCase
         assertEquals(model.getNameSpace() + "Company", item1.getClassName());
     }
 
-    public void testMakeItemAddAttribute() throws Exception {
+    public void testAddAttribute() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
         
         Item item1 = itemFactory.makeItem();
@@ -170,7 +170,7 @@ public class ItemTest extends TestCase
         }
     }
 
-    public void testMakeItemAddReference() throws Exception {
+    public void testAddReference() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
         
         Item item1 = itemFactory.makeItem();
@@ -198,9 +198,20 @@ public class ItemTest extends TestCase
         } catch (RuntimeException _) {
             // expected
         }
+        
+        Item item2 = itemFactory.makeItem();
+        
+        item2.setClassName(model.getNameSpace() + "CEO");
+        
+        item2.setIdentifier("item_2");
+        
+        item1.setReference("CEO", item2);
+        
+        assertEquals(item1.getReference("CEO").getRefId(), "item_2");
+        
     }
 
-    public void testMakeItemAddCollection() throws Exception {
+    public void testAddCollection() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
         
         Item item1 = itemFactory.makeItem();
@@ -225,6 +236,61 @@ public class ItemTest extends TestCase
 
         try {
             item1.addToCollection("illegalCollection", "illegal_id");
+            fail("expected RuntimeException");
+        } catch (RuntimeException _) {
+            // expected
+        }
+    }
+    
+    public void testAddCollectionShortCut() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+        
+        Item item1 = itemFactory.makeItem();
+        
+        item1.setClassName(model.getNameSpace() + "Company");
+
+        List idsToAdd = new ArrayList();
+        
+        idsToAdd.add("contractor_id_1");
+        idsToAdd.add("contractor_id_2");
+        idsToAdd.add("contractor_id_3");
+        
+        item1.setCollection("contractors", idsToAdd);
+
+        List resultContractors = item1.getCollection("contractors").getRefIds();
+
+        assertEquals(3, resultContractors.size());        
+
+        List expected = new ArrayList();
+
+        expected.add("contractor_id_1");
+        expected.add("contractor_id_2");
+        expected.add("contractor_id_3");
+
+        assertEquals(expected, resultContractors);
+
+        try {
+            item1.addToCollection("illegalCollection", "illegal_id");
+            fail("expected RuntimeException");
+        } catch (RuntimeException _) {
+            // expected
+        }
+    }
+    
+    public void testAddCollectionShortCutWrongType() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+        
+        Item item1 = itemFactory.makeItem();
+        
+        item1.setClassName(model.getNameSpace() + "Company");
+
+        List idsToAdd = new ArrayList();
+
+        idsToAdd.add("contractor_id_1");
+        idsToAdd.add(new Integer(10));
+        
+        try {
+            item1.setCollection("contractors", idsToAdd);
             fail("expected RuntimeException");
         } catch (RuntimeException _) {
             // expected
