@@ -10,6 +10,7 @@ package org.intermine.xml.full;
  *
  */
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -44,7 +45,13 @@ public class ReferenceList
      */
     public ReferenceList(String name, List refIds) {
         this(name);
-        this.refIds.addAll(refIds);
+        Iterator refIdsIter = refIds.iterator();
+        while (refIdsIter.hasNext()) {
+            // we do this rather this calling this.refIds.addAll(refIds) so that the type of the
+            // elements is checked immediately
+            String thisId = (String) refIdsIter.next();
+            addRefId(thisId);    
+        }
     }
 
     /**
