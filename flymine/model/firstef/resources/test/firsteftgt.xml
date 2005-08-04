@@ -2,7 +2,7 @@
 <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="abbreviation" value="HS"/>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#InfoSource">
+<item id="0_1" class="http://www.flymine.org/model/genomic#Database">
 <attribute name="title" value="UCSC"/>
 </item>
 <item id="0_2" class="http://www.flymine.org/model/genomic#Chromosome">
@@ -54,15 +54,15 @@
 <reference name="organism" ref_id="0_0"/>
 </item>
 <item id="0_10" class="http://www.flymine.org/model/genomic#Exon">
-<attribute name="identifier" value="=exon(2179-)#2:chr1:2097064..2097289"/>
-<attribute name="name" value="exon(2179-)#2"/>
+<attribute name="identifier" value="exon(2179-)#2:chr1:2097064..2097289"/>
+<attribute name="symbol" value="exon(2179-)#2"/>
 <reference name="organism" ref_id="0_0"/>
 <collection name="evidence">
 <reference ref_id="0_1"/>
 </collection>
 </item>
 <item id="0_11" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="exon(2179-)#2"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="0_10"/>
@@ -79,7 +79,7 @@
 </item>
 <item id="0_13" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="=exon(2179-)#2:chr1:2097064..2097289"/>
+<attribute name="value" value="exon(2179-)#2:chr1:2097064..2097289"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="0_10"/>
 </item>
