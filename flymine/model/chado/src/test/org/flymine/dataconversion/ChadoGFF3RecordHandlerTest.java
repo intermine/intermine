@@ -88,10 +88,12 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
 
-        assertEquals(7, handler.getItems().size());
+        assertEquals(6, handler.getItems().size());
+
+        assertEquals(1, handler.getFinalItems().size());
 
         Item actualGene = null;
-        iter = handler.getItems().iterator();
+        iter = handler.getFinalItems().iterator();
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
             if (item.getClassName().equals(tgtNs + "Gene")) {
@@ -105,15 +107,17 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     // test that Gene->Pseudogene->Exon get changed to Pseudogene->Transcript->Exon
     public void testHandlePseudoGene() throws Exception {
         String gff =
-            "4\t.\tgene\t26994\t32391\t.\t-\t.\tID=CR32011;Dbxref=FlyBase:FBan0032011,FlyBase:FBgn0052011;cyto_range=102A1-102A1;gbunit=AE003845;synonym=CR32011;synonym_2nd=CG32011"
-            + "4\t.\tpseudogene\t26994\t32391\t.\t-\t.\tID=CR32011-RA;Dbxref=FlyBase:FBtr0089182,FlyBase:FBgn0052011;Parent=CR32011;dbxref_2nd=Gadfly:CR32011-RA;synonym=CR32011-RA"
-            + "4\t.\texon\t27167\t27349\t.\t-\t.\tID=CR32011:7;Parent=CR32011-RA";
+            "4\t.\tgene\t26994\t32391\t.\t-\t.\tID=CR32011;Dbxref=FlyBase:FBan0032011,FlyBase:FBgn0052011;cyto_range=102A1-102A1;gbunit=AE003845;synonym=1st_CR32011;synonym_2nd=2nd_CG32011\n"
+            + "4\t.\tpseudogene\t26994\t32391\t.\t-\t.\tID=CR32011-RA;Dbxref=FlyBase:FBtr0089182,FlyBase:FBgn0052011;Parent=CR32011;dbxref_2nd=Gadfly:CR32011-RA;synonym=1st_CR32011-RA\n"
+            + "4\t.\texon\t27167\t27349\t.\t-\t.\tID=CR32011:7;Parent=CR32011-RA\n";
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
         Iterator iter = GFF3Parser.parse(srcReader);
 
         List featureIdentifiers = new ArrayList();
+        
+        List allItems = new ArrayList();
         
         while (iter.hasNext()) {
 
@@ -123,11 +127,23 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
             String className = TypeUtil.javaiseClassName(term);
 
             Item feature = itemFactory.makeItem(null, tgtNs + className, "");
-
+            if (term.equals("gene")) {
+                feature.setAttribute("identifier", "CR32011");
+            } else {
+                if (term.equals("pseudogene")) {
+                    feature.setAttribute("identifier", "CR32011-RA");
+                } else {
+                    feature.setAttribute("identifier", "CR32011:7");
+                }
+            }
+            
             handler.setFeature(feature);
             handler.process(record);
             
             featureIdentifiers.add(feature.getIdentifier());
+            
+            allItems.addAll(handler.getItems());
+            handler.clear();
         }
 
         Item expectedGene =
@@ -144,17 +160,19 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                                                  tgtNs + "Exon", "");
         expectedExon.setAttribute("identifier", "CR32011:7");
 
-        assertEquals(12, handler.getItems().size());
+        allItems.addAll(handler.getFinalItems());
+        
+        assertEquals(8, allItems.size());
 
         Item actualGene = null;
         Item actualTranscript = null;
         Item actualExon = null;
 
-        iter = handler.getItems().iterator();
+        iter = allItems.iterator();
 
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
-            if (item.getClassName().equals(tgtNs + "Gene")) {
+            if (item.getClassName().equals(tgtNs + "Pseudogene")) {
                 actualGene = item;
             }
             if (item.getClassName().equals(tgtNs + "Transcript")) {
@@ -170,6 +188,71 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         assertEquals(expectedExon, actualExon);
     }
 
+    // test that Gene->Pseudogene->Exon get changed to Pseudogene->Transcript->Exon
+    public void testHandleDuplicateSymbol() throws Exception {
+        String gff =
+            "4\t.\tgene\t248174\t250682\t.\t+\t.\tID=CG1629;Name=yellow-h;Dbxref=FlyBase:FBan0001629,FlyBase:FBgn0039896;cyto_range=102B1-102B2;gbunit=AE003844;synonym=yellow-h\n"
+            + "4\t.\tgene\t248174\t250682\t.\t+\t.\tID=CG1629-test;Name=yellow-h;Dbxref=FlyBase:FBan0001629,FlyBase:FBgn0039896;cyto_range=102B1-102B2;gbunit=AE003844;synonym=yellow-h\n";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+
+        converter.parse(srcReader);
+
+        Item expectedGene1 = null;
+        Item expectedGene2 = null;
+            
+        Item actualGene1 = null;
+        Item actualGene2 = null;
+
+
+        Iterator iter = writer.getItems().iterator();
+
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                if (item.getAttribute("identifier").getValue().equals("CG1629")) {
+                    if (actualGene1 == null) {
+                        actualGene1 = item;
+                        expectedGene1 =
+                            itemFactory.makeItem(item.getIdentifier(), tgtNs + "Gene", "");
+                        expectedGene1.setAttribute("organismDbId", "FBgn0039896-duplicate-organismDbId-1");
+                        expectedGene1.setAttribute("identifier", "CG1629");
+                        expectedGene1.setAttribute("symbol", "yellow-h-duplicate-symbol-1");
+                        expectedGene1.setReference("organism", handler.getOrganism());
+                        List evidence = new ArrayList();
+                        evidence.add(handler.getInfoSource().getIdentifier());
+                        expectedGene1.setCollection("evidence", evidence);
+                    } else {
+                        fail("found a gene twice: CG1629");
+                    }
+                } else {
+                    if (item.getAttribute("identifier").getValue().equals("CG1629-test")) {
+                        if (actualGene2 == null) {
+                            actualGene2 = item;
+                            expectedGene2 =
+                                itemFactory.makeItem(item.getIdentifier(), tgtNs + "Gene", "");
+                            expectedGene2.setAttribute("organismDbId", "FBgn0039896-duplicate-organismDbId-2");
+                            expectedGene2.setAttribute("identifier", "CG1629-test");
+                            expectedGene2.setAttribute("symbol", "yellow-h-duplicate-symbol-2");
+                            expectedGene2.setReference("organism", handler.getOrganism());
+                            List evidence = new ArrayList();
+                            evidence.add(handler.getInfoSource().getIdentifier());
+                            expectedGene2.setCollection("evidence", evidence);
+                        } else {
+                            fail("found a gene twice: CG1629-test");
+                        }
+                    } else {
+                        fail("found an unknown gene: " + item.getAttribute("identifier").getValue());
+                    }
+                }
+            }
+        }
+        
+        assertNotNull(expectedGene1);
+        assertNotNull(expectedGene2);
+        assertEquals(expectedGene1, actualGene1);
+        assertEquals(expectedGene2, actualGene2);
+    }
 
     public void testHandleGeneNoDbxref() throws Exception {
         String gff = "4\t.\tgene\t230506\t233418\t.\t+\t.\tID=CG1234;Dbxref=FlyBase:FBan0001587;dbxref_2nd=FlyBase:FBgn0024811";
@@ -185,21 +268,16 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         handler.process(record);
 
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
-        expectedGene.setAttribute("organismDbId", "CG1234");
+     
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
 
-        assertEquals(2, handler.getItems().size());
+        assertEquals(1, handler.getItems().size());
+        assertEquals(1, handler.getFinalItems().size());
 
-        Item actualGene = null;
-        iter = handler.getItems().iterator();
-        while (iter.hasNext()) {
-            Item item = (Item) iter.next();
-            if (item.getClassName().equals(tgtNs + "Gene")) {
-                actualGene = item;
-                expectedGene.setIdentifier(actualGene.getIdentifier());
-            }
-        }
+        Item actualGene = (Item) handler.getFinalItems().iterator().next();
+        expectedGene.setIdentifier(actualGene.getIdentifier());
+
         assertEquals(expectedGene, actualGene);
     }
 
@@ -216,78 +294,19 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         handler.setFeature(feature);
         handler.process(record);
 
-        assertEquals(2, handler.getItems().size());
+        assertEquals(1, handler.getItems().size());
+        assertEquals(1, handler.getFinalItems().size());
 
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
-        expectedGene.setAttribute("organismDbId", "CG1234");
+
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
 
-        Item actualGene = null;
-        iter = handler.getItems().iterator();
-        while (iter.hasNext()) {
-            Item item = (Item) iter.next();
-            if (item.getClassName().equals(tgtNs + "Gene")) {
-                actualGene = item;
-                expectedGene.setIdentifier(actualGene.getIdentifier());
-            }
-        }
+        Item actualGene = (Item) handler.getFinalItems().iterator().next();
+
+        expectedGene.setIdentifier(actualGene.getIdentifier());
+
         assertEquals(expectedGene, actualGene);
-    }
-
-
-    public void testHandleTRNA() throws Exception {
-        String gff = "2L\t.\ttRNA\t1938089\t1938159\t.\t-\t.\tID=CR31667;Dbxref=FlyBase:FBan0031667,FlyBase:FBgn0051667;synonym=CR31667;synonym_2nd=CG31667";
-
-        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
-        Iterator iter = GFF3Parser.parse(srcReader);
-        GFF3Record record = (GFF3Record) iter.next();
-
-        Item feature = itemFactory.makeItem(null, tgtNs + "TRNA", "");
-        feature.setAttribute("identifier", "CR31667");
-        handler.setFeature(feature);
-
-        Item infoSource = itemFactory.makeItem(null, tgtNs + "InfoSource", "");
-        infoSource.setAttribute("title", "FlyBase");
-        handler.setInfoSource(infoSource);
-
-        handler.process(record);
-
-        Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
-        expectedGene.setAttribute("identifier", "CG31667");
-        expectedGene.setAttribute("organismDbId", "FBgn0051667");
-        expectedGene.setReference("organism", handler.getOrganism().getIdentifier());
-        expectedGene.addCollection(new ReferenceList("evidence",
-                                                    Arrays.asList(new Object[] {handler.getSourceIdentifier("FlyBase")})));
-        assertEquals(6, handler.getItems().size());
-
-        Item actualGene = null;
-        iter = handler.getItems().iterator();
-        while (iter.hasNext()) {
-            Item item = (Item) iter.next();
-            if (item.getClassName().equals(tgtNs + "Gene")) {
-                actualGene = item;
-                expectedGene.setIdentifier(actualGene.getIdentifier());
-            }
-        }
-        assertEquals(expectedGene, actualGene);
-
-
-
-        Item expectedRelation = itemFactory.makeItem(null, tgtNs + "SimpleRelation", "");
-        expectedRelation.setReference("object", expectedGene.getIdentifier());
-        expectedRelation.setReference("subject", feature.getIdentifier());
-
-        Item actualRelation = null;
-        iter = handler.getItems().iterator();
-        while (iter.hasNext()) {
-            Item item = (Item) iter.next();
-            if (item.getClassName().equals(tgtNs + "SimpleRelation")) {
-                actualRelation = item;
-                expectedRelation.setIdentifier(actualRelation.getIdentifier());
-            }
-        }
-        assertEquals(expectedRelation, actualRelation);
     }
 
 
@@ -314,7 +333,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedTrans.setReference("organism", handler.getOrganism().getIdentifier());
         expectedTrans.addCollection(new ReferenceList("evidence",
                                                     Arrays.asList(new Object[] {handler.getSourceIdentifier("FlyBase")})));
-        assertEquals(3, handler.getItems().size());
+        assertEquals(4, handler.getItems().size());
 
         Item actualTrans = null;
         iter = handler.getItems().iterator();

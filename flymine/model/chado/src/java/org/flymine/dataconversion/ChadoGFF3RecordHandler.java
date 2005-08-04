@@ -16,12 +16,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Arrays;
 
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.util.XmlUtil;
@@ -117,7 +119,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         // class names later
         if ("Pseudogene".equals(clsName)) {
             String className = tgtNs + "Transcript";
-            // Transcript doesn't have a name attribute
+            // Transcript doesn't have a symbol attribute
             getFeature().removeAttribute("symbol");
 
             getFeature().setClassName(className);
@@ -244,7 +246,84 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
      * @return the final Items
      */
     public Collection getFinalItems() {
+        Map symbolToGeneMap = new HashMap();
+        Map organismDbIdToGeneMap = new HashMap();
+
+        Set genesWithDuplicatedSymbols = new LinkedHashSet();
+        Set genesWithDuplicatedOrganismDbIds = new LinkedHashSet();
+
         Iterator finalItemIter = finalItems.iterator();
+
+        while (finalItemIter.hasNext()) {
+            Item thisGene = (Item) finalItemIter.next();
+
+            {
+                Attribute symbolAtt = thisGene.getAttribute("symbol");
+                
+                if (symbolAtt != null) {
+                    String symbol = symbolAtt.getValue();
+
+                    Item otherGene = (Item) symbolToGeneMap.get(symbol);
+
+                    if (otherGene == null) {
+                        symbolToGeneMap.put(symbol, thisGene);
+                    } else {
+                        genesWithDuplicatedSymbols.add(otherGene);
+                        genesWithDuplicatedSymbols.add(thisGene);
+                    }
+                }
+            }
+
+            {
+                Attribute organismDbIdAtt = thisGene.getAttribute("organismDbId");
+
+                if (organismDbIdAtt != null) {
+                    String organismDbId = organismDbIdAtt.getValue();
+
+                    Item otherGene = (Item) organismDbIdToGeneMap.get(organismDbId);
+
+                    if (otherGene == null) {
+                        organismDbIdToGeneMap.put(organismDbId, thisGene);
+                    } else {
+                        genesWithDuplicatedOrganismDbIds.add(otherGene);
+                        genesWithDuplicatedOrganismDbIds.add(thisGene);
+                    }
+                }
+            }
+        }
+
+        Iterator genesWithDuplicatedSymbolsIter = genesWithDuplicatedSymbols.iterator();
+
+        int count = 1;
+        while (genesWithDuplicatedSymbolsIter.hasNext()) {
+            Item thisGene = (Item) genesWithDuplicatedSymbolsIter.next();
+
+            String newValue =
+                thisGene.getAttribute("symbol").getValue() + "-duplicate-symbol-" + count++;
+
+            thisGene.setAttribute("symbol", newValue);
+
+            LOG.warn("gene (" + thisGene.getAttribute("identifier").getValue()
+                     + ") has duplicated symbol, created new symbol: " + newValue);
+        }
+
+        Iterator genesWithDuplicatedOrganismDbIdsIter = genesWithDuplicatedOrganismDbIds.iterator();
+        
+        count = 1;
+        while (genesWithDuplicatedOrganismDbIdsIter.hasNext()) {
+            Item thisGene = (Item) genesWithDuplicatedOrganismDbIdsIter.next();
+
+            String newValue =
+                thisGene.getAttribute("organismDbId").getValue() + "-duplicate-organismDbId-"
+                + count++;
+
+            thisGene.setAttribute("organismDbId", newValue);
+
+            LOG.warn("gene (" + thisGene.getAttribute("identifier").getValue()
+                     + ") has duplicated organismDbId, created new organismDbId: " + newValue);
+        }
+
+        finalItemIter = finalItems.iterator();
 
         while (finalItemIter.hasNext()) {
             Item thisItem = (Item) finalItemIter.next();
