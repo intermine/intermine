@@ -3152,7 +3152,7 @@
                 merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
-                merge-ensembl-disease-model,merge-opposumchain-model,
+                merge-ensembl-disease-model,
                 merge-tfbscluster-model,
                 merge-chado-model, merge-shortcuts">
   </target>
@@ -3476,7 +3476,7 @@
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
                    tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test, 
-                   opposumchain-test, tfbsculster-test">
+                   opposumchain-test, tfbscluster-test">
     <antcall target="test-report"/>
   </target>
 
@@ -4209,7 +4209,6 @@
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
-
   </target>
 
 </project>
