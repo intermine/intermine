@@ -15,6 +15,10 @@ import org.apache.log4j.Logger;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
+
 /**
  * Abstract parent class of all DataConverters
  * @author Mark Woodbridge
@@ -49,5 +53,24 @@ import java.util.HashMap;
         aliases.put(className, nextIndex);
         LOG.info("Aliasing className " + className + " to index " + nextIndex);
         return nextIndex;
+    }
+    
+    /**
+     * Add an Item to a named collection on another Item. If the collection does not exist
+     * if will be created.
+     * 
+     * @param item item with collection
+     * @param collection collection name
+     * @param addition item to add to collection
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected void addToCollection(Item item, String collection, Item addition)
+        throws ObjectStoreException {
+        ReferenceList coll = item.getCollection(collection);
+        if (coll == null) {
+            coll = new ReferenceList(collection);
+            item.addCollection(coll);
+        }
+        coll.addRefId(addition.getIdentifier());
     }
 }
