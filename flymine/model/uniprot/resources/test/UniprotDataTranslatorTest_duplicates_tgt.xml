@@ -19,7 +19,7 @@
 </item>
 <item id="-1_8" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value="CG2803"/>
-<attribute name="name" value="Dave-1"/>
+<attribute name="symbol" value="Dave-1"/>
 <attribute name="organismDbId" value="FBgn0012345"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
@@ -33,7 +33,7 @@
 </collection>
 </item>
 <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="Troponin C-akin-1 protein"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_2"/>
@@ -57,7 +57,7 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="-1_17" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="Troponin C-akin-1 protein"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_14"/>
@@ -104,7 +104,7 @@
 </collection>
 </item>
 <item id="-1_12" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="Dave-1"/>
 <reference name="source" ref_id="-1_11"/>
 <reference name="subject" ref_id="-1_8"/>

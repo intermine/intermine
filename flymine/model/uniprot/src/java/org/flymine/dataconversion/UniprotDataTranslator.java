@@ -230,7 +230,7 @@ public class UniprotDataTranslator extends DataTranslator
                     if (srcProteinNameEvidence != null) {
                         srcProteinNameStr += " (Evidence " + srcProteinNameEvidence + ")";
                     }
-                    retval.add(createSynonym(protein.getIdentifier(), "name",
+                    retval.add(createSynonym(protein.getIdentifier(), "symbol",
                                              srcProteinNameStr, getDbId("UniProt")));
                 }
             }
@@ -419,9 +419,9 @@ public class UniprotDataTranslator extends DataTranslator
                                 retval.add(synonym);
                             }
                         }
-                        // Probmlem with gene names for drosophila - ignore
+                        // Problem with gene names for drosophila - ignore
                         if (primaryGeneName != null && taxonId != 7227) {
-                            gene.addAttribute(new Attribute("name", primaryGeneName));
+                            gene.addAttribute(new Attribute("symbol", primaryGeneName));
                         }
                         gene.addReference(organismReference);
 
@@ -435,13 +435,13 @@ public class UniprotDataTranslator extends DataTranslator
                         while (srcGeneNameIter.hasNext()) {
                             Item srcGeneName = (Item) srcGeneNameIter.next();
                             String type = getAttributeValue(srcGeneName, "type");
-                            String name = getAttributeValue(srcGeneName, "name");
+                            String symbol = getAttributeValue(srcGeneName, "name");
                             // synonym already created for ORF as identifer
                             if (!type.equals("ORF")) {
                                 Item synonym = createSynonym(gene.getIdentifier(),
                                     (type.equals("primary") || type.equals("synonym"))
-                                                             ? "name" : type,
-                                                             name, getDbId("UniProt"));
+                                                             ? "symbol" : type,
+                                                             symbol, getDbId("UniProt"));
                                 geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }

@@ -1,1 +1,636 @@
-<template-list><template name="AAA_organismProteins1" description="Show all the proteins from a particular organism." category="Proteomics" important="false" keywords=""><query name="AAA_organismProteins1" model="genomic" view="Protein"><node path="Protein" type="Protein"></node><node path="Protein.organism" type="Organism"></node><node path="Protein.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="" editable="true"></constraint></node></query></template><template name="AAB_Synonyms" description="Show all names and identifiers for a particular database entry." category="Genomics" important="false" keywords=""><query name="AAB_Synonyms" model="genomic" view="Synonym.subject.synonyms.value"><node path="Synonym" type="Synonym"></node><node path="Synonym.value" type="String"><constraint op="=" value="zen" description="Enter a name or identifier (eg a gene or protein name or identifier):" identifier="" editable="true"></constraint></node></query></template><template name="AAB_proteins2fasta" description="Output proteins from a particular organism in a format suitable for creating a fasta database." category="Proteomics" important="false" keywords=""><query name="AAB_proteins2fasta" model="genomic" view="Protein"><node path="Protein" type="Protein"></node><node path="Protein.organism" type="Organism"></node><node path="Protein.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Output proteins from the organism:" identifier="" editable="true"></constraint></node></query></template><template name="AAC_organismGenes1" description="Show all the genes for a particular organism." category="Genomics" important="false" keywords=""><query name="AAC_organismGenes1" model="genomic" view="Gene"><node path="Gene" type="Gene"></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="" editable="true"></constraint></node></query></template><template name="AAC_protein2proteinInteraction" description="Show protein interactions for a particular protein." category="Proteomics" important="false" keywords=""><query name="AAC_protein2proteinInteraction" model="genomic" view="Protein Protein.interactions.prey Protein.interactions.bait"><node path="Protein" type="Protein"></node><node path="Protein.primaryAccession" type="String"><constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="" editable="true"></constraint></node></query></template><template name="AAD_GOidentifier2proteinInteractions1" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." category="Proteomics" important="false" keywords=""><query name="AAD_GOidentifier2proteinInteractions1" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.genes.name GOTerm.genes.organismDbId GOTerm.genes.proteins.primaryAccession GOTerm.genes.proteins.interactions.bait.primaryAccession GOTerm.genes.proteins.interactions.prey.primaryAccession GOTerm.genes.proteins.interactions.evidence.analysis.interactionDetection.name GOTerm.genes.proteins.interactions.evidence.analysis.publication.pubMedId GOTerm.genes.organism.name"><node path="GOTerm" type="GOTerm"></node><node path="GOTerm.identifier" type="String"><constraint op="=" value="GO:0007568" description="Show protein interactions for proteins annotated with GO identifier:" identifier="c1" editable="true"></constraint></node><node path="GOTerm.genes" type="Gene"></node><node path="GOTerm.genes.proteins" type="Protein"></node><node path="GOTerm.genes.proteins.interactions" type="ProteinInteraction"></node><node path="GOTerm.genes.proteins.interactions.evidence" type="AnalysisResult"></node><node path="GOTerm.genes.proteins.interactions.evidence.analysis" type="ProteinInteractionExperiment"></node><node path="GOTerm.genes.organism" type="Organism"></node><node path="GOTerm.genes.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2" editable="true"></constraint></node></query></template><template name="AAD_genes2fasta" description="Output genes from a particular organism in a format suitable for creating a fasta database." category="Genomics" important="false" keywords=""><query name="AAD_genes2fasta" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name"><node path="Gene" type="Gene"></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Output genes from the organism:" identifier="" editable="true"></constraint></node></query></template><template name="AAE_gene2Transcripts2" description="Show the predicted transcripts and the number of exons for a particular gene." category="Genomics" important="false" keywords=""><query name="AAE_gene2Transcripts2" model="genomic" view="Gene Gene.transcripts.identifier Gene.transcripts.exonCount"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="zen" description="Show the predicted transcripts and the number of exons for gene:" identifier="" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true"></constraint></node></query></template><template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." category="Proteomics" important="false" keywords=""><query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.evidence.confidence Synonym.subject.proteins.interactions.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactions.evidence.analysis.publication.pubMedId"><node path="Synonym" type="Synonym"></node><node path="Synonym.value" type="String"><constraint op="=" value="128up" description="Show the protein interactions for the protein product of gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Synonym.subject" type="Gene"></node><node path="Synonym.subject.proteins" type="Protein"></node><node path="Synonym.subject.proteins.interactions" type="ProteinInteraction"></node><node path="Synonym.subject.proteins.interactions.evidence" type="ExperimentalResult"></node><node path="Synonym.subject.proteins.interactions.evidence.analysis" type="ProteinInteractionExperiment"></node><node path="Synonym.subject.organism" type="Organism"></node><node path="Synonym.subject.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true"></constraint></node></query></template><template name="AAF_gene2exonTranscript1" description="Show the predicted transcripts and exons for a particular gene." category="Genomics" important="false" keywords=""><query name="AAF_gene2exonTranscript1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.transcripts.exonCount Gene.exons.identifier"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="zen" description="Show predicted transcripts and exons for gene:" identifier="" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true"></constraint></node></query></template><template name="AAG_gene2ProteinInteraction2Structure" description="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." category="Proteomics" important="false" keywords=""><query name="AAG_gene2ProteinInteraction2Structure" model="genomic" view="Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.bait.regions.sequenceFamily.name Synonym.subject.proteins.interactions.bait.regions.structures Synonym.subject.proteins.interactions.prey.regions.sequenceFamily.name Synonym.subject.proteins.interactions.prey.regions.structures"><node path="Synonym" type="Synonym"></node><node path="Synonym.value" type="String"><constraint op="=" value="128up" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Synonym.subject" type="Gene"></node></query></template><template name="AAG_gene2protein1" description="Show the proteins for a particular gene." category="Genomics" important="false" keywords=""><query name="AAG_gene2protein1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.proteins.primaryAccession"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="zen" description="Show proteins for the gene:" identifier="" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true"></constraint></node></query></template><template name="AAH_Gene2ProteinStructure2.1" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." category="Proteomics" important="false" keywords=""><query name="AAH_Gene2ProteinStructure2.1" model="genomic" view="Synonym.subject.organismDbId Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.regions.sequenceFamily.name Synonym.subject.proteins.regions.objects.start Synonym.subject.proteins.regions.objects.end Synonym.subject.proteins.regions.structures"><node path="Synonym" type="Synonym"></node><node path="Synonym.value" type="String"><constraint op="=" value="FBgn0025936" description="Show regions which have predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Synonym.subject" type="Gene"></node><node path="Synonym.subject.proteins" type="Protein"></node><node path="Synonym.subject.proteins.regions" type="ProteinRegion"></node><node path="Synonym.subject.proteins.regions.objects" type="Location"></node><node path="Synonym.subject.proteins.regions.objects.object" type="Protein"></node><node path="Synonym.subject.organism" type="Organism"></node><node path="Synonym.subject.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2"></constraint></node></query></template><template name="AAH_Genes2chromosome1" description="Show genes located on a particular chromsome." category="Genomics" important="false" keywords=""><query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier"><node path="Gene" type="Gene"></node><node path="Gene.chromosome" type="Chromosome"></node><node path="Gene.chromosome.identifier" type="String"><constraint op="=" value="2L" description="Show genes located on chromosome" identifier="c1" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true"></constraint></node></query></template><template name="AAI_Pfam2proteinStructure1" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." category="Proteomics" important="false" keywords=""><query name="AAI_Pfam2proteinStructure1" model="genomic" view="ProteinSequenceFamily.name ProteinSequenceFamily.regions.objects.object.primaryAccession ProteinSequenceFamily.regions.objects.start ProteinSequenceFamily.regions.objects.end ProteinSequenceFamily.regions.structures"><node path="ProteinSequenceFamily" type="ProteinSequenceFamily"></node><node path="ProteinSequenceFamily.name" type="String"><constraint op="=" value="PF00812" description="Show the Drosophila proteins which contain Pfam domain:  (and which also have a predicted 3-D structure for this region.)" identifier="c1" editable="true"></constraint></node><node path="ProteinSequenceFamily.regions" type="ProteinRegion"></node><node path="ProteinSequenceFamily.regions.objects" type="Location"></node><node path="ProteinSequenceFamily.regions.objects.object" type="Protein"></node></query></template><template name="AAI_gene2ChromosomeLocation1" description="Show the chromosome and the chromosome location of a particluar gene." category="Genomics" important="false" keywords=""><query name="AAI_gene2ChromosomeLocation1" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="zen" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true"></constraint></node><node path="Gene.objects" type="Location"></node><node path="Gene.objects.object" type="Chromosome"></node></query></template><template name="AAJ_gene2ProteinStructure1" description="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." category="Proteomics" important="false" keywords=""><query name="AAJ_gene2ProteinStructure1" model="genomic" view="Gene.name Gene.organismDbId Gene.proteins.primaryAccession Gene.proteins.regions.sequenceFamily.name Gene.proteins.regions.objects.start Gene.proteins.regions.objects.end Gene.proteins.regions.structures"><node path="Gene" type="Gene"></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="c1" editable="true"></constraint></node><node path="Gene.proteins" type="Protein"></node><node path="Gene.proteins.regions" type="ProteinRegion"></node><node path="Gene.proteins.regions.objects" type="Location"></node><node path="Gene.proteins.regions.objects.object" type="Protein"></node></query></template><template name="AAJ_synonymGene2exonChromosomeLocations1" description="Show the chromosome location of the exons for a particular gene." category="Genomics" important="false" keywords=""><query name="AAJ_synonymGene2exonChromosomeLocations1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end Synonym.subject.exons.objects.strand"><node path="Synonym" type="Synonym"></node><node path="Synonym.value" type="String"><constraint op="=" value="zen" description="Show the chromosome location of the exons of gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Synonym.subject" type="Gene"></node><node path="Synonym.subject.exons" type="Exon"></node><node path="Synonym.subject.exons.objects" type="Location"></node><node path="Synonym.subject.exons.objects.object" type="Chromosome"></node><node path="Synonym.subject.organism" type="Organism"></node><node path="Synonym.subject.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="" editable="true"></constraint></node></query></template><template name="AAK_chromosomeLocation2geneSequence1" description="Show the chromosome location and sequence for all genes from a particular organism." category="Genomics" important="false" keywords=""><query name="AAK_chromosomeLocation2geneSequence1" model="genomic" view="Gene.objects.object.identifier Gene.objects.strand Gene.objects.start Gene.objects.end Gene.name Gene.identifier Gene.sequence.residues"><node path="Gene" type="Gene"></node><node path="Gene.objects" type="Location"></node><node path="Gene.objects.object" type="Chromosome"></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="" editable="true"></constraint></node></query></template><template name="AAL_chromosomeLocation2genes1" description="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." category="Genomics" important="false" keywords=""><query name="AAL_chromosomeLocation2genes1" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.name Chromosome.exons.gene.organismDbId Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand"><node path="Chromosome" type="Chromosome"></node><node path="Chromosome.identifier" type="String"><constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="c1" editable="true"></constraint></node><node path="Chromosome.organism" type="Organism"></node><node path="Chromosome.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2" editable="true"></constraint></node><node path="Chromosome.exons" type="Exon"></node><node path="Chromosome.exons.objects" type="Location"></node><node path="Chromosome.exons.objects.object" type="Chromosome"></node><node path="Chromosome.exons.objects.start" type="Integer"><constraint op="&gt;" value="1" description="between base:" identifier="c3" editable="true"></constraint></node><node path="Chromosome.exons.objects.end" type="Integer"><constraint op="&lt;" value="10000" description="and:" identifier="c4" editable="true"></constraint></node></query></template><template name="AAM_Gene2GO2" description="Search for GO annotations for a particular gene." category="Genomics" important="false" keywords=""><query name="AAM_Gene2GO2" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.GOTerms.name Gene.GOTerms.identifier"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="CG11348" description="Show the GO annotations for gene:" identifier="" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true"></constraint></node></query></template><template name="AAN_Gene_GoTerms" description="Search for genes annotated with a particular GO term." category="Genomics" important="false" keywords=""><query name="AAN_Gene_GoTerms" model="genomic" view="Gene"><node path="Gene" type="Gene"></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Search for genes from:" identifier="" editable="true"></constraint></node><node path="Gene.annotations" type="Annotation"></node><node path="Gene.annotations.property" type="GOTerm"></node><node path="Gene.annotations.property.identifier" type="String"><constraint op="=" value="GO:0007568" description="that have been annotated with GO term:" identifier="Gene.annotations.property.identifier" editable="true"></constraint></node></query></template><template name="AAO_OrthologuesWithGO" description="Show predicted orthologues between two organisms and their GO terms." category="Genomics" important="false" keywords=""><query name="AAO_OrthologuesWithGO" model="genomic" view="Orthologue.object.identifier Orthologue.object.annotations.property.identifier Orthologue.object.annotations.property.name Orthologue.subject.identifier Orthologue.subject.annotations.property.identifier Orthologue.subject.annotations.property.name"><node path="Orthologue" type="Orthologue"></node><node path="Orthologue.object" type="BioEntity"></node><node path="Orthologue.object.organism" type="Organism"></node><node path="Orthologue.object.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show orthologues and GO terms between organism:" identifier="" editable="true"></constraint></node><node path="Orthologue.object.annotations" type="Annotation"></node><node path="Orthologue.object.annotations.property" type="GOTerm"></node><node path="Orthologue.subject" type="BioEntity"></node><node path="Orthologue.subject.organism" type="Organism"></node><node path="Orthologue.subject.organism.name" type="String"><constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true"></constraint></node><node path="Orthologue.subject.annotations" type="Annotation"></node><node path="Orthologue.subject.annotations.property" type="GOTerm"></node></query></template><template name="AAP_gene2orthologues" description="Search for predicted orthologues for a particular gene:" category="Genomics" important="false" keywords=""><query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="notch" description="Show the predicted orthologues for gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true"></constraint></node></query></template><template name="AAQ_orthologues" description="Show the predicted orthologues between two organisms." category="Genomics" important="false" keywords=""><query name="AAQ_orthologues" model="genomic" view="Orthologue.object Orthologue.subject"><node path="Orthologue" type="Orthologue"></node><node path="Orthologue.object" type="BioEntity"></node><node path="Orthologue.object.organism" type="Organism"></node><node path="Orthologue.object.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true"></constraint></node><node path="Orthologue.subject" type="BioEntity"></node><node path="Orthologue.subject.organism" type="Organism"></node><node path="Orthologue.subject.organism.name" type="String"><constraint op="=" value="Anopheles gambiae str. PEST" description="and:" identifier="" editable="true"></constraint></node></query></template><template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." category="Genomics" important="false" keywords=""><query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description"><node path="Gene" type="Gene"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="notch" description="Show the transcript identifiers and orthologue transcript identifiers for gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true"></constraint></node><node path="Gene.orthologues" type="Orthologue"></node><node path="Gene.orthologues.subject" type="Gene"></node><node path="Gene.orthologues.evidence" type="ComputationalResult"></node><node path="Gene.orthologues.evidence.analysis" type="ComputationalAnalysis"></node></query></template><template name="AAS_phenotype2genesWithOrthologues" description="Search for genes with a particular RNAi phenotype and show the orthologues of these genes. (Note: RNAi phenotypes are currently only available for C. elegans)." category="Genomics" important="false" keywords=""><query name="AAS_phenotype2genesWithOrthologues" model="genomic" view="Phenotype Phenotype.genes Phenotype.genes.organism Phenotype.genes.orthologues.subject Phenotype.genes.orthologues.subject.organism"><node path="Phenotype" type="Phenotype"></node><node path="Phenotype.RNAiCode" type="String"><constraint op="=" value="WT" description="Search for genes and their orthologues which have RNAi code:" identifier="" editable="true"></constraint></node></query></template><template name="AAT_RNAiwithOrthologues" description="Search for RNAi phenotypes for a particular gene and show the predicted orthologues for this gene. (Note: RNAi phenotypes are currently only available for C. elegans genes)." category="Genomics" important="false" keywords=""><query name="AAT_RNAiwithOrthologues" model="genomic" view="Synonym.subject Synonym.subject.annotations.property Synonym.subject.orthologues.subject Synonym.subject.orthologues.subject.organism"><node path="Synonym" type="Synonym"></node><node path="Synonym.subject" type="Gene"></node><node path="Synonym.subject.annotations" type="Annotation"></node><node path="Synonym.subject.annotations.property" type="Phenotype"></node><node path="Synonym.value" type="String"><constraint op="=" value="C43G2.1" description="Search for RNAi phenotypes and predicted orthologues for gene:" identifier="" editable="true"></constraint></node></query></template><template name="AAU_phenotype2genes1" description="Search for genes with a particular RNAi phenotype. (Note:  RNAi phenotypes are currently only available for C. elegans)." category="Genomics" important="false" keywords=""><query name="AAU_phenotype2genes1" model="genomic" view="Phenotype Phenotype.genes Phenotype.genes.organism"><node path="Phenotype" type="Phenotype"></node><node path="Phenotype.RNAiCode" type="String"><constraint op="=" value="Bli" description="Search for gene with RNAi code:" identifier="" editable="true"></constraint></node></query></template><template name="AAV_Gene2RNAi" description="Search for RNAi phenotypes for a particular gene. (Note RNAi phenotypes are currently ony available for C. elegans)." category="Genomics" important="false" keywords=""><query name="AAV_Gene2RNAi" model="genomic" view="Gene Gene.annotations.property"><node path="Gene" type="Gene"></node><node path="Gene.annotations" type="Annotation"></node><node path="Gene.annotations.property" type="Phenotype"></node><node path="Gene.identifier" type="String"><constraint op="=" value="F48E8.5" description="Search for RNAi phenotypes for gene:" identifier="" editable="true"></constraint></node></query></template><template name="AAW_gene2CERNAi" description="Search for the C. elegans orthologue for a particular gene and its RNAi phenotype." category="Genomics" important="false" keywords=""><query name="AAW_gene2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name"><node path="Gene" type="Gene"></node><node path="Gene.orthologues" type="Orthologue"></node><node path="Gene.orthologues.subject" type="Gene"></node><node path="Gene.orthologues.subject.annotations" type="Annotation"></node><node path="Gene.orthologues.subject.annotations.property" type="Phenotype"></node><node path="Gene.orthologues.subject.organism" type="Organism"></node><node path="Gene.orthologues.subject.organism.name" type="String"><constraint op="=" value="Caenorhabditis elegans" description="" identifier=""></constraint></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="mav" description="Search for C. elegans orthologues for gene:" identifier="Gene.identifier" editable="true"></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true"></constraint></node></query></template><template name="AAX_genes2CERNAi" description="Show the C. elegans orthologue and RNAi phenotypes for all genes from a particular organism." category="Genomics" important="false" keywords=""><query name="AAX_genes2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name"><node path="Gene" type="Gene"></node><node path="Gene.orthologues" type="Orthologue"></node><node path="Gene.orthologues.subject" type="Gene"></node><node path="Gene.orthologues.subject.annotations" type="Annotation"></node><node path="Gene.orthologues.subject.annotations.property" type="Phenotype"></node><node path="Gene.orthologues.subject.organism" type="Organism"></node><node path="Gene.orthologues.subject.organism.name" type="String"><constraint op="=" value="Caenorhabditis elegans" description="" identifier=""></constraint></node><node path="Gene.organism" type="Organism"></node><node path="Gene.organism.name" type="String"><constraint op="=" value="Drosophila melanogaster" description="Show C. elegans orthologues and RNAi phenotypes for organism:" identifier="" editable="true"></constraint></node></query></template><template name="Gene2TFbindingsite" description="Show transcription factor binding sites for a particular gene." category="Genomics" important="false" keywords=""><query name="Gene2TFbindingsite" model="genomic" view="Gene Gene.regulatoryRegions Gene.regulatoryRegions.factor"><node path="Gene" type="Gene"></node><node path="Gene.regulatoryRegions" type="TFBindingSite"></node><node path="Gene.synonyms" type="Synonym"></node><node path="Gene.synonyms.value" type="String"><constraint op="=" value="zen" description="Show transcription factor binding sites for the gene:" identifier="Gene.identifier" editable="true"></constraint></node></query></template><template name="Object_Synonym" description="Find an entry in the database using any identifier or synonym." category="Genomics" important="false" keywords=""><query name="Object_Synonym" model="genomic" view="Synonym.subject"><node path="Synonym" type="Synonym"></node><node path="Synonym.value" type="String"><constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true"></constraint></node></query></template><template name="transcript2longOligo" description="Give details of the INDAC microarray long oligo for a particular transcript." category="Genomics" important="false" keywords=""><query name="transcript2longOligo" model="genomic" view="Transcript Transcript.microarrayOligos Transcript.microarrayOligos.identifier Transcript.microarrayOligos.length Transcript.microarrayOligos.tm Transcript.microarrayOligos.distance3Prime"><node path="Transcript" type="Transcript"></node><node path="Transcript.identifier" type="String"><constraint op="=" value="CG10000-RA" description="Give details of the INDAC microarray long oligo for the transcript:" identifier="" editable="true"></constraint></node></query></template></template-list>
+<template-list>
+  <template name="AAA_organismProteins1" description="Show all the proteins from a particular organism." category="Proteomics" important="false" keywords="">
+    <query name="AAA_organismProteins1" model="genomic" view="Protein">
+      <node path="Protein" type="Protein">
+      </node>
+      <node path="Protein.organism" type="Organism">
+      </node>
+      <node path="Protein.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAB_Synonyms" description="Show all names and identifiers for a particular database entry." category="Genomics" important="false" keywords="">
+    <query name="AAB_Synonyms" model="genomic" view="Synonym.subject.synonyms.value">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="zen" description="Enter a name or identifier (eg a gene or protein name or identifier):" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAB_proteins2fasta" description="Output proteins from a particular organism in a format suitable for creating a fasta database." category="Proteomics" important="false" keywords="">
+    <query name="AAB_proteins2fasta" model="genomic" view="Protein">
+      <node path="Protein" type="Protein">
+      </node>
+      <node path="Protein.organism" type="Organism">
+      </node>
+      <node path="Protein.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Output proteins from the organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAC_organismGenes1" description="Show all the genes for a particular organism." category="Genomics" important="false" keywords="">
+    <query name="AAC_organismGenes1" model="genomic" view="Gene">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAC_protein2proteinInteraction" description="Show protein interactions for a particular protein." category="Proteomics" important="false" keywords="">
+    <query name="AAC_protein2proteinInteraction" model="genomic" view="Protein Protein.interactions.prey Protein.interactions.bait">
+      <node path="Protein" type="Protein">
+      </node>
+      <node path="Protein.primaryAccession" type="String">
+        <constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAD_GOidentifier2proteinInteractions1" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." category="Proteomics" important="false" keywords="">
+    <query name="AAD_GOidentifier2proteinInteractions1" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.genes.name GOTerm.genes.organismDbId GOTerm.genes.proteins.primaryAccession GOTerm.genes.proteins.interactions.bait.primaryAccession GOTerm.genes.proteins.interactions.prey.primaryAccession GOTerm.genes.proteins.interactions.evidence.analysis.interactionDetection.name GOTerm.genes.proteins.interactions.evidence.analysis.publication.pubMedId GOTerm.genes.organism.name">
+      <node path="GOTerm" type="GOTerm">
+      </node>
+      <node path="GOTerm.identifier" type="String">
+        <constraint op="=" value="GO:0007568" description="Show protein interactions for proteins annotated with GO identifier:" identifier="c1" editable="true">
+        </constraint>
+      </node>
+      <node path="GOTerm.genes" type="Gene">
+      </node>
+      <node path="GOTerm.genes.proteins" type="Protein">
+      </node>
+      <node path="GOTerm.genes.proteins.interactions" type="ProteinInteraction">
+      </node>
+      <node path="GOTerm.genes.proteins.interactions.evidence" type="AnalysisResult">
+      </node>
+      <node path="GOTerm.genes.proteins.interactions.evidence.analysis" type="ProteinInteractionExperiment">
+      </node>
+      <node path="GOTerm.genes.organism" type="Organism">
+      </node>
+      <node path="GOTerm.genes.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAD_genes2fasta" description="Output genes from a particular organism in a format suitable for creating a fasta database." category="Genomics" important="false" keywords="">
+    <query name="AAD_genes2fasta" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.symbol">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Output genes from the organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAE_gene2Transcripts2" description="Show the predicted transcripts and the number of exons for a particular gene." category="Genomics" important="false" keywords="">
+    <query name="AAE_gene2Transcripts2" model="genomic" view="Gene Gene.transcripts.identifier Gene.transcripts.exonCount">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="zen" description="Show the predicted transcripts and the number of exons for gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." category="Proteomics" important="false" keywords="">
+    <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.evidence.confidence Synonym.subject.proteins.interactions.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactions.evidence.analysis.publication.pubMedId">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="128up" description="Show the protein interactions for the protein product of gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Synonym.subject" type="Gene">
+      </node>
+      <node path="Synonym.subject.proteins" type="Protein">
+      </node>
+      <node path="Synonym.subject.proteins.interactions" type="ProteinInteraction">
+      </node>
+      <node path="Synonym.subject.proteins.interactions.evidence" type="ExperimentalResult">
+      </node>
+      <node path="Synonym.subject.proteins.interactions.evidence.analysis" type="ProteinInteractionExperiment">
+      </node>
+      <node path="Synonym.subject.organism" type="Organism">
+      </node>
+      <node path="Synonym.subject.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAF_gene2exonTranscript1" description="Show the predicted transcripts and exons for a particular gene." category="Genomics" important="false" keywords="">
+    <query name="AAF_gene2exonTranscript1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.transcripts.exonCount Gene.exons.identifier">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="zen" description="Show predicted transcripts and exons for gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAG_gene2ProteinInteraction2Structure" description="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." category="Proteomics" important="false" keywords="">
+    <query name="AAG_gene2ProteinInteraction2Structure" model="genomic" view="Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.bait.regions.sequenceFamily.name Synonym.subject.proteins.interactions.bait.regions.structures Synonym.subject.proteins.interactions.prey.regions.sequenceFamily.name Synonym.subject.proteins.interactions.prey.regions.structures">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="128up" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Synonym.subject" type="Gene">
+      </node>
+    </query>
+  </template>
+  <template name="AAG_gene2protein1" description="Show the proteins for a particular gene." category="Genomics" important="false" keywords="">
+    <query name="AAG_gene2protein1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.proteins.primaryAccession">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="zen" description="Show proteins for the gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAH_Gene2ProteinStructure2.1" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." category="Proteomics" important="false" keywords="">
+    <query name="AAH_Gene2ProteinStructure2.1" model="genomic" view="Synonym.subject.organismDbId Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.regions.sequenceFamily.name Synonym.subject.proteins.regions.objects.start Synonym.subject.proteins.regions.objects.end Synonym.subject.proteins.regions.structures">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="FBgn0025936" description="Show regions which have predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Synonym.subject" type="Gene">
+      </node>
+      <node path="Synonym.subject.proteins" type="Protein">
+      </node>
+      <node path="Synonym.subject.proteins.regions" type="ProteinRegion">
+      </node>
+      <node path="Synonym.subject.proteins.regions.objects" type="Location">
+      </node>
+      <node path="Synonym.subject.proteins.regions.objects.object" type="Protein">
+      </node>
+      <node path="Synonym.subject.organism" type="Organism">
+      </node>
+      <node path="Synonym.subject.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAH_Genes2chromosome1" description="Show genes located on a particular chromsome." category="Genomics" important="false" keywords="">
+    <query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.chromosome" type="Chromosome">
+      </node>
+      <node path="Gene.chromosome.identifier" type="String">
+        <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="c1" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAI_Pfam2proteinStructure1" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." category="Proteomics" important="false" keywords="">
+    <query name="AAI_Pfam2proteinStructure1" model="genomic" view="ProteinSequenceFamily.name ProteinSequenceFamily.regions.objects.object.primaryAccession ProteinSequenceFamily.regions.objects.start ProteinSequenceFamily.regions.objects.end ProteinSequenceFamily.regions.structures">
+      <node path="ProteinSequenceFamily" type="ProteinSequenceFamily">
+      </node>
+      <node path="ProteinSequenceFamily.name" type="String">
+        <constraint op="=" value="PF00812" description="Show the Drosophila proteins which contain Pfam domain:  (and which also have a predicted 3-D structure for this region.)" identifier="c1" editable="true">
+        </constraint>
+      </node>
+      <node path="ProteinSequenceFamily.regions" type="ProteinRegion">
+      </node>
+      <node path="ProteinSequenceFamily.regions.objects" type="Location">
+      </node>
+      <node path="ProteinSequenceFamily.regions.objects.object" type="Protein">
+      </node>
+    </query>
+  </template>
+  <template name="AAI_gene2ChromosomeLocation1" description="Show the chromosome and the chromosome location of a particluar gene." category="Genomics" important="false" keywords="">
+    <query name="AAI_gene2ChromosomeLocation1" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="zen" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.objects" type="Location">
+      </node>
+      <node path="Gene.objects.object" type="Chromosome">
+      </node>
+    </query>
+  </template>
+  <template name="AAJ_gene2ProteinStructure1" description="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." category="Proteomics" important="false" keywords="">
+    <query name="AAJ_gene2ProteinStructure1" model="genomic" view="Gene.name Gene.organismDbId Gene.proteins.primaryAccession Gene.proteins.regions.sequenceFamily.name Gene.proteins.regions.objects.start Gene.proteins.regions.objects.end Gene.proteins.regions.structures">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="c1" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.proteins" type="Protein">
+      </node>
+      <node path="Gene.proteins.regions" type="ProteinRegion">
+      </node>
+      <node path="Gene.proteins.regions.objects" type="Location">
+      </node>
+      <node path="Gene.proteins.regions.objects.object" type="Protein">
+      </node>
+    </query>
+  </template>
+  <template name="AAJ_synonymGene2exonChromosomeLocations1" description="Show the chromosome location of the exons for a particular gene." category="Genomics" important="false" keywords="">
+    <query name="AAJ_synonymGene2exonChromosomeLocations1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end Synonym.subject.exons.objects.strand">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="zen" description="Show the chromosome location of the exons of gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Synonym.subject" type="Gene">
+      </node>
+      <node path="Synonym.subject.exons" type="Exon">
+      </node>
+      <node path="Synonym.subject.exons.objects" type="Location">
+      </node>
+      <node path="Synonym.subject.exons.objects.object" type="Chromosome">
+      </node>
+      <node path="Synonym.subject.organism" type="Organism">
+      </node>
+      <node path="Synonym.subject.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAK_chromosomeLocation2geneSequence1" description="Show the chromosome location and sequence for all genes from a particular organism." category="Genomics" important="false" keywords="">
+    <query name="AAK_chromosomeLocation2geneSequence1" model="genomic" view="Gene.objects.object.identifier Gene.objects.strand Gene.objects.start Gene.objects.end Gene.name Gene.identifier Gene.sequence.residues">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.objects" type="Location">
+      </node>
+      <node path="Gene.objects.object" type="Chromosome">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAL_chromosomeLocation2genes1" description="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." category="Genomics" important="false" keywords="">
+    <query name="AAL_chromosomeLocation2genes1" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.name Chromosome.exons.gene.organismDbId Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand">
+      <node path="Chromosome" type="Chromosome">
+      </node>
+      <node path="Chromosome.identifier" type="String">
+        <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="c1" editable="true">
+        </constraint>
+      </node>
+      <node path="Chromosome.organism" type="Organism">
+      </node>
+      <node path="Chromosome.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2" editable="true">
+        </constraint>
+      </node>
+      <node path="Chromosome.exons" type="Exon">
+      </node>
+      <node path="Chromosome.exons.objects" type="Location">
+      </node>
+      <node path="Chromosome.exons.objects.object" type="Chromosome">
+      </node>
+      <node path="Chromosome.exons.objects.start" type="Integer">
+        <constraint op="&gt;" value="1" description="between base:" identifier="c3" editable="true">
+        </constraint>
+      </node>
+      <node path="Chromosome.exons.objects.end" type="Integer">
+        <constraint op="&lt;" value="10000" description="and:" identifier="c4" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAM_Gene2GO2" description="Search for GO annotations for a particular gene." category="Genomics" important="false" keywords="">
+    <query name="AAM_Gene2GO2" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.GOTerms.name Gene.GOTerms.identifier">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="CG11348" description="Show the GO annotations for gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAN_Gene_GoTerms" description="Search for genes annotated with a particular GO term." category="Genomics" important="false" keywords="">
+    <query name="AAN_Gene_GoTerms" model="genomic" view="Gene">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Search for genes from:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.annotations" type="Annotation">
+      </node>
+      <node path="Gene.annotations.property" type="GOTerm">
+      </node>
+      <node path="Gene.annotations.property.identifier" type="String">
+        <constraint op="=" value="GO:0007568" description="that have been annotated with GO term:" identifier="Gene.annotations.property.identifier" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAO_OrthologuesWithGO" description="Show predicted orthologues between two organisms and their GO terms." category="Genomics" important="false" keywords="">
+    <query name="AAO_OrthologuesWithGO" model="genomic" view="Orthologue.object.identifier Orthologue.object.annotations.property.identifier Orthologue.object.annotations.property.name Orthologue.subject.identifier Orthologue.subject.annotations.property.identifier Orthologue.subject.annotations.property.name">
+      <node path="Orthologue" type="Orthologue">
+      </node>
+      <node path="Orthologue.object" type="BioEntity">
+      </node>
+      <node path="Orthologue.object.organism" type="Organism">
+      </node>
+      <node path="Orthologue.object.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show orthologues and GO terms between organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Orthologue.object.annotations" type="Annotation">
+      </node>
+      <node path="Orthologue.object.annotations.property" type="GOTerm">
+      </node>
+      <node path="Orthologue.subject" type="BioEntity">
+      </node>
+      <node path="Orthologue.subject.organism" type="Organism">
+      </node>
+      <node path="Orthologue.subject.organism.name" type="String">
+        <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Orthologue.subject.annotations" type="Annotation">
+      </node>
+      <node path="Orthologue.subject.annotations.property" type="GOTerm">
+      </node>
+    </query>
+  </template>
+  <template name="AAP_gene2orthologues" description="Search for predicted orthologues for a particular gene:" category="Genomics" important="false" keywords="">
+    <query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="notch" description="Show the predicted orthologues for gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAQ_orthologues" description="Show the predicted orthologues between two organisms." category="Genomics" important="false" keywords="">
+    <query name="AAQ_orthologues" model="genomic" view="Orthologue.object Orthologue.subject">
+      <node path="Orthologue" type="Orthologue">
+      </node>
+      <node path="Orthologue.object" type="BioEntity">
+      </node>
+      <node path="Orthologue.object.organism" type="Organism">
+      </node>
+      <node path="Orthologue.object.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Orthologue.subject" type="BioEntity">
+      </node>
+      <node path="Orthologue.subject.organism" type="Organism">
+      </node>
+      <node path="Orthologue.subject.organism.name" type="String">
+        <constraint op="=" value="Anopheles gambiae str. PEST" description="and:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." category="Genomics" important="false" keywords="">
+    <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="notch" description="Show the transcript identifiers and orthologue transcript identifiers for gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.orthologues" type="Orthologue">
+      </node>
+      <node path="Gene.orthologues.subject" type="Gene">
+      </node>
+      <node path="Gene.orthologues.evidence" type="ComputationalResult">
+      </node>
+      <node path="Gene.orthologues.evidence.analysis" type="ComputationalAnalysis">
+      </node>
+    </query>
+  </template>
+  <template name="AAS_phenotype2genesWithOrthologues" description="Search for genes with a particular RNAi phenotype and show the orthologues of these genes. (Note: RNAi phenotypes are currently only available for C. elegans)." category="Genomics" important="false" keywords="">
+    <query name="AAS_phenotype2genesWithOrthologues" model="genomic" view="Phenotype Phenotype.genes Phenotype.genes.organism Phenotype.genes.orthologues.subject Phenotype.genes.orthologues.subject.organism">
+      <node path="Phenotype" type="Phenotype">
+      </node>
+      <node path="Phenotype.RNAiCode" type="String">
+        <constraint op="=" value="WT" description="Search for genes and their orthologues which have RNAi code:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAT_RNAiwithOrthologues" description="Search for RNAi phenotypes for a particular gene and show the predicted orthologues for this gene. (Note: RNAi phenotypes are currently only available for C. elegans genes)." category="Genomics" important="false" keywords="">
+    <query name="AAT_RNAiwithOrthologues" model="genomic" view="Synonym.subject Synonym.subject.annotations.property Synonym.subject.orthologues.subject Synonym.subject.orthologues.subject.organism">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.subject" type="Gene">
+      </node>
+      <node path="Synonym.subject.annotations" type="Annotation">
+      </node>
+      <node path="Synonym.subject.annotations.property" type="Phenotype">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="C43G2.1" description="Search for RNAi phenotypes and predicted orthologues for gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAU_phenotype2genes1" description="Search for genes with a particular RNAi phenotype. (Note:  RNAi phenotypes are currently only available for C. elegans)." category="Genomics" important="false" keywords="">
+    <query name="AAU_phenotype2genes1" model="genomic" view="Phenotype Phenotype.genes Phenotype.genes.organism">
+      <node path="Phenotype" type="Phenotype">
+      </node>
+      <node path="Phenotype.RNAiCode" type="String">
+        <constraint op="=" value="Bli" description="Search for gene with RNAi code:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAV_Gene2RNAi" description="Search for RNAi phenotypes for a particular gene. (Note RNAi phenotypes are currently ony available for C. elegans)." category="Genomics" important="false" keywords="">
+    <query name="AAV_Gene2RNAi" model="genomic" view="Gene Gene.annotations.property">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.annotations" type="Annotation">
+      </node>
+      <node path="Gene.annotations.property" type="Phenotype">
+      </node>
+      <node path="Gene.identifier" type="String">
+        <constraint op="=" value="F48E8.5" description="Search for RNAi phenotypes for gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAW_gene2CERNAi" description="Search for the C. elegans orthologue for a particular gene and its RNAi phenotype." category="Genomics" important="false" keywords="">
+    <query name="AAW_gene2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.orthologues" type="Orthologue">
+      </node>
+      <node path="Gene.orthologues.subject" type="Gene">
+      </node>
+      <node path="Gene.orthologues.subject.annotations" type="Annotation">
+      </node>
+      <node path="Gene.orthologues.subject.annotations.property" type="Phenotype">
+      </node>
+      <node path="Gene.orthologues.subject.organism" type="Organism">
+      </node>
+      <node path="Gene.orthologues.subject.organism.name" type="String">
+        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="">
+        </constraint>
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="mav" description="Search for C. elegans orthologues for gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="AAX_genes2CERNAi" description="Show the C. elegans orthologue and RNAi phenotypes for all genes from a particular organism." category="Genomics" important="false" keywords="">
+    <query name="AAX_genes2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.orthologues" type="Orthologue">
+      </node>
+      <node path="Gene.orthologues.subject" type="Gene">
+      </node>
+      <node path="Gene.orthologues.subject.annotations" type="Annotation">
+      </node>
+      <node path="Gene.orthologues.subject.annotations.property" type="Phenotype">
+      </node>
+      <node path="Gene.orthologues.subject.organism" type="Organism">
+      </node>
+      <node path="Gene.orthologues.subject.organism.name" type="String">
+        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="">
+        </constraint>
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show C. elegans orthologues and RNAi phenotypes for organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="Gene2TFbindingsite" description="Show transcription factor binding sites for a particular gene." category="Genomics" important="false" keywords="">
+    <query name="Gene2TFbindingsite" model="genomic" view="Gene Gene.regulatoryRegions Gene.regulatoryRegions.factor">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.regulatoryRegions" type="TFBindingSite">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="zen" description="Show transcription factor binding sites for the gene:" identifier="Gene.identifier" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="Object_Synonym" description="Find an entry in the database using any identifier or synonym." category="Genomics" important="false" keywords="">
+    <query name="Object_Synonym" model="genomic" view="Synonym.subject">
+      <node path="Synonym" type="Synonym">
+      </node>
+      <node path="Synonym.value" type="String">
+        <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="transcript2longOligo" description="Give details of the INDAC microarray long oligo for a particular transcript." category="Genomics" important="false" keywords="">
+    <query name="transcript2longOligo" model="genomic" view="Transcript Transcript.microarrayOligos Transcript.microarrayOligos.identifier Transcript.microarrayOligos.length Transcript.microarrayOligos.tm Transcript.microarrayOligos.distance3Prime">
+      <node path="Transcript" type="Transcript">
+      </node>
+      <node path="Transcript.identifier" type="String">
+        <constraint op="=" value="CG10000-RA" description="Give details of the INDAC microarray long oligo for the transcript:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+</template-list>

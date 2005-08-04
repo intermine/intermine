@@ -19,7 +19,6 @@
   <reference name="contig" referenced-type="org.flymine.model.genomic.Contig"/>
 </class>
 <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <attribute name="primaryAccession" type="java.lang.String"/>
   <collection name="translations" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="protein" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Sequence" is-interface="true">
@@ -33,9 +32,6 @@
 <class name="org.flymine.model.genomic.ChromosomeBand" is-interface="true">
   <attribute name="stain" type="java.lang.String"/>
   <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
-</class>
-<class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <attribute name="name" type="java.lang.String"/>
 </class>
 <class name="org.flymine.model.genomic.Exon" is-interface="true">
   <collection name="contigs" referenced-type="org.flymine.model.genomic.Contig" ordered="true"/>

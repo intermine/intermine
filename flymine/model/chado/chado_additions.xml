@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
   <class name="org.flymine.model.genomic.CDS" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="CDSs"/>
     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
   </class>
@@ -13,18 +13,18 @@
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.MRNA" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
     <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" reverse-reference="MRNAs" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.NcRNA" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Exon" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Intron" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
     <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="introns" ordered="true"/>
     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true"/>
   </class>
@@ -32,14 +32,13 @@
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.UTR" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
   </class>
   <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.FivePrimeUTR" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.Enhancer" is-interface="true">

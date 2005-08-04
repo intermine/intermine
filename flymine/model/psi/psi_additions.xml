@@ -22,7 +22,6 @@
   <attribute name="residues" type="java.lang.String"/>
 </class>
 <class name="org.flymine.model.genomic.Protein" is-interface="true">
-  <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
   <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true"/>
 </class>
 </classes>

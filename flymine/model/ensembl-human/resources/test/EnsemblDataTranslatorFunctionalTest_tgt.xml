@@ -63,7 +63,7 @@
 
 <item id="4_327" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value="17165"/>
-<attribute name="name" value="TFIP11"/>
+<attribute name="symbol" value="TFIP11"/>
 <attribute name="organismDbId" value="ENSG00000100109"/>
 <reference name="organism" ref_id="-1_1"/>
 <reference name="comment" ref_id="-1_15"/>
@@ -96,7 +96,7 @@
 <reference name="source" ref_id="-1_2"/>
 </item>
 <item id="-1_18" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="TFIP11"/>
 <reference name="source" ref_id="-1_5"/>
 <reference name="subject" ref_id="4_327"/>
@@ -110,7 +110,7 @@
 
 <item id="4_949" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value="18944"/>
-<attribute name="name" value="KRTAP20-2"/>
+<attribute name="symbol" value="KRTAP20-2"/>
 <attribute name="organismDbId" value="ENSG00000184032"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
@@ -139,7 +139,7 @@
 <reference name="source" ref_id="-1_2"/>
 </item>
 <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="KRTAP20-2"/>
 <reference name="source" ref_id="-1_5"/>
 <reference name="subject" ref_id="4_949"/>

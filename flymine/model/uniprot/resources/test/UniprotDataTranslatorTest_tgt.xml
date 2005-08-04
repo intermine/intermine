@@ -117,7 +117,7 @@
 <attribute name="taxonId" value="180454"/>
 </item>
 <item id="-1_16" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="14-3-3-like protein 1"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_12"/>
@@ -132,7 +132,7 @@
 </item>
 <item id="-1_21" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value="M117.2"/>
-<attribute name="name" value="par-5"/>
+<attribute name="symbol" value="par-5"/>
 <attribute name="organismDbId" value="WBGene00003920"/>
 <reference name="organism" ref_id="-1_11"/>
 <collection name="evidence">
@@ -172,7 +172,7 @@
 <reference name="subject" ref_id="-1_21"/>
 </item>
 <item id="-1_39" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="Tina-1"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_37"/>
@@ -181,19 +181,19 @@
 <attribute name="title" value="FlyBase"/>
 </item>
 <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="par-5"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_21"/>
 </item>
 <item id="-1_25" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="ftt-1"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_21"/>
 </item>
 <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="ENSANGP00000011199"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_2"/>
@@ -227,7 +227,7 @@
 </collection>
 </item>
 <item id="-1_31" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
+<attribute name="type" value="symbol"/>
 <attribute name="value" value="Troponin C-akin-1 protein"/>
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_27"/>

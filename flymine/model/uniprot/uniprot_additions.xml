@@ -1,12 +1,8 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.Protein" is-interface="true">
-  <attribute name="name" type="java.lang.String"/>
-  <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
-  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="proteins"/>
-  <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
-</class>
-<class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="genes"/>
-</class>
+  <class name="org.flymine.model.genomic.Protein" is-interface="true">
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="proteins"/>
+    <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+  </class>
 </classes>
