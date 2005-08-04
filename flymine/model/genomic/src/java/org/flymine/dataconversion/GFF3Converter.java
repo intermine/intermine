@@ -26,6 +26,7 @@ import org.intermine.xml.full.ItemFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 
 import org.flymine.io.gff3.GFF3Parser;
@@ -155,6 +156,14 @@ public class GFF3Converter
 
         String term = record.getType();
         String className = TypeUtil.javaiseClassName(term);
+        String fullClassName = tgtModel.getPackageName() + "." + className;
+        
+        ClassDescriptor cd = tgtModel.getClassDescriptorByName(fullClassName);
+
+        if (cd == null) {
+            throw new IllegalArgumentException("no class found in model for: " + className
+                                               + " (original GFF record type: " + term + ")");
+        }
 
         Item feature;
 
@@ -167,15 +176,28 @@ public class GFF3Converter
         }
 
         if (names != null) {
-            feature.addAttribute(new Attribute("symbol", (String) names.get(0)));
-            for (Iterator i = names.iterator(); i.hasNext(); ) {
-                String recordName = (String) i.next();
-                Item synonym = createItem("Synonym");
-                synonym.addReference(new Reference("subject", feature.getIdentifier()));
-                synonym.addAttribute(new Attribute("value", recordName));
-                synonym.addAttribute(new Attribute("type", "symbol"));
-                synonym.addReference(new Reference("source", infoSource.getIdentifier()));
-                handler.addItem(synonym);
+            if (cd.getFieldDescriptorByName("symbol") == null) {
+                feature.addAttribute(new Attribute("name", (String) names.get(0)));
+                for (Iterator i = names.iterator(); i.hasNext(); ) {
+                    String recordName = (String) i.next();
+                    Item synonym = createItem("Synonym");
+                    synonym.addReference(new Reference("subject", feature.getIdentifier()));
+                    synonym.addAttribute(new Attribute("value", recordName));
+                    synonym.addAttribute(new Attribute("type", "name"));
+                    synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+                    handler.addItem(synonym);
+                }
+            } else {
+                feature.addAttribute(new Attribute("symbol", (String) names.get(0)));
+                for (Iterator i = names.iterator(); i.hasNext(); ) {
+                    String recordName = (String) i.next();
+                    Item synonym = createItem("Synonym");
+                    synonym.addReference(new Reference("subject", feature.getIdentifier()));
+                    synonym.addAttribute(new Attribute("value", recordName));
+                    synonym.addAttribute(new Attribute("type", "symbol"));
+                    synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+                    handler.addItem(synonym);
+                }
             }
         }
         feature.addReference(getOrgRef());
