@@ -14,6 +14,7 @@
     <collection name="evidence">
       <reference ref_id="0_9"/>
       <reference ref_id="1_16"/>
+      <reference ref_id="1_19"/>
     </collection>
   </item>
   <item id="0_9" class="http://www.flymine.org/model/genomic#Database">
@@ -24,7 +25,10 @@
     <reference name="organism" ref_id="2_2"/>
   </item>
   <item id="1_16" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="10218159"/>
+    <attribute name="pubMedId" value="10000000"/>
+  </item>
+  <item id="1_19" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="20000000"/>
   </item>
   <item id="4_7" class="http://www.flymine.org/model/genomic#GOTerm">
     <attribute name="identifier" value="GO:0019825"/>

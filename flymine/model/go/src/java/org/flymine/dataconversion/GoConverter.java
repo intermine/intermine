@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -28,10 +27,14 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.ontology.DagParser;
 import org.intermine.ontology.OboParser;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+
+import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse a go annotation file into Items
@@ -50,15 +53,19 @@ public class GoConverter extends FileConverter
     protected int id = 0;
     protected File ontology;
     protected Map withTypes = new HashMap();
+    protected Map annotations = new HashMap();
+    protected ItemFactory itemFactory;
+
+    private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
-     * @throws ObjectStoreException if an error occurs in storing
+     * @throws Exception if an error occurs in storing or finding Model
      */
-    public GoConverter(ItemWriter writer) throws ObjectStoreException {
+    public GoConverter(ItemWriter writer) throws Exception {
         super(writer);
-
+        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         addWithType("FB", "Gene", "organismDbId");
         addWithType("UniProt", "Protein", "primaryAccession");
     }
@@ -94,13 +101,31 @@ public class GoConverter extends FileConverter
                 continue;
             }
             String[] array = line.split("\t", -1); //keep trailing empty Strings
-            Item annotation = newAnnotation(array[3],
-                                            newDatabase(array[14]),
-                                            newPublication(array[5]),
-                                            array[6],
-                                            newProduct(array[1], array[11], newOrganism(array[12])),
-                                            newGoTerm(array[4]),
-                                            array[7]);
+
+            String qualifier = array[3];
+            String goEvidence = array[6];
+            String productId = array[1];
+            String goId = array[4];
+
+            GoTermProduct key = new GoTermProduct(productId, goId, goEvidence, qualifier);
+
+            Item annotation = (Item) annotations.get(key);
+            if (!annotations.containsKey(key)) {
+                annotation = newAnnotation(qualifier,
+                                                newDatabase(array[14]),
+                                                newPublication(array[5]),
+                                                goEvidence,
+                                                newProduct(productId, array[11],
+                                                           newOrganism(array[12])),
+                                                newGoTerm(goId),
+                                                array[7]);
+                annotations.put(key, annotation);
+            } else {
+                Item pub = newPublication(array[5]);
+                if (pub != null) {
+                    annotation.addToCollection("evidence", pub.getIdentifier());
+                }
+            }
             writer.store(ItemHelper.convert(annotation));
         }
     }
@@ -183,20 +208,28 @@ public class GoConverter extends FileConverter
      */
     protected List createWithObjects(String withText) {
         List with = new ArrayList();
-        StringTokenizer st = new StringTokenizer(withText, ";,");
-        while (st.hasMoreTokens()) {
-            String entry = st.nextToken().trim();
-            String prefix = entry.substring(0, entry.indexOf(':'));
-            String value = entry.substring(entry.indexOf(':') + 1);
+        try {
+            String[] elements = withText.split("; |, ");
+            for (int i = 0; i < elements.length; i++) {
+                String entry = elements[i].trim();
+                // rely on the format being type:identifier
+                if (entry.indexOf(':') > 0) {
+                    String prefix = entry.substring(0, entry.indexOf(':'));
+                    String value = entry.substring(entry.indexOf(':') + 1);
 
-            if (withTypes.containsKey(prefix)) {
+                    if (withTypes.containsKey(prefix)) {
 
-                WithType wt = (WithType) withTypes.get(prefix);
-                Item item = createItem(wt.clsName);
-                item.setAttribute(wt.fieldName, value);
-                with.add(item);
+                        WithType wt = (WithType) withTypes.get(prefix);
+                        Item item = createItem(wt.clsName);
+                        item.setAttribute(wt.fieldName, value);
+                        with.add(item);
 
+                    }
+                }
             }
+        } catch (RuntimeException e) {
+            LOG.error("createWithObjects broke with: " + withText);
+            throw e;
         }
         return with;
     }
@@ -214,22 +247,23 @@ public class GoConverter extends FileConverter
         throws ObjectStoreException {
         String key = identifier + type + (organism == null ? "" : organism.getIdentifier());
         String idField = null;
+        String clsName = null;
         if ("gene".equals(type)) {
             if (organism == null) {
                 throw new IllegalArgumentException("Encountered gene without a valid organism");
             }
-            type = "Gene";
+            clsName = "Gene";
             idField = "organismDbId";
 
         } else if ("protein".equals(type)) {
-            type = "Protein";
+            clsName = "Protein";
             idField = "primaryAccession";
         } else {
-            throw new IllegalArgumentException("Unrecognised product type '" + type + "'");
+            LOG.warn("Unrecognised product type '" + type + "'");
         }
         Item item;
-        if (product == null || !product.key.equals(key)) {
-            item = createItem(type);
+        if ((clsName != null) && (product == null || !product.key.equals(key))) {
+            item = createItem(clsName);
             item.addAttribute(new Attribute(idField, identifier));
             if (organism != null) {
                 item.addReference(new Reference("organism", organism.getIdentifier()));
@@ -271,6 +305,8 @@ public class GoConverter extends FileConverter
                 title = "UniProt";
             } else if ("FB".equals(code)) {
                 title = "FlyBase";
+            } else if ("WB".equals(code)) {
+                title = "WormBase";
             } else if ("SP".equals(code)) {
                 title = "Swiss-Prot";
             } else if ("MGI".equals(code)) {
@@ -340,11 +376,7 @@ public class GoConverter extends FileConverter
      * @return a new Item
      */
     protected Item createItem(String className) {
-        Item item = new Item();
-        item.setIdentifier(alias(className) + "_" + (id++));
-        item.setClassName(GENOMIC_NS + className);
-        item.setImplementations("");
-        return item;
+        return itemFactory.makeItem(alias(className) + "_" + (id++), GENOMIC_NS + className, "");
     }
 
     /**
@@ -363,6 +395,55 @@ public class GoConverter extends FileConverter
         ItemWrapper(String key, Item item) {
             this.key = key;
             this.item = item;
+        }
+    }
+
+    /**
+     * Identify a GoTerm/product pair with evidence code and qualifier
+     */
+    class GoTermProduct
+    {
+        String productId;
+        String goId;
+        String code;
+        String qualifier;
+
+        /**
+         * Constructor
+         * @param productId gene/protein identifier
+         * @param goId GO term id
+         * @param code evidence code
+         * @param qualifier qualifier
+         */
+        GoTermProduct(String productId, String goId, String code, String qualifier) {
+            this.productId = productId;
+            this.goId = goId;
+            this.code = code;
+            this.qualifier = qualifier;
+        }
+
+        /**
+         * @see Object#equals
+         */
+        public boolean equals(Object o) {
+            if (o instanceof GoTermProduct) {
+                GoTermProduct go = (GoTermProduct) o;
+                return productId.equals(go.productId)
+                    && goId.equals(go.goId)
+                    && code.equals(go.code)
+                    && qualifier.equals(go.qualifier);
+            }
+            return false;
+        }
+
+        /**
+         * @see Object#hashCode
+         */
+        public int hashCode() {
+            return (3 * productId.hashCode())
+                + (5 * goId.hashCode())
+                + (7 * code.hashCode())
+                + (11 * qualifier.hashCode());
         }
     }
 

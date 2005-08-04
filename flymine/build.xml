@@ -1530,8 +1530,11 @@
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
-      <fileset dir="/shared/data/go-annotation">
-        <include name="gene_association_*"/>
+      <fileset dir="/shared/data/go-annotation/">
+        <include name="flybase/2005-07-26/gene_association.fb"/>
+        <include name="wormbase/2005-04-06/gene_association.wb"/>
+        <include name="uniprot/2005-07-25/gene_association_ag"/>
+        <include name="uniprot/2005-07-25/gene_association_agp"/>
       </fileset>
     </convert-file>
 
