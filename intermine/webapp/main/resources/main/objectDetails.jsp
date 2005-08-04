@@ -71,7 +71,7 @@
             </c:forEach>
           
             <c:forEach items="${object.attributes}" var="entry">
-              <c:if test="${! object.fieldConfigMap[entry.key].showInSummary}">
+              <c:if test="${! object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
                 <tr>
                   <td>
                     <span class="attributeField">${entry.key}</span>
@@ -276,6 +276,38 @@
             </c:if>
           </table>
         </im:body>
+        
+        <c:forEach items="${object.attributes}" var="entry">
+          <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
+          	<im:heading id="right-${entry.key}">
+          	  ${object.fieldConfigMap[entry.key].sectionTitle}
+          	</im:heading>
+          	<im:body id="right-${entry.key}">
+          	
+          	       <c:set var="maxLength" value="80"/>
+                    <c:choose>
+                      <c:when test="${entry.value.class.name ==
+                                    'java.lang.String' && fn:length(entry.value) > maxLength
+                                    && ! object.fieldConfigMap[entry.key].doNotTruncate}">
+                        <span class="value">
+                          ${fn:substring(entry.value, 0, maxLength/2)}
+                        </span>
+                        <span class="value" style="white-space:nowrap">
+                          ${fn:substring(entry.value, maxLength/2, maxLength)}
+                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                            <fmt:message key="objectDetails.viewall"/>
+                          </html:link>
+                        </span>
+                      </c:when>
+                      <c:otherwise>
+                        <span class="value">${entry.value}</span>
+                      </c:otherwise>
+                    </c:choose>
+                    
+          	</im:body>
+          </c:if>
+        </c:forEach>    
+        
       </td>
 
     </tr>

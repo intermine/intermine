@@ -23,6 +23,9 @@ public class FieldConfig
     private boolean showInSummary;
     private boolean showInInlineCollection;
     private boolean showInResults;
+    private boolean sectionOnRight;
+    private String sectionTitle;
+    private boolean openByDefault;
     private String fieldExporter;
 
     /**
@@ -169,5 +172,29 @@ public class FieldConfig
                + "\" showInSummary=\"" + showInSummary + "\" showInInlineCollection=\"" 
                + showInInlineCollection + "\" showInResults=\"" + showInResults
             + "\"" + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
+    }
+
+    public boolean isOpenByDefault() {
+        return openByDefault;
+    }
+
+    public void setOpenByDefault(boolean openByDefault) {
+        this.openByDefault = openByDefault;
+    }
+
+    public boolean isSectionOnRight() {
+        return sectionOnRight;
+    }
+
+    public void setSectionOnRight(boolean sectionOnRight) {
+        this.sectionOnRight = sectionOnRight;
+    }
+
+    public String getSectionTitle() {
+        return sectionTitle;
+    }
+
+    public void setSectionTitle(String sectionTitle) {
+        this.sectionTitle = sectionTitle;
     }
 }
