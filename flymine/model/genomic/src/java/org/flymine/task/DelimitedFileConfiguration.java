@@ -37,7 +37,7 @@ public class DelimitedFileConfiguration
     FieldDescriptor keyFieldDescriptor = null;
     ArrayList columnFieldDescriptors = null;
     int keyColumnNumber = -1;
-    
+
     /**
      * Create a new DelimitedFileConfiguration from an InputStream.
      * @param model The model to use when looking for ClassDescriptors and FieldDescriptors
@@ -60,8 +60,12 @@ public class DelimitedFileConfiguration
             configClassDescriptor = model.getClassDescriptorByName(className);
         }
 
+        if (configClassDescriptor == null) {
+            throw new IllegalArgumentException("cannot find ClassDescriptor for: " + className);
+        }
+
         Map columnFieldDescriptorMap = new TreeMap();
-        
+
         Enumeration enumeration = properties.propertyNames();
 
         while (enumeration.hasMoreElements()) {
@@ -78,6 +82,11 @@ public class DelimitedFileConfiguration
                     FieldDescriptor columnFD =
                         configClassDescriptor.getFieldDescriptorByName(fieldName);
 
+                    if (columnFD == null) {
+                        throw new IllegalArgumentException("cannot find FieldDescriptor for "
+                                                           + fieldName + " in " + className);
+                    }
+
                     columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("column number (" + key + ") not parsable "
@@ -88,16 +97,16 @@ public class DelimitedFileConfiguration
         }
 
         int mapMax = findMapMaxKey(columnFieldDescriptorMap);
-        
+
         columnFieldDescriptors = new ArrayList(mapMax + 1);
-        
+
         for (int columnNumber = 0; columnNumber < mapMax + 1; columnNumber++) {
-            FieldDescriptor columnFD = 
+            FieldDescriptor columnFD =
                 (FieldDescriptor) columnFieldDescriptorMap.get(new Integer(columnNumber));
-            
+
             columnFieldDescriptors.add(columnFD);
         }
-        
+
         String keyColumnString = properties.getProperty("keyColumn");
 
         if (keyColumnString == null) {
@@ -112,9 +121,9 @@ public class DelimitedFileConfiguration
                                                        + "in property file for "
                                                        + "DelimitedFileConfiguration");
                 }
-                
+
                 keyFieldDescriptor = (FieldDescriptor) columnFieldDescriptors.get(keyColumnNumber);
-                
+
                 if (keyFieldDescriptor == null) {
                     throw new IllegalArgumentException("no column configuration found for "
                                                        + "keyColumn: " + keyColumnString);
@@ -132,14 +141,14 @@ public class DelimitedFileConfiguration
         if (map.size() == 0) {
             throw new IllegalArgumentException("Map empty in findMapMaxKey()");
         }
-        
+
         int maxSoFar = Integer.MIN_VALUE;
-        
+
         Iterator mapKeyIter = map.keySet().iterator();
-        
+
         while (mapKeyIter.hasNext()) {
             Integer key = (Integer) mapKeyIter.next();
-            
+
             if (key.intValue() > maxSoFar) {
                 maxSoFar = key.intValue();
             }
@@ -149,7 +158,7 @@ public class DelimitedFileConfiguration
     }
 
     /**
-     * Return the ClassDescriptor of the class to modify. 
+     * Return the ClassDescriptor of the class to modify.
      * @return the ClassDescriptor
      */
     public ClassDescriptor getConfigClassDescriptor() {
@@ -157,13 +166,13 @@ public class DelimitedFileConfiguration
     }
 
     /**
-     * Return the column in the input file that should be used as the key for looking up objects. 
+     * Return the column in the input file that should be used as the key for looking up objects.
      * @return the key column - the first column is 0
      */
     public int getKeyColumnNumber () {
         return keyColumnNumber;
     }
-    
+
     /**
      * Return the FieldDescriptor of the field in the configClassDescriptor that should be used as
      * the primary key when looking up objects.
