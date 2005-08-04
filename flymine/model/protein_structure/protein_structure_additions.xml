@@ -9,7 +9,6 @@
   <collection name="regions" referenced-type="org.flymine.model.genomic.ProteinRegion" ordered="true" reverse-reference="sequenceFamily"/>
 </class>
 <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <attribute name="primaryAccession" type="java.lang.String"/>
   <collection name="regions" referenced-type="org.flymine.model.genomic.ProteinRegion" ordered="true" reverse-reference="protein"/>
 </class>
 <class name="org.flymine.model.genomic.ModelledProteinStructure" extends="org.flymine.model.genomic.ProteinStructure" is-interface="true">

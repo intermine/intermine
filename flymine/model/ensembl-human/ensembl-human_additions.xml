@@ -5,7 +5,6 @@
   <attribute name="length" type="java.lang.Integer"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <attribute name="name" type="java.lang.String"/>
   <attribute name="accession" type="java.lang.String"/>
   <reference name="comment" referenced-type="org.flymine.model.genomic.Comment" />
 </class>
@@ -51,8 +50,6 @@
 <class name="org.flymine.model.genomic.TranscriptStartSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.TRNA" is-interface="true"/>
 <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <attribute name="primaryAccession" type="java.lang.String"/>
-  <attribute name="identifier" type="java.lang.String"/>
   <attribute name="translationStart" type="java.lang.Integer"/>
   <attribute name="translationEnd" type="java.lang.Integer"/>
   <reference name="startExon" referenced-type="org.flymine.model.genomic.Exon"/>

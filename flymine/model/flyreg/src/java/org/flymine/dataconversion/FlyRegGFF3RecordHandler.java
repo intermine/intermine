@@ -72,7 +72,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             } else {
                 gene = getItemFactory().makeItemForClass(geneNs);
                 geneIdMap.put(factorGeneName, gene);
-                gene.setAttribute("name", factorGeneName);
+                gene.setAttribute("symbol", factorGeneName);
                 gene.setReference("organism", getOrganism().getIdentifier());
                 addItem(gene);
             }
@@ -90,7 +90,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             } else {
                 gene = getItemFactory().makeItemForClass(geneNs);
                 geneIdMap.put(targetGeneName, gene);
-                gene.setAttribute("name", targetGeneName);
+                gene.setAttribute("symbol", targetGeneName);
                 gene.setReference("organism", getOrganism().getIdentifier());
                 addItem(gene);
             }

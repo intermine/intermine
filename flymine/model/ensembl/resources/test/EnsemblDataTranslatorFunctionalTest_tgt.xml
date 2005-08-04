@@ -142,7 +142,7 @@
     <reference name="subject" ref_id="-1_20"/>
   </item>
   <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="name"/>
+    <attribute name="type" value="symbol"/>
     <attribute name="value" value="fb_symbol"/>
     <reference name="source" ref_id="-1_7"/>
     <reference name="subject" ref_id="5_1"/>
@@ -379,7 +379,7 @@
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="identifier" value="ENSANGG00000017446"/>
-    <attribute name="name" value="fb_symbol"/>
+    <attribute name="symbol" value="fb_symbol"/>
     <attribute name="organismDbId" value="FBgn0001"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">

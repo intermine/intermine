@@ -86,7 +86,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
         expectedGene.setAttribute("organismDbId", "FBgn0024811");
         expectedGene.setAttribute("identifier", "CG1234");
-        expectedGene.setAttribute("name", "CG1234");
+        expectedGene.setAttribute("symbol", "CG1234");
 
         assertEquals(7, handler.getItems().size());
 
@@ -134,7 +134,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
             itemFactory.makeItem((String) featureIdentifiers.get(0), tgtNs + "Pseudogene", "");
         expectedGene.setAttribute("organismDbId", "FBgn0052011");
         expectedGene.setAttribute("identifier", "CR32011");
-        expectedGene.setAttribute("name", "CR32011");
+        expectedGene.setAttribute("symbol", "CR32011");
 
         Item expectedTranscript = itemFactory.makeItem((String) featureIdentifiers.get(1),
                                                        tgtNs + "Transcript", "");
@@ -187,7 +187,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
         expectedGene.setAttribute("organismDbId", "CG1234");
         expectedGene.setAttribute("identifier", "CG1234");
-        expectedGene.setAttribute("name", "CG1234");
+        expectedGene.setAttribute("symbol", "CG1234");
 
         assertEquals(2, handler.getItems().size());
 
@@ -221,7 +221,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
         expectedGene.setAttribute("organismDbId", "CG1234");
         expectedGene.setAttribute("identifier", "CG1234");
-        expectedGene.setAttribute("name", "CG1234");
+        expectedGene.setAttribute("symbol", "CG1234");
 
         Item actualGene = null;
         iter = handler.getItems().iterator();

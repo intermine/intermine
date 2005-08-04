@@ -105,9 +105,9 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             }
 
             // if no name set for gene then use CGxx (FlyBase symbol rules)
-            if (feature.getAttribute("name") == null) {
-                feature.setAttribute("name", feature.getAttribute("identifier").getValue());
-                addItem(createSynonym(feature, "name", feature.getAttribute("name").getValue(),
+            if (feature.getAttribute("symbol") == null) {
+                feature.setAttribute("symbol", feature.getAttribute("identifier").getValue());
+                addItem(createSynonym(feature, "symbol", feature.getAttribute("symbol").getValue(),
                                       "FlyBase"));
             }
         }
@@ -118,7 +118,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         if ("Pseudogene".equals(clsName)) {
             String className = tgtNs + "Transcript";
             // Transcript doesn't have a name attribute
-            getFeature().removeAttribute("name");
+            getFeature().removeAttribute("symbol");
 
             getFeature().setClassName(className);
 
@@ -189,8 +189,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         if (feature.hasAttribute("identifier")) {
             synonyms.add(feature.getAttribute("identifier").getValue());
         }
-        if (feature.hasAttribute("name")) {
-            synonyms.add(feature.getAttribute("name").getValue());
+        if (feature.hasAttribute("symbol")) {
+            synonyms.add(feature.getAttribute("symbol").getValue());
         }
         if (feature.hasAttribute("organismDbId")) {
             synonyms.add(feature.getAttribute("organismDbId").getValue());
@@ -221,7 +221,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                     || synonym.startsWith("FB")) {
                     addItem(createSynonym(feature, "identifier", synonym, "FlyBase"));
                 } else {
-                    addItem(createSynonym(feature, "name", synonym, "FlyBase"));
+                    addItem(createSynonym(feature, "symbol", synonym, "FlyBase"));
                 }
                 synonyms.add(synonym);
             }

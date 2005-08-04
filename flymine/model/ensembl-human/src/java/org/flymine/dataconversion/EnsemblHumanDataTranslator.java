@@ -679,12 +679,12 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         .getItemById(srcItem.getReference("display_xref").getRefId()));
             String accession = null;
             String dbname = null;
-            String name = null;
+            String symbol = null;
             if (xref.hasAttribute("dbprimary_acc")) {
                 accession = xref.getAttribute("dbprimary_acc").getValue();
             }
             if (xref.hasAttribute("display_label")) {
-                name = xref.getAttribute("display_label").getValue();
+                symbol = xref.getAttribute("display_label").getValue();
             }
             if (xref.hasReference("external_db")) {
                 Item externalDb = ItemHelper.convert(srcItemReader
@@ -702,7 +702,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 Item synonym = new Item();
                 if (dbname.equals("HUGO")) {
                     synonym = createSynonym(tgtItem.getIdentifier(),
-                                            "name", name, getHugoRef());
+                                            "symbol", symbol, getHugoRef());
                     synonyms.add(synonym);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonym = createSynonym(tgtItem.getIdentifier(),
@@ -710,7 +710,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     synonyms.add(synonym);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     tgtItem.addAttribute(new Attribute("identifier", accession));
-                    tgtItem.addAttribute(new Attribute("name", name));
+                    tgtItem.addAttribute(new Attribute("symbol", symbol));
                 } else if (dbname.equals("RefSeq_dna") || dbname.equals("RefSeq_dna_predicted")) {
                     synonym = createSynonym(tgtItem.getIdentifier(),
                                             "accession", accession, getRefSeqRef());

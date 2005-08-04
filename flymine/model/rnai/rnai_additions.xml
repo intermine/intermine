@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <attribute name="organismDbId" type="java.lang.String"/>
-  <attribute name="name" type="java.lang.String"/>
-</class>
 <class name="org.flymine.model.genomic.Phenotype" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
   <attribute name="RNAiCode" type="java.lang.String"/>
 </class>

@@ -1,12 +1,5 @@
 package org.flymine.task;
 
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-
-import junit.framework.TestCase;
-
-import org.apache.tools.ant.filters.StringInputStream;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -16,6 +9,13 @@ import org.apache.tools.ant.filters.StringInputStream;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+
+import junit.framework.TestCase;
+
+import org.apache.tools.ant.filters.StringInputStream;
 
 /**
  * Tests for DelimitedFileConfiguration.
@@ -30,7 +30,7 @@ public class DelimitedFileConfigurationTest extends TestCase
             "className: org.flymine.model.genomic.Gene\n"
             + "keyColumn: 1\n"
             + "column.0: identifier\n"
-            + "column.1: name\n"
+            + "column.1: symbol\n"
             // no column 2 config
             + "column.3: organismDbId\n";
         StringInputStream stringInputStream = new StringInputStream(config);
@@ -41,10 +41,10 @@ public class DelimitedFileConfigurationTest extends TestCase
         assertEquals("org.flymine.model.genomic.Gene",
                      dfc.getConfigClassDescriptor().getName());
 
-        assertEquals("name", dfc.getKeyFieldDescriptor().getName());
+        assertEquals("symbol", dfc.getKeyFieldDescriptor().getName());
         assertEquals("identifier",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(0)).getName());
-        assertEquals("name",
+        assertEquals("symbol",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(1)).getName());
         assertEquals("organismDbId",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(3)).getName());

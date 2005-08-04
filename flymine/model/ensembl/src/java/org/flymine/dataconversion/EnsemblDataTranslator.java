@@ -213,7 +213,7 @@ public class EnsemblDataTranslator extends DataTranslator
                         tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
                     }
                     // display_xref is gene name (?)
-                    //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
+                    //promoteField(tgtItem, srcItem, "symbol", "display_xref", "display_label");
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
                     // if no organismDbId set to be same as identifier
                     if (!tgtItem.hasAttribute("organismDbId")) {
@@ -641,8 +641,8 @@ public class EnsemblDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonym.addAttribute(new Attribute("value", accession));
                     if (dbname.equals("flybase_symbol")) {
-                        synonym.addAttribute(new Attribute("type", "name"));
-                        tgtItem.addAttribute(new Attribute("name", accession));
+                        synonym.addAttribute(new Attribute("type", "symbol"));
+                        tgtItem.addAttribute(new Attribute("symbol", accession));
                     } else { // flybase_gene
                         synonym.addAttribute(new Attribute("type", "identifier"));
                         // temporary fix to deal with broken FlyBase identfiers in ensembl

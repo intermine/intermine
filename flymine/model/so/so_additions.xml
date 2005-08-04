@@ -65,9 +65,6 @@
   <class name="org.flymine.model.genomic.GoldenPathFragment" extends="org.flymine.model.genomic.AssemblyComponent" is-interface="true">
     <collection name="goldenPaths" referenced-type="org.flymine.model.genomic.GoldenPath" ordered="true" reverse-reference="goldenPathFragments"/>
   </class>
-  <class name="org.flymine.model.genomic.Sequence" is-interface="true">
-    <attribute name="residues" type="java.lang.String"/>
-  </class>
   <class name="org.flymine.model.genomic.Intron" extends="org.flymine.model.genomic.GenePart" is-interface="true"/>
   <class name="org.flymine.model.genomic.TransposableElementGene" extends="org.flymine.model.genomic.Gene" is-interface="true"/>
   <class name="org.flymine.model.genomic.TranscriptionEndSite" extends="org.flymine.model.genomic.Junction" is-interface="true">

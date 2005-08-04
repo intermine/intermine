@@ -102,17 +102,17 @@ public class FlyRegGFF3RecordHandlerTest extends TestCase
 
         Item expectedGene1 =
             itemFactory.makeItem(((Item) itemIter.next()).getIdentifier(), tgtNs + "Gene", "");
-        expectedGene1.setAttribute("name", "dpp");
+        expectedGene1.setAttribute("symbol", "dpp");
         expectedGene1.setReference("organism", "0_0");
 
         Item expectedGene2 =
             itemFactory.makeItem(((Item) itemIter.next()).getIdentifier(), tgtNs + "Gene", "");
-        expectedGene2.setAttribute("name", "Ubx");
+        expectedGene2.setAttribute("symbol", "Ubx");
         expectedGene2.setReference("organism", "0_0");
 
         Item expectedGene3 =
             itemFactory.makeItem(((Item) itemIter.next()).getIdentifier(), tgtNs + "Gene", "");
-        expectedGene3.setAttribute("name", "Adf1");
+        expectedGene3.setAttribute("symbol", "Adf1");
         expectedGene3.setReference("organism", "0_0");
 
         Item expectedBindingSite2 = itemFactory.makeItem(((Item) itemIter.next()).getIdentifier(),
@@ -125,7 +125,7 @@ public class FlyRegGFF3RecordHandlerTest extends TestCase
 
         Item expectedGene4 =
             itemFactory.makeItem(((Item) itemIter.next()).getIdentifier(), tgtNs + "Gene", "");
-        expectedGene4.setAttribute("name", "Adh");
+        expectedGene4.setAttribute("symbol", "Adh");
         expectedGene4.setReference("organism", "0_0");
 
         Item expectedBindingSite3 = itemFactory.makeItem(((Item) itemIter.next()).getIdentifier(),

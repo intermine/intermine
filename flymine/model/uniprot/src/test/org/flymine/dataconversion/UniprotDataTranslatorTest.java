@@ -78,7 +78,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         // print differences
         String diff = printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
         if (!diff.equals("")) {
-            System.out.println(diff);
+            System.err.println(diff);
         }
 
         // uncomment to write out a new target items file
