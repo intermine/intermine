@@ -16,8 +16,10 @@ import java.util.Collection;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.ontology.DagTerm;
+import org.intermine.ontology.DagTermSynonym;
 import org.intermine.ontology.OboParser;
 import org.intermine.ontology.OboTerm;
+import org.intermine.ontology.OboTermSynonym;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
@@ -47,8 +49,22 @@ public class OboConverter extends DagConverter
         super.configureItem(termId, item, term);
         OboTerm oboterm = (OboTerm) term;
         item.addAttribute(new Attribute("namespace", oboterm.getNamespace()));
+        item.addAttribute(new Attribute("description", oboterm.getDescription()));
     }
 
+    /**
+     * Cast DagTermSynonym to OboTermSynonym and set the type attribute on the
+     * synonym item.
+     * 
+     * @see DagConverter#configureSynonymItem(DagTermSynonym, Item, DagTerm)
+     */
+    protected void configureSynonymItem(DagTermSynonym syn, Item item, DagTerm term)
+        throws ObjectStoreException {
+        super.configureSynonymItem(syn, item, term);
+        OboTermSynonym osyn = (OboTermSynonym) syn;
+        item.addAttribute(new Attribute("type", osyn.getType()));
+    }
+    
     /**
      * 
      */

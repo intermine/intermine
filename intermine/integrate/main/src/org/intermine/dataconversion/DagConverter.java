@@ -12,19 +12,21 @@ package org.intermine.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.ontology.DagParser;
 import org.intermine.ontology.DagTerm;
-import org.intermine.ontology.OboParser;
+import org.intermine.ontology.DagTermSynonym;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
@@ -39,11 +41,15 @@ public class DagConverter extends DataConverter
     protected static final String ONTOLOGY_RELATION =
         "http://www.flymine.org/model/genomic#OntologyRelation";
     protected static final String ONTOLOGY = "http://www.flymine.org/model/genomic#Ontology";
-
+    protected static final String ONTOLOGY_TERM_SYNONYM =
+        "http://www.flymine.org/model/genomic#OntologyTermSynonym";
+    
     protected String dagFilename;
     protected String termClass;
     protected int uniqueId = 0;
+    protected int uniqueSynId = 0;
     protected Map nameToTerm = new HashMap();
+    protected Map synToItem = new HashMap();
     protected Item ontology;
     protected ItemFactory itemFactory = ItemFactory.NULL_MODEL_ITEM_FACTORY;
 
@@ -73,6 +79,7 @@ public class DagConverter extends DataConverter
      */
     public void process() throws Exception {
         nameToTerm = new HashMap();
+        synToItem = new HashMap();
         process(findRootTerms(new File(dagFilename)));
     }
     
@@ -101,6 +108,9 @@ public class DagConverter extends DataConverter
         for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
             writer.store(ItemHelper.convert((Item) i.next()));
         }
+        for (Iterator i = synToItem.values().iterator(); i.hasNext();) {
+            writer.store(ItemHelper.convert((Item) i.next()));
+        }
     }
 
     /**
@@ -117,6 +127,7 @@ public class DagConverter extends DataConverter
             item = itemFactory.makeItem("0_" + (uniqueId++));
             item.setClassName(termClass);
             item.setImplementations("");
+            nameToTerm.put(termId, item);
             configureItem(termId, item, term);
         } else {
             if ((!term.getName().equals(item.getAttribute("name").getValue()))
@@ -155,7 +166,6 @@ public class DagConverter extends DataConverter
         item.addCollection(parentRelations);
         ReferenceList childRelations = new ReferenceList("childRelations");
         item.addCollection(childRelations);
-        nameToTerm.put(termId, item);
         Iterator iter = term.getChildren().iterator();
         while (iter.hasNext()) {
             DagTerm subTerm = (DagTerm) iter.next();
@@ -168,8 +178,37 @@ public class DagConverter extends DataConverter
             Item subItem = process(subTerm);
             relate(item, subItem, "part_of");
         }
+        iter = term.getSynonyms().iterator();
+        while (iter.hasNext()) {
+            DagTermSynonym syn = (DagTermSynonym) iter.next();
+            Item synItem = (Item) synToItem.get(syn);
+            if (synItem == null) {
+                synItem = itemFactory.makeItem("1_" + (uniqueSynId++));
+                synItem.setClassName(ONTOLOGY_TERM_SYNONYM);
+                synItem.setImplementations("");
+                synToItem.put(syn, synItem);
+                configureSynonymItem(syn, synItem, term);
+            }
+            addToCollection(item, "synonyms", synItem);
+        }
     }
-
+    
+    /**
+     * Set up attributes and references for the Item created from a DagTermSynonym. Subclasses
+     * can override this method to perform extra setup, for example by casting the
+     * DagTermSynonym to some someclass and retrieving extra attributes. Subclasses should call this
+     * inherited method first.
+     * 
+     * @param syn the DagTermSynonym object (or a subclass of)
+     * @param item the Item created to store the synonym
+     * @param term the source DagTerm
+     * @throws ObjectStoreException if an error occurs while writing to the itemWriter
+     */
+    protected void configureSynonymItem(DagTermSynonym syn, Item item, DagTerm term)
+        throws ObjectStoreException {
+        item.addAttribute(new Attribute("name", syn.getName()));
+    }
+    
     /**
      * Create (and store) a relation between two DagTerms.
      *

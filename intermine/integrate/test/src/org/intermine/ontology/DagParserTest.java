@@ -150,8 +150,8 @@ public class DagParserTest extends TestCase
         String test = "name ; id ; synonym:s1 ; synonym:s2";
 
         DagTerm term = new DagTerm("id", "name");
-        term.addSynonym("s1");
-        term.addSynonym("s2");
+        term.addSynonym(new DagTermSynonym("s1"));
+        term.addSynonym(new DagTermSynonym("s2"));
 
         assertTrue(DagTermTest.equalDagTerms(term, parser.dagTermFromString(test)));
         assertTrue(parser.seenTerms.size() == 1);
@@ -161,16 +161,16 @@ public class DagParserTest extends TestCase
         String test = "name ; id ; synonym:s1 ; synonym:s2";
 
         DagTerm seen = new DagTerm("id", "name");
-        seen.addSynonym("old1");
+        seen.addSynonym(new DagTermSynonym("old1"));
         DagTerm child = new DagTerm("id1", "child1");
         seen.addChild(child);
         DagParser.Identifier identifier = parser.new Identifier("id", "name");
         parser.seenTerms.put(identifier, seen);
 
         DagTerm term = new DagTerm("id", "name");
-        term.addSynonym("s1");
-        term.addSynonym("s2");
-        term.addSynonym("old1");
+        term.addSynonym(new DagTermSynonym("s1"));
+        term.addSynonym(new DagTermSynonym("s2"));
+        term.addSynonym(new DagTermSynonym("old1"));
         term.addChild(child);
 
         assertTrue(DagTermTest.equalDagTerms(term, parser.dagTermFromString(test)));

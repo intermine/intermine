@@ -34,7 +34,7 @@ public class OboParserTest extends TestCase
         parser = new OboParser();
     }
 
-    public void testProcess() throws Exception {
+    public void testBasicStructure() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
 
         Set terms = parser.processForLabellingOntology(new StringReader(test));
@@ -56,17 +56,37 @@ public class OboParserTest extends TestCase
         assertTrue(dt1.getChildren().contains(dt2));
         assertTrue(dt2.getChildren().contains(dt3));
         assertTrue(dt1.getComponents().contains(dt3));
+    }
+    
+    public void testSynonyms() throws Exception {
+        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
+        Set terms = parser.processForLabellingOntology(new StringReader(test));
+        
+        DagTerm dt3 = (DagTerm) parser.terms.get("GO:0000003");
         
         assertEquals(5, dt3.getSynonyms().size());
         
         HashSet expSyns = new HashSet();
-        expSyns.add("some_value");
-        expSyns.add("exact_value");
-        expSyns.add("related_value");
-        expSyns.add("broad_value");
-        expSyns.add("narrow_value");
+        expSyns.add(new OboTermSynonym("some_value", "synonym"));
+        expSyns.add(new OboTermSynonym("exact_value", "exact_synonym"));
+        expSyns.add(new OboTermSynonym("related_value", "related_synonym"));
+        expSyns.add(new OboTermSynonym("broad_value", "broad_synonym"));
+        expSyns.add(new OboTermSynonym("narrow_value", "narrow_synonym"));
         
         assertEquals(expSyns, dt3.getSynonyms());
+    }
+    
+    public void testDescriptions() throws Exception {
+        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
+        Set terms = parser.processForLabellingOntology(new StringReader(test));
+        
+        OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
+        OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
+        OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
+        
+        assertEquals("iosis, mediated byhe cytoskeleton.", dt1.getDescription());
+        assertEquals("The maintenance of the structure and integrity of the mitochondrial genome.", dt2.getDescription());
+        assertEquals("", dt3.getDescription());
     }
     
     public void testNamespaces() throws Exception {
@@ -142,15 +162,15 @@ public class OboParserTest extends TestCase
                 Arrays.asList(new String[]{"\"no escapes\" []",
                         " \"one \\\" escape\" [asdf]",
                         " \"late quotes\" [as\\\"df] \"",
-                        "\"nothing trailing\""}));
+                        "\"nothing trailing\""}), "synonym_type");
         
         assertEquals(4, term.getSynonyms().size());
         
         HashSet expect = new HashSet();
-        expect.add("no escapes");
-        expect.add("one \" escape");
-        expect.add("late quotes");
-        expect.add("nothing trailing");
+        expect.add(new OboTermSynonym("no escapes", "synonym_type"));
+        expect.add(new OboTermSynonym("one \" escape", "synonym_type"));
+        expect.add(new OboTermSynonym("late quotes", "synonym_type"));
+        expect.add(new OboTermSynonym("nothing trailing", "synonym_type"));
         
         assertEquals(expect, term.getSynonyms());
     }
@@ -158,7 +178,7 @@ public class OboParserTest extends TestCase
     public void testDodgySynonym() {
         DagTerm term = new DagTerm("id", "name");
         parser.addSynonyms(term,
-                Arrays.asList(new String[]{"xxxxxxxx"}));
+                Arrays.asList(new String[]{"xxxxxxxx"}), "synonym_type");
         assertEquals(0, term.getSynonyms().size());
     }
     

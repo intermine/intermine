@@ -31,7 +31,6 @@ name: goo
 id: GO:0000003
 name: reproduction
 alt_id: GO:0019952
-def: "The produ inherited from that organism." [GO:curators, ISBN:0198506732]
 subset: goslim_generic
 is_a: GO:0000002 ! biological_process
 relationship: part_of GO:0000001 ! DNA recombination

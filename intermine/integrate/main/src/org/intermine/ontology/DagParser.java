@@ -203,7 +203,7 @@ public class DagParser
         // zero or more synonyms follow name and id
         for (int i = 2; i < elements.length; i++) {
             if (elements[i].startsWith("synonym:")) {
-                term.addSynonym(elements[i].substring(elements[i].indexOf(":") + 1));
+                term.addSynonym(new DagTermSynonym(elements[i].substring(elements[i].indexOf(":") + 1)));
             }
         }
         return term;

@@ -1,0 +1,62 @@
+package org.intermine.ontology;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+/**
+ * Object representing aa OboTerm synonym.
+ * 
+ * @author Thomas Riley
+ */
+public class OboTermSynonym extends DagTermSynonym
+{
+    private String type;
+    
+    /**
+     * Create a new instance of DagTermSynonym.
+     * @param name the synoym name
+     */
+    public OboTermSynonym(String name, String type) {
+        super(name);
+        this.type = type;
+    }
+    
+    /**
+     * Get the synonym type.
+     * @return synonym type
+     */
+    public String getType() {
+        return type;
+    }
+    
+    /**
+     * @see Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        return (o instanceof OboTermSynonym && super.equals(o)
+                && ((OboTermSynonym) o).type.equals(type));
+    }
+
+    /**
+     * @see Object#hashCode()
+     */
+    public int hashCode() {
+        return super.hashCode() + 3 * type.hashCode();
+    }
+    
+    /**
+     * @see Object#toString()
+     */
+    public String toString() {
+        return new ToStringBuilder(this).append("name", getName()).append("type", type).toString();
+    }
+}
