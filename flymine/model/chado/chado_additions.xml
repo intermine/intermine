@@ -48,7 +48,7 @@
     <attribute name="name" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">    	   	 
@@ -60,5 +60,6 @@
   </class>
   <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
     <attribute name="organismDbId" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
   </class>
 </classes>
