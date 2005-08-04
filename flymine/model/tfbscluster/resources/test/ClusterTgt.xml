@@ -47,7 +47,8 @@
 <item id="1_3" class="http://www.flymine.org/model/genomic#DistanceRelation">
 <attribute name="distance" value="1460"/>
 <attribute name="type" value="3'"/>
-<reference name="gene" ref_id="1_2"/>
+<reference name="object" ref_id="0_3"/>
+<reference name="subject" ref_id="1_2"/>
 </item>
 <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="organismDbId" value="ENSG00000049245"/>
@@ -55,7 +56,8 @@
 <item id="1_5" class="http://www.flymine.org/model/genomic#DistanceRelation">
 <attribute name="distance" value="1964"/>
 <attribute name="type" value="5'"/>
-<reference name="gene" ref_id="1_4"/>
+<reference name="object" ref_id="0_3"/>
+<reference name="subject" ref_id="1_4"/>
 </item>
 
 
@@ -96,6 +98,7 @@
 <item id="1_8" class="http://www.flymine.org/model/genomic#DistanceRelation">
 <attribute name="distance" value="0"/>
 <attribute name="type" value="intron"/>
-<reference name="gene" ref_id="1_7"/>
+<reference name="object" ref_id="0_6"/>
+<reference name="subject" ref_id="1_7"/>
 </item>
 </items>

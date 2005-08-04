@@ -102,7 +102,8 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             Item distanceRelation = createItem("DistanceRelation");
             distanceRelation.setAttribute("type", (String) genes.get(1));
             distanceRelation.setAttribute("distance", (String) genes.get(2));
-            distanceRelation.setReference("gene", geneItem.getIdentifier());
+            distanceRelation.setReference("object", feature.getIdentifier());
+            distanceRelation.setReference("subject", geneItem.getIdentifier());
             feature.addToCollection("geneDistances", distanceRelation.getIdentifier());
             addItem(geneItem);
             addItem(distanceRelation);
