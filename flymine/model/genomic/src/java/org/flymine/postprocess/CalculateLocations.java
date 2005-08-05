@@ -421,13 +421,13 @@ public class CalculateLocations
      * ignored when searching for overlaps.  Sub classes to these classes are ignored too
      * @throws Exception if anything goes wrong
      */
-    public void createOverlapRelations(List classesToIgnore) throws Exception {
+    public void createOverlapRelations(List classNamesToIgnore) throws Exception {
         osw.beginTransaction();
         Map chromosomeMap = makeChromosomeMap();
         Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
-            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classesToIgnore);
+            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore);
         }
         osw.commitTransaction();
     }
@@ -437,12 +437,12 @@ public class CalculateLocations
      * @param classNamesToIgnore a comma separated list of the names of those classes that should be
      * ignored when searching for overlaps.  Sub classes to these classes are ignored too
      */
-    private void createSubjectOverlapRelations(Chromosome subject, List classesToIgnore)
+    private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore)
         throws Exception {
         LOG.info("Creating overlaps for " + subject + ", identifier: "
                  + subject.getIdentifier());
 
-        Iterator overlapIterator = OverlapUtil.findOverlaps(os, subject, classesToIgnore);
+        Iterator overlapIterator = OverlapUtil.findOverlaps(os, subject, classNamesToIgnore);
 
         int count = 0;
 

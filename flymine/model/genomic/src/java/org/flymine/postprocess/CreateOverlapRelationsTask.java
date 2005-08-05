@@ -31,7 +31,7 @@ public class CreateOverlapRelationsTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
-    protected String objectStoreWriter, classesToIgnore;
+    protected String objectStoreWriter, classNamesToIgnore;
     protected ObjectStoreWriter osw;
 
     /**
@@ -43,12 +43,12 @@ public class CreateOverlapRelationsTask extends Task
     }
 
     /**
-     * Sets the value of classesToIgnore.
+     * Sets the value of classNamesToIgnore.
      * @param classNamesToIgnore a comma separated list of the names of those classes that should be
      * ignored when searching for overlaps.  Sub classes to these classes are ignored too
      */
-    public void setClassesToIgnore(String classesToIgnore) {
-        this.classesToIgnore = classesToIgnore;
+    public void setClassesToIgnore(String classNamesToIgnore) {
+        this.classNamesToIgnore = classNamesToIgnore;
     }
 
     private ObjectStoreWriter getObjectStoreWriter() throws Exception {
@@ -68,22 +68,22 @@ public class CreateOverlapRelationsTask extends Task
         if (objectStoreWriter == null) {
             throw new BuildException("objectStoreWriter attribute is not set");
         }
-        if (classesToIgnore == null) {
-            throw new BuildException("classesToIgnore attribute is not set");
+        if (classNamesToIgnore == null) {
+            throw new BuildException("classNamesToIgnore attribute is not set");
         }
 
         try {
             CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
             LOG.info("Starting CalculateLocations.createOverlapRelations()");
-            List classesToIgnoreList = new ArrayList();
+            List classNamesToIgnoreList = new ArrayList();
 
-            String[] classNames = StringUtil.split(classesToIgnore, ",");
+            String[] classNames = StringUtil.split(classNamesToIgnore, ",");
 
             for (int i = 0; i < classNames.length; i++) {
-                classesToIgnoreList.add(classNames[i].trim());
+                classNamesToIgnoreList.add(classNames[i].trim());
             }
 
-            cl.createOverlapRelations(classesToIgnoreList);
+            cl.createOverlapRelations(classNamesToIgnoreList);
         } catch (Exception e) {
             throw new BuildException("Failed to create OverlapRelations");
         }
