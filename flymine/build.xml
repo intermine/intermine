@@ -353,6 +353,16 @@
 
   <!-- ========== MODEL GENERATION/MERGING TARGETS - ORGANISED BY SOURCE ========== -->
 
+    
+  <!-- INTERPRO MODEL GENERATION -->
+
+  <!-- merge the interpro model additions with the current genomic model -->
+  <target name="merge-interpro-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/interpro/interpro_additions.xml"/>
+  </target>
+
+
+
   <!-- ENSEMBL MODEL GENERATION -->
 
   <!-- convert ensembl zargo to InterMine model -->
