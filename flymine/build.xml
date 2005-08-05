@@ -556,7 +556,7 @@
                 merge-go-model, merge-uniprot-model,
                 merge-protein_structure-model, merge-so-model, merge-orthologue-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
-                merge-chado-model, merge-homophila-model, merge-mage-model,
+                merge-chado-model, merge-homophila-model, merge-interpro-model,
                 merge-bdgp_clone-model, merge-drosdel-model, merge-shortcuts">
   </target>
 
