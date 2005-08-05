@@ -21,25 +21,27 @@ import java.util.LinkedHashMap;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
 
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
  * @author Mark Woodbridge
+ * @author Richard Smith
  */
 public class InparanoidConverter extends FileConverter
 {
-    protected static final String ORTHOLOGUE_NS = "http://www.flymine.org/model/genomic#";
+    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Map proteins = new HashMap();
+    protected Map bioEntities = new HashMap();
     protected Item db, analysis;
     protected Map ids = new HashMap();
     protected Map organisms = new LinkedHashMap();
+    protected ItemFactory itemFactory;
 
     /**
      * Constructor
@@ -48,6 +50,7 @@ public class InparanoidConverter extends FileConverter
      */
     public InparanoidConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
+        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         setupItems();
     }
 
@@ -56,7 +59,7 @@ public class InparanoidConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         String line, species = null, oldIndex = null;
-        Item protein = null;
+        Item bio = null;
 
         BufferedReader br = new BufferedReader(reader);
         while ((line = br.readLine()) != null) {
@@ -65,31 +68,37 @@ public class InparanoidConverter extends FileConverter
             if (!index.equals(oldIndex)) {
                 oldIndex = index;
                 species = array[2];
-                protein = newProtein(array[4], getOrganism(species));
+                bio = newBioEntity(array[4], getOrganism(species));
                 continue;
             }
 
-            Item newProtein = newProtein(array[4], getOrganism(array[2]));
+            Item newBio = newBioEntity(array[4], getOrganism(array[2]));
             Item result = newResult(array[3]);
 
-            // create two organisms with subjectProtein and objectProtein reversed
-            Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-            item.addReference(new Reference("subjectProtein", newProtein.getIdentifier()));
-            item.addReference(new Reference("objectProtein", protein.getIdentifier()));
+            // if BioEntity is a Translation then need to set [object|subject]Translation,
+            // if it is a Gene then set [object|subject]
+            String bioRef = (bio.getClassName().equals(GENOMIC_NS + "Gene")) ? "" : "Translation";
+            String newBioRef =
+                (newBio.getClassName().equals(GENOMIC_NS + "Gene")) ? "" : "Translation";
+
+            // create two organisms with subjectTranslation and objectTranslation reversed
+            Item item = createItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
+            item.setReference("subject" + newBioRef, newBio.getIdentifier());
+            item.setReference("object" + bioRef, bio.getIdentifier());
             item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier(), result.getIdentifier()})));
             writer.store(ItemHelper.convert(item));
 
-            item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-            item.addReference(new Reference("subjectProtein", protein.getIdentifier()));
-            item.addReference(new Reference("objectProtein", newProtein.getIdentifier()));
+            item = createItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
+            item.setReference("subject" + bioRef, bio.getIdentifier());
+            item.setReference("object" + newBioRef, newBio.getIdentifier());
             item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier(), result.getIdentifier()})));
             writer.store(ItemHelper.convert(item));
 
             if (!species.equals(array[2])) {
                 species = array[2];
-                protein = newProtein;
+                bio = newBio;
             }
         }
     }
@@ -99,20 +108,7 @@ public class InparanoidConverter extends FileConverter
      */
     public void close() throws ObjectStoreException {
         store(organisms.values());
-        store(proteins.values());
-    }
-
-    /**
-     * Convenience method for creating a new Item
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item newItem(String className) {
-        Item item = new Item();
-        item.setIdentifier(alias(className) + "_" + newId(className));
-        item.setClassName(ORTHOLOGUE_NS + className);
-        item.setImplementations("");
-        return item;
+        store(bioEntities.values());
     }
 
     private String newId(String className) {
@@ -127,20 +123,26 @@ public class InparanoidConverter extends FileConverter
     }
 
     /**
-     * Convenience method to create and cache proteins by SwissProt id
-     * @param swissProtId SwissProt identifier for the new Protein
+     * Convenience method to create and cache Genes/Proteins by identifier
+     * @param identifier identifier for the new Gene/Protein
      * @param organism the Organism for this protein
-     * @return a new protein Item
+     * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected Item newProtein(String swissProtId, Item organism) throws ObjectStoreException {
-        if (proteins.containsKey(swissProtId)) {
-            return (Item) proteins.get(swissProtId);
+    protected Item newBioEntity(String identifier, Item organism) throws ObjectStoreException {
+        if (bioEntities.containsKey(identifier)) {
+            return (Item) bioEntities.get(identifier);
         }
-        Item item = newItem("Protein");
-        item.addAttribute(new Attribute("primaryAccession", swissProtId));
-        item.addReference(new Reference("organism", organism.getIdentifier()));
-        proteins.put(swissProtId, item);
+        Item item = null;
+        if ("CE".equals(organism.getAttribute("abbreviation").getValue())) {
+            item = createItem("Gene");
+        } else {
+            item = createItem("Translation");
+        }
+        item.setAttribute("identifier", identifier);
+        item.setReference("organism", organism.getIdentifier());
+        bioEntities.put(identifier, item);
+
         return item;
     }
 
@@ -151,18 +153,24 @@ public class InparanoidConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected Item newResult(String confidence) throws ObjectStoreException {
-        Item item = newItem("ComputationalResult");
-        item.addAttribute(new Attribute("confidence", confidence));
-        item.addReference(new Reference("analysis", analysis.getIdentifier()));
+        Item item = createItem("ComputationalResult");
+        item.setAttribute("confidence", confidence);
+        item.setReference("analysis", analysis.getIdentifier());
         writer.store(ItemHelper.convert(item));
         return item;
     }
 
     private Item getOrganism(String abbrev) {
+        if (abbrev.startsWith("ens") || abbrev.startsWith("mod")) {
+            abbrev = abbrev.substring(3);
+        }
+        if (abbrev.length() != 2) {
+            throw new IllegalArgumentException("invalid organism abbreviation: " + abbrev);
+        }
         Item organism = (Item) organisms.get(abbrev);
         if (organism == null) {
-            organism = newItem("Organism");
-            organism.addAttribute(new Attribute("abbreviation", abbrev));
+            organism = createItem("Organism");
+            organism.setAttribute("abbreviation", abbrev);
             organisms.put(abbrev, organism);
         }
         return organism;
@@ -173,20 +181,32 @@ public class InparanoidConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected void setupItems() throws ObjectStoreException {
-        Item pub = newItem("Publication");
-        pub.addAttribute(new Attribute("pubMedId", "11743721"));
+        Item pub = createItem("Publication");
+        pub.setAttribute("pubMedId", "11743721");
 
-        analysis = newItem("ComputationalAnalysis");
-        analysis.addAttribute(new Attribute("algorithm", "INPARANOID"));
-        analysis.addReference(new Reference("publication", pub.getIdentifier()));
+        analysis = createItem("ComputationalAnalysis");
+        analysis.setAttribute("algorithm", "INPARANOID");
+        analysis.setReference("publication", pub.getIdentifier());
 
-        db = newItem("Database");
-        db.addAttribute(new Attribute("title", "INPARANOID"));
+        db = createItem("Database");
+        db.setAttribute("title", "INPARANOID");
 
         List toStore = Arrays.asList(new Object[] {db, analysis, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {
             writer.store(ItemHelper.convert((Item) i.next()));
         }
     }
+
+    /**
+     * Convenience method for creating a new Item
+     * @param className the name of the class
+     * @return a new Item
+     */
+    protected Item createItem(String className) {
+        return itemFactory.makeItem(alias(className) + "_" + newId(className),
+                                    GENOMIC_NS + className, "");
+    }
+
+
 }
 
