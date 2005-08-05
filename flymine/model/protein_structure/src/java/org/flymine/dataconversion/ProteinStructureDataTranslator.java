@@ -43,7 +43,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     protected static final String ENDL = System.getProperty("line.separator");
     protected String dataLocation;
     protected Item db;
-    protected Map proteinSequenceFamilies = new HashMap();
+    protected Map proteinFeatures = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -130,25 +130,25 @@ public class ProteinStructureDataTranslator extends DataTranslator
             modelledProteinStructure.addReference(new Reference("region",
                                                                 proteinRegion.getIdentifier()));
 
-            // sequenceFamily -> proteinSequenceFamily
+            // sequenceFamily -> proteinFeature
             Item sequenceFamily = getReference(srcItem, "sequence_family");
             String name = sequenceFamily.getAttribute("pfam_id").getValue();
-            Item proteinSequenceFamily = (Item) proteinSequenceFamilies.get(name);
-            if (proteinSequenceFamily == null) {
-                proteinSequenceFamily = createItem(tgtNs + "ProteinSequenceFamily", "");
-                proteinSequenceFamily.addAttribute(new Attribute("name", name));
-                proteinSequenceFamilies.put(name, proteinSequenceFamily);
+            Item proteinFeature = (Item) proteinFeatures.get(name);
+            if (proteinFeature == null) {
+                proteinFeature = createItem(tgtNs + "ProteinFeature", "");
+                proteinFeature.addAttribute(new Attribute("identifier", name));
+                proteinFeatures.put(name, proteinFeature);
             }
 
             // link proteinRegion and proteinSequenceFamily using annotation, and add shortcut
             Item annotation2 = createItem(tgtNs + "Annotation", "");
             annotation2.addReference(new Reference("subject", proteinRegion.getIdentifier()));
-            annotation2.addReference(new Reference("property", proteinSequenceFamily
+            annotation2.addReference(new Reference("property", proteinFeature
                                                   .getIdentifier()));
             annotation2.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier()})));
-            proteinRegion.addReference(new Reference("sequenceFamily",
-                                                     proteinSequenceFamily.getIdentifier()));
+            proteinRegion.addReference(new Reference("proteinFeature",
+                                                     proteinFeature.getIdentifier()));
 
             result.add(proteinRegion);
             result.add(protein);
@@ -156,7 +156,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             result.add(modelledProteinStructure);
             result.add(annotation);
             result.add(annotation2);
-            result.add(proteinSequenceFamily);
+            result.add(proteinFeature);
         }
 
         return result;
