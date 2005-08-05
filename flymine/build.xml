@@ -551,10 +551,10 @@
 
   <!-- create merged model from core genomic model and all model additions -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-                merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-psi-model, merge-rnai-model,
                 merge-ensembl-model, merge-phenotype-model,
                 merge-go-model, merge-uniprot-model,
-                merge-protein_structure-model, merge-so-model,
+                merge-protein_structure-model, merge-so-model, merge-orthologue-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-chado-model, merge-homophila-model, merge-mage-model,
                 merge-bdgp_clone-model, merge-drosdel-model, merge-shortcuts">
@@ -899,51 +899,6 @@
           depends="compile-genomic-java-from-db, filter-chado-small, retrieve-chado, load-chado"/>
 
 
-  <!-- ENSEMBL ORTHOLOGUES PIPELINE -->
-
-  <!-- retrieve ensembl orthologue/paralogue data into common tgt items database-->
-  <target name="retrieve-orthologues-ensembl" depends="prepare-build-model, compile-orthologue-java">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.ensembl-orthologue-tgt-items-std"/>
-    </ant>
-
-    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <convert-file clsName="org.flymine.dataconversion.OrthologueConverter"
-                  osName="osw.ensembl-orthologue-tgt-items"
-                  model="genomic"
-                  param1="AG"
-                  param2="DM">
-      <fileset dir="${shared.data}/orthologues/ensembl" includes="orthologues.AG-DM"/>
-    </convert-file>
-
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.ensembl-orthologue-tgt-items-std"/>
-    </ant>
-
-    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.common-tgt-items"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
-  <!-- Load data from ensembl orthologues into production -->
-  <target name="load-orthologues-ensembl" depends="copy-flymine-config">
-    <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="genomic.class.path"/>
-    </taskdef>
-
-    <load-orthologue integrationWriter="integration.production" source="os.ensembl-orthologue-translated" sourceName="orthologue-ensembl"/>
-  </target>
-
-
   <!-- INPARANOID ORTHOLOGUES PIPELINE -->
 
   <!-- retrieve inparanoid orthologue data into common tgt items database -->
@@ -960,7 +915,7 @@
 
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
                   osName="osw.inparanoid-orthologue-tgt-items" model="genomic">
-      <fileset dir="${shared.data}/orthologues/inparanoid" includes="orthologues.*"/>
+      <fileset dir="/shared/data/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
