@@ -11,6 +11,8 @@ package org.flymine.dataconversion;
  */
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
@@ -27,6 +29,7 @@ import org.apache.tools.ant.BuildException;
 public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
 {
 
+    private final Map geneMap = new HashMap();
 
     /**
      * Create a new TfbsGFF3RecordHandler for the given target model.
@@ -97,15 +100,22 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             throw new BuildException
                 ("gene attributes not in right format. please check the gff3 file");
         } else {
-            Item geneItem = createItem("Gene");
-            geneItem.setAttribute("organismDbId", (String) genes.get(0));
+            String organismDbId = (String) genes.get(0);
+            Item geneItem;
+            if (geneMap.containsKey(organismDbId)) {
+                geneItem = (Item) geneMap.get(organismDbId);
+            } else {
+                geneItem = createItem("Gene");
+                geneItem.setAttribute("organismDbId", organismDbId);
+                geneMap.put(organismDbId, geneItem);
+                addItem(geneItem);
+            }
             Item distanceRelation = createItem("DistanceRelation");
             distanceRelation.setAttribute("type", (String) genes.get(1));
             distanceRelation.setAttribute("distance", (String) genes.get(2));
             distanceRelation.setReference("object", feature.getIdentifier());
             distanceRelation.setReference("subject", geneItem.getIdentifier());
             feature.addToCollection("geneDistances", distanceRelation.getIdentifier());
-            addItem(geneItem);
             addItem(distanceRelation);
         }
     }
