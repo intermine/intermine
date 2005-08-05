@@ -417,27 +417,32 @@ public class CalculateLocations
     /**
      * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
      * objects that are located on chromosomes and overlap.
+     * @param classNamesToIgnore a comma separated list of the names of those classes that should be
+     * ignored when searching for overlaps.  Sub classes to these classes are ignored too
      * @throws Exception if anything goes wrong
      */
-    public void createOverlapRelations() throws Exception {
+    public void createOverlapRelations(List classesToIgnore) throws Exception {
         osw.beginTransaction();
         Map chromosomeMap = makeChromosomeMap();
         Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
-            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id));
+            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classesToIgnore);
         }
         osw.commitTransaction();
     }
 
     /**
      * Create OverlapRelation objects for locations that have the given subject.
+     * @param classNamesToIgnore a comma separated list of the names of those classes that should be
+     * ignored when searching for overlaps.  Sub classes to these classes are ignored too
      */
-    private void createSubjectOverlapRelations(Chromosome subject) throws Exception {
+    private void createSubjectOverlapRelations(Chromosome subject, List classesToIgnore)
+        throws Exception {
         LOG.info("Creating overlaps for " + subject + ", identifier: "
                  + subject.getIdentifier());
 
-        Iterator overlapIterator = OverlapUtil.findOverlaps(os, subject);
+        Iterator overlapIterator = OverlapUtil.findOverlaps(os, subject, classesToIgnore);
 
         int count = 0;
 

@@ -2074,11 +2074,22 @@
     <mappings operation="create-oligo-locations" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="create-overlap-relations" depends="compile-genomic-java-from-db">
-    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+  <target name="create-overlap-relations-flymine" depends="compile-genomic-java-from-db">
+    <taskdef name="create-overlap-relations"
+             classname="org.flymine.postprocess.CreateOverlapRelationsTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings operation="create-overlap-relations" objectStoreWriter="osw.production"/>
+    <create-overlap-relations objectStoreWriter="osw.production"
+                              classesToIgnore="Primer, Contig"/>
+  </target>
+
+  <target name="create-overlap-relations-t1dmine" depends="compile-genomic-java-from-db">
+    <taskdef name="create-overlap-relations"
+             classname="org.flymine.postprocess.CreateOverlapRelationsTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <create-overlap-relations objectStoreWriter="osw.production"
+                              classesToIgnore="Primer"/>
   </target>
 
   <target name="create-references" depends="compile-genomic-java-from-db">

@@ -14,6 +14,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -119,10 +121,6 @@ public class PostProcessTask extends Task
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOG.info("Starting CalculateLocations.createOligoLocations()");
                 cl.createOligoLocations();
-            } else if ("create-overlap-relations".equals(operation)) {
-                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOG.info("Starting CalculateLocations.createOverlapRelations()");
-                cl.createOverlapRelations();
             } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertReferences()");
