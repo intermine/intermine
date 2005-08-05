@@ -165,7 +165,11 @@ public class FileReadTask extends Task
 
         Class c;
         try {
-            c = Class.forName(className);
+            if (className.indexOf(".") == -1) {
+                c = Class.forName(os.getModel().getPackageName() + "." + className);
+            } else {
+                c = Class.forName(className);
+            }
         } catch (ClassNotFoundException e) {
             throw new BuildException("cannot find class for: " + className);
         }
