@@ -83,10 +83,11 @@
   <property name="create.attribute.indexes" value="false"/>
 
   <!-- file data sources -->
-  <property name="flybase.chado.melanogaster" location="/shared/data/flybase/release_4_2"/>
+  <property name="shared.data" location="/shared/data"/>
+  <property name="flybase.chado.melanogaster" location="${shared.data}/flybase/release_4_2"/>
   <property name="flybase.chado.melanogaster.fasta" location="${flybase.chado.melanogaster}/fasta"/>
   <property name="flybase.chado.melanogaster.gff" location="${flybase.chado.melanogaster}/gff"/>
-  <property name="flybase.chado.pseudoobscura" location="/shared/data/flybase/release_4_2"/>
+  <property name="flybase.chado.pseudoobscura" location="${shared.data}/flybase/release_4_2"/>
   <property name="flybase.chado.pseudoobscura.fasta" location="${flybase.chado.pseudoobscura}/fasta"/>
   <property name="flybase.chado.pseudoobscura.gff" location="${flybase.chado.pseudoobscura}/gff"/>
   <property name="flybase.uniprot.link.file" location="${flybase.chado.melanogaster}/cg2uniprot.txt"/>
@@ -908,7 +909,7 @@
                   model="genomic"
                   param1="AG"
                   param2="DM">
-      <fileset dir="/shared/data/orthologues/ensembl" includes="orthologues.AG-DM"/>
+      <fileset dir="${shared.data}/orthologues/ensembl" includes="orthologues.AG-DM"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -949,7 +950,7 @@
 
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
                   osName="osw.inparanoid-orthologue-tgt-items" model="genomic">
-      <fileset dir="/shared/data/orthologues/inparanoid" includes="orthologues.*"/>
+      <fileset dir="${shared.data}/orthologues/inparanoid" includes="orthologues.*"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -997,7 +998,7 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.RNAiConverter"
                   osName="osw.rnai-tgt-items" model="rnai">
-      <fileset dir="/shared/data/rnai" includes="*Set.txt"/>
+      <fileset dir="${shared.data}/rnai" includes="*Set.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1032,9 +1033,9 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.HomophilaConverter"
                   osName="osw.homophila-tgt-items" model="homophila"
-                  diseaseFile="/shared/data/homophila/homophila_diseases.txt"
-                  proteinGeneFile="/shared/data/homophila/protein_gene.txt">
-      <fileset dir="/shared/data/homophila/" includes="homophila_matches.txt"/>
+                  diseaseFile="${shared.data}/homophila/homophila_diseases.txt"
+                  proteinGeneFile="${shared.data}/homophila/protein_gene.txt">
+      <fileset dir="${shared.data}/homophila/" includes="homophila_matches.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1072,7 +1073,7 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.BDGPCloneConverter"
                   osName="osw.bdgp_clone-tgt-items" model="bdgp_clone">
-      <fileset dir="/shared/data/bdgp_clones/" includes="dgc2flybase.txt"/>
+      <fileset dir="${shared.data}/bdgp_clones/" includes="dgc2flybase.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1174,7 +1175,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-xml schema="${model}/psi/psi.xsd" model="psi" osName="osw.psi-src-items">
-      <fileset dir="/shared/data/psi">
+      <fileset dir="${shared.data}/psi">
         <include name="droso*.xml"/>
       </fileset>
     </convert-xml>
@@ -1202,7 +1203,7 @@
     <convert-xml schema="${model}/psi/psi.xsd"
                  model="psi"
                  osName="osw.psi-src-items">
-      <fileset dir="/shared/data/psi">
+      <fileset dir="${shared.data}/psi">
         <include name="caeel*.xml"/>
         <include name="drome*.xml"/>
       </fileset>
@@ -1278,7 +1279,7 @@
 
     <convert-file clsName="org.flymine.dataconversion.TaxonomyConverter"
                   osName="osw.taxonomy-tgt-items" model="genomic">
-      <fileset dir="/shared/data/taxonomy" includes="taxonomy.dat"/>
+      <fileset dir="${shared.data}/taxonomy" includes="taxonomy.dat"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1333,11 +1334,11 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <fileset dir="/shared/data/mage/E-FLYC-1"/>
-      <fileset dir="/shared/data/mage/E-FLYC-2"/>
-      <fileset dir="/shared/data/mage/E-FLYC-3"/>
-      <fileset dir="/shared/data/mage/E-FLYC-4"/>
-      <fileset dir="/shared/data/mage/E-FLYC-5"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-1"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-2"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-3"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-4"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-5"/>
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
@@ -1426,7 +1427,7 @@
     <convert-xml schema="${model}/protein_structure/protein_structure.xsd"
                  model="protein_structure"
                  osName="osw.protein_structure-src-items">
-      <fileset dir="/shared/data/kenji" includes="**/*.xml"/>
+      <fileset dir="${shared.data}/kenji" includes="**/*.xml"/>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1454,7 +1455,7 @@
                     target="osw.protein_structure-tgt-items"
                     srcModel="protein_structure"
                     tgtModel="genomic"
-                    dataLocation="/shared/data/kenji/data/pfam-3d/model/"/>
+                    dataLocation="${shared.data}/kenji/data/pfam-3d/model/"/>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1530,7 +1531,7 @@
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
-      <fileset dir="/shared/data/go-annotation/">
+      <fileset dir="${shared.data}/go-annotation/">
         <include name="flybase/2005-07-26/gene_association.fb"/>
         <include name="wormbase/2005-04-06/gene_association.wb"/>
         <include name="uniprot/2005-07-25/gene_association_ag"/>
@@ -1584,7 +1585,7 @@
                    infoSourceTitle="FlyReg"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FlyRegGFF3RecordHandler">
-      <fileset dir="/shared/data/flyreg">
+      <fileset dir="${shared.data}/flyreg">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1637,7 +1638,7 @@
                    infoSourceTitle="INDAC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
-      <fileset dir="/shared/data/long_oligo">
+      <fileset dir="${shared.data}/long_oligo">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1690,7 +1691,7 @@
                    infoSourceTitle="Genetics"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TilingPathGFF3RecordHandler">
-      <fileset dir="/shared/data/tiling">
+      <fileset dir="${shared.data}/tiling">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1742,10 +1743,10 @@
                     orgAbbrev ="HS"
                     infoSourceTitle = "UCSC"
                     model ="genomic">
-      <fileset dir ="/shared/data/human">
+      <fileset dir ="${shared.data}/human">
           <include name ="tfbs/*.gff"/>
       </fileset>
-      <!--fileset dir ="/shared/data/gff3">
+      <!--fileset dir ="${shared.data}/gff3">
         <include name ="test.gff"/>
       </fileset-->
 
@@ -1802,7 +1803,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
-      <fileset dir="/shared/data/uniprot">
+      <fileset dir="${shared.data}/uniprot">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -2199,6 +2200,18 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <mappings operation="set-collection-counts" objectStoreWriter="osw.production"/>
+  </target>
+  
+  <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db">
+    <taskdef name="tsv-file-reader" classname="org.flymine.task.TSVFileReaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <tsv-file-reader oswAlias="osw.production" organismAbbreviation="DM"
+                     configurationFile="model/genomic/resources/flymine/drosophila_fullname_reader.properties">
+      <fileset dir="${flybase.chado.melanogaster}">
+        <include name="flyBaseFullNameWT.txt"/>
+      </fileset>
+    </tsv-file-reader>
   </target>
 
   <target name="post-process">
@@ -3265,7 +3278,7 @@
                    osName="osw.gene-synonym-tgt-items"
                    model="ensembl-human"
                    synonymtype="entrezGene">
-      <fileset dir ="/shared/data/human/geneSynonym/">
+      <fileset dir ="${shared.data}/human/geneSynonym/">
         <include name ="ensembl_entrezgene.tsv"/>
       </fileset>
     </convert-file>
@@ -3315,7 +3328,7 @@
                    osName="osw.gene-synonym-tgt-items"
                    model="ensembl-human"
                    synonymtype="ccds">
-      <fileset dir ="/shared/data/human/geneSynonym/">
+      <fileset dir ="${shared.data}/human/geneSynonym/">
         <include name ="ensembl_ccds.tsv"/>
       </fileset>
     </convert-file>
@@ -3365,7 +3378,7 @@
                    osName="osw.gene-synonym-tgt-items"
                    model="ensembl-human"
                    synonymtype="embl">
-      <fileset dir ="/shared/data/human/geneSynonym/">
+      <fileset dir ="${shared.data}/human/geneSynonym/">
         <include name ="ensembl_embl.tsv"/>
       </fileset>
     </convert-file>
@@ -3522,7 +3535,7 @@
 
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic">
-      <fileset dir="/shared/data/go-annotation/human">
+      <fileset dir="${shared.data}/go-annotation/human">
         <include name="gene_association*"/>
       </fileset>
     </convert-file>
@@ -3559,7 +3572,7 @@
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" 
                   model="genomic">
-      <fileset dir="/shared/data/go-annotation/mouse">
+      <fileset dir="${shared.data}/go-annotation/mouse">
         <include name="gene_association*"/>
       </fileset>
     </convert-file>
@@ -3646,7 +3659,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/tfbs">
+      <fileset dir ="${shared.data}/human/tfbs">
         <include name ="tfbsConsSites_withFactors.gff"/>
       </fileset>
     </retrieve-file>
@@ -3719,7 +3732,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FirstEFGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/firstEF">
+      <fileset dir ="${shared.data}/human/firstEF">
         <include name ="firstEF3new.gff"/>
       </fileset>
     </retrieve-file>
@@ -3792,7 +3805,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.RegionGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/encodeRegions/">
+      <fileset dir ="${shared.data}/human/encodeRegions/">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
@@ -3865,7 +3878,7 @@
                    infoSourceTitle="T1DBase"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.DiseaseRegionGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/diseaseRegions/">
+      <fileset dir ="${shared.data}/human/diseaseRegions/">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
@@ -3939,7 +3952,7 @@
     <convert-file clsName="org.flymine.dataconversion.EnsemblDiseaseConverter"
                    osName="osw.ensembl-disease-tgt-items"
                    model="ensembl-disease">
-      <fileset dir ="/shared/data/ensemblDisease/">
+      <fileset dir ="${shared.data}/ensemblDisease/">
         <include name ="*.tsv"/>
       </fileset>
     </convert-file>
@@ -3994,7 +4007,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
-      <fileset dir ="/shared/data/human/comparativeGenomics">
+      <fileset dir ="${shared.data}/human/comparativeGenomics">
         <include name ="mouseChain.gff"/>
       </fileset>
     </retrieve-file>
@@ -4070,7 +4083,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
-      <fileset dir ="/shared/data/human/comparativeGenomics">
+      <fileset dir ="${shared.data}/human/comparativeGenomics">
         <include name ="opposumChain.gff"/>
       </fileset>
     </retrieve-file>
@@ -4144,7 +4157,7 @@
                    infoSourceTitle="HSCL"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsClusterGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/tfbscluster">
+      <fileset dir ="${shared.data}/human/tfbscluster">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
