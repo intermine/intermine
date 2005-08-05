@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
+import org.apache.log4j.Logger;
 
 /**
  * Read a file of tab separated values.  Use one column as the key to look up objects and use the
@@ -40,6 +41,8 @@ import org.apache.tools.ant.types.FileSet;
 
 public class TSVFileReaderTask extends FileReadTask
 {
+    private static final Logger LOG = Logger.getLogger(TSVFileReaderTask.class);
+
     private File configurationFile = null;
 
     /**
@@ -69,10 +72,6 @@ public class TSVFileReaderTask extends FileReadTask
             throw new BuildException("configurationFile not set");
         }
 
-        if (getKeyFieldName() == null) {
-            throw new BuildException("keyFieldName not set");
-        }
-
         Model model = getObjectStoreWriter().getModel();
 
         DelimitedFileConfiguration dfc;
@@ -97,26 +96,38 @@ public class TSVFileReaderTask extends FileReadTask
         setClassName(dfc.getConfigClassDescriptor().getName());
         setKeyFieldName(dfc.keyFieldDescriptor.getName());
 
-        Map idMap = getIdMap(osw.getObjectStore());
-        
-        Iterator fileSetIter = getFileSets().iterator();
-        
-        while (fileSetIter.hasNext()) {
-            FileSet fileSet = (FileSet) fileSetIter.next();
-            
-            DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
-            String[] files = ds.getIncludedFiles();
-            for (int i = 0; i < files.length; i++) {
-                File file = new File(ds.getBasedir(), files[i]);
-                System.err .println("Processing file: " + file.getName());
+        File currentFile = null;
 
-                try {
-                    Iterator tsvIter = TextFileUtil.parseTabDelimitedReader(new FileReader(file));
+        try {
+            osw.beginTransaction();
+            
+            Map idMap = getIdMap(osw.getObjectStore());
+            
+            Iterator fileSetIter = getFileSets().iterator();
+            
+            while (fileSetIter.hasNext()) {
+                FileSet fileSet = (FileSet) fileSetIter.next();
                 
+                DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
+                String[] files = ds.getIncludedFiles();
+                for (int i = 0; i < files.length; i++) {
+                    currentFile = new File(ds.getBasedir(), files[i]);
+                    System.err .println("Processing file: " + currentFile.getName());
+                    
+                    Iterator tsvIter =
+                        TextFileUtil.parseTabDelimitedReader(new FileReader(currentFile));
+                    
                     while (tsvIter.hasNext()) {
                         String[] thisRow = (String[]) tsvIter.next();
                         String keyColumnValue = thisRow[dfc.getKeyColumnNumber()];
                         Integer objectId = (Integer) idMap.get(keyColumnValue);
+
+                        if (objectId == null) {
+                            LOG.warn("cannot find object for ID: " + keyColumnValue
+                                     + " read from " + currentFile);
+                            continue;
+                        }
+
                         InterMineObject o = 
                             osw.getObjectStore().getObjectById(objectId);
                         
@@ -132,16 +143,19 @@ public class TSVFileReaderTask extends FileReadTask
                             }
                         }
                     }
-               } catch (NoSuchElementException e) {
-                   throw new BuildException("no fasta sequences in: " + file, e);
-               } catch (FileNotFoundException e) {
-                    throw new BuildException("problem reading file - file not found: " + file, e);
-                } catch (IOException e) {
-                    throw new BuildException("error while reading from: " + file, e);
-                } catch (ObjectStoreException e) {
-                    throw new BuildException("error fetching object from ObjectStore: ", e);
                 }
             }
+
+            osw.commitTransaction();
+        } catch (NoSuchElementException e) {
+            throw new BuildException("no fasta sequences in: " + currentFile, e);
+        } catch (FileNotFoundException e) {
+            throw new BuildException("problem reading file - file not found: " + currentFile, e);
+        } catch (IOException e) {
+            throw new BuildException("error while reading from: " + currentFile, e);
+        } catch (ObjectStoreException e) {
+            throw new BuildException("error fetching object from ObjectStore: ", e);
         }
+
     }
 }

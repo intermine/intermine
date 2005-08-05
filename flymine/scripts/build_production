@@ -353,7 +353,7 @@ run: read-flybase-chromosome-fasta calculate-locations
 run: create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
 run: create-indexes-production-attribute
-run: set-collection-counts
+run: set-collection-counts set-name-and-wildtypefunction
 
 dump: postprocess-1
 
