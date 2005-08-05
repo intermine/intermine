@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.Orthologue" extends="org.flymine.model.genomic.Relation" is-interface="true">
-  <reference name="objectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
-  <reference name="subjectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
+  <reference name="objectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <reference name="subjectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
 </class>
 <class name="org.flymine.model.genomic.Paralogue" extends="org.flymine.model.genomic.Relation" is-interface="true">
-  <reference name="objectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
-  <reference name="subjectProtein" referenced-type="org.flymine.model.genomic.Protein"/>
+  <reference name="objectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <reference name="subjectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>

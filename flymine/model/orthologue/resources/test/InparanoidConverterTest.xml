@@ -1,42 +1,42 @@
 <items>
   <item id="6_1" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectProtein" ref_id="4_1"/>
-    <reference name="subjectProtein" ref_id="4_2"/>
+    <reference name="object" ref_id="4_1"/>
+    <reference name="subject" ref_id="4_2"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_1"/>
     </collection>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="primaryAccession" value="TOR1_YEAST"/>
+  <item id="7_2" class="http://www.flymine.org/model/genomic#Translation">
+    <attribute name="identifier" value="CG10844-PA"/>
     <reference name="organism" ref_id="3_2"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="INPARANOID"/>
     <reference name="publication" ref_id="0_1"/>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="primaryAccession" value="O01438"/>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="T21E12.4"/>
     <reference name="organism" ref_id="3_1"/>
   </item>
   <item id="5_3" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="confidence" value="0.566"/>
     <reference name="analysis" ref_id="1_1"/>
   </item>
-  <item id="7_2" class="http://www.flymine.org/model/genomic#Orthologue">
-    <reference name="objectProtein" ref_id="4_3"/>
-    <reference name="subjectProtein" ref_id="4_1"/>
+  <item id="8_2" class="http://www.flymine.org/model/genomic#Orthologue">
+    <reference name="objectTranslation" ref_id="7_1"/>
+    <reference name="subject" ref_id="4_1"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_2"/>
     </collection>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="abbreviation" value="SC"/>
+    <attribute name="abbreviation" value="DM"/>
   </item>
   <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectProtein" ref_id="4_4"/>
-    <reference name="subjectProtein" ref_id="4_3"/>
+    <reference name="objectTranslation" ref_id="7_2"/>
+    <reference name="subjectTranslation" ref_id="7_1"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_3"/>
@@ -49,21 +49,21 @@
     <attribute name="confidence" value="1.000"/>
     <reference name="analysis" ref_id="1_1"/>
   </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="primaryAccession" value="TOR2_YEAST"/>
+  <item id="7_1" class="http://www.flymine.org/model/genomic#Translation">
+    <attribute name="identifier" value="CG32019-PA"/>
     <reference name="organism" ref_id="3_2"/>
   </item>
-  <item id="7_1" class="http://www.flymine.org/model/genomic#Orthologue">
-    <reference name="objectProtein" ref_id="4_1"/>
-    <reference name="subjectProtein" ref_id="4_3"/>
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Orthologue">
+    <reference name="object" ref_id="4_1"/>
+    <reference name="subjectTranslation" ref_id="7_1"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_2"/>
     </collection>
   </item>
   <item id="6_3" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectProtein" ref_id="4_3"/>
-    <reference name="subjectProtein" ref_id="4_4"/>
+    <reference name="objectTranslation" ref_id="7_1"/>
+    <reference name="subjectTranslation" ref_id="7_2"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_3"/>
@@ -77,8 +77,8 @@
     <attribute name="abbreviation" value="CE"/>
   </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectProtein" ref_id="4_2"/>
-    <reference name="subjectProtein" ref_id="4_1"/>
+    <reference name="object" ref_id="4_2"/>
+    <reference name="subject" ref_id="4_1"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_1"/>
@@ -87,8 +87,8 @@
   <item id="0_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="11743721"/>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="primaryAccession" value="Q95Q95"/>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="ZK617.1b"/>
     <reference name="organism" ref_id="3_1"/>
   </item>
 </items>
