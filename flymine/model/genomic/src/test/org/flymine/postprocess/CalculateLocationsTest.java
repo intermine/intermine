@@ -10,6 +10,7 @@ package org.flymine.postprocess;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.PartialLocation;
+import org.flymine.model.genomic.ReversePrimer;
 import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.OverlapRelation;
@@ -142,6 +144,18 @@ public class CalculateLocationsTest extends TestCase {
             exonLocs[i] = createLocation(chr, exons[i], 1, start, end, Location.class);
             exonLocs[i].setId(new Integer(1000 + exonId));
         }
+        
+        ReversePrimer rp =
+            (ReversePrimer) DynamicUtil.createObject(Collections.singleton(ReversePrimer.class));
+        rp.setId(new Integer(3000));
+        rp.setLength(new Integer(100));
+        rp.setChromosome(chr);
+
+        Location rpLoc = createLocation(chr, rp, 1, 1, 100, Location.class);
+        rpLoc.setId(new Integer(3001));
+
+        toStore.add(rp);
+        toStore.add(rpLoc);
 
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
@@ -153,7 +167,9 @@ public class CalculateLocationsTest extends TestCase {
         }
 
         CalculateLocations cl = new CalculateLocations(osw);
-        cl.createOverlapRelations();
+        List classesToIgnore = new ArrayList();
+        classesToIgnore.add("Primer");
+        cl.createOverlapRelations(classesToIgnore);
 
         ObjectStore os = osw.getObjectStore();
 
@@ -210,11 +226,13 @@ public class CalculateLocationsTest extends TestCase {
                     lsf2.getId().intValue() == expectedOverlaps[i][1] ||
                     lsf1.getId().intValue() == expectedOverlaps[i][0] &&
                     lsf2.getId().intValue() == expectedOverlaps[i][1]) {
+                    System.err.println (lsf1.getId() + " - "+ lsf2.getId());
                     continue RESULTS;
                 }
             }
 
-            fail("didn't find overlap " + lsf1.getId() + ", "+ lsf2.getId() + " in results");
+            fail("didn't find overlap " + lsf1.getId() + ", "+ lsf2.getId()
+                 + " in expected results");
         }
     }
 

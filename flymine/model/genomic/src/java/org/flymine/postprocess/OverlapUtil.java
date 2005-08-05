@@ -22,21 +22,23 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
-import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -53,11 +55,37 @@ public abstract class OverlapUtil
      * on the given subject (generally a Chromosome).
      * @param os the ObjectStore to query
      * @param subject the LocatedSequenceFeature (eg. a Chromosome) where the LSFs are located
+     * @param classNamesToIgnore a comma separated list of the names of those classes that should be
+     * ignored when searching for overlaps.  Sub classes to these classes are ignored too
      * @return an Iterator over the overlapping features
      * @throws ObjectStoreException if an error occurs while writing
+     * @throws ClassNotFoundException if there is an ObjectStore problem
      */
-    public static Iterator findOverlaps(final ObjectStore os, LocatedSequenceFeature subject)
-        throws ObjectStoreException {
+    public static Iterator findOverlaps(final ObjectStore os, LocatedSequenceFeature subject,
+                                        List classNamesToIgnore)
+        throws ObjectStoreException, ClassNotFoundException {
+        Model model = os.getModel();
+
+        Set classesToIgnore = new HashSet();
+
+        Iterator classNamesToIgnoreIter = classNamesToIgnore.iterator();
+
+        while (classNamesToIgnoreIter.hasNext()) {
+            String className = (String) classNamesToIgnoreIter.next();
+
+            String fullClassName;
+
+            if (className.indexOf(".") == -1) {
+                fullClassName = model.getPackageName() + "." + className;
+            } else {
+                fullClassName = className;
+            }
+
+            Class thisClass = Class.forName(fullClassName);
+
+            classesToIgnore.add(thisClass);
+        }
+
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(cs);
@@ -71,9 +99,17 @@ public abstract class OverlapUtil
         q.addFrom(qcObj);
         q.addToSelect(qcObj);
 
-        QueryClass qcSub = new QueryClass(BioEntity.class);
+        QueryClass qcSub;
+        
+        if (subject instanceof Chromosome) {
+            // Special case that will hopefully make things faster 
+            qcSub = new QueryClass(Chromosome.class);
+        } else {
+            qcSub = new QueryClass(LocatedSequenceFeature.class);
+        }
+        
         q.addFrom(qcSub);
-
+        
         QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
         cs.addConstraint(cc1);
@@ -115,6 +151,11 @@ public abstract class OverlapUtil
 
             Location location = (Location) rr.get(0);
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+
+            if (isAClassToIgnore(classesToIgnore, lsf)) {
+                continue;
+            }
+
             SimpleLoc simpleLoc = new SimpleLoc(location, lsf);
 
             locationsByLength.put(simpleLoc, simpleLoc);
@@ -122,6 +163,24 @@ public abstract class OverlapUtil
         }
 
         return new OverlappingFeaturesIterator(os, locationsByLength, locationsByStartPos);
+    }
+
+    /**
+     * Return true if and only if the given LocatedSequenceFeature should be ignored when looking
+     * for overlaps.
+     */
+    private static boolean isAClassToIgnore(Set classesToIgnore, LocatedSequenceFeature lsf) {
+        Iterator classesToIgnoreIter = classesToIgnore.iterator();
+
+        while (classesToIgnoreIter.hasNext()) {
+            Class thisClass = (Class) classesToIgnoreIter.next();
+
+            if (thisClass.isAssignableFrom(lsf.getClass())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -134,6 +193,7 @@ public abstract class OverlapUtil
         private Iterator locationsByLengthIter = null;
         private Iterator otherLocationIter = null;
         private Location currentLocation = null;
+
 
         private OverlappingFeaturesIterator(ObjectStore os, TreeMap locationsByLengthMap,
                                             TreeMap locationsByStartPos) {
@@ -174,11 +234,11 @@ public abstract class OverlapUtil
         }
 
         public Object next() throws NoSuchElementException {
-                Location returnArray[] = new Location[2];
-                returnArray[0] = currentLocation;
-                returnArray[1] = (Location) otherLocationIter.next();
-                return returnArray;
-           }
+            Location returnArray[] = new Location[2];
+            returnArray[0] = currentLocation;
+            returnArray[1] = (Location) otherLocationIter.next();
+            return returnArray;
+        }
 
         public void remove() throws UnsupportedOperationException {
             throw new UnsupportedOperationException();
@@ -277,7 +337,7 @@ public abstract class OverlapUtil
                             return 1;
                         } else {
                             return 0;
-                            }
+                        }
                     }
                 }
             }
