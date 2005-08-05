@@ -19,6 +19,7 @@
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="org.flymine.model.genomic.GOAnnotation" ordered="true"/>
+  <collection name="allGoAnnotation" referenced-type="org.flymine.model.genomic.GOAnnotation" ordered="true"/>
 </class>
 </classes>
 
