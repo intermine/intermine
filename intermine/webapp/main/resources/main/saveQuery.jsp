@@ -16,10 +16,5 @@
       <fmt:message key="query.export"/>
     </html:link>
   </div>
-  <div class="exportQueryLink">
-    <html:link action="/importQuery">
-      <fmt:message key="query.import"/>
-    </html:link>
-  </div>
 </c:if>
 <!-- /saveQuery.jsp -->

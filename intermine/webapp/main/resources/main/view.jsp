@@ -12,10 +12,11 @@
 
 <a name="showing"></a>
 
-  <div class="heading">
-    <fmt:message key="view.notEmpty.description"/><im:helplink key="view.help.output"/>
-  </div>
-  <c:choose>
+<div class="heading">
+  <fmt:message key="view.notEmpty.description"/><im:helplink key="view.help.output"/>
+</div>
+
+<c:choose>
   <c:when test="${empty QUERY.view}">
     <div class="body">
       <fmt:message key="view.empty.description"/>
@@ -126,4 +127,15 @@
     </div>
   </c:otherwise>
 </c:choose>
+
+<!--
+<div class="body">
+  <div class="exportQueryLink">
+    <html:link action="/importQuery">
+      <fmt:message key="query.import"/>
+    </html:link>
+  </div>
+</div>
+-->
+
 <!-- /view.jsp -->
