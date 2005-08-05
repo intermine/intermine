@@ -625,7 +625,9 @@ public class CreateReferences
         }
     }
 
-
+    /**
+     * Creates a collection of GOAnnotation objects on Genes.
+     */
     protected void createGOAnnotationCollection() throws Exception {
         Query q = new Query();
 
