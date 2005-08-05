@@ -62,4 +62,81 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         assertTrue(storedObjects.get(new Integer(100)) == o4);
         assertTrue(((Company) storedObjects.get(new Integer(100))).getId().equals(new Integer(100)));
     }
+
+    public void testStoreTransaction() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os.setModel(Model.getInstanceByName("testmodel"));
+        ObjectStoreWriterDummyImpl osw = new ObjectStoreWriterDummyImpl(os);
+        
+        osw.beginTransaction();
+
+        InterMineObject o1 = 
+            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+        osw.store(o1);
+        
+        InterMineObject o2 = 
+            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+        o2.setId(new Integer(1));
+        osw.store(o2);
+        
+        InterMineObject o3 =
+            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+        osw.store(o3);
+
+        assertTrue(osw.isInTransaction());
+
+        osw.commitTransaction();
+
+        assertFalse(osw.isInTransaction());
+        
+        Map storedObjects = osw.getStoredObjects();
+        
+        assertEquals(3, storedObjects.size());
+
+        assertTrue(storedObjects.get(new Integer(0)) == o1);
+        assertTrue(((Company) storedObjects.get(new Integer(0))).getId().equals(new Integer(0)));
+        assertTrue(storedObjects.get(new Integer(1)) == o2);
+        assertTrue(((Company) storedObjects.get(new Integer(1))).getId().equals(new Integer(1)));
+        assertTrue(storedObjects.get(new Integer(2)) == o3);
+        assertTrue(((Company) storedObjects.get(new Integer(2))).getId().equals(new Integer(2)));
+
+
+
+        // an aborted transaction
+        osw.beginTransaction();
+
+        assertTrue(osw.isInTransaction());
+
+        InterMineObject o4 = 
+            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+        o4.setId(new Integer(100));
+        osw.store(o4);
+
+        
+        InterMineObject o5 = 
+            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+        osw.store(o5);
+        
+        storedObjects = osw.getStoredObjects();
+
+        assertEquals(5, storedObjects.size());
+        
+        osw.abortTransaction();
+
+        assertFalse(osw.isInTransaction());
+
+        storedObjects = osw.getStoredObjects();
+
+        // check that we have the same objects as before
+
+
+        assertEquals(3, storedObjects.size());
+        
+        assertTrue(storedObjects.get(new Integer(0)) == o1);
+        assertTrue(((Company) storedObjects.get(new Integer(0))).getId().equals(new Integer(0)));
+        assertTrue(storedObjects.get(new Integer(1)) == o2);
+        assertTrue(((Company) storedObjects.get(new Integer(1))).getId().equals(new Integer(1)));
+        assertTrue(storedObjects.get(new Integer(2)) == o3);
+        assertTrue(((Company) storedObjects.get(new Integer(2))).getId().equals(new Integer(2)));
+    }
 }

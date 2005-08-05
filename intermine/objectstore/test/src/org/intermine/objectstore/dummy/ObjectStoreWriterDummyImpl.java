@@ -36,8 +36,10 @@ import java.util.Set;
 public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 {
     private Map storedObjects = new HashMap();
+    // a holder for the old storedObjects Map when we are in a transaction
+    private Map savedObjects = null;
     private ObjectStore os;
-    
+
     // used to generate unique IDs
     private int idCounter = 0;
 
@@ -69,19 +71,25 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
     }
 
     public boolean isInTransaction() throws ObjectStoreException {
-       throw new UnsupportedOperationException();
+       if (savedObjects == null) {
+           return false;
+       } else {
+           return true;
+       }
     }
 
     public void beginTransaction() throws ObjectStoreException {
-        throw new UnsupportedOperationException();
+        savedObjects = storedObjects;
+        storedObjects = new HashMap(savedObjects);
     }
 
     public void commitTransaction() throws ObjectStoreException {
-        throw new UnsupportedOperationException();
+        savedObjects = null;
     }
 
     public void abortTransaction() throws ObjectStoreException {
-        throw new UnsupportedOperationException();
+        storedObjects = savedObjects;
+        savedObjects = null;
     }
 
     public void close() throws ObjectStoreException {
