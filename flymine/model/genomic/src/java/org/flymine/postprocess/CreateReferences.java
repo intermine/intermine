@@ -641,10 +641,6 @@ public class CreateReferences
         q.addToSelect(qcGOAnnotation);
         q.addToOrderBy(qcGOAnnotation);
 
-        QueryClass qcAnnotation = new QueryClass(Annotation.class);
-        q.addFrom(qcAnnotation);
-        q.addToSelect(qcAnnotation);
-
         QueryCollectionReference geneAnnCol =
             new QueryCollectionReference(qcGene, "annotations");
         ContainsConstraint ccGeneAnnotations =
