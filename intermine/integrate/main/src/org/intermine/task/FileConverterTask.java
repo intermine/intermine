@@ -33,12 +33,13 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 
 /**
- * Initiates retrieval and conversion of data from a source database
+ * Initiates retrieval and conversion of data from a source file.
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
  * @author Richard Smith
  * @author Matthew Wakeling
+ * @author Thomas Riley
  */
 public class FileConverterTask extends ConverterTask implements DynamicAttribute
 {
@@ -180,6 +181,11 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
         }
     }
 
+    /**
+     * Handle an attribute that we don't have a setter for.
+     * @param name the attribute name
+     * @param value the attribute value
+     */
     public void setDynamicAttribute(String name, String value)
         throws BuildException {
         dynamicAttrs.put(name, value);
