@@ -60,7 +60,7 @@ import org.apache.log4j.Logger;
 public class DataLoaderHelper
 {
     private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
-    
+
     protected static Map sourceKeys = new HashMap();
     protected static Map modelDescriptors = new HashMap();
 
@@ -261,7 +261,7 @@ public class DataLoaderHelper
             default:
                 return q;
             }
-   
+
     }
 
     /**
@@ -290,8 +290,8 @@ public class DataLoaderHelper
             primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
         }
 
-        LOG.info("primary keys for class " + cld.getName() + " = " + primaryKeys);
-        
+        LOG.debug("primary keys for class " + cld.getName() + " = " + primaryKeys);
+
         Set returnSet = new LinkedHashSet();
 
         Iterator pkSetIter = primaryKeys.iterator();
