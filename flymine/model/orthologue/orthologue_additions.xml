@@ -8,6 +8,7 @@
   <reference name="objectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
   <reference name="subjectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
 </class>
+<class name="org.flymine.model.genomic.Translation" is-interface="true"/>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
 </class>
