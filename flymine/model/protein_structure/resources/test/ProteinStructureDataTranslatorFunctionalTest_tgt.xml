@@ -21,7 +21,7 @@
   </item>
   <item id="-1_2" class="http://www.flymine.org/model/genomic#ProteinRegion">
     <reference name="protein" ref_id="-1_3"/>
-    <reference name="sequenceFamily" ref_id="-1_7"/>
+    <reference name="proteinFeature" ref_id="-1_7"/>
   </item>
   <item id="-1_5" class="http://www.flymine.org/model/genomic#ModelledProteinStructure">
     <attribute name="QScore" value="-0.49"/>
@@ -32,8 +32,8 @@
   <item id="-1_3" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="O01367"/>
   </item>
-  <item id="-1_7" class="http://www.flymine.org/model/genomic#ProteinSequenceFamily">
-    <attribute name="name" value="PF00013"/>
+  <item id="-1_7" class="http://www.flymine.org/model/genomic#ProteinFeature">
+    <attribute name="identifier" value="PF00013"/>
   </item>
   <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="Pfam"/>
