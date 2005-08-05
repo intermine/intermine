@@ -87,7 +87,7 @@ public class ExportAction extends InterMineAction
             return tableExporter.export(mapping, form, request, response);
         }
     }
-
+    
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      *
@@ -107,7 +107,8 @@ public class ExportAction extends InterMineAction
         HttpSession session = request.getSession();
 
         response.setContentType("Application/vnd.ms-excel");
-        response.setHeader("Content-Disposition ", "inline; filename=results-table.xsl");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Content-Disposition", "attachment; filename=\"results-table.xls\"");
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
@@ -211,7 +212,8 @@ public class ExportAction extends InterMineAction
         HttpSession session = request.getSession();
 
         response.setContentType("text/comma-separated-values");
-        response.setHeader("Content-Disposition ", "inline; filename=results-table.csv");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Content-Disposition", "inline; filename=\"results-table.csv\"");
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
@@ -241,7 +243,8 @@ public class ExportAction extends InterMineAction
         HttpSession session = request.getSession();
 
         response.setContentType("text/tab-separated-values");
-        response.setHeader("Content-Disposition ", "inline; filename=results-table.txt");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Content-Disposition", "inline; filename=\"results-table.txt\"");
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
