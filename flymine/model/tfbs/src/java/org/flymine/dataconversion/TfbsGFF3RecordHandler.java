@@ -101,10 +101,10 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
                     } else {
                         protein = getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
                                   + "Protein");
-                        proteinMap.put(idAcc, protein);
                         protein.setAttribute("primaryAccession", idAcc);
                         protein.setReference("organism", getOtherOrganism(idOrg).getIdentifier());
                         protein.addCollection(getUniprotRefList());
+                        proteinMap.put(idAcc, protein);
                         addItem(protein);
 
                         synonym = getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
