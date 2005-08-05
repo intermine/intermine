@@ -4105,7 +4105,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gff3 integrationWriter="integration.genomic-test"
+    <load-gff3 integrationWriter="integration.production"
                source="os.gff3-translated"
                sourceName="opposumchain"
                ignoreDuplicates="false"/>
@@ -4158,7 +4158,7 @@
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsClusterGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/tfbscluster">
-        <include name ="*.gff"/>
+        <include name ="*.gff3"/>
       </fileset>
     </retrieve-file>
 
@@ -4179,7 +4179,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gff3 integrationWriter="integration.production"
+    <load-gff3 integrationWriter="integration.genomic-test"
                source="os.gff3-translated"
                sourceName="tfbscluster"
                ignoreDuplicates="false"/>
@@ -4226,6 +4226,6 @@
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
-
+ 
 </project>
 
