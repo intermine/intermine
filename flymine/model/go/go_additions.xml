@@ -2,12 +2,6 @@
 <classes>
 <class name="org.flymine.model.genomic.GOTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
   <attribute name="namespace" type="java.lang.String"/>
-  <attribute name="description" type="java.lang.String"/>
-  <collection name="synonyms" referenced-type="org.flymine.model.genomic.OntologyTermSynonym" ordered="true"/>
-</class>
-<class name="org.flymine.model.genomic.OntologyTermSynonym" is-interface="true">
-  <attribute name="name" type="java.lang.String"/>
-  <attribute name="type" type="java.lang.String"/>
 </class>
 <class name="org.flymine.model.genomic.GOAnnotation" extends="org.flymine.model.genomic.Annotation" is-interface="true">
   <attribute name="identifier" type="java.lang.String"/>

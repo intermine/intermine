@@ -94,7 +94,7 @@ public class DagConverterTask extends Task
             writer = new ObjectStoreItemWriter(osw);
 
             DagConverter converter;
-            if (file.endsWith(".ontology")) {
+            if (file.endsWith(".ontology") || file.endsWith(".dag")) {
                 converter = new DagConverter(writer, file, dagName, termClass);
             } else if (file.endsWith(".obo")) {
                 converter = new OboConverter(writer, file, dagName, termClass);

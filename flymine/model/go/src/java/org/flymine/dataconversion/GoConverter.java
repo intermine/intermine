@@ -83,7 +83,7 @@ public class GoConverter extends FileConverter
      */
     public void process(Reader reader) throws ObjectStoreException, IOException {
         try {
-            if (ontology.getName().endsWith(".ontology")) {
+            if (ontology.getName().endsWith(".ontology") || ontology.getName().endsWith(".dag")) {
                 termIdNameMap = new DagParser().getTermIdNameMap(new FileReader(ontology));
             } else if (ontology.getName().endsWith(".obo")) {
                 termIdNameMap = new OboParser().getTermIdNameMap(new FileReader(ontology));
