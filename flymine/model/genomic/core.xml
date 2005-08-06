@@ -84,9 +84,15 @@
   <class name="org.flymine.model.genomic.OntologyTerm" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
     <reference name="ontology" referenced-type="org.flymine.model.genomic.Ontology"/>
     <collection name="parentRelations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" reverse-reference="childTerm"/>
     <collection name="childRelations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" reverse-reference="parentTerm"/>
+    <collection name="synonyms" referenced-type="org.flymine.model.genomic.OntologyTermSynonym" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.OntologyTermSynonym" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Synonym" is-interface="true">
     <attribute name="value" type="java.lang.String"/>
