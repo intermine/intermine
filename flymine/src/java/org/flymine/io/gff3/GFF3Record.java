@@ -10,6 +10,7 @@ package org.flymine.io.gff3;
  *
  */
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import org.intermine.util.StringUtil;
 
@@ -37,7 +39,8 @@ public class GFF3Record
     private String strand;
     private String phase;
     private Map    attributes   = new LinkedHashMap();
-
+    private static Map replacements;
+    
     /**
      * Create a GFF3Record from a line of a GFF3 file
      * @param line the String to parse
@@ -50,8 +53,8 @@ public class GFF3Record
             throw new IOException("GFF line too short (" + st.countTokens() + " fields): " + line);
         }
 
-        sequenceID = st.nextToken();
-
+        sequenceID = fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8"));
+        
         source = st.nextToken();
 
         if (source.equals("") || source.equals(".")) {
@@ -165,6 +168,10 @@ public class GFF3Record
                         }
                     }
                 }
+            }
+            // Decode values
+            for (int i = 0; i < valList.size(); i++) {
+                valList.set(i, fixEntityNames(URLDecoder.decode((String) valList.get(i), "UTF-8")));
             }
             attributes.put(attName, valList);
         }
@@ -386,5 +393,74 @@ public class GFF3Record
             sb.append(entry.getKey() + "=" + StringUtil.join((List) entry.getValue(), ","));
         }
         return sb.toString();
+    }
+    
+    /**
+     * Replace greek character entity names with entity names that work in HTML.
+     * @param value input string
+     * @return string with replacements
+     */
+    protected static String fixEntityNames(String value) {
+        synchronized (GFF3Record.class) {
+            if (replacements == null) {
+                replacements = new HashMap();
+                replacements.put("agr", "alpha");
+                replacements.put("Agr", "Alpha");
+                replacements.put("bgr", "beta");
+                replacements.put("Bgr", "Beta");
+                replacements.put("ggr", "gamma");
+                replacements.put("Ggr", "Gamma");
+                replacements.put("dgr", "delta");
+                replacements.put("Dgr", "Delta");
+                replacements.put("egr", "epsilon");
+                replacements.put("Egr", "Epsilon");
+                replacements.put("zgr", "zeta");
+                replacements.put("Zgr", "Zeta");
+                replacements.put("eegr", "eta");
+                replacements.put("EEgr", "Eta");
+                replacements.put("thgr", "theta");
+                replacements.put("THgr", "Theta");
+                replacements.put("igr", "iota");
+                replacements.put("Igr", "Iota");
+                replacements.put("kgr", "kappa");
+                replacements.put("Kgr", "Kappa");
+                replacements.put("lgr", "lambda");
+                replacements.put("Lgr", "Lambda");
+                replacements.put("mgr", "mu");
+                replacements.put("Mgr", "Mu");
+                replacements.put("ngr", "nu");
+                replacements.put("Ngr", "Nu");
+                replacements.put("xgr", "xi");
+                replacements.put("Xgr", "Xi");
+                replacements.put("ogr", "omicron");
+                replacements.put("Ogr", "Omicron");
+                replacements.put("pgr", "pi");
+                replacements.put("Pgr", "Pi");
+                replacements.put("rgr", "rho");
+                replacements.put("Rgr", "Rho");
+                replacements.put("sgr", "sigma");
+                replacements.put("Sgr", "Sigma");
+                replacements.put("sfgr", "sigmaf");
+                replacements.put("tgr", "tau");
+                replacements.put("Tgr", "Tau");
+                replacements.put("ugr", "upsilon");
+                replacements.put("Ugr", "Upsilon");
+                replacements.put("phgr", "phi");
+                replacements.put("PHgr", "Phi");
+                replacements.put("khgr", "chi");
+                replacements.put("KHgr", "Chi");
+                replacements.put("psgr", "psi");
+                replacements.put("PSgr", "Psi");
+                replacements.put("ohgr", "omega");
+                replacements.put("OHgr", "Omega");
+            }
+        }
+        
+        for (Iterator iter = replacements.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            value = value.replaceAll("&" + entry.getKey() + ";", "&" + entry.getValue() + ";");
+        }
+        
+        return value;
     }
 }
