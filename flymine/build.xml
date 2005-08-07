@@ -1840,7 +1840,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="false"/>
+    <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="true"/>
   </target>
 
   <target name="build-uniprot-production" depends="filter-uniprot, retrieve-uniprot, translate-uniprot, load-uniprot"/>
