@@ -52,6 +52,12 @@ public class ConstraintOp
     /** Require that the first argument is NOT IN the second */
     public static final ConstraintOp NOT_IN = new ConstraintOp("NOT IN");
 
+    /** Subquery exists */
+    public static final ConstraintOp EXISTS = CONTAINS;
+    /** Subquery does not exist */
+    public static final ConstraintOp DOES_NOT_EXISTS = DOES_NOT_CONTAIN;
+    
+    
     /** Combine constraints with the AND operation */
     public static final ConstraintOp AND = new ConstraintOp("AND");
     /** Combine constraints with the OR operation */
