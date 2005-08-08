@@ -914,8 +914,9 @@
     </taskdef>
 
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
-                  osName="osw.inparanoid-orthologue-tgt-items" model="genomic">
-      <fileset dir="/shared/data/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
+                  osName="osw.inparanoid-orthologue-tgt-items" 
+                  model="genomic">
+      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -936,8 +937,10 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated"
-              sourceName="orthologue-inparanoid" ignoreDuplicates="true"/>
+    <load-orthologue integrationWriter="integration.production" 
+                     source="os.inparanoid-orthologue-translated"
+                     sourceName="orthologue-inparanoid" 
+                     ignoreDuplicates="true"/>
   </target>
 
 
@@ -3139,13 +3142,14 @@
  <!-- create human genomic model from core and all additions files -->
   <target name="create-t1dmine-production-model"
           depends="remove-genomic, prepare-build-model,
-                merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
                 merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-ensembl-disease-model,
-                merge-tfbscluster-model,
+                merge-tfbscluster-model, merge-mage-model,
+                merge-orthologue-model,
                 merge-chado-model, merge-shortcuts">
   </target>
 
@@ -3396,6 +3400,7 @@
       <property name="db.name" value="db.production"/>
       <property name="objectstore.name" value="os.production"/>
     </ant>
+    <antcall target="create-indexes-production"/>
   </target>
 
 
@@ -3431,8 +3436,8 @@
       <antcall target="fetch-contig-sequences"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
-      <antcall target="analyse-db-production"/>
-      <!-- removed due to running out of memory -->
+      <antcall target="analyse-db-production"/>  
+       <!-- removed due to running out of memory -->  
       <!--antcall target="transfer-sequences-chromosome"/-->
       <!--antcall target="analyse-db-production"/-->
       <!--antcall target="create-indexes-production-attribute"/-->
@@ -3446,7 +3451,6 @@
       <antcall target="make-spanning-locations"/>
       <antcall target="analyse-db-production"/-->
   </target>
-
 
   <!-- COMPILATION AND TESTING TARGETS -->
   <target name="compile-ensembl-human-java">
@@ -3497,7 +3501,11 @@
   </target>
 
   <!-- GO ANNOTATION -->
+
   <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
+
+    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
+   
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3510,7 +3518,9 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
+                  clsName="org.flymine.dataconversion.GoConverter" 
+                  model="genomic"
+                  ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/human">
         <include name="gene_association*"/>
       </fileset>
@@ -3534,6 +3544,9 @@
 
 <!-- GO ANNOTATION -->
   <target name="retrieve-go-annotation-mouse" depends="prepare-build-model, compile-go-java">
+
+    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
+
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3547,7 +3560,8 @@
 
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" 
-                  model="genomic">
+                  model="genomic"
+                  ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/mouse">
         <include name="gene_association*"/>
       </fileset>
@@ -4019,9 +4033,9 @@
     <path refid="models.class.path"/>
     <pathelement location="${model}/opposumchain/resources"/>
   </path>
-  <target name="merge-opposumchain-model" depends="prepare-genomic-model">
+  <!--target name="merge-opposumchain-model" depends="prepare-genomic-model">
     <merge-genomic-additions additionsFile="${model}/opposumchain/opposumchain_additions.xml"/>
-  </target>
+  </target-->
 
   <target name="opposumchain-test"
           depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
@@ -4031,13 +4045,13 @@
     </ant>
   </target>
 
-  <target name="compile-opposumchain-java"
+  <!--target name="compile-opposumchain-java"
           depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="opposumchain"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
-  </target>
+  </target-->
 
   <!--load comparativeGenomics opposumChain GFF3 data from UCSC-->
   <target name="retrieve-opposumchain" depends="prepare-build-model, compile-genomic-java">
@@ -4162,6 +4176,44 @@
   </target>
 
   <target name="build-tfbscluster-production" depends="retrieve-tfbscluster, load-tfbscluster"/>
+
+
+<!-- INPARANOID ORTHOLOGUES PIPELINE hs/mm -->
+
+  <!-- retrieve inparanoid orthologue data into common tgt items database -->
+  <target name="retrieve-orthologues-inparanoid-mouse" depends="prepare-build-model, compile-orthologue-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.inparanoid-orthologue-tgt-items-std"/>
+    </ant>
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
+                  osName="osw.inparanoid-orthologue-tgt-items"
+                  model="genomic">
+      <fileset dir="${shared.data}/human/orthologues/2005-04-16/" 
+          includes="sqltable.*"/>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.inparanoid-orthologue-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="build-orthologues-production-mouse" 
+          depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
+
 
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
