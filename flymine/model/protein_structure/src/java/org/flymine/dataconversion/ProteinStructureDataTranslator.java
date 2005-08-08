@@ -140,13 +140,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
                 proteinFeatures.put(name, proteinFeature);
             }
 
-            // link proteinRegion and proteinSequenceFamily using annotation, and add shortcut
-            Item annotation2 = createItem(tgtNs + "Annotation", "");
-            annotation2.addReference(new Reference("subject", proteinRegion.getIdentifier()));
-            annotation2.addReference(new Reference("property", proteinFeature
-                                                  .getIdentifier()));
-            annotation2.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                {db.getIdentifier()})));
+            // link proteinRegion and proteinSequenceFamily
             proteinRegion.addReference(new Reference("proteinFeature",
                                                      proteinFeature.getIdentifier()));
 
@@ -155,7 +149,6 @@ public class ProteinStructureDataTranslator extends DataTranslator
             result.add(location);
             result.add(modelledProteinStructure);
             result.add(annotation);
-            result.add(annotation2);
             result.add(proteinFeature);
         }
 
