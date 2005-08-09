@@ -187,8 +187,16 @@ sub load_db
   $exp->send("$pass\n");
   $exp->expect(9999999, '__LOAD_FINISHED__\n');
   $exp->soft_close();
+
+
+
   log_and_print `date`, "\n\n";
-  log_and_print "finished load\n\n";
+  log_and_print "finished load - now analysing\n\n";
+
+  run_and_check_status "ant", "analyse-db-production";
+
+  log_and_print `date`, "\n\n";
+  log_and_print "finished analysing\n\n";
 }
 
 sub get_actions
@@ -278,7 +286,7 @@ if ($restart) {
 my $seen_start_action = 0;
 
 if (!$restart || !defined $restart_dump_suffix) {
-  # always start at the beggining of the command list if we aren't restarting
+  # always start at the beginning of the command list if we aren't restarting
   $seen_start_action = 1;
 }
 
