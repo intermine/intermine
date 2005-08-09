@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Operations used in building constraints
+ * Operations used in building constraints.
+ *
  * @author Mark Woodbridge
  * @author Matthew Wakeling
  */
