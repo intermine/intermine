@@ -90,14 +90,15 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     public void testQueries() throws Throwable {
         StringWriter errorMessage = new StringWriter();
         PrintWriter writer = new PrintWriter(errorMessage);
-        int status = 0; // 0 = everything fine, 1 = Failure, 2 = Error
+        int failureCount = 0;
+        int errorCount = 0;
         Iterator i = results.keySet().iterator();
         while (i.hasNext()) {
             String type = (String) i.next();
             // Does this appear in the queries map;
             if (!(queries.containsKey(type))) {
                 writer.println("\n" + type + " does not appear in the queries map");
-                status = 1;
+                failureCount++;
             } else {
                 Object result = results.get(type);
                 if (result != NO_RESULT) {
@@ -107,11 +108,11 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                     } catch (AssertionFailedError e) {
                         writer.println("\n" + type + " has failed: " + e.getMessage());
                         //e.printStackTrace(writer);
-                        status = (status == 2 ? 2 : 1);
+                        failureCount++;
                     } catch (Throwable t) {
                         writer.println("\n" + type + " produced an error:");
                         t.printStackTrace(writer);
-                        status = 2;
+                        errorCount++;
                     } finally {
                         System.out.println("Test " + type + " took " + (System.currentTimeMillis() - startTime) + " ms");
                     }
@@ -125,17 +126,21 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
             if (result == null) {
                 if (strictTestQueries) {
                     writer.println("\n" + type + " does not appear in the results map");
-                    status = (status == 2 ? 2 : 1);
+                    failureCount++;
                 }
             }
         }
         writer.flush();
         errorMessage.flush();
 
-        if (status == 1) {
-            throw new SummaryAssertionFailedError(errorMessage.toString(), "Failures present");
-        } else if (status == 2) {
-            throw new SummaryException(errorMessage.toString(), "Errors present");
+        if (errorCount > 0) {
+            if (failureCount > 0) {
+                throw new SummaryException(errorMessage.toString(), errorCount + " errors and " + failureCount + " failures present");
+            } else {
+                throw new SummaryException(errorMessage.toString(), errorCount + " errors present");
+            }
+        } else if (failureCount > 0) {
+            throw new SummaryAssertionFailedError(errorMessage.toString(), failureCount + " failures present");
         }
     }
 
@@ -166,6 +171,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ContainsNot11", containsNot11());
         queries.put("ContainsNeg11", containsNeg11());
         queries.put("Contains1N", contains1N());
+        queries.put("ContainsNot1N", containsNot1N());
         queries.put("ContainsN1", containsN1());
         queries.put("ContainsMN", containsMN());
         queries.put("ContainsNotMN", containsNotMN());
@@ -658,6 +664,32 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
+        QueryValue v1 = new QueryValue("CompanyA");
+        QueryField qf1 = new QueryField(qc1, "name");
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
+      select company, department
+      from Company, Department
+      where company.departments DOES NOT contain department
+      and company.name = "CompanyA"
+    */
+      public static Query containsNot1N() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.DOES_NOT_CONTAIN, qc2);
         QueryValue v1 = new QueryValue("CompanyA");
         QueryField qf1 = new QueryField(qc1, "name");
         Query q1 = new Query();

@@ -72,6 +72,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("Contains11", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Manager AS a2_ WHERE (a1_.manager CONTAINS a2_ AND a1_.name = 'DepartmentA1')", null));
         results.put("ContainsNot11", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Manager AS a2_ WHERE (a1_.manager DOES NOT CONTAIN a2_ AND a1_.name = 'DepartmentA1')", null));
         results.put("Contains1N", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a1_.name = 'CompanyA')", null));
+        results.put("ContainsNot1N", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments DOES NOT CONTAIN a2_ AND a1_.name = 'CompanyA')", null));
         results.put("ContainsN1", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.name = 'CompanyA')", null));
         results.put("ContainsMN", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Contractor AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.companys CONTAINS a2_ AND a1_.name = 'ContractorA')", null));
         results.put("ContainsNotMN", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Contractor AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.companys DOES NOT CONTAIN a2_ AND a1_.name = 'ContractorA')", null));
@@ -191,6 +192,12 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.HasSecretarys AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_", null);
         fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")})));
         results.put("QueryClassBagMM", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE a1_.employees DOES NOT CONTAIN a2_", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
+        results.put("QueryClassBagNot", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.HasSecretarys AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys DOES NOT CONTAIN a2_", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")})));
+        results.put("QueryClassBagNotMM", fq);
         fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::(org.intermine.model.testmodel.CEO, org.intermine.model.testmodel.Broke) AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_", null);
         fq.setParameters(Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
         results.put("QueryClassBagDynamic", fq);
@@ -211,5 +218,26 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq.setParameters(Collections.singletonList(bag));
         res.add(fq);
         results.put("DynamicBagConstraint2", res);
+        fq = new IqlQuery("SELECT a1_.id AS a4_, a2_, a3_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.employees CONTAINS a2_ AND a1_.employees CONTAINS a3_)", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
+        results.put("QueryClassBagDouble", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees CONTAINS ?", null);
+        fq.setParameters(Arrays.asList(new Object[] {Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}), data.get("EmployeeA1")}));
+        results.put("QueryClassBagContainsObject", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_ WHERE (a1_.employees CONTAINS ? AND a1_.employees CONTAINS ?)", null);
+        fq.setParameters(Arrays.asList(new Object[] {Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}), data.get("EmployeeA1"), data.get("EmployeeA2")}));
+        results.put("QueryClassBagContainsObjectDouble", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN ?", null);
+        fq.setParameters(Arrays.asList(new Object[] {Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}), data.get("EmployeeA1")}));
+        results.put("QueryClassBagNotContainsObject", fq);
+        results.put("ObjectContainsObject", NO_RESULT);
+        results.put("ObjectContainsObject2", NO_RESULT);
+        results.put("ObjectNotContainsObject", NO_RESULT);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE ( NOT (a1_.employees CONTAINS a2_ AND 1 = 1))", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
+        results.put("QueryClassBagNotViaNand", fq);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE ( NOT (a1_.employees CONTAINS a2_ OR 1 = 1))", null);
+        fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
+        results.put("QueryClassBagNotViaNor", fq);
     }
 }

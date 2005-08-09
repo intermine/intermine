@@ -286,19 +286,7 @@ public class IqlQuery
             ContainsConstraint c = (ContainsConstraint) cc;
             QueryReference ref = c.getReference();
             ConstraintOp op = c.getOp();
-            String refString = null;
-            if (ref.getQueryClass() != null) {
-                refString = (String) q.getAliases().get(ref.getQueryClass());
-            } else if (((QueryCollectionReference) ref).getQcb() != null) {
-                refString = (String) q.getAliases().get(((QueryCollectionReference) ref).getQcb());
-            } else {
-                refString = "?";
-                Object param = ((QueryCollectionReference) ref).getQcObject();
-                if (param == null) {
-                    param = ((QueryCollectionReference) ref).getQcb();
-                }
-                parameters.add(param);
-            }
+            String refString = queryReferenceToString(q, ref, parameters);
             if (op.equals(ConstraintOp.IS_NULL) || op.equals(ConstraintOp.IS_NOT_NULL)) {
                 return refString + "." + ref.getFieldName() + " " + op.toString();
             } else if (c.getQueryClass() == null) {
@@ -337,6 +325,28 @@ public class IqlQuery
         }
     }
 
+    /**
+     * Converts a QueryReference into a String.
+     *
+     * @param q a Query, from which to get aliases
+     * @param ref a QueryReference
+     * @param parameters a List to which parameters will be added
+     * @return a String
+     */
+    public static String queryReferenceToString(Query q, QueryReference ref, List parameters) {
+        if (ref.getQueryClass() != null) {
+            return (String) q.getAliases().get(ref.getQueryClass());
+        } else if (((QueryCollectionReference) ref).getQcb() != null) {
+            return (String) q.getAliases().get(((QueryCollectionReference) ref).getQcb());
+        } else {
+            Object param = ((QueryCollectionReference) ref).getQcObject();
+            if (param == null) {
+                param = ((QueryCollectionReference) ref).getQcb();
+            }
+            parameters.add(param);
+            return "?";
+        }
+    }
 
     /**
      * Convert to a InterMine query

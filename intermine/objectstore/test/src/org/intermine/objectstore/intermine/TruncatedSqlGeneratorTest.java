@@ -22,6 +22,7 @@ import junit.framework.Test;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.TypeUtil;
@@ -77,8 +78,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("WhereNotClassClass", Collections.singleton("InterMineObject"));
         results.put("WhereNegClassClass", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Company' AND a1_.id != a2_.id ORDER BY a1_.id, a2_.id");
         results2.put("WhereNegClassClass", Collections.singleton("InterMineObject"));
-        Integer id1 = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
-        results.put("WhereClassObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a1_.id = " + id1 + " ORDER BY a1_.id");
+        results.put("WhereClassObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a1_.id = " + companyAId + " ORDER BY a1_.id");
         results2.put("WhereClassObject", Collections.singleton("InterMineObject"));
         results.put("Contains11", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Department' AND a2_.class = 'org.intermine.model.testmodel.Manager' AND (a1_.managerId = a2_.id AND a1_.name = 'DepartmentA1') ORDER BY a1_.id, a2_.id");
         results2.put("Contains11", Collections.singleton("InterMineObject"));
@@ -88,14 +88,14 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsNeg11", Collections.singleton("InterMineObject"));
         results.put("Contains1N", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Department' AND (a1_.id = a2_.companyId AND a1_.name = 'CompanyA') ORDER BY a1_.id, a2_.id");
         results2.put("Contains1N", Collections.singleton("InterMineObject"));
+        results.put("ContainsNot1N", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Department' AND (a1_.id != a2_.companyId AND a1_.name = 'CompanyA') ORDER BY a1_.id, a2_.id");
+        results2.put("ContainsNot1N", Collections.singleton("InterMineObject"));
         results.put("ContainsN1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Department' AND a2_.class = 'org.intermine.model.testmodel.Company' AND (a1_.companyId = a2_.id AND a2_.name = 'CompanyA') ORDER BY a1_.id, a2_.id");
         results2.put("ContainsN1", Collections.singleton("InterMineObject"));
         results.put("ContainsMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_, CompanysContractors AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Contractor' AND a2_.class = 'org.intermine.model.testmodel.Company' AND ((a1_.id = indirect0.Companys AND indirect0.Contractors = a2_.id) AND a1_.name = 'ContractorA') ORDER BY a1_.id, a2_.id");
         results2.put("ContainsMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
         results.put("ContainsDuplicatesMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_, OldComsOldContracts AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Contractor' AND a2_.class = 'org.intermine.model.testmodel.Company' AND (a1_.id = indirect0.OldComs AND indirect0.OldContracts = a2_.id) ORDER BY a1_.id, a2_.id");
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "OldComsOldContracts"})));
-        results.put("ContainsNotMN", NO_RESULT); //TODO: Fix this (ticket #445)
-        id1 = (Integer) TypeUtil.getFieldValue(data.get("EmployeeA1"), "id");
         results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM InterMineObject AS a1_, InterMineObject AS a3_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a3_.class = 'org.intermine.model.testmodel.Department' AND a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results2.put("SimpleGroupBy", Collections.singleton("InterMineObject"));
         results.put("MultiJoin", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM InterMineObject AS a1_, InterMineObject AS a2_, InterMineObject AS a3_, InterMineObject AS a4_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Department' AND a3_.class = 'org.intermine.model.testmodel.Manager' AND a4_.class = 'org.intermine.model.testmodel.Address' AND (a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1') ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
@@ -112,9 +112,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectInterfaceAndSubClasses3", Collections.singleton("InterMineObject"));
         results.put("OrderByAnomaly", "SELECT DISTINCT 5 AS a2_, a1_.name AS a3_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.name");
         results2.put("OrderByAnomaly", Collections.singleton("InterMineObject"));
-        Integer id2 = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
-        Integer id3 = (Integer) TypeUtil.getFieldValue(data.get("DepartmentA1"), "id");
-        results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Department' AND (a1_.id = " + id2 + " AND a1_.id = a2_.companyId AND a2_.id IN (SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Department' AND a1_.id = " + id3 + ")) ORDER BY a1_.id");
+        results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Department' AND (a1_.id = " + companyAId + " AND a1_.id = a2_.companyId AND a2_.id IN (SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Department' AND a1_.id = " + departmentA1Id + ")) ORDER BY a1_.id");
         results2.put("SelectClassObjectSubquery", Collections.singleton("InterMineObject"));
         results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND a2_.class = 'org.intermine.model.testmodel.Secretary' AND (a1_.name = 'CompanyA' AND (a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id)) ORDER BY a2_.id");
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
@@ -128,7 +126,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("EmptyNorConstraintSet", Collections.singleton("InterMineObject"));
         results.put("BagConstraint", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.name IN ('CompanyA', 'goodbye', 'hello')) ORDER BY Company.id");
         results2.put("BagConstraint", Collections.singleton("InterMineObject"));
-        results.put("BagConstraint2", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.id IN (" + id2 + ")) ORDER BY Company.id");
+        results.put("BagConstraint2", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND (Company.id IN (" + companyAId + ")) ORDER BY Company.id");
         results2.put("BagConstraint2", Collections.singleton("InterMineObject"));
         results.put("InterfaceField", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employable' AND a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results2.put("InterfaceField", Collections.singleton("InterMineObject"));
@@ -187,7 +185,6 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsConstraintNotCollectionRefObject", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintMMCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, CompanysContractors AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND (a1_.id = indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
         results2.put("ContainsConstraintMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
-        results.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT); //TODO: Fix this (ticket #445)
         //results.put("ContainsConstraintNotMMCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, CompanysContractors AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND (a1_.id != indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
         //results2.put("ContainsConstraintNotMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
         results.put("SimpleConstraintNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Manager' AND a1_.title IS NULL ORDER BY a1_.id");
@@ -227,18 +224,12 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("InterMineObject"));
-        results.put("CollectionQueryOneMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND " + id3 + " = a1_.departmentId ORDER BY a1_.id");
+        results.put("CollectionQueryOneMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND " + departmentA1Id + " = a1_.departmentId ORDER BY a1_.id");
         results2.put("CollectionQueryOneMany", Collections.singleton("InterMineObject"));
-        Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
-        results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, HasSecretarysSecretarys AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Secretary' AND (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
+        results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, HasSecretarysSecretarys AS indirect0 WHERE a1_.class = 'org.intermine.model.testmodel.Secretary' AND (" + companyBId + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
         results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
-        Integer id5 = (Integer) ((Department) data.get("DepartmentA1")).getId();
-        Integer id6 = (Integer) ((Department) data.get("DepartmentB1")).getId();
-        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND (a2_.departmentId IN (" + id5 + ", " + id6 + ")) ORDER BY a2_.departmentId, a2_.id");
+        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND (a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) ORDER BY a2_.departmentId, a2_.id");
         results2.put("QueryClassBag", Collections.singleton("InterMineObject"));
-        Integer companyAId = (Integer) ((Company) data.get("CompanyA")).getId();
-        Integer companyBId = (Integer) ((Company) data.get("CompanyB")).getId();
-        Integer employeeB1Id = (Integer) ((Employee) data.get("EmployeeB1")).getId();
         results.put("QueryClassBagMM", "SELECT indirect0.Secretarys AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a2_.class = 'org.intermine.model.testmodel.Secretary' AND ((indirect0.Secretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
         results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
         results.put("QueryClassBagDynamic", "SELECT indirect0.Secretarys AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a2_.class = 'org.intermine.model.testmodel.Secretary' AND ((indirect0.Secretarys IN (" + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
@@ -253,6 +244,18 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.CEO' AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
         results.put("DynamicBagConstraint2", res);
         results2.put("DynamicBagConstraint2", Collections.singleton("InterMineObject"));
+        results.put("QueryClassBagDouble", "SELECT a2_.departmentId AS a4_, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a2_, InterMineObject AS a3_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND a3_.class = 'org.intermine.model.testmodel.Employee' AND ((a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND a3_.departmentId = a2_.departmentId) ORDER BY a2_.departmentId, a2_.id, a3_.id");
+        results2.put("QueryClassBagDouble", Collections.singleton("InterMineObject"));
+        results.put("QueryClassBagContainsObject", "SELECT indirect0.departmentId AS a2_ FROM InterMineObject AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") ORDER BY indirect0.departmentId");
+        results2.put("QueryClassBagContainsObject", Collections.singleton("InterMineObject"));
+        results.put("QueryClassBagContainsObjectDouble", "SELECT indirect0.departmentId AS a2_ FROM InterMineObject AS indirect0, InterMineObject AS indirect1 WHERE (indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") AND indirect1.class = 'org.intermine.model.testmodel.Employee' AND (indirect1.departmentId = indirect0.departmentId AND indirect1.id = " + employeeA2Id + ")) ORDER BY indirect0.departmentId");
+        results2.put("QueryClassBagContainsObjectDouble", Collections.singleton("InterMineObject"));
+        results.put("ObjectContainsObject", "SELECT 1 AS a1_ FROM InterMineObject AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results2.put("ObjectContainsObject", Collections.singleton("InterMineObject"));
+        results.put("ObjectContainsObject2", "SELECT 1 AS a1_ FROM InterMineObject AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
+        results2.put("ObjectContainsObject2", Collections.singleton("InterMineObject"));
+        results.put("ObjectNotContainsObject", "SELECT 1 AS a1_ FROM InterMineObject AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results2.put("ObjectNotContainsObject", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

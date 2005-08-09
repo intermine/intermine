@@ -100,7 +100,7 @@ public class ContainsConstraint extends Constraint
         this.obj = obj;
         this.cls = null;
     }
-    
+
     /**
      * Constructor for ContainsConstraint.
      *
