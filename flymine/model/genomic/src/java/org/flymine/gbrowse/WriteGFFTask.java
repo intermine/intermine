@@ -139,7 +139,7 @@ public class WriteGFFTask extends Task
                 synonymMap = makeSynonymMap(os, resultChrId);
 
                 if (currentChrId != null) {
-                    writeTranscriptsAndExons(os, gffWriter, currentChr, seenTranscripts,
+                    writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
                                              seenTranscriptParts, synonymMap);
                     seenTranscripts = new HashMap();
                     seenTranscriptParts = new HashMap();
@@ -157,8 +157,10 @@ public class WriteGFFTask extends Task
                     }
                     gffWriter = new PrintWriter(new FileWriter(gffFile));
 
-                    writeFeature(gffWriter, currentChr, currentChr, null, new Integer(0), null,
-                             synonymMap);
+                    writeFeature(gffWriter, currentChr, currentChr, null,
+                                 chromosomeFileNamePrefix(currentChr),
+                                 new Integer(0), "chromosome",
+                                 "Chromosome", null, synonymMap, feature.getId());
 
                     objectCounts = new HashMap();
                     currentChrId = resultChrId;
@@ -179,15 +181,20 @@ public class WriteGFFTask extends Task
                 seenTranscriptParts.put(feature, loc);
             }
 
-            if (feature instanceof CDS) {
-                // ignore CDS objects from FlyBase
-                continue;
-            }
-
             if (!currentChr.getIdentifier().endsWith("_random")
                     && !currentChr.getIdentifier().equals("M")) {
+                String identifier = feature.getIdentifier();
+
+                String featureType = getFeatureName(feature);
+
+                if (identifier == null) {
+                    identifier = featureType + "_" + objectCounts.get(feature.getClass());
+                }
+
                 writeFeature(gffWriter, currentChr, feature, loc,
-                         (Integer) objectCounts.get(feature.getClass()), null, synonymMap);
+                             identifier, null,
+                             featureType.toLowerCase(), featureType, null,
+                             synonymMap, feature.getId());
             }
 
             incrementCount(objectCounts, feature);
@@ -195,25 +202,61 @@ public class WriteGFFTask extends Task
 
         if (!currentChr.getIdentifier().endsWith("_random")
                     && !currentChr.getIdentifier().equals("M")) {
-            writeTranscriptsAndExons(os, gffWriter, currentChr, seenTranscripts,
+            writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
                                      seenTranscriptParts, synonymMap);
         }
 
         gffWriter.close();
     }
 
-    private void writeTranscriptsAndExons(ObjectStore os, PrintWriter gffWriter, Chromosome chr,
+    private String getFeatureName(BioEntity feature) {
+        Class bioEntityClass = feature.getClass();
+        Set classes = DynamicUtil.decomposeClass(bioEntityClass);
+
+        StringBuffer nameBuffer = new StringBuffer();
+
+        Iterator iter = classes.iterator();
+
+        while (iter.hasNext()) {
+            Class thisClass = (Class) iter.next();
+            if (nameBuffer.length() > 0) {
+                nameBuffer.append("_");
+            } else {
+                nameBuffer.append(TypeUtil.unqualifiedName(thisClass.getName()));
+            }
+        }
+
+        return nameBuffer.toString();
+    }
+
+    private void writeTranscriptsAndExons(PrintWriter gffWriter, Chromosome chr,
                                           Map seenTranscripts, Map seenTranscriptParts,
                                           Map synonymMap)
         throws IOException {
         Iterator transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
-
             Transcript transcript = (Transcript) transcriptIter.next();
-            Location transcriptLocation = (Location) seenTranscripts.get(transcript);
             Gene gene = transcript.getGene();
+            Location transcriptLocation = (Location) seenTranscripts.get(transcript);
 
-            writeFeature(gffWriter, chr, transcript, transcriptLocation, null, gene, synonymMap);
+            String transcriptFeatureType = null;
+
+            if (gene instanceof Pseudogene) {
+                transcriptFeatureType = "pseudogene_mRNA";
+            } else {
+                transcriptFeatureType = "gene_mRNA";
+            }
+
+            Map geneNameAttributeMap = new HashMap();
+
+            ArrayList geneNameList = new ArrayList();
+            geneNameList.add(gene.getIdentifier());
+            geneNameAttributeMap.put("Gene", geneNameList);
+
+            writeFeature(gffWriter, chr, transcript, transcriptLocation, transcript.getIdentifier(),
+                         null,
+                         transcriptFeatureType, "mRNA", geneNameAttributeMap, synonymMap,
+                         transcript.getId());
 
             Collection exons = transcript.getExons();
 
@@ -223,12 +266,20 @@ public class WriteGFFTask extends Task
             exonsResults.setNoOptimise();
             exonsResults.setNoExplain();
 
+            String exonFeatureType = null;
+            if (gene instanceof Pseudogene) {
+                exonFeatureType = "pseudogene_CDS";
+            } else {
+                exonFeatureType = "gene_CDS";
+            }
+
             Iterator exonIter = exons.iterator();
             while (exonIter.hasNext()) {
                 Exon exon = (Exon) exonIter.next();
                 Location exonLocation = (Location) seenTranscriptParts.get(exon);
 
-                writeFeature(gffWriter, chr, exon, exonLocation, null, transcript, synonymMap);
+                writeFeature(gffWriter, chr, exon, exonLocation, transcript.getIdentifier(), null,
+                             exonFeatureType, "mRNA", null, synonymMap, transcript.getId());
             }
         }
     }
@@ -244,9 +295,21 @@ public class WriteGFFTask extends Task
 
     private static final String FLYMINE_STRING = "flymine";
 
+    /**
+     * @param bioEntity the obejct to write
+     * @param location the location of the object on the chromosome
+     * @param index the index of this object (first object written is 0, then 1, ...)
+     * @param featureType the type (third output column) to be used when writing - null means create
+     * the featureType automatically from the java class name on the object to write
+     * @param idType the type tag to use when storing the ID in the attributes Map - null means use
+     * the featureType
+     * @param flyMineId
+     */
     private void writeFeature(PrintWriter gffWriter, Chromosome chr,
-                              BioEntity bioEntity, Location location, Integer index,
-                              BioEntity parent, Map synonymMap)
+                              BioEntity bioEntity, Location location, String identifier,
+                              Integer index,
+                              String featureType, String idType, Map extraAttributes,
+                              Map synonymMap, Integer flyMineId)
         throws IOException {
 
         if (index == null) {
@@ -258,40 +321,7 @@ public class WriteGFFTask extends Task
         lineBuffer.append(chromosomeFileNamePrefix(chr)).append("\t");
         lineBuffer.append(FLYMINE_STRING).append("\t");
 
-        String featureName = null;
-
-        if (parent == null) {
-            Class bioEntityClass = bioEntity.getClass();
-            Set classes = DynamicUtil.decomposeClass(bioEntityClass);
-
-            StringBuffer nameBuffer = new StringBuffer();
-
-            Iterator iter = classes.iterator();
-
-            while (iter.hasNext()) {
-                Class thisClass = (Class) iter.next();
-                if (nameBuffer.length() > 0) {
-                    nameBuffer.append("_");
-                } else {
-                    nameBuffer.append(TypeUtil.unqualifiedName(thisClass.getName()));
-                }
-            }
-
-            featureName = nameBuffer.toString();
-            String lcName = featureName.toLowerCase();
-            lineBuffer.append(lcName).append("\t");
-        } else {
-            if (bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)) {
-                featureName = "mRNA";
-            } else {
-                if (bioEntity instanceof Exon) {
-                    featureName = "CDS";
-                } else {
-                    throw new RuntimeException("unknown BioEntity: " + bioEntity);
-                }
-            }
-            lineBuffer.append(featureName).append("\t");
-        }
+        lineBuffer.append(featureType).append("\t");
 
         if (location == null && bioEntity == chr) {
             // special case for Chromosome location
@@ -335,34 +365,13 @@ public class WriteGFFTask extends Task
         Map attributes = new LinkedHashMap();
 
         List identifiers = new ArrayList();
-        if (location == null && bioEntity == chr) {
-            identifiers.add(chromosomeFileNamePrefix(chr));
-        } else {
-            if (bioEntity.getIdentifier() == null) {
-                identifiers.add(featureName + "_" + index);
-            } else {
-                if ((bioEntity instanceof Exon) && parent != null) {
-                    identifiers.add(parent.getIdentifier());
-                } else {
-                    identifiers.add(bioEntity.getIdentifier());
-                }
-            }
-        }
+        identifiers.add(identifier);
 
-        // for use with the processed_transcript aggregator
-        if ((bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)
-             || bioEntity instanceof Exon) && parent != null) {
-            attributes.put("mRNA", identifiers);
-        } else {
-            attributes.put(featureName, identifiers);
-        }
+        attributes.put(idType, identifiers);
 
         ArrayList flyMineIDs = new ArrayList();
-        if (bioEntity instanceof Exon && parent != null) {
-            flyMineIDs.add("FlyMineInternalID_" + parent.getId());
-        } else {
-            flyMineIDs.add("FlyMineInternalID_" + bioEntity.getId());
-        }
+        flyMineIDs.add("FlyMineInternalID_" + flyMineId);
+
         attributes.put("FlyMineInternalID", flyMineIDs.clone());
         List allIds = (List) flyMineIDs.clone();
 
@@ -383,11 +392,12 @@ public class WriteGFFTask extends Task
 
         attributes.put("Alias", allIds);
 
-        if (bioEntity instanceof Transcript && !(bioEntity instanceof TRNA) && parent != null) {
-            ArrayList geneNameList = new ArrayList();
-            if (parent.getIdentifier() != null) {
-                geneNameList.add(parent.getIdentifier());
-                attributes.put("Gene", geneNameList);
+        if (extraAttributes != null) {
+            Iterator extraAttributesIter = extraAttributes.keySet().iterator();
+
+            while (extraAttributesIter.hasNext()) {
+                String key = (String) extraAttributesIter.next();
+                attributes.put(key, extraAttributes.get(key));
             }
         }
 
@@ -481,7 +491,7 @@ public class WriteGFFTask extends Task
     }
 
     private void writeChromosomeFasta(File destinationDirectory, Chromosome chr)
-        throws IOException, IllegalArgumentException, IllegalSymbolException {
+        throws IOException, IllegalArgumentException {
 
         Sequence chromosomeSequence = chr.getSequence();
 
@@ -489,29 +499,12 @@ public class WriteGFFTask extends Task
             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
 
         PrintStream printStream = new PrintStream(fileStream);
-
-// using BioJava - too slow!
-//         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-
-//         if (sequence != null) {
-//             try {
-//                 sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-//                                                      chromosomeFileNamePrefix(chr));
-//             } catch (ChangeVetoException e) {
-//                 throw new RuntimeException("failed to set a property", e);
-//             }
-//            SeqIOTools.writeFasta(outputStream, sequence);
-//         }
-
-
         printStream.println(">" + chromosomeFileNamePrefix(chr));
 
         String residues = chromosomeSequence.getResidues();
 
         // code from BioJava's FastaFormat class:
-
         int length = residues.length();
-
         for (int pos = 0; pos < length; pos += 60) {
             int end = Math.min(pos + 60, length);
             printStream.println(residues.substring(pos, end));
@@ -519,9 +512,7 @@ public class WriteGFFTask extends Task
 
         printStream.close();
         fileStream.close();
-
     }
-
 
     private File chromosomeFastaFile(File destinationDirectory, Chromosome chr) {
         return new File(destinationDirectory, chromosomeFileNamePrefix(chr) + ".fa");
