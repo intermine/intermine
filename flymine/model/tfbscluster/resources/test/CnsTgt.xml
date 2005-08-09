@@ -1,0 +1,77 @@
+<items>
+<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="abbreviation" value="HS"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#Database">
+<attribute name="title" value="TFBSSearch"/>
+</item>
+<item id="0_2" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="1"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
+
+<item id="0_3" class="http://www.flymine.org/model/genomic#NcConservedRegion">
+<attribute name="identifier" value="ets-n2:chr1:6745..6752"/>
+<attribute name="type" value="ets-n2"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="conservedOrganism" ref_id="1_1"/>
+<reference name="sequence" ref_id="1_2"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+
+<item id="0_4" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="6752"/>
+<attribute name="start" value="6745"/>
+<attribute name="strand" value="1"/>
+<reference name="object" ref_id="0_2"/>
+<reference name="subject" ref_id="0_3"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_5" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="ets-n2:chr1:6745..6752"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_3"/>
+</item>
+
+<item id="0_6" class="http://www.flymine.org/model/genomic#NcConservedRegion">
+<attribute name="identifier" value="ets-n2:chr1:6799..6933"/>
+<attribute name="type" value="ets-n2"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="conservedOrganism" ref_id="1_1"/>
+<reference name="sequence" ref_id="1_2"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+
+<item id="0_7" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="6933"/>
+<attribute name="start" value="6799"/>
+<attribute name="strand" value="1"/>
+<reference name="object" ref_id="0_2"/>
+<reference name="subject" ref_id="0_6"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+
+<item id="0_8" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="ets-n2:chr1:6799..6933"/>
+<reference name="source" ref_id="0_1"/>
+  
+<reference name="subject" ref_id="0_6"/>
+</item>
+
+<item id="1_2" class="http://www.flymine.org/model/genomic#Sequence">
+<attribute name="residues" value="GTGGAAGG"/>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="abbreviation" value="MM"/>
+</item>
+</items>
