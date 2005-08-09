@@ -145,6 +145,10 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1") } };
         results.put("Contains1N", toList(r));
 
+        r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentB1") },
+                             { data.get("CompanyA"), data.get("DepartmentB2") } };
+        results.put("ContainsNot1N", toList(r));
+
         r = new Object[][] { { data.get("DepartmentA1"), data.get("CompanyA") } };
         results.put("ContainsN1", toList(r));
 
@@ -289,7 +293,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("CompanyB") } };
         results.put("ContainsConstraintMMCollectionRefObject", toList(r));
 
-        results.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT); //TODO: Fix this (ticket #445)
+        results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)")); //TODO: Fix this (ticket #445)
         //results.put("ContainsConstraintNotMMCollectionRefObject", Collections.EMPTY_LIST);
 
         r = new Object[][] { { data.get("EmployeeA1") },
@@ -400,10 +404,44 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { ((HasSecretarys) data.get("CompanyB")).getId(), data.get("Secretary2") } };
         results.put("QueryClassBagMM", toList(r));
 
+        r = new Object[][] { { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeB1") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeB2") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeB3") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA1") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA2") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA3") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB3") } };
+        results.put("QueryClassBagNot", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+
+        results.put("QueryClassBagNotMM", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+
         results.put("QueryClassBagDynamic", Collections.EMPTY_LIST);
 
         // results.put("DynamicBagConstraint", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1")))); // See ticket #469
         results.put("DynamicBagConstraint2", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
+
+        r = new Object[][] { { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA1") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA2") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA3") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2"), data.get("EmployeeA1") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2"), data.get("EmployeeA2") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2"), data.get("EmployeeA3") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3"), data.get("EmployeeA1") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3"), data.get("EmployeeA2") },
+                             { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3"), data.get("EmployeeA3") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB1"), data.get("EmployeeB1") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB1"), data.get("EmployeeB2") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB2"), data.get("EmployeeB1") },
+                             { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB2"), data.get("EmployeeB2") } };
+        results.put("QueryClassBagDouble", toList(r));
+        results.put("QueryClassBagContainsObject", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
+        results.put("QueryClassBagContainsObjectDouble", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
+        results.put("QueryClassBagNotContainsObject", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("ObjectContainsObject", Collections.singletonList(Collections.singletonList(new Integer(1))));
+        results.put("ObjectContainsObject2", Collections.EMPTY_LIST);
+        results.put("ObjectNotContainsObject", Collections.EMPTY_LIST);
+        results.put("QueryClassBagNotViaNand", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("QueryClassBagNotViaNor", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
     }
 
     /**

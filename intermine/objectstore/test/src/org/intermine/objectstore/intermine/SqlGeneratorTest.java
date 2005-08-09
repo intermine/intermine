@@ -32,14 +32,21 @@ import org.intermine.objectstore.Failure;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 public class SqlGeneratorTest extends SetupDataTestCase
@@ -61,28 +68,43 @@ public class SqlGeneratorTest extends SetupDataTestCase
         db = DatabaseFactory.getDatabase("db.unittest");
     }
 
+    public static Integer companyAId;
+    public static Integer companyBId;
+    public static Integer departmentA1Id;
+    public static Integer departmentB1Id;
+    public static Integer employeeA1Id;
+    public static Integer employeeA2Id;
+    public static Integer employeeB1Id;
+
     public static void setUpResults() throws Exception {
+        companyAId = ((Company) data.get("CompanyA")).getId();
+        companyBId = ((Company) data.get("CompanyB")).getId();
+        departmentA1Id = ((Department) data.get("DepartmentA1")).getId();
+        departmentB1Id = ((Department) data.get("DepartmentB1")).getId();
+        employeeA1Id = ((Employee) data.get("EmployeeA1")).getId();
+        employeeA2Id = ((Employee) data.get("EmployeeA2")).getId();
+        employeeB1Id = ((Employee) data.get("EmployeeB1")).getId();
         results = new HashMap();
         results.put("SelectSimpleObject", "SELECT intermine_Alias.id AS \"intermine_Aliasid\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
         results2.put("SubQuery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
-        results2.put("WhereSimpleEquals", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereSimpleEquals", Collections.singleton("Company"));
         results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
-        results2.put("WhereSimpleNotEquals", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereSimpleNotEquals", Collections.singleton("Company"));
         results.put("WhereSimpleNegEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
-        results2.put("WhereSimpleNegEquals", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereSimpleNegEquals", Collections.singleton("Company"));
         results.put("WhereSimpleLike", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name LIKE 'Company%' ORDER BY a1_.name");
-        results2.put("WhereSimpleLike", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereSimpleLike", Collections.singleton("Company"));
         results.put("WhereEqualsString", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name = 'CompanyA' ORDER BY a1_.name");
-        results2.put("WhereEqualsString", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereEqualsString", Collections.singleton("Company"));
         results.put("WhereAndSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'Company%' AND a1_.vatNumber > 2000) ORDER BY a1_.name");
-        results2.put("WhereAndSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereAndSet", Collections.singleton("Company"));
         results.put("WhereOrSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'CompanyA%' OR a1_.vatNumber > 2000) ORDER BY a1_.name");
-        results2.put("WhereOrSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereOrSet", Collections.singleton("Company"));
         results.put("WhereNotSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE ( NOT (a1_.name LIKE 'Company%' AND a1_.vatNumber > 2000)) ORDER BY a1_.name");
-        results2.put("WhereNotSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("WhereNotSet", Collections.singleton("Company"));
         results.put("WhereSubQueryField", "SELECT a1_.id AS a1_id, a1_.name AS orderbyfield0 FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name FROM Department AS a1_) ORDER BY a1_.name, a1_.id");
         results2.put("WhereSubQueryField", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department"})));
         results.put("WhereSubQueryClass", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE a1_.id IN (SELECT a1_.id FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.id");
@@ -97,8 +119,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("WhereNotClassClass", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("WhereNegClassClass", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Company AS a1_, Company AS a2_ WHERE a1_.id != a2_.id ORDER BY a1_.id, a2_.id");
         results2.put("WhereNegClassClass", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
-        Integer id1 = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
-        results.put("WhereClassObject", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE a1_.id = " + id1 + " ORDER BY a1_.id");
+        results.put("WhereClassObject", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE a1_.id = " + companyAId + " ORDER BY a1_.id");
         results2.put("WhereClassObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("Contains11", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Department AS a1_, Manager AS a2_ WHERE (a1_.managerId = a2_.id AND a1_.name = 'DepartmentA1') ORDER BY a1_.id, a2_.id");
         results2.put("Contains11", new HashSet(Arrays.asList(new String[] {"Department", "Manager", "InterMineObject"})));
@@ -108,14 +129,15 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsNeg11", new HashSet(Arrays.asList(new String[] {"Department", "Manager", "InterMineObject"})));
         results.put("Contains1N", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Company AS a1_, Department AS a2_ WHERE (a1_.id = a2_.companyId AND a1_.name = 'CompanyA') ORDER BY a1_.id, a2_.id");
         results2.put("Contains1N", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
+        results.put("ContainsNot1N", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Company AS a1_, Department AS a2_ WHERE (a1_.id != a2_.companyId AND a1_.name = 'CompanyA') ORDER BY a1_.id, a2_.id");
+        results2.put("ContainsNot1N", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("ContainsN1", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Department AS a1_, Company AS a2_ WHERE (a1_.companyId = a2_.id AND a2_.name = 'CompanyA') ORDER BY a1_.id, a2_.id");
         results2.put("ContainsN1", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("ContainsMN", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, CompanysContractors AS indirect0 WHERE ((a1_.id = indirect0.Companys AND indirect0.Contractors = a2_.id) AND a1_.name = 'ContractorA') ORDER BY a1_.id, a2_.id");
         results2.put("ContainsMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "CompanysContractors", "InterMineObject"})));
         results.put("ContainsDuplicatesMN", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS indirect0 WHERE (a1_.id = indirect0.OldComs AND indirect0.OldContracts = a2_.id) ORDER BY a1_.id, a2_.id");
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "OldComsOldContracts", "InterMineObject"})));
-        results.put("ContainsNotMN", NO_RESULT); //TODO: Fix this (ticket #445)
-        id1 = (Integer) TypeUtil.getFieldValue(data.get("EmployeeA1"), "id");
+        results.put("ContainsNotMN", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results2.put("SimpleGroupBy", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("MultiJoin", "SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id, a4_.id AS a4_id FROM Company AS a1_, Department AS a2_, Manager AS a3_, Address AS a4_ WHERE (a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1') ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
@@ -131,10 +153,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("SelectInterfaceAndSubClasses3", "SELECT a1_.id AS a1_id FROM ImportantPerson AS a1_ ORDER BY a1_.id");
         results2.put("SelectInterfaceAndSubClasses3", new HashSet(Arrays.asList(new String[] {"InterMineObject", "ImportantPerson"})));
         results.put("OrderByAnomaly", "SELECT DISTINCT 5 AS a2_, a1_.name AS a3_ FROM Company AS a1_ ORDER BY a1_.name");
-        results2.put("OrderByAnomaly", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
-        Integer id2 = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
-        Integer id3 = (Integer) TypeUtil.getFieldValue(data.get("DepartmentA1"), "id");
-        results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.id AS a1_id FROM Company AS a1_, Department AS a2_ WHERE (a1_.id = " + id2 + " AND a1_.id = a2_.companyId AND a2_.id IN (SELECT a1_.id FROM Department AS a1_ WHERE a1_.id = " + id3 + ")) ORDER BY a1_.id");
+        results2.put("OrderByAnomaly", Collections.singleton("Company"));
+        results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.id AS a1_id FROM Company AS a1_, Department AS a2_ WHERE (a1_.id = " + companyAId + " AND a1_.id = a2_.companyId AND a2_.id IN (SELECT a1_.id FROM Department AS a1_ WHERE a1_.id = " + departmentA1Id + ")) ORDER BY a1_.id");
         results2.put("SelectClassObjectSubquery", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.id AS a2_id FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE (a1_.name = 'CompanyA' AND (a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id)) ORDER BY a2_.id");
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys", "InterMineObject"})));
@@ -148,7 +168,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("EmptyNorConstraintSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("BagConstraint", "SELECT Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.name IN ('CompanyA', 'goodbye', 'hello')) ORDER BY Company.id");
         results2.put("BagConstraint", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
-        results.put("BagConstraint2", "SELECT Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.id IN (" + id2 + ")) ORDER BY Company.id");
+        results.put("BagConstraint2", "SELECT Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.id IN (" + companyAId + ")) ORDER BY Company.id");
         results2.put("BagConstraint2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("InterfaceField", "SELECT a1_.id AS a1_id FROM Employable AS a1_ WHERE a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results2.put("InterfaceField", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employable"})));
@@ -205,7 +225,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsConstraintNotCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department", "Employee"})));
         results.put("ContainsConstraintMMCollectionRefObject", "SELECT a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE (a1_.id = indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
         results2.put("ContainsConstraintMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CompanysContractors"})));
-        results.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT); //TODO: Fix this (ticket #445)
+        results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         //results.put("ContainsConstraintNotMMCollectionRefObject", "SELECT a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE (a1_.id != indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
         //results2.put("ContainsConstraintNotMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CompanysContractors"})));
         results.put("SimpleConstraintNull", "SELECT a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NULL ORDER BY a1_.id");
@@ -213,13 +233,13 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("SimpleConstraintNotNull", "SELECT a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NOT NULL ORDER BY a1_.id");
         results2.put("SimpleConstraintNotNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Manager"})));
         results.put("TypeCast", "SELECT DISTINCT (a1_.age)::TEXT AS a2_ FROM Employee AS a1_ ORDER BY (a1_.age)::TEXT");
-        results2.put("TypeCast", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results2.put("TypeCast", Collections.singleton("Employee"));
         results.put("IndexOf", "SELECT STRPOS(a1_.name, 'oy') AS a2_ FROM Employee AS a1_ ORDER BY STRPOS(a1_.name, 'oy')");
-        results2.put("IndexOf", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results2.put("IndexOf", Collections.singleton("Employee"));
         results.put("Substring", "SELECT SUBSTR(a1_.name, 2, 2) AS a2_ FROM Employee AS a1_ ORDER BY SUBSTR(a1_.name, 2, 2)");
-        results2.put("Substring", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results2.put("Substring", Collections.singleton("Employee"));
         results.put("Substring2", "SELECT SUBSTR(a1_.name, 2) AS a2_ FROM Employee AS a1_ ORDER BY SUBSTR(a1_.name, 2)");
-        results2.put("Substring2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results2.put("Substring2", Collections.singleton("Employee"));
         results.put("OrderByReference", "SELECT a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("FailDistinctOrder", new Failure(ObjectStoreException.class, "Field a1_.age in the ORDER BY list must be in the SELECT list, or the whole QueryClass org.intermine.model.testmodel.Employee must be in the SELECT list, or the query made non-distinct"));
@@ -242,24 +262,22 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("NegativeNumbers", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
 
         results.put("Lower", "SELECT LOWER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY LOWER(a1_.name)");
-        results2.put("Lower", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results2.put("Lower", Collections.singleton("Employee"));
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY UPPER(a1_.name)");
-        results2.put("Upper", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        results.put("CollectionQueryOneMany", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE " + id3 + " = a1_.departmentId ORDER BY a1_.id");
+        results2.put("Upper", Collections.singleton("Employee"));
+        results.put("CollectionQueryOneMany", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE " + departmentA1Id + " = a1_.departmentId ORDER BY a1_.id");
         results2.put("CollectionQueryOneMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        Integer id4 = (Integer) TypeUtil.getFieldValue(data.get("CompanyB"), "id");
-        results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE (" + id4 + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
+        results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE (" + companyBId + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id) ORDER BY a1_.id");
         results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
-        Integer id5 = (Integer) ((Department) data.get("DepartmentA1")).getId();
-        Integer id6 = (Integer) ((Department) data.get("DepartmentB1")).getId();
-        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.id AS a2_id FROM Employee AS a2_ WHERE (a2_.departmentId IN (" + id5 + ", " + id6 + ")) ORDER BY a2_.departmentId, a2_.id");
+        results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.id AS a2_id FROM Employee AS a2_ WHERE (a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) ORDER BY a2_.departmentId, a2_.id");
         results2.put("QueryClassBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        Integer companyAId = (Integer) ((Company) data.get("CompanyA")).getId();
-        Integer companyBId = (Integer) ((Company) data.get("CompanyB")).getId();
-        Integer employeeB1Id = (Integer) ((Employee) data.get("EmployeeB1")).getId();
         results.put("QueryClassBagMM", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE ((indirect0.Secretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
         results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
+        results.put("QueryClassBagNot", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
+        //results.put("QueryClassBagNot", "SELECT a2_.departmentId AS a3_, a2_.id AS a2_id FROM Employee AS a2_ WHERE ( NOT (a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + "))) ORDER BY a2_.departmentId, a2_.id");
+        //results2.put("QueryClassBagNot", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results.put("QueryClassBagNotMM", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
         results.put("QueryClassBagDynamic", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE ((indirect0.Secretarys IN (" + employeeB1Id + ")) AND indirect0.HasSecretarys = a2_.id) ORDER BY indirect0.Secretarys, a2_.id");
         results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
         //res = new HashSet()
@@ -272,6 +290,21 @@ public class SqlGeneratorTest extends SetupDataTestCase
         res.add("SELECT a1_.id AS a1_id FROM Broke AS a1_, CEO AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
         results.put("DynamicBagConstraint2", res);
         results2.put("DynamicBagConstraint2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Broke", "CEO"})));
+        results.put("QueryClassBagDouble", "SELECT a2_.departmentId AS a4_, a2_.id AS a2_id, a3_.id AS a3_id FROM Employee AS a2_, Employee AS a3_ WHERE ((a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND a3_.departmentId = a2_.departmentId) ORDER BY a2_.departmentId, a2_.id, a3_.id");
+        results2.put("QueryClassBagDouble", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results.put("QueryClassBagContainsObject", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0 WHERE ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") ORDER BY indirect0.departmentId");
+        results2.put("QueryClassBagContainsObject", Collections.singleton("Employee"));
+        results.put("QueryClassBagContainsObjectDouble", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0, Employee AS indirect1 WHERE (((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") AND (indirect1.departmentId = indirect0.departmentId AND indirect1.id = " + employeeA2Id + ")) ORDER BY indirect0.departmentId");
+        results2.put("QueryClassBagContainsObjectDouble", Collections.singleton("Employee"));
+        results.put("QueryClassBagNotContainsObject", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
+        results.put("ObjectContainsObject", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results2.put("ObjectContainsObject", Collections.singleton("Employee"));
+        results.put("ObjectContainsObject2", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
+        results2.put("ObjectContainsObject2", Collections.singleton("Employee"));
+        results.put("ObjectNotContainsObject", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results2.put("ObjectNotContainsObject", Collections.singleton("Employee"));
+        results.put("QueryClassBagNotViaNand", new Failure(ObjectStoreException.class, "Invalid constraint: QueryClassBag ContainsConstraint cannot be inside an OR ConstraintSet"));
+        results.put("QueryClassBagNotViaNor", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
@@ -402,10 +435,100 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
+        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
         try {
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET), db, new HashMap());
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, s, db, new HashMap());
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
+            assertEquals("interface org.intermine.model.testmodel.Company is not in the model", e.getMessage());
+        }
+        try {
+            SqlGenerator.findTableNames(q, s);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertEquals("interface org.intermine.model.testmodel.Company is not in the model", e.getMessage());
+        }
+    }
+
+    public void testInvalidFromElement() throws Exception {
+        Query q = new Query();
+        FromElement fe = new FromElement() {};
+        q.addFrom(fe);
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        try {
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertTrue(e.getMessage().startsWith("Unknown FromElement: "));
+        }
+        try {
+            SqlGenerator.findTableNames(q, getSchema());
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertTrue(e.getMessage().startsWith("Unknown FromElement: "));
+        }
+    }
+
+    public void testInvalidConstraintType() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new Constraint() {});
+        try {
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertTrue(e.getMessage().startsWith("Unknown constraint type: "));
+        }
+        try {
+            SqlGenerator.findTableNames(q, getSchema());
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertTrue(e.getMessage().startsWith("Unknown constraint type: "));
+        }
+    }
+
+    public void testInvalidClassConstraint() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        q.setConstraint(new ClassConstraint(qc, ConstraintOp.EQUALS, c));
+        try {
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertEquals("ClassConstraint cannot contain an InterMineObject without an ID set", e.getMessage());
+        }
+    }
+
+    public void testInvalidClassInContainsConstraint() throws Exception {
+        Employee emp = new Employee() {
+            private Set extras;
+            public Set getExtras() {
+                return extras;
+            }
+            public void setExtras(Set extras) {
+                this.extras = extras;
+            }
+            public void addExtras(Employee e) {
+                extras.add(e);
+            }
+        };
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(emp, "extras"), ConstraintOp.CONTAINS, qc));
+        try {
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertEquals("Reference ?.extras is not in the model", e.getMessage());
         }
     }
 
@@ -471,6 +594,27 @@ public class SqlGeneratorTest extends SetupDataTestCase
         DatabaseSchema schema = getSchema();
         Query q = (Query) queries.get("SelectSimpleObject");
         assertEquals(precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
+    }
+
+    public void testInvalidSafenesses() throws Exception {
+        try {
+            SqlGenerator.constraintToString(null, null, null, null, 3);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertEquals("Unknown ContainsConstraint safeness: 3", e.getMessage());
+        }
+        try {
+            SqlGenerator.constraintSetToString(null, null, null, null, 3);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertEquals("Unknown ContainsConstraint safeness: 3", e.getMessage());
+        }
+        try {
+            SqlGenerator.containsConstraintToString(null, null, null, null, 3);
+            fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreException e) {
+            assertEquals("Unknown ContainsConstraint safeness: 3", e.getMessage());
+        }
     }
 
     protected DatabaseSchema getSchema() throws Exception {

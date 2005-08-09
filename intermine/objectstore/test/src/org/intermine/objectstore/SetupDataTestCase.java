@@ -53,6 +53,8 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -90,9 +92,20 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("CollectionQueryManyMany", collectionQueryManyMany());
         queries.put("QueryClassBag", queryClassBag());
         queries.put("QueryClassBagMM", queryClassBagMM());
+        queries.put("QueryClassBagNot", queryClassBagNot());
+        queries.put("QueryClassBagNotMM", queryClassBagNotMM());
         queries.put("QueryClassBagDynamic", queryClassBagDynamic());
         //queries.put("DynamicBagConstraint", dynamicBagConstraint()); // See ticket #469
         queries.put("DynamicBagConstraint2", dynamicBagConstraint2());
+        queries.put("QueryClassBagDouble", queryClassBagDouble());
+        queries.put("QueryClassBagContainsObject", queryClassBagContainsObject());
+        queries.put("QueryClassBagContainsObjectDouble", queryClassBagContainsObjectDouble());
+        queries.put("QueryClassBagNotContainsObject", queryClassBagNotContainsObject());
+        queries.put("ObjectContainsObject", objectContainsObject());
+        queries.put("ObjectContainsObject2", objectContainsObject2());
+        queries.put("ObjectNotContainsObject", objectNotContainsObject());
+        queries.put("QueryClassBagNotViaNand", queryClassBagNotViaNand());
+        queries.put("QueryClassBagNotViaNor", queryClassBagNotViaNor());
     }
 
     public static Collection setUpData() throws Exception {
@@ -598,6 +611,38 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     /*
+     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE a1_.employees DOES NOT CONTAIN a2_
+     */
+    public static Query queryClassBagNot() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.DOES_NOT_CONTAIN, qc));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id, a2_ FROM ?::HasSecretarys AS a1_, Secretary AS a2_ WHERE a1_.secretarys DOES NOT CONTAIN a2_
+     */
+    public static Query queryClassBagNotMM() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(HasSecretarys.class, Arrays.asList(new Object[] {data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")}));
+        QueryClass qc = new QueryClass(Secretary.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.DOES_NOT_CONTAIN, qc));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
      * SELECT a1_.id, a2_ FROM ?::(CEO, Broke) AS a1_, Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_
      */
     public static Query queryClassBagDynamic() throws Exception {
@@ -636,6 +681,141 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}))));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id, a2_, a3_ FROM ?::Department AS a1_, Employee AS a2_, Employee AS a3_ WHERE a1_.employees CONTAINS a2_ AND a1_.employee CONTAINS a3_
+     */
+    public static Query queryClassBagDouble() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        QueryClass qc1 = new QueryClass(Employee.class);
+        QueryClass qc2 = new QueryClass(Employee.class);
+        q.addFrom(qcb);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc1);
+        q.addToSelect(qc2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc1));
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc2));
+        q.setConstraint(cs);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id FROM ?::Department AS a1_ WHERE a1_.employees CONTAINS ?
+     */
+    public static Query queryClassBagContainsObject() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        q.addFrom(qcb);
+        q.addToSelect(new QueryField(qcb));
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA1")));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id FROM ?::Department AS a1_ WHERE a1_.employees CONTAINS ? AND a1_.employees CONTAINS ?
+     */
+    public static Query queryClassBagContainsObjectDouble() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        q.addFrom(qcb);
+        q.addToSelect(new QueryField(qcb));
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA1")));
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA2")));
+        q.setConstraint(cs);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id FROM ?::Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN ?
+     */
+    public static Query queryClassBagNotContainsObject() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        q.addFrom(qcb);
+        q.addToSelect(new QueryField(qcb));
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.DOES_NOT_CONTAIN, (Employee) data.get("EmployeeA1")));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT 1 AS a1_ WHERE ?.employees CONTAINS ?
+     */
+    public static Query objectContainsObject() throws Exception {
+        Query q = new Query();
+        q.addToSelect(new QueryValue(new Integer(1)));
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeA1")));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT 1 AS a1_ WHERE ?.employees CONTAINS ?
+     */
+    public static Query objectContainsObject2() throws Exception {
+        Query q = new Query();
+        q.addToSelect(new QueryValue(new Integer(1)));
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeB1")));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT 1 AS a1_ WHERE ?.employees DOES NOT CONTAIN ?
+     */
+    public static Query objectNotContainsObject() throws Exception {
+        Query q = new Query();
+        q.addToSelect(new QueryValue(new Integer(1)));
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("EmployeeA1")));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE NOT (a1_.employees CONTAINS a2_ AND 1 = 1)
+     */
+    public static Query queryClassBagNotViaNand() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.NAND);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
+        cs.addConstraint(new SimpleConstraint(new QueryValue(new Integer(1)), ConstraintOp.EQUALS, new QueryValue(new Integer(1))));
+        q.setConstraint(cs);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE NOT (a1_.employees CONTAINS a2_ OR 1 = 1)
+     */
+    public static Query queryClassBagNotViaNor() throws Exception {
+        Query q = new Query();
+        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}));
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qcb);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.NOR);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
+        cs.addConstraint(new SimpleConstraint(new QueryValue(new Integer(1)), ConstraintOp.EQUALS, new QueryValue(new Integer(1))));
+        q.setConstraint(cs);
         q.setDistinct(false);
         return q;
     }

@@ -44,6 +44,8 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         results.put("ContainsNeg11", new IqlQuery("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Manager AS a2_ WHERE NOT a1_.manager CONTAINS a2_ AND a1_.name = 'DepartmentA1'", null));
         results.put("EmptyNandConstraintSet", NO_RESULT);
         results.put("EmptyNorConstraintSet", NO_RESULT);
+        results.put("QueryClassBagNotViaNand", NO_RESULT); // Has trouble with "1 = 1" - both are UnknownTypeValues
+        results.put("QueryClassBagNotViaNor", NO_RESULT);
     }
 
     public void executeTest(String type) throws Exception {
