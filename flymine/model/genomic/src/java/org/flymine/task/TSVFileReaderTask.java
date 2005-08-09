@@ -138,8 +138,11 @@ public class TSVFileReaderTask extends FileReadTask
                             if (columnFD == null) {
                                 // ignore - no configuration for this column
                             } else {
-                                TypeUtil.setFieldValue(o, columnFD.getName(), thisRow[columnIndex]);
-                                osw.store(o);
+                                String rowValue = thisRow[columnIndex].trim();
+                                if (rowValue.length() > 0) {
+                                    TypeUtil.setFieldValue(o, columnFD.getName(), rowValue);
+                                    osw.store(o);
+                                }
                             }
                         }
                     }
