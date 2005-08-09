@@ -66,7 +66,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
 
         String ENDL = System.getProperty("line.separator");
-        file = new File("build/model/mage/mage_config.properties");
+        file = new File("build/model/genomic/mage_config.properties");
         String propertiesFile="P10005.experimentName=Experiment 1" + ENDL
             + "P10005.primaryCharacteristic=colour" + ENDL;
 
@@ -550,7 +550,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         translator.sampleToTreatments.put("0_1", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"})));
 
-        translator.sampleToLabeledExtract.put("0_1", "2_1");
+        translator.sampleToLabeledExtracts.put("0_1", new HashSet(Collections.singleton("2_1")));
         translator.labeledExtractToMeasuredBioAssay.put("2_1", "3_1");
         translator.measuredBioAssayToMicroArrayAssay.put("3_1", "4_1");
         translator.assayToExpName.put("4_1", "P10005");
