@@ -69,7 +69,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="organismDbId" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="symbol" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
