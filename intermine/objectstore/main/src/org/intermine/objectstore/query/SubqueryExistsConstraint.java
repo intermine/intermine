@@ -14,7 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 
+ * Check if there are any rows in the subquery
+ *
+ * @author Tom Reilly
+ * @author Matthew Wakeling
  */
 public class SubqueryExistsConstraint extends Constraint
 {
@@ -37,22 +40,6 @@ public class SubqueryExistsConstraint extends Constraint
 
         if (!VALID_OPS.contains(op)) {
             throw new IllegalArgumentException("op cannot be " + op);
-        }
-
-        // check that query only has one item in select list
-        List select = query.getSelect();
-        if (select.size() < 1) {
-            throw new IllegalArgumentException("Query has no items in select list.");
-        }
-
-        if (select.size() > 1) {
-            throw new IllegalArgumentException("Subquery must have only one select item.");
-        }
-
-        // check that the select node is a QueryEvaluable
-        QueryNode selectNode = (QueryNode) select.get(0);
-        if (!QueryEvaluable.class.isAssignableFrom(selectNode.getClass())) {
-            throw new IllegalArgumentException("Subquery select item is not a QueryEvaluable");
         }
 
         this.subquery = query;

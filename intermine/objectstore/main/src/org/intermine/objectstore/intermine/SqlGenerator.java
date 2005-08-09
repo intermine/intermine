@@ -58,6 +58,7 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.UnknownTypeValue;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
@@ -540,6 +541,8 @@ public class SqlGenerator
             }
         } else if (c instanceof SubqueryConstraint) {
             findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema);
+        } else if (c instanceof SubqueryExistsConstraint) {
+            findTableNames(tablenames, ((SubqueryExistsConstraint) c).getQuery(), schema);
         } else if (c instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) c;
             QueryReference ref = cc.getReference();
@@ -739,6 +742,8 @@ public class SqlGenerator
             simpleConstraintToString(state, (SimpleConstraint) c, q);
         } else if (c instanceof SubqueryConstraint) {
             subqueryConstraintToString(state, (SubqueryConstraint) c, q, schema);
+        } else if (c instanceof SubqueryExistsConstraint) {
+            subqueryExistsConstraintToString(state, (SubqueryExistsConstraint) c, q, schema);
         } else if (c instanceof ClassConstraint) {
             classConstraintToString(state, (ClassConstraint) c, q, schema);
         } else if (c instanceof ContainsConstraint) {
@@ -840,6 +845,25 @@ public class SqlGenerator
         state.addToWhere(" " + c.getOp().toString() + " ("
                          + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
                                     state.getBagTableNames()) + ")");
+    }
+
+    /**
+     * Converts a SubqueryExistsConstraint object into a String suitable for putting in an SQL
+     * query.
+     *
+     * @param state the object to place text into
+     * @param c the SubqueryExistsConstraint object
+     * @param q the Query
+     * @param schema the DatabaseSchema in which to look up metadata
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected static void subqueryExistsConstraintToString(State state, SubqueryExistsConstraint c,
+            Query q, DatabaseSchema schema) throws ObjectStoreException {
+        Query subQ = c.getQuery();
+        state.addToWhere((c.getOp() == ConstraintOp.EXISTS ? "EXISTS(" : "(NOT EXISTS(")
+                         + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
+                                    state.getBagTableNames())
+                         + (c.getOp() == ConstraintOp.EXISTS ? ")" : "))"));
     }
 
     /**
