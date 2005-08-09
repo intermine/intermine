@@ -168,10 +168,10 @@ public class DagValidator
             Map.Entry e = (Map.Entry) iter.next();
             Iterator synIter = ((Set) e.getValue()).iterator();
             while (synIter.hasNext()) {
-                String synonym = (String) synIter.next();
-                if (synMap.containsKey(synonym)) {
+                DagTermSynonym synonym = (DagTermSynonym) synIter.next();
+                if (synMap.containsKey(synonym.getName())) {
                     DagTerm term = (DagTerm) nameMap.get((String) e.getKey());
-                    DagTerm synTerm = (DagTerm) nameMap.get(synonym);
+                    DagTerm synTerm = (DagTerm) nameMap.get(synonym.getName());
                     output.append("synonym \'" + synonym + "\' for term: \'" + term.toString()
                                   + "\' is also term: " + synTerm.getId() + "\n");
                     valid = false;
