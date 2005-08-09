@@ -4177,6 +4177,56 @@
 
   <target name="build-tfbscluster-production" depends="retrieve-tfbscluster, load-tfbscluster"/>
 
+<!--load TFBS CNS GFF3 data from UCSC-->
+  <target name="retrieve-cns" depends="prepare-build-model, compile-tfbscluster-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="TFBSSearch"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.CnsGFF3RecordHandler">
+      <fileset dir ="${shared.data}/human/cns">
+        <include name ="*.gff3"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-cns" depends="copy-t1dmine-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.genomic-test"
+               source="os.gff3-translated"
+               sourceName="tfbscluster"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-cns-production" depends="retrieve-cns, load-cns"/>
+
 
 <!-- INPARANOID ORTHOLOGUES PIPELINE hs/mm -->
 
