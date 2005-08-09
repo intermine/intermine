@@ -99,5 +99,10 @@ public class TSVFileReaderTaskTest extends TestCase
         Map storeObjects = osw.getStoredObjects();
         
         assertEquals("name1", ((Gene) storeObjects.get(new Integer(101))).getSymbol());
+        assertEquals("name2", ((Gene) storeObjects.get(new Integer(102))).getSymbol());
+        assertNull(((Gene) storeObjects.get(new Integer(103))).getSymbol());
+        assertEquals("organismDbId1", ((Gene)storeObjects.get(new Integer(101))).getOrganismDbId());
+        assertEquals("organismDbId2", ((Gene)storeObjects.get(new Integer(102))).getOrganismDbId());
+        assertEquals("organismDbId3", ((Gene)storeObjects.get(new Integer(103))).getOrganismDbId());
     }
 }
