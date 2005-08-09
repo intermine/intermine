@@ -167,14 +167,9 @@ public class WriteGFFTask extends Task
                 }
             }
 
+            // process Transcripts but not tRNAs
             if (feature instanceof Transcript && !(feature instanceof NcRNA)) {
-                Transcript transcript = (Transcript) feature;
-
-                if (transcript.getGene() != null) {
-                    // process Transcripts but not tRNAs
-                    seenTranscripts.put(transcript, loc);
-                    continue;
-                }
+                seenTranscripts.put(feature, loc);
             }
 
             if (feature instanceof Exon) {
@@ -375,20 +370,20 @@ public class WriteGFFTask extends Task
         attributes.put("FlyMineInternalID", flyMineIDs.clone());
         List allIds = (List) flyMineIDs.clone();
 
-//         List synonymValues = (List) synonymMap.get(bioEntity.getId());
+        List synonymValues = (List) synonymMap.get(bioEntity.getId());
 
-//         if (synonymValues == null) {
-//             LOG.warn("cannot find any synonyms for: " + bioEntity.getId() + " identifier: "
-//                      + bioEntity.getIdentifier());
-//         } else {
-//             Iterator synonymIter = synonymValues.iterator();
-//             while (synonymIter.hasNext()) {
-//                 String thisSynonymValue = (String) synonymIter.next();
-//                 if (!allIds.contains(thisSynonymValue)) {
-//                     allIds.add(thisSynonymValue);
-//                 }
-//             }
-//         }
+        if (synonymValues == null) {
+            LOG.warn("cannot find any synonyms for: " + bioEntity.getId() + " identifier: "
+                     + bioEntity.getIdentifier());
+        } else {
+            Iterator synonymIter = synonymValues.iterator();
+            while (synonymIter.hasNext()) {
+                String thisSynonymValue = (String) synonymIter.next();
+                if (!allIds.contains(thisSynonymValue)) {
+                    allIds.add(thisSynonymValue);
+                }
+            }
+        }
 
         attributes.put("Alias", allIds);
 
@@ -415,6 +410,40 @@ public class WriteGFFTask extends Task
 
         lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
         gffWriter.println(lineBuffer.toString());
+    }
+
+    /**
+     * Taken from BioJava's SimpleGFFRecord.java
+     */
+    static String stringifyAttributes(Map attMap) {
+        StringBuffer sBuff = new StringBuffer();
+        Iterator ki = attMap.keySet().iterator();
+        while (ki.hasNext()) {
+            String key = (String) ki.next();
+    
+            List values = (List) attMap.get(key);
+            if (values.size() == 0) {
+                sBuff.append(key);
+                sBuff.append(";");
+            } else {
+                for (Iterator vi = values.iterator(); vi.hasNext();) {
+                    sBuff.append(key);
+                    String value = (String) vi.next();
+                    sBuff.append(" \"" + value + "\"");
+                    if (ki.hasNext() || vi.hasNext()) {
+                        sBuff.append(";");
+                        
+                    }
+                    if (vi.hasNext()) {
+                        sBuff.append(" ");
+                    }
+                }
+            }
+            if (ki.hasNext()) {
+                sBuff.append(" ");
+            }
+        }
+        return sBuff.toString();
     }
 
     /**

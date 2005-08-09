@@ -11,10 +11,14 @@ package org.flymine.gbrowse;
  */
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -106,6 +110,33 @@ public class WriteGFFTaskTest extends TestCase
         ts.transferToLocatedSequenceFeatures();
         WriteGFFTask task = new WriteGFFTask();
         task.writeGFF(osw.getObjectStore(), new File("build/gbrowse/data"));
+    }
+
+    public void testStringifyAttributes() throws Exception {
+        Map attMap = new LinkedHashMap();
+
+        attMap.put("empty_key", new ArrayList());
+
+        List oneValue = new ArrayList();
+        oneValue.add("v1");
+        attMap.put("k1", oneValue);
+        
+        List twoValues = new ArrayList(); 
+        twoValues.add("v2");
+        twoValues.add("v3");
+        attMap.put("k2", twoValues);
+
+        List threeValues = new ArrayList();
+        threeValues.add("v4");
+        threeValues.add("");
+        threeValues.add("v5");
+        attMap.put("k3", threeValues);
+
+        String stringifiedAttributes = WriteGFFTask.stringifyAttributes(attMap);
+        String expected =
+            "empty_key; k1 \"v1\"; k2 \"v2\"; k2 \"v3\"; k3 \"v4\"; k3 \"\"; k3 \"v5\"";
+
+        assertEquals(expected, stringifiedAttributes);
     }
 
     private void createData() throws Exception {
