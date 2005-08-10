@@ -468,7 +468,7 @@ public class QueryOptimiser
                     // of currentQuery.
                     reconstructAbstractConstraints(currentQuery.getHaving(), precomputedSqlTable,
                             valueMap, precompQuery.getFrom(), false, newQuery.getHaving(),
-                            Collections.EMPTY_SET, null, 0, null);
+                            Collections.EMPTY_SET, null, 0, null, false);
 
                     // Now populate the ORDER BY clause of newQuery from the contents of the ORDER
                     // BY clause of currentQuery.
@@ -522,14 +522,15 @@ public class QueryOptimiser
                     if ((orderByField == null) || (!query.getGroupBy().isEmpty())) {
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
-                                whereConstraintEqualsSet, null, 0, null);
+                                whereConstraintEqualsSet, null, 0, null, false);
                     } else {
                         Field firstPrecompOrderBy = new Field(((SelectValue) valueMap.get(
                                         precompOrderBy.get(0))).getAlias(), precomputedSqlTable);
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, firstPrecompOrderBy,
-                                precompOrderBy.size(), orderByField);
+                                precompOrderBy.size(), orderByField,
+                                precomputedTable.getFirstOrderByHasNoNulls());
                     }
 
                     // Now populate the GROUP BY clause of newQuery from the contents of the GROUP
@@ -665,7 +666,7 @@ public class QueryOptimiser
                 // of the original query, leaving out those constraints in constraintEqualsSet.
                 reconstructAbstractConstraints(query.getHaving(), precomputedSqlTable, valueMap,
                         precompQuery.getFrom(), true, newQuery.getWhere(), constraintEqualsSet,
-                        null, 0, null);
+                        null, 0, null, true);
 
                 // Now populate the ORDER BY clause of the new query from the contents of the ORDER
                 // BY clause of the original query.
@@ -940,20 +941,23 @@ public class QueryOptimiser
      * field in the precomputed table would be mapped onto in the destination query
      * @param precompOrderBySize the number of elements in the precomputed table's order by clause
      * @param orderByField a Field that can replace the firstPrecompOrderBy field
+     * @param firstPrecompOrderByHasNoNulls true if the firstPrecompOrderBy field does not permit
+     * null values
      * @throws QueryOptimiserException if reconstructAbstractValue finds an AbstractValue that
      * cannot be constructed, given the PrecomputedTable
      */
     protected static void reconstructAbstractConstraints(Set oldConstraints,
             Table precomputedSqlTable, Map valueMap, Set tableSet, boolean groupBy,
             Set newConstraints, Set constraintEqualsSet, Field firstPrecompOrderBy,
-            int precompOrderBySize, Field orderByField) throws QueryOptimiserException {
+            int precompOrderBySize, Field orderByField, boolean firstPrecompOrderByHasNoNulls)
+        throws QueryOptimiserException {
         Iterator constraintIter = oldConstraints.iterator();
         while (constraintIter.hasNext()) {
             AbstractConstraint old = (AbstractConstraint) constraintIter.next();
             if (!constraintEqualsSet.contains(old)) {
                 AbstractConstraint newConstraint = reconstructAbstractConstraint(old,
                         precomputedSqlTable, valueMap, tableSet, groupBy, firstPrecompOrderBy,
-                        precompOrderBySize, orderByField);
+                        precompOrderBySize, orderByField, firstPrecompOrderByHasNoNulls);
                 newConstraints.add(newConstraint);
             }
         }
@@ -973,6 +977,8 @@ public class QueryOptimiser
      * field in the precomputed table would be mapped onto in the destination query
      * @param precompOrderBySize the number of elements in the precomputed table's order by clause
      * @param orderByField a Field that can replace the firstPrecompOrderBy field
+     * @param firstPrecompOrderByHasNoNulls true if the firstPrecompOrderBy field does not permit
+     * null values
      * @return an AbstractConstraint that uses AbstractValues reconstructed by
      * reconstructAbstractValue
      * @throws QueryOptimiserException if reconstructAbstractValue finds an AbstractValue that
@@ -981,7 +987,8 @@ public class QueryOptimiser
     protected static AbstractConstraint reconstructAbstractConstraint(
             AbstractConstraint oldConstraint, Table precomputedSqlTable, Map valueMap,
             Set tableSet, boolean groupBy, Field firstPrecompOrderBy, int precompOrderBySize,
-            Field orderByField) throws QueryOptimiserException {
+            Field orderByField, boolean firstPrecompOrderByHasNoNulls)
+        throws QueryOptimiserException {
         if (oldConstraint instanceof Constraint) {
             AbstractValue left = ((Constraint) oldConstraint).getLeft();
             AbstractValue right = ((Constraint) oldConstraint).getRight();
@@ -998,11 +1005,21 @@ public class QueryOptimiser
                 return new Constraint(new Constant(value), Constraint.LT,
                         orderByField);
             }
+            if (right.equals(firstPrecompOrderBy) && (operation == Constraint.LT)
+                    && (left instanceof Constant) && firstPrecompOrderByHasNoNulls) {
+                String value = ((Constant) left).toString();
+                for (int i = 1; i < precompOrderBySize; i++) {
+                    value += "50000000000000000000";
+                }
+                return new Constraint(new Constant(value), Constraint.LT,
+                        orderByField);
+            }
             return new Constraint(left, operation, right);
         } else if (oldConstraint instanceof NotConstraint) {
             AbstractConstraint inner = ((NotConstraint) oldConstraint).getConstraint();
             inner = reconstructAbstractConstraint(inner, precomputedSqlTable, valueMap, tableSet,
-                    groupBy, firstPrecompOrderBy, precompOrderBySize, orderByField);
+                    groupBy, firstPrecompOrderBy, precompOrderBySize, orderByField,
+                    firstPrecompOrderByHasNoNulls);
             return new NotConstraint(inner);
         } else if (oldConstraint instanceof ConstraintSet) {
             Set cons = ((ConstraintSet) oldConstraint).getConstraints();
@@ -1011,7 +1028,8 @@ public class QueryOptimiser
             while (consIter.hasNext()) {
                 AbstractConstraint con = (AbstractConstraint) consIter.next();
                 con = reconstructAbstractConstraint(con, precomputedSqlTable, valueMap, tableSet,
-                        groupBy, firstPrecompOrderBy, precompOrderBySize, orderByField);
+                        groupBy, firstPrecompOrderBy, precompOrderBySize, orderByField,
+                        firstPrecompOrderByHasNoNulls);
                 retval.add(con);
             }
             return retval;

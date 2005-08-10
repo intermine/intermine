@@ -12,6 +12,7 @@ package org.intermine.sql.precompute;
 
 import junit.framework.*;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -346,10 +347,10 @@ public class QueryOptimiserTest extends TestCase
         ec4.add(ec1);
         ec4.add(ec3);
 
-        assertEquals(ec1, QueryOptimiser.reconstructAbstractConstraint(c1, precomputedSqlTable, valueMap, tableSet, false, null, 0, null));
-        assertEquals(ec2, QueryOptimiser.reconstructAbstractConstraint(c2, precomputedSqlTable, valueMap, tableSet, false, null, 0, null));
-        assertEquals(ec3, QueryOptimiser.reconstructAbstractConstraint(c3, precomputedSqlTable, valueMap, tableSet, false, null, 0, null));
-        assertEquals(ec4, QueryOptimiser.reconstructAbstractConstraint(c4, precomputedSqlTable, valueMap, tableSet, false, null, 0, null));
+        assertEquals(ec1, QueryOptimiser.reconstructAbstractConstraint(c1, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
+        assertEquals(ec2, QueryOptimiser.reconstructAbstractConstraint(c2, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
+        assertEquals(ec3, QueryOptimiser.reconstructAbstractConstraint(c3, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
+        assertEquals(ec4, QueryOptimiser.reconstructAbstractConstraint(c4, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
 
         Set set = new HashSet();
         set.add(c1);
@@ -363,7 +364,7 @@ public class QueryOptimiserTest extends TestCase
         eset.add(ec4);
         Set newSet = new HashSet();
         Set constraintEqualsSet = new HashSet();
-        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null);
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null, false);
         assertEquals(eset, newSet);
 
         newSet = new HashSet();
@@ -372,7 +373,7 @@ public class QueryOptimiserTest extends TestCase
         eset.add(ec2);
         eset.add(ec4);
         constraintEqualsSet.add(c3);
-        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null);
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null, false);
         assertEquals(eset, newSet);
     }
 
@@ -927,5 +928,67 @@ public class QueryOptimiserTest extends TestCase
         bestQuery = new BestQueryStorer();
         QueryOptimiser.recursiveOptimise(precomps, q2, bestQuery, q2);
         assertEquals(eSet, bestQuery.getQueries());
+    }
+
+    public void testKimsBug4() throws Exception {
+        try {
+            con.createStatement().execute("CREATE TABLE LocatedSequenceFeature (id int)");
+            con.createStatement().execute("CREATE TABLE OverlapRelation (id int);");
+            Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
+            Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
+            PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+            Set precomps = new HashSet();
+            precomps.add(pt1);
+
+            System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
+
+            StringUtil.setNextUniqueNumber(42);
+            BestQueryStorer bestQuery = new BestQueryStorer();
+            QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+            Set eSet = new ConsistentSet();
+            eSet.add(new Query("SELECT P48.a3_id AS a1_id, P48.a2_id, P48.a1_id AS a3_id FROM precomp1 AS P48 WHERE 24081631 < P48.a3_id ORDER BY P48.a3_id, P48.a2_id, P48.a1_id"));
+            eSet.add(new Query("SELECT P51.a1_id, P51.a2_id, P51.a3_id FROM precomp1 AS P51 WHERE 24081631 < P51.a1_id ORDER BY P51.orderby_field"));
+            assertEquals(eSet, bestQuery.getQueries());
+        } finally {
+            try {
+                con.createStatement().execute("DROP TABLE LocatedSequenceFeature");
+            } catch (SQLException e) {
+            }
+            try {
+                con.createStatement().execute("DROP TABLE OverlapRelation");
+            } catch (SQLException e) {
+            }
+        }
+    }
+
+    public void testKimsBug5() throws Exception {
+        try {
+            con.createStatement().execute("CREATE TABLE LocatedSequenceFeature (id int NOT NULL)");
+            con.createStatement().execute("CREATE TABLE OverlapRelation (id int NOT NULL);");
+            Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
+            Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
+            PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+            Set precomps = new HashSet();
+            precomps.add(pt1);
+
+            System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
+
+            StringUtil.setNextUniqueNumber(42);
+            BestQueryStorer bestQuery = new BestQueryStorer();
+            QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+            Set eSet = new ConsistentSet();
+            eSet.add(new Query("SELECT P48.a3_id AS a1_id, P48.a2_id, P48.a1_id AS a3_id FROM precomp1 AS P48 WHERE 24081631 < P48.a3_id ORDER BY P48.a3_id, P48.a2_id, P48.a1_id"));
+            eSet.add(new Query("SELECT P51.a1_id, P51.a2_id, P51.a3_id FROM precomp1 AS P51 WHERE 240816315000000000000000000050000000000000000000 < P51.orderby_field ORDER BY P51.orderby_field"));
+            assertEquals(eSet, bestQuery.getQueries());
+        } finally {
+            try {
+                con.createStatement().execute("DROP TABLE LocatedSequenceFeature");
+            } catch (SQLException e) {
+            }
+            try {
+                con.createStatement().execute("DROP TABLE OverlapRelation");
+            } catch (SQLException e) {
+            }
+        }
     }
 }

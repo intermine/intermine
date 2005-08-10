@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -471,6 +472,25 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                 value = null;
                             }
                             fieldNamesWritten.add(tableInfo.fieldNames[colNo]);
+                        } else {
+                            FieldDescriptor fieldDescriptor = tableInfo.fields[colNo];
+                            if (fieldDescriptor instanceof AttributeDescriptor) {
+                                String fieldType = ((AttributeDescriptor) fieldDescriptor)
+                                    .getType();
+                                if ("boolean".equals(fieldType)) {
+                                    value = Boolean.FALSE;
+                                } else if ("short".equals(fieldType)) {
+                                    value = new Short((short) 0);
+                                } else if ("int".equals(fieldType)) {
+                                    value = new Integer(0);
+                                } else if ("long".equals(fieldType)) {
+                                    value = new Long(0L);
+                                } else if ("float".equals(fieldType)) {
+                                    value = new Float(0.0F);
+                                } else if ("double".equals(fieldType)) {
+                                    value = new Double(0.0);
+                                }
+                            }
                         }
                         values[colNo] = value;
                     }
@@ -583,6 +603,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
             retval.colNames = new String[colCount];
             retval.fieldNames = new String[colCount];
+            retval.fields = new FieldDescriptor[colCount];
             int colNo = 0;
             if (hasObject) {
                 retval.colNames[colNo] = "OBJECT";
@@ -601,6 +622,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                 retval.colNames[colNo] = DatabaseUtil.getColumnName(field);
                 retval.fieldNames[colNo] = field.getName();
+                retval.fields[colNo] = field;
                 colNo++;
             }
             retval.referencesFrom = colNo;
@@ -609,6 +631,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                 retval.colNames[colNo] = DatabaseUtil.getColumnName(field);
                 retval.fieldNames[colNo] = field.getName();
+                retval.fields[colNo] = field;
                 colNo++;
             }
             tableToInfo.put(tableName, retval);
@@ -1000,6 +1023,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         String tableName;
         String colNames[];
         String fieldNames[];
+        FieldDescriptor fields[];
         int referencesFrom;
     }
 }
