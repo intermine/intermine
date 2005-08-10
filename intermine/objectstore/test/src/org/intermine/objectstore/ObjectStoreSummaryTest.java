@@ -11,7 +11,10 @@ package org.intermine.objectstore;
  */
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+
+import org.intermine.metadata.ClassDescriptor;
 
 import junit.framework.Test;
 
@@ -31,6 +34,7 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
     }
 
     public void executeTest(String type) {
+        
     }
 
     public static Test suite() {
@@ -41,6 +45,8 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, new Properties());
         assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
+        
+        System.out.println("" + oss.toProperties());
     }
 
     public void testGetFieldValues() throws Exception {
@@ -62,5 +68,40 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         // null because max.field.values exceeded
         assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
         assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
+    }
+    
+    public void testLookForEmptyThings() throws Exception {
+        Properties config = new Properties();
+        config.put("max.field.value", "10");
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
+        ClassDescriptor cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.CEO");
+        
+        HashSet empties = new HashSet();
+        oss.lookForEmptyThings(cld, empties, os);
+        
+        HashSet expected = new HashSet();
+        expected.add("secretarys");
+        expected.add("address");
+        expected.add("departmentThatRejectedMe");
+        
+        assertEquals(expected, empties);
+        
+        cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        empties = new HashSet();
+        oss.lookForEmptyThings(cld, empties, os);
+        assertEquals(new HashSet(), empties);
+    }
+    
+    public void testToProperties() throws Exception {
+        Properties config = new Properties();
+        config.put("max.field.value", "10");
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
+        
+        Properties out = oss.toProperties();
+        oss = new ObjectStoreSummary(out);
+        
+        assertEquals(out, oss.toProperties());
     }
 }
