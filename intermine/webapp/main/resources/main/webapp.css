@@ -330,12 +330,17 @@ table.results tr.even {
 .attributeField {
   color: green;
 }
+.nullReferenceField {
+  color: grey;
+}
 .value {
 /*  padding: 2px;*/
   font-family: monospace;
   font-size: 13px;
 }
-
+.nullStrike {
+  text-decoration: line-through;
+}
 .constraint {
   color: purple;
 }

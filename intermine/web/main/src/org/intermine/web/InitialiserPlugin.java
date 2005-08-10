@@ -29,11 +29,6 @@ import java.util.TreeSet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionServlet;
-import org.apache.struts.action.PlugIn;
-import org.apache.struts.config.ModuleConfig;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -45,6 +40,13 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.dataset.DataSetBinding;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import org.apache.struts.action.ActionServlet;
+import org.apache.struts.action.PlugIn;
+import org.apache.struts.config.ModuleConfig;
 
 /**
  * Initialiser for the InterMine web application.
@@ -194,7 +196,7 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to read objectstoresummary.properties", e);
             }
         }
-        ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
+        final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
         Model model = os.getModel();
         Map classes = new LinkedHashMap();
         Map classCounts = new LinkedHashMap();
@@ -226,6 +228,20 @@ public class InitialiserPlugin implements PlugIn
             subclassesMap.put(className, subclasses);
         }
         servletContext.setAttribute(Constants.SUBCLASSES, subclassesMap);
+        // Map from class name to Map from reference name to Boolean.TRUE if empty ref/collection
+        Map emptyFields = new HashMap();
+        for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
+            String classname = (String) iter.next();
+            Set nullFields = oss.getNullReferencesAndCollections(classname);
+            Map boolMap = new HashMap();
+            emptyFields.put(TypeUtil.unqualifiedName(classname), boolMap);
+            if (nullFields != null && nullFields.size() > 0) {
+                for (Iterator fiter = nullFields.iterator(); fiter.hasNext();) {
+                    boolMap.put(fiter.next(), Boolean.TRUE);
+                }
+            }
+        }
+        servletContext.setAttribute(Constants.EMPTY_FIELD_MAP, emptyFields);
     }
 
     /**
@@ -240,7 +256,7 @@ public class InitialiserPlugin implements PlugIn
         Reader exampleQueriesReader = new InputStreamReader(exampleQueriesStream);
         Map exampleQueries = null;
         try {
-            exampleQueries = new PathQueryBinding().unmarshal(exampleQueriesReader);
+            exampleQueries = PathQueryBinding.unmarshal(exampleQueriesReader);
         } catch (Exception e) {
             throw new ServletException("Unable to parse example-queries.xml", e);
         }
