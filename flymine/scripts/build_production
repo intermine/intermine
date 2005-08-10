@@ -25,7 +25,8 @@ or
 
 flags:
  -v is passed to ant
- -r attempt to restart by reading the last dump file
+ -l attempt to restart by reading the last dump file
+ -r attempt to restart just after the last dump point _without_ loading a dump
 
 example:
   $0 /tmp/production_dump
@@ -33,6 +34,7 @@ EOF
 }
 
 my $verbose = 0;
+my $load_last = 0;
 my $restart = 0;
 
 my %opts = ();
@@ -41,6 +43,10 @@ getopts('vr', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
+}
+
+if ($opts{l}) {
+  $load_last = 1;
 }
 
 if ($opts{r}) {
@@ -270,14 +276,18 @@ my @actions = get_actions();
 
 my $restart_dump_suffix = undef;
 
-if ($restart) {
+if ($load_last || $restart) {
   $restart_dump_suffix = get_restart_dump_suffix($dump_file_prefix, @actions);
 
-  my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
+  my $dump_file_name = "\n$dump_file_prefix.$restart_dump_suffix";
 
   if (defined $restart_dump_suffix) {
-    log_and_print "restarting from $dump_file_name\n";
-    load_db $prod_db, $prod_user, $prod_pass, $prod_host, $dump_file_name;
+    if ($load_last) {
+      log_and_print "restarting from $dump_file_name\n";
+      load_db $prod_db, $prod_user, $prod_pass, $prod_host, $dump_file_name;
+    } else {
+      log_and_print "\nrestarting build at stage: $restart_dump_suffix - NOT loading dump\n";
+    }
   } else {
     warn "no dump file found with prefix $dump_file_prefix\n";
   }
@@ -285,7 +295,7 @@ if ($restart) {
 
 my $seen_start_action = 0;
 
-if (!$restart || !defined $restart_dump_suffix) {
+if ((!$load_last && !$restart) || !defined $restart_dump_suffix) {
   # always start at the beginning of the command list if we aren't restarting
   $seen_start_action = 1;
 }
