@@ -320,6 +320,8 @@ public class IqlQuery
             BagConstraint c = (BagConstraint) cc;
             parameters.add(c.getBag());
             return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " ?";
+        } else if (cc instanceof SubqueryExistsConstraint) {
+            return "";
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }
