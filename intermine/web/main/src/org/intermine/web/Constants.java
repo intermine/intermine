@@ -198,4 +198,9 @@ public interface Constants
      * Session attribute that holds cache of table identifiers to PagedTable objects.
      */
     public static final String TABLE_MAP = "TABLE_MAP";
+
+    /**
+     * Session attribute that holds a map from class name to map from field name to Boolean.TRUE.
+     */
+    public static final String EMPTY_FIELD_MAP = "EMPTY_FIELD_MAP";
 }

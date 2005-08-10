@@ -45,7 +45,14 @@
               </c:forEach>
             </c:if>
             <a name="${node.path}"></a>
+            <c:set var="isNull" value="${EMPTY_FIELD_MAP[node.parentType][node.fieldName]}"/>
+            <c:if test="${isNull}">
+              <span class="nullStrike">
+            </c:if>
             <c:choose>
+              <c:when test="${isNull}">
+                <img border="0" src="images/plus-disabled.gif" width="11" height="11" alt="+"/>
+              </c:when>
               <c:when test="${node.button == '+'}">
                 <html:link action="/mainChange?method=changePath&amp;path=${node.path}">
                   <img border="0" src="images/plus.gif" width="11" height="11" alt="+"/>
@@ -76,26 +83,26 @@
               <c:if test="${node.indentation > 0}">
                 <c:choose>
                   <c:when test="${node.collection}">
-                    <span class="collectionField">
-                      <c:out value="${node.fieldName}"/>
-                    </span>
+                    <c:set var="fieldNameClass" value="collectionField"/>
                   </c:when>
                   <c:when test="${node.reference}">
-                    <span class="referenceField">
-                      <c:out value="${node.fieldName}"/>
-                    </span>
+                    <c:set var="fieldNameClass" value="referenceField"/>
                   </c:when>
                   <c:otherwise>
-                    <span class="attributeField">
-                      <c:out value="${node.fieldName}"/>
-                    </span>
+                    <c:set var="fieldNameClass" value="attributeField"/>
                   </c:otherwise>
                 </c:choose>
+                <c:if test="${isNull}">
+                  <c:set var="fieldNameClass" value="${fieldNameClass} nullReferenceField"/>
+                </c:if>
+                <span class="${fieldNameClass}">
+                  <c:out value="${node.fieldName}"/>
+                </span>
                 <im:typehelp type="${node.parentType}.${node.fieldName}"/>
               </c:if>
-              <span class="collectionDescription">
+              <span class="collectionDescription ${isNull ? 'nullReferenceField' : ''}">
               <c:if test="${node.type != 'String' && node.type != 'Integer'}">
-                <span class="type">${node.type}</span><im:typehelp type="${node.type}"/>
+                <span class="type">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
               </c:if>
               <c:if test="${node.collection}">
                 <fmt:message key="query.collection"/>
@@ -121,7 +128,7 @@
               </c:otherwise>
             </c:choose>
             <c:choose>
-              <c:when test="${viewPaths[fullpath] == null}">
+              <c:when test="${viewPaths[fullpath] == null && !isNull}">
                 <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
                            title="${selectNodeTitle}">
                   <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
@@ -131,14 +138,39 @@
                 <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
               </c:otherwise>
             </c:choose>
-            <%-- <c:if test="${node.attribute || !empty PROFILE.savedBags || !empty SUBCLASSES[node.type] || allNodeTypes[node.type] != null}"> --%>
-              <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
-                         title="${addConstraintToTitle}">
-                <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain"/>
-              </html:link>
-            <%-- </c:if> --%>
+            <c:choose>
+              <c:when test="${isNull}">
+                <img class="arrow" src="images/constrain-disabled.gif" width="70" height="13" alt="constrain"/>
+              </c:when>
+              <c:otherwise>
+                <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
+                           title="${addConstraintToTitle}">
+                  <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain"/>
+                </html:link>
+              </c:otherwise>
+            </c:choose>
+            <c:if test="${isNull}">
+              </span>
+              <c:choose>
+                <c:when test="${node.reference}">
+                  <fmt:message key="query.nullRefHelp" var="strikeThruHelp">
+                    <fmt:param value="${node.parentType}"/>
+                    <fmt:param value="${node.fieldName}"/>
+                  </fmt:message>
+                </c:when>
+                <c:when test="${node.collection}">
+                  <fmt:message key="query.emptyCollHelp" var="strikeThruHelp">
+                    <fmt:param value="${node.parentType}"/>
+                    <fmt:param value="${node.fieldName}"/>
+                  </fmt:message>
+                </c:when>
+                <c:otherwise>
+                  <%-- null attribute help? --%>
+                </c:otherwise>
+              </c:choose>
+              <im:helplink text="${strikeThruHelp}"/>
+            </c:if>
           </div>
-        
       </c:forEach>
       </div>
     </td>

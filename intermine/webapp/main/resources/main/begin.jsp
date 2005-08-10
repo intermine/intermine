@@ -15,7 +15,7 @@
     <tr>
       <td width="99%">
       	<c:choose>
-      	  <c:when test="${!empty DATASETS && false}">
+      	  <c:when test="${!empty DATASETS}">
       	    <tiles:insert page="/dataSetIcons.jsp"/>
       	  </c:when>
       	  <c:otherwise>
