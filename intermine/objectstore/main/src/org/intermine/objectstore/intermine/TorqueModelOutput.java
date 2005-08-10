@@ -161,7 +161,7 @@ public class TorqueModelOutput
             fieldIter = fields.getReferences().iterator();
             while (fieldIter.hasNext()) {
                 ReferenceDescriptor field = (ReferenceDescriptor) fieldIter.next();
-                sb.append(generateColumn(DatabaseUtil.getColumnName(field), "int"));
+                sb.append(generateColumn(DatabaseUtil.getColumnName(field), "java.lang.Integer"));
             }
             if (schema.isTruncated(cld)) {
                 if (schema.isFlatMode()) {
@@ -190,8 +190,11 @@ public class TorqueModelOutput
             .append(name)
             .append("\" type=\"")
             .append(generateJdbcType(type))
-            .append("\"")
-            .append("/>" + ENDL);
+            .append("\"");
+        if ((type.indexOf(".") == -1) || ("id".equals(name))) {
+            sb.append(" required=\"true\"");
+        }
+        sb.append("/>" + ENDL);
         return sb.toString();
     }
 

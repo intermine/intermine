@@ -11,6 +11,7 @@ package org.intermine.sql.precompute;
  */
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -45,6 +46,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
     protected Map valueMap;
     protected String orderByField;
     protected String generationSqlString;
+    protected boolean firstOrderByHasNoNulls = false;
 
     /**
      * Construct a new PrecomputedTable
@@ -134,6 +136,38 @@ public class PrecomputedTable implements SQLStringable, Comparable
                     }
                 }
             }
+            Iterator orderByIter = q.getOrderBy().iterator();
+            if (orderByIter.hasNext()) {
+                AbstractValue column = (AbstractValue) orderByIter.next();
+                if (column instanceof Field) {
+                    AbstractTable table = ((Field) column).getTable();
+                    if (table instanceof Table) {
+                        String tableName = ((Table) table).getName().toLowerCase();
+                        String columnName = ((Field) column).getName().toLowerCase();
+                        ResultSet r = conn.getMetaData().getColumns(null, null, tableName,
+                                columnName);
+                        if (r.next()) {
+                            if (tableName.equals(r.getString(3))
+                                    && columnName.equals(r.getString(4))) {
+                                int nullable = r.getInt(11);
+                                if (DatabaseMetaData.columnNoNulls == nullable) {
+                                    firstOrderByHasNoNulls = true;
+                                }
+                            } else {
+                                LOG.error("getColumns returned wrong data for column "
+                                        + column.getSQLString());
+                            }
+                        } else {
+                            LOG.error("getColumns returned no data for column "
+                                    + column.getSQLString());
+                        }
+                        if (r.next()) {
+                            LOG.error("getColumns returned too much data for column "
+                                    + column.getSQLString());
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             useOrderByField = false;
             LOG.error("Caught SQLException while examining order by fields: " + e);
@@ -204,6 +238,15 @@ public class PrecomputedTable implements SQLStringable, Comparable
      */
     public String getOrderByField() {
         return orderByField;
+    }
+
+    /**
+     * Returns true if the first element of the ORDER BY clause is a column that contains no nulls.
+     *
+     * @return a boolean
+     */
+    public boolean getFirstOrderByHasNoNulls() {
+        return firstOrderByHasNoNulls;
     }
 
     /**
