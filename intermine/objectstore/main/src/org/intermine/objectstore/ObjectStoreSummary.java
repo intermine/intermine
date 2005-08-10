@@ -10,21 +10,37 @@ package org.intermine.objectstore;
  *
  */
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.util.StringUtil;
+
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.log4j.Logger;
 
 /**
  * A summary of the data in an ObjectStore
@@ -34,9 +50,13 @@ import org.intermine.util.StringUtil;
  */
 public class ObjectStoreSummary
 {
+    private static final Logger LOG = Logger.getLogger(ObjectStoreSummary.class);
+    
     private final Map classCountsMap = new HashMap();
     private final Map fieldValuesMap = new HashMap();
+    private final Map emptyFieldsMap = new HashMap();
 
+    static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
     static final String FIELDS_SUFFIX = ".fieldValues";
     static final String NULL_MARKER = "___NULL___";
@@ -52,6 +72,7 @@ public class ObjectStoreSummary
     public ObjectStoreSummary(ObjectStore os, Properties configuration)
         throws ClassNotFoundException, ObjectStoreException {
         //classCounts
+        LOG.info("Collecting class counts...");
         for (Iterator i = os.getModel().getClassDescriptors().iterator(); i.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) i.next();
             Query q = new Query();
@@ -61,6 +82,7 @@ public class ObjectStoreSummary
             classCountsMap.put(cld.getName(), new Integer(os.count(q, os.getSequence())));
         }
         //fieldValues
+        LOG.info("Summarising field values...");
         String maxValuesString = (String) configuration.get("max.field.values");
         int maxValues =
             (maxValuesString == null ? Integer.MAX_VALUE : Integer.parseInt(maxValuesString));
@@ -78,13 +100,25 @@ public class ObjectStoreSummary
                                            + "file (" + className + ") is not in the model");
             }
             List fieldNames = Arrays.asList(value.split(" "));
-            processFields(cld, fieldNames, os, maxValues);
+            summariseField(cld, fieldNames, os, maxValues);
             for (Iterator j = os.getModel().getAllSubs(cld).iterator(); j.hasNext();) {
-                processFields((ClassDescriptor) j.next(), fieldNames, os, maxValues);
+                summariseField((ClassDescriptor) j.next(), fieldNames, os, maxValues);
             }
         }
+        // always empty references and collections
+        LOG.info("Looking for empty collections and references...");
+        Model model = os.getModel();
+        for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
+            long startTime = System.currentTimeMillis();
+            ClassDescriptor cld = (ClassDescriptor) iter.next();
+            LOG.info(cld.getName());
+            Set emptyFields = new TreeSet();
+            emptyFieldsMap.put(cld.getName(), emptyFields);
+            lookForEmptyThings(cld, emptyFields, os);
+            LOG.info("\t" + (System.currentTimeMillis() - startTime) + " millis");
+        }
     }
-
+    
     /**
      * Construct a summary from a properties object
      * @param properties the properties
@@ -106,6 +140,10 @@ public class ObjectStoreSummary
                     }
                 }
                 fieldValuesMap.put(classAndFieldName, fieldValues);
+            } else if (key.endsWith(NULL_FIELDS_SUFFIX)) {
+                String className = key.substring(0, key.lastIndexOf("."));
+                List fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
+                emptyFieldsMap.put(className, new TreeSet(fieldNames));
             }
         }
     }
@@ -133,6 +171,16 @@ public class ObjectStoreSummary
      */
     public List getFieldValues(String className, String fieldName) {
         return (List) fieldValuesMap.get(className + "." + fieldName);
+    }
+    
+    /**
+     * Get a list of the reference and collection names that, for a given class, are always
+     * null or empty.
+     * @param className the class name to look up
+     * @return Set of null reference and empty collection names
+     */
+    public Set getNullReferencesAndCollections(String className) {
+        return (Set) emptyFieldsMap.get(className);
     }
 
     /**
@@ -165,6 +213,15 @@ public class ObjectStoreSummary
             }
             properties.put(key + FIELDS_SUFFIX, sb.toString());
         }
+        for (Iterator i = emptyFieldsMap.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            String key = (String) entry.getKey();
+            Set value = (Set) entry.getValue();
+            if (value.size() > 0) {
+                String fields = StringUtil.join(value, FIELD_DELIM);
+                properties.put(key + NULL_FIELDS_SUFFIX, fields);
+            }
+        }
         return properties;
     }
 
@@ -177,7 +234,7 @@ public class ObjectStoreSummary
      * @throws ClassNotFoundException if the class cannot be found
      * @throws ObjectStoreException if an error occurs retrieving data
      */
-    protected void processFields(ClassDescriptor cld, List fieldNames, ObjectStore os,
+    protected void summariseField(ClassDescriptor cld, List fieldNames, ObjectStore os,
                                  int maxValues)
         throws ClassNotFoundException, ObjectStoreException {
         for (Iterator i = fieldNames.iterator(); i.hasNext();) {
@@ -199,4 +256,63 @@ public class ObjectStoreSummary
             fieldValuesMap.put(cld.getName() + "." + fieldName, fieldValues);
         }
     }
+    
+
+
+    /**
+     * Look for empty fields and collections on all instances of a particular class.
+     * @param cld the class of objects to be examined
+     * @param nullFieldNames output set of null/empty references/collections
+     * @param os the objectstore
+     * @throws ObjectStoreException if an error occurs retrieving data
+     * @throws ClassNotFoundException if the class cannot be found
+     */
+    protected void lookForEmptyThings(ClassDescriptor cld, Set nullFieldNames, ObjectStore os)
+        throws ObjectStoreException, ClassNotFoundException {
+        Iterator iter = IteratorUtils.chainedIterator(cld.getAllCollectionDescriptors().iterator(),
+                cld.getAllReferenceDescriptors().iterator());
+        while (iter.hasNext()) {
+            ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
+            Query q = new Query();
+            
+            QueryClass qc1 = new QueryClass(Class.forName(cld.getName()));
+            QueryClass qc2 = new QueryClass(Class.forName(desc.getReferencedClassName()));
+            
+            q.addFrom(qc1);
+            q.addFrom(qc2);
+            
+            q.addToSelect(qc2);
+            
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            QueryReference qd;
+            if (desc instanceof CollectionDescriptor) {
+                qd = new QueryCollectionReference(qc1, desc.getName());
+            } else {
+                qd = new QueryObjectReference(qc1, desc.getName());
+            }
+            ContainsConstraint gdc = new ContainsConstraint(qd, ConstraintOp.CONTAINS, qc2);
+            cs.addConstraint(gdc);
+            
+            q.setConstraint(cs);
+            
+            Query q2 = new Query();
+            q2.addToSelect(new QueryValue(new Integer(1)));
+            
+            ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
+            cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
+            q2.setConstraint(cs2);
+            
+            int count = os.count(q2, os.getSequence());
+            
+            Results results = os.execute(q2);
+            results.setBatchSize(1);
+            if (results.iterator().hasNext()) {
+                LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
+            } else {
+                LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + " - EMPTY");
+                nullFieldNames.add(desc.getName());
+            }
+        }
+    }
+
 }
