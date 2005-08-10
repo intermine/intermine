@@ -56,7 +56,7 @@ public class ConstraintOp
     /** Subquery exists */
     public static final ConstraintOp EXISTS = CONTAINS;
     /** Subquery does not exist */
-    public static final ConstraintOp DOES_NOT_EXISTS = DOES_NOT_CONTAIN;
+    public static final ConstraintOp DOES_NOT_EXIST = DOES_NOT_CONTAIN;
     
     
     /** Combine constraints with the AND operation */

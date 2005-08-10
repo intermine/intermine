@@ -82,6 +82,6 @@ public class SubqueryExistsConstraint extends Constraint
 
     //-------------------------------------------------------------------------
     
-    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
-        ConstraintOp.NOT_IN});
+    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EXISTS,
+        ConstraintOp.DOES_NOT_EXIST});
 }
