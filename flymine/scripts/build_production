@@ -39,7 +39,7 @@ my $restart = 0;
 
 my %opts = ();
 
-getopts('vr', \%opts);
+getopts('vrl', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
