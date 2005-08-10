@@ -375,7 +375,8 @@ run: create-overlap-relations-flymine
 
 dump: postprocess-3-overlap
 
-run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
+run: create-symmetrical-relation-references
+run: transfer-sequences read-flybase-cds-fasta
 run: create-flybase-to-uniprot-refs update-publications
 
 dump: postprocess-4
