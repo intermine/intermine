@@ -1737,7 +1737,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gff3 integrationWriter="integration.genomic-test"
+    <load-gff3 integrationWriter="integration.production"
                source="os.gff3-translated"
                sourceName="ucsc"
                ignoreDuplicates="false"/>
@@ -3280,7 +3280,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gene-synonyms integrationWriter="integration.genomic-test"
+    <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
                ignoreDuplicates="false"/>
@@ -3330,7 +3330,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gene-synonyms integrationWriter="integration.genomic-test"
+    <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
                ignoreDuplicates="false"/>
@@ -3380,7 +3380,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gene-synonyms integrationWriter="integration.genomic-test"
+    <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
                ignoreDuplicates="false"/>
@@ -3543,6 +3543,7 @@
 
 
 <!-- GO ANNOTATION -->
+
   <target name="retrieve-go-annotation-mouse" depends="prepare-build-model, compile-go-java">
 
     <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
@@ -4169,7 +4170,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gff3 integrationWriter="integration.genomic-test"
+    <load-gff3 integrationWriter="integration.production"
                source="os.gff3-translated"
                sourceName="tfbscluster"
                ignoreDuplicates="false"/>
@@ -4177,7 +4178,7 @@
 
   <target name="build-tfbscluster-production" depends="retrieve-tfbscluster, load-tfbscluster"/>
 
-<!--load TFBS CNS GFF3 data from UCSC-->
+<!--load TFBS CNS GFF3 data from HSCL, CIMR-->
   <target name="retrieve-cns" depends="prepare-build-model, compile-tfbscluster-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -4219,7 +4220,7 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-gff3 integrationWriter="integration.genomic-test"
+    <load-gff3 integrationWriter="integration.production"
                source="os.gff3-translated"
                sourceName="tfbscluster"
                ignoreDuplicates="false"/>
@@ -4265,7 +4266,6 @@
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
 
 
-
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
     <copy todir="${build.resources}"
@@ -4304,6 +4304,6 @@
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
- 
+
 </project>
 
