@@ -7,20 +7,23 @@
   <import file="${tests.xml.basedir}/library.xml"/>
   
   <target name="-pre-init" depends="library.-pre-init">
+    <!-- emma properties -->
+    <property name="emma.enabled" value="true"/>
+    <property name="build.coverage.dir" location="${build.dir}/coverage"/>
+    <property name="build.coverage.results.dir" location="${build.coverage.dir}"/>
+    <property name="build.instrumented.dir" location="${build.dir}/instrumented"/>
+    <!-- junit task properties -->
     <property name="test.results.dir" location="${build.dir}/test/results"/>
     <property name="test.excludes" location=""/>
-    <property name="test.fork" value="yes"/>
+    <condition property="test.fork" value="yes" else="no">
+      <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
+    </condition>
     <property name="test.forkmode" value="once"/>
     <property name="build.test.resources.dir" location="${build.dir}/test/resources"/>
     <property name="generate.report" value="true"/>
     <condition property="gen.report">
       <and><istrue value="${generate.report}"/></and>
     </condition>
-    <!-- emma properties -->
-    <property name="emma.enabled" value="true"/>
-    <property name="build.coverage.dir" location="${build.dir}/coverage"/>
-    <property name="build.coverage.results.dir" location="${build.coverage.dir}"/>
-    <property name="build.instrumented.dir" location="${build.dir}/instrumented"/>
     <property environment="ENV"/>
   </target>
   
@@ -30,6 +33,9 @@
     <mkdir dir="${test.results.dir}"/>
     <mkdir dir="${build.test.resources.dir}"/>
     <copy file="${tests.xml.basedir}/test.log4j.properties" toFile="${build.test.resources.dir}/log4j.properties"/>
+    <condition property="front.of.classpath" value="${build.instrumented.dir}" else="${build.classes.dir}">
+      <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
+    </condition>
   </target>
   
   <target name="-init-emma" depends="init">
@@ -98,6 +104,7 @@
     <element name="customize" optional="true"/>
     <sequential>
       <echo>ANT_OPTS = ${ENV.ANT_OPTS}</echo>
+      <echo>fork = @{fork}</echo>
       <junit showoutput="true" reloading="false" printsummary="yes"
              failureproperty="tests.failed" errorproperty="tests.failed"
              fork="@{fork}" forkmode="@{forkmode}">
@@ -112,7 +119,7 @@
           </fileset>
         </batchtest>
         <classpath>
-          <pathelement location="${build.instrumented.dir}"/>
+          <pathelement location="${front.of.classpath}"/>
           <path refid="main.class.path"/>
           <pathelement location="${build.classes.dir}"/>
           <pathelement location="${resources.dir}"/>
