@@ -12,6 +12,7 @@
   <!-- INIT -->
   
   <target name="-init-project">
+    <property file="${user.home}/build.properties"/>
     <property file="project.properties"/>
   </target>
   
@@ -30,6 +31,7 @@
     <!-- Compilation settings -->
     <property name="javac.source" value="1.4"/>
     <property name="javac.target" value="1.4"/>
+    <property name="javac.compiler" value="modern"/>
     <property name="javac.debug" value="on"/>
     <property name="javac.debuglevel" value="lines,vars,source"/>
     <property name="build.classes.excludes" value="**/*.java"/>
@@ -212,7 +214,7 @@
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
-        <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="jikes"
+        <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="${javac.compiler}"
            deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}"
            includeantruntime="false">
           <classpath refid="@{classpath}"/>
