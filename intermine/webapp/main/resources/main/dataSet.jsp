@@ -13,7 +13,7 @@
 <%-- Import into request scope so that popup can see it --%>
 <tiles:importAttribute name="dataSet" scope="request"/>
 
-<im:box title="${dataSet.name}" topRightTile="/dataSetPopup.jsp">
+<im:box topLeftTile="/dataSetIcon.jsp" topRightTile="/dataSetPopup.jsp">
 <fmt:setBundle var="mb" basename="model"/>
 
 <c:if test="${!empty dataSet.dataSetSources}">
@@ -21,7 +21,7 @@
     <fmt:message key="dataset.${dataSet.name}.sources.from" bundle="${mb}"/>
     <ul>
       <c:forEach items="${dataSet.dataSetSources}" var="source">
-      	  <li><a href="${source.url}" target="_blank" class="extlink">${source.name}</a></li>
+        <li><a href="${source.url}" target="_blank" class="extlink">${source.name}</a></li>
       </c:forEach>
     </ul>
   </div>
