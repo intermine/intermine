@@ -31,4 +31,8 @@
         <reference name="subject" referenced-type="org.flymine.model.genomic.ProteinFeature"/>
     </class>
 
+    <class name="org.flymine.model.genomic.InterproEvidence" extends="org.flymine.model.genomic.Evidence" is-interface="true">
+        <attribute name="infotext" type="java.lang.String"/>
+    </class>
+
 </classes>
