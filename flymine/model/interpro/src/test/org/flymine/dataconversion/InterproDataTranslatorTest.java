@@ -20,7 +20,6 @@ import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.metadata.Model;
 import org.intermine.dataconversion.*;
-import junit.framework.TestCase;
 
 public class InterproDataTranslatorTest extends DataTranslatorTestCase {
   private String tgtNs = "http://www.flymine.org/model/genomic#";
@@ -46,10 +45,10 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
     MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
     translator.translate(tgtIw);
 
-    writeTgtFile(tgtIw);
-    assertEquals(1, 1);
+    //writeTgtFile(tgtIw);
+    //assertEquals(1, 1);
 
-    /*
+
     String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
     String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
 
@@ -66,7 +65,7 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
-    */
+
   }
 
   protected Collection getExpectedItems() throws Exception {
