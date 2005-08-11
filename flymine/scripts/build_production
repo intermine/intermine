@@ -14,14 +14,15 @@ my $ant_command = "ant";
 
 my $dump_file_prefix;
 my $dump_host;
+my $config_arg;
 
 sub usage
 {
   die <<'EOF';
 usage:
-  $0 dump_host dump_file_prefix
+  $0 [-v] [-l | -r] dump_host dump_file_prefix conf_file
 or
-  $0 -v dump_host dump_file_prefix
+  $0 [-v] [-l | -r] dump_host dump_file_prefix configuration_name
 
 flags:
  -v is passed to ant
@@ -53,11 +54,28 @@ if ($opts{r}) {
   $restart = 1;
 }
 
-if (@ARGV == 2) {
+if (@ARGV == 3) {
   $dump_host = $ARGV[0];
   $dump_file_prefix = $ARGV[1];
+  $config_arg = $ARGV[2];
 } else {
   usage;
+}
+
+my $config_file;
+
+if (-e $config_arg) {
+  if (-r $config_arg) {
+    # user put a config file name on the command line
+    $config_file = $config_arg;
+  } else {
+    die "cannot read configuration file: $config_arg\n";
+  }
+} else {
+  $config_file = "conf/$config_arg.build_conf";
+  if (!-r $config_file) {
+    die "cannot read configuration file: $config_file\n";
+  }
 }
 
 my $log_file = "pbuild.log";
@@ -209,7 +227,10 @@ sub get_actions
 {
   my @actions = ();
 
-  while (my $line = <DATA>) {
+  open CONF_FILE, "$config_file" 
+    or die "cannot open $config_file: $!\n";
+
+  while (defined (my $line = <CONF_FILE>)) {
     if ($line =~ m{
                    ^\s*\#
                    |
@@ -224,6 +245,8 @@ sub get_actions
 
     push @actions, {type => $action_type, args => [@args]};
   }
+
+  close CONF_FILE;
 
   return @actions;
 }
@@ -327,67 +350,4 @@ for my $action (@actions) {
     }
   }
 }
-
-
-
-__END__
-
-# lines beginning with "run:" list ant targets to run
-# "dump:" lines give the suffix of the postgresql dump file
-# actions are executed in order
-
-run: create-production-model compile-genomic-model jar-genomic build-db-production load-static-flymine
-
-dump: static
-
-run: build-ensembl-anopheles-production
-
-dump: anopheles
-
-run: build-uniprot-production
-
-dump: uniprot
-
-run: build-flybase-production
-
-dump: drosophila
-
-run: build-go-production build-psi-production build-rnai-production
-
-dump: load-stage-1
-
-run: build-phenotype-production build-orthologues-production build-protein_structure-production
-
-dump: load-stage-2
-
-run: build-flyreg-production
-run: build-long_oligo-production
-run: build-tiling_path-production
-
-dump: load-stage-3
-
-run: build-drosdel-production
-
-dump: load-stage-4-drosdel
-
-run: read-flybase-chromosome-fasta calculate-locations
-run: create-references
-run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
-run: create-indexes-production-attribute
-
-dump: postprocess-1
-
-run: set-collection-counts set-name-and-wildtypefunction
-
-dump: postprocess-2
-
-run: create-overlap-relations-flymine
-
-dump: postprocess-3-overlap
-
-run: create-symmetrical-relation-references
-run: transfer-sequences read-flybase-cds-fasta
-run: create-flybase-to-uniprot-refs update-publications
-
-dump: postprocess-4
 

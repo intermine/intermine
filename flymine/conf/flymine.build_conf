@@ -1,0 +1,59 @@
+# lines beginning with "run:" list ant targets to run
+# "dump:" lines give the suffix of the postgresql dump file
+# actions are executed in order
+
+run: create-production-model compile-genomic-model jar-genomic build-db-production load-static-flymine
+
+dump: static
+
+run: build-ensembl-anopheles-production
+
+dump: anopheles
+
+run: build-uniprot-production
+
+dump: uniprot
+
+run: build-flybase-production
+
+dump: drosophila
+
+run: build-go-production build-psi-production build-rnai-production
+
+dump: load-stage-1
+
+run: build-phenotype-production build-orthologues-production build-protein_structure-production
+
+dump: load-stage-2
+
+run: build-flyreg-production
+run: build-long_oligo-production
+run: build-tiling_path-production
+
+dump: load-stage-3
+
+run: build-drosdel-production
+
+dump: load-stage-4-drosdel
+
+run: read-flybase-chromosome-fasta calculate-locations
+run: create-references
+run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
+run: create-indexes-production-attribute
+
+dump: postprocess-1
+
+run: set-collection-counts set-name-and-wildtypefunction
+
+dump: postprocess-2
+
+run: create-overlap-relations-flymine
+
+dump: postprocess-3-overlap
+
+run: create-symmetrical-relation-references
+run: transfer-sequences read-flybase-cds-fasta
+run: create-flybase-to-uniprot-refs update-publications
+
+dump: postprocess-4
+
