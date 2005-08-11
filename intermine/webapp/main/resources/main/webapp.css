@@ -340,6 +340,7 @@ table.results tr.even {
 }
 .nullStrike {
   text-decoration: line-through;
+  color: grey;
 }
 .constraint {
   color: purple;
@@ -498,6 +499,12 @@ img.searchHeatImg {
   border: 1px solid #222;
 }
 
+.dsSmallIconImage {
+  border: 1px solid #222;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
 .dataSetSources {
   float: right;
   clear: right;
@@ -527,6 +534,10 @@ img.searchHeatImg {
   margin-right: 10px;
   margin-bottom: 5px;
   margin-top: 3px;
+}
+
+.dataSetTitle {
+  font-size: 15px;
 }
 
 .dataSetSelect {
