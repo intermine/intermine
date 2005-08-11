@@ -177,6 +177,9 @@ public class PostProcessTask extends Task
             } else if ("homophila-post-process".equals(operation)) {
                 HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
                 hpp.connectDrosophilaGenesToHumanDiseases();
+            } else if ("update-equivalent-interpro-features".equals(operation)) {
+                UpdateEquivalentInterproFeatures ueid = new UpdateEquivalentInterproFeatures(getObjectStoreWriter());
+                ueid.updateEquivalentFeatures();
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();
