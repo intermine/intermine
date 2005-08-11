@@ -90,7 +90,9 @@ public class DisplayReference extends DisplayField
      */
     private static List getProxyList(ProxyReference proxy) {
         List proxyList = new ArrayList();
-        proxyList.add(proxy);
+        if (proxy != null) {
+            proxyList.add(proxy);
+        }
         return proxyList;
     }
 }

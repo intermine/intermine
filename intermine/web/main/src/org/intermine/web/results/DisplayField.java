@@ -54,7 +54,7 @@ public class DisplayField
      * @return the results table
      */
     public InlineResultsTable getTable() {
-        if (table == null) {
+        if (table == null && collection.size() > 0) {
             table = new InlineResultsTable(collection, cld, webConfig, webProperties);
         }
         return table;
@@ -66,6 +66,14 @@ public class DisplayField
      */
     public ClassDescriptor getCld() {
         return cld;
+    }
+    
+    /**
+     * Return true if the collection is empty or reference null.
+     * @return true if collection/reference is empty
+     */
+    public boolean isEmpty() {
+        return collection.isEmpty();
     }
 
     /**

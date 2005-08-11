@@ -173,19 +173,25 @@
                           </html:link>
                         </c:when>
                         <c:otherwise>
-                          <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
+                          <span class="nullStrike">
+                            <img border="0" src="images/plus-disabled.gif" alt=" " width="11" height="11"/>
+                            <span class="collectionField nullReferenceField">${fieldName}</span>
+                          </span>
                         </c:otherwise>
                       </c:choose>
                     </div>
                   </td>
                   <td>
-                    <span class="collectionDescription">
+                    <span class="collectionDescription ${collection.size == 0 ? 'nullReferenceField' : ''}">
                       ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
                     </span>
                     <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
                       [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}_${collection.table.ids[0]}">
                         <fmt:message key="results.details"/>
                       </html:link>]
+                    </c:if>
+                    <c:if test="${collection.size == 0}">
+                      </span>
                     </c:if>
                   </td>
                 </tr>
