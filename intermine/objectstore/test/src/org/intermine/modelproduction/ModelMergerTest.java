@@ -74,7 +74,7 @@ public class ModelMergerTest extends TestCase
             ModelMerger.mergeClass(cld1, cld2, emptyModel, Collections.EMPTY_SET);
             fail("Expected ModelMergerException with is-interface mismatch");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -227,7 +227,7 @@ public class ModelMergerTest extends TestCase
             ModelMerger.mergeReferences(cld1, cld2);
             fail("Expected ModelMergerException with incorrect reverse-reference name");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         // test bad reference type
@@ -241,7 +241,7 @@ public class ModelMergerTest extends TestCase
             ModelMerger.mergeReferences(cld1, cld2);
             fail("Expected ModelMergerException with incorrect reference type");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -281,7 +281,7 @@ public class ModelMergerTest extends TestCase
             ModelMerger.mergeCollections(cld1, cld2);
             fail("Expected ModelMergerException with incorrect reverse reference name");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         // test bad type
@@ -295,7 +295,7 @@ public class ModelMergerTest extends TestCase
             ModelMerger.mergeCollections(cld1, cld2);
             fail("Expected ModelMergerException with incorrect type");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     
