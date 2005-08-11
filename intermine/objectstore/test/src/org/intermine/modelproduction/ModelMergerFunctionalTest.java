@@ -272,7 +272,7 @@ public class ModelMergerFunctionalTest extends TestCase
             ModelMerger.mergeModel(model, additionClds);
             fail("Expected ModelMergerException");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -302,7 +302,7 @@ public class ModelMergerFunctionalTest extends TestCase
             ModelMerger.mergeModel(model, additionClds);
             fail("Expected ModelMergerException");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     
@@ -331,7 +331,7 @@ public class ModelMergerFunctionalTest extends TestCase
             ModelMerger.mergeModel(model, additionClds);
             fail("Expected ModelMergerException");
         } catch (ModelMergerException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 
