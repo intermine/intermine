@@ -247,12 +247,12 @@ public class DisplayObject
                         //check whether reference is null without dereferencing
                         ProxyReference proxy =
                             (ProxyReference) TypeUtil.getFieldProxy(object, ref.getName());
-                        if (proxy != null) {
+                        //if (proxy != null) {
                             DisplayReference newReference =
                                 new DisplayReference(proxy, ref.getReferencedClassDescriptor(),
                                                      webConfig, webProperties);
                             references.put(fd.getName(), newReference);
-                        }
+                        //}
                     } else if (fd.isCollection()) {
                         Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                         ClassDescriptor refCld =
@@ -260,9 +260,9 @@ public class DisplayObject
                         DisplayCollection newCollection =
                             new DisplayCollection((Collection) fieldValue, refCld,
                                                   webConfig, webProperties);
-                        if (newCollection.getSize() > 0) {
+                        //if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
-                        }
+                        //}
                     }
                 }
             }
