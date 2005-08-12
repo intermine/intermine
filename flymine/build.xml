@@ -191,7 +191,7 @@
       <pathelement location="${build.model}/uniprot"/>
       <pathelement location="${build.model}/protein_structure"/>
       <pathelement location="${build.model}/homophila"/>
-      <pathelement location="${build.model}/bdgp_clone"/>
+      <pathelement location="${build.model}/cdnaclone"/>
 
       <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/firstef"/>
@@ -202,6 +202,7 @@
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
       <pathelement location="${build.model}/opposumchain"/>
+      
      
 
       <fileset dir="${model}">
@@ -426,13 +427,14 @@
     <merge-genomic-additions additionsFile="${model}/homophila/homophila_additions.xml"/>
   </target>
 
-  <!-- BDGP CLONE MDEL GENERATION -->
+  <!-- CDNACLONE MDEL GENERATION -->
 
-  <!-- merge bdgp_clone model additions with current genomic model -->
-  <target name="merge-bdgp_clone-model" depends="prepare-genomic-model">
-    <merge-genomic-additions additionsFile="${model}/bdgp_clone/bdgp_clone_additions.xml"/>
+  <!-- merge cdna clone model additions with current genomic model -->
+  <target name="merge-cdnaclone-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/cdnaclone/cdnaclone_additions.xml"/>
   </target>
 
+ 
 
 
   <!-- SEQUENCE ONTOLOGY MODEL GENERATION -->
@@ -556,7 +558,7 @@
                 merge-protein_structure-model, merge-so-model, merge-orthologue-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-chado-model, merge-homophila-model, merge-interpro-model,
-                merge-bdgp_clone-model, merge-drosdel-model, merge-shortcuts">
+                merge-cdnaclone-model, merge-drosdel-model, merge-shortcuts">
   </target>
 
   <!-- create class files from a model in an ObjectStore -->
@@ -1021,43 +1023,45 @@
   <target name="build-homophila-production" depends="retrieve-homophila, load-homophila"/>
 
 
-  <!-- BDGP_CLONE PIPELINE -->
+  <!-- BDGP CDNACLONE PIPELINE -->
 
-  <!-- Build bdgp_clone tgt items database -->
+  <!-- Build bdgp cdnaclone tgt items database -->
 
-  <target name="build-db-bdgp_clone-tgt-items" depends="prepare">
+  <target name="build-db-cdnaclone-tgt-items" depends="prepare">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.bdgp_clone-tgt-items-std"/>
+      <property name="objectstore.name" value="os.cdnaclone-tgt-items-std"/>
     </ant>
   </target>
 
-  <target name="retrieve-bdgp_clone" depends="prepare, compile-bdgp_clone-java, build-db-bdgp_clone-tgt-items">
+  <target name="retrieve-cdnaclone-bdgp" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.BDGPCloneConverter"
-                  osName="osw.bdgp_clone-tgt-items" model="bdgp_clone">
+                  osName="osw.cdnaclone-tgt-items" model="cdnaclone">
       <fileset dir="${shared.data}/bdgp_clones/" includes="dgc2flybase.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.bdgp_clone-tgt-items-std"/>
+      <property name="os.alias" value="os.cdnaclone-tgt-items-std"/>
     </ant>
   </target>
 
-  <target name="load-bdgp_clone" depends="copy-flymine-config">
-    <taskdef name="load-bdgp_clone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+  <target name="load-cdnaclone" depends="copy-flymine-config">
+    <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-bdgp_clone integrationWriter="integration.production" source="os.bdgp_clone-translated" sourceName="bdgp_clone"/>
+    <load-cdnaclone integrationWriter="integration.production" 
+                    source="os.cdnaclone-translated" 
+                    sourceName="cdnaclone"/>
   </target>
 
-  <!-- load BDGP clone data into production -->
-  <target name="build-bdgp_clone-production" depends="retrieve-bdgp_clone, load-bdgp_clone"/>
+  <!-- load BDGP/CDNA clone data into production -->
+  <target name="build-cdnaclone-bdgp-production" depends="retrieve-cdnaclone-bdgp, load-cdnaclone"/>
 
 
   <!-- PHENOTYPE PIPELINE -->
@@ -2327,16 +2331,16 @@
     </ant>
   </target>
 
-  <target name="compile-bdgp_clone-java">
+  <target name="compile-cdnaclone-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
-      <property name="model.name" value="bdgp_clone"/>
+      <property name="model.name" value="cdnaclone"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
-  <target name="bdgp_clone-test" depends="prepare-build-model, prepare-test">
+  <target name="cdnaclone-test" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
-      <property name="model.name" value="bdgp_clone"/>
+      <property name="model.name" value="cdnaclone"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
@@ -3147,7 +3151,7 @@
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-ensembl-disease-model,
-                merge-tfbscluster-model, merge-mage-model,
+                merge-tfbscluster-model, merge-mage-model, merge-cdnaclone-model,
                 merge-orthologue-model,
                 merge-chado-model, merge-shortcuts">
   </target>
@@ -4242,6 +4246,69 @@
   <target name="build-orthologues-production-mouse" 
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
 
+<!--mage data for stem cell-->
+ <target name="retrieve-mage-stemcell" depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
+    <!-- MAGEstk toolkit wants write access to source files (?) -->
+    <delete dir="${build}/tmp/mage"/>
+    <copy todir="${build.tmp}/mage">
+      <fileset dir="${shared.data}/mage/t1dmine/E-EMBL-1"/>     
+    </copy>
+
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
+
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.mage-src-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="mage.class.path"/>
+    </taskdef>
+
+    <convert-file osName="osw.mage-src-items"
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Signal med ratio">
+      <fileset dir="${build.tmp}/mage/">
+        <include name="*.xml"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.mage-src-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-src-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+
+<!-- CDNACLONE/image PIPELINE -->
+
+ 
+  <target name="retrieve-cdnaclone-image" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <convert-file clsName="org.flymine.dataconversion.CDNACloneConverter"
+                  osName="osw.cdnaclone-tgt-items" model="cdnaclone">
+      <fileset dir="${shared.data}/human/imageClones/" includes="UnigeneSetRZPD3.1.txt"/>
+    </convert-file>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.cdnaclone-tgt-items-std"/>
+    </ant>
+  </target>
+
+ 
+  <!-- load CDNAclone image data into production -->
+  <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone"/>
+
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
@@ -4282,6 +4349,16 @@
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
 
+  <!-- insert the testmodel data into the database 
+  <target name="insert-data-unittest"
+          depends="build-db-genomic-test, create-indexes-genomic-test, copy-t1dmine-config, ensembl-human-test">
+    <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <insert-xml-data integrationWriter="integration.genomic-test"
+         xmlFile="${build}/model/ensembl-human/resources/test/EnsemblDataTranslatorFunctionalTest_tgt.xml"
+         sourceName="ensembl-human"/>
+  </target>-->
 
 </project>
 
