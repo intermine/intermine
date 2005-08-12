@@ -615,7 +615,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.interpro-src-items"/>
+      <property name="db.name" value="db.common-src-items"/>
       <property name="objectstore.name" value="os.interpro-src-items-std"/>
     </ant>
   </target>
@@ -638,7 +638,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.interpro-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.interpro-tgt-items-std"/>
     </ant>
 
@@ -654,7 +654,7 @@
                     tgtModel="genomic"/>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.interpro-src-items"/>
+      <property name="db.name" value="db.common-src-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
 
@@ -665,7 +665,7 @@
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.interpro-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
