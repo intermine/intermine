@@ -45,8 +45,7 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
     MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
     translator.translate(tgtIw);
 
-    //writeTgtFile(tgtIw);
-    //assertEquals(1, 1);
+    writeTgtFile(tgtIw);
 
 
     String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
@@ -65,7 +64,6 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
-
   }
 
   protected Collection getExpectedItems() throws Exception {
