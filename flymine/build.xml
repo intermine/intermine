@@ -194,7 +194,6 @@
       <pathelement location="${build.model}/bdgp_clone"/>
 
       <pathelement location="${build.model}/ensembl-human"/>
-      <pathelement location="${build.model}/ucsc"/>
       <pathelement location="${build.model}/firstef"/>
       <pathelement location="${build.model}/tfbs"/>
       <pathelement location="${build.model}/tfbscluster"/>
@@ -2196,7 +2195,7 @@
   <target name="post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
-    <antcall target="create-chromosome-locations"/>
+    <antcall target="create-chromosome-locations-and-lengths"/>
     <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
     <antcall target="homophila-post-process"/>
@@ -3583,28 +3582,6 @@
   <target name="build-go-production-mouse"
           depends="retrieve-go-annotation-mouse, load-go-annotation"/>
 
-<!-- UCSC MODEL GENERATION -->
-
-  <!-- merge ucsc model additions with current genomic model -->
-    <target name="merge-ucsc-model" depends="prepare-genomic-model">
-    <merge-genomic-additions additionsFile="${model}/ucsc/ucsc_additions.xml"/>
-  </target>
-
-  <target name="ucsc-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
-    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
-      <property name="model.name" value="ucsc"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-    </ant>
-  </target>
-
-  <target name="compile-ucsc-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
-    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
-      <property name="model.name" value="ucsc"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
 
 
 <!-- TFBS MODEL GENERATION -->
@@ -4304,6 +4281,7 @@
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
+
 
 </project>
 
