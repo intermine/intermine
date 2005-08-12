@@ -2092,7 +2092,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <create-overlap-relations objectStoreWriter="osw.production"
-                              classesToIgnore="Primer"/>
+                              classesToIgnore="Primer, Contig"/> <!--transcript if still slow-->
   </target>
 
   <target name="create-references" depends="compile-genomic-java-from-db">
@@ -3098,7 +3098,7 @@
 
   <!-- =============== TIDMINE TARGETS ======================================== -->
 
- <target name="compile-genomic-t1dmine-java" depends="compile-flymine-java, compile-genomic-t1dmine-model">
+ <target name="compile-genomic-java-t1dmine" depends="compile-flymine-java, compile-genomic-model-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3107,7 +3107,7 @@
 
  <target name="load-static-t1dmine" depends="prepare-build-model, copy-t1dmine-config">
     <taskdef name="load-xml-data"
-      classname="org.intermine.dataloader.XmlDataLoaderTask">
+             classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -3140,7 +3140,7 @@
  <!-- MERGED GENOMIC HUMAN MODEL  -->
 
  <!-- create human genomic model from core and all additions files -->
-  <target name="create-t1dmine-production-model"
+  <target name="create-production-model-t1dmine"
           depends="remove-genomic, prepare-build-model,
                 merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
@@ -3155,7 +3155,7 @@
 
 
   <!-- create java objects for the genomic human model-->
-  <target name="compile-genomic-t1dmine-model" depends="create-t1dmine-production-model">
+  <target name="compile-genomic-model-t1dmine" depends="create-production-model-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3192,7 +3192,7 @@
   </target>
 
   <!-- translate ensembl human data -->
-  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3242,7 +3242,7 @@
   </path>
 
   <target name="retrieve-gene-synonyms-for-entrezgene"
-          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3292,7 +3292,7 @@
 
   <!--Retrieve gene synonyms for CCDS, file is tab separated format -->
   <target name="retrieve-gene-synonyms-for-ccds"
-          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3342,7 +3342,7 @@
 
 <!--Retrieve gene synonyms for embl, file is tab separated format -->
   <target name="retrieve-gene-synonyms-for-embl"
-          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-t1dmine-java">
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3393,7 +3393,7 @@
  <!-- BUILD PRODUCTION DATABASE -->
 
   <!-- Build genomic model database to hold production data -->
-  <target name="build-db-production-t1dmine" depends="compile-genomic-t1dmine-model, copy-t1dmine-config">
+  <target name="build-db-production-t1dmine" depends="compile-genomic-model-t1dmine, copy-t1dmine-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3406,14 +3406,14 @@
 
    <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="t1dmine-production-build"
-          depends="create-t1dmine-production-model, compile-genomic-t1dmine-model,jar-genomic,
-                   build-db-production-t1dmine,create-indexes-production, load-static-t1dmine,
-                   build-ensembl-human-production, build-go-human-production,
+          depends="create-production-model-t1dmine, compile-genomic-model-t1dmine,jar-genomic,
+                   build-db-production-t1dmine, load-static-t1dmine,
+                   build-ensembl-human-production, build-go-production-human,build-go-production-mouse,
                    build-tfbs-production, build-firstef-production,
-                   build-regions-production, build-disease-regions-production,
-                   build-ensembl-disease-production, 
+                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production, 
                    build-mousechain-production, build-opposumchain-production,
-                   build-tfbscluster-production,
+                   build-tfbscluster-production, build-cns-production,
+                   build-orthologues-production-mouse,
                    analyse-db-production, grant-db-production"/>
 
 
@@ -3477,14 +3477,14 @@
   </target>
 
   <target name="test-t1dmine-models-full"
-          depends="compile-genomic-t1dmine-model, test-t1dmine-models-inc">
+          depends="compile-genomic-model-t1dmine, test-t1dmine-models-inc">
     <antcall target="test-report"/>
   </target>
 
-  <target name="genomic-t1dmine-test" depends="compile-genomic-t1dmine-model, genomic-test-inc"/>
+  <target name="genomic-t1dmine-test" depends="compile-genomic-model-t1dmine, genomic-test-inc"/>
 
   <target name="t1dminefulltest"
-          depends="clean, compile-genomic-t1dmine-model, build-db-genomic-test,
+          depends="clean, compile-genomic-model-t1dmine, build-db-genomic-test,
                    create-indexes-genomic-test, test-t1dmine-models-inc, genomic-t1dmine-test"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
@@ -3500,7 +3500,7 @@
     </ant>
   </target>
 
-  <!-- GO ANNOTATION -->
+  <!-- GO ANNOTATION FOR HUMAN -->
 
   <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
 
@@ -3538,11 +3538,11 @@
     </ant>
   </target>
 
-  <target name="build-go-human-production"
+  <target name="build-go-production-human"
           depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
 
 
-<!-- GO ANNOTATION -->
+<!-- GO ANNOTATION FOR MOUSE-->
 
   <target name="retrieve-go-annotation-mouse" depends="prepare-build-model, compile-go-java">
 
@@ -3580,8 +3580,8 @@
     </ant>
   </target>
 
-  <target name="build-go-mouse-production"
-          depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-mouse, load-go-annotation"/>
+  <target name="build-go-production-mouse"
+          depends="retrieve-go-annotation-mouse, load-go-annotation"/>
 
 <!-- UCSC MODEL GENERATION -->
 
@@ -3591,7 +3591,7 @@
   </target>
 
   <target name="ucsc-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ucsc"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3599,7 +3599,7 @@
   </target>
 
   <target name="compile-ucsc-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ucsc"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3615,7 +3615,7 @@
   </target>
 
   <target name="tfbs-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="tfbs"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3623,7 +3623,7 @@
   </target>
 
   <target name="compile-tfbs-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="tfbs"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3688,7 +3688,7 @@
   </target>
 
   <target name="firstef-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="firstef"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3696,7 +3696,7 @@
   </target>
 
   <target name="compile-firstef-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="firstef"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3761,7 +3761,7 @@
   </target>
 
   <target name="region-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="region"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3769,7 +3769,7 @@
   </target>
 
   <target name="compile-region-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="region"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3834,7 +3834,7 @@
   </target>
 
   <target name="diseaseregion-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="diseaseregion"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -3842,7 +3842,7 @@
   </target>
 
   <target name="compile-diseaseregion-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="diseaseregion"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3943,7 +3943,7 @@
     <convert-file clsName="org.flymine.dataconversion.EnsemblDiseaseConverter"
                    osName="osw.ensembl-disease-tgt-items"
                    model="ensembl-disease">
-      <fileset dir ="${shared.data}/ensemblDisease/">
+      <fileset dir ="${shared.data}/human/ensemblDisease/">
         <include name ="*.tsv"/>
       </fileset>
     </convert-file>
@@ -3999,7 +3999,7 @@
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
       <fileset dir ="${shared.data}/human/comparativeGenomics">
-        <include name ="mouseChain.gff"/>
+        <include name ="mouseChain.gff3"/>
       </fileset>
     </retrieve-file>
 
@@ -4039,7 +4039,7 @@
   </target-->
 
   <target name="opposumchain-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="opposumchain"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -4047,7 +4047,7 @@
   </target>
 
   <!--target name="compile-opposumchain-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="opposumchain"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4075,7 +4075,7 @@
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
       <fileset dir ="${shared.data}/human/comparativeGenomics">
-        <include name ="opposumChain.gff"/>
+        <include name ="opposumChain.gff3"/>
       </fileset>
     </retrieve-file>
 
@@ -4113,7 +4113,7 @@
   </target>
 
   <target name="tfbscluster-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-t1dmine-java">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="tfbscluster"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -4121,7 +4121,7 @@
   </target>
 
   <target name="compile-tfbscluster-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-t1dmine-java">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="tfbscluster"/>
       <reference torefid="class.path" refid="models.class.path"/>
