@@ -1772,7 +1772,7 @@
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
       <fileset dir="${shared.data}/uniprot">
         <include name="uniprot_sprot*"/>
-        <!--include name="uniprot_trembl*"/-->
+        <include name="uniprot_trembl*"/>
       </fileset>
     </filter-uniprot>
   </target>
