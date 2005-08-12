@@ -16,6 +16,7 @@ import org.intermine.InterMineException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.dataconversion.*;
 import org.intermine.metadata.Model;
@@ -51,6 +52,7 @@ public class InterproDataTranslator extends DataTranslator {
   protected static final String MATCHES = "matches";
   protected static final String ENTRY2ENTRY = "entry2entry";
   protected static final String ENTRY2COMP = "entry2comp";
+  protected static final String COMMON_ANNOTATION = "common_annotation";
 
   protected static final String FAMILY = "Family";
   protected static final String DOMAIN = "Domain";
@@ -64,8 +66,9 @@ public class InterproDataTranslator extends DataTranslator {
   protected static final String NAME = "name";
   protected static final String ENTRY_AC = "entry_ac";
   protected static final String METHOD_AC = "method_ac";
-  protected static final String COMMON_ANNOTATION = "common_annotation";
   protected static final String EVIDENCE = "evidence";
+  protected static final String SOURCE = "source";
+
 
   protected static final Logger LOG = Logger.getLogger(InterproDataTranslator.class);
 
@@ -131,6 +134,8 @@ public class InterproDataTranslator extends DataTranslator {
             processEntryItem(srcItem, tgtItem);
           } else if (MATCHES.equals(srcItemClassName)) {
             processMatchesItem(srcItem, tgtItem);
+          } else if (COMMON_ANNOTATION.equals(srcItemClassName)) {
+            processCommonAnnotationItem(srcItem, tgtItem);
           }
 
           result.add(tgtItem);
@@ -354,7 +359,6 @@ public class InterproDataTranslator extends DataTranslator {
     setupEntryRelations(entryFromEntry2CompViaEntry2, srcItem, tgtItem, ENTRY1, FOUNDIN);
   }
 
-
   private void processMatchesItem(org.intermine.xml.full.Item srcItem, org.intermine.xml.full.Item tgtItem)
           throws ObjectStoreException {
 
@@ -378,6 +382,12 @@ public class InterproDataTranslator extends DataTranslator {
       LOG.warn("!!! FOUND A MATCHES ITEM WITHOUT A REFERENCED CV_EVIDENCE ITEM !!!");
     }
   }
+
+  private void processCommonAnnotationItem(org.intermine.xml.full.Item srcItem, org.intermine.xml.full.Item tgtItem) {
+
+    tgtItem.setReference(SOURCE, getInterproEvidenceItem().getIdentifier());
+  }
+
 
 
   //Private helper method to assist in setting any reverse self relations in the ProteinFamily object.
@@ -500,6 +510,21 @@ public class InterproDataTranslator extends DataTranslator {
 
 
   /**
+   * @return Creates a Database item with the description set to Interpro - used for evidence tagging...
+   */
+  private Item getInterproEvidenceItem() {
+
+    if (interproEvidenceItem == null) {
+      interproEvidenceItem = createItem("Database");
+      interproEvidenceItem.setAttribute("title", "InterPro");
+    }
+
+    return interproEvidenceItem;
+  }
+
+//----------------------------------------------------------------------------------------------------------------------
+
+  /**
    * WE HAVE OVERRIDDEN THE PARENT METHOD TO SET THE BATCH SIZE TO A LOWER VALUE TO AVOID GETTING TO MANY QUERY ITEMS
    *
    * Returns the Iterator over Items that the DataTranslator will translate.
@@ -509,12 +534,14 @@ public class InterproDataTranslator extends DataTranslator {
    */
   public Iterator getItemIterator() throws ObjectStoreException {
 
-      ((ObjectStoreItemReader)srcItemReader).setBatchSize(500);  
+    //have to check this if we want our mock data tests to work...
+    if(srcItemReader instanceof ObjectStoreItemReader){
 
-      return srcItemReader.itemIterator();
+      ((ObjectStoreItemReader)srcItemReader).setBatchSize(500);
+    }
+
+    return srcItemReader.itemIterator();
   }
-
-
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -703,16 +730,4 @@ public class InterproDataTranslator extends DataTranslator {
     return paths;
   }
 
-  /**
-   * @return Creates a Database item with the description set to Interpro - used for evidence tagging...
-   */
-  private Item getInterproEvidenceItem() {
-
-    if (interproEvidenceItem == null) {
-      interproEvidenceItem = createItem("Database");
-      interproEvidenceItem.setAttribute("title", "InterPro");
-    }
-
-    return interproEvidenceItem;
-  }
 }
