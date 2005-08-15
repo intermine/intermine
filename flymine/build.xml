@@ -563,7 +563,7 @@
                 merge-protein_structure-model, merge-so-model, merge-orthologue-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-chado-model, merge-homophila-model, merge-interpro-model,
-                merge-cdnaclone-model, merge-drosdel-model, merge-shortcuts">
+                merge-cdnaclone-model, merge-drosdel-model, merge-mage-model, merge-shortcuts">
   </target>
 
   <!-- create class files from a model in an ObjectStore -->
@@ -1375,7 +1375,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.mage-tgt-items-std"/>
     </ant>
   </target>
@@ -1385,6 +1385,7 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
+      <!--fileset dir="${shared.data}/mage/t1dmine/E-EMBL-1/"/-->
       <fileset dir="${shared.data}/mage/E-FLYC-1"/>
       <fileset dir="${shared.data}/mage/E-FLYC-2"/>
       <fileset dir="${shared.data}/mage/E-FLYC-3"/>
@@ -1407,6 +1408,8 @@
 
     <convert-file osName="osw.mage-src-items"
                   clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Signal med ratio">
+    <!--convert-file osName="osw.mage-src-items"
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Log2Ratio"-->
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -1429,7 +1432,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.mage-tgt-items-std"/>
     </ant>
     <copy file="${model}/mage/mage_mappings" toDir="${build.model}/mage"/>
@@ -1448,7 +1451,7 @@
       <property name="os.alias" value="os.mage-tgt-items-std"/>
     </ant>
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.mage-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -2456,7 +2459,7 @@
     </ant>
   </target>
 
-  <target name="mage-test" depends="prepare-build-model, prepare-test, merge-mage-model, build-db-fulldatatest">
+  <target name="mage-test" depends="prepare-build-model, prepare-test, build-db-fulldatatest">
     <mkdir dir="${build.tmp}/mage"/>
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -2467,7 +2470,7 @@
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
     <!-- put model back to how it was -->
-    <antcall target="compile-genomic-model"/>
+    <!--antcall target="compile-genomic-model"/-->
 
   </target>
 
