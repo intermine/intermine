@@ -40,7 +40,8 @@ import org.intermine.util.DynamicUtil;
 
 public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 {
-    public static final Object NO_RESULT = new Object();
+    public static final Object NO_RESULT = new Object() {
+        public String toString() { return "NO RESULT"; } };
 
     protected static Map queries = new HashMap();
     protected static Map results = new LinkedHashMap();
@@ -223,6 +224,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 
         // tests using a temporary table for the bag - 'foo' NOT IN bag
         queries.put("LargeBagNotConstraintUsingTable", largeBagConstraint(true));
+        queries.put("SubqueryExistsConstraint", subqueryExistsConstraint());
+        queries.put("NotSubqueryExistsConstraint", notSubqueryExistsConstraint());
+        queries.put("SubqueryExistsConstraintNeg", subqueryExistsConstraintNeg());
     }
 
     /*
@@ -1442,5 +1446,53 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(-51))));
         q.setDistinct(false);
         return q;
+    }
+
+    /*
+     * SELECT 'hello' AS a1_ WHERE EXISTS (SELECT a1_ FROM Company AS a1_)
+     */
+    public static Query subqueryExistsConstraint() throws Exception {
+        Query q1 = new Query();
+        q1.addToSelect(new QueryValue("hello"));
+        Query q2 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q2.addFrom(qc);
+        q2.addToSelect(qc);
+        q2.setDistinct(false);
+        q1.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q2));
+        q1.setDistinct(false);
+        return q1;
+    }
+
+    /*
+     * SELECT 'hello' AS a1_ WHERE DOES NOT EXIST (SELECT a1_ FROM Company AS a1_)
+     */
+    public static Query notSubqueryExistsConstraint() throws Exception {
+        Query q1 = new Query();
+        q1.addToSelect(new QueryValue("hello"));
+        Query q2 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q2.addFrom(qc);
+        q2.addToSelect(qc);
+        q2.setDistinct(false);
+        q1.setConstraint(new SubqueryExistsConstraint(ConstraintOp.DOES_NOT_EXIST, q2));
+        q1.setDistinct(false);
+        return q1;
+    }
+    
+    /*
+     * SELECT 'hello' AS a1_ WHERE EXISTS (SELECT a1_ FROM Bank AS a1_)
+     */
+    public static Query subqueryExistsConstraintNeg() throws Exception {
+        Query q1 = new Query();
+        q1.addToSelect(new QueryValue("hello"));
+        Query q2 = new Query();
+        QueryClass qc = new QueryClass(Bank.class);
+        q2.addFrom(qc);
+        q2.addToSelect(qc);
+        q2.setDistinct(false);
+        q1.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q2));
+        q1.setDistinct(false);
+        return q1;
     }
 }

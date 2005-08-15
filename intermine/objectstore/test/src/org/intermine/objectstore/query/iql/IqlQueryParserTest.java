@@ -180,7 +180,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
             assertEquals("expecting \"as\", found '+'", e.getCause().getMessage());
         }
         try {
-            Query q = IqlQueryParser.parse(new IqlQuery("select 'flibble' + 3 as a from Company", "org.intermine.model.testmodel"));
+            Query q = IqlQueryParser.parse(new IqlQuery("select '3flibble' + 3 as a from Company", "org.intermine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because an expression must type-match");
         } catch (IllegalArgumentException e) {
             assertEquals("Incompatible expression with unknown type values", e.getMessage());

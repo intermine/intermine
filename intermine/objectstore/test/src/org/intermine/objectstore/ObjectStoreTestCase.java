@@ -437,11 +437,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("QueryClassBagContainsObject", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
         results.put("QueryClassBagContainsObjectDouble", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
         results.put("QueryClassBagNotContainsObject", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
-        results.put("ObjectContainsObject", Collections.singletonList(Collections.singletonList(new Integer(1))));
+        results.put("ObjectContainsObject", Collections.singletonList(Collections.singletonList("hello")));
         results.put("ObjectContainsObject2", Collections.EMPTY_LIST);
         results.put("ObjectNotContainsObject", Collections.EMPTY_LIST);
         results.put("QueryClassBagNotViaNand", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
         results.put("QueryClassBagNotViaNor", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("SubqueryExistsConstraint", Collections.singletonList(Collections.singletonList("hello")));
+        results.put("NotSubqueryExistsConstraint", Collections.EMPTY_LIST);
+        results.put("SubqueryExistsConstraintNeg", Collections.EMPTY_LIST);
     }
 
     /**

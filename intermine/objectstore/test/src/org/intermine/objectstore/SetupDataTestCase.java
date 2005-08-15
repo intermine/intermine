@@ -750,33 +750,33 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     /*
-     * SELECT 1 AS a1_ WHERE ?.employees CONTAINS ?
+     * SELECT 'hello' AS a1_ WHERE ?.employees CONTAINS ?
      */
     public static Query objectContainsObject() throws Exception {
         Query q = new Query();
-        q.addToSelect(new QueryValue(new Integer(1)));
+        q.addToSelect(new QueryValue("hello"));
         q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeA1")));
         q.setDistinct(false);
         return q;
     }
 
     /*
-     * SELECT 1 AS a1_ WHERE ?.employees CONTAINS ?
+     * SELECT 'hello' AS a1_ WHERE ?.employees CONTAINS ?
      */
     public static Query objectContainsObject2() throws Exception {
         Query q = new Query();
-        q.addToSelect(new QueryValue(new Integer(1)));
+        q.addToSelect(new QueryValue("hello"));
         q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeB1")));
         q.setDistinct(false);
         return q;
     }
 
     /*
-     * SELECT 1 AS a1_ WHERE ?.employees DOES NOT CONTAIN ?
+     * SELECT 'hello' AS a1_ WHERE ?.employees DOES NOT CONTAIN ?
      */
     public static Query objectNotContainsObject() throws Exception {
         Query q = new Query();
-        q.addToSelect(new QueryValue(new Integer(1)));
+        q.addToSelect(new QueryValue("hello"));
         q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("EmployeeA1")));
         q.setDistinct(false);
         return q;

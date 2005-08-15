@@ -46,8 +46,6 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
     public static void setUpResults() throws Exception {
         results.put("SelectSimpleObject", "SELECT intermine_Alias.OBJECT AS \"intermine_Alias\", intermine_Alias.id AS \"intermine_Aliasid\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", Collections.singleton("Company"));
-        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.OBJECT AS intermine_Array, intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
-        results2.put("SubQuery", Collections.singleton("Company"));
         results.put("WhereSubQueryField", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.name AS orderbyfield0 FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name FROM Department AS a1_) ORDER BY a1_.name, a1_.id");
         results2.put("WhereSubQueryField", Collections.singleton("Department"));
         results.put("WhereSubQueryClass", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE a1_.id IN (SELECT a1_.id FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.id");
@@ -112,8 +110,6 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("BagConstraint2", Collections.singleton("Company"));
         results.put("InterfaceField", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employable AS a1_ WHERE a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results2.put("InterfaceField", Collections.singleton("Employable"));
-        results.put("InterfaceReference", NO_RESULT);
-        results.put("InterfaceCollection", NO_RESULT);
         Set res = new HashSet();
         res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM Employee AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1__1.debt > 0 AND a1_.age > 0) ORDER BY a1_.id");
         res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM Broke AS a1_, Employee AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.debt > 0 AND a1__1.age > 0) ORDER BY a1_.id");
