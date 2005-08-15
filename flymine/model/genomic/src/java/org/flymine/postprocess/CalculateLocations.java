@@ -105,10 +105,7 @@ public class CalculateLocations
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            Integer objectId = (Integer) rr.get(0);
             BioEntity subject = (BioEntity) rr.get(1);
-            Location location = (Location) rr.get(2);
-
             if (subject.getId().intValue() != previousSubjectId && batch.size() > 0) {
                 fixPartialBatch(batch);
                 batch = new HashSet();
@@ -138,11 +135,7 @@ public class CalculateLocations
         LOG.info("processing partial batch size " + batch.size());
 
         Location startLocation = null;
-        int startLocationObjectLength = -1;
-
         Location endLocation = null;
-        int endLocationObjectLength = -1;
-
         // Locations that are partial at the start and the end
         Set veryPartialLocations = new HashSet();
 
@@ -153,7 +146,6 @@ public class CalculateLocations
             ResultsRow rr = (ResultsRow) batchIter.next();
             Integer objectId = (Integer) rr.get(0);
             BioEntity object = (BioEntity) os.getObjectById(objectId);
-            BioEntity subject = (BioEntity) rr.get(1);
             Location location = (Location) rr.get(2);
 
             try {
@@ -490,8 +482,6 @@ public class CalculateLocations
         Iterator mapOfPartialsIter = mapOfPartials.keySet().iterator();
 
         while (mapOfPartialsIter.hasNext()) {
-            int minBioStart = Integer.MAX_VALUE;
-            int maxBioEnd = -1;
             int minChrStart = Integer.MAX_VALUE;
             int maxChrEnd = -1;
             int newStrand = 0;
@@ -607,7 +597,6 @@ public class CalculateLocations
             ResultsRow rr = (ResultsRow) resIter.next();
 
             BioEntity parentObject = (BioEntity) rr.get(0);
-            BioEntity childObject = (BioEntity) rr.get(1);
             Location location = (Location) rr.get(2);
 
             // the object that childObject is located on
@@ -1256,7 +1245,6 @@ public class CalculateLocations
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
-            Integer chromosomeId = (Integer) rr.get(0);
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
@@ -1342,13 +1330,13 @@ public class CalculateLocations
      */
     protected class SimpleLoc
     {
-        int start;
-        int parentId;
-        int childId;
-        int strand;
-        int end;
-        boolean startIsPartial;
-        boolean endIsPartial;
+        private int start;
+        private int parentId;
+        private int childId;
+        private int strand;
+        private int end;
+        private boolean startIsPartial;
+        private boolean endIsPartial;
 
         /**
          * Construct with integer values
