@@ -293,13 +293,13 @@ public class TransferSequences
                if (currentTranscript != null) {
                    storeNewSequence(currentTranscript,
                                     currentTranscriptBases.toString().toCharArray());
+                   i++;
                }
                currentTranscriptBases = new StringBuffer();
                currentTranscript = transcript;
            }
 
            currentTranscriptBases.append(exon.getSequence().getResidues());
-           i++;
            if (i % 100 == 0) {
                long now = System.currentTimeMillis();
                LOG.info("Set sequences for " + i + " Transcripts"
