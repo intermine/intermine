@@ -192,6 +192,9 @@ public class QueryCloner
             BagConstraint origC = (BagConstraint) orig;
             return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(), fromElementMap),
                                      origC.getOp(), new HashSet(origC.getBag()));
+        } else if (orig instanceof SubqueryExistsConstraint) {
+            SubqueryExistsConstraint origC = (SubqueryExistsConstraint) orig;
+            return new SubqueryExistsConstraint(origC.getOp(), cloneQuery(origC.getQuery()));
         } else if (orig instanceof Set) {
             return new HashSet((Set) orig);
         } else if (orig instanceof List) {

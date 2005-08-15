@@ -132,4 +132,11 @@ public class QueryValue implements QueryEvaluable
             throw new ClassCastException("getApproximateType called when type is known");
         }
     }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return value.getClass().getName() + ": \"" + value + "\"";
+    }
 }

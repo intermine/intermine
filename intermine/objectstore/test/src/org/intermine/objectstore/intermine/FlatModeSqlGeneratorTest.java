@@ -48,8 +48,6 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
     public static void setUpResults() throws Exception {
         results.put("SelectSimpleObject", "SELECT intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", Collections.singleton("Company"));
-        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
-        results2.put("SubQuery", Collections.singleton("Company"));
         results.put("WhereSubQueryField", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name FROM Department AS a1_) ORDER BY a1_.name, a1_.id");
         results2.put("WhereSubQueryField", Collections.singleton("Department"));
         results.put("WhereSubQueryClass", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE a1_.id IN (SELECT a1_.id FROM Company AS a1_ WHERE a1_.name = 'CompanyA') ORDER BY a1_.id");
@@ -114,8 +112,6 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("BagConstraint2", Collections.singleton("Company"));
         results.put("InterfaceField", NO_RESULT);
         results2.put("InterfaceField", NO_RESULT);
-        results.put("InterfaceReference", NO_RESULT);
-        results.put("InterfaceCollection", NO_RESULT);
         Set res = new HashSet();
         results.put("DynamicInterfacesAttribute", NO_RESULT);
         results2.put("DynamicInterfacesAttribute", NO_RESULT);
@@ -208,9 +204,9 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("QueryClassBagDouble", Collections.singleton("Employee"));
         results.put("QueryClassBagContainsObject", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") ORDER BY indirect0.departmentId");
         results.put("QueryClassBagContainsObjectDouble", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0, Employee AS indirect1 WHERE (indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") AND indirect1.class = 'org.intermine.model.testmodel.Employee' AND (indirect1.departmentId = indirect0.departmentId AND indirect1.id = " + employeeA2Id + ")) ORDER BY indirect0.departmentId");
-        results.put("ObjectContainsObject", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
-        results.put("ObjectContainsObject2", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
-        results.put("ObjectNotContainsObject", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results.put("ObjectContainsObject", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results.put("ObjectContainsObject2", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
+        results.put("ObjectNotContainsObject", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
     }
 
     protected DatabaseSchema getSchema() throws Exception {

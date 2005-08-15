@@ -371,6 +371,11 @@ public class IqlQueryParser
                 return processNewField(ast.getFirstChild(), q);
             case IqlTokenTypes.CONSTANT:
                 String value = unescape(ast.getFirstChild().getText());
+                if ((value.charAt(0) == '\'') && ((value.charAt(1) < '0')
+                            || (value.charAt(1) > '9'))
+                        && (value.charAt(value.length() - 1) == '\'')) {
+                    return new QueryValue(value.substring(1, value.length() - 1));
+                }
                 return new QueryValue(new UnknownTypeValue(value));
             case IqlTokenTypes.UNSAFE_FUNCTION:
                 return processNewUnsafeFunction(ast.getFirstChild(), q);
@@ -792,7 +797,7 @@ public class IqlQueryParser
                 QueryNode leftb = processNewQueryNode(subAST, q);
                 subAST = subAST.getNextSibling();
                 if (subAST.getType() != IqlTokenTypes.IQL_STATEMENT) {
-                    throw new IllegalArgumentException("Expected: a IQL SELECT statement");
+                    throw new IllegalArgumentException("Expected: an IQL SELECT statement");
                 }
                 Query rightb = new Query();
                 rightb.setDistinct(false);
@@ -804,6 +809,15 @@ public class IqlQueryParser
                     return new SubqueryConstraint((QueryEvaluable) leftb, ConstraintOp.IN,
                             rightb);
                 }
+            case IqlTokenTypes.SUBQUERY_EXISTS_CONSTRAINT:
+                subAST = ast.getFirstChild();
+                if (subAST.getType() != IqlTokenTypes.IQL_STATEMENT) {
+                    throw new IllegalArgumentException("Expected: an IQL SELECT statement");
+                }
+                Query subquery = new Query();
+                subquery.setDistinct(false);
+                processIqlStatementAST(subAST, subquery, modelPackage, iterator);
+                return new SubqueryExistsConstraint(ConstraintOp.EXISTS, subquery);
             case IqlTokenTypes.CONTAINS_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 if (subAST.getType() != IqlTokenTypes.FIELD) {

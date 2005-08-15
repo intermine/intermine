@@ -447,7 +447,7 @@ public class SqlGenerator
             Set tablenames = (Set) schemaCache.get(q);
             if (tablenames == null) {
                 tablenames = new HashSet();
-                findTableNames(tablenames, q, schema);
+                findTableNames(tablenames, q, schema, true);
                 schemaCache.put(q, tablenames);
             }
             return tablenames;
@@ -477,10 +477,12 @@ public class SqlGenerator
      * @param tablenames a Set of table names - new names will be added here
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
+     * @param addInterMineObject true if this method should normally add the InterMineObject
+     * table to the Set
      * @throws ObjectStoreException if something goes wrong
      */
     private static void findTableNames(Set tablenames, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+            DatabaseSchema schema, boolean addInterMineObject) throws ObjectStoreException {
         findTableNamesInConstraint(tablenames, q.getConstraint(), schema);
         Set fromElements = q.getFrom();
         Iterator fromIter = fromElements.iterator();
@@ -501,14 +503,14 @@ public class SqlGenerator
                 }
             } else if (fromElement instanceof Query) {
                 Query subQ = (Query) fromElement;
-                findTableNames(tablenames, subQ, schema);
+                findTableNames(tablenames, subQ, schema, false);
             } else if (fromElement instanceof QueryClassBag) {
                 // Do nothing
             } else {
                 throw new ObjectStoreException("Unknown FromElement: " + fromElement.getClass());
             }
         }
-        if (schema.isMissingNotXml()) {
+        if (addInterMineObject && schema.isMissingNotXml()) {
             String interMineObject = DatabaseUtil.getTableName(schema.getModel()
                     .getClassDescriptorByName(InterMineObject.class.getName()));
             boolean notHaveInterMineObject = !tablenames.contains(interMineObject);
@@ -540,9 +542,9 @@ public class SqlGenerator
                 findTableNamesInConstraint(tablenames, subC, schema);
             }
         } else if (c instanceof SubqueryConstraint) {
-            findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema);
+            findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema, false);
         } else if (c instanceof SubqueryExistsConstraint) {
-            findTableNames(tablenames, ((SubqueryExistsConstraint) c).getQuery(), schema);
+            findTableNames(tablenames, ((SubqueryExistsConstraint) c).getQuery(), schema, false);
         } else if (c instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) c;
             QueryReference ref = cc.getReference();
@@ -1185,17 +1187,13 @@ public class SqlGenerator
         } else {
             boolean needComma = false;
             String objectAlias = (String) state.getFieldToAlias(qc).get("OBJECT");
-            if (objectAlias != null) {
+            if ((kind != QUERY_SUBQUERY_FROM) && (objectAlias != null)) {
                 buffer.append(objectAlias);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
                     buffer.append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias)
                                 : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\"");
-                }
-                if (kind == QUERY_SUBQUERY_FROM) {
-                    buffer.append(" AS ")
-                        .append(DatabaseUtil.generateSqlCompatibleName(alias));
                 }
                 needComma = true;
             }

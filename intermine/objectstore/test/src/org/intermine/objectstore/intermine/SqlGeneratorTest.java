@@ -45,6 +45,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.testing.MustBeDifferentMap;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -52,7 +53,7 @@ import org.intermine.util.TypeUtil;
 public class SqlGeneratorTest extends SetupDataTestCase
 {
     protected static Database db;
-    protected static HashMap results2 = new HashMap();
+    protected static Map results2;
 
     public SqlGeneratorTest(String arg) {
         super(arg);
@@ -84,11 +85,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
         employeeA1Id = ((Employee) data.get("EmployeeA1")).getId();
         employeeA2Id = ((Employee) data.get("EmployeeA2")).getId();
         employeeB1Id = ((Employee) data.get("EmployeeB1")).getId();
-        results = new HashMap();
+        results = new MustBeDifferentMap(new HashMap());
+        results2 = new MustBeDifferentMap(new HashMap());
         results.put("SelectSimpleObject", "SELECT intermine_Alias.id AS \"intermine_Aliasid\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
-        results2.put("SubQuery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results2.put("SubQuery", Collections.singleton("Company"));
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
         results2.put("WhereSimpleEquals", Collections.singleton("Company"));
         results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
@@ -297,14 +299,20 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("QueryClassBagContainsObjectDouble", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0, Employee AS indirect1 WHERE (((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") AND (indirect1.departmentId = indirect0.departmentId AND indirect1.id = " + employeeA2Id + ")) ORDER BY indirect0.departmentId");
         results2.put("QueryClassBagContainsObjectDouble", Collections.singleton("Employee"));
         results.put("QueryClassBagNotContainsObject", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
-        results.put("ObjectContainsObject", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results.put("ObjectContainsObject", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
         results2.put("ObjectContainsObject", Collections.singleton("Employee"));
-        results.put("ObjectContainsObject2", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
+        results.put("ObjectContainsObject2", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
         results2.put("ObjectContainsObject2", Collections.singleton("Employee"));
-        results.put("ObjectNotContainsObject", "SELECT 1 AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results.put("ObjectNotContainsObject", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
         results2.put("ObjectNotContainsObject", Collections.singleton("Employee"));
         results.put("QueryClassBagNotViaNand", new Failure(ObjectStoreException.class, "Invalid constraint: QueryClassBag ContainsConstraint cannot be inside an OR ConstraintSet"));
         results.put("QueryClassBagNotViaNor", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
+        results.put("SubqueryExistsConstraint", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM Company AS a1_)");
+        results2.put("SubqueryExistsConstraint", Collections.singleton("Company"));
+        results.put("NotSubqueryExistsConstraint", "SELECT 'hello' AS a1_ WHERE (NOT EXISTS(SELECT a1_.id FROM Company AS a1_))");
+        results2.put("NotSubqueryExistsConstraint", Collections.singleton("Company"));
+        results.put("SubqueryExistsConstraintNeg", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM Bank AS a1_)");
+        results2.put("SubqueryExistsConstraintNeg", Collections.singleton("Bank"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
@@ -353,7 +361,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
 
             // TODO: extend sql so that it can represent these
-            if (!(type.startsWith("Empty"))) {
+            if (!(type.startsWith("Empty") || "SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser. 
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);

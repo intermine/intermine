@@ -36,6 +36,7 @@ tokens {
     AND_CONSTRAINT_SET;
     OR_CONSTRAINT_SET;
     SUBQUERY_CONSTRAINT;
+    SUBQUERY_EXISTS_CONSTRAINT;
     CONTAINS_CONSTRAINT;
     NOTLIKE;
     BAG_CONSTRAINT;
@@ -51,10 +52,10 @@ iql_statement: select_command
 
 select_command:
         ( "explain" )? "select"! ( "all"! | "distinct" )? select_list
-        ( from_list
-            ( where_clause )?
-            ( group_clause )?
-            ( order_clause )? )?
+        ( from_list )?
+        ( where_clause )?
+        ( group_clause )?
+        ( order_clause )?
     ;
 
 select_list:
@@ -202,6 +203,7 @@ safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | (contains_constraint)=> contains_constraint
             | "true"
             | "false"
+            | subquery_exists_constraint
             | constraint
             | not_constraint
     ;
@@ -241,13 +243,23 @@ subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! i
         { #subquery_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"], #subquery_constraint)); }
     ;
 
+subquery_exists_constraint: "exists"! OPEN_PAREN! iql_statement CLOSE_PAREN!
+        { #subquery_exists_constraint = #([SUBQUERY_EXISTS_CONSTRAINT, "SUBQUERY_EXISTS_CONSTRAINT"], #subquery_exists_constraint); }
+        | "does"! "not"! "exist"! OPEN_PAREN! iql_statement CLOSE_PAREN!
+        { #subquery_exists_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_EXISTS_CONSTRAINT, "SUBQUERY_EXISTS_CONSTRAINT"], #subquery_exists_constraint)); }
+    ;
+
 bag_constraint: (abstract_value "in" )=> abstract_value "in"! QUESTION_MARK!
         { #bag_constraint = #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint); }
         | abstract_value "not"! "in"! QUESTION_MARK!
         { #bag_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint)); }
     ;
 
-contains_constraint: (collection_from_question_mark "contains" )=> collection_from_question_mark "contains"! thing
+contains_constraint: (collection_from_question_mark "contains" QUESTION_MARK)=> collection_from_question_mark "contains"! QUESTION_MARK
+        { #contains_constraint = #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint); }
+        | (collection_from_question_mark "does" "not" "contain" QUESTION_MARK)=> collection_from_question_mark "does"! "not"! "contain"! QUESTION_MARK
+        { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }
+        | (collection_from_question_mark "contains" )=> collection_from_question_mark "contains"! thing
         { #contains_constraint = #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint); }
         | (collection_from_question_mark "does" "not" "contain" )=> collection_from_question_mark "does"! "not"! "contain"! thing
         { #contains_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([CONTAINS_CONSTRAINT, "CONTAINS_CONSTRAINT"], #contains_constraint)); }

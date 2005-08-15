@@ -74,72 +74,64 @@ public class IqlQuery
         }
 
         boolean needComma = false;
-        String retval = (q.isDistinct() ? "SELECT DISTINCT " : "SELECT ");
+        StringBuffer retval = new StringBuffer(q.isDistinct() ? "SELECT DISTINCT " : "SELECT ");
         Iterator selectIter = q.getSelect().iterator();
         while (selectIter.hasNext()) {
             QueryNode qn = (QueryNode) selectIter.next();
             if (needComma) {
-                retval += ", ";
+                retval.append(", ");
             }
             needComma = true;
             String nodeAlias = (String) q.getAliases().get(qn);
             if (qn instanceof QueryClass) {
-                retval += nodeToString(q, qn);
+                retval.append(nodeToString(q, qn));
             } else {
-                retval += nodeToString(q, qn) + (nodeAlias == null ? "" : " AS "
-                        + escapeReservedWord(nodeAlias));
+                retval.append(nodeToString(q, qn))
+                    .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));
             }
         }
         needComma = false;
-        retval += " FROM ";
         Iterator qcIter = q.getFrom().iterator();
         while (qcIter.hasNext()) {
             FromElement fe = (FromElement) qcIter.next();
             String classAlias = escapeReservedWord((String) q.getAliases().get(fe));
-            if (needComma) {
-                retval += ", ";
-            }
+            retval.append(needComma ? ", " : " FROM ");
             needComma = true;
             if (fe instanceof QueryClass) {
-                retval += fe.toString() + (classAlias == null ? "" : " AS " + classAlias);
+                retval.append(fe.toString())
+                    .append(classAlias == null ? "" : " AS " + classAlias);
             } else if (fe instanceof QueryClassBag) {
-                retval += fe.toString() + (classAlias == null ? "" : " AS " + classAlias);
+                retval.append(fe.toString())
+                    .append(classAlias == null ? "" : " AS " + classAlias);
                 parameters.add(((QueryClassBag) fe).getBag());
             } else {
-                retval += "(" + fe.toString() + ")" + (classAlias == null ? "" : " AS "
-                        + classAlias);
+                retval.append("(")
+                    .append(fe.toString())
+                    .append(")")
+                    .append(classAlias == null ? "" : " AS " + classAlias);
             }
         }
         if (q.getConstraint() != null) {
-            retval += " WHERE " + constraintToString(q, q.getConstraint(), parameters);
+            retval.append(" WHERE ")
+                .append(constraintToString(q, q.getConstraint(), parameters));
         }
-        if (!q.getGroupBy().isEmpty()) {
-            retval += " GROUP BY ";
-            Iterator groupIter = q.getGroupBy().iterator();
-            needComma = false;
-            while (groupIter.hasNext()) {
-                QueryNode qn = (QueryNode) groupIter.next();
-                if (needComma) {
-                    retval += ", ";
-                }
-                needComma = true;
-                retval += nodeToString(q, qn);
-            }
+        Iterator groupIter = q.getGroupBy().iterator();
+        needComma = false;
+        while (groupIter.hasNext()) {
+            QueryNode qn = (QueryNode) groupIter.next();
+            retval.append(needComma ? ", " : " GROUP BY ");
+            needComma = true;
+            retval.append(nodeToString(q, qn));
         }
-        if (!q.getOrderBy().isEmpty()) {
-            retval += " ORDER BY ";
-            Iterator orderIter = q.getOrderBy().iterator();
-            needComma = false;
-            while (orderIter.hasNext()) {
-                QueryOrderable qn = (QueryOrderable) orderIter.next();
-                if (needComma) {
-                    retval += ", ";
-                }
-                needComma = true;
-                retval += nodeToString(q, qn);
-            }
+        Iterator orderIter = q.getOrderBy().iterator();
+        needComma = false;
+        while (orderIter.hasNext()) {
+            QueryOrderable qn = (QueryOrderable) orderIter.next();
+            retval.append(needComma ? ", " : " ORDER BY ");
+            needComma = true;
+            retval.append(nodeToString(q, qn));
         }
-        queryString = retval;
+        queryString = retval.toString();
     }
 
     /**
@@ -315,13 +307,16 @@ public class IqlQuery
                 }
                 return retval + (negate ? "))" : ")");
             }
-            return ((disjunctive ? negate : !negate) ? "true" : "false");
+            return (disjunctive == negate ? "true" : "false");
         } else if (cc instanceof BagConstraint) {
             BagConstraint c = (BagConstraint) cc;
             parameters.add(c.getBag());
             return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " ?";
         } else if (cc instanceof SubqueryExistsConstraint) {
-            return "";
+            IqlQuery subquery = new IqlQuery(((SubqueryExistsConstraint) cc).getQuery());
+            parameters.addAll(subquery.getParameters());
+            return (cc.getOp().equals(ConstraintOp.EXISTS) ? "EXISTS (" : "DOES NOT EXIST (")
+                + subquery.getQueryString() + ")";
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }

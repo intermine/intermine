@@ -230,14 +230,23 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_.id AS a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN ?", null);
         fq.setParameters(Arrays.asList(new Object[] {Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")}), data.get("EmployeeA1")}));
         results.put("QueryClassBagNotContainsObject", fq);
-        results.put("ObjectContainsObject", NO_RESULT);
-        results.put("ObjectContainsObject2", NO_RESULT);
-        results.put("ObjectNotContainsObject", NO_RESULT);
+        fq = new IqlQuery("SELECT 'hello' AS a1_ WHERE ?.employees CONTAINS ?", null);
+        fq.setParameters(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("EmployeeA1")}));
+        results.put("ObjectContainsObject", fq);
+        fq = new IqlQuery("SELECT 'hello' AS a1_ WHERE ?.employees CONTAINS ?", null);
+        fq.setParameters(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("EmployeeB1")}));
+        results.put("ObjectContainsObject2", fq);
+        fq = new IqlQuery("SELECT 'hello' AS a1_ WHERE ?.employees DOES NOT CONTAIN ?", null);
+        fq.setParameters(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("EmployeeA1")}));
+        results.put("ObjectNotContainsObject", fq);
         fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE ( NOT (a1_.employees CONTAINS a2_ AND 1 = 1))", null);
         fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
         results.put("QueryClassBagNotViaNand", fq);
         fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE ( NOT (a1_.employees CONTAINS a2_ OR 1 = 1))", null);
         fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("DepartmentA1"), data.get("DepartmentB1")})));
         results.put("QueryClassBagNotViaNor", fq);
+        results.put("SubqueryExistsConstraint", new IqlQuery("SELECT 'hello' AS a1_ WHERE EXISTS (SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_)", null));
+        results.put("NotSubqueryExistsConstraint", new IqlQuery("SELECT 'hello' AS a1_ WHERE DOES NOT EXIST (SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_)", null));
+        results.put("SubqueryExistsConstraintNeg", new IqlQuery("SELECT 'hello' AS a1_ WHERE EXISTS (SELECT a1_ FROM org.intermine.model.testmodel.Bank AS a1_)", null));
     }
 }
