@@ -83,10 +83,11 @@
   <property name="create.attribute.indexes" value="false"/>
 
   <!-- file data sources -->
-  <property name="flybase.chado.melanogaster" location="/shared/data/flybase/release_4_0"/>
+  <property name="shared.data" location="/shared/data"/>
+  <property name="flybase.chado.melanogaster" location="${shared.data}/flybase/release_4_2"/>
   <property name="flybase.chado.melanogaster.fasta" location="${flybase.chado.melanogaster}/fasta"/>
   <property name="flybase.chado.melanogaster.gff" location="${flybase.chado.melanogaster}/gff"/>
-  <property name="flybase.chado.pseudoobscura" location="/shared/data/flybase/release_4_0"/>
+  <property name="flybase.chado.pseudoobscura" location="${shared.data}/flybase/release_4_2"/>
   <property name="flybase.chado.pseudoobscura.fasta" location="${flybase.chado.pseudoobscura}/fasta"/>
   <property name="flybase.chado.pseudoobscura.gff" location="${flybase.chado.pseudoobscura}/gff"/>
   <property name="flybase.uniprot.link.file" location="${flybase.chado.melanogaster}/cg2uniprot.txt"/>
@@ -177,7 +178,6 @@
       <pathelement location="${build.model}/chado"/>
       <pathelement location="${build.model}/so"/>
       <pathelement location="${build.model}/ensembl"/>
-      <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/rnai"/>
       <pathelement location="${build.model}/long_oligo"/>
       <pathelement location="${build.model}/tiling_path"/>
@@ -191,15 +191,21 @@
       <pathelement location="${build.model}/taxonomy"/>
       <pathelement location="${build.model}/uniprot"/>
       <pathelement location="${build.model}/protein_structure"/>
+      <pathelement location="${build.model}/homophila"/>
+      <pathelement location="${build.model}/interpro"/>
+      <pathelement location="${build.model}/cdnaclone"/>
+      
+      <!--t1dmine specific model-->
+      <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/firstef"/>
       <pathelement location="${build.model}/tfbs"/>
+      <pathelement location="${build.model}/tfbscluster"/>
       <pathelement location="${build.model}/region"/>
       <pathelement location="${build.model}/diseaseregion"/>
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
       <pathelement location="${build.model}/opposumchain"/>
-      <pathelement location="${build.model}/interpro"/>
-
+     
       <fileset dir="${model}">
         <patternset refid="lib.models"/>
       </fileset>
@@ -349,7 +355,6 @@
   <!-- ========== MODEL GENERATION/MERGING TARGETS - ORGANISED BY SOURCE ========== -->
 
 
-
   <!-- INTERPRO MODEL GENERATION -->
 
   <!-- convert interpro zargo to InterMine model -->
@@ -364,8 +369,6 @@
   <target name="merge-interpro-model" depends="convert-interpro, prepare-genomic-model">
     <merge-genomic-additions additionsFile="${model}/interpro/interpro_additions.xml"/>
   </target>
-
-
 
   <!-- ENSEMBL MODEL GENERATION -->
 
@@ -437,8 +440,6 @@
   <target name="merge-cdnaclone-model" depends="prepare-genomic-model">
     <merge-genomic-additions additionsFile="${model}/cdnaclone/cdnaclone_additions.xml"/>
   </target>
-
- 
 
 
   <!-- SEQUENCE ONTOLOGY MODEL GENERATION -->
@@ -902,7 +903,7 @@
     </taskdef>
 
     <filter-chado tgtDir="${build.tmp}">
-      <fileset dir="/shared/data/flybase/release_4_0/gff">
+      <fileset dir="${flybase.chado.melanogaster.gff}">
         <include name="*.gff"/>
       </fileset>
     </filter-chado>
@@ -917,7 +918,7 @@
     </taskdef>
 
     <filter-chado tgtDir="${build.tmp}">
-      <fileset dir="/shared/data/flybase/release_4_0/gff">
+      <fileset dir="${flybase.chado.melanogaster.gff}">
         <include name="*-4-*.gff"/>
       </fileset>
     </filter-chado>
@@ -1046,7 +1047,7 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.RNAiConverter"
                   osName="osw.rnai-tgt-items" model="rnai">
-      <fileset dir="/shared/data/rnai" includes="*Set.txt"/>
+      <fileset dir="${shared.data}/rnai" includes="*Set.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1081,9 +1082,9 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.HomophilaConverter"
                   osName="osw.homophila-tgt-items" model="homophila"
-                  diseaseFile="/shared/data/homophila/homophila_diseases.txt"
-                  proteinGeneFile="/shared/data/homophila/protein_gene.txt">
-      <fileset dir="/shared/data/homophila/" includes="homophila_matches.txt"/>
+                  diseaseFile="${shared.data}/homophila/homophila_diseases.txt"
+                  proteinGeneFile="${shared.data}/homophila/protein_gene.txt">
+      <fileset dir="${shared.data}/homophila/" includes="homophila_matches.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1121,7 +1122,7 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.BDGPCloneConverter"
                   osName="osw.cdnaclone-tgt-items" model="cdnaclone">
-      <fileset dir="/shared/data/bdgp_clones/" includes="dgc2flybase.txt"/>
+      <fileset dir="${shared.data}/bdgp_clones/" includes="dgc2flybase.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1225,7 +1226,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-xml schema="${model}/psi/psi.xsd" model="psi" osName="osw.psi-src-items">
-      <fileset dir="/shared/data/psi">
+      <fileset dir="${shared.data}/psi">
         <include name="droso*.xml"/>
       </fileset>
     </convert-xml>
@@ -1253,7 +1254,7 @@
     <convert-xml schema="${model}/psi/psi.xsd"
                  model="psi"
                  osName="osw.psi-src-items">
-      <fileset dir="/shared/data/psi">
+      <fileset dir="${shared.data}/psi">
         <include name="caeel*.xml"/>
         <include name="drome*.xml"/>
       </fileset>
@@ -1329,7 +1330,7 @@
 
     <convert-file clsName="org.flymine.dataconversion.TaxonomyConverter"
                   osName="osw.taxonomy-tgt-items" model="genomic">
-      <fileset dir="/shared/data/taxonomy" includes="taxonomy.dat"/>
+      <fileset dir="${shared.data}/taxonomy" includes="taxonomy.dat"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
@@ -1384,8 +1385,11 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <fileset dir="/shared/data/mage/E-FLYC-1"/>
-      <fileset dir="/shared/data/mage/E-FLYC-2"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-1"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-2"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-3"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-4"/>
+      <fileset dir="${shared.data}/mage/E-FLYC-5"/>
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
@@ -1474,7 +1478,7 @@
     <convert-xml schema="${model}/protein_structure/protein_structure.xsd"
                  model="protein_structure"
                  osName="osw.protein_structure-src-items">
-      <fileset dir="/shared/data/kenji" includes="**/*.xml"/>
+      <fileset dir="${shared.data}/kenji" includes="**/*.xml"/>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1502,7 +1506,7 @@
                     target="osw.protein_structure-tgt-items"
                     srcModel="protein_structure"
                     tgtModel="genomic"
-                    dataLocation="/shared/data/kenji/data/pfam-3d/model/"/>
+                    dataLocation="${shared.data}/kenji/data/pfam-3d/model/"/>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1574,7 +1578,7 @@
 
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic">
-      <fileset dir="/shared/data/go-annotation">
+      <fileset dir="${shared.data}/go-annotation">
         <include name="gene_association*"/>
       </fileset>
     </convert-file>
@@ -1625,7 +1629,7 @@
                    infoSourceTitle="FlyReg"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FlyRegGFF3RecordHandler">
-      <fileset dir="/shared/data/flyreg">
+      <fileset dir="${shared.data}/flyreg">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1678,7 +1682,7 @@
                    infoSourceTitle="INDAC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
-      <fileset dir="/shared/data/long_oligo">
+      <fileset dir="${shared.data}/long_oligo">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1731,7 +1735,7 @@
                    infoSourceTitle="Genetics"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TilingPathGFF3RecordHandler">
-      <fileset dir="/shared/data/tiling">
+      <fileset dir="${shared.data}/tiling">
         <include name="*.gff3"/>
         <include name="*.GFF3"/>
       </fileset>
@@ -1783,10 +1787,10 @@
                     orgAbbrev ="HS"
                     infoSourceTitle = "UCSC"
                     model ="genomic">
-      <fileset dir ="/shared/data/human">
+      <fileset dir ="${shared.data}/human">
           <include name ="tfbs/*.gff"/>
       </fileset>
-      <!--fileset dir ="/shared/data/gff3">
+      <!--fileset dir ="${shared.data}/gff3">
         <include name ="test.gff"/>
       </fileset-->
 
@@ -1843,7 +1847,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
-      <fileset dir="/shared/data/uniprot">
+      <fileset dir="${shared.data}/uniprot">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -1987,6 +1991,7 @@
       <property name="db.name" value="db.production"/>
       <property name="objectstore.name" value="os.production"/>
     </ant>
+    <antcall target="create-indexes-production"/>
   </target>
 
   <target name="create-indexes-production"
@@ -2318,6 +2323,13 @@
     </ant>
   </target>
 
+  <target name="compile-interpro-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="interpro"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
   <target name="compile-ensembl-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
@@ -2325,12 +2337,6 @@
     </ant>
   </target>
 
-  <target name="compile-interpro-java">
-    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
-      <property name="model.name" value="interpro"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
 
   <target name="ensembl-test" depends="prepare-test, convert-ensembl, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
@@ -3193,7 +3199,9 @@
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-ensembl-disease-model,
-                merge-chado-model, merge-shortcuts">
+                merge-tfbscluster-model, merge-mage-model,
+                merge-orthologue-model,
+                merge-chado-model, merge-shortcuts">  
   </target>
 
 
@@ -3453,7 +3461,7 @@
                    build-db-production-t1dmine, load-static-t1dmine,
                    build-ensembl-human-production, build-go-production-human,build-go-production-mouse,
                    build-tfbs-production, build-firstef-production,
-                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production,
+                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production, 
                    build-mousechain-production, build-opposumchain-production,
                    build-tfbscluster-production, build-cns-production,
                    build-orthologues-production-mouse,
@@ -3479,12 +3487,20 @@
       <antcall target="fetch-contig-sequences"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
-      <antcall target="analyse-db-production"/>  
-       <!-- removed due to running out of memory -->  
+      <antcall target="analyse-db-production"/>
+      <!-- removed due to running out of memory -->  
       <!--antcall target="transfer-sequences-chromosome"/-->
       <!--antcall target="analyse-db-production"/-->
       <!--antcall target="create-indexes-production-attribute"/-->
       <!--antcall target="analyse-db-production"/-->
+      <!--antcall target="create-chromosome-locations-and-lengths"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="create-overlap-relations"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="create-symmetrical-relation-references"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="make-spanning-locations"/>
+      <antcall target="analyse-db-production"/--> 
   </target>
 
   <!--COMPILATION AND TESTING TARGETS -->
@@ -3506,7 +3522,8 @@
 
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
-                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test">
+                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test, 
+                   opposumchain-test, tfbscluster-test">
     <antcall target="test-report"/>
   </target>
 
@@ -3555,7 +3572,7 @@
                   clsName="org.flymine.dataconversion.GoConverter" 
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
-      <fileset dir="/shared/data/go-annotation/human">
+      <fileset dir="${shared.data}/go-annotation/human">
         <include name="gene_association*"/>
       </fileset>
     </convert-file>
@@ -3662,7 +3679,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/tfbs">
+      <fileset dir ="${shared.data}/human/tfbs">
         <include name ="tfbsConsSites_withFactors.gff"/>
       </fileset>
     </retrieve-file>
@@ -3735,7 +3752,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FirstEFGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/firstEF">
+      <fileset dir ="${shared.data}/human/firstEF">
         <include name ="firstEF3new.gff"/>
       </fileset>
     </retrieve-file>
@@ -3808,7 +3825,7 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.RegionGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/encodeRegions/">
+      <fileset dir ="${shared.data}/human/encodeRegions/">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
@@ -3881,7 +3898,7 @@
                    infoSourceTitle="T1DBase"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.DiseaseRegionGFF3RecordHandler">
-      <fileset dir ="/shared/data/human/diseaseRegions/">
+      <fileset dir ="${shared.data}/human/diseaseRegions/">
         <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
@@ -4277,7 +4294,7 @@
   <target name="build-orthologues-production-mouse" 
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
 
-<!--mage data for stem cell-->
+ <!--mage data for stem cell-->
  <target name="retrieve-mage-stemcell" depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
@@ -4318,9 +4335,7 @@
   </target>
 
 
-<!-- CDNACLONE/image PIPELINE -->
-
- 
+<!-- CDNACLONE/image PIPELINE --> 
   <target name="retrieve-cdnaclone-image" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
@@ -4335,7 +4350,6 @@
       <property name="os.alias" value="os.cdnaclone-tgt-items-std"/>
     </ant>
   </target>
-
  
   <!-- load CDNAclone image data into production -->
   <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone"/>
