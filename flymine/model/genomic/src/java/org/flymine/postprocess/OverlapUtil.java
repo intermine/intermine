@@ -57,12 +57,14 @@ public abstract class OverlapUtil
      * @param subject the LocatedSequenceFeature (eg. a Chromosome) where the LSFs are located
      * @param classNamesToIgnore a comma separated list of the names of those classes that should be
      * ignored when searching for overlaps.  Sub classes to these classes are ignored too
+     * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
+     * same class.
      * @return an Iterator over the overlapping features
      * @throws ObjectStoreException if an error occurs while writing
      * @throws ClassNotFoundException if there is an ObjectStore problem
      */
     public static Iterator findOverlaps(final ObjectStore os, LocatedSequenceFeature subject,
-                                        List classNamesToIgnore)
+                                        List classNamesToIgnore, boolean ignoreSelfMatches)
         throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
 
@@ -160,7 +162,8 @@ public abstract class OverlapUtil
             locationsByStartPos.put(location, location);
         }
 
-        return new OverlappingFeaturesIterator(locationsByLength, locationsByStartPos);
+        return new OverlappingFeaturesIterator(locationsByLength, locationsByStartPos,
+                                               ignoreSelfMatches);
     }
 
     /**
@@ -187,6 +190,7 @@ public abstract class OverlapUtil
     private static final class OverlappingFeaturesIterator implements Iterator
     {
         private final TreeMap locationsByStartPos;
+        private final boolean ignoreSelfMatches;
         private Iterator locationsByLengthIter = null;
         private Iterator otherLocationIter = null;
         private Location currentLocation = null;
@@ -196,11 +200,15 @@ public abstract class OverlapUtil
          * Create a new OverlappingFeaturesIterator.
          * @param locationsByLengthMap A Map from LocatedSequenceFeature lengths to Location
          * @param locationsByStartPos A Map from Location start position to Location
+         * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
+         * same class.
          */
         private OverlappingFeaturesIterator(TreeMap locationsByLengthMap,
-                                            TreeMap locationsByStartPos) {
+                                            TreeMap locationsByStartPos,
+                                            boolean ignoreSelfMatches) {
             super();
             this.locationsByStartPos = locationsByStartPos;
+            this.ignoreSelfMatches = ignoreSelfMatches;
             locationsByLengthIter = locationsByLengthMap.entrySet().iterator();
         }
 
@@ -309,8 +317,10 @@ public abstract class OverlapUtil
 
             while (subRangeIter.hasNext()) {
                 Location otherLocation = (Location) subRangeIter.next();
-
+                Class thisLocationClass = thisLocation.getSubject().getClass();
+                Class otherLocationClass = otherLocation.getSubject().getClass();
                 if (thisLocation != otherLocation
+                    && (!ignoreSelfMatches || !thisLocationClass.equals(otherLocationClass))
                     && (thisLocation.getStart().intValue() <= otherLocation.getStart().intValue()
                         && thisLocation.getEnd().intValue() >= otherLocation.getStart().intValue()
                         || thisLocation.getStart().intValue() <= otherLocation.getEnd().intValue()

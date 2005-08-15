@@ -411,15 +411,19 @@ public class CalculateLocations
      * objects that are located on chromosomes and overlap.
      * @param classNamesToIgnore a comma separated list of the names of those classes that should be
      * ignored when searching for overlaps.  Sub classes to these classes are ignored too
+     * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
+     * same class.
      * @throws Exception if anything goes wrong
      */
-    public void createOverlapRelations(List classNamesToIgnore) throws Exception {
+    public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
+         throws Exception {
         osw.beginTransaction();
         Map chromosomeMap = makeChromosomeMap();
         Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
-            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore);
+            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore,
+                                          ignoreSelfMatches);
         }
         osw.commitTransaction();
     }
@@ -428,13 +432,17 @@ public class CalculateLocations
      * Create OverlapRelation objects for locations that have the given subject.
      * @param classNamesToIgnore a comma separated list of the names of those classes that should be
      * ignored when searching for overlaps.  Sub classes to these classes are ignored too
+     * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
+     * same class.
      */
-    private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore)
+    private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore,
+                                               boolean ignoreSelfMatches)
         throws Exception {
         LOG.info("Creating overlaps for " + subject + ", identifier: "
                  + subject.getIdentifier());
 
-        Iterator overlapIterator = OverlapUtil.findOverlaps(os, subject, classNamesToIgnore);
+        Iterator overlapIterator =
+            OverlapUtil.findOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches);
 
         int count = 0;
 
