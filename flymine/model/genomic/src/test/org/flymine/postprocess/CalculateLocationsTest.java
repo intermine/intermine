@@ -95,7 +95,7 @@ public class CalculateLocationsTest extends TestCase {
         LOG.error("closed objectstore");
     }
 
-    public void testCreateOverlapRelations () throws Exception {
+    private void createOverlapTestData() throws Exception {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setIdentifier("X");
@@ -157,6 +157,20 @@ public class CalculateLocationsTest extends TestCase {
         toStore.add(rp);
         toStore.add(rpLoc);
 
+
+        Contig contig =
+            (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
+        contig.setId(new Integer(4000));
+        contig.setLength(new Integer(10));
+        contig.setChromosome(chr);
+
+        Location contigLoc = createLocation(chr, contig, 1, 1, 10, Location.class);
+        contigLoc.setId(new Integer(4001));
+
+        toStore.add(contig);
+        toStore.add(contigLoc);
+
+
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
 
@@ -165,11 +179,15 @@ public class CalculateLocationsTest extends TestCase {
             InterMineObject o = (InterMineObject) iter.next();
             osw.store(o);
         }
+    }
 
+    public void testCreateOverlapFull () throws Exception {
+        createOverlapTestData();
+        
         CalculateLocations cl = new CalculateLocations(osw);
         List classesToIgnore = new ArrayList();
         classesToIgnore.add("Primer");
-        cl.createOverlapRelations(classesToIgnore);
+        cl.createOverlapRelations(classesToIgnore, false);
 
         ObjectStore os = osw.getObjectStore();
 
@@ -199,6 +217,9 @@ public class CalculateLocationsTest extends TestCase {
             { 1012, 1013 },
             { 1018, 1019 },
             { 1019, 1020 },
+            { 4000, 1000 },
+            { 4000, 1001 },
+            { 4000, 1002 },
         };
 
         Query q = new Query();
@@ -224,9 +245,60 @@ public class CalculateLocationsTest extends TestCase {
             for (int i = 0; i < expectedOverlaps.length; i++) {
                 if (lsf1.getId().intValue() == expectedOverlaps[i][0] &&
                     lsf2.getId().intValue() == expectedOverlaps[i][1] ||
-                    lsf1.getId().intValue() == expectedOverlaps[i][0] &&
-                    lsf2.getId().intValue() == expectedOverlaps[i][1]) {
-                    System.err.println (lsf1.getId() + " - "+ lsf2.getId());
+                    lsf1.getId().intValue() == expectedOverlaps[i][1] &&
+                    lsf2.getId().intValue() == expectedOverlaps[i][0]) {
+                    continue RESULTS;
+                }
+            }
+
+            fail("didn't find overlap " + lsf1.getId() + ", "+ lsf2.getId()
+                 + " in expected results");
+        }
+    }
+    
+    public void testCreateOverlapIgnoreSelfMatches () throws Exception {
+        createOverlapTestData();
+        
+        CalculateLocations cl = new CalculateLocations(osw);
+        List classesToIgnore = new ArrayList();
+        classesToIgnore.add("Primer");
+        cl.createOverlapRelations(classesToIgnore, true);
+
+        ObjectStore os = osw.getObjectStore();
+
+        ///////////////////////////////
+
+        int [][] expectedOverlaps = {
+            { 4000, 1000 },
+            { 4000, 1001 },
+            { 4000, 1002 },
+        };
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(OverlapRelation.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        SingletonResults res =
+            new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore().getSequence());
+
+        assertEquals(expectedOverlaps.length, res.size());
+
+        Iterator resIter = res.iterator();
+      RESULTS:
+        while (resIter.hasNext()) {
+            OverlapRelation overlap = (OverlapRelation) resIter.next();
+
+            Set bioEntities = overlap.getBioEntities();
+
+            Iterator beIter = bioEntities.iterator();
+            LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) beIter.next();
+            LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) beIter.next();
+
+            for (int i = 0; i < expectedOverlaps.length; i++) {
+                if (lsf1.getId().intValue() == expectedOverlaps[i][0] &&
+                    lsf2.getId().intValue() == expectedOverlaps[i][1] ||
+                    lsf1.getId().intValue() == expectedOverlaps[i][1] &&
+                    lsf2.getId().intValue() == expectedOverlaps[i][0]) {
                     continue RESULTS;
                 }
             }
