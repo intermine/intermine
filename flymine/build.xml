@@ -3203,7 +3203,7 @@
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-ensembl-disease-model,
-                merge-tfbscluster-model, merge-mage-model,
+                merge-tfbscluster-model, merge-mage-model, merge-cdnaclone-model,
                 merge-orthologue-model,
                 merge-chado-model, merge-shortcuts">  
   </target>
