@@ -1371,16 +1371,6 @@
     </ant>
   </target>
 
-  <!-- build mage tgt items database -->
-  <target name="build-db-mage-tgt-items" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.mage-tgt-items-std"/>
-    </ant>
-  </target>
-
 
   <target name="retrieve-mage" depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
@@ -1408,9 +1398,9 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Signal med ratio">
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationTypes="Signal med ratio">
     <!--convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Log2Ratio"-->
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationTypes="Log2Ratio"-->
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -1429,7 +1419,7 @@
   </target>
 
 
-  <target name="translate-mage" depends="convert-mage, compile-genomic-java, compile-mage-java, build-db-mage-tgt-items">
+  <target name="translate-mage" depends="convert-mage, compile-genomic-java, compile-mage-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1438,6 +1428,7 @@
     </ant>
     <copy file="${model}/mage/mage_mappings" toDir="${build.model}/mage"/>
     <copy file="${model}/genomic/resources/flymine/mage_config.properties" toDir="${build.model}/genomic"/>
+    <echo message="CLASSPATH: ${models.class.path}"/>
     <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1546,7 +1537,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-go-dag file="${model}/go/go-combined.ontology" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" dagName="GO"/>
+    <retrieve-go-dag file="${model}/go/gene_ontology.obo" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" dagName="GO"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -2261,6 +2252,25 @@
     <homophila-post-process operation="homophila-post-process" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="set-collection-counts" depends="compile-genomic-java-from-db"> 	 
+     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask"> 	 
+       <classpath refid="models.class.path"/> 	 
+     </taskdef> 	 
+     <mappings operation="set-collection-counts" objectStoreWriter="osw.production"/> 	 
+   </target> 	 
+  	 
+   <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db"> 	 
+     <taskdef name="tsv-file-reader" classname="org.flymine.task.TSVFileReaderTask"> 	 
+       <classpath refid="models.class.path"/> 	 
+     </taskdef> 	 
+     <tsv-file-reader oswAlias="osw.production" organismAbbreviation="DM" 	 
+                      configurationFile="model/genomic/resources/flymine/drosophila_fullname_reader.properties"> 	 
+       <fileset dir="${flybase.chado.melanogaster}"> 	 
+         <include name="flyBaseFullNameWT.txt"/> 	 
+       </fileset> 	 
+     </tsv-file-reader> 	 
+   </target>
+
   <target name="post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
@@ -2541,6 +2551,14 @@
     </ant>
   </target>
 
+  <target name="flyreg-test" 	 
+           depends="prepare-test, prepare-build-model, build-db-fulldatatest, compile-genomic-java"> 	 
+     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true"> 	 
+       <property name="model.name" value="flyreg"/> 	 
+       <reference torefid="class.path" refid="test.class.path"/> 	 
+     </ant> 	 
+   </target>
+
   <target name="compile-taxonomy-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="taxonomy"/>
@@ -2570,7 +2588,7 @@
     </ant>
   </target>
 
-  <target name="compile-genomic-java" depends="compile-flymine-java, compile-genomic-model">
+  <target name="compile-genomic-java" depends="prepare, compile-flymine-java, compile-genomic-model">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2615,7 +2633,7 @@
 
   <target name="test-models-inc"
           depends="mage-test, ensembl-test, rnai-test, homophila-test, psi-test, orthologue-test, go-test,
-                   drosdel-test, taxonomy-test, uniprot-test, protein_structure-test">
+                   flyreg-test, drosdel-test, taxonomy-test, uniprot-test, protein_structure-test">
     <antcall target="test-report"/>
   </target>
 
@@ -2649,7 +2667,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier" 
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-chromosome-*.fasta"/>
       </fileset>
@@ -2662,7 +2681,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier" 
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-4-chromosome-*.fasta"/>
       </fileset>
@@ -2675,7 +2695,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="Gene" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.Gene" keyFieldName="identifier" 
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-gene-*.fasta"/>
       </fileset>
@@ -2688,7 +2709,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="CDS" organismAbbreviation="DM" alias="osw.production">
+    <read-fasta className="org.flymine.model.genomic.CDS" keyFieldName="identifier" 
+                organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-CDS-*.fasta"/>
       </fileset>
@@ -2793,6 +2815,19 @@
       <property name="file.dir" value="${build.tmp}"/>
       <reference torefid="file.names" refid="flymine-global-web-properties-patternset"/>
     </ant>
+
+    <filter token="LOG_DIR" value="${webapp.logdir}"/> 	 
+     <copy todir="${build.tmp}" filtering="true" overwrite="true"> 	 
+       <fileset file="${log4j.properties.file}"/> 	 
+     </copy> 	 
+     <patternset id="flymine-logging-properties-patternset"> 	 
+       <include name="log4j.properties"/> 	 
+     </patternset> 	 
+     <ant antfile="${build}/build-webapp.xml" target="add-to-war-classes" inheritRefs="true"> 	 
+       <property name="war" value="${dist.webapp}/flymine.war"/> 	 
+       <property name="file.dir" value="${build.tmp}"/> 	 
+       <reference torefid="file.names" refid="flymine-logging-properties-patternset"/> 	 
+     </ant>
   </target>
 
   <target name="release-webapp" depends="no-dep, prepare-build-model"
@@ -4395,6 +4430,7 @@
      <property name="model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
+     <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
 
   <!-- insert the testmodel data into the database 

@@ -39,6 +39,9 @@ import org.intermine.dataconversion.ItemPath;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.ItemPrefetchDescriptor;
+import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
+import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.metadata.Model;
 
 import org.apache.log4j.Logger;
@@ -87,6 +90,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map sampleToLabeledExtracts = new HashMap();
     // genomic:MicroArrayResult identifier to genomic:MicroArrayAssay identifier
     protected Map resultToFeature = new HashMap();
+    protected Map resultToReporter = new HashMap();
     protected Map featureToReporter = new HashMap();
     protected Map resultToBioAssayData = new HashMap();
     protected Map bioAssayDataToAssay = new HashMap();
@@ -105,18 +109,28 @@ public class MageDataTranslator extends DataTranslator
 
     protected Map clones = new HashMap();
     protected Map reporterToMaterial = new HashMap();
+    protected Map cloneIds = new HashMap();
+    protected Set materialIdTypes = new HashSet();
+    protected Map expIdNames = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
      */
     public MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
-                              Model tgtModel) throws IOException {
+                              Model tgtModel) throws Exception {
         super(srcItemReader, mapping, srcModel, tgtModel);
+
+
+            ClassLoader cl = getClass().getClassLoader();
+            Class c = cl.loadClass("com.bea.xml.stream.XMLOutputFactoryBase");
+            System.out.println("found class: " + c.getName());
+            LOG.error("found class: " + c.getName());
         srcNs = srcModel.getNameSpace().toString();
         tgtNs = tgtModel.getNameSpace().toString();
 
         readConfig();
-        LOG.error(config);
+        LOG.info(config);
+        LOG.info("materialIdTypes: " + materialIdTypes);
     }
 
 
@@ -149,6 +163,12 @@ public class MageDataTranslator extends DataTranslator
             String propName = key.substring(key.indexOf(".") + 1);
 
             addToMap(config, exptName, propName, value);
+
+            // also set up a map of any expt.materialIdType confif values found,
+            // these need to be kept as possible alternative material ids
+            if (propName.equals("materialIdType")) {
+                materialIdTypes.add(value);
+            }
         }
     }
 
@@ -162,7 +182,7 @@ public class MageDataTranslator extends DataTranslator
     }
 
 
-    private String getConfig(String exptName, String propName) {
+    private String  getConfig(String exptName, String propName) {
         String value = null;
         Map exptConfig = (Map) config.get(exptName);
         if (exptConfig != null) {
@@ -184,6 +204,10 @@ public class MageDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
 
         super.translate(tgtItemWriter);
+
+        LOG.error("materialToIdTypes: " + materialIdTypes);
+        LOG.error("expIdNames: " + expIdNames);
+        LOG.error("cloneIds: " + cloneIds);
 
         Iterator i;
 
@@ -217,6 +241,7 @@ public class MageDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
+
 
     }
 
@@ -341,6 +366,8 @@ public class MageDataTranslator extends DataTranslator
 
         // may have already created references to experiment
         tgtItem.setIdentifier(getExperimentId(exptName));
+
+        expIdNames.put(tgtItem.getIdentifier(), exptName);
 
 
         // PATH Experiment.descriptions.bibliographicReferences
@@ -523,13 +550,22 @@ public class MageDataTranslator extends DataTranslator
             resultToFeature.put(tgtItem.getIdentifier(),
                          srcItem.getReference("designElement").getRefId());
         }
+
+        if (srcItem.hasReference("reporter")) {
+            // map from genomic:MicroArrayResult identifier to mage:Reporter identifier
+            //LOG.error("resultToReporter.put(" + tgtItem.getIdentifier() + ", "
+            //             + srcItem.getReference("reporter").getRefId() + ")");
+            resultToReporter.put(tgtItem.getIdentifier(),
+                         srcItem.getReference("reporter").getRefId());
+        }
+
         if (srcItem.hasReference("quantitationType")) {
             Item qtItem = getReference(srcItem, "quantitationType");
 
             if (qtItem.hasAttribute("name")) {
                 tgtItem.setAttribute("type", "(Normalised) " + qtItem.getAttribute("name").getValue());
             } else {
-                LOG.error("srcItem ( " + qtItem.getIdentifier()
+                LOG.warn("QuantitationType ( " + qtItem.getIdentifier()
                           + " ) does not have name attribute");
             }
             if (qtItem.getClassName().endsWith("MeasuredSignal")
@@ -540,7 +576,7 @@ public class MageDataTranslator extends DataTranslator
 
                     tgtItem.setAttribute("scale", oeItem.getAttribute("value").getValue());
                 } else {
-                    LOG.error("srcItem (" + qtItem.getIdentifier()
+                    LOG.warn("QuantitationType (" + qtItem.getIdentifier()
                               + "( does not have scale attribute ");
                 }
             } else if (qtItem.getClassName().endsWith("Error")) {
@@ -552,7 +588,7 @@ public class MageDataTranslator extends DataTranslator
 
                         tgtItem.setAttribute("scale", oeItem.getAttribute("value").getValue());
                     } else {
-                        LOG.error("srcItem (" + msItem.getIdentifier()
+                        LOG.warn("QuantitationType (" + msItem.getIdentifier()
                                   + "( does not have scale attribute ");
                     }
                 }
@@ -619,12 +655,35 @@ public class MageDataTranslator extends DataTranslator
                             if (material == null) {
                                 material = createItem(tgtNs + "CDNAClone", "");
                                 material.setAttribute("identifier", cloneId);
-                                clones.put(cloneId, material);
+                                //LOG.error("clones.put(" + material.getIdentifier() + ", " +  material + ")");
+                                clones.put(material.getIdentifier(), material);
                             }
                             tgtItem.setReference("material", material.getIdentifier());
+                                //LOG.error("reporterToMaterial.put(" + tgtItem.getIdentifier() + ", " + material.getIdentifier()+ ")");
                             reporterToMaterial.put(tgtItem.getIdentifier(), material.getIdentifier());
                         } else {
                             throw new ObjectStoreException("Unknown BioSequence type: " + type);
+                        }
+                    }
+                    if (!materialIdTypes.isEmpty() && bioSequence.hasCollection("sequenceDatabases")) {
+                        Iterator dbIter = getCollection(bioSequence, "sequenceDatabases");
+                        while (dbIter.hasNext()) {
+                            Item dbRef = (Item) dbIter.next();
+                            if (dbRef.hasReference("database")) {
+                                Item db = getReference(dbRef, "database");
+                                String dbName = db.getAttribute("name").getValue();
+                                //LOG.error("dbName: " + dbName);
+                                if (materialIdTypes.contains(dbName)) {
+                                    Map altIds = (Map) cloneIds.get(material.getIdentifier());
+                                    if (altIds == null) {
+                                        altIds = new HashMap();
+                                        //LOG.error("cloneIds.put(" + material.getIdentifier() + ", " + altIds + ")");
+                                        cloneIds.put(material.getIdentifier(), altIds);
+                                    }
+                                    //LOG.error("altIds.put(" + dbName + ", " + dbRef.getAttribute("accession").getValue() + ")");
+                                    altIds.put(dbName, dbRef.getAttribute("accession").getValue());
+                                }
+                            }
                         }
                     }
                 }
@@ -679,10 +738,8 @@ public class MageDataTranslator extends DataTranslator
         throws ObjectStoreException {
 
         String sampleId = searchTreatments(srcItem, new ArrayList());
-        LOG.error("sampleId: " + sampleId);
         // map from sample to top level LabeledExtract
         if (sampleId != null) {
-            LOG.error("sampleToLabeledExtracts.put(): " + sampleId + ", " + srcItem.getIdentifier());
             Set extracts = (Set) sampleToLabeledExtracts.get(sampleId);
             if (extracts == null) {
                 extracts = new HashSet();
@@ -706,8 +763,6 @@ public class MageDataTranslator extends DataTranslator
 
         // PATH is recursive - duplicate a number of times?  Refactor easier prefetch
         // PATH LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
-        LOG.error("bioMaterial: " + bioMaterial.getClassName() + " - "
-                  + bioMaterial.getIdentifier());
         if (bioMaterial.getClassName().equals(srcNs + "BioSource")) {
             // if this is sample then put list of treatments in a map
             sampleToTreatments.put(bioMaterial.getIdentifier(), treatments);
@@ -877,10 +932,6 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
         }
-
-//         if (paramIds.size() > 0) {
-//             tgtItem.addCollection(new ReferenceList("parameters", paramIds));
-//         }
         return params;
     }
 
@@ -946,6 +997,7 @@ public class MageDataTranslator extends DataTranslator
         while (resultIter.hasNext()) {
             Item maResult = (Item) resultIter.next();
             String maResultId = maResult.getIdentifier();
+            String experimentId = null;
 
 
             // MicroArrayResult.assay
@@ -960,26 +1012,57 @@ public class MageDataTranslator extends DataTranslator
                             (List) assayToSamples.get(assayId)));
                     }
                     if (assayToExperiment.containsKey(assayId)) {
-                        maResult.setReference("experiment", (String) assayToExperiment.get(assayId));
+                        experimentId = (String) assayToExperiment.get(assayId);
+                        LOG.error("experimentId: " + experimentId);
+                        maResult.setReference("experiment", experimentId);
                     }
                 }
             }
 
             // MicroArrayResult.isControl
-            if (resultToFeature.containsKey(maResult.getIdentifier())) {
+            String reporterId = null;
+            if (resultToReporter.containsKey(maResult.getIdentifier())) {
+                reporterId = (String) resultToReporter.get(maResult.getIdentifier());
+            } else if (resultToFeature.containsKey(maResult.getIdentifier())) {
                 String featureId = (String) resultToFeature.get(maResult.getIdentifier());
                 if (featureToReporter.containsKey(featureId)) {
-                    String reporterId = (String)  featureToReporter.get(featureId);
-                    maResult.setReference("reporter", reporterId);
-                    if (controls.contains(reporterId)) {
-                        maResult.setAttribute("isControl", "true");
-                    } else {
-                        maResult.setAttribute("isControl", "false");
-                    }
-                    // MicroArrayResult.material
-                    if (reporterToMaterial.containsKey(reporterId)) {
-                        maResult.setReference("material",
-                                              (String) reporterToMaterial.get(reporterId));
+                    reporterId = (String)  featureToReporter.get(featureId);
+                }
+            }
+
+            LOG.error("reportedId: " + reporterId);
+            if (reporterId != null) {
+                maResult.setReference("reporter", reporterId);
+                if (controls.contains(reporterId)) {
+                    maResult.setAttribute("isControl", "true");
+                } else {
+                    maResult.setAttribute("isControl", "false");
+                }
+                // MicroArrayResult.material
+                if (reporterToMaterial.containsKey(reporterId)) {
+                    String materialId = (String) reporterToMaterial.get(reporterId);
+                    maResult.setReference("material", materialId);
+
+
+                    // for some experiments we want to change the material identifier for
+                    // an alternative database reference defined in the config.  Alternatives
+                    // are in cloneIds map - material->alternative id
+                    String expName = (String) expIdNames.get(experimentId);
+                    String materialIdType = getConfig(expName, "materialIdType");
+                    LOG.error("materialId, expName: " + materialId + ", " + expName);
+
+                    if (materialIdType != null && cloneIds.containsKey(materialId)) {
+                        Map typeMap = (Map) cloneIds.get(materialId);
+                        LOG.error("typeMap: " + typeMap);
+                        if (typeMap != null) {
+                            if (typeMap.containsKey(materialIdType)) {
+                                Item clone = (Item) clones.get(materialId);
+                                if (clone != null) {
+                                    LOG.error("clone.setAttribute(\"identifier\", " + (String) typeMap.get(materialIdType) + ")");
+                                    clone.setAttribute("identifier", (String) typeMap.get(materialIdType));
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -996,15 +1079,9 @@ public class MageDataTranslator extends DataTranslator
             Item sample = (Item) sampleIter.next();
             String sampleId = sample.getIdentifier();
 
-            LOG.error("(process) sampleId: " + sampleId);
             if (sampleToTreatments.containsKey(sampleId)) {
                 sample.addCollection(new ReferenceList("treatments", (List) sampleToTreatments.get(sampleId)));
             }
-
-            LOG.error("sampleToLabeledExtracst: " + sampleToLabeledExtracts);
-            LOG.error("labeledExtractToMeasuredBioAssay: " + labeledExtractToMeasuredBioAssay);
-            LOG.error("measuredBioAssayToMicroArrayAssay: " + measuredBioAssayToMicroArrayAssay);
-
 
             if (sampleToLabeledExtracts.containsKey(sampleId)) {
                 Iterator extractIter = ((Set) sampleToLabeledExtracts.get(sampleId)).iterator();
@@ -1041,7 +1118,6 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
         }
-        LOG.error("assayToSamples: " + assayToSamples);
         return samples;
     }
 
@@ -1122,15 +1198,21 @@ public class MageDataTranslator extends DataTranslator
         Map paths = new HashMap();
         Set descSet;
         ItemPath path;
-        String srcNs = "http://www.flymine.org/mage#";
+        String srcNs = "http://www.flymine.org/model/mage#";
+        System.out.println("srcNs: " + srcNs);
 
-        path = new ItemPath("Experiment.descriptions.bibliographicReferences", srcNs);
-        paths.put(srcNs + "Experiment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
+        descSet = new HashSet();
+        path = new ItemPath("Experiment.descriptions", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("Experiment.bioAssays", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "Experiment", descSet);
 
         descSet = new HashSet();
         path = new ItemPath("MeasuredBioAssay.featureExtraction.physicalBioAssaySource.bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "MeasuredBioAssay", descSet);
+
 
         path = new ItemPath("DerivedBioAssay.derivedBioAssayMap.sourceBioAssays", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1140,7 +1222,9 @@ public class MageDataTranslator extends DataTranslator
 
 
         descSet = new HashSet();
-        path = new ItemPath("BioAssayDatum.quatitationType.scale", srcNs);
+        path = new ItemPath("BioAssayDatum.quantitationType.scale", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("BioAssayDatum.quantitationType.targetQuantitationType.scale", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "BioAssayDatum", descSet);
 
@@ -1158,17 +1242,58 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "BioSource", descSet);
 
+        descSet = new HashSet();
         path = new ItemPath("Treatment.action", srcNs);
-        paths.put(srcNs + "Treatment", new HashSet(Collections.singleton(path.getItemPrefetchDescriptor())));
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("Treatment.protocolApplications.protocol", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("Treatment.protocolApplications.parameterValues.parameterType", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "Treatment", descSet);
+
+
+        ItemPrefetchDescriptor desc, desc1, desc2, desc3, desc4;
 
         descSet = new HashSet();
-        path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("Reporter.controlType", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());
+
+        desc = new ItemPrefetchDescriptor("Reporter.featureReporterMaps");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("featureReporterMaps",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor("Reporter.featureReporterMaps.feature");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("feature",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc.addPath(desc2);
+        descSet.add(desc);
+
+        desc = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("immobilizedCharacteristics",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("type",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc.addPath(desc2);
+        desc3 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type.sequenceDatabases");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("sequenceDatabases",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2.addPath(desc3);
+        desc4 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type.sequenceDatabases.database");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("database",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc3.addPath(desc4);
+        descSet.add(desc);
+
         paths.put(srcNs + "Reporter", descSet);
+
+        //path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
+//         path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
+//         descSet.add(path.getItemPrefetchDescriptor());
+//         path = new ItemPath("Reporter.controlType", srcNs);
+//         descSet.add(path.getItemPrefetchDescriptor());
+//         path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
+//         descSet.add(path.getItemPrefetchDescriptor());
+//         path = new ItemPath("Reporter.immobilizedCharacteristics.type.sequenceDatabases.database", srcNs);
+//         descSet.add(path.getItemPrefetchDescriptor());
+//         paths.put(srcNs + "Reporter", descSet);
 
         return paths;
     }
