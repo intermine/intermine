@@ -910,7 +910,8 @@
   </target>
 
   <!-- filter only chromosome 4 of Chado for creating small databases -->
-  <target name="filter-chado-small" depends="prepare-build-model, compile-chado-java, compile-flymine-java">
+  <target name="filter-chado-small" 
+          depends="prepare-build-model, compile-genomic-java, compile-chado-java, compile-flymine-java">
     <taskdef
       name="filter-chado"
       classname="org.flymine.dataconversion.FilterChadoTask">
