@@ -11,6 +11,7 @@ package org.flymine.dataconversion;
  */
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -95,8 +96,9 @@ public class GFF3Converter
      * parse a bufferedReader and process GFF3 record
      * @param bReader BufferedReader
      * @throws java.io.IOException if an error occurs reading GFF
+     * @throws ObjectStoreException if an error occurs storing items
      */
-    public void parse(BufferedReader bReader) throws java.io.IOException {
+    public void parse(BufferedReader bReader) throws IOException, ObjectStoreException {
 
         GFF3Record record;
         long start, now, opCount;
