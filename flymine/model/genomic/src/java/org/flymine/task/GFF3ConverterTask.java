@@ -171,6 +171,7 @@ public class GFF3ConverterTask extends Task
                 System.err .println("Processing file: " + f.getName());
                 gff3converter.parse(new BufferedReader(new FileReader(f)));
             }
+            gff3converter.store();
             gff3converter.close();
         } catch (Exception e) {
             throw new BuildException(e);
