@@ -119,7 +119,6 @@ public class GFF3Converter
      * store all the items
      * @throws ObjectStoreException if an error occurs storing items
      */
-    public void p
     public void store() throws ObjectStoreException {
         // TODO should probably not store if an empty file
         writer.store(ItemHelper.convert(organism));
