@@ -68,7 +68,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         String ENDL = System.getProperty("line.separator");
         file = new File("build/model/genomic/mage_config.properties");
         String propertiesFile="P10005.experimentName=Experiment 1" + ENDL
-            + "P10005.primaryCharacteristic=colour" + ENDL;
+            + "P10005.primaryCharacteristic=colour" + ENDL
+            + "P10005.materialIdType=image" + ENDL;
 
         FileWriter fw = new FileWriter(file);
         fw.write(propertiesFile);
@@ -413,6 +414,45 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
+    public void testTranslateReporterBioSequence() throws Exception {
+        Item srcItem1 = createSrcItem("Reporter", "0_1", "");
+        srcItem1.setAttribute("name", "GH1234");
+        srcItem1.addCollection(new ReferenceList("immobilizedCharacteristics",
+                                                 new ArrayList(Arrays.asList(new Object[] {"1_1"}))));
+
+        Item srcItem2 = createSrcItem("BioSequence", "1_1", "");
+        srcItem2.setReference("type", "2_1");
+        srcItem2.addCollection(new ReferenceList("sequenceDatabases",
+                                                 new ArrayList(Arrays.asList(new Object[] {"3_1"}))));
+
+        Item srcItem3 = createSrcItem("OntologyEntry", "2_1", "");
+        srcItem3.setAttribute("category", "BioSequenceType");
+        srcItem3.setAttribute("value", "cDNA_clone");
+
+        Item srcItem4 = createSrcItem("DatabaseEntry", "3_1", "");
+        srcItem4.setAttribute("accession", "1234");
+        srcItem4.setReference("database", "4_1");
+
+        Item srcItem5 = createSrcItem("Database", "4_1", "");
+        srcItem5.setAttribute("name", "image");
+
+        Set src = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2, srcItem3, srcItem4, srcItem5}));
+        Map srcMap = writeItems(src);
+
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        Map expCloneIds = new HashMap();
+        Map typeMap = new HashMap();
+        typeMap.put("image", "1234");
+        expCloneIds.put("-1_1", typeMap);
+        assertEquals(expCloneIds, translator.cloneIds);
+    }
+
+
     public void testSearchTreatments() throws Exception {
 
         Item srcItem1 = createSrcItem("LabeledExtract", "0_1", "");
@@ -463,7 +503,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslateMicroArrayResult() throws Exception {
         // can't use ItemFactory as bioAssayData reference not in model
         Item srcItem1 = new Item("58_762", srcNs + "BioAssayDatum", "");
-        srcItem1.setAttribute("value", "1.234");
+        srcItem1.setAttribute("value", "-1.234");
         srcItem1.setReference("quantitationType","40_620");
         srcItem1.setReference("designElement","3_1");
         srcItem1.setReference("bioAssayData","4_1");
@@ -487,7 +527,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
         Item expItem1 = createTgtItem("MicroArrayResult", "58_762", "");
-        expItem1.setAttribute("value","1.234");
+        expItem1.setAttribute("value","-1.234");
         expItem1.setAttribute("scale","log");
         expItem1.setAttribute("type","(Normalised) Log Ratio");
 
@@ -538,6 +578,42 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         translator.processMicroArrayResults();
         assertEquals(exp, translator.microArrayResults);
+    }
+
+
+    public void testProcessMicroArrayResultsMaterialIds() throws Exception {
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+
+        Item result = createTgtItem("MicroArrayResult", "0_1", "");
+        translator.microArrayResults.add(result);
+
+        translator.resultToBioAssayData.put("0_1", "1_1");
+        translator.bioAssayDataToAssay.put("1_1", "5_1");
+        translator.assayToSamples.put("5_1", new ArrayList(Collections.singleton("6_1")));
+        translator.controls.add("3_1");
+
+        translator.resultToFeature.put("0_1", "2_1");
+        translator.featureToReporter.put("2_1", "3_1");
+        translator.assayToExperiment.put("5_1", "6_1");
+        translator.reporterToMaterial.put("3_1", "7_1");
+        translator.expIdNames.put("6_1", "P10005");
+
+        Item clone = createTgtItem("Clone", "7_1", "");
+        clone.setAttribute("identifier", "1234");
+        translator.clones.put("7_1", clone);
+        Map typeMap = new HashMap();
+        typeMap.put("image", "5678");
+        translator.cloneIds.put("7_1", typeMap);
+
+
+        Item expClone = createTgtItem("Clone", "7_1", "");
+        expClone.setAttribute("identifier", "5678");
+        Map expClones = new HashMap();
+        expClones.put("7_1", expClone);
+
+        translator.processMicroArrayResults();
+        assertEquals(expClones, translator.clones);
     }
 
 
