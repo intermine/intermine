@@ -95,17 +95,11 @@ public class GFF3Converter
      * parse a bufferedReader and process GFF3 record
      * @param bReader BufferedReader
      * @throws java.io.IOException if an error occurs reading GFF
-     * @throws ObjectStoreException if an error occurs storing items
      */
-    public void parse(BufferedReader bReader) throws java.io.IOException, ObjectStoreException {
+    public void parse(BufferedReader bReader) throws java.io.IOException {
 
         GFF3Record record;
         long start, now, opCount;
-
-
-        // TODO should probably not store if an empty file
-        writer.store(ItemHelper.convert(organism));
-        writer.store(ItemHelper.convert(infoSource));
 
         opCount = 0;
         start = System.currentTimeMillis();
@@ -119,6 +113,17 @@ public class GFF3Converter
                 start = System.currentTimeMillis();
             }
         }
+    }
+
+    /**
+     * store all the items
+     * @throws ObjectStoreException if an error occurs storing items
+     */
+    public void p
+    public void store() throws ObjectStoreException {
+        // TODO should probably not store if an empty file
+        writer.store(ItemHelper.convert(organism));
+        writer.store(ItemHelper.convert(infoSource));
 
         // write ComputationalAnalysis items
         Iterator iter = analyses.values().iterator();
@@ -133,7 +138,7 @@ public class GFF3Converter
         }
 
         iter = handler.getFinalItems().iterator();
-        
+
         while (iter.hasNext()) {
             writer.store(ItemHelper.convert((Item) iter.next()));
         }
@@ -157,7 +162,7 @@ public class GFF3Converter
         String term = record.getType();
         String className = TypeUtil.javaiseClassName(term);
         String fullClassName = tgtModel.getPackageName() + "." + className;
-        
+
         ClassDescriptor cd = tgtModel.getClassDescriptorByName(fullClassName);
 
         if (cd == null) {
