@@ -31,6 +31,12 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.Author">
+    <fields>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.Database">
     <longdisplayers>
       <displayer src="/model/databaseLong.jsp"/>
