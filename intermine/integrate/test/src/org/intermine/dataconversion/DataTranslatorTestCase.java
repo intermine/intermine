@@ -83,7 +83,7 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * @param b a set of Items
      * @return the set of Items in a but not in b
      */
-    public Set compareItemSets(Set a, Set b) {
+    public static Set compareItemSets(Set a, Set b) {
         Set diff = new HashSet(a);
         Iterator i = a.iterator();
         while (i.hasNext()) {
@@ -106,7 +106,7 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * @param actual the actual set of org.intermine.xml.full.Items
      * @return the differences between the to
      */
-    public String printCompareItemSets(Set expected, Set actual) {
+    public static String printCompareItemSets(Set expected, Set actual) {
         String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, actual);
         String actualNotExpected = "in actual, not expected: " + compareItemSets(actual, expected);
 
