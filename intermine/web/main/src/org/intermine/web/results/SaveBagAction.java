@@ -43,6 +43,7 @@ import org.intermine.web.bag.InterMinePrimitiveBag;
  *
  * @author Andrew Varley
  * @author Thomas Riley
+ * @author Kim Rutherford
  */
 public class SaveBagAction extends InterMineAction
 {
@@ -114,65 +115,67 @@ public class SaveBagAction extends InterMineAction
             bag = new InterMinePrimitiveBag();
         }
 
-        // Go through the selected items and add to the set
-        for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
-             itemIterator.hasNext();) {
-            String selectedObject = (String) itemIterator.next();
-            // selectedObject is of the form "column,row" or "column"
-            int commaIndex = selectedObject.indexOf(",");
-            if (commaIndex == -1) {
-                int column = Integer.parseInt(selectedObject);
+        List allRows = pt.getAllRows();
 
-                List allRows = pt.getAllRows();
-
-                if (allRows instanceof Results) {
-                    Results results = (Results) allRows;
-
-                    if (results.size() > maxBagSize) {
-                        ActionMessage actionMessage =
-                            new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                        recordError(actionMessage, request);
-
-                        return mapping.findForward("results");
-                    }
-
-                    try {
-                        // make a copy of the Results object with a larger batch size so the object
-                        // store doesn't need to do lots of queries
-                        // we copy because setBatchSize() throws an exception if size() has already
-                        // been called
-                        Results newResults = results.getObjectStore().execute(results.getQuery());
-
-                        if (maxBagSize > results.getObjectStore().getMaxLimit()) {
-                            newResults.setBatchSize(results.getObjectStore().getMaxLimit());
-                        } else {
-                            newResults.setBatchSize(maxBagSize);
-                        }
-
-                        // make sure we can get the first batch
-                        try {
-                            newResults.get(0);
-                        } catch (IndexOutOfBoundsException e) {
-                            // Ignore - that means there are NO rows in this results object.
-                        }
-
-                        allRows = newResults;
-                    } catch (RuntimeException e) {
-                        if (e.getCause() instanceof ObjectStoreException) {
-                            recordError(new ActionMessage("errors.query.objectstoreerror"),
-                                        request, (ObjectStoreException) e.getCause(), LOG);
-                            return mapping.findForward("results");
-                        }
-                        throw e;
-                    } catch (ObjectStoreException e) {
-                        recordError(new ActionMessage("errors.query.objectstoreerror"),
-                                    request, e, LOG);
-                        return mapping.findForward("results");
-                    }
+        if (allRows instanceof Results) {
+            Results results = (Results) allRows;
+            
+            if (results.size() > maxBagSize) {
+                ActionMessage actionMessage =
+                    new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                recordError(actionMessage, request);
+                
+                return mapping.findForward("results");
+            }
+            
+            try {
+                // make a copy of the Results object with a larger batch size so the object
+                // store doesn't need to do lots of queries
+                // we copy because setBatchSize() throws an exception if size() has already
+                // been called
+                Results newResults = results.getObjectStore().execute(results.getQuery());
+                
+                if (maxBagSize > results.getObjectStore().getMaxLimit()) {
+                    newResults.setBatchSize(results.getObjectStore().getMaxLimit());
+                } else {
+                    newResults.setBatchSize(maxBagSize);
                 }
+                
+                // make sure we can get the first batch
+                try {
+                    newResults.get(0);
+                } catch (IndexOutOfBoundsException e) {
+                    // Ignore - that means there are NO rows in this results object.
+                }
+                
+                allRows = newResults;
+            } catch (RuntimeException e) {
+                if (e.getCause() instanceof ObjectStoreException) {
+                    recordError(new ActionMessage("errors.query.objectstoreerror"),
+                                request, (ObjectStoreException) e.getCause(), LOG);
+                    return mapping.findForward("results");
+                }
+                throw e;
+            } catch (ObjectStoreException e) {
+                recordError(new ActionMessage("errors.query.objectstoreerror"),
+                            request, e, LOG);
+                return mapping.findForward("results");
+            }
+        }
 
-                for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
-                    List thisRow = (List) rowIterator.next();
+        // save selected columns first
+        for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
+            List thisRow = (List) rowIterator.next();
+
+            // go through the selected items (checkboxes) and add to the bag-to-save
+            for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
+                 itemIterator.hasNext();) {
+                String selectedObject = (String) itemIterator.next();
+                // selectedObject is of the form "column,row" or "column"
+                int commaIndex = selectedObject.indexOf(",");
+                if (commaIndex == -1) {
+                    int column = Integer.parseInt(selectedObject);
+                    
                     if (storingIds) {
                         Integer id = ((InterMineObject) thisRow.get(column)).getId();
                         bag.add(id);
@@ -184,11 +187,20 @@ public class SaveBagAction extends InterMineAction
                         ActionMessage actionMessage =
                             new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                         recordError(actionMessage, request);
-
+                
                         return mapping.findForward("results");
                     }
                 }
-            } else {
+            }
+        }
+
+        // not save individually selected items
+        for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
+             itemIterator.hasNext();) {
+            String selectedObject = (String) itemIterator.next();
+            // selectedObject is of the form "column,row" or "column"
+            int commaIndex = selectedObject.indexOf(",");
+            if (commaIndex != -1) {
                 // use the column,row to pick out the object from PagedTable
                 int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
                 int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
