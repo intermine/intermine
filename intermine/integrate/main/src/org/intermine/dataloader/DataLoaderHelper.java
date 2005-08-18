@@ -160,11 +160,19 @@ public class DataLoaderHelper
                 String[] tokens = keyList.split(",");
                 for (int i = 0; i < tokens.length; i++) {
                     String token = tokens[i].trim();
-                    keySet.add(map.get(token));
+                    if (map.get(token) == null) {
+                        String msg = "No keyDef found for key: " + token
+                            + " for class: " + cld.getName()
+                            + " from source: " + source.getName();
+                        throw new IllegalArgumentException(msg);
+                    } else {
+                        keySet.add(map.get(token));
+                    }
                 }
             }
         } else {
-            throw new IllegalArgumentException("Unable to find keys for source: " + source.getName());
+            throw new IllegalArgumentException("Unable to find keys for source: "
+                                               + source.getName());
         }
         return keySet;
     }
@@ -297,7 +305,6 @@ public class DataLoaderHelper
         Iterator pkSetIter = primaryKeys.iterator();
         while (pkSetIter.hasNext()) {
             PrimaryKey pk = (PrimaryKey) pkSetIter.next();
-
             if (!queryNulls && !objectPrimaryKeyNotNull(model, obj, cld, pk, source)) {
                 continue;
             }
@@ -308,8 +315,12 @@ public class DataLoaderHelper
             query.addFrom(qc);
             query.addToSelect(qc);
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            if (pk.getFieldNames() == null) {
+                throw new IllegalArgumentException("no fieldnames found for primary key: "
+                                                   + pk.getName());
+            }
             Iterator pkIter = pk.getFieldNames().iterator();
-          PK:
+            PK:
             while (pkIter.hasNext()) {
                 String fieldName = (String) pkIter.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);

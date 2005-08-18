@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
  */
 public class PrimaryKey
 {
+    String name;
     Set fieldNames = new LinkedHashSet();
 
     /**
@@ -29,7 +30,8 @@ public class PrimaryKey
      *
      * @param fields a comma-delimited list of field names
      */
-    public PrimaryKey(String fields) {
+    public PrimaryKey(String name, String fields) {
+        this.name = name;
         if (fields == null) {
             throw new NullPointerException("fields parameter cannot be null");
         }
@@ -39,7 +41,18 @@ public class PrimaryKey
             fieldNames.add(token);
         }
     }
-    
+
+
+    /**
+     * Return the name
+     *
+     * @return name of this primary key
+     */
+    public String getName() {
+        return name;
+    }
+
+
     /**
      * Return the Set of field names
      *
