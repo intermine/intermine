@@ -609,7 +609,7 @@
 
   <target name="build-interpro-prod-database" depends="prepare-build-model">
     <copy todir="${build.resources}" file="${model}/interpro/resources/buildInterproSummaryDbFromInterproReleaseDb.sql" overwrite="true"/>
-    <sql classpathref="models.class.path" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://XX_FIXME_XX:3306/interpro_prod" userid="usernameplease" password="" src="${build.resources}/buildInterproSummaryDbFromInterproReleaseDb.sql"/>
+    <sql classpathref="models.class.path" driver="com.mysql.jdbc.Driver" url="jdbc:mysql:gollum:3306/interpro_prod" userid="rns" password="rns" src="${build.resources}/buildInterproSummaryDbFromInterproReleaseDb.sql"/>
   </target>
 
   <target name="build-db-interpro-src-items" depends="prepare-build-model">
@@ -621,7 +621,7 @@
     </ant>
   </target>
 
-  <target name="retrieve-interpro" depends="build-db-interpro-src-items">
+  <target name="retrieve-interpro" depends="convert-interpro, build-db-interpro-src-items">
     <taskdef name="retrieve-interpro" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
