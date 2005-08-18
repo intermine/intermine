@@ -51,7 +51,7 @@ public abstract class PrimaryKeyUtil
         Iterator iter = keyNames.iterator();
         while (iter.hasNext()) {
             String keyName = (String) iter.next();
-            PrimaryKey key = new PrimaryKey((String) cldKeys.get(keyName));
+            PrimaryKey key = new PrimaryKey(keyName, (String) cldKeys.get(keyName));
             keyMap.put(keyName, key);
         }
         return keyMap;
