@@ -125,14 +125,14 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
                         + "instead (see FileConverterTask)");
                 converter.setParam2(param2);
             }
-            
+
             configureDynamicAttributes(converter);
-            
+
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
-                System.err .println("Processing file: " + f.getName());
+                System.err .println("Processing file: " + f.getPath());
                 converter.process(new BufferedReader(new FileReader(f)));
             }
             converter.close();
@@ -153,7 +153,7 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
             throw new BuildException(e);
         }
     }
-    
+
     /**
      * Call setters on the converter bean to pass any dynamic properties
      * passed through from ant.
@@ -173,7 +173,7 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
                     }
                     PropertyUtils.setProperty(bean, propName, propValue);
                 } else {
-                    
+
                 }
             } catch (Exception e) {
                 throw new BuildException(e);
