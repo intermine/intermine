@@ -179,6 +179,8 @@ public class StringUtilTest extends TestCase
     public void testAllDigits() throws Exception {
         assertTrue(StringUtil.allDigits("123456"));
         assertTrue(StringUtil.allDigits("1.23456"));
+        assertTrue(StringUtil.allDigits("-1.23456"));
+        assertTrue(StringUtil.allDigits("11.23456"));
         assertFalse(StringUtil.allDigits("text"));
         assertFalse(StringUtil.allDigits("1234text"));
         assertFalse(StringUtil.allDigits(""));
