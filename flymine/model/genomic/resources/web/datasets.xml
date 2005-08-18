@@ -74,8 +74,8 @@
   
   <data-set name="Genomics">
     <subtitle>genomics genomics</subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/genomics.gif</icon-image>
+    <large-image>model/genomics.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
     </intro-text>
