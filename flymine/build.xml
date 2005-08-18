@@ -1390,7 +1390,7 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationTypes="Signal med ratio">
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Signal med ratio">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
