@@ -257,7 +257,8 @@ public class StringUtil
             return false;
         }
         for (int i = 0; i < s.length(); i++) {
-            if (!Character.isDigit(s.charAt(i)) && !('.' == s.charAt(i))) {
+            if (!Character.isDigit(s.charAt(i)) && !('.' == s.charAt(i))
+                && !('-' == s.charAt(i))) {
                 return false;
             }
         }
