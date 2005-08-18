@@ -34,11 +34,16 @@ dump: load-stage-3
 
 run: build-drosdel-production
 
-dump: load-stage-4-drosdel
+dump: load-stage-4
+
+run: build-homophila-production
+
+dump: load-stage-5-load-complete
 
 run: read-flybase-chromosome-fasta calculate-locations
 run: create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
+run: homophila-post-process
 run: create-indexes-production-attribute
 
 dump: postprocess-1
