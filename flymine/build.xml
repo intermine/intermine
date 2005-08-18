@@ -1366,7 +1366,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.mage-src-items"/>
+      <property name="db.name" value="db.common-src-items"/>
       <property name="objectstore.name" value="os.mage-src-items-std"/>
     </ant>
   </target>
@@ -1376,7 +1376,6 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <!--fileset dir="${shared.data}/mage/t1dmine/E-EMBL-1/"/-->
       <fileset dir="${shared.data}/mage/E-FLYC-1"/>
       <fileset dir="${shared.data}/mage/E-FLYC-2"/>
       <fileset dir="${shared.data}/mage/E-FLYC-3"/>
@@ -1386,21 +1385,12 @@
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
 
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-src-items"/>
-      <property name="objectstore.name" value="os.mage-src-items-std"/>
-    </ant>
-
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="mage.class.path"/>
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
                   clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationTypes="Signal med ratio">
-    <!--convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationTypes="Log2Ratio"-->
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
