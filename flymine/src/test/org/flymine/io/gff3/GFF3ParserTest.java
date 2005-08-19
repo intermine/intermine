@@ -125,6 +125,14 @@ public class GFF3ParserTest extends TestCase
         assertEquals(expect, output);
     }
 
+    public void testSpaces() throws Exception {
+        String gff="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013:2;Parent=CG32013-RA,CG32013-RB;Gap=A+B;Target=C+D;Other=E+F\n";
+        GFF3Record record = new GFF3Record(gff);
+        assertEquals(Arrays.asList(new Object[]{"A+B"}), record.getAttributes().get("Gap"));
+        assertEquals(Arrays.asList(new Object[]{"C+D"}), record.getAttributes().get("Target"));
+        assertEquals(Arrays.asList(new Object[]{"E F"}), record.getAttributes().get("Other"));
+    }
+    
     public void testToGFF3() throws Exception {
         String original="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013:2;Parent=CG32013-RA\n"
             + "4\t.\texon\t22335\t22528\t1000.0\t-\t1\tID=CG32013:2;Parent=CG32013-RA\n";

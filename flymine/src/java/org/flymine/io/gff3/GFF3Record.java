@@ -171,7 +171,12 @@ public class GFF3Record
             }
             // Decode values
             for (int i = 0; i < valList.size(); i++) {
-                valList.set(i, fixEntityNames(URLDecoder.decode((String) valList.get(i), "UTF-8")));
+                String value = (String) valList.get(i);
+                if (!attName.equals("Target") && !attName.equals("Gap")) {
+                    value = URLDecoder.decode(value, "UTF-8");
+                }
+                value = fixEntityNames(value);
+                valList.set(i, value);
             }
             attributes.put(attName, valList);
         }
