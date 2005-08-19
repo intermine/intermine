@@ -1122,7 +1122,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.BDGPCloneConverter"
-                  osName="osw.cdnaclone-tgt-items" model="cdnaclone">
+                  osName="osw.cdnaclone-tgt-items" 
+                  model="cdnaclone">
       <fileset dir="${shared.data}/bdgp_clones/" includes="dgc2flybase.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -3552,7 +3553,7 @@
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
                    tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test, 
-                   opposumchain-test, tfbscluster-test">
+                   opposumchain-test, tfbscluster-test, mage-test, cdnaclone-test">
     <antcall target="test-report"/>
   </target>
 
