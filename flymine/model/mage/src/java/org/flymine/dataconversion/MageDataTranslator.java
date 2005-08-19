@@ -656,7 +656,7 @@ public class MageDataTranslator extends DataTranslator
                                 material = createItem(tgtNs + "CDNAClone", "");
                                 material.setAttribute("identifier", cloneId);
                                 //LOG.error("clones.put(" + material.getIdentifier() + ", " +  material + ")");
-                                clones.put(material.getIdentifier(), material);
+                                clones.put(cloneId, material);
                             }
                             tgtItem.setReference("material", material.getIdentifier());
                                 //LOG.error("reporterToMaterial.put(" + tgtItem.getIdentifier() + ", " + material.getIdentifier()+ ")");
