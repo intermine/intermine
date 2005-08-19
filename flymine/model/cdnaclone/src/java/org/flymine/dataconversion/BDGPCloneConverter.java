@@ -35,9 +35,6 @@ public class BDGPCloneConverter extends CDNACloneConverter
 {
     protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
 
-    protected Item db;
-    protected Item organism;
-    protected ItemFactory itemFactory;
 
     /**
      * Constructor
@@ -102,7 +99,4 @@ public class BDGPCloneConverter extends CDNACloneConverter
         }
     }
 
-
 }
-
-

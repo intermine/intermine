@@ -62,6 +62,7 @@ public class FirstEFGFF3HandlerTest extends TestCase
         BufferedReader srcReader = new BufferedReader(new
                    InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/firstef.gff")));
         converter.parse(srcReader);
+        converter.store();
 
         FileWriter writerSrc = new FileWriter(new File("firstef_items.xml"));
         writerSrc.write(FullRenderer.render(writer.getItems()));

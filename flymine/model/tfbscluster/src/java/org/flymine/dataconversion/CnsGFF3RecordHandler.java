@@ -23,7 +23,7 @@ import org.apache.tools.ant.BuildException;
 
 
 /**
- * A converter/retriever for Tfbs GFF3 files.
+ * A converter/retriever for Tfbs conserved non-coding site GFF3 files.
  *
  * @author Wenyan Ji
  */
@@ -112,18 +112,5 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         return conservedOrganism;
     }
 
-     /**
-     * @return ComputationalAnalysis item created/from map
-
-    private Item getComputationalAnalysis(String algorithm) {
-        Item analysis = (Item) analyses.get(algorithm);
-        if (analysis == null) {
-            analysis = createItem("ComputationalAnalysis");
-            analysis.setAttribute("algorithm", algorithm);
-            analyses.put(algorithm, analysis);
-        }
-        return analysis;
-    }
-   */
 }
 

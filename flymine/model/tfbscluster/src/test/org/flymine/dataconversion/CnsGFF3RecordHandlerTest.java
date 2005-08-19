@@ -62,6 +62,7 @@ public class CnsGFF3RecordHandlerTest extends TestCase
         BufferedReader srcReader = new BufferedReader(new
                    InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/CnsTest.gff")));
         converter.parse(srcReader);
+        converter.store();
 
         FileWriter writerSrc = new FileWriter(new File("cns_items.xml"));
         writerSrc.write(FullRenderer.render(writer.getItems()));

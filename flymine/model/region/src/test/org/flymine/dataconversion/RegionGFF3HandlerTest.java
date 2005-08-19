@@ -62,6 +62,7 @@ public class RegionGFF3HandlerTest extends TestCase
         BufferedReader srcReader = new BufferedReader(new
                    InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/region.gff")));
         converter.parse(srcReader);
+        converter.store();
 
         FileWriter writerSrc = new FileWriter(new File("region_items.xml"));
         writerSrc.write(FullRenderer.render(writer.getItems()));
