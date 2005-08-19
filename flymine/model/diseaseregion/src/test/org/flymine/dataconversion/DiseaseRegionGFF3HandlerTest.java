@@ -62,6 +62,7 @@ public class DiseaseRegionGFF3HandlerTest extends TestCase
         BufferedReader srcReader = new BufferedReader(new
                    InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/diseaseregion.gff")));
         converter.parse(srcReader);
+        converter.store();
 
         FileWriter writerSrc = new FileWriter(new File("diseaseregion_items.xml"));
         writerSrc.write(FullRenderer.render(writer.getItems()));

@@ -62,6 +62,7 @@ public class TfbsGFF3HandlerTest extends TestCase
         BufferedReader srcReader = new BufferedReader(new
                    InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/tfbs.gff")));
         converter.parse(srcReader);
+        converter.store();
 
         FileWriter writerSrc = new FileWriter(new File("tfbs_items.xml"));
         writerSrc.write(FullRenderer.render(writer.getItems()));
