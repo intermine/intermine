@@ -13,8 +13,8 @@
   
   <data-set name="Protein Interactions">
     <subtitle>interactions interactions</subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/proteinInteraction.gif</icon-image>
+    <large-image>model/proteinInteraction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
     </intro-text>
@@ -44,8 +44,8 @@
   
   <data-set name="Binding Sites">
     <subtitle>binding binding</subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/bindingSites.jpeg</icon-image>
+    <large-image>model/bindingSites.jpeg</large-image>
     <tile-name></tile-name>
     <intro-text>
     </intro-text>
