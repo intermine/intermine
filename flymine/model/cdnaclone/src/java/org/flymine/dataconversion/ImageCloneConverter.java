@@ -29,11 +29,13 @@ import org.apache.log4j.Logger;
 
 /**
  * DataConverter to load flat file linking BDGP clones to Flybase genes.
- * @author Richard Smith
+ * @author Wenyan Ji
  */
-public class BDGPCloneConverter extends CDNACloneConverter
+public class ImageCloneConverter extends CDNACloneConverter
 {
-    protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
+    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
+
+    protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
 
     protected Item db;
     protected Item organism;
@@ -45,18 +47,18 @@ public class BDGPCloneConverter extends CDNACloneConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public BDGPCloneConverter(ItemWriter writer) throws ObjectStoreException,
+    public ImageCloneConverter(ItemWriter writer) throws ObjectStoreException,
                                                         MetaDataException {
         super(writer);
 
-
+        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
         db = createItem("Database");
-        db.setAttribute("title", "BDGP");
+        db.setAttribute("title", "RZPD");
         writer.store(ItemHelper.convert(db));
 
         organism = createItem("Organism");
-        organism.setAttribute("abbreviation", "DM");
+        organism.setAttribute("abbreviation", "HS");
         writer.store(ItemHelper.convert(organism));
     }
 
@@ -79,29 +81,34 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 continue;
             }
 
-            Item gene = createBioEntity("Gene", array[0], organism.getIdentifier());
+            String geneId = array[16].trim();
+            Item gene = createGene("Gene", geneId, organism.getIdentifier());
             writer.store(ItemHelper.convert(gene));
 
-            String[] cloneIds = array[3].split(";");
+            String cloneId = array[4];
 
-            for (int i = 0; i < cloneIds.length; i++) {
-                Item clone = createBioEntity("CDNAClone", cloneIds[i],organism.getIdentifier());
-                clone.setReference("gene", gene.getIdentifier());
+            Item clone = createBioEntity("CDNAClone", cloneId, organism.getIdentifier());
+            clone.setReference("gene", gene.getIdentifier());
 
-                Item synonym = createItem("Synonym");
-                synonym.setAttribute("type", "identifier");
-                synonym.setAttribute("value", cloneIds[i]);
-                synonym.setReference("source", db.getIdentifier());
-                synonym.setReference("subject", clone.getIdentifier());
-                writer.store(ItemHelper.convert(synonym));
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("type", "identifier");
+            synonym.setAttribute("value", cloneId);
+            synonym.setReference("source", db.getIdentifier());
+            synonym.setReference("subject", clone.getIdentifier());
+            writer.store(ItemHelper.convert(synonym));
 
-                clone.addCollection(new ReferenceList("evidence",
+            clone.addCollection(new ReferenceList("evidence",
                     new ArrayList(Collections.singleton(db.getIdentifier()))));
-                writer.store(ItemHelper.convert(clone));
-            }
+            writer.store(ItemHelper.convert(clone));
         }
     }
 
+    private Item createGene(String clsName, String id, String orgId) {
+        Item gene = createItem(clsName);
+        gene.setAttribute("organismDbId", id);
+        gene.setReference("organism", orgId);
+        return gene;
+    }
 
 }
 
