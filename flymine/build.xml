@@ -1562,11 +1562,17 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
+    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
+
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
-      <fileset dir="${shared.data}/go-annotation">
-        <include name="gene_association*"/>
-      </fileset>
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic"
+                  ontology="${build}/model/go/gene_ontology.obo">
+      <fileset dir="${shared.data}/go-annotation/">
+        <include name="flybase/2005-07-26/gene_association.fb"/>
+        <include name="wormbase/2005-04-06/gene_association.wb"/>
+        <include name="uniprot/2005-07-25/gene_association_ag"/>
+        <include name="uniprot/2005-07-25/gene_association_agp"/>
+     </fileset>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -3584,9 +3590,9 @@
   <!-- GO ANNOTATION FOR HUMAN -->
 
   <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
-
+ 
     <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
-   
+  
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
