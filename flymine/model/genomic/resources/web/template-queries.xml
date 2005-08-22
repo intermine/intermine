@@ -1,5 +1,5 @@
 <template-list>
-  <template name="AAA_organismProteins1" description="Show all the proteins from a particular organism." category="Proteomics" important="false" keywords="">
+  <template name="AAA_organismProteins1" description="Show all the proteins from a particular organism." category="Proteins" important="false" keywords="">
     <query name="AAA_organismProteins1" model="genomic" view="Protein">
       <node path="Protein" type="Protein">
       </node>
@@ -21,7 +21,7 @@
       </node>
     </query>
   </template>
-  <template name="AAB_proteins2fasta" description="Output proteins from a particular organism in a format suitable for creating a fasta database." category="Proteomics" important="false" keywords="">
+  <template name="AAB_proteins2fasta" description="Output proteins from a particular organism in a format suitable for creating a fasta database." category="Proteins" important="false" keywords="">
     <query name="AAB_proteins2fasta" model="genomic" view="Protein">
       <node path="Protein" type="Protein">
       </node>
@@ -45,7 +45,7 @@
       </node>
     </query>
   </template>
-  <template name="AAC_protein2proteinInteraction" description="Show protein interactions for a particular protein." category="Proteomics" important="false" keywords="">
+  <template name="AAC_protein2proteinInteraction" description="Show protein interactions for a particular protein." category="Protein Interactions" important="false" keywords="">
     <query name="AAC_protein2proteinInteraction" model="genomic" view="Protein Protein.interactions.prey Protein.interactions.bait">
       <node path="Protein" type="Protein">
       </node>
@@ -55,7 +55,7 @@
       </node>
     </query>
   </template>
-  <template name="AAD_GOidentifier2proteinInteractions1" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." category="Proteomics" important="false" keywords="">
+  <template name="AAD_GOidentifier2proteinInteractions1" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." category="Protein Interactions" important="false" keywords="">
     <query name="AAD_GOidentifier2proteinInteractions1" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.genes.name GOTerm.genes.organismDbId GOTerm.genes.proteins.primaryAccession GOTerm.genes.proteins.interactions.bait.primaryAccession GOTerm.genes.proteins.interactions.prey.primaryAccession GOTerm.genes.proteins.interactions.evidence.analysis.interactionDetection.name GOTerm.genes.proteins.interactions.evidence.analysis.publication.pubMedId GOTerm.genes.organism.name">
       <node path="GOTerm" type="GOTerm">
       </node>
@@ -111,7 +111,7 @@
       </node>
     </query>
   </template>
-  <template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." category="Proteomics" important="false" keywords="">
+  <template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." category="Protein Interactions" important="false" keywords="">
     <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.evidence.confidence Synonym.subject.proteins.interactions.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactions.evidence.analysis.publication.pubMedId">
       <node path="Synonym" type="Synonym">
       </node>
@@ -155,7 +155,7 @@
       </node>
     </query>
   </template>
-  <template name="AAG_gene2ProteinInteraction2Structure" description="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." category="Proteomics" important="false" keywords="">
+  <template name="AAG_gene2ProteinInteraction2Structure" description="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." category="Protein Interactions" important="false" keywords="">
     <query name="AAG_gene2ProteinInteraction2Structure" model="genomic" view="Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.bait.regions.sequenceFamily.name Synonym.subject.proteins.interactions.bait.regions.structures Synonym.subject.proteins.interactions.prey.regions.sequenceFamily.name Synonym.subject.proteins.interactions.prey.regions.structures">
       <node path="Synonym" type="Synonym">
       </node>
@@ -185,7 +185,7 @@
       </node>
     </query>
   </template>
-  <template name="AAH_Gene2ProteinStructure2.1" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." category="Proteomics" important="false" keywords="">
+  <template name="AAH_Gene2ProteinStructure2.1" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." category="Protein Structure" important="false" keywords="">
     <query name="AAH_Gene2ProteinStructure2.1" model="genomic" view="Synonym.subject.organismDbId Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.regions.sequenceFamily.name Synonym.subject.proteins.regions.objects.start Synonym.subject.proteins.regions.objects.end Synonym.subject.proteins.regions.structures">
       <node path="Synonym" type="Synonym">
       </node>
@@ -229,7 +229,7 @@
       </node>
     </query>
   </template>
-  <template name="AAI_Pfam2proteinStructure1" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." category="Proteomics" important="false" keywords="">
+  <template name="AAI_Pfam2proteinStructure1" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." category="Protein Structure" important="false" keywords="">
     <query name="AAI_Pfam2proteinStructure1" model="genomic" view="ProteinSequenceFamily.name ProteinSequenceFamily.regions.objects.object.primaryAccession ProteinSequenceFamily.regions.objects.start ProteinSequenceFamily.regions.objects.end ProteinSequenceFamily.regions.structures">
       <node path="ProteinSequenceFamily" type="ProteinSequenceFamily">
       </node>
@@ -267,7 +267,7 @@
       </node>
     </query>
   </template>
-  <template name="AAJ_gene2ProteinStructure1" description="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." category="Proteomics" important="false" keywords="">
+  <template name="AAJ_gene2ProteinStructure1" description="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." category="Protein Structure" important="false" keywords="">
     <query name="AAJ_gene2ProteinStructure1" model="genomic" view="Gene.name Gene.organismDbId Gene.proteins.primaryAccession Gene.proteins.regions.sequenceFamily.name Gene.proteins.regions.objects.start Gene.proteins.regions.objects.end Gene.proteins.regions.structures">
       <node path="Gene" type="Gene">
       </node>
@@ -357,7 +357,7 @@
       </node>
     </query>
   </template>
-  <template name="AAM_Gene2GO2" description="Search for GO annotations for a particular gene." category="Genomics" important="false" keywords="">
+  <template name="AAM_Gene2GO2" description="Search for GO annotations for a particular gene." category="Gene Ontology" important="false" keywords="">
     <query name="AAM_Gene2GO2" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.GOTerms.name Gene.GOTerms.identifier">
       <node path="Gene" type="Gene">
       </node>
@@ -375,7 +375,7 @@
       </node>
     </query>
   </template>
-  <template name="AAN_Gene_GoTerms" description="Search for genes annotated with a particular GO term." category="Genomics" important="false" keywords="">
+  <template name="AAN_Gene_GoTerms" description="Search for genes annotated with a particular GO term." category="Gene Ontology" important="false" keywords="">
     <query name="AAN_Gene_GoTerms" model="genomic" view="Gene">
       <node path="Gene" type="Gene">
       </node>
@@ -395,7 +395,7 @@
       </node>
     </query>
   </template>
-  <template name="AAO_OrthologuesWithGO" description="Show predicted orthologues between two organisms and their GO terms." category="Genomics" important="false" keywords="">
+  <template name="AAO_OrthologuesWithGO" description="Show predicted orthologues between two organisms and their GO terms." category="Orthologues and Paralogues" important="false" keywords="">
     <query name="AAO_OrthologuesWithGO" model="genomic" view="Orthologue.object.identifier Orthologue.object.annotations.property.identifier Orthologue.object.annotations.property.name Orthologue.subject.identifier Orthologue.subject.annotations.property.identifier Orthologue.subject.annotations.property.name">
       <node path="Orthologue" type="Orthologue">
       </node>
@@ -425,7 +425,7 @@
       </node>
     </query>
   </template>
-  <template name="AAP_gene2orthologues" description="Search for predicted orthologues for a particular gene:" category="Genomics" important="false" keywords="">
+  <template name="AAP_gene2orthologues" description="Search for predicted orthologues for a particular gene:" category="Orthologues and Paralogues" important="false" keywords="">
     <query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name">
       <node path="Gene" type="Gene">
       </node>
@@ -599,6 +599,62 @@
       </node>
     </query>
   </template>
+  <template name="ChrLocation2PCRProduct" description="Show microarray tiling path amplimers located between two points on a chromosome." category="Tiling Path" important="false" keywords="TilingPath microarray amplimer chromosomeLocation">
+    <query name="ChrLocation2PCRProduct" model="genomic" view="PCRProduct">
+      <node path="PCRProduct" type="PCRProduct">
+      </node>
+      <node path="PCRProduct.chromosomeLocation" type="Location">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
+        <constraint op="=" value="2R" description="Show tiling path amplimers located on chromsome:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.chromosomeLocation.start" type="Integer">
+        <constraint op="&gt;" value="1" description="Between:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.chromosomeLocation.end" type="Integer">
+        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.organism" type="Organism">
+      </node>
+      <node path="PCRProduct.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="ChrLocation2TilingPathAmplimers2" description="Show tiling path amplimers located between two points on a chromosome and show the primers used to create the amplimer." category="Tiling Path" important="false" keywords="TilingPath primers amplimer PCRProduct">
+    <query name="ChrLocation2TilingPathAmplimers2" model="genomic" view="PCRProduct PCRProduct.primers">
+      <node path="PCRProduct" type="PCRProduct">
+      </node>
+      <node path="PCRProduct.chromosomeLocation" type="Location">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
+        <constraint op="=" value="2R" description="Show the tiling path amplimers and their primers on chromosome:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.chromosomeLocation.start" type="Integer">
+        <constraint op="&gt;" value="1" description="Between:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.chromosomeLocation.end" type="Integer">
+        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.organism" type="Organism">
+      </node>
+      <node path="PCRProduct.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        </constraint>
+      </node>
+    </query>
+  </template>
   <template name="Gene2TFbindingsite" description="Show transcription factor binding sites for a particular gene." category="Genomics" important="false" keywords="">
     <query name="Gene2TFbindingsite" model="genomic" view="Gene Gene.regulatoryRegions Gene.regulatoryRegions.factor">
       <node path="Gene" type="Gene">
@@ -623,7 +679,61 @@
       </node>
     </query>
   </template>
-  <template name="transcript2longOligo" description="Give details of the INDAC microarray long oligo for a particular transcript." category="Genomics" important="false" keywords="">
+  <template name="chromosome2tilingAmplicon" description="Show microarray tiling path amplicons and their location for a particular chromsomome." category="Tiling Path" important="false" keywords="MicroArray PCRProduct tiling amplicon">
+    <query name="chromosome2tilingAmplicon" model="genomic" view="PCRProduct PCRProduct.chromosomeLocation.start PCRProduct.chromosomeLocation.end">
+      <node path="PCRProduct" type="PCRProduct">
+      </node>
+      <node path="PCRProduct.chromosomeLocation" type="Location">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
+        <constraint op="=" value="2R" description="Show microarray tiling path amplicons located on chromosome:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.organism" type="Organism">
+      </node>
+      <node path="PCRProduct.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="tilingAmpliconsInPromoter" description="Show microarray tiling amplicons between two points on a chromosome that are located within a promoter. " category="Tiling Path" important="false" keywords="MicroArray PCRProduct amplicon tiling tilingPath">
+    <query name="tilingAmpliconsInPromoter" model="genomic" view="PCRProduct PCRProduct.promoter">
+      <node path="PCRProduct" type="PCRProduct">
+      </node>
+      <node path="PCRProduct.organism" type="Organism">
+      </node>
+      <node path="PCRProduct.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        </constraint>
+      </node>
+      <node path="PCRProduct.promoter" type="Boolean">
+        <constraint op="=" value="true" description="" identifier="">
+        </constraint>
+      </node>
+      <node path="PCRProduct.objects" type="Relation">
+      </node>
+      <node path="PCRProduct.chromosomeLocation" type="Location">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
+      </node>
+      <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
+        <constraint op="=" value="2L" description="Show tiling amplicons located within a promoter on chromosome:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.chromosomeLocation.start" type="Integer">
+        <constraint op="&gt;" value="1" description="between:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="PCRProduct.chromosomeLocation.end" type="Integer">
+        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="transcript2longOligo" description="Give details of the INDAC microarray long oligo for a particular transcript." category="INDAC" important="false" keywords="">
     <query name="transcript2longOligo" model="genomic" view="Transcript Transcript.microarrayOligos Transcript.microarrayOligos.identifier Transcript.microarrayOligos.length Transcript.microarrayOligos.tm Transcript.microarrayOligos.distance3Prime">
       <node path="Transcript" type="Transcript">
       </node>

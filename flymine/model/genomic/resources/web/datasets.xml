@@ -1,39 +1,46 @@
 
 <data-sets>
   <data-set name="MicroArray">
-    <subtitle>microArray microArray</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
-    <tile-name></tile-name>
     <intro-text>
+    Microarray gene expression data formatted in mage-ml format can be loaded into FlyMine. 
     </intro-text>
-    <starting-points>MicroarrayOligo</starting-points>
+    <tile-name>model/microarray.jsp</tile-name>
+    <starting-points>MicroarrayExperiment Clone Gene</starting-points>
     <data-source name="INDAC microarray long oligo set (Version: 1.0)" url="http://www.indac.net/"/>
   </data-set>
   
   <data-set name="Protein Interactions">
-    <subtitle>interactions interactions</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/proteinInteraction.gif</icon-image>
     <large-image>model/proteinInteraction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
+    Proteins formatted in the Proteomics Standards Initiative (PSI)
+    molecular interaction (PSI MI) format can be mapped to the FlyMine
+    data model.
     </intro-text>
-    <starting-points>ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
+    <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
+    <tile-name>model/proteinInteraction.jsp</tile-name>
   </data-set>
   
   <data-set name="Protein Structure">
-    <subtitle>structure structure</subtitle>
+    <subtitle>3-D protein structures</subtitle>
     <icon-image>model/pstructure.gif</icon-image>
     <large-image>model/pstructure.gif</large-image>
-    <tile-name></tile-name>
     <intro-text>
+    3-D protein structures.
     </intro-text>
-    <starting-points>ProteinStructure</starting-points>
+    <starting-points>Protein ProteinStructure ProteinRegion ProteinSequenceFamily</starting-points>
+    <tile-name>model/proteinStructure.jsp</tile-name>
     <data-source name="D. melanogaster protein domain 3-D%3Cbr/%3Estructure predictions from Kenji Mizuguchi" url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
   </data-set>
   
+<!--
   <data-set name="Anopheles">
-    <subtitle>anopheles anopheles</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/anopheles.gif</icon-image>
     <large-image>model/anopheles.gif</large-image>
     <tile-name></tile-name>
@@ -41,65 +48,145 @@
     </intro-text>
     <starting-points></starting-points>
   </data-set>
+-->
   
   <data-set name="Binding Sites">
-    <subtitle>binding binding</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/bindingSites.png</icon-image>
     <large-image>model/bindingSites.png</large-image>
-    <tile-name></tile-name>
     <intro-text>
+    DNA binding sites.
     </intro-text>
-    <starting-points></starting-points>
+    <starting-points>Gene TFBindingSite</starting-points>
+    <tile-name>model/bindingSites.jsp</tile-name>
   </data-set>
   
   <data-set name="INDAC">
-    <subtitle>indac indac</subtitle>
+    <subtitle>Long Oligos</subtitle>
     <icon-image>model/indac.png</icon-image>
     <large-image>model/indac.png</large-image>
-    <tile-name></tile-name>
     <intro-text>
+     Long oligos from the International Drosophila array consortium.
     </intro-text>
-    <starting-points></starting-points>
+    <tile-name>model/indac.jsp</tile-name>
+    <starting-points>Gene MicroarrayOligo</starting-points>
   </data-set>
   
   <data-set name="Tiling Path">
-    <subtitle>tiling tiling</subtitle>
+    <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
     <large-image>model/tilingPath.png</large-image>
-    <tile-name></tile-name>
-    <intro-text>
+        <intro-text>
+    Primers designed to tile across whole genomes or regions of genomes.
     </intro-text>
-    <starting-points></starting-points>
+    <tile-name>model/tilingPath.jsp</tile-name>
+    <starting-points>PCRProduct Primer TilingPathSpan Chromosome Location</starting-points>
   </data-set>
   
   <data-set name="Genomics">
-    <subtitle>genomics genomics</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
-    <tile-name></tile-name>
     <intro-text>
+     Genome annotation data.
     </intro-text>
-    <starting-points></starting-points>
+        <tile-name>model/genomics.jsp</tile-name>
+    <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
   </data-set>
   
   <data-set name="Gene Ontology">
-    <subtitle>ontology ontology</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/ontology.gif</icon-image>
     <large-image>model/ontology.gif</large-image>
-    <tile-name></tile-name>
     <intro-text>
+    The Gene Ontology (GO) project is a collaborative effort to
+    address the need for consistent descriptions of gene products in
+    different databases.
+
+    The GO collaborators are developing three structured, controlled
+    vocabularies (ontologies) that describe gene products in terms of
+    their associated biological processes, cellular components and
+    molecular functions in a species-independent manner.
+
+    GO terms are organized in structures called directed acyclic
+    graphs (DAGs), which differ from hierarchies in that a child, or
+    more specialized, term can have many parents, or less specialized,
+    terms.
+
+    The three GO ontologies have been loaded into FlyMine and the
+    hierachical structure of each can be browsed and queried.
+
+    Model organism databases annotate their gene products (or genes)
+    with GO terms, providing references and indicating what kind of
+    evidence is available to support the annotations.
+
+    GO annotations for D. melanogaster, C. elegans and A. gambiae have
+    been loaded into FlyMine.  The GO annotations are 'attached' to
+    Genes and so each gene has a reference (link) to a list of it's GO
+    annotations (if available).
     </intro-text>
-    <starting-points></starting-points>
-  </data-set>
-  
+    <starting-points>Gene GOTerm GOEvidence</starting-points>
+    <tile-name>model/GO.jsp</tile-name>
+    </data-set>
+
   <data-set name="Homophila">
-    <subtitle>homophila homophila</subtitle>
+    <subtitle>Human Disease to Drosophila</subtitle>
     <icon-image>model/homophila.gif</icon-image>
     <large-image>model/homophila.gif</large-image>
-    <tile-name></tile-name>
-    <intro-text>
+      <intro-text>
+    Homophila Human Disease to Drosophila Database (version 2.1).
     </intro-text>
-    <starting-points></starting-points>
+     <tile-name>model/homophila.jsp</tile-name>
+     <starting-points>Gene OmimDiseases</starting-points>
   </data-set>
+
+  <data-set name="Proteins">
+    <subtitle></subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <intro-text>
+    Protein annotation (including family and domain annotation).  
+    </intro-text>
+     <tile-name>model/proteins.jsp</tile-name>
+     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+  </data-set>
+
+  <data-set name="Orthologues and Paralogues">
+    <subtitle></subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <intro-text>
+    Orthologues (equivalent genes in different species that evolved
+    from a common ancestor by speciation) and Paralogues (genes from
+    the same homologous superfamily found in another part of the
+    genome of a particular taxon. Paralogues are the result of gene
+    duplication).
+    </intro-text>
+     <tile-name>model/inparanoid.jsp</tile-name>
+     <starting-points>Gene Orthologue Paralogue</starting-points>
+  </data-set>
+
+  <data-set name="DrosDel">
+    <subtitle>P-element Insertions and Deletions</subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <intro-text>
+    DrosDel P-element insertion and deletion locations.
+    </intro-text>
+     <tile-name>model/drosdel.jsp</tile-name>
+     <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
+  </data-set>
+
+  <data-set name="RNAi">
+    <subtitle></subtitle>
+    <icon-image>model/blank.gif</icon-image>
+    <large-image>model/blank.gif</large-image>
+    <intro-text>
+    RNAi experiments
+    </intro-text>
+     <tile-name>model/RNAi.jsp</tile-name>
+     <starting-points>RNAiExperiment Phenotype Gene</starting-points>
+  </data-set>
+
   
 </data-sets>
