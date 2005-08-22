@@ -54,8 +54,8 @@
   
   <data-set name="INDAC">
     <subtitle>indac indac</subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/indac.png</icon-image>
+    <large-image>model/indac.png</large-image>
     <tile-name></tile-name>
     <intro-text>
     </intro-text>
