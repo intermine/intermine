@@ -118,6 +118,7 @@ public class InitialiserPlugin implements PlugIn
         } else {
             Map sets = DataSetBinding.unmarhsal(is);
             servletContext.setAttribute(Constants.DATASETS, sets);
+            servletContext.setAttribute(Constants.CATEGORIES, Collections.unmodifiableSet(sets.keySet()));
         }
     }
 
@@ -333,7 +334,7 @@ public class InitialiserPlugin implements PlugIn
             n++;
         }
         
-        servletContext.setAttribute(Constants.CATEGORIES, categories);
+        //servletContext.setAttribute(Constants.CATEGORIES, categories);
         servletContext.setAttribute(Constants.CATEGORY_CLASSES, subcategories);
     }
 
