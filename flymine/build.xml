@@ -1568,7 +1568,7 @@
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/">
-        <include name="flybase/2005-07-26/gene_association.fb"/>
+        <include name="flybase/2005-08-22/gene_association.fb"/>
         <include name="wormbase/2005-04-06/gene_association.wb"/>
         <include name="uniprot/2005-07-25/gene_association_ag"/>
         <include name="uniprot/2005-07-25/gene_association_agp"/>
@@ -1839,7 +1839,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
-      <fileset dir="${shared.data}/uniprot">
+      <fileset dir="${shared.data}/uniprot/5.7">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
