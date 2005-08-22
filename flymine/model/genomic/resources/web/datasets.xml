@@ -44,8 +44,8 @@
   
   <data-set name="Binding Sites">
     <subtitle>binding binding</subtitle>
-    <icon-image>model/bindingSites.jpeg</icon-image>
-    <large-image>model/bindingSites.jpeg</large-image>
+    <icon-image>model/bindingSites.png</icon-image>
+    <large-image>model/bindingSites.png</large-image>
     <tile-name></tile-name>
     <intro-text>
     </intro-text>
@@ -64,8 +64,8 @@
   
   <data-set name="Tiling Path">
     <subtitle>tiling tiling</subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/tilingPath.png</icon-image>
+    <large-image>model/tilingPath.png</large-image>
     <tile-name></tile-name>
     <intro-text>
     </intro-text>
