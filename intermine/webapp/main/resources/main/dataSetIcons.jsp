@@ -8,22 +8,35 @@
 <!-- dataSetIcons -->
 
 <div class="dataSetIcons">
-  <c:forEach var="entry" items="${DATASETS}" varStatus="status">
-  	<c:set var="set" value="${entry.value}"/>
-    <div class="dsIconsElement">
-    	  <html:link action="/dataSet?name=${set.name}">
-        <img src="${set.iconImage}" class="dsIconImage"/>
-      </html:link>
-      <div class="dsIconLabel">
-      	<html:link action="/dataSet?name=${set.name}">
-          ${set.name}
-        </html:link>
-      </div>
-      <div class="dsIconDetail">
-        ${set.subTitle}
-      </div>
-    </div>
-  </c:forEach>
+  <table>
+    <tr>
+      <td class="dsIconsElement">
+        <c:forEach var="entry" items="${DATASETS}" varStatus="status">
+          <c:set var="set" value="${entry.value}"/>
+          <html:link action="/dataSet?name=${set.name}">
+            <img src="${set.iconImage}" class="dsIconImage"/>
+          </html:link>
+          <div class="dsIconLabel">
+      	    <html:link action="/dataSet?name=${set.name}">
+              ${set.name}
+            </html:link>
+          </div>
+          <div class="dsIconDetail">
+            ${set.subTitle}
+          </div>
+
+          <c:if test="${fn:length(DATASETS) != status.count}">
+            <td/>
+            <c:if test="${status.count % 5 == 0}">
+              <tr/>
+              <tr>
+            </c:if>
+            <td class="dsIconsElement">
+          </c:if>
+        </c:forEach>
+      </td>
+    </tr>
+  </table>
 </div>
 
 <!-- /dataSetIcons -->
