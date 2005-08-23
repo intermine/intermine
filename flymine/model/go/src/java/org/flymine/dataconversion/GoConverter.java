@@ -301,7 +301,7 @@ public class GoConverter extends FileConverter
         if (item == null) {
             item = createItem("Database");
             String title = null;
-            if ("UniProt".equals(code)) {
+            if ("UniProt".equals(code) || "UniProtKB".equals(code)) {
                 title = "UniProt";
             } else if ("FB".equals(code)) {
                 title = "FlyBase";
