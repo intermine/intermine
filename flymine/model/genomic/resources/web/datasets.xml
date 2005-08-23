@@ -5,13 +5,13 @@
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
     <intro-text>
-    Microarray gene expression data formatted in mage-ml format can be loaded into FlyMine. 
+    Microarray gene expression data formatted in mage-ml format can be loaded into FlyMine.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
     <starting-points>MicroarrayExperiment Clone Gene</starting-points>
     <data-source name="INDAC microarray long oligo set (Version: 1.0)" url="http://www.indac.net/"/>
   </data-set>
-  
+
   <data-set name="Protein Interactions">
     <subtitle></subtitle>
     <icon-image>model/proteinInteraction.gif</icon-image>
@@ -25,7 +25,7 @@
     <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
     <tile-name>model/proteinInteraction.jsp</tile-name>
   </data-set>
-  
+
   <data-set name="Protein Structure">
     <subtitle>3-D protein structures</subtitle>
     <icon-image>model/pstructure.gif</icon-image>
@@ -37,7 +37,7 @@
     <tile-name>model/proteinStructure.jsp</tile-name>
     <data-source name="D. melanogaster protein domain 3-D%3Cbr/%3Estructure predictions from Kenji Mizuguchi" url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
   </data-set>
-  
+
 <!--
   <data-set name="Anopheles">
     <subtitle></subtitle>
@@ -49,7 +49,7 @@
     <starting-points></starting-points>
   </data-set>
 -->
-  
+
   <data-set name="Binding Sites">
     <subtitle></subtitle>
     <icon-image>model/bindingSites.png</icon-image>
@@ -60,7 +60,7 @@
     <starting-points>Gene TFBindingSite</starting-points>
     <tile-name>model/bindingSites.jsp</tile-name>
   </data-set>
-  
+
   <data-set name="INDAC">
     <subtitle>Long Oligos</subtitle>
     <icon-image>model/indac.png</icon-image>
@@ -71,7 +71,7 @@
     <tile-name>model/indac.jsp</tile-name>
     <starting-points>Gene MicroarrayOligo</starting-points>
   </data-set>
-  
+
   <data-set name="Tiling Path">
     <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
@@ -82,7 +82,7 @@
     <tile-name>model/tilingPath.jsp</tile-name>
     <starting-points>PCRProduct Primer TilingPathSpan Chromosome Location</starting-points>
   </data-set>
-  
+
   <data-set name="Genomics">
     <subtitle></subtitle>
     <icon-image>model/genomics.gif</icon-image>
@@ -93,7 +93,7 @@
         <tile-name>model/genomics.jsp</tile-name>
     <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
   </data-set>
-  
+
   <data-set name="Gene Ontology">
     <subtitle></subtitle>
     <icon-image>model/ontology.gif</icon-image>
@@ -145,16 +145,16 @@
     <icon-image>model/blank.gif</icon-image>
     <large-image>model/blank.gif</large-image>
     <intro-text>
-    Protein annotation (including family and domain annotation).  
+    Protein annotation (including family and domain annotation).
     </intro-text>
      <tile-name>model/proteins.jsp</tile-name>
      <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
   </data-set>
 
-  <data-set name="Orthologues and Paralogues">
-    <subtitle></subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+  <data-set name="Comparative Genomics">
+    <subtitle>Orthologues and Paralogues</subtitle>
+    <icon-image>model/comparativeGenomics.gif</icon-image>
+    <large-image>model/comparativeGenomics.gif</large-image>
     <intro-text>
     Orthologues (equivalent genes in different species that evolved
     from a common ancestor by speciation) and Paralogues (genes from
@@ -188,5 +188,5 @@
      <starting-points>RNAiExperiment Phenotype Gene</starting-points>
   </data-set>
 
-  
+
 </data-sets>
