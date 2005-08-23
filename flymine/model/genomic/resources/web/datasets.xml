@@ -153,8 +153,8 @@
 
   <data-set name="Comparative Genomics">
     <subtitle>Orthologues and Paralogues</subtitle>
-    <icon-image>model/comparativeGenomics.gif</icon-image>
-    <large-image>model/comparativeGenomics.gif</large-image>
+    <icon-image>model/comparativeGenomics.png</icon-image>
+    <large-image>model/comparativeGenomics.png</large-image>
     <intro-text>
     Orthologues (equivalent genes in different species that evolved
     from a common ancestor by speciation) and Paralogues (genes from
@@ -168,8 +168,8 @@
 
   <data-set name="DrosDel">
     <subtitle>P-element Insertions and Deletions</subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/drosdel.gif</icon-image>
+    <large-image>model/drosdel.gif</large-image>
     <intro-text>
     DrosDel P-element insertion and deletion locations.
     </intro-text>
@@ -179,8 +179,8 @@
 
   <data-set name="RNAi">
     <subtitle></subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/rnai.png</icon-image>
+    <large-image>model/rnai.png</large-image>
     <intro-text>
     RNAi experiments
     </intro-text>
