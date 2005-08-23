@@ -96,8 +96,8 @@
 
   <data-set name="Gene Ontology">
     <subtitle></subtitle>
-    <icon-image>model/ontology.gif</icon-image>
-    <large-image>model/ontology.gif</large-image>
+    <icon-image>model/geneOntology.png</icon-image>
+    <large-image>model/geneOntology.png</large-image>
     <intro-text>
     The Gene Ontology (GO) project is a collaborative effort to
     address the need for consistent descriptions of gene products in
@@ -142,8 +142,8 @@
 
   <data-set name="Proteins">
     <subtitle></subtitle>
-    <icon-image>model/blank.gif</icon-image>
-    <large-image>model/blank.gif</large-image>
+    <icon-image>model/proteins.png</icon-image>
+    <large-image>model/proteins.png</large-image>
     <intro-text>
     Protein annotation (including family and domain annotation).
     </intro-text>
