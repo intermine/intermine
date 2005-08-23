@@ -68,6 +68,7 @@ public class UniprotDataTranslator extends DataTranslator
     private FileWriter fw = null;
     private boolean outputIdentifiers = false;
     private Map identifierToOrganismDbId = new HashMap();
+    private Set geneIdentifiers = new HashSet();
 
     private static final String SRC_NS = "http://www.flymine.org/model#";
 
@@ -396,7 +397,19 @@ public class UniprotDataTranslator extends DataTranslator
                     // may alrady have created this gene
                     String geneItemId = (String) geneIdentifierToId.get(geneOrganismDbId);
                     ReferenceList geneSynonyms = new ReferenceList("synonyms", new ArrayList());
-                    if (geneItemId == null) {
+
+                    // UniProt sometimes has same identifier paired with two organismDbIds
+                    // causes problems merging other data sources.  Simple check to prevent
+                    // creating a gene with a duplicate identifier.
+
+                    // log problem genes
+                    boolean isDuplicateIdentifier = false;
+                    if ((geneItemId == null) && geneIdentifiers.contains(geneIdentifier)) {
+                        LOG.warn("already created a gene for identifier: " + geneIdentifier
+                                 + " with different organismDbId, discarding this one");
+                        isDuplicateIdentifier = true;
+                    }
+                    if ((geneItemId == null) && !isDuplicateIdentifier) {
                         Item gene = createItem(tgtNs + "Gene", "");
                         if (geneOrganismDbId != null) {
                             if (geneOrganismDbId.equals("")) {
@@ -418,6 +431,8 @@ public class UniprotDataTranslator extends DataTranslator
                                 geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }
+                            // keep a track of non-null gene identifiers
+                            geneIdentifiers.add(geneIdentifier);
                         }
                         // Problem with gene names for drosophila - ignore
                         if (primaryGeneName != null && taxonId != 7227) {
@@ -451,11 +466,15 @@ public class UniprotDataTranslator extends DataTranslator
                         geneIdentifierToId.put(geneOrganismDbId, geneItemId);
                         retval.add(gene);
                     }
-                    if (geneCollection == null) {
-                        geneCollection = new ReferenceList("genes", new ArrayList());
-                        protein.addCollection(geneCollection);
+
+                    // TODO untidy - sould just do this check once
+                    if (!isDuplicateIdentifier) {
+                        if (geneCollection == null) {
+                            geneCollection = new ReferenceList("genes", new ArrayList());
+                            protein.addCollection(geneCollection);
+                        }
+                        geneCollection.addRefId(geneItemId);
                     }
-                    geneCollection.addRefId(geneItemId);
                 }
             }
 
