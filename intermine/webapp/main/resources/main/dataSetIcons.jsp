@@ -9,7 +9,7 @@
 
 <div class="dataSetIcons">
   <table>
-    <tr>
+    <tr valign="top">
       <td class="dsIconsElement">
         <c:forEach var="entry" items="${DATASETS}" varStatus="status">
           <c:set var="set" value="${entry.value}"/>
@@ -29,7 +29,7 @@
             <td/>
             <c:if test="${status.count % 5 == 0}">
               <tr/>
-              <tr>
+              <tr valign="top">
             </c:if>
             <td class="dsIconsElement">
           </c:if>
