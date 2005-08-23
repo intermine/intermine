@@ -24,7 +24,11 @@
                           && ! fn:contains(seenIdentifiers, searchString)}">
           <tr>
             <td>
-              <html:img src="model/${sourceTitle}_logo_small.png"/>
+              <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"
+                         title="${sourceTitle}: ${thisSynonym.value}"
+                         target="view_window">
+                <html:img src="model/${sourceTitle}_logo_small.png"/>
+              </html:link>
             </td>
             <td>
               <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"
