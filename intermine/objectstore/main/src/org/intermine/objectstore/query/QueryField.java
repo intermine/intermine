@@ -45,8 +45,8 @@ public class QueryField implements QueryEvaluable
         }
         Method field = TypeUtil.getGetter(qc.getType(), fieldName);
         if (field == null) {
-            throw new IllegalArgumentException("Field " + fieldName
-                                                             + " not found in " + qc.getType());
+            throw new IllegalArgumentException("Field " + fieldName + " not found in "
+                    + qc.getType());
         }
         if (Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
@@ -144,17 +144,17 @@ public class QueryField implements QueryEvaluable
     }
 
     /**
-     * Gets the QueryClass of which the field is a member
+     * Gets the FromElement of which the field is a member
      *
-     * @return the QueryClass
+     * @return the FromElement
      */
     public FromElement getFromElement() {
         return qc;
     }
 
     /**
-       * @see QueryEvaluable
-       */
+     * @see QueryEvaluable
+     */
     public Class getType() {
         return type;
     }

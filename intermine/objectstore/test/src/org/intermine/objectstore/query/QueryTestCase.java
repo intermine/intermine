@@ -92,6 +92,26 @@ public class QueryTestCase extends OneTimeTestCase
                 } else {
                     fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
                 }
+            } else if (qc1 instanceof QueryObjectPathExpression) {
+                if (qc2 instanceof QueryObjectPathExpression) {
+                    QueryObjectPathExpression pe1 = (QueryObjectPathExpression) qc1;
+                    QueryObjectPathExpression pe2 = (QueryObjectPathExpression) qc2;
+                    checkQueryNodes(msg + ": QueryClasses of QueryObjectPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
+                    assertEquals(msg + ": QueryObjectPathExpression fieldnames are not equal", pe1.getFieldName(), pe2.getFieldName());
+                } else {
+                    fail(msg + ": QueryObjectPathExpression does not match " + qc2.getClass().getName());
+                }
+            } else if (qc1 instanceof QueryFieldPathExpression) {
+                if (qc2 instanceof QueryFieldPathExpression) {
+                    QueryFieldPathExpression pe1 = (QueryFieldPathExpression) qc1;
+                    QueryFieldPathExpression pe2 = (QueryFieldPathExpression) qc2;
+                    checkQueryNodes(msg + ": QueryClasses of QueryFieldPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
+                    assertEquals(msg + ": QueryFieldPathExpression referenceNames are not equal", pe1.getReferenceName(), pe2.getReferenceName());
+                    assertEquals(msg + ": QueryFieldPathExpression fieldNames are not equal", pe1.getFieldName(), pe2.getFieldName());
+                    assertEquals(msg + ": QueryFieldPathExpression defaultValues are not equal", pe1.getDefaultValue(), pe2.getDefaultValue());
+                } else {
+                    fail(msg + ": QueryFieldPathExpression does not match " + qc2.getClass().getName());
+                }
             } else {
                 fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());
             }

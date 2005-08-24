@@ -33,7 +33,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
@@ -129,7 +129,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                     // BagConstraint with all the IDs of all the objects that are in the collection.
                     // We should be able to read these queries and extract the IDs, and create a
                     // super-bag for use in a single query.
-                    QueryNode node = (QueryNode) q.getSelect().get(0);
+                    QuerySelectable node = (QuerySelectable) q.getSelect().get(0);
                     if (node instanceof QueryClass) {
                         Map froms = new HashMap();
                         Set toIds = new TreeSet();

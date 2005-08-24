@@ -56,8 +56,9 @@ public class QueryCloner
             }
             Iterator selectIter = query.getSelect().iterator();
             while (selectIter.hasNext()) {
-                QueryNode origSelect = (QueryNode) selectIter.next();
-                QueryNode newSelect = (QueryNode) cloneThing(origSelect, fromElementMap);
+                QuerySelectable origSelect = (QuerySelectable) selectIter.next();
+                QuerySelectable newSelect = (QuerySelectable) cloneThing(origSelect,
+                        fromElementMap);
                 newQuery.addToSelect(newSelect, (String) aliases.get(origSelect));
             }
             Iterator orderIter = query.getOrderBy().iterator();
@@ -134,6 +135,15 @@ public class QueryCloner
         } else if (orig instanceof QueryCast) {
             return new QueryCast((QueryEvaluable) cloneThing(((QueryCast) orig).getValue(),
                         fromElementMap), ((QueryCast) orig).getType());
+        } else if (orig instanceof QueryObjectPathExpression) {
+            QueryObjectPathExpression origC = (QueryObjectPathExpression) orig;
+            return new QueryObjectPathExpression((QueryClass) fromElementMap
+                    .get(origC.getQueryClass()), origC.getFieldName());
+        } else if (orig instanceof QueryFieldPathExpression) {
+            QueryFieldPathExpression origC = (QueryFieldPathExpression) orig;
+            return new QueryFieldPathExpression((QueryClass) fromElementMap
+                    .get(origC.getQueryClass()), origC.getReferenceName(), origC.getFieldName(),
+                    origC.getDefaultValue());
         } else if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
             if ((origC.getOp() == ConstraintOp.IS_NULL)

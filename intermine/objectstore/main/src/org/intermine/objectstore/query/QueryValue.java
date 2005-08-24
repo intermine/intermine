@@ -34,14 +34,11 @@ public class QueryValue implements QueryEvaluable
         if (value == null) {
             throw new NullPointerException("Cannot create a QueryValue with null");
         }
-        if (!((value instanceof Number)
-              || (value instanceof String)
-              || (value instanceof Boolean)
-              || (value instanceof Date)
-              || (value instanceof UnknownTypeValue))) {
+        if (!((value instanceof Number) || (value instanceof String) || (value instanceof Boolean)
+                    || (value instanceof Date) || (value instanceof UnknownTypeValue))) {
             throw new IllegalArgumentException("value (" + value
-                                               + ") must be a Number, String, Boolean, "
-                                               + "Date or unknown but was: " + value.getClass());
+                    + ") must be a Number, String, Boolean, Date or unknown but was: "
+                    + value.getClass());
         }
         this.value = value;
     }

@@ -258,6 +258,14 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("NotSubqueryExistsConstraint", Collections.singleton("InterMineObject"));
         results.put("SubqueryExistsConstraintNeg", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Bank')");
         results2.put("SubqueryExistsConstraintNeg", Collections.singleton("InterMineObject"));
+        results.put("ObjectPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("ObjectPathExpression", Collections.singleton("InterMineObject"));
+        results.put("FieldPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
+        results2.put("FieldPathExpression", Collections.singleton("InterMineObject"));
+        results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
+        results2.put("ForeignKey", Collections.singleton("InterMineObject"));
+        results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
+        results2.put("ForeignKey2", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

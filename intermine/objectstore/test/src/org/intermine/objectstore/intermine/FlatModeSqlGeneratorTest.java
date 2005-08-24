@@ -207,6 +207,14 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("ObjectContainsObject", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
         results.put("ObjectContainsObject2", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeB1Id + ")");
         results.put("ObjectNotContainsObject", "SELECT 'hello' AS a1_ FROM Employee AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " != indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
+        results.put("ObjectPathExpression", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression", new HashSet(Arrays.asList(new String[] {"Employee", "Department"})));
+        results.put("FieldPathExpression", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"Company", "CEO"})));
+        results.put("ForeignKey", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("ForeignKey", Collections.singleton("Company"));
+        results.put("ForeignKey2", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("ForeignKey2", Collections.singleton("Company"));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

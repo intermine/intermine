@@ -63,7 +63,7 @@ public class SubqueryConstraint extends Constraint
         }
 
         // check that the select node is a QueryEvaluable
-        QueryNode selectNode = (QueryNode) select.get(0);
+        QuerySelectable selectNode = (QuerySelectable) select.get(0);
         if (!QueryEvaluable.class.isAssignableFrom(selectNode.getClass())) {
             throw new IllegalArgumentException("Subquery select item is not a QueryEvaluable");
         }
@@ -117,7 +117,7 @@ public class SubqueryConstraint extends Constraint
                                                 + "item in select list.");
         }
 
-        QueryNode selectNode = (QueryNode) select.get(0);
+        QuerySelectable selectNode = (QuerySelectable) select.get(0);
         if (!QueryClass.class.isAssignableFrom(selectNode.getClass())) {
             throw new IllegalArgumentException("Select item of subquery is not a QueryClass");
         }

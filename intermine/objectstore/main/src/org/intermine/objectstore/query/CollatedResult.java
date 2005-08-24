@@ -175,7 +175,7 @@ public class CollatedResult extends Results
             // One constraint for each item in the select list
             i = q.getSelect().iterator();
             while (i.hasNext()) {
-                QueryNode node = (QueryNode) i.next();
+                QuerySelectable node = (QuerySelectable) i.next();
                 int index = q.getSelect().indexOf(node);
                 if (node instanceof QueryClass) {
                     // add a ClassConstraint, ie. this QueryClass = example

@@ -203,7 +203,7 @@ public class Query implements FromElement
         iterators.add(select.iterator());
         Iterator iter = new CombinedIterator(iterators);
         while (iter.hasNext()) {
-            QueryOrderable node = (QueryOrderable) iter.next();
+            Object node = iter.next();
             if (node instanceof QueryClass) {
                 if (!seenQueryClasses.contains(node)) {
                     retval.add(node);
@@ -234,44 +234,45 @@ public class Query implements FromElement
     }
 
     /**
-     * Add a QueryNode to the SELECT clause of this Query
+     * Add a QuerySelectable to the SELECT clause of this Query
      *
-     * @param node the QueryNode to add
+     * @param node the QuerySelectable to add
      * @return the updated Query
      */
-    public Query addToSelect(QueryNode node) {
+    public Query addToSelect(QuerySelectable node) {
         select.add(node);
         alias(node, null);
         return this;
     }
 
     /**
-     * Add a QueryNode to the SELECT clause of this Query
+     * Add a QuerySelectable to the SELECT clause of this Query
      *
-     * @param node the QueryNode to add
+     * @param node the QuerySelectable to add
      * @param alias the alias for this FromElement
      * @return the updated Query
      */
-    public Query addToSelect(QueryNode node, String alias) {
+    public Query addToSelect(QuerySelectable node, String alias) {
         select.add(node);
         alias(node, alias);
         return this;
     }
 
     /**
-     * Remove a QueryNode from the SELECT clause
+     * Remove a QuerySelectable from the SELECT clause
      *
-     * @param node the node to remove
+     * @param node the QuerySelectable to remove
      * @return the updated Query
      */
-    public Query deleteFromSelect(QueryNode node) {
+    public Query deleteFromSelect(QuerySelectable node) {
         select.remove(node);
 
         // Don't think the following is sufficient - what if the node is also in the FROM list?
-        String alias = (String) aliases.remove(node);
-        if (alias != null) {
-            reverseAliases.remove(alias);
-        }
+        // Matthew: don't need to do this at all. Extra entries in the alias map will be ignored.
+        //String alias = (String) aliases.remove(node);
+        //if (alias != null) {
+        //    reverseAliases.remove(alias);
+        //}
         return this;
     }
 

@@ -37,7 +37,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -130,7 +130,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                 retval = new CacheHoldingArrayList(results);
             }
             if (retval.size() > 1) {
-                QueryNode node = (QueryNode) q.getSelect().get(0);
+                QuerySelectable node = (QuerySelectable) q.getSelect().get(0);
                 if (node instanceof QueryClass) {
                     Map bagMap = new HashMap();
                     int lowestId = Integer.MAX_VALUE;
