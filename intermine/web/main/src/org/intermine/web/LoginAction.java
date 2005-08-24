@@ -60,7 +60,7 @@ public class LoginAction extends InterMineAction
         Map mergeQueries = Collections.EMPTY_MAP;
         Map mergeBags = Collections.EMPTY_MAP;
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
-            mergeQueries = new HashMap(currentProfile.getSavedQueries());
+            mergeQueries = new HashMap(currentProfile.getHistory());
             mergeBags = new HashMap(currentProfile.getSavedBags());
         }
         
@@ -81,17 +81,17 @@ public class LoginAction extends InterMineAction
         // Merge in anonymous query history
         for (Iterator iter = mergeQueries.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
-            PathQuery query = (PathQuery) ((PathQuery) entry.getValue()).clone();
+            SavedQuery query = (SavedQuery) entry.getValue();
             String name = makeUniqueQueryName((String) entry.getKey(),
-                                                profile.getSavedQueries().keySet());
-            profile.saveQuery(name, query);
+                                                profile.getHistory().keySet());
+            profile.saveHistory(query);
         }
         // Merge anonymous bags
         for (Iterator iter = mergeBags.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
             String name = makeUniqueQueryName((String) entry.getKey(),
-                                                profile.getSavedQueries().keySet());
+                                                profile.getSavedBags().keySet());
             profile.saveBag(name, bag);
         }
         

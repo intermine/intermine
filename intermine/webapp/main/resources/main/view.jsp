@@ -128,14 +128,5 @@
   </c:otherwise>
 </c:choose>
 
-<!--
-<div class="body">
-  <div class="exportQueryLink">
-    <html:link action="/importQuery">
-      <fmt:message key="query.import"/>
-    </html:link>
-  </div>
-</div>
--->
 
 <!-- /view.jsp -->

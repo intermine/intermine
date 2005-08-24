@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.TreeMap;
 
+import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.lucene.store.Directory;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
@@ -38,6 +39,7 @@ public class Profile
     protected Map savedBags = new TreeMap();
     protected Map savedTemplates = new TreeMap();
     protected Map categoryTemplates;
+    protected Map queryHistory = new ListOrderedMap();
     protected Directory templateIndex;
     
     /**
@@ -126,7 +128,7 @@ public class Profile
      * @param name the query name
      * @param query the query
      */
-    public void saveQuery(String name, PathQuery query) {
+    public void saveQuery(String name, SavedQuery query) {
         savedQueries.put(name, query);
         if (manager != null) {
             manager.saveProfile(this);
@@ -142,6 +144,44 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
+    }
+    
+    /**
+     * Get the session query history.
+     * @return map from query name to SavedQuery
+     */
+    public Map getHistory() {
+        return Collections.unmodifiableMap(queryHistory);
+    }
+    
+    /**
+     * Save a query to the query history.
+     * @param query the SavedQuery to save to the history
+     */
+    public void saveHistory(SavedQuery query) {
+        queryHistory.put(query.getName(), query);
+    }
+    
+    /**
+     * Remove an item from the query history.
+     * @param name the of the SavedQuery from the history
+     */
+    public void deleteHistory(String name) {
+        queryHistory.remove(name);
+    }
+    
+    public void renameHistory(String oldName, String newName) {
+        Map newMap = new ListOrderedMap();
+        Iterator iter = queryHistory.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = (String) iter.next();
+            SavedQuery sq = (SavedQuery) queryHistory.get(name);
+            if (name.equals(oldName)) {
+                sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
+            }
+            newMap.put(sq.getName(), sq);
+        }
+        queryHistory = newMap;
     }
 
     /**

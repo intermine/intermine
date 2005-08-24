@@ -35,7 +35,7 @@ public class TemplateQueryBinding
     /**
      * Convert a TemplateQuery to XML and write XML to given writer.
      *
-     * @param template theTemplateQuery
+     * @param template the TemplateQuery
      * @param writer the XMLStreamWriter to write to
      */
     public static void marshal(TemplateQuery template, XMLStreamWriter writer) {
@@ -94,7 +94,7 @@ public class TemplateQueryBinding
     }
 
     /**
-     * Extension of DefaultHandler to handle parsing TemplateQueries
+     * Extension of PathQueryHandler to handle parsing TemplateQueries
      */
     static class TemplateQueryHandler extends PathQueryHandler
     {

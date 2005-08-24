@@ -48,7 +48,6 @@ public class ProfileManager
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
-    protected PathQueryBinding queryBinding = new PathQueryBinding();
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
 
     /**
@@ -186,7 +185,18 @@ public class ProfileManager
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
             SavedQuery query = (SavedQuery) i.next();
             try {
-                savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
+                Map queries = SavedQueryBinding.unmarshal(new StringReader(query.getQuery()));
+                if (queries.size() == 0) {
+                    queries = PathQueryBinding.unmarshal(new StringReader(query.getQuery()));
+                    if (queries.size() == 1) {
+                        Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
+                        String name = (String) entry.getKey();
+                        savedQueries.put(name,
+                            new org.intermine.web.SavedQuery(name, null, (PathQuery) entry.getValue()));
+                    }
+                } else {
+                    savedQueries.putAll(queries);
+                }
             } catch (Exception _) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
@@ -255,14 +265,13 @@ public class ProfileManager
                 }
 
                 for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                    PathQuery query = null;
+                    org.intermine.web.SavedQuery query = null;
                     try {
                         Map.Entry entry = (Map.Entry) i.next();
                         String queryName = (String) entry.getKey();
-                        query = (PathQuery) entry.getValue();
+                        query = (org.intermine.web.SavedQuery) entry.getValue();
                         SavedQuery savedQuery = new SavedQuery();
-                        savedQuery.setQuery(PathQueryBinding.marshal(query, queryName,
-                                                                 os.getModel().getName()));
+                        savedQuery.setQuery(SavedQueryBinding.marshal(query));
                         savedQuery.setUserProfile(userProfile);
                         osw.store(savedQuery);
                     } catch (Exception e) {

@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -187,9 +188,9 @@ public class SessionMethods
         SessionMethods.setResultsTable(session, "results." + qid, pr);
 
         if (saveQuery) {
-            String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
+            String queryName = SaveQueryHelper.findNewQueryName(profile.getHistory());
             query.setInfo(pr.getResultsInfo());
-            saveQuery(session, queryName, query);
+            saveQueryToHistory(session, queryName, query);
             recordMessage(resources.getMessage("saveQuery.message", queryName), session);
         }
         
@@ -218,7 +219,28 @@ public class SessionMethods
     }
     
     /**
-     * Save a query in the Map on the session, and clone it to allow further editing.
+     * Save a clone of a query to the user's Profile.
+     * 
+     * @param session The HTTP session
+     * @param queryName the name to save the query under
+     * @param query the PathQuery
+     * @param created creation date
+     * @return the SavedQuery created
+     */
+    public static SavedQuery saveQuery(HttpSession session,
+                                 String queryName,
+                                 PathQuery query,
+                                 Date created) {
+        LOG.debug("saving query " + queryName);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        SavedQuery sq = new SavedQuery(queryName, (created != null ? created : new Date()),
+                (PathQuery) query.clone());
+        profile.saveQuery(sq.getName(), sq);
+        return sq;
+    }
+    
+    /**
+     * Save a clone of a query to the user's Profile.
      * 
      * @param session The HTTP session
      * @param queryName the name to save the query under
@@ -227,10 +249,23 @@ public class SessionMethods
     public static void saveQuery(HttpSession session,
                                  String queryName,
                                  PathQuery query) {
-        LOG.debug("saving query " + queryName);
+        saveQuery(session, queryName, query, null);
+    }
+    
+    /**
+     * Save a clone of a query to the user's Profile history.
+     * 
+     * @param session The HTTP session
+     * @param queryName the name to save the query under
+     * @param query the PathQuery
+     */
+    public static void saveQueryToHistory(HttpSession session,
+                                          String queryName,
+                                          PathQuery query) {
+        LOG.debug("saving history " + queryName);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        profile.saveQuery(queryName, query);
-        session.setAttribute(Constants.QUERY, query.clone());
+        SavedQuery sq = new SavedQuery(queryName, new Date(), (PathQuery) query.clone());
+        profile.saveHistory(sq);
     }
     
     /**

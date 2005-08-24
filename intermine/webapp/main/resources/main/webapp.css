@@ -110,6 +110,17 @@ table.box > tbody > tr > td {
   background: white;
 }
 
+table.history > tbody > tr > td {
+  font-size: 11px;
+  padding: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+table.history input {
+  font-size: 11px;
+}
+
 .help {
   padding: 5px;
   text-align: right;
@@ -247,23 +258,18 @@ table.query {
   border: none;
 }
 
-/*
-table.query th, table.query td {
-  border-bottom: 1px solid black;
-}
-*/
 table.query td.modelbrowse {
   border-right: 1px solid black;
 }
 
 table.results {
-  border-left: solid 1px black;
-  border-top: solid 1px black;
+  border-left: solid 1px #666;
+  border-top: solid 1px #666;
 }
 table.results th, table.results td {
   padding: 4px;
-  border-right: solid 1px black;
-  border-bottom: solid 1px black;
+  border-right: solid 1px #666;
+  border-bottom: solid 1px #666;
 }
 table.results th {
   font-size: 12px;
@@ -552,3 +558,21 @@ img.searchHeatImg {
   margin-bottom: 5px;
 }
 
+.historySummaryRoot {
+  background: #e7F1E7;
+  border: 1px solid #bbb;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 1px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.historySummaryShowing {
+  background: #E7F1FB;
+  border: 1px solid #bbb;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 1px;
+  font-size: 10px;
+}

@@ -28,16 +28,9 @@
     </c:choose>
   </span>
   <span class="menu-item">
-  <c:choose>
-    <c:when test="${!empty PROFILE.savedBags || !empty PROFILE.savedQueries}">
-      <html:link action="/history.do">
-        <fmt:message key="menu.history"/>
-      </html:link>
-    </c:when>
-    <c:otherwise>
+    <html:link action="/history.do">
       <fmt:message key="menu.history"/>
-    </c:otherwise>
-  </c:choose>
+    </html:link>
   </span>
   <span class="menu-item">
     <html:link action="/examples.do">

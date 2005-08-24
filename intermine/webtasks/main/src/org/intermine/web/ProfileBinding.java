@@ -101,9 +101,9 @@ public class ProfileBinding
             for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
                 Map.Entry entry = (Map.Entry) i.next();
                 String queryName = (String) entry.getKey();
-                PathQuery query = (PathQuery) entry.getValue();
+                SavedQuery query = (SavedQuery) entry.getValue();
 
-                PathQueryBinding.marshal(query, queryName, os.getModel().getName(), writer);
+                SavedQueryBinding.marshal(query, writer);
             }
             writer.writeEndElement();
 

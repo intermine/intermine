@@ -11,8 +11,10 @@
       </bag>
     </bags>
     <queries>
-      <query name="query1" model="testmodel" view="">
-      </query>
+      <saved-query name="query1">
+        <query name="query1" model="testmodel" view="">
+        </query>
+      </saved-query>
     </queries>
     <template-queries>
       <template name="template" description="tdesc" category="tcat" important="false" keywords="">
@@ -89,8 +91,10 @@
       </bag>
     </bags>
     <queries>
-      <query name="query1" model="testmodel" view="">
-      </query>
+      <saved-query name="query1">
+        <query name="query1" model="testmodel" view="">
+        </query>
+      </saved-query>
     </queries>
     <template-queries>
       <template name="template" description="some desc" category="some category" important="true" keywords="some_keyword">
