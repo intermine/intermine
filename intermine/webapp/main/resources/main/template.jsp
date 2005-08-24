@@ -205,8 +205,8 @@
       <br/>
       <html:hidden property="templateName"/>
       <html:hidden property="templateType"/>
-      <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
       <html:submit><fmt:message key="template.submitToQuery"/></html:submit>
+      <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
     </c:if>
   </html:form>
 </div>
