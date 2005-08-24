@@ -41,6 +41,7 @@ tokens {
     NOTLIKE;
     BAG_CONSTRAINT;
     TYPECAST;
+    FIELD_PATH_EXPRESSION;
 }
 
 
@@ -86,6 +87,7 @@ order_clause:
 select_value:
         ( (unsafe_function)=> unsafe_function "as"! field_alias
             | (typecast)=> typecast "as"! field_alias
+            | (field_path_expression)=> field_path_expression "as"! field_alias
             | thing ( "as"! field_alias )?
             | constant "as"! field_alias
             | safe_function "as"! field_alias
@@ -154,8 +156,13 @@ subquery:
 
 constant:
 //TODO: properly
-        ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" )
+        ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" | "null" )
         { #constant = #([CONSTANT, "CONSTANT"], #constant); }
+    ;
+
+field_path_expression:
+        IDENTIFIER DOT! IDENTIFIER DOT! IDENTIFIER OPEN_PAREN! "def"! constant CLOSE_PAREN!
+        { #field_path_expression = #([FIELD_PATH_EXPRESSION, "FIELD_PATH_EXPRESSION"], #field_path_expression); }
     ;
 
 thing:

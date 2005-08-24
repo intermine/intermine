@@ -208,6 +208,14 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("DynamicBagConstraint2", new HashSet(Arrays.asList(new String[] {"Broke", "CEO"})));
         results.put("QueryClassBagDouble", "SELECT a2_.departmentId AS a4_, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Employee AS a2_, Employee AS a3_ WHERE ((a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND a3_.departmentId = a2_.departmentId) ORDER BY a2_.departmentId, a2_.id, a3_.id");
         results2.put("QueryClassBagDouble", Collections.singleton("Employee"));
+        results.put("ObjectPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression", new HashSet(Arrays.asList(new String[] {"Employee", "Department"})));
+        results.put("FieldPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"Company", "CEO"})));
+        results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("ForeignKey", Collections.singleton("Company"));
+        results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("ForeignKey2", Collections.singleton("Company"));
     }
 
     protected DatabaseSchema getSchema() {

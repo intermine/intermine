@@ -37,7 +37,9 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryFieldPathExpression;
+import org.intermine.objectstore.query.QueryPathExpression;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
@@ -84,7 +86,7 @@ public class ResultsConverter
                 ResultsRow row = new ResultsRow();
                 Iterator selectIter = q.getSelect().iterator();
                 while (selectIter.hasNext()) {
-                    QueryNode node = (QueryNode) selectIter.next();
+                    QuerySelectable node = (QuerySelectable) selectIter.next();
                     String alias = DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
                             .get(node));
                     if (node instanceof QueryClass) {
@@ -133,6 +135,15 @@ public class ResultsConverter
                             }
                         }
                         row.add(obj);
+                    } else if ((node instanceof QueryFieldPathExpression)
+                            && "id".equals(((QueryFieldPathExpression) node).getFieldName())) {
+                        currentColumn = sqlResults.getObject(alias);
+                        Integer foreignKey = (Integer) (currentColumn == null
+                                ? ((QueryFieldPathExpression) node).getDefaultValue()
+                                : currentColumn);
+                        row.add(foreignKey);
+                    } else if (node instanceof QueryPathExpression) {
+                        throw new ObjectStoreException("Path expressions are not implemented yet");
                     } else {
                         currentColumn = sqlResults.getObject(alias);
                         if (Date.class.equals(node.getType())) {
@@ -182,6 +193,9 @@ public class ResultsConverter
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);
+        } catch (ClassCastException e) {
+            throw new ObjectStoreException("Object is of wrong type while converting results: "
+                    + currentColumn, e);
         }
     }
 

@@ -320,7 +320,7 @@ public class IqlQueryParser
      * @param modelPackage the package for unqualified class names
      */
     private static void processNewSelect(AST ast, Query q, String modelPackage) {
-        QueryNode node = null;
+        QuerySelectable node = null;
         String nodeAlias = null;
         do {
             switch (ast.getType()) {
@@ -332,7 +332,10 @@ public class IqlQueryParser
                 case IqlTokenTypes.UNSAFE_FUNCTION:
                 case IqlTokenTypes.SAFE_FUNCTION:
                 case IqlTokenTypes.TYPECAST:
-                    node = processNewQueryNode(ast, q);
+                    node = processNewQuerySelectable(ast, q);
+                    break;
+                case IqlTokenTypes.FIELD_PATH_EXPRESSION:
+                    node = processNewQueryFieldPathExpression(ast.getFirstChild(), q);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -365,18 +368,28 @@ public class IqlQueryParser
         return (QueryNode) retval;
     }
 
+    /**
+     * Processes an AST node that describes a QuerySelectable.
+     *
+     * @param ast an AST node to process
+     * @param q the Query to build
+     * @return a QuerySelectable object corresponding to the input
+     */
+    private static QuerySelectable processNewQuerySelectable(AST ast, Query q) {
+        Object retval = processNewQueryNodeOrReference(ast, q);
+        if (retval instanceof QueryObjectReference) {
+            retval = new QueryObjectPathExpression(((QueryObjectReference) retval).getQueryClass(),
+                    ((QueryObjectReference) retval).getFieldName());
+        }
+        return (QuerySelectable) retval;
+    }
+
     private static QueryOrderable processNewQueryNodeOrReference(AST ast, Query q) {
         switch (ast.getType()) {
             case IqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild(), q);
             case IqlTokenTypes.CONSTANT:
-                String value = unescape(ast.getFirstChild().getText());
-                if ((value.charAt(0) == '\'') && ((value.charAt(1) < '0')
-                            || (value.charAt(1) > '9'))
-                        && (value.charAt(value.length() - 1) == '\'')) {
-                    return new QueryValue(value.substring(1, value.length() - 1));
-                }
-                return new QueryValue(new UnknownTypeValue(value));
+                return processNewQueryValue(ast.getFirstChild(), q);
             case IqlTokenTypes.UNSAFE_FUNCTION:
                 return processNewUnsafeFunction(ast.getFirstChild(), q);
             case IqlTokenTypes.SAFE_FUNCTION:
@@ -387,6 +400,84 @@ public class IqlQueryParser
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
         }
+    }
+
+    /**
+     * Process an AST node that describes a QueryValue.
+     *
+     * @param ast an AST node to process
+     * @param q the Query to build
+     * @return a QueryValue object
+     */
+    private static QueryValue processNewQueryValue(AST ast, Query q) {
+        String value = unescape(ast.getText());
+        if ((value.charAt(0) == '\'') && ((value.charAt(1) < '0')
+                    || (value.charAt(1) > '9'))
+                && (value.charAt(value.length() - 1) == '\'')) {
+            return new QueryValue(value.substring(1, value.length() - 1));
+        }
+        return new QueryValue(new UnknownTypeValue(value));
+    }
+
+    /**
+     * Process an AST node that describes a QueryFieldPathExpression.
+     *
+     * @param ast an AST node to process
+     * @param q the Query to build
+     * @return a QueryFieldPathExpression object
+     */
+    private static QueryFieldPathExpression processNewQueryFieldPathExpression(AST ast, Query q) {
+        if (ast == null) {
+            throw new IllegalArgumentException("Field path expression cut short");
+        }
+        if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
+            throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                    + ast.getType() + "]");
+        }
+        Object qcObj = q.getReverseAliases().get(unescape(ast.getText()));
+
+        if (!(qcObj instanceof QueryClass)) {
+            throw new IllegalArgumentException(ast.getText() + " is not a QueryClass while"
+                    + " attempting to create a QueryFieldPathExpression");
+        }
+        ast = ast.getNextSibling();
+        if (ast == null) {
+            throw new IllegalArgumentException("Field path expression cut short");
+        }
+        if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
+            throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                    + ast.getType() + "]");
+        }
+        String referenceName = unescape(ast.getText());
+        ast = ast.getNextSibling();
+        if (ast == null) {
+            throw new IllegalArgumentException("Field path expression cut short");
+        }
+        if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
+            throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                    + ast.getType() + "]");
+        }
+        String fieldName = unescape(ast.getText());
+        ast = ast.getNextSibling();
+        if (ast == null) {
+            throw new IllegalArgumentException("Field path expression cut short");
+        }
+        if (ast.getType() != IqlTokenTypes.CONSTANT) {
+            throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                    + ast.getType() + "]");
+        }
+        Object defaultValue;
+        if ("null".equals(ast.getFirstChild().getText().toLowerCase())) {
+            defaultValue = null;
+        } else {
+            defaultValue = processNewQueryValue(ast.getFirstChild(), q).getValue();
+        }
+        if (ast.getNextSibling() != null) {
+            throw new IllegalArgumentException("Expected expression to end while creating a"
+                    + " QueryFieldPathExpression");
+        }
+        return new QueryFieldPathExpression((QueryClass) qcObj, referenceName, fieldName,
+                defaultValue);
     }
 
     /**
@@ -405,7 +496,7 @@ public class IqlQueryParser
     private static QueryOrderable processNewField(AST ast, Query q) {
         if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
-                        + ast.getType() + "]");
+                    + ast.getType() + "]");
         }
         Object obj = q.getReverseAliases().get(unescape(ast.getText()));
 

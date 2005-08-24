@@ -227,6 +227,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SubqueryExistsConstraint", subqueryExistsConstraint());
         queries.put("NotSubqueryExistsConstraint", notSubqueryExistsConstraint());
         queries.put("SubqueryExistsConstraintNeg", subqueryExistsConstraintNeg());
+        queries.put("ObjectPathExpression", objectPathExpression());
+        queries.put("FieldPathExpression", fieldPathExpression());
+        queries.put("ForeignKey", foreignKey());
+        queries.put("ForeignKey2", foreignKey2());
     }
 
     /*
@@ -1494,5 +1498,57 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q2));
         q1.setDistinct(false);
         return q1;
+    }
+
+    /*
+     * SELECT a1_, a1_.department AS a2_ FROM Employee AS a1_
+     */
+    public static Query objectPathExpression() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryObjectPathExpression(qc, "department"));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.CEO.name(DEF: 'fred') AS a2_ FROM Company AS a1_
+     */
+    public static Query fieldPathExpression() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "name", "3fred"));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.CEO.id(DEF: null) AS a2_ FROM Company AS a1_
+     */
+    public static Query foreignKey() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "id", null));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.CEO.id(DEF: 3) AS a2_ FROM Company AS a1_
+     */
+    public static Query foreignKey2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "id", new Integer(3)));
+        q.setDistinct(false);
+        return q;
     }
 }

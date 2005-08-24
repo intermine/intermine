@@ -82,7 +82,7 @@ public abstract class QueryHelper
         List columnAliases = new ArrayList();
         Iterator selectIter = query.getSelect().iterator();
         while (selectIter.hasNext()) {
-            QueryNode node = (QueryNode) selectIter.next();
+            QuerySelectable node = (QuerySelectable) selectIter.next();
             String alias = (String) query.getAliases().get(node);
             columnAliases.add(alias);
         }
@@ -100,7 +100,7 @@ public abstract class QueryHelper
         List columnTypes = new ArrayList();
         Iterator selectIter = query.getSelect().iterator();
         while (selectIter.hasNext()) {
-            QueryNode node = (QueryNode) selectIter.next();
+            QuerySelectable node = (QuerySelectable) selectIter.next();
             Class type = node.getType();
             columnTypes.add(type);
         }

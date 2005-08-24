@@ -49,12 +49,14 @@ import org.intermine.objectstore.query.QueryClassBag;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFieldPathExpression;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryOrderable;
+import org.intermine.objectstore.query.QueryPathExpression;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
@@ -409,7 +411,7 @@ public class SqlGenerator
         Set selectClasses = new HashSet();
         Iterator selectIter = q.getSelect().iterator();
         while (selectIter.hasNext()) {
-            QueryNode n = (QueryNode) selectIter.next();
+            QuerySelectable n = (QuerySelectable) selectIter.next();
             if (n instanceof QueryClass) {
                 selectClasses.add(n);
             } else if (n instanceof QueryField) {
@@ -510,17 +512,23 @@ public class SqlGenerator
                 throw new ObjectStoreException("Unknown FromElement: " + fromElement.getClass());
             }
         }
-        if (addInterMineObject && schema.isMissingNotXml()) {
-            String interMineObject = DatabaseUtil.getTableName(schema.getModel()
-                    .getClassDescriptorByName(InterMineObject.class.getName()));
-            boolean notHaveInterMineObject = !tablenames.contains(interMineObject);
-            Iterator selectIter = q.getSelect().iterator();
-            while (selectIter.hasNext() && notHaveInterMineObject) {
-                Object selectable = selectIter.next();
-                if (selectable instanceof QueryClass) {
+        String interMineObject = DatabaseUtil.getTableName(schema.getModel()
+                .getClassDescriptorByName(InterMineObject.class.getName()));
+        Iterator selectIter = q.getSelect().iterator();
+        while (selectIter.hasNext()) {
+            QuerySelectable selectable = (QuerySelectable) selectIter.next();
+            if (selectable instanceof QueryClass) {
+                if (addInterMineObject && schema.isMissingNotXml()) {
                     tablenames.add(interMineObject);
-                    notHaveInterMineObject = false;
                 }
+            } else if (selectable instanceof QueryEvaluable) {
+                // Do nothing
+            } else if ((selectable instanceof QueryFieldPathExpression)
+                    && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
+                // Do nothing
+            } else {
+                throw new ObjectStoreException("Illegal entry in SELECT list: "
+                        + selectable.getClass());
             }
         }
     }
@@ -1418,16 +1426,20 @@ public class SqlGenerator
         StringBuffer retval = new StringBuffer();
         Iterator iter = q.getSelect().iterator();
         while (iter.hasNext()) {
-            QueryNode node = (QueryNode) iter.next();
-            if (needComma) {
-                retval.append(", ");
-            }
-            needComma = true;
+            QuerySelectable node = (QuerySelectable) iter.next();
+            String alias = (String) q.getAliases().get(node);
             if (node instanceof QueryClass) {
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
                 queryClassToString(retval, (QueryClass) node, q, schema, kind, state);
             } else if (node instanceof QueryEvaluable) {
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
-                String alias = (String) q.getAliases().get(node);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase())
                             ? DatabaseUtil.generateSqlCompatibleName(alias)
@@ -1435,6 +1447,30 @@ public class SqlGenerator
                 } else if (kind == QUERY_SUBQUERY_FROM) {
                     retval.append(" AS " + DatabaseUtil.generateSqlCompatibleName(alias));
                 }
+            } else if ((node instanceof QueryFieldPathExpression)
+                    && ("id".equals(((QueryFieldPathExpression) node).getFieldName()))) {
+                QueryFieldPathExpression pe = (QueryFieldPathExpression) node;
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
+                // This is effectively a foreign key. Because we don't add this SELECT item to the
+                // artificial ORDER BY list, we must assert that the QueryClass or its ID already
+                // exists on the SELECT list - a weaker assertion than that we make for all
+                // other QueryFieldPathExpressions anyway.
+                if (!q.getSelect().contains(pe.getQueryClass())) {
+                    throw new ObjectStoreException("Foreign key specified by"
+                            + " QueryFieldPathExpression on SELECT list, but parent QueryClass not"
+                            + " present on SELECT list");
+                }
+                retval.append((String) state.getFieldToAlias(pe.getQueryClass())
+                        .get(pe.getReferenceName()))
+                    .append(" AS ")
+                    .append(DatabaseUtil.generateSqlCompatibleName(alias));
+            } else if (node instanceof QueryPathExpression) {
+                // Do nothing
+            } else {
+                throw new ObjectStoreException("Unknown object in SELECT list: " + node.getClass());
             }
         }
         iter = state.getOrderBy().iterator();
@@ -1492,8 +1528,8 @@ public class SqlGenerator
         boolean needComma = false;
         Iterator orderByIter = q.getEffectiveOrderBy().iterator();
         while (orderByIter.hasNext()) {
-            QueryOrderable node = (QueryOrderable) orderByIter.next();
-            if (!(node instanceof QueryValue)) {
+            Object node = orderByIter.next();
+            if (!((node instanceof QueryValue) || (node instanceof QueryPathExpression))) {
                 retval.append(needComma ? ", " : " ORDER BY ");
                 needComma = true;
                 if (node instanceof QueryClass) {
@@ -1501,10 +1537,6 @@ public class SqlGenerator
                 } else if (node instanceof QueryObjectReference) {
                     QueryObjectReference ref = (QueryObjectReference) node;
                     StringBuffer buffer = new StringBuffer();
-                    Map fieldNameToFieldDescriptor = schema.getModel().getFieldDescriptorsForClass(
-                            ref.getQueryClass().getType());
-                    ReferenceDescriptor refDesc = (ReferenceDescriptor) fieldNameToFieldDescriptor
-                        .get(ref.getFieldName());
                     buffer.append((String) state.getFieldToAlias(ref.getQueryClass())
                             .get(ref.getFieldName()));
                     retval.append(buffer.toString());

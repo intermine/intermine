@@ -77,7 +77,7 @@ public class IqlQuery
         StringBuffer retval = new StringBuffer(q.isDistinct() ? "SELECT DISTINCT " : "SELECT ");
         Iterator selectIter = q.getSelect().iterator();
         while (selectIter.hasNext()) {
-            QueryNode qn = (QueryNode) selectIter.next();
+            QuerySelectable qn = (QuerySelectable) selectIter.next();
             if (needComma) {
                 retval.append(", ");
             }
@@ -135,13 +135,13 @@ public class IqlQuery
     }
 
     /**
-     * Converts a QueryOrderable into a String.
+     * Converts an Object into a String.
      *
      * @param q a Query, to provide aliases
-     * @param qn a QueryOrderable to convert
+     * @param qn an Object to convert
      * @return a String
      */
-    public static String nodeToString(Query q, QueryOrderable qn) {
+    public static String nodeToString(Query q, Object qn) {
         if (qn instanceof QueryClass) {
             String nodeAlias = (String) q.getAliases().get(qn);
             return escapeReservedWord(nodeAlias);
@@ -225,14 +225,30 @@ public class IqlQuery
             }
         } else if (qn instanceof QueryCast) {
             QueryCast qc = (QueryCast) qn;
-            String type = qn.getType().getName();
+            String type = qc.getType().getName();
             return "(" + nodeToString(q, qc.getValue()) + ")::"
                 + type.substring(type.lastIndexOf('.') + 1);
         } else if (qn instanceof QueryObjectReference) {
             QueryObjectReference ref = (QueryObjectReference) qn;
             return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
+        } else if (qn instanceof QueryObjectPathExpression) {
+            QueryObjectPathExpression ref = (QueryObjectPathExpression) qn;
+            return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
+        } else if (qn instanceof QueryFieldPathExpression) {
+            QueryFieldPathExpression ref = (QueryFieldPathExpression) qn;
+            String objRepresentation = "null";
+            if (ref.getDefaultValue() instanceof String) {
+                objRepresentation = "'" + ref.getDefaultValue() + "'";
+            } else if (ref.getDefaultValue() instanceof Date) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                objRepresentation = "'" + format.format((Date) ref.getDefaultValue()) + "'";
+            } else if (ref.getDefaultValue() != null) {
+                objRepresentation = ref.getDefaultValue().toString();
+            }
+            return q.getAliases().get(ref.getQueryClass()) + "." + ref.getReferenceName() + "."
+                + ref.getFieldName() + "(DEF " + objRepresentation + ")";
         } else {
-            throw new IllegalArgumentException("Invalid QueryNode: " + qn.toString());
+            throw new IllegalArgumentException("Invalid Object for nodeToString: " + qn.toString());
         }
     }
 

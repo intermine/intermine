@@ -313,6 +313,14 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("NotSubqueryExistsConstraint", Collections.singleton("Company"));
         results.put("SubqueryExistsConstraintNeg", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM Bank AS a1_)");
         results2.put("SubqueryExistsConstraintNeg", Collections.singleton("Bank"));
+        results.put("ObjectPathExpression", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "Department"})));
+        results.put("FieldPathExpression", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CEO"})));
+        results.put("ForeignKey", "SELECT a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("ForeignKey", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
+        results.put("ForeignKey2", "SELECT a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("ForeignKey2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

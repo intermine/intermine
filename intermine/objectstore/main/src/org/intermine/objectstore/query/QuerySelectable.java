@@ -11,12 +11,16 @@ package org.intermine.objectstore.query;
  */
 
 /**
- * An element that can appear in the SELECT, ORDER BY or GROUP BY clause of a query.
+ * An element that can appear in the SELECT clause of a query.
  *
- * @author Mark Woodbridge
- * @author Richard Smith
  * @author Matthew Wakeling
  */
-public interface QueryNode extends QueryOrderable, QuerySelectable
+public interface QuerySelectable
 {
+    /**
+     * Get Java type represented by this item.
+     *
+     * @return class describing the type
+     */
+    public Class getType();
 }

@@ -445,6 +445,23 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("SubqueryExistsConstraint", Collections.singletonList(Collections.singletonList("hello")));
         results.put("NotSubqueryExistsConstraint", Collections.EMPTY_LIST);
         results.put("SubqueryExistsConstraintNeg", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("EmployeeA1"), data.get("DepartmentA1") },
+                             { data.get("EmployeeA2"), data.get("DepartmentA1") },
+                             { data.get("EmployeeA3"), data.get("DepartmentA2") },
+                             { data.get("EmployeeB1"), data.get("DepartmentB1") },
+                             { data.get("EmployeeB2"), data.get("DepartmentB1") },
+                             { data.get("EmployeeB3"), data.get("DepartmentB1") } };
+        results.put("ObjectPathExpression", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), "3fred"},
+                             { data.get("CompanyB"), "EmployeeB1"} };
+        results.put("FieldPathExpression", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), null},
+                             { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
+        results.put("ForeignKey", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), new Integer(3)},
+                             { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
+        results.put("ForeignKey2", toList(r));
     }
 
     /**
