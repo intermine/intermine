@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.history;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,27 +10,33 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.web.Constants;
+import org.intermine.web.PathQuery;
+import org.intermine.web.Profile;
+
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Iterator;
 
 /**
  * Form bean to used in combining bags
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class ModifyBagForm extends ActionForm
 {
     protected String[] selectedBags;
+    protected String newBagName;
 
     /**
      * Constructor
@@ -44,6 +50,7 @@ public class ModifyBagForm extends ActionForm
      */
    public void initialise() {
         selectedBags = new String[0];
+        newBagName = "";
     }
 
     /**
@@ -63,6 +70,22 @@ public class ModifyBagForm extends ActionForm
     public String[] getSelectedBags() {
         return selectedBags;
     }
+    
+    /**
+     * Set the new bag name.
+     * @param name the new bag name
+     */
+    public void setNewBagName(String name) {
+        newBagName = name;
+    }
+    
+    /**
+     * Get the new bag name.
+     * @return the new bag name
+     */
+    public String getNewBagName() {
+        return newBagName;
+    }
 
     /**
      * @see ActionForm#validate
@@ -73,7 +96,7 @@ public class ModifyBagForm extends ActionForm
 
         ActionErrors errors = new ActionErrors();
 
-        if (selectedBags.length == 0) {
+        if (request.getParameter("rename") == null && selectedBags.length == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
         } else if (request.getParameter("delete") != null) {
             for (int i = 0; i < getSelectedBags().length; i++) {

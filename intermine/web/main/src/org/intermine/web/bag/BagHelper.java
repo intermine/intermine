@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class BagHelper
 {
-    private static final String BAG_NAME_PREFIX = "bag_";
+    public static final String BAG_NAME_PREFIX = "bag";
 
     /**
      * Return a bag name that isn't currently in use.
@@ -27,9 +27,12 @@ public class BagHelper
      * @param savedBags the Map of current saved bags
      * @return the new bag name
      */
-    public static String findNewBagName(Map savedBags) {
+    public static String findNewBagName(Map savedBags, String nameWanted) {
+        if (!savedBags.containsKey(nameWanted)) {
+            return nameWanted;
+        }
         for (int i = 1;; i++) {
-            String testName = BAG_NAME_PREFIX + i;
+            String testName = nameWanted + "_" + i;
             if (savedBags == null || savedBags.get(testName) == null) {
                 return testName;
             }

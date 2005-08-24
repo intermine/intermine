@@ -11,6 +11,8 @@
       </bag>
     </bags>
     <queries>
+      <!-- this is intentionally not a save-query element in order to test the backwards
+           compatibility of the unmarshalling of saved queries -->
       <query name="query1" model="testmodel" view="">
       </query>
     </queries>

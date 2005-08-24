@@ -20,10 +20,10 @@
                type="org.intermine.web.TemplateForm"/>
 
     <form-bean name="modifyQueryForm"
-               type="org.intermine.web.ModifyQueryForm"/>
+               type="org.intermine.web.history.ModifyQueryForm"/>
 
     <form-bean name="modifyBagForm"
-               type="org.intermine.web.ModifyBagForm"/>
+               type="org.intermine.web.history.ModifyBagForm"/>
 
     <form-bean name="mainForm"
                type="org.intermine.web.MainForm"/>
@@ -166,9 +166,11 @@
     <!-- Actions invoked using links -->
     
     <action path="/modifyQueryChange"
-            type="org.intermine.web.ModifyQueryChangeAction"
+            type="org.intermine.web.history.ModifyQueryChangeAction"
             parameter="method">
       <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
     </action>
     
     <action path="/loadQuery"
@@ -365,7 +367,7 @@
     </action>
 
     <action path="/modifyQuery"
-            type="org.intermine.web.ModifyQueryAction"
+            type="org.intermine.web.history.ModifyQueryAction"
             name="modifyQueryForm"
             parameter="action"
             input="history">
@@ -373,7 +375,7 @@
     </action>
     
     <action path="/modifyBag"
-            type="org.intermine.web.ModifyBagAction"
+            type="org.intermine.web.history.ModifyBagAction"
             name="modifyBagForm"
             parameter="action"
             input="history">

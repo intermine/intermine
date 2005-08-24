@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import junit.framework.TestCase;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -25,6 +26,8 @@ import org.intermine.web.bag.InterMinePrimitiveBag;
 public class ProfileTest extends TestCase
 {
     PathQuery query;
+    SavedQuery sq;
+    Date date = new Date();
     InterMineBag bag;
     TemplateQuery template;
     
@@ -35,6 +38,7 @@ public class ProfileTest extends TestCase
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         bag = new InterMinePrimitiveBag();
+        sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "tdesc", "tcat",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");
@@ -60,11 +64,11 @@ public class ProfileTest extends TestCase
     public void testSaveNoManager() throws Exception {
         Profile profile = new Profile(null, "bob", "pass",
                                       new HashMap(), new HashMap(), new HashMap());
-        profile.saveQuery("query1", query);
+        profile.saveQuery("query1", sq);
         profile.saveBag("bag1", bag);
         profile.saveTemplate("template", template);
         assertEquals(1, profile.getSavedQueries().size());
-        assertEquals(profile.getSavedQueries().get("query1"), query);
+        assertEquals(profile.getSavedQueries().get("query1"), sq);
         assertEquals(1, profile.getSavedBags().size());
         assertEquals(profile.getSavedBags().get("bag1"), bag);
         assertEquals(1, profile.getSavedTemplates().size());
@@ -95,7 +99,7 @@ public class ProfileTest extends TestCase
                                       new HashMap(), new HashMap(), new HashMap());
 
         try {
-            profile.saveQuery("query1", query);
+            profile.saveQuery("query1", sq);
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
@@ -113,7 +117,7 @@ public class ProfileTest extends TestCase
         }
 
         assertEquals(1, profile.getSavedQueries().size());
-        assertEquals(profile.getSavedQueries().get("query1"), query);
+        assertEquals(profile.getSavedQueries().get("query1"), sq);
         assertEquals(1, profile.getSavedBags().size());
         assertEquals(profile.getSavedBags().get("bag1"), bag);
         assertEquals(1, profile.getSavedTemplates().size());

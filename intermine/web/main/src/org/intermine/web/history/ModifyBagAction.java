@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.history;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,27 +10,31 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.WebUtil;
+import org.intermine.web.bag.BagHelper;
+import org.intermine.web.bag.InterMineBag;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.bag.BagHelper;
-import org.intermine.web.bag.InterMineBag;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
  * @author Mark Woodbridge
  */
-public class ModifyBagAction extends InterMineAction
+public class ModifyBagAction extends ModifyHistoryAction
 {
     /**
      * Forward to the correct method based on the button pressed
@@ -47,6 +51,10 @@ public class ModifyBagAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        ActionForward af = super.execute(mapping, form, request, response);
+        if (af != null) {
+            return af;
+        }
         if (request.getParameter("union") != null) {
             union(mapping, form, request, response);
         } else if (request.getParameter("intersect") != null) {
@@ -54,7 +62,7 @@ public class ModifyBagAction extends InterMineAction
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request, response);
         }
-
+        
         return mapping.findForward("history");
     }
 
@@ -106,7 +114,7 @@ public class ModifyBagAction extends InterMineAction
             return mapping.findForward("history");
         }
 
-        profile.saveBag(BagHelper.findNewBagName(savedBags), combined);
+        profile.saveBag(BagHelper.findNewBagName(savedBags, mbf.getNewBagName()), combined);
 
         return mapping.findForward("history");
     }
@@ -164,7 +172,7 @@ public class ModifyBagAction extends InterMineAction
         for (int i = 1; i < selectedBags.length; i++) {
             combined.retainAll((Collection) savedBags.get(selectedBags[i]));
         }
-        profile.saveBag(BagHelper.findNewBagName(savedBags), combined);
+        profile.saveBag(BagHelper.findNewBagName(savedBags, mbf.getNewBagName()), combined);
 
         return mapping.findForward("history");
     }

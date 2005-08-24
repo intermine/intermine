@@ -97,7 +97,7 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new PathQueryHandler(savedQueries);
+            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries);
         }
         if (subHandler != null) {
             subHandler.startElement(uri, localName, qName, attrs);

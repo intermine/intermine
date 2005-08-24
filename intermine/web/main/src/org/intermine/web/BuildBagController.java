@@ -47,7 +47,7 @@ public class BuildBagController extends TilesAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        String bagName = BagHelper.findNewBagName(profile.getSavedBags());
+        String bagName = BagHelper.findNewBagName(profile.getSavedBags(), BagHelper.BAG_NAME_PREFIX);
         ((BuildBagForm) form).setBagName(bagName);
 
         return null;

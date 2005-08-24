@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -80,6 +81,8 @@ public class ProfileManagerBindingTest extends XMLTestCase
         osw.commitTransaction();
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
+        Date date = null;
+        SavedQuery sq = new SavedQuery("query1", date, query);
         InterMineBag bag = new InterMinePrimitiveBag();
         bag.add("foo1");
         bag.add("foo2");
@@ -95,12 +98,13 @@ public class ProfileManagerBindingTest extends XMLTestCase
 
         bobProfile = new Profile(null, "bob", "pass",
                                  new HashMap(), new HashMap(), new HashMap());
-        bobProfile.saveQuery("query1", query);
+        bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
         bobProfile.saveTemplate("template", template);
 
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         bag = new InterMinePrimitiveBag();
+        sq = new SavedQuery("query1", date, query);
         InterMineBag otherBag = new InterMinePrimitiveBag();
 
         bag.add("some value");
@@ -125,7 +129,7 @@ public class ProfileManagerBindingTest extends XMLTestCase
 
         sallyProfile = new Profile(null, "sally", "sally_pass",
                                    new HashMap(), new HashMap(), new HashMap());
-        sallyProfile.saveQuery("query1", query);
+        sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", bag);
         sallyProfile.saveBag("sally_bag2", otherBag);
         sallyProfile.saveBag("sally_bag3", objectBag);

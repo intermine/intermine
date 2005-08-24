@@ -10,25 +10,25 @@ package org.intermine.web.bag;
  *
  */
 
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.SAXParser;
-import org.intermine.util.TypeUtil;
-
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
+
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.SAXParser;
+import org.intermine.util.TypeUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * Parse InterMineBags in XML format

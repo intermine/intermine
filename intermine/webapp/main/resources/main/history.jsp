@@ -9,14 +9,19 @@
 </div>
 <br/>
 <c:choose>
-  <c:when test="${empty PROFILE.savedBags && empty PROFILE.savedQueries}">
+  <c:when test="${empty PROFILE.savedBags && empty PROFILE.savedQueries && empty PROFILE.history}">
     <div class="body altmessage">
       <fmt:message key="history.nohistory"/>
     </div>
   </c:when>
   <c:otherwise>
     <tiles:get name="historyBagView"/>
-    <tiles:get name="historyQueryView"/>
+    <tiles:insert name="historyQueryView">
+      <tiles:put name="type" value="saved"/>
+    </tiles:insert>
+    <tiles:insert name="historyQueryView">
+      <tiles:put name="type" value="history"/>
+    </tiles:insert>
   </c:otherwise>
 </c:choose>
 <!-- /history.jsp -->

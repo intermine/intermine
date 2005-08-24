@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import org.intermine.util.XmlUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForm;
@@ -48,7 +49,27 @@ public class ExportQueryAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String type = request.getParameter("type");
+        String name = request.getParameter("name");
+        PathQuery query = null;
+        
+        if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
+            query = (PathQuery) session.getAttribute(Constants.QUERY);
+        } else if ("history".equals(type)) {
+            query = (PathQuery) ((SavedQuery) profile.getHistory().get(name)).getPathQuery();
+        } else if ("saved".equals(type)) {
+            query = (PathQuery) ((SavedQuery) profile.getSavedQueries().get(name)).getPathQuery();
+        } else {
+            LOG.error("Bad type parameter: " + type);
+            return null;
+        }
+        
+        if (query == null) {
+            LOG.error("Failed to find query " + name + " of type " + type);
+            return null;
+        }
+        
         response.setContentType("text/plain; charset=us-ascii");
         String xml = PathQueryBinding.marshal(query, "", query.getModel().getName());
         xml = XmlUtil.indentXmlSimple(xml);

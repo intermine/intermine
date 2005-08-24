@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.history;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -64,7 +64,7 @@ public class ModifyQueryForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = null;
 
-        if (selectedQueries.length == 0) {
+        if (request.getParameter("rename") == null && selectedQueries.length == 0) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyQuery.none"));
         }
