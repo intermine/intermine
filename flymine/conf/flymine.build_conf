@@ -38,6 +38,14 @@ dump: load-stage-4
 
 run: build-homophila-production
 
+dump: homophila
+
+run: build-interpro-production
+
+dump: interpro
+
+run: build-mage-production
+
 dump: load-stage-5-load-complete
 
 run: read-flybase-chromosome-fasta calculate-locations
