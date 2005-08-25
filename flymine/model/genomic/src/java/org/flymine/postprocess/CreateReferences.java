@@ -149,13 +149,16 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
         LOG.info("insertReferences stage 13");
-        // Gene.GOTerms
-        //insertReferences(Gene.class, GOTerm.class, "GOTerms");
+        // Gene.goAnnotations
         createGOAnnotationCollection();
 
         LOG.info("insertReferences stage 14");
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
+
+        LOG.info("insertReferences stage 15");
+        // Gene.microArrayResults
+        createMicroArrayResultsCollection();
 
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
@@ -700,6 +703,96 @@ public class CreateReferences
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
             ClassDescriptor cld = model.getClassDescriptorByName(GOAnnotation.class.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
+    /**
+     * Creates a collection of MicroArrayResult objects on Genes.
+     * @throws Exception if anything goes wrong
+     */
+    protected void createMicroArrayResultsCollection() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        q.addToOrderBy(qcGene);
+
+        QueryClass qcCDNAClone = new QueryClass(CDNAClone.class);
+        q.addFrom(qcCDNAClone);
+        q.addToSelect(qcCDNAClone);
+        q.addToOrderBy(qcCDNAClone);
+
+        QueryCollectionReference geneClones =
+            new QueryCollectionReference(qcGene, "clones");
+        ContainsConstraint ccGeneClones =
+            new ContainsConstraint(geneClones, ConstraintOp.CONTAINS, qcCDNAClone);
+        cs.addConstraint(ccGeneClones);
+
+        QueryClass qcResult = new QueryClass(MicroArrayResult.class);
+        q.addFrom(qcResult);
+        q.addToSelect(qcResult);
+        q.addToOrderBy(qcResult);
+
+        QueryCollectionReference cloneResults =
+            new QueryCollectionReference(qcCDNAClone, "results");
+        ContainsConstraint ccCloneResults =
+            new ContainsConstraint(cloneResults, ConstraintOp.CONTAINS, qcResult);
+        cs.addConstraint(ccCloneResults);
+
+        q.setConstraint(cs);
+        ObjectStore os = osw.getObjectStore();
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+
+        int count = 0;
+        Gene lastGene = null;
+        Set newCollection = new HashSet();
+
+        osw.beginTransaction();
+
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Gene thisGene = (Gene) rr.get(0);
+            MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
+
+            if (lastGene == null || !thisGene.getId().equals(lastGene.getId())) {
+                if (lastGene != null) {
+                    // clone so we don't change the ObjectStore cache
+                    Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+                    TypeUtil.setFieldValue(tempGene, "microArrayResults", newCollection);
+                    osw.store(tempGene);
+                    count++;
+                }
+                newCollection = new HashSet();
+            }
+
+            newCollection.add(maResult);
+
+            lastGene = thisGene;
+        }
+
+        if (lastGene != null) {
+            // clone so we don't change the ObjectStore cache
+            Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+            TypeUtil.setFieldValue(tempGene, "microArrayResults", newCollection);
+            osw.store(tempGene);
+            count++;
+        }
+        LOG.info("Created " + count + " Gene.microArrayResults collections");
+        osw.commitTransaction();
+
+
+        // now ANALYSE tables relating to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(Gene.class.getName());
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
