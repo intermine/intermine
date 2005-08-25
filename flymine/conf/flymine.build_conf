@@ -71,6 +71,7 @@ dump: postprocess-3-overlap
 run: create-symmetrical-relation-references
 run: transfer-sequences read-flybase-cds-fasta
 run: create-flybase-to-uniprot-refs update-publications
+run: grant-db-production
 
 dump: postprocess-4
 
