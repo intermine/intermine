@@ -6,10 +6,10 @@
 <!-- templates.jsp -->
 <c:choose>
   <c:when test="${empty param.category}">
-    <c:forEach items="${CATEGORIES}" var="category">
-      <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-        <div class="heading">${category}</div>
-        <div class="body"><im:templateList type="global" category="${category}"/></div>
+    <c:forEach items="${CATEGORY_TEMPLATES}" var="category">
+      <c:if test="${!empty CATEGORY_TEMPLATES[category.key]}">
+        <div class="heading">${category.key}</div>
+        <div class="body"><im:templateList type="global" category="${category.key}"/></div>
         <im:vspacer height="5"/>
       </c:if>
     </c:forEach>

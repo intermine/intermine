@@ -45,11 +45,14 @@ public class CollapseAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        String forward = request.getParameter("forward");
+        String forward = request.getParameter("forward");        
         String id = request.getParameter("id");
         Map collapsed = SessionMethods.getCollapsedMap(session);
         Boolean b = (Boolean.TRUE == collapsed.get(id) ? Boolean.FALSE : Boolean.TRUE);
         collapsed.put(id, b);
+        if (forward.endsWith("?")) {
+            forward = forward.substring(0, forward.length() - 1);
+        }
         return new ActionForward(forward, true);
     }
 }

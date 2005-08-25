@@ -23,6 +23,9 @@
     <c:otherwise>
 
       <html:form action="/modifyBag">
+        <p>
+          <fmt:message key="history.savedbags.help"/>
+        </p>
         <table class="results history" cellspacing="0">
           <tr>
             <th>

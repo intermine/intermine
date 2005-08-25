@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- history.jsp -->
 <div class="body">
@@ -16,12 +17,17 @@
   </c:when>
   <c:otherwise>
     <tiles:get name="historyBagView"/>
-    <tiles:insert name="historyQueryView">
-      <tiles:put name="type" value="saved"/>
-    </tiles:insert>
+    <c:if test="${!empty PROFILE.username}">
+      <tiles:insert name="historyQueryView">
+        <tiles:put name="type" value="saved"/>
+      </tiles:insert>
+    </c:if>
     <tiles:insert name="historyQueryView">
       <tiles:put name="type" value="history"/>
     </tiles:insert>
   </c:otherwise>
 </c:choose>
+
+<tiles:get name="historyTemplateView.jsp"/>
+  
 <!-- /history.jsp -->

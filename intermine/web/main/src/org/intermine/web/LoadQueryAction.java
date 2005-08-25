@@ -46,7 +46,7 @@ public class LoadQueryAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward load(ActionMapping mapping,
+    public ActionForward loadExample(ActionMapping mapping,
                               ActionForm form,
                               HttpServletRequest request,
                               HttpServletResponse response)

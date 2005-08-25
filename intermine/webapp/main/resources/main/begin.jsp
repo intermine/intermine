@@ -16,6 +16,7 @@
       <td width="99%">
       	<c:choose>
       	  <c:when test="${!empty DATASETS}">
+      	    <fmt:message key="begin.dataset.intro"/><br/><im:vspacer height="5"/>
       	    <tiles:insert page="/dataSetIcons.jsp"/>
       	  </c:when>
       	  <c:otherwise>
@@ -120,6 +121,31 @@
 </c:if>
 <%-- /Browse --%>
 
+
+<%-- Search templates --%>
+<im:vspacer height="12"/>
+  <im:box titleKey="begin.heading.searchtemplates">
+  <div class="body" align="center">
+  <html:form action="/templateSearch" method="GET" styleId="templateSearch">
+    <fmt:message key="templateSearch.search.label"/>
+    <html:text property="queryString" size="40" styleId="queryString"/>
+    <html:select property="type">
+      <html:option key="templateSearch.form.global" value="global"/>
+      <html:option key="templateSearch.form.user" value="user"/>
+      <html:option key="templateSearch.form.all" value="ALL"/>
+    </html:select>
+    <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
+    <br/>
+    <div class="smallnote">
+       <fmt:message key="begin.searchtemplates.help.message"/>
+    </div>
+  </html:form>
+  </div>
+</im:box>
+<%-- /Search templates --%>
+
+
+<%--
 <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.html"/>
 
 <c:if test="${!IS_SUPERUSER}">
@@ -154,17 +180,6 @@
     </c:if>
   </im:box>
 </c:if>
-  
-<c:if test="${IS_SUPERUSER}">
-  <span class="smallnote">
-    <c:if test="${!empty PROFILE.savedTemplates}">
-      <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
-        <fmt:message key="begin.exportTemplates"/>
-      </html:link><br/>
-    </c:if>
-    <html:link action="/import" titleKey="begin.importTemplatesDesc">
-      <fmt:message key="begin.importTemplates"/>
-    </html:link>
-  </span>
-</c:if>
+ --%>
+
 <!-- /begin.jsp -->

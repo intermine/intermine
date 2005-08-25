@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
@@ -43,6 +44,7 @@ import org.intermine.util.TypeUtil;
 public class TemplateRepository
 {
     private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
+    private static final String MISC = "Miscellaneous";
     
     private ServletContext servletContext;
     
@@ -130,34 +132,62 @@ public class TemplateRepository
         servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_QUERIES, templateMap);
         
         // Sort into categories
-        Map categoryTemplates = new HashMap();
+        Map categoryTemplates = new ListOrderedMap();
         // a Map from class name to a Map from category to template
         Map classCategoryTemplates = new HashMap();
         // a Map from class name to a Map from template name to field name List - the field
         // names/expressions are the ones that should be set when a template is linked to from the
         // object details page eg. Gene.identifier
         Map classTemplateExprs = new HashMap();
+        Set leftover = new HashSet(templateMap.values());
         Iterator iter = templateMap.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             TemplateQuery template = (TemplateQuery) entry.getValue();
-            List list = (List) categoryTemplates.get(template.getCategory());
-            if (list == null) {
-                list = new ArrayList();
-                categoryTemplates.put(template.getCategory(), list);
+            //
+            Set aspects = aspectsForTemplate(template, servletContext);
+            for (Iterator citer = aspects.iterator(); citer.hasNext(); ) {
+                String cat = (String) citer.next();
+                List list = (List) categoryTemplates.get(cat);
+                if (list == null) {
+                    list = new ArrayList();
+                    categoryTemplates.put(cat, list);
+                }
+                list.add(template);
+                leftover.remove(template);
             }
-            list.add(template);
-
+            
             Object osObject = servletContext.getAttribute(Constants.OBJECTSTORE);
             ObjectStore os = (ObjectStore) osObject;
             
-            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateExprs);
+            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateExprs, servletContext);
         }
+        
+        categoryTemplates.put(MISC, new ArrayList(leftover));
+        
         servletContext.setAttribute(Constants.CATEGORY_TEMPLATES, categoryTemplates);
         servletContext.setAttribute(Constants.CLASS_CATEGORY_TEMPLATES, classCategoryTemplates);
         servletContext.setAttribute(Constants.CLASS_TEMPLATE_EXPRS, classTemplateExprs);
         
         reindexGlobalTemplates(servletContext);
+    }
+    
+    /**
+     * Get the set of aspect names that this template relates too (by looking at template keywords).
+     * @param template the template query 
+     * @param servletContext the servlet context
+     * @return Set of aspect names
+     */
+    private static Set aspectsForTemplate(TemplateQuery template, ServletContext servletContext) {
+        Set aspects = new HashSet();
+        Set aspectNames = (Set) servletContext.getAttribute(Constants.CATEGORIES);
+        for (Iterator iter = aspectNames.iterator(); iter.hasNext(); ) {
+            String aspect = (String) iter.next();
+            if (template.getKeywords().indexOf(aspect) >= 0) {
+                aspects.add(aspect);
+            }
+        }
+        return aspects;
     }
     
     /**
@@ -171,7 +201,8 @@ public class TemplateRepository
      */
     private static void setClassesForTemplate(ObjectStore os, TemplateQuery template,
                                               Map classCategoryTemplates,
-                                              Map classTemplateExprs) {
+                                              Map classTemplateExprs,
+                                              ServletContext servletContext) {
         List constraints = template.getAllConstraints();
         Model model = os.getModel();
         Iterator constraintIter = constraints.iterator();
@@ -208,11 +239,22 @@ public class TemplateRepository
                     
                         Map categoryTemplatesMap = (Map) classCategoryTemplates.get(thisClassName);
                     
-                        if (!categoryTemplatesMap.containsKey(template.getCategory())) {
+                        Set aspects = aspectsForTemplate(template, servletContext);
+                        for (Iterator citer = aspects.iterator(); citer.hasNext(); ) {
+                            String cat = (String) citer.next();
+                            List list = (List) categoryTemplatesMap.get(cat);
+                            if (list == null) {
+                                list = new ArrayList();
+                                categoryTemplatesMap.put(cat, list);
+                            }
+                            list.add(template);
+                        }
+                        
+                        /*if (!categoryTemplatesMap.containsKey(template.getCategory())) {
                             categoryTemplatesMap.put(template.getCategory(), new ArrayList());
                         }
                     
-                        ((List) categoryTemplatesMap.get(template.getCategory())).add(template);
+                        ((List) categoryTemplatesMap.get(template.getCategory())).add(template);*/
                     
                         if (!classTemplateExprs.containsKey(thisClassName)) {
                             classTemplateExprs.put(thisClassName, new HashMap());
@@ -271,8 +313,7 @@ public class TemplateRepository
             
             Document doc = new Document();
             doc.add(Field.Text("name", template.getName()));
-            doc.add(Field.UnStored("content", template.getDescription() + " "
-                    + template.getCategory() + " " + template.getKeywords()));
+            doc.add(Field.UnStored("content", template.getDescription() + " " + template.getKeywords()));
             doc.add(Field.UnIndexed("type", type));
             
             try {
