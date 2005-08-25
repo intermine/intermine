@@ -48,10 +48,14 @@ run: build-mage-production
 
 dump: load-stage-5-load-complete
 
+run: build-cdnaclone-bdgp-production
+
+dump: load-stage-6-load-complete
+
 run: read-flybase-chromosome-fasta calculate-locations
 run: create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
-run: homophila-post-process
+#run: homophila-post-process
 run: create-indexes-production-attribute
 
 dump: postprocess-1
