@@ -119,7 +119,7 @@
                 <c:if test="${type == 'history'}">
                   <c:if test="${!empty PROFILE.username}">
                     <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
-                               historyKey="history.action.save.hover">
+                               titleKey="history.action.save.hover">
                       <fmt:message key="history.action.save"/>
                     </html:link>
                     |
