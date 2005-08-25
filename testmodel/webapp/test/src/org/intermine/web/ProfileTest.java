@@ -39,7 +39,7 @@ public class ProfileTest extends TestCase
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         bag = new InterMinePrimitiveBag();
         sq = new SavedQuery("query1", date, query);
-        template = new TemplateQuery("template", "tdesc", "tcat",
+        template = new TemplateQuery("template", "tdesc",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");
     }

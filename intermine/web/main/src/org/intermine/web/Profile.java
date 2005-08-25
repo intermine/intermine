@@ -38,7 +38,7 @@ public class Profile
     protected Map savedQueries = new TreeMap();
     protected Map savedBags = new TreeMap();
     protected Map savedTemplates = new TreeMap();
-    protected Map categoryTemplates;
+    //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     protected Directory templateIndex;
     
@@ -250,7 +250,7 @@ public class Profile
      * within that category.
      */
     private void buildTemplateCategories() {
-        categoryTemplates = new LinkedHashMap();
+        /*categoryTemplates = new LinkedHashMap();
         Iterator iter = savedTemplates.values().iterator();
         while (iter.hasNext()) {
             TemplateQuery template = (TemplateQuery) iter.next();
@@ -260,7 +260,7 @@ public class Profile
                 categoryTemplates.put(template.getCategory(), list);
             }
             list.add(template);
-        }
+        }*/
         
         // We also take this opportunity to index the user's template queries
         templateIndex = TemplateRepository.indexTemplates(savedTemplates, "user");
@@ -271,7 +271,7 @@ public class Profile
      * @return Map from category name to List of templates
      */
     public Map getCategoryTemplates() {
-        return categoryTemplates;
+        return new java.util.HashMap();//categoryTemplates;
     }
     
     /**

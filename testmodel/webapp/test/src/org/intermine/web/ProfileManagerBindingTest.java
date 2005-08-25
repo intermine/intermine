@@ -92,7 +92,7 @@ public class ProfileManagerBindingTest extends XMLTestCase
         bag.add(new Float(1.1));
 
         TemplateQuery template =
-            new TemplateQuery("template", "tdesc", "tcat",
+            new TemplateQuery("template", "tdesc",
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               false, "");
 
@@ -122,7 +122,7 @@ public class ProfileManagerBindingTest extends XMLTestCase
         // primary key of the Department includes the company reference
         objectBag.add(6);
 
-        template = new TemplateQuery("template", "some desc", "some category",
+        template = new TemplateQuery("template", "some desc",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,
                                      "some_keyword");
 

@@ -25,6 +25,9 @@
     <form-bean name="modifyBagForm"
                type="org.intermine.web.history.ModifyBagForm"/>
 
+    <form-bean name="modifyTemplateForm"
+               type="org.intermine.web.history.ModifyTemplateForm"/>
+
     <form-bean name="mainForm"
                type="org.intermine.web.MainForm"/>
 
@@ -382,6 +385,14 @@
       <forward name="history" path="/history.do" redirect="true"/>
     </action>
 
+    <action path="/modifyTemplate"
+            type="org.intermine.web.history.ModifyTemplateAction"
+            name="modifyTemplateForm"
+            parameter="action"
+            input="history">
+      <forward name="history" path="/history.do" redirect="true"/>
+    </action>
+
     <action path="/saveBag"
             type="org.intermine.web.results.SaveBagAction"
             name="saveBagForm"
@@ -409,7 +420,7 @@
             name="buildTemplateForm"
             input="templateBuilder">
       <forward name="templateBuilder" path="templateBuilder.page"/>
-      <forward name="finish" path="/begin.do" redirect="true"/>
+      <forward name="finish" path="/history.do" redirect="true"/>
     </action>
 
     <action path="/templateSearch"

@@ -91,7 +91,7 @@ public class InitialiserPlugin implements PlugIn
         loadWebConfig(servletContext, os);
         loadDataSetsConfig(servletContext, os);
 
-        loadClassCategories(servletContext, os);
+        //loadClassCategories(servletContext, os);
         loadClassDescriptions(servletContext, os);
         
         summarizeObjectStore(servletContext, os);
@@ -293,7 +293,7 @@ public class InitialiserPlugin implements PlugIn
      *
      * @param servletContext  the servlet context
      * @param os              the main object store
-     */
+     *
     private void loadClassCategories(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         List categories = new ArrayList();
@@ -335,8 +335,8 @@ public class InitialiserPlugin implements PlugIn
         }
         
         //servletContext.setAttribute(Constants.CATEGORIES, categories);
-        servletContext.setAttribute(Constants.CATEGORY_CLASSES, subcategories);
-    }
+        //servletContext.setAttribute(Constants.CATEGORY_CLASSES, subcategories);
+    }*/
 
     /**
      * Create the profile manager and place it into to the servlet context.

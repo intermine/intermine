@@ -13,14 +13,16 @@
 <c:choose>
   <c:when test="${type == 'saved'}">
     <c:set var="queryMap" value="${PROFILE.savedQueries}"/>
+    <c:set var="messageKey" value="history.savedQueries.help"/>
   </c:when>
   <c:otherwise>
     <c:set var="queryMap" value="${PROFILE.history}"/>
+    <c:set var="messageKey" value="history.history.help"/>
   </c:otherwise>
 </c:choose>
 
   <im:heading id="${type}">
-    <fmt:message key="${type == 'saved' ? 'query.savedqueries.header' : 'query.history.header'}"/>
+    <fmt:message key="${type == 'saved' ? 'history.savedqueries.header' : 'history.history.header'}"/>
   </im:heading>
   <im:body id="${type}">
   
@@ -32,6 +34,9 @@
         </div>
       </c:when>
       <c:otherwise>
+        <p>
+          <fmt:message key="${messageKey}"/>
+        </p>
         <html:form action="/modifyQuery">
         <table class="results history" cellspacing="0">
           <tr>
@@ -39,19 +44,19 @@
               &nbsp;
             </th>
             <th align="left" colspan="2" nowrap>
-              <fmt:message key="query.savedqueries.namecolumnheader"/>
+              <fmt:message key="history.namecolumnheader"/>
             </th>
             <th align="center" nowrap>
-              <fmt:message key="query.savedqueries.datecreatedcolumnheader"/>
+              <fmt:message key="history.datecreatedcolumnheader"/>
             </th>
             <th align="center" nowrap>
-              <fmt:message key="query.savedqueries.countcolumnheader"/>
+              <fmt:message key="history.countcolumnheader"/>
             </th>
             <th align="center" nowrap>
-              <fmt:message key="query.savedqueries.startcolumnheader"/>
+              <fmt:message key="history.startcolumnheader"/>
             </th>
             <th align="center" nowrap>
-              <fmt:message key="query.savedqueries.summarycolumnheader"/>
+              <fmt:message key="history.summarycolumnheader"/>
             </th>
             <th align="center" nowrap>
               <fmt:message key="history.actionscolumnheader"/>
@@ -64,55 +69,12 @@
                   <c:out value="${savedQuery.key}"/>
                 </html:multibox>
               </td>
-              <%--
-              <tiles:insert page="historyElementName.jsp" flush="true">
-                <tiles:put name="name" value="${savedQuery.key}"/>
-                <tiles:put name="type" value="${type}"/>
-              </tiles:insert>
-              --%>
+              
               <tiles:insert name="historyElementName.jsp">
                 <tiles:put name="name" value="${savedQuery.key}"/>
                 <tiles:put name="type" value="${type}"/>
               </tiles:insert>
               
-              <%--
-                <c:choose>
-                  <c:when test="${param.action=='rename' && param.type==type && param.name==savedQuery.key}">
-                  
-                    <td align="left" colspan="2" nowrap>
-                  
-<script type="text/javascript">
-<!--
-window.onload = function() {
-  document.getElementById("renameEntry").focus();
-}
-// -->
-</script>
-                    <input type="text" name="newName" value="${savedQuery.key}" size="10" id="renameEntry"/>
-                    <input type="hidden" name="name" value="${savedQuery.key}"/>
-                    <input type="hidden" name="type" value="${type}"/>
-                    <input type="submit" name="rename" value="Rename"/>
-                    
-                    </td>
-                    
-                  </c:when>
-                  <c:otherwise>
-                    <td align="left" class="noRightBorder">
-                    <html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}&type=${type}">
-                      <c:out value="${savedQuery.key}"/>
-                    </html:link>
-                    </td>
-                    <td align="right" valign="middle" width="1">
-                    <html:link action="/history?action=rename&amp;name=${savedQuery.key}&type=${type}">
-                      <img border="0" src="images/edit.gif" width="13" height="13" alt="x"/>
-                    </html:link>
-                    </td>
-                  </c:otherwise>
-                </c:choose>
-                
-                --%>
-                
-              </td>
               <td align="center" nowrap>
                 <c:choose>
                   <c:when test="${savedQuery.value.dateCreated != null}">
@@ -155,12 +117,16 @@ window.onload = function() {
               </td>
               <td align="center" nowrap>
                 <c:if test="${type == 'history'}">
-                  <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}">
-                    <fmt:message key="history.action.save"/>
-                  </html:link>
-                  |
+                  <c:if test="${!empty PROFILE.username}">
+                    <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
+                               historyKey="history.action.save.hover">
+                      <fmt:message key="history.action.save"/>
+                    </html:link>
+                    |
+                  </c:if>
                 </c:if>
-                <html:link action="/exportQuery?name=${savedQuery.key}&type=${type}">
+                <html:link action="/exportQuery?name=${savedQuery.key}&type=${type}"
+                           titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
               </td>

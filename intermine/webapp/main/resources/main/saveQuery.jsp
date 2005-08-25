@@ -5,12 +5,14 @@
 <!-- saveQuery.jsp -->
 <html:xhtml/>
 <c:if test="${!empty QUERY}">
-  <html:form action="/saveQuery">
-    <html:text property="queryName"/>
-    <html:submit property="action">
-      <fmt:message key="query.save"/>
-    </html:submit>
-  </html:form>
+  <c:if test="${!empty PROFILE.username}">
+    <html:form action="/saveQuery">
+      <html:text property="queryName"/>
+      <html:submit property="action">
+        <fmt:message key="query.save"/>
+      </html:submit>
+    </html:form>
+  </c:if>
   <div class="exportQueryLink">
     <html:link action="/exportQuery">
       <fmt:message key="query.export"/>

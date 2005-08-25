@@ -36,8 +36,6 @@ public class BuildTemplateForm extends ValidatorForm
     protected Map constraintLabels;
     /** Map from constraint to constraint identifier. */
     protected Map constraintIds;
-    /** Category entered. */
-    protected String category;
     /** Template description. */
     protected String templateDescription = "";
     /** Template name. */
@@ -155,24 +153,6 @@ public class BuildTemplateForm extends ValidatorForm
     }
     
     /**
-     * Get the template category.
-     *
-     * @return  template category entered
-     */
-    public String getCategory() {
-        return category;
-    }
-    
-    /**
-     * Set the template category.
-     *
-     * @param category  the category for this template
-     */
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    
-    /**
      * Whether or not this template be marked as important.
      *
      * @return whether or not this template be marked as important.
@@ -253,7 +233,6 @@ public class BuildTemplateForm extends ValidatorForm
         constraintIds = new HashMap();
         templateDescription = "";
         shortName = "";
-        category = "";
         keywords = "";
         important = false;
     }
@@ -266,7 +245,6 @@ public class BuildTemplateForm extends ValidatorForm
      */
     public void initFromTemplate(TemplateQuery template) {
         setShortName(template.getName());
-        setCategory(template.getCategory());
         setDescription(template.getDescription());
         setImportant(template.isImportant());
         setKeywords(template.getKeywords());

@@ -29,8 +29,6 @@ public class TemplateQuery
     protected String name;
     /** Template query description. */
     protected String description;
-    /** Template query category. */
-    protected String category;
     /** Entire query */
     protected PathQuery query;
     /** Nodes with templated constraints */
@@ -46,27 +44,24 @@ public class TemplateQuery
      * Construct a new instance of TemplateQuery.
      *
      * @param name the name of the template
-     * @param category name of category that this query falls under
      * @param description the template description
      * @param query the query itself
      * @param important true if template is important
      * @param keywords keywords for this template
      */
-    public TemplateQuery(String name, String description, String category, PathQuery query,
+    public TemplateQuery(String name, String description, PathQuery query,
                          boolean important, String keywords) {
         if (description != null) {
             this.description = description;
         }
-        if (category != null) {
-            this.category = category;
-        }
         if (name != null) {
             this.name = name;
         }
+        if (keywords != null) {
+            this.keywords = keywords;
+        }
         this.query = query;
         this.important = important;
-        this.keywords = keywords;
-
         // Find the editable constraints in the query.
         Iterator iter = query.getNodes().entrySet().iterator();
         while (iter.hasNext()) {
@@ -168,14 +163,6 @@ public class TemplateQuery
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Get the category that this template belongs to.
-     * @return category for template
-     */
-    public String getCategory() {
-        return category;
     }
     
     /**

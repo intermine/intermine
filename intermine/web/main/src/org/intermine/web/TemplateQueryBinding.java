@@ -21,6 +21,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.util.SAXParser;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -43,7 +46,6 @@ public class TemplateQueryBinding
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
             writer.writeAttribute("description", template.getDescription());
-            writer.writeAttribute("category", template.getCategory());
             writer.writeAttribute("important", "" + template.isImportant());
             writer.writeAttribute("keywords", template.getKeywords());
             
@@ -112,6 +114,7 @@ public class TemplateQueryBinding
         public TemplateQueryHandler(Map templates) {
             super(new HashMap());
             this.templates = templates;
+            reset();
         }
 
         /**
@@ -138,13 +141,30 @@ public class TemplateQueryBinding
         public void endElement(String uri, String localName, String qName) {
             super.endElement(uri, localName, qName);
             if (qName.equals("template")) {
+                if (StringUtils.isNotEmpty(templateCat)) {
+                    if (keywords == null) {
+                        keywords = "";
+                    }
+                    if (StringUtils.isNotEmpty(keywords)) {
+                        keywords += ", " + templateCat;
+                    } else {
+                        keywords = templateCat;
+                    }
+                }
                 templates.put(templateName, new TemplateQuery(templateName,
                                                               templateDesc,
-                                                              templateCat,
                                                               query,
                                                               important,
                                                               keywords));
+                reset();
             }
+        }
+        
+        private void reset() {
+            keywords = "";
+            templateCat = "";
+            templateName = "";
+            templateDesc = "";
         }
     }
 }

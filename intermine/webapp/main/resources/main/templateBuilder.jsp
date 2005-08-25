@@ -29,12 +29,14 @@
       <fmt:message key="templateBuilder.keywords"/>
       <html:text property="keywords" size="55"/>
     </p>
+    <%--
     <p style="text-align:center">
       <fmt:message key="templateBuilder.category"/>
       <html:select property="category">
         <html:options name="CATEGORIES"/>
       </html:select>
     </p>
+    --%>
     <c:if test="${IS_SUPERUSER}">
       <p style="text-align:center">
         <html:checkbox property="important"/>
