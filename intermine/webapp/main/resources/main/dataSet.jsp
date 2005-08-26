@@ -14,11 +14,10 @@
 <tiles:importAttribute name="dataSet" scope="request"/>
 
 <im:box topLeftTile="/dataSetIcon.jsp" topRightTile="/dataSetPopup.jsp">
-<fmt:setBundle var="mb" basename="model"/>
 
 <c:if test="${!empty dataSet.dataSetSources}">
   <div class="dataSetSources">
-    <fmt:message key="dataset.${dataSet.name}.sources.from" bundle="${mb}"/>
+    <fmt:message key="dataset.sources.from"/>
     <ul>
       <c:forEach items="${dataSet.dataSetSources}" var="source">
         <li><a href="${source.url}" target="_blank" class="extlink">${source.name}</a></li>

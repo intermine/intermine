@@ -16,7 +16,9 @@
       <td width="99%">
       	<c:choose>
       	  <c:when test="${!empty DATASETS}">
-      	    <fmt:message key="begin.dataset.intro"/><br/><im:vspacer height="5"/>
+      	    <div class="body">
+              <fmt:message key="begin.dataset.intro"/>
+        	    </div>
       	    <tiles:insert page="/dataSetIcons.jsp"/>
       	  </c:when>
       	  <c:otherwise>
