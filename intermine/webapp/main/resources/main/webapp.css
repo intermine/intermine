@@ -484,8 +484,7 @@ img.searchHeatImg {
 
 .dsIconsElement {
   background: white;
-  border: 1px solid #888;
-  padding: 7px;
+  padding-top: 5px;
   margin: 4px;
   text-align: center;
   font-size: 14px;
