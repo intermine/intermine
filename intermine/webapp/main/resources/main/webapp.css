@@ -548,6 +548,14 @@ img.searchHeatImg {
   font-size: 11px;
 }
 
+dd {
+  margin-bottom: 7px;
+  margin-top: 5px;
+  margin-left: 35px;
+  border-left: 1px dashed #888;
+  padding-left: 10px;
+}
+
 .saveQueryForm {
   margin-bottom: 5px;
 }
