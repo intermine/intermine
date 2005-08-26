@@ -129,6 +129,7 @@
     <tile-name>model/GO.jsp</tile-name>
     </data-set>
 
+<!--
   <data-set name="Homophila">
     <subtitle>Human Disease to Drosophila</subtitle>
     <icon-image>model/homophila.gif</icon-image>
@@ -139,6 +140,7 @@
      <tile-name>model/homophila.jsp</tile-name>
      <starting-points>Gene Disease</starting-points>
   </data-set>
+-->
 
   <data-set name="Proteins">
     <subtitle></subtitle>
