@@ -63,6 +63,13 @@ public class PathQuery
      */
     public void setView(List view) {
         this.view = view;
+        for (Iterator iter = view.iterator(); iter.hasNext(); ) {
+            try {
+                MainHelper.getTypeForPath((String) iter.next(), this);
+            } catch (Exception err) {
+                problems.add(err);
+            }
+        }
     }
 
     /**
@@ -120,6 +127,12 @@ public class PathQuery
 
         if (path.indexOf(".") == -1) {
             node = new PathNode(path);
+            // Check whether starting point exists
+            try {
+                MainHelper.getQualifiedTypeName(path, model);
+            } catch (ClassNotFoundException err) {
+                problems.add(err);
+            }
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
             if (nodes.containsKey(prefix)) {
@@ -164,7 +177,7 @@ public class PathQuery
      * @return true if query is valid, false if not
      */
     public boolean isValid() {
-        return (problems == null || problems.size() == 0);
+        return (problems.size() == 0);
     }
 
     /**
