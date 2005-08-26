@@ -98,6 +98,7 @@ class PathQueryHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
+            query.checkValidity();
             queries.put(queryName, query);
         }
     }
