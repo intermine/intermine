@@ -2745,6 +2745,7 @@
           depends="prepare-build-model, compile-flymine-java">
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
+    <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
     <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
 
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
