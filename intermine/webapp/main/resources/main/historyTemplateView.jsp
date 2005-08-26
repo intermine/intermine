@@ -52,14 +52,29 @@
                   <c:out value="${savedTemplate.key}"/>
                 </html:multibox>
               </td>
-              <td nowrap>
-                <fmt:message var="linkTitle" key="templateList.run">
-                  <fmt:param value="${savedTemplate.value.name}"/>
-                </fmt:message>
-                <html:link action="/template?name=${savedTemplate.value.name}&amp;type=user" 
+              
+              <c:choose>
+                <c:when test="${!savedTemplate.value.valid}">
+                  <td align="left" nowrap">
+                    <html:link action="/templateProblems?name=${savedTemplate.key}&amp;type=user" styleClass="brokenTmplLink">
+                    <strike>${savedTemplate.value.name}</strike>
+                    </html:link>
+                  </td>
+                </c:when>
+                <c:otherwise>
+                  <td nowrap>
+                    <fmt:message var="linkTitle" key="templateList.run">
+                      <fmt:param value="${savedTemplate.value.name}"/>
+                    </fmt:message>
+                    <html:link action="/template?name=${savedTemplate.value.name}&amp;type=user" 
                            title="${linkTitle}">
-                  ${savedTemplate.value.name}
-                </html:link>
+                      ${savedTemplate.value.name}
+                    </html:link>
+                  </td>
+                </c:otherwise>
+              </c:choose>
+              
+                
               </td>
               <%--
               <td align="center" nowrap>
