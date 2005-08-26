@@ -69,12 +69,21 @@
                   <c:out value="${savedQuery.key}"/>
                 </html:multibox>
               </td>
-              
-              <tiles:insert name="historyElementName.jsp">
-                <tiles:put name="name" value="${savedQuery.key}"/>
-                <tiles:put name="type" value="${type}"/>
-              </tiles:insert>
-              
+              <c:choose>
+                <c:when test="${!savedQuery.value.pathQuery.valid}">
+                  <td align="left" colspan="2" nowrap">
+                    <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=${type}" styleClass="brokenTmplLink">
+                    <strike>${savedQuery.value.name}</strike>
+                    </html:link>
+                  </td>
+                </c:when>
+                <c:otherwise>
+                  <tiles:insert name="historyElementName.jsp">
+                    <tiles:put name="name" value="${savedQuery.key}"/>
+                    <tiles:put name="type" value="${type}"/>
+                  </tiles:insert>
+                </c:otherwise>
+              </c:choose>
               <td align="center" nowrap>
                 <c:choose>
                   <c:when test="${savedQuery.value.dateCreated != null}">

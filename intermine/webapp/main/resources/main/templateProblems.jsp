@@ -12,6 +12,10 @@
 <c:if test="${param.type == 'global'}">
   <c:set var="template" value="${GLOBAL_TEMPLATE_QUERIES[param.name]}"/>
 </c:if>
+<c:if test="${param.type == 'saved'}">
+  <c:set var="template" value="${PROFILE.savedQueries[param.name].pathQuery}"/>
+</c:if>
+
 
 <c:if test="${template != null}">
   <div class="body">

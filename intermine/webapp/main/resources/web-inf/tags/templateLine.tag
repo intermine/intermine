@@ -11,7 +11,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
     <c:if test="${!templateQuery.valid}">
-      <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=${type}" styleClass="brokenTmplLink">
+      <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=query" styleClass="brokenTmplLink">
       <strike><span class="templateDesc"><c:out value="${templateQuery.description}"/></span></strike>
       <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
       </html:link>
