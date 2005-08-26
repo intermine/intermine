@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,13 +64,6 @@ public class PathQuery
      */
     public void setView(List view) {
         this.view = view;
-        for (Iterator iter = view.iterator(); iter.hasNext(); ) {
-            try {
-                MainHelper.getTypeForPath((String) iter.next(), this);
-            } catch (Exception err) {
-                problems.add(err);
-            }
-        }
     }
 
     /**
@@ -245,5 +239,17 @@ public class PathQuery
      */
     public String toString() {
         return "{PathQuery: " + model + ", " + nodes + ", " + view + "}";
+    }
+
+    /**
+     * Check validity of receiver by trying to create an objectstore Query. If
+     * conversion fails, the exception is recorded and isValid will return false.
+     */
+    protected void checkValidity() {
+        try {
+            MainHelper.makeQuery(this, new HashMap());
+        } catch (Exception err) {
+            problems.add(err);
+        }
     }
 }
