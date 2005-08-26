@@ -202,7 +202,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="description" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
   </class>
 
@@ -270,7 +270,7 @@
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="description" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="description" sectionOnRight="true" sectionTitle="Description" openByDefault="true"/>
     </fields>
   </class>
 
@@ -316,6 +316,15 @@
     <fields>
       <fieldconfig fieldExpr="sample1" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="sample2" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.GOAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="subject.identifier" showInSummary="true" showInInlineCollection="false" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="evidenceCode" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
   </class>
 
