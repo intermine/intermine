@@ -9,33 +9,40 @@
 <!-- dataSetIcons -->
 
 <div class="dataSetIcons">
-  <table>
+  <table border="0" width="100">
     <tr valign="top">
-      <td class="dsIconsElement" width="20%">
+      <td class="dsIconsElement" width="50%">
         <c:forEach var="entry" items="${DATASETS}" varStatus="status">
           <c:set var="set" value="${entry.value}"/>
-          <html:link action="/dataSet?name=${set.name}">
-            <img src="${set.iconImage}" class="dsIconImage"/>
-          </html:link>
-          <div class="dsIconLabel">
-      	    <html:link action="/dataSet?name=${set.name}">
-              ${set.name}
-            </html:link>
-          </div>
-          <div class="dsIconDetail">
-            <c:choose>
-              <c:when test="${!empty set.subTitle}">
-                ${set.subTitle}
-              </c:when>
-              <c:otherwise>
-                <im:hspacer width="85"/>
-              </c:otherwise>
-            </c:choose>
-          </div>
+          
+          <table border="0">
+            <tr>
+              <td>
+               <html:link action="/dataSet?name=${set.name}">
+                 <img src="${set.iconImage}" class="dsIconImage"/>
+               </html:link>
+             </td>
+             <td>
+                       
+             <div class="dsIconLabel">
+               <html:link action="/dataSet?name=${set.name}">
+                 ${set.name}
+               </html:link>
+             </div>
+             <div class="dsIconDetail">
+               ${set.subTitle}
+               <c:if test="${status.count % 3 != 0}">
+                 <im:hspacer width="82"/>
+               </c:if>
+             </div>
+          
+             </td>
+           </tr>
+          </table>
 
           <c:if test="${fn:length(DATASETS) != status.count}">
             <td/>
-            <c:if test="${status.count % 5 == 0}">
+            <c:if test="${status.count % 3 == 0}">
               <tr/>
               <tr valign="top">
             </c:if>
