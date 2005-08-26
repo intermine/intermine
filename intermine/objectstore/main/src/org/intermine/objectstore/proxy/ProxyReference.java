@@ -78,4 +78,11 @@ public class ProxyReference implements InterMineObject, Lazy
     public ObjectStore getObjectStore() {
         return os;
     }
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString() {
+        return "<ProxyReference os: " + os + ", id: " + id + ", proxied class: " + clazz + ">";
+    }
 }
