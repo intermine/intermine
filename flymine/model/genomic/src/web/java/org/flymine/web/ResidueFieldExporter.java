@@ -12,9 +12,12 @@ package org.flymine.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 
 import org.biojava.bio.Annotation;
 
@@ -24,6 +27,8 @@ import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.utils.ChangeVetoException;
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Sequence;
 
@@ -51,6 +56,7 @@ import org.intermine.web.FieldExporter;
 
 public class ResidueFieldExporter implements FieldExporter
 {
+    protected static final Logger LOG = Logger.getLogger(ResidueFieldExporter.class);
 
     /**
      * Export a field containing residues in FASTA format.
@@ -62,28 +68,48 @@ public class ResidueFieldExporter implements FieldExporter
      */
     public void exportField(InterMineObject object, String fieldName, ObjectStore os,
                             HttpServletResponse response)
-      throws ExportException {
+        throws ExportException {
         if (!(object instanceof Sequence)) {
             throw new IllegalArgumentException("ResidueFieldExporter can only export "
                                                + "Sequence.residues fields");
         }
 
+        Sequence sequence = (Sequence) object;
+
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=" + fieldName + ".fasta");
 
         try {
-            LocatedSequenceFeature lsf = null;
+            LocatedSequenceFeature lsf =
+                getLocatedSequenceFeatureForSequence(os, (Sequence) object);
+            BioEntity bioEntity = lsf;
 
-            if (object instanceof Sequence) {
-                lsf = getLocatedSequenceFeatureForSequence(os, (Sequence) object);
+            Protein protein = null;
+            
+            if (bioEntity == null) {
+                protein = getProteinForSequence(os, sequence);
+                bioEntity = protein;
             }
 
-            FlyMineSequence flyMineSequence = null;
+            if (bioEntity == null) {
+                LOG.error("No LocatedSequenceFeature or Protein has a Sequence with id "
+                          + sequence.getId());
+                OutputStream outputStream = response.getOutputStream();
+                PrintStream printStream = new PrintStream(outputStream);
+                printStream.println (sequence.getResidues());
+                printStream.close();
+                outputStream.close();
+                return;
+            }
 
+            FlyMineSequence flyMineSequence;
+            
             if (lsf != null) {
                 flyMineSequence = FlyMineSequenceFactory.make(lsf);
+            } else {
+                flyMineSequence = FlyMineSequenceFactory.make(protein);
             }
-
+            
             // avoid opening the OutputStream until we have all the data - this avoids some problems
             // that occur when getOutputStream() is called twice (once by this method and again to
             // write the error)
@@ -91,11 +117,7 @@ public class ResidueFieldExporter implements FieldExporter
 
             Annotation annotation = flyMineSequence.getAnnotation();
 
-            if (flyMineSequence == null) {
-                annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, "unknown");
-            } else {
-                annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, lsf.getIdentifier());
-            }
+            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, bioEntity.getIdentifier());
 
             SeqIOTools.writeFasta(outputStream, flyMineSequence);
 
@@ -138,5 +160,31 @@ public class ResidueFieldExporter implements FieldExporter
             return null;
         }
     }
-}
 
+    private Protein getProteinForSequence(ObjectStore os, Sequence sequence) {
+        Query q = new Query();
+
+        QueryClass proteinQc = new QueryClass(Protein.class);
+        q.addFrom(proteinQc);
+        q.addToSelect(proteinQc);
+
+        QueryClass sequenceQc = new QueryClass(Sequence.class);
+        q.addFrom(sequenceQc);
+        QueryReference ref = new QueryObjectReference(proteinQc, "sequence");
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(ref, ConstraintOp.CONTAINS, sequenceQc));
+
+        QueryField seqIdQf = new QueryField(sequenceQc, "id");
+        QueryValue seqIdQv = new QueryValue(sequence.getId());
+        cs.addConstraint(new SimpleConstraint(seqIdQf, ConstraintOp.EQUALS, seqIdQv));
+        q.setConstraint(cs);
+
+        Results results = new Results(q, os, os.getSequence());
+
+        if (results.size() == 1) {
+            return (Protein) ((List) results.get(0)).get(0);
+        } else {
+            return null;
+        }
+    }
+}
