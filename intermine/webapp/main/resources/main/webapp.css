@@ -486,21 +486,24 @@ img.searchHeatImg {
   background: white;
   padding-top: 5px;
   margin: 4px;
-  text-align: center;
   font-size: 14px;
 }
 
 .dsIconLabel {
-  margin-top: 5px;
+  margin-top: -3px;
+  margin-left: 3px;
 }
 
 .dsIconDetail {
+  margin-left: 3px;
   margin-top: 2px;
   font-size: 11px;
 }
 
 .dsIconImage {
   border: 1px solid #222;
+  margin-left: 5px;
+  margin-bottom: 5px;
 }
 
 .dsSmallIconImage {
