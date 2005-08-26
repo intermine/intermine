@@ -1,6 +1,6 @@
 
 <data-sets>
-  <data-set name="MicroArray">
+  <data-set name="Gene Expression">
     <subtitle></subtitle>
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
@@ -8,9 +8,8 @@
     Microarray gene expression data formatted in mage-ml format can be loaded into FlyMine.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
-    <starting-points>MicroarrayExperiment Clone Gene</starting-points>
-    <data-source name="INDAC microarray long oligo set (Version: 1.0)" url="http://www.indac.net/"/>
-  </data-set>
+    <starting-points>MicroArrayExperiment Clone Gene</starting-points>
+    </data-set>
 
   <data-set name="Protein Interactions">
     <subtitle></subtitle>
@@ -33,10 +32,9 @@
     <intro-text>
     3-D protein structures.
     </intro-text>
-    <starting-points>Protein ProteinStructure ProteinRegion ProteinSequenceFamily</starting-points>
+    <starting-points>Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain ProteinFamily</starting-points>
     <tile-name>model/proteinStructure.jsp</tile-name>
-    <data-source name="D. melanogaster protein domain 3-D%3Cbr/%3Estructure predictions from Kenji Mizuguchi" url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
-  </data-set>
+    </data-set>
 
 <!--
   <data-set name="Anopheles">
@@ -125,7 +123,7 @@
     Genes and so each gene has a reference (link) to a list of it's GO
     annotations (if available).
     </intro-text>
-    <starting-points>Gene GOTerm GOEvidence</starting-points>
+    <starting-points>Gene GOTerm</starting-points>
     <tile-name>model/GO.jsp</tile-name>
     </data-set>
 
