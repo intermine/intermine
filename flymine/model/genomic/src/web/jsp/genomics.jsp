@@ -6,14 +6,14 @@
 Current Data
 </div>
 <div class="body">
-<UL>
-<LI><I>D. melanogaster</I><BR>
-<p>
+<DT>
+<DT><I>D. melanogaster</I></DT>
+<DD>
 Release 4.2 genome annotation from <A href="http://flybase.bio.indiana.edu">FlyBase</A>.
-</p>
-<LI><I>A. gambiae</I><BR>
-<p>
+</DD>
+<DT><I>A. gambiae</I></DT>
+<DD>
 Release 2b genome annotations from <A href="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</A>.
-</p>
-</UL>
+</DD>
+</DL>
 </div>
