@@ -367,7 +367,14 @@ public class DataLoaderHelper
                     }
                     if (destId == null) {
                         if (refObj instanceof ProxyReference) {
+                            InterMineObject originalRefObj = refObj;
                             refObj = ((ProxyReference) refObj).getObject();
+
+                            if (refObj == null) {
+                                throw new RuntimeException("cannot get object of ProxyReference "
+                                                           + originalRefObj + " while processing "
+                                                           + obj);
+                            }
                         }
                         Query refSubQuery =
                             createPKQuery(model, refObj, source, idMap, queryNulls);
