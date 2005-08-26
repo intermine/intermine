@@ -6,10 +6,10 @@
 Current Data
 </div>
 <div class="body">
-<UL>
-<LI><I>D. melanogaster</I><BR>
-<p>
+<DL>
+<DT><I>D. melanogaster</I></DT>
+<DD>
 A set of primers and the correspondng amplimers designed to tile across the release 4.0 <I>D. melanogaster</I> genome sequence.
-</p>
-</UL>
+</DD>
+</DL>
 </div>

@@ -26,7 +26,7 @@
   </data-set>
 
   <data-set name="Protein Structure">
-    <subtitle>3-D protein structures</subtitle>
+    <subtitle>3-D protein&lt;br/&gt;structures</subtitle>
     <icon-image>model/pstructure.gif</icon-image>
     <large-image>model/pstructure.gif</large-image>
     <intro-text>
@@ -71,7 +71,7 @@
   </data-set>
 
   <data-set name="Tiling Path">
-    <subtitle>Microarray Tiling Primers</subtitle>
+    <subtitle>Microarray Tiling&lt;br/&gt;Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
     <large-image>model/tilingPath.png</large-image>
         <intro-text>
@@ -129,7 +129,7 @@
 
 <!--
   <data-set name="Homophila">
-    <subtitle>Human Disease to Drosophila</subtitle>
+    <subtitle>Human Disease&lt;br/&gt;to Drosophila</subtitle>
     <icon-image>model/homophila.gif</icon-image>
     <large-image>model/homophila.gif</large-image>
       <intro-text>
@@ -152,7 +152,7 @@
   </data-set>
 
   <data-set name="Comparative Genomics">
-    <subtitle>Orthologues and Paralogues</subtitle>
+    <subtitle>Orthologues&lt;br/&gt;and Paralogues</subtitle>
     <icon-image>model/comparativeGenomics.png</icon-image>
     <large-image>model/comparativeGenomics.png</large-image>
     <intro-text>
@@ -167,7 +167,7 @@
   </data-set>
 
   <data-set name="DrosDel">
-    <subtitle>P-element Insertions and Deletions</subtitle>
+    <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
     <icon-image>model/drosdel.gif</icon-image>
     <large-image>model/drosdel.gif</large-image>
     <intro-text>

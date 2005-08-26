@@ -6,36 +6,35 @@
 Current Data
 </div>
 <div class="body">
+<DL>
+<DT><A href="http://www.ebi.uniprot.org/index.shtml">Uniprot Knowledgebase (UniProtKB)</A></DT>
+<DD>
+All proteins from the <A href="http://www.ebi.uniprot.org/index.shtml">UniProt Knowledgebase</A> (version 5.6) for the following organisms have been loaded:
 <UL>
-<LI><A href="http://www.ebi.uniprot.org/index.shtml">Uniprot Knowledgebase (UniProtKB)</A><BR>
-<p>
-All proteins from the <A href="http://www.ebi.uniprot.org/index.shtml">UniProt Knowledgebase</A> (version 5.6) for the following organisms have been loaded:<BR>
-<BR>
-<I>D. melanogaster</I><BR>
-<I>A. gambiae</I><BR>
-<I>C. elegans</I><BR>
-<BR>
-For each protein record in Uniprot for each species the following information is extracted and loaded into FlyMine:
-<BR>
-<BR>
-Entry name<BR>
-Primary accession number<BR>
-Secondary accession number<BR>
-Protein name<BR>
-Comments<BR>
-Publications<BR>
-Sequence<BR>
-Gene ORF name<BR>
-<BR>
-</p>
-<LI><A href="http://www.ebi.ac.uk/interpro">Interpro</A> protein families and domains.
-<p>
-Protein family and domain assignments to proteins in Uniprot have been loaded from <A href="http://www.ebi.ac.uk/interpro">Interpro</A> (version 10.0) for the following organisms:<BR>
-<BR>
-<I>D. melanogaster</I><BR>
-<I>A. gambiae</I><BR>
-<I>C. elegans</I><BR>
-<BR>
-</p>
+<LI><I>D. melanogaster</I>
+<LI><I>A. gambiae</I>
+<LI><I>C. elegans</I>
 </UL>
+For each protein record in Uniprot for each species the following information is extracted and loaded into FlyMine:
+<UL>
+<LI>Entry name
+<LI>Primary accession number
+<LI>Secondary accession number
+<LI>Protein name
+<LI>Comments
+<LI>Publications
+<LI>Sequence
+<LI>Gene ORF name
+</UL>
+</DD>
+<DT><A href="http://www.ebi.ac.uk/interpro">Interpro</A> protein families and domains.</DT>
+<DD>
+Protein family and domain assignments to proteins in Uniprot have been loaded from <A href="http://www.ebi.ac.uk/interpro">Interpro</A> (version 10.0) for the following organisms:
+<UL>
+<LI><I>D. melanogaster</I>
+<LI><I>A. gambiae</I>
+<LI><I>C. elegans</I>
+</UL>
+</DD>
+</DL>
 </div>

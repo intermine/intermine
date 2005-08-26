@@ -8,27 +8,27 @@ Current Data
 <div class="body">
 <p>The following gene expression experiments were downloaded from <A HREF="http://www.ebi.ac.uk/arrayexpress">ArrayExpress</A>:
 </p>
-<B><I>D. melanogaster:</I></B><BR>
-<BR>
-<UL>
-<LI>Whitfield W:
-<p>
+<B><I>D. melanogaster:</I></B>
+<DL>
+<DT>Whitfield W:</DT>
+<DD>
 Identification of aberrant gene expression in the presence of mutant CP190 protein.
-</p>
-<LI>Bate M:
-<p>
+</DD>
+<DT>Bate M:</DT>
+<DD>
 Identification of genes regulated by synaptic transmission in embryos.
-</p>
-<LI>Papafotiou G:
-<p>
+</DD>
+<DT>Papafotiou G:</DT>
+<DD>
 Identification of changes in gene expression due to Wolbachia infection.
-</p>
-<LI>Roberts I:
-<p>Comparison the transcriptional profile of 3 cell lines: S2, Kc and S3.
-</p>
-<LI>White-Cooper H:
-<p>
+</DD>
+<DT>Roberts I:</DT>
+<DD>
+Comparison the transcriptional profile of 3 cell lines: S2, Kc and S3.
+</DD>
+<DT>White-Cooper H:</DT>
+<DD>
 Identification of genes regulated by the meiotic arrest genes: aly, can, zaa and zab.
-</p>
-</UL>
+</DD>
+</DL>
 </div>

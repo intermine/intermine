@@ -6,13 +6,14 @@
 Current Data
 </div>
 <div class="body">
-<p>Orthologue and paralogue relationships calculated by <A href="http://inparanoid.cgb.ki.se/index.html">inparanoid</A> (latest calculated 16th April 2005) for the following organism pairs have been loaded:<BR>
-<BR>
-<I>D. melanogaster</I> : <I>A. gambiae</I><BR>
-<I>D. melanogaster</I> : <I>C. elegans</I><BR>
-<I>A. gambiae<I> : <I>C. elegans</I><BR>
-<BR>
+<p>
+Orthologue and paralogue relationships calculated by <A href="http://inparanoid.cgb.ki.se/index.html">inparanoid</A> (latest calculated 16th April 2005) for the following organism pairs have been loaded:
 </p>
+<ul>
+<li><I>D. melanogaster</I> : <I>A. gambiae</I></li>
+<li><I>D. melanogaster</I> : <I>C. elegans</I></li>
+<li><I>A. gambiae<I> : <I>C. elegans</I></li>
+</ul>
 </div>
 
  
