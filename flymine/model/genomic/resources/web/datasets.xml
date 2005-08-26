@@ -53,7 +53,7 @@
     <icon-image>model/bindingSites.png</icon-image>
     <large-image>model/bindingSites.png</large-image>
     <intro-text>
-    DNA binding sites.
+    DNA and Protein binding sites.
     </intro-text>
     <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
     <tile-name>model/bindingSites.jsp</tile-name>
