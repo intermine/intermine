@@ -232,6 +232,9 @@ public class WriteGFFTask extends Task
         while (transcriptIter.hasNext()) {
             Transcript transcript = (Transcript) transcriptIter.next();
             Gene gene = transcript.getGene();
+            if (gene == null) {
+                continue;
+            }
             Location transcriptLocation = (Location) seenTranscripts.get(transcript);
 
             String transcriptFeatureType = null;
