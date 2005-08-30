@@ -38,6 +38,7 @@
           <fmt:message key="${messageKey}"/>
         </p>
         <html:form action="/modifyQuery">
+        <input type="hidden" name="type" value="${type}"/>
         <table class="results history" cellspacing="0">
           <tr>
             <th>
