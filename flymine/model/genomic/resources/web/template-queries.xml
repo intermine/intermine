@@ -699,6 +699,28 @@
       </node>
     </query>
   </template>
+  <template name="GOterm2GeneProteinInteraction" description="Show Genes from a particular organism annotated with a particular GO term which has evidence code IPI (inferred from Protein Interaction). Show the Gene from which the annotation was inferred (the 'with' field)." important="false" keywords="Genomics, Gene Ontology, Protein Interaction">
+    <query name="GOterm2GeneProteinInteraction" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.goAnnotation" type="GOAnnotation">
+      </node>
+      <node path="Gene.goAnnotation.name" type="String">
+        <constraint op="=" value="protein binding" description="annotated with GO term (and evidence code IPI):" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.goAnnotation.evidenceCode" type="String">
+        <constraint op="=" value="IPI" description="" identifier="">
+        </constraint>
+      </node>
+    </query>
+  </template>
   <template name="GOterm2microarrayExperiment1" description="Show experiments in which Genes annotated with a particular GO term have a normalised expression ratio (linear scale) greater/less than a particular value." important="false" keywords="Gene Expression, Gene Ontology">
     <query name="GOterm2microarrayExperiment1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
       <node path="MicroArrayExperiment" type="MicroArrayExperiment">
@@ -861,6 +883,50 @@
       </node>
       <node path="Gene.synonyms.value" type="String">
         <constraint op="=" value="CG9852" description="Show available DrosDel deletions that would delete gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="gene2goTermwithEvidence" description="Show genes from a particular organism annotated with a particular GO term with a  particular evidence code" important="false" keywords="Genomics, Gene Ontology">
+    <query name="gene2goTermwithEvidence" model="genomic" view="Gene Gene.goAnnotation">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.goAnnotation" type="GOAnnotation">
+      </node>
+      <node path="Gene.goAnnotation.name" type="String">
+        <constraint op="=" value="protein binding" description="annotated with GO term:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.goAnnotation.evidenceCode" type="String">
+        <constraint op="=" value="IPI" description="with evidence code:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="goTerm2genesWithEvidenceandWith" description="Show genes and the related 'with' annotations from a particular organism annotated with a particular GO term with a particular evidence code. (The 'with' field holds an additional identifier for annotations using certain evidence codes - see below)." important="false" keywords="Genomics, Gene Ontology">
+    <query name="goTerm2genesWithEvidenceandWith" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes and 'with' annotations from organism:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.goAnnotation" type="GOAnnotation">
+      </node>
+      <node path="Gene.goAnnotation.name" type="String">
+        <constraint op="=" value="protein binding" description="Annotated with GO term:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.goAnnotation.evidenceCode" type="String">
+        <constraint op="=" value="IPI" description="with evidence code: (note: for 'with' annotations the evidence code should be IC, IEA, IGI, IPI OR ISS)" identifier="" editable="true">
         </constraint>
       </node>
     </query>
