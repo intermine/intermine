@@ -5,6 +5,24 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- history.jsp -->
+
+<script type="text/javascript">
+  <!--//<![CDATA[
+    function selectColumnCheckbox(form, type) {
+      var columnCheckBox = 'selected_' + type;
+      var checked = document.getElementById(columnCheckBox).checked;
+      with(form) {
+        for(i=0;i < elements.length;i++) {
+          thiselm = elements[i];
+          var testString = columnCheckBox + '_';
+          if(thiselm.id.indexOf(testString) != -1)
+            thiselm.checked = checked;
+        }
+      }
+    }
+    //]]>-->
+</script>
+
 <div class="body">
   <fmt:message key="history.intro"/>
 </div>
