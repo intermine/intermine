@@ -157,15 +157,15 @@
       </node>
     </query>
   </template>
-  <template name="AAG_gene2ProteinInteraction2Structure" description="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." important="false" keywords="Proteins Protein Structure, Protein Interactions">
-    <query name="AAG_gene2ProteinInteraction2Structure" model="genomic" view="Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.bait.regions.sequenceFamily.name Synonym.subject.proteins.interactions.bait.regions.structures Synonym.subject.proteins.interactions.prey.regions.sequenceFamily.name Synonym.subject.proteins.interactions.prey.regions.structures">
-      <node path="Synonym" type="Synonym">
+  <template name="AAG_gene2ProteinInteraction2StructureNEW2" description="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." important="false" keywords="Proteins, Protein Interactions, Protein Structure">
+    <query name="AAG_gene2ProteinInteraction2StructureNEW2" model="genomic" view="Gene Gene.organismDbId Gene.symbol Gene.proteins.primaryAccession Gene.proteins.interactions.bait.primaryAccession Gene.proteins.interactions.bait.regions.structures.region.proteinFeature Gene.proteins.interactions.bait.regions.structures Gene.proteins.interactions.prey.primaryAccession Gene.proteins.interactions.prey.regions.structures.region.proteinFeature Gene.proteins.interactions.prey.regions.structures">
+      <node path="Gene" type="Gene">
       </node>
-      <node path="Synonym.value" type="String">
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
         <constraint op="=" value="128up" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true">
         </constraint>
-      </node>
-      <node path="Synonym.subject" type="Gene">
       </node>
     </query>
   </template>
@@ -187,28 +187,30 @@
       </node>
     </query>
   </template>
-  <template name="AAH_Gene2ProteinStructure2.1" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." important="false" keywords="Protein Structure">
-    <query name="AAH_Gene2ProteinStructure2.1" model="genomic" view="Synonym.subject.organismDbId Synonym.subject.name Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.regions.sequenceFamily.name Synonym.subject.proteins.regions.objects.start Synonym.subject.proteins.regions.objects.end Synonym.subject.proteins.regions.structures">
-      <node path="Synonym" type="Synonym">
+  <template name="AAH_Gene2ProteinStructure2.1NEW2" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." important="false" keywords="Proteins, Protein Structure">
+    <query name="AAH_Gene2ProteinStructure2.1NEW2" model="genomic" view="Gene Gene.organismDbId Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature Gene.proteins.regions.structures.region.objects.start Gene.proteins.regions.structures.region.objects.end Gene.proteins.regions.structures">
+      <node path="Gene" type="Gene">
       </node>
-      <node path="Synonym.value" type="String">
-        <constraint op="=" value="FBgn0025936" description="Show regions which have predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true">
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="FBgn0025936" description="Show regions which have a predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true">
         </constraint>
       </node>
-      <node path="Synonym.subject" type="Gene">
+      <node path="Gene.proteins" type="Protein">
       </node>
-      <node path="Synonym.subject.proteins" type="Protein">
+      <node path="Gene.proteins.regions" type="ProteinRegion">
       </node>
-      <node path="Synonym.subject.proteins.regions" type="ProteinRegion">
+      <node path="Gene.proteins.regions.structures" type="ProteinStructure">
       </node>
-      <node path="Synonym.subject.proteins.regions.objects" type="Location">
+      <node path="Gene.proteins.regions.structures.region" type="ProteinRegion">
       </node>
-      <node path="Synonym.subject.proteins.regions.objects.object" type="Protein">
+      <node path="Gene.proteins.regions.structures.region.objects" type="Location">
       </node>
-      <node path="Synonym.subject.organism" type="Organism">
+      <node path="Gene.organism" type="Organism">
       </node>
-      <node path="Synonym.subject.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2">
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="">
         </constraint>
       </node>
     </query>
@@ -275,23 +277,25 @@
       </node>
     </query>
   </template>
-  <template name="AAJ_gene2ProteinStructure1" description="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." important="false" keywords="Proteins, Protein Structure">
-    <query name="AAJ_gene2ProteinStructure1" model="genomic" view="Gene.name Gene.organismDbId Gene.proteins.primaryAccession Gene.proteins.regions.sequenceFamily.name Gene.proteins.regions.objects.start Gene.proteins.regions.objects.end Gene.proteins.regions.structures">
+  <template name="AAJ_gene2ProteinStructure1NEW" description="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." important="false" keywords="Proteins, Protein Structure">
+    <query name="AAJ_gene2ProteinStructure1NEW" model="genomic" view="Gene Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature Gene.proteins.regions.structures.region.objects.start Gene.proteins.regions.structures.region.objects.end Gene.proteins.regions.structures">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="c1" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="" editable="true">
         </constraint>
       </node>
       <node path="Gene.proteins" type="Protein">
       </node>
       <node path="Gene.proteins.regions" type="ProteinRegion">
       </node>
-      <node path="Gene.proteins.regions.objects" type="Location">
+      <node path="Gene.proteins.regions.structures" type="ProteinStructure">
       </node>
-      <node path="Gene.proteins.regions.objects.object" type="Protein">
+      <node path="Gene.proteins.regions.structures.region" type="ProteinRegion">
+      </node>
+      <node path="Gene.proteins.regions.structures.region.objects" type="Location">
       </node>
     </query>
   </template>
@@ -365,8 +369,8 @@
       </node>
     </query>
   </template>
-  <template name="AAM_Gene2GO2" description="Search for GO annotations for a particular gene." important="false" keywords="Genomics, Gene Ontology">
-    <query name="AAM_Gene2GO2" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.GOTerms.name Gene.GOTerms.identifier">
+  <template name="AAM_Gene2GO2NEW" description="Search for GO annotations for a particular gene." important="false" keywords="Genomics, Gene Ontology">
+    <query name="AAM_Gene2GO2NEW" model="genomic" view="Gene.organismDbId Gene.identifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.identifier">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
@@ -695,6 +699,70 @@
       </node>
     </query>
   </template>
+  <template name="GOterm2microarrayExperiment1" description="Show experiments in which Genes annotated with a particular GO term have a normalised expression ratio (linear scale) greater/less than a particular value." important="false" keywords="Gene Expression, Gene Ontology">
+    <query name="GOterm2microarrayExperiment1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
+      <node path="MicroArrayExperiment" type="MicroArrayExperiment">
+      </node>
+      <node path="MicroArrayExperiment.results" type="MicroArrayResult">
+      </node>
+      <node path="MicroArrayExperiment.results.genes" type="Gene">
+      </node>
+      <node path="MicroArrayExperiment.results.genes.goAnnotation" type="GOAnnotation">
+      </node>
+      <node path="MicroArrayExperiment.results.genes.goAnnotation.name" type="String">
+        <constraint op="=" value="signal peptide processing" description="Show experiments in which genes annotated with GO term:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="MicroArrayExperiment.results.value" type="Float">
+        <constraint op="&gt;" value="2.0" description="have a normalised expression ratio (linear scale) greater.less than:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="GOterm2microarrayresult1" description="Show Genes annotated with a particular GO term which have a normalised expression ratio (linear scale) greater/less than a particular value in a particular experiment." important="false" keywords="Gene Expression, Gene Ontology">
+    <query name="GOterm2microarrayresult1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
+      <node path="MicroArrayExperiment" type="MicroArrayExperiment">
+      </node>
+      <node path="MicroArrayExperiment.results" type="MicroArrayResult">
+      </node>
+      <node path="MicroArrayExperiment.results.genes" type="Gene">
+      </node>
+      <node path="MicroArrayExperiment.results.genes.goAnnotation" type="GOAnnotation">
+      </node>
+      <node path="MicroArrayExperiment.results.genes.goAnnotation.name" type="String">
+        <constraint op="=" value="signal peptide processing" description="Show genes annotated with Go term:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="MicroArrayExperiment.results.value" type="Float">
+        <constraint op="&gt;" value="2.0" description="which have a normailsed expression ratio (linear scale) greater/less than:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="MicroArrayExperiment.name" type="String">
+        <constraint op="=" value="White-Cooper H: Identification of genes regulated by the meiotic arrest genes: aly, can, zaa and zab" description="in experiment:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="Gene2MicroarrayExperiment1" description="Show experiments in which a particular gene (or set of genes) has a normalised expression ratio (linear scale) greater/less than a particular value." important="false" keywords="Gene Expression">
+    <query name="Gene2MicroarrayExperiment1" model="genomic" view="MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.genes MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
+      <node path="MicroArrayExperiment" type="MicroArrayExperiment">
+      </node>
+      <node path="MicroArrayExperiment.results" type="MicroArrayResult">
+      </node>
+      <node path="MicroArrayExperiment.results.genes" type="Gene">
+      </node>
+      <node path="MicroArrayExperiment.results.genes.synonyms" type="Synonym">
+      </node>
+      <node path="MicroArrayExperiment.results.genes.synonyms.value" type="String">
+        <constraint op="=" value="CG2358" description="Show microarray experiments in which gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="MicroArrayExperiment.results.value" type="Float">
+        <constraint op="&gt;" value="2.0" description="has a normalised expression ratio (linear scale) greater/less than:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
   <template name="Gene2TFbindingsite" description="Show transcription factor binding sites, their locations and associated factors for a particular gene." important="false" keywords="Binding Sites">
     <query name="Gene2TFbindingsite" model="genomic" view="Gene Gene.regulatoryRegions Gene.regulatoryRegions.chromosomeLocation.object.identifier Gene.regulatoryRegions.chromosomeLocation.start Gene.regulatoryRegions.chromosomeLocation.end Gene.regulatoryRegions.factor">
       <node path="Gene" type="Gene">
@@ -743,6 +811,60 @@
       </node>
     </query>
   </template>
+  <template name="chromosomeLocation2deletion1" description="Show DrosDel deletions for a particular chromosome location:" important="false" keywords="Genomics, DrosDel">
+    <query name="chromosomeLocation2deletion1" model="genomic" view="Chromosome Chromosome.subjects.start Chromosome.subjects.end Chromosome.features Chromosome.features.element1 Chromosome.features.element2">
+      <node path="Chromosome" type="Chromosome">
+      </node>
+      <node path="Chromosome.identifier" type="String">
+        <constraint op="=" value="2L" description="Show DrosDel deletions on chromosome:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Chromosome.subjects" type="Location">
+      </node>
+      <node path="Chromosome.subjects.start" type="Integer">
+        <constraint op="&gt;" value="500" description="between:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Chromosome.subjects.end" type="Integer">
+        <constraint op="&lt;" value="1500" description="and:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Chromosome.features" type="ArtificialDeletion">
+      </node>
+    </query>
+  </template>
+  <template name="gene2DrosDelDeletion1" description="Show DrosDel deletions and transposable elements which would delete a particular gene." important="false" keywords="Genomics, DrosDel">
+    <query name="gene2DrosDelDeletion1" model="genomic" view="Gene Gene.overlappingFeatures Gene.overlappingFeatures.available Gene.overlappingFeatures.chromosome.identifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.element1 Gene.overlappingFeatures.element2">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="CG8340" description="Show DrosDel deletions and transposable elements that would delete gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="gene2DrosDelDeletion2" description="Show available DrosDel deletions which would delete a particular gene." important="false" keywords="Genomics, DrosDel">
+    <query name="gene2DrosDelDeletion2" model="genomic" view="Gene Gene.overlappingFeatures Gene.overlappingFeatures.available Gene.overlappingFeatures.chromosome.identifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.element1 Gene.overlappingFeatures.element2">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
+      </node>
+      <node path="Gene.overlappingFeatures.available" type="Boolean">
+        <constraint op="=" value="true" description="" identifier="">
+        </constraint>
+      </node>
+      <node path="Gene.synonyms" type="Synonym">
+      </node>
+      <node path="Gene.synonyms.value" type="String">
+        <constraint op="=" value="CG9852" description="Show available DrosDel deletions that would delete gene:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
   <template name="microarrayOligo2chromosome" description="List details of microarray oligos and the transcripts they are designed to for a particular chromosome (note: locations are transcript locations not oligo locations)." important="false" keywords="MicroArray, INDAC">
     <query name="microarrayOligo2chromosome" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.length MicroarrayOligo.distance3Prime MicroarrayOligo.tm MicroarrayOligo.transcript.identifier MicroarrayOligo.transcript.chromosome.identifier MicroarrayOligo.transcript.chromosomeLocation.start MicroarrayOligo.transcript.chromosomeLocation.end">
       <node path="MicroarrayOligo" type="MicroarrayOligo">
@@ -753,6 +875,24 @@
       </node>
       <node path="MicroarrayOligo.transcript.chromosome.identifier" type="String">
         <constraint op="=" value="2R" description="List details of microarray oligos and the transcripts they are designed to for Drosophila chromosome:" identifier="" editable="true">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="microarrayResult2Experiment1" description="Show genes with a normalised expression ratio (linear scale) greater than or less than a particular value in a particular experiment." important="false" keywords="Gene Expression">
+    <query name="microarrayResult2Experiment1" model="genomic" view="Gene Gene.microArrayResults.experiment Gene.microArrayResults">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.microArrayResults" type="MicroArrayResult">
+      </node>
+      <node path="Gene.microArrayResults.value" type="Float">
+        <constraint op="&gt;" value="2.0" description="Show genes with a normalised expression ratio (linear scale) greater/less than:" identifier="" editable="true">
+        </constraint>
+      </node>
+      <node path="Gene.microArrayResults.experiment" type="MicroArrayExperiment">
+      </node>
+      <node path="Gene.microArrayResults.experiment.name" type="String">
+        <constraint op="=" value="Bate M: Identification of genes regulated by synaptic transmission in embryos" description="in experiment:" identifier="" editable="true">
         </constraint>
       </node>
     </query>
