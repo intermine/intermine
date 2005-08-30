@@ -550,7 +550,7 @@
         <div style="text-align:right">
           <script language="JavaScript">
           <!--
-            document.write('<input type="submit" onclick="window.location.reload()" value="<fmt:message key="query.cancelConstraint"/>"/>');
+            document.write('<input type="submit" onclick="window.location.href=\'<html:rewrite action="/query"/>?cancel\'" value="<fmt:message key="query.cancelConstraint"/>"/>');
           //-->
           </script>
         </div>
