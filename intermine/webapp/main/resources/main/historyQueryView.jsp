@@ -42,7 +42,8 @@
         <table class="results history" cellspacing="0">
           <tr>
             <th>
-              &nbsp;
+              <input type="checkbox" id="selected_${type}"
+                             onclick="selectColumnCheckbox(this.form, '${type}')">
             </th>
             <th align="left" colspan="2" nowrap>
               <fmt:message key="history.namecolumnheader"/>
@@ -63,10 +64,10 @@
               <fmt:message key="history.actionscolumnheader"/>
             </th>
           </tr>    
-          <c:forEach items="${queryMap}" var="savedQuery">
+          <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
             <tr>
               <td>
-                <html:multibox property="selectedQueries">
+                <html:multibox property="selectedQueries" styleId="selected_${type}_${status.index}">
                   <c:out value="${savedQuery.key}"/>
                 </html:multibox>
               </td>
