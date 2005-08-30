@@ -78,9 +78,14 @@ public class ModifyQueryAction extends ModifyHistoryAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyQueryForm mqf = (ModifyQueryForm) form;
+        String type = request.getParameter("type");
         
         for (int i = 0; i < mqf.getSelectedQueries().length; i++) {
-            profile.deleteQuery(mqf.getSelectedQueries()[i]);
+            if ("history".equals(type)) {
+                profile.deleteHistory(mqf.getSelectedQueries()[i]);
+            } else {
+                profile.deleteQuery(mqf.getSelectedQueries()[i]);
+            }
         }
 
         return mapping.findForward("history");
