@@ -70,7 +70,7 @@ public class UniprotDataTranslator extends DataTranslator
     private Map identifierToOrganismDbId = new HashMap();
     private Set geneIdentifiers = new HashSet();
 
-    private static final String SRC_NS = "http://www.flymine.org/model#";
+    private static final String SRC_NS = "http://www.flymine.org/model/uniprot#";
 
     /**
      * @see DataTranslator
@@ -650,7 +650,7 @@ public class UniprotDataTranslator extends DataTranslator
 
 
     /**
-     * @see DataTranslatorTask#execute
+     * @see org.flymine.task.DataTranslatorTask#execute
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
@@ -710,8 +710,8 @@ public class UniprotDataTranslator extends DataTranslator
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
-        paths.put(SRC_NS + "EntryType", descs);
 
+        paths.put(SRC_NS + "EntryType", descs);
         return paths;
     }
 }
