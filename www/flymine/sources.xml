@@ -518,15 +518,6 @@
       </description>
       <version></version>
     </source>
-   <source>
-      <name>Homophila</name> 
-      <description>D. melanogaster genes with
-      homology to Human disease genes in OMIM (online mendelian
-      inheritance in man)from &lt;a
-      href="http://superfly.ucsd.edu/homophila/">Homophila&lt;/a>
-      </description>
-      <version></version>
-    </source>
-  </sources>
+   </sources>
 </intermine-sources>
 
