@@ -22,6 +22,9 @@ window.onload = function() { document.getElementById("queryString").focus(); }
     </html:select>
     <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
   </html:form>
+  <p class="smallnote">
+    <fmt:message key="begin.searchtemplates.help.message"/>
+  </p>
   
   <c:if test="${!empty results}">
     <p>
