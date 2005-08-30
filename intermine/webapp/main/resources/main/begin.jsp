@@ -104,10 +104,10 @@
         <input type="hidden" name="noSaveQuery" value="1"/>
         <html:submit><fmt:message key="begin.input.submit"/></html:submit>
         <br/>
-        <div class="smallnote">
+        <p class="smallnote">
           <fmt:message key="begin.browse.help.message"/>
           [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
-        </div>
+        </p>
       </html:form>
     </div>
   </im:box>
@@ -138,9 +138,9 @@
     </html:select>
     <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
     <br/>
-    <div class="smallnote">
+    <p class="smallnote">
        <fmt:message key="begin.searchtemplates.help.message"/>
-    </div>
+    </p>
   </html:form>
   </div>
 </im:box>
