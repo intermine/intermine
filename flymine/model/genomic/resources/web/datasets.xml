@@ -71,7 +71,7 @@
   </data-set>
 
   <data-set name="Tiling Path">
-    <subtitle>Microarray Tiling&lt;br/&gt;Primers</subtitle>
+    <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
     <large-image>model/tilingPath.png</large-image>
         <intro-text>
