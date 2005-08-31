@@ -96,7 +96,7 @@ public class ModifyBagForm extends ActionForm
 
         ActionErrors errors = new ActionErrors();
 
-        if (request.getParameter("rename") == null && selectedBags.length == 0) {
+        if (request.getParameter("newName") == null && selectedBags.length == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
         } else if (request.getParameter("delete") != null) {
             for (int i = 0; i < getSelectedBags().length; i++) {
