@@ -30,14 +30,12 @@
         <table class="results history" cellspacing="0">
           <tr>
             <th>
-              &nbsp;
+              <input type="checkbox" id="selected_template"
+                     onclick="selectColumnCheckbox(this.form, 'template')">
             </th>
             <th align="left" nowrap>
               <fmt:message key="history.namecolumnheader"/>
             </th>
-          <%--  <th align="center" nowrap>
-              <fmt:message key="history.datecreatedcolumnheader"/>
-            </th> --%>
             <th align="left" nowrap>
               <fmt:message key="history.descriptionheader"/>
             </th>
@@ -48,7 +46,7 @@
           <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate">
             <tr>
               <td>
-                <html:multibox property="selected">
+                <html:multibox property="selected" styleId="selected_template_${status.index}">
                   <c:out value="${savedTemplate.key}"/>
                 </html:multibox>
               </td>
@@ -74,20 +72,7 @@
                 </c:otherwise>
               </c:choose>
               
-                
               </td>
-              <%--
-              <td align="center" nowrap>
-                <c:choose>
-                  <c:when test="${savedQuery.value.dateCreated != null}">
-                    <fmt:formatDate value="${savedQuery.value.dateCreated}" type="both" pattern="dd/M/yy K:mm a"/>
-                  </c:when>
-                  <c:otherwise>
-                    n/a
-                  </c:otherwise>
-                </c:choose>
-              </td>
-              --%>
               <td nowrap>
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">

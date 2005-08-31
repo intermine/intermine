@@ -29,7 +29,8 @@
         <table class="results history" cellspacing="0">
           <tr>
             <th>
-              &nbsp;
+              <input type="checkbox" id="selected_bag"
+                     onclick="selectColumnCheckbox(this.form, 'bag')">
             </th>
             <th align="left" colspan="2" nowrap>
               <fmt:message key="query.savedbags.namecolumnheader"/>
@@ -41,16 +42,11 @@
           <c:forEach items="${PROFILE.savedBags}" var="savedBag">
             <tr>
               <td>
-                <html:multibox property="selectedBags">
+                <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
                   <c:out value="${savedBag.key}"/>
                 </html:multibox>
               </td>
-                <%--
-                <html:link action="/bagDetails?bagName=${savedBag.key}">
-                  <c:out value="${savedBag.key}"/>
-                </html:link>
-                --%>
-                
+              
                 <tiles:insert name="historyElementName.jsp">
                   <tiles:put name="name" value="${savedBag.key}"/>
                   <tiles:put name="type" value="bag"/>
