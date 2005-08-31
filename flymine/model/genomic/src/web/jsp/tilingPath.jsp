@@ -9,7 +9,7 @@ Current Data
 <DL>
 <DT><I>D. melanogaster</I></DT>
 <DD>
-A set of primers and the correspondng amplimers designed to tile across the release 4.0 <I>D. melanogaster</I> genome sequence.
+Whole genome tiling path primers for ChIP-Chip experiments in <i>D. melanogaster</i>.  The primers were designed to PCR-amplify 1000-1200 bp overlapping fragments of the release 4.0 genome excluding the transposable elements.  Rana and Micklem (unpublished).
 </DD>
 </DL>
 </div>
