@@ -37,7 +37,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        if (request.getParameter("rename") != null) {
+        if (request.getParameter("newName") != null) {
             return rename(mapping, form, request, response);
         } else {
             LOG.debug("execute returning null");
