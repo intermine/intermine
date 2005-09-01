@@ -14,12 +14,7 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Properties;
+import java.util.*;
 
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
@@ -28,9 +23,7 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.dataconversion.ItemReader;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.*;
 import org.intermine.metadata.Model;
 import org.intermine.util.XmlUtil;
 
@@ -40,6 +33,8 @@ import org.intermine.util.XmlUtil;
  */
 public class ProteinStructureDataTranslator extends DataTranslator
 {
+
+    private static final String SRC_NS = "http://www.flymine.org/model/protein_structure#";
     protected static final String ENDL = System.getProperty("line.separator");
     protected String dataLocation;
     protected Item db;
@@ -154,4 +149,26 @@ public class ProteinStructureDataTranslator extends DataTranslator
 
         return result;
     }
+
+
+  public static Map getPrefetchDescriptors() {
+      Map paths    = new HashMap();
+      Set fpsDescs = new HashSet();
+
+      ItemPrefetchDescriptor prs2sfDesc = new ItemPrefetchDescriptor("(Fragment_Protein_structure.sequence_family)");
+      prs2sfDesc.addConstraint(new ItemPrefetchConstraintDynamic("sequence_family", ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+      fpsDescs.add(prs2sfDesc);
+
+      ItemPrefetchDescriptor prs2mrDesc = new ItemPrefetchDescriptor("(Fragment_Protein_structure.modelled_region)");
+      prs2mrDesc.addConstraint(new ItemPrefetchConstraintDynamic("modelled_region", ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+      fpsDescs.add(prs2mrDesc);
+
+      ItemPrefetchDescriptor prs2mDesc = new ItemPrefetchDescriptor("(Fragment_Protein_structure.model)");
+      prs2mDesc.addConstraint(new ItemPrefetchConstraintDynamic("model", ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+      fpsDescs.add(prs2mDesc);
+
+      paths.put(SRC_NS + "Fragment_Protein_structure", fpsDescs);
+      return paths;
+  }
+
 }
