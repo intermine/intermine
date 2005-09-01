@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
+import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.BagHelper;
 import org.intermine.web.bag.InterMineBag;
@@ -114,8 +115,9 @@ public class ModifyBagAction extends ModifyHistoryAction
             return mapping.findForward("history");
         }
 
-        profile.saveBag(BagHelper.findNewBagName(savedBags, mbf.getNewBagName()), combined);
-
+        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+        profile.saveBag(name, combined);
+        
         return mapping.findForward("history");
     }
     
@@ -172,8 +174,9 @@ public class ModifyBagAction extends ModifyHistoryAction
         for (int i = 1; i < selectedBags.length; i++) {
             combined.retainAll((Collection) savedBags.get(selectedBags[i]));
         }
-        profile.saveBag(BagHelper.findNewBagName(savedBags, mbf.getNewBagName()), combined);
-
+        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+        profile.saveBag(name, combined);
+        
         return mapping.findForward("history");
     }
 
@@ -198,6 +201,7 @@ public class ModifyBagAction extends ModifyHistoryAction
 
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
+            SessionMethods.invalidateBagTable(session, mbf.getSelectedBags()[i]);
             profile.deleteBag(mbf.getSelectedBags()[i]);
         }
 

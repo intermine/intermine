@@ -10,12 +10,14 @@ package org.intermine.web.history;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
+import org.intermine.web.TemplateRepository;
 
 import org.apache.log4j.Logger;
 
@@ -76,11 +78,18 @@ public class ModifyTemplateAction extends ModifyHistoryAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         
         for (int i = 0; i < mqf.getSelected().length; i++) {
             profile.deleteTemplate(mqf.getSelected()[i]);
+        }
+        
+        if (profile.getUsername() != null
+            && profile.getUsername().equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
+            TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+            tr.globalTemplatesChanged();
         }
 
         return mapping.findForward("history");

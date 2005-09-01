@@ -17,7 +17,7 @@
       </query>
     </queries>
     <template-queries>
-      <template name="template" description="tdesc" category="tcat" important="false" keywords="">
+      <template name="template" description="tdesc" important="false" keywords="">
         <query name="template" model="testmodel" view="">
         </query>
       </template>
@@ -95,7 +95,7 @@
       </query>
     </queries>
     <template-queries>
-      <template name="template" description="some desc" category="some category" important="true" keywords="some_keyword">
+      <template name="template" description="some desc" important="true" keywords="some_keyword">
         <query name="template" model="testmodel" view="">
         </query>
       </template>

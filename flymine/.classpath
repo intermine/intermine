@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="lib" path="build/resources/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
-	<classpathentry kind="src" path="model/flyreg/src/test"/>
 	<classpathentry kind="src" path="model/genomic/src/web/java"/>
 	<classpathentry kind="src" path="model/drosdel/src/test"/>
 	<classpathentry kind="src" path="model/drosdel/src/java"/>
@@ -74,5 +73,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
+	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>

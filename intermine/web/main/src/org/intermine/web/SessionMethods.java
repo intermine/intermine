@@ -497,4 +497,16 @@ public class SessionMethods
         }
         tables.put(identifier, table);
     }
+
+    /**
+     * Remove a cached bag table from the session.
+     * @param session the current session
+     * @param name the bag name
+     */
+    public static void invalidateBagTable(HttpSession session, String name) {
+        Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
+        if (tables != null) {
+            tables.remove("bag." + name);
+        }
+    }
 }

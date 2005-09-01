@@ -106,7 +106,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
 
         String newBagName = buildBagForm.getBagName();
         profile.saveBag(newBagName, bag);
-
+        
         recordMessage(new ActionMessage("bagBuild.saved", newBagName), request);
 
         return mapping.findForward("buildBag");

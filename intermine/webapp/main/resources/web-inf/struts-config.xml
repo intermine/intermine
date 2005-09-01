@@ -69,7 +69,7 @@
     
     <form-bean name="importQueryForm"
                type="org.intermine.web.ImportQueryForm"/>
-                         
+               
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -255,6 +255,11 @@
     
     <action path="/collapseElement"
             type="org.intermine.web.CollapseAction">
+    </action>
+    
+    <action path="/addToBagAction"
+            type="org.intermine.web.results.AddToBagAction">
+      <forward name="objectDetails" path="/objectDetails.do" redirect="true"/>
     </action>
     
     <!-- wait for a custom build query to run -->

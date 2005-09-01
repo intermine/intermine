@@ -234,6 +234,7 @@ public class SaveBagAction extends InterMineAction
                 return mapping.findForward("results");
             }
             bag.addAll(existingBag);
+            SessionMethods.invalidateBagTable(session, bagName);
         }
         if (bag.size() > maxBagSize) {
             ActionMessage actionMessage =

@@ -10,19 +10,17 @@ package org.intermine.web;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Collections;
 import java.util.TreeMap;
 
-import org.apache.commons.collections.map.ListOrderedMap;
-import org.apache.lucene.store.Directory;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
+
+import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.lucene.store.Directory;
 
 /**
  * Class to represent a user of the webapp

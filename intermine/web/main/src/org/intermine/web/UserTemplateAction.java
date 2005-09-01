@@ -58,7 +58,6 @@ public class UserTemplateAction extends InterMineDispatchAction
                     (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
                 TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
                 tr.globalTemplateRemoved(template);
-                //InitialiserPlugin.loadGlobalTemplateQueries(servletContext);
             }
         } else {
             recordError(new ActionMessage("errors.template.nosuchtemplate"), request);

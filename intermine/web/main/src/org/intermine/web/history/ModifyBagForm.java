@@ -11,16 +11,20 @@ package org.intermine.web.history;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.web.Constants;
-import org.intermine.web.PathQuery;
 import org.intermine.web.Profile;
+import org.intermine.web.SavedQuery;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -95,18 +99,28 @@ public class ModifyBagForm extends ActionForm
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         ActionErrors errors = new ActionErrors();
-
+        
         if (request.getParameter("newName") == null && selectedBags.length == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
         } else if (request.getParameter("delete") != null) {
             for (int i = 0; i < getSelectedBags().length; i++) {
-                List queries = queriesThatMentionBag(profile.getSavedQueries(),
-                                                     getSelectedBags()[i]);
+                Set queries = new HashSet();
+                queries.addAll(queriesThatMentionBag(profile.getSavedQueries(), getSelectedBags()[i]));
+                queries.addAll(queriesThatMentionBag(profile.getHistory(), getSelectedBags()[i]));
                 if (queries.size() > 0) {
                     ActionMessage actionMessage =
                         new ActionMessage("history.baginuse", getSelectedBags()[i], queries);
                     errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
                 }
+            }
+        }
+        
+        if (request.getParameter("newName") == null &&
+            (request.getParameter("union") != null || request.getParameter("intersect") != null)) {
+            if (StringUtils.isEmpty(getNewBagName())) {
+                ActionMessage actionMessage =
+                    new ActionMessage("errors.required", "New bag name");
+                errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
             }
         }
 
@@ -123,8 +137,8 @@ public class ModifyBagForm extends ActionForm
         List queries = new ArrayList();
         for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
             String queryName = (String) i.next();
-            PathQuery query = (PathQuery) savedQueries.get(queryName);
-            if (query.getBagNames().contains(bagName)) {
+            SavedQuery query = (SavedQuery) savedQueries.get(queryName);
+            if (query.getPathQuery().getBagNames().contains(bagName)) {
                 queries.add(queryName);
             }
         }

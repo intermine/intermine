@@ -9,8 +9,10 @@ import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SavedQuery;
+import org.intermine.web.SessionMethods;
 import org.intermine.web.bag.InterMineBag;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForm;
@@ -72,6 +74,11 @@ public abstract class ModifyHistoryAction extends InterMineAction
             return historyForward;
         }
         
+        if (StringUtils.isEmpty(newName)) {
+            recordError(new ActionMessage("errors.required", "New name"), request);
+            return editForward(historyForward, type, name);
+        }
+        
         if (type.equals("history")) {
             if (profile.getHistory().get(newName) != null) {
                 recordError(new ActionMessage("errors.modifyQuery.queryExists", newName), request);
@@ -94,6 +101,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
             }
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
             profile.deleteBag(name);
+            SessionMethods.invalidateBagTable(session, name);
             profile.saveBag(newName, bag);
         } else {
             LOG.error("Don't understand type parameter: " + type);
