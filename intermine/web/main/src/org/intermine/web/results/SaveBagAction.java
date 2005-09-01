@@ -77,6 +77,11 @@ public class SaveBagAction extends InterMineAction
     }
 
     /**
+     * The batch size to use when we need to iterate through the whole result set.
+     */
+    public static final int BIG_BATCH_SIZE = 10000;
+
+    /**
      * Save the selected objects to a bag on the session
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -115,39 +120,54 @@ public class SaveBagAction extends InterMineAction
             bag = new InterMinePrimitiveBag();
         }
 
+        // set to true if there is a complete column to save as a bag
+        boolean wholeColumnToSave = false;
+
+        for (int i = 0; i < crf.getSelectedObjects().length; i++) {
+            String selectedObjectString = crf.getSelectedObjects()[i];
+            if (selectedObjectString.indexOf(",") == -1) {
+                wholeColumnToSave = true;
+                break;
+            }
+        }
+
         List allRows = pt.getAllRows();
 
         if (allRows instanceof Results) {
             Results results = (Results) allRows;
-            
-            if (results.size() > maxBagSize) {
+
+            if (results.size() > maxBagSize && wholeColumnToSave) {
                 ActionMessage actionMessage =
                     new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                 recordError(actionMessage, request);
-                
+
                 return mapping.findForward("results");
             }
-            
+
             try {
                 // make a copy of the Results object with a larger batch size so the object
                 // store doesn't need to do lots of queries
                 // we copy because setBatchSize() throws an exception if size() has already
                 // been called
                 Results newResults = results.getObjectStore().execute(results.getQuery());
-                
+
                 if (maxBagSize > results.getObjectStore().getMaxLimit()) {
                     newResults.setBatchSize(results.getObjectStore().getMaxLimit());
                 } else {
-                    newResults.setBatchSize(maxBagSize);
+                    if (maxBagSize < BIG_BATCH_SIZE) {
+                        newResults.setBatchSize(maxBagSize);
+                    } else {
+                        newResults.setBatchSize(BIG_BATCH_SIZE);
+                    }
                 }
-                
+
                 // make sure we can get the first batch
                 try {
                     newResults.get(0);
                 } catch (IndexOutOfBoundsException e) {
                     // Ignore - that means there are NO rows in this results object.
                 }
-                
+
                 allRows = newResults;
             } catch (RuntimeException e) {
                 if (e.getCause() instanceof ObjectStoreException) {
@@ -164,37 +184,39 @@ public class SaveBagAction extends InterMineAction
         }
 
         // save selected columns first
-        for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
-            List thisRow = (List) rowIterator.next();
+        if (wholeColumnToSave) {
+            for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
+                List thisRow = (List) rowIterator.next();
 
-            // go through the selected items (checkboxes) and add to the bag-to-save
-            for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
-                 itemIterator.hasNext();) {
-                String selectedObject = (String) itemIterator.next();
-                // selectedObject is of the form "column,row" or "column"
-                int commaIndex = selectedObject.indexOf(",");
-                if (commaIndex == -1) {
-                    int column = Integer.parseInt(selectedObject);
-                    
-                    if (storingIds) {
-                        Integer id = ((InterMineObject) thisRow.get(column)).getId();
-                        bag.add(id);
-                    } else {
-                        bag.add(thisRow.get(column));
-                    }
+                // go through the selected items (checkboxes) and add to the bag-to-save
+                for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
+                     itemIterator.hasNext();) {
+                    String selectedObject = (String) itemIterator.next();
+                    // selectedObject is of the form "column,row" or "column"
+                    int commaIndex = selectedObject.indexOf(",");
+                    if (commaIndex == -1) {
+                        int column = Integer.parseInt(selectedObject);
 
-                    if (bag.size() > maxBagSize) {
-                        ActionMessage actionMessage =
-                            new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                        recordError(actionMessage, request);
-                
-                        return mapping.findForward("results");
+                        if (storingIds) {
+                            Integer id = ((InterMineObject) thisRow.get(column)).getId();
+                            bag.add(id);
+                        } else {
+                            bag.add(thisRow.get(column));
+                        }
+
+                        if (bag.size() > maxBagSize) {
+                            ActionMessage actionMessage =
+                                new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                            recordError(actionMessage, request);
+
+                            return mapping.findForward("results");
+                        }
                     }
                 }
             }
         }
 
-        // not save individually selected items
+        // now save individually selected items
         for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
              itemIterator.hasNext();) {
             String selectedObject = (String) itemIterator.next();
