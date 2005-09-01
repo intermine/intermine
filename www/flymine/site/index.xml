@@ -6,18 +6,16 @@
         Introduction
       </title>
       
-      <para>The FlyMine project is building an integrated database of genomic,
+      <para>FlyMine is an integrated database of genomic,
         expression and protein data for <emphasis>Drosophila</emphasis> and
-        <emphasis>Anopheles</emphasis> and making this available to the worldwide
-        research community via web and bioinformatics interfaces.
+        <emphasis>Anopheles</emphasis>.  Accessible online, users can access
+        a library of pre-defined queries or construct their own using a
+        powerful query builder interface.
       </para>
       
       <para>
-        An initial release of the database is 
-        <ulink url="/begin.do">now accessible</ulink>, 
-        accompanied by full <ulink url="doc/index.xml">documentation</ulink>. 
-        For more information about
-        FlyMine please consult the more detailed
+        Full <ulink url="doc/index.xml">user documentation</ulink> is available. 
+        For further information about FlyMine please consult the more detailed
         <ulink url="introduction.xml">introduction</ulink>.
       </para>
       
@@ -39,7 +37,7 @@
         FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>.
         Release 2.1 of FlyMine incorporates the following data sources:
       </para>
-        <sources sources="/sources.xml" version="2.1"/>
+        <sources sources="/sources.xml" version="3.0"/>
     </section>
   </column>
   

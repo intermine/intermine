@@ -27,6 +27,18 @@
     <!-- Add new news at the top here -->
     
     <item>
+      <title>FlyMine 3.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-3.0/begin.do"&gt;
+        FlyMine 3.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.html"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Thu, 1 Sep 2005 13:23:51 GMT</pubDate>
+    </item>
+    
+    <item>
       <title>FlyMine 2.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -48,14 +60,14 @@
       <pubDate>Wed, 30 Mar 2005 16:53:30 GMT</pubDate>
     </item>
     
-    <item>
+    <!--item>
       <title>FlyMine 1.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
         FlyMine 1.1 is now available.
       </description>
       <pubDate>Fri, 18 Feb 2005 20:16:58 GMT</pubDate>
-    </item>
+    </item-->
     
     <!--item>
       <title>FlyMine 1.0 Released</title>

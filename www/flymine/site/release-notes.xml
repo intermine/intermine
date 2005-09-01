@@ -3,25 +3,95 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
+    <title>FlyMine version 3.0 - release notes</title>
+    
+    <itemizedlist>
+      <listitem>
+        <para>Data - new and updated</para>
+        <itemizedlist>
+          <listitem><para>UPDATE: FlyBase <emphasis>D. melanogaster</emphasis> genome annotation updated to release 4.2.</para></listitem>
+          <listitem><para>NEW: Microarray gene expression data - currently five experiments run at the FlyChip facility are available.</para></listitem>
+          <listitem><para>NEW: Protein domain and family information from InterPro.</para></listitem>
+          <listitem><para>NEW: DrosDel deletion data added.</para></listitem>
+          <listitem><para>NEW: <emphasis>D. melanogaster</emphasis> genes now have full name and wild type function set.</para></listitem>
+          <listitem><para>UPDATE: GO annotation changes:</para>
+            <itemizedlist>
+              <listitem><para><emphasis>D. melanogaster</emphasis> and <emphasis>C. elegans</emphasis> gene associations are now taken from FlyBase and WormBase respectively.</para></listitem>
+              <listitem><para>Gene now has a collection of GOAnnotations, an object which contains the GO term id, name, evidence code and text from 'with' reference if present. If 'with' is a Gene or Protein a reference to the object is added.</para></listitem>
+              <listitem><para>GOTerm entries now have a description, namespace ('biological_process', 'cellular_component' or 'molecular_function') and a collection of synonyms.</para></listitem>
+            </itemizedlist>
+          </listitem>
+        </itemizedlist>
+        <para>NOTE - this list does not include all updates to the versions of existing data sources - for a full list of versions see the Datasources section on the <ulink url="/">FlyMine home page</ulink>.</para>
+        <para />
+      </listitem>
+      <listitem>
+        <para>Data - fixes</para>
+         <itemizedlist>
+          <listitem><para>FIX: Gene.name is now Gene.symbol, added Gene.name which has a longer text name.</para></listitem>
+          <listitem><para>FIX: Transcript.exonCount is now set for all Transcripts.</para></listitem>
+          <listitem><para>FIX: Only RepeatRegions predicted by TRF are retrieved for <emphasis>A. gambiae</emphasis> from Ensembl.</para></listitem>
+          <listitem><para>FIX: There are no longer links to UniProt with BDGP identifiers.</para></listitem>
+          <listitem><para>FIX: Incorrect start and end fields removed from RepeatRegion.</para></listitem>
+          <listitem><para>FIX: Removed duplicate synonyms for some Proteins.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Data - known issues</para>
+         <itemizedlist>
+           <listitem><para>Five genes are annotated incorrectly in the FlyBase release 4.2 annotation. These are eys, Dimp, cp309, Nev3 and kay. It is a known problem with FlyBase and a fix is progress. In FlyMine the symbols(names) are modified so that they are unique and indicate that there is a problem. Examples are: Dimp-duplicate-symbol-1, Dimp-duplicate-symbol-2 instead of Dimp.</para></listitem>
+           <listitem><para>The latest version of InterPro (11.0) is not yet available as a mysql dump so we still have version 10.0.</para></listitem>
+           <listitem><para>INDAC microarray oligos were designed to FlyBase version 4.0 transcripts. This means a number now map to old transcripts. These oligos can be queried in FlyMine, however the transcript they are designed to will not have merged with a Gene.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Interface - new features</para>
+        <itemizedlist>
+          <listitem><para>NEW: The start page of FlyMine now has links to a series of 'aspects' which are convenient starting points for the different types of data in FlyMine - such as genomics, protein interactions and gene expression. Each aspect lists relevant data sets in FlyMine, template queries and suggested starting points for queries.</para></listitem>
+          <listitem><para>NEW: Template search box added to the front page.</para></listitem>
+          <listitem><para>NEW: User templates are now listed on the user's History page.</para></listitem>
+          <listitem><para>NEW: Saved bags and saved queries can be renamed from the History page.</para></listitem>
+          <listitem><para>NEW: Executed queries are now automatically saved to a 'session history'. The user can permanently save a query from the session history from the History page.</para></listitem>
+          <listitem><para>NEW: Saved queries and queries in the session history are now displayed with the date and time at which they were created.</para></listitem>
+          <listitem><para>NEW: Saved queries and queries in the session history are now displayed with their starting point and a summary of the fields selected for output.</para></listitem>
+          <listitem><para>NEW: You can now edit an existing constraint in the query builder by clicking the blue edit icon next to the constraint.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Interface - fixes</para>
+        <itemizedlist>
+          <listitem><para>FIX: History page is now viewable to anonymous users.</para></listitem>
+          <listitem><para>FIX: Characters from the Greek alphabet within identifier names should now display correctly.</para></listitem>
+          <listitem><para>FIX: Users can now run separate queries in separate browser windows and view results simultaneously.</para></listitem>
+          <listitem><para>FIX: Exported results on Windows Internet Explorer now download with the correct file name.</para></listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+  </section>
+  <section>
     <title>FlyMine version 2.1 - release notes</title>
     
     <itemizedlist>
       <listitem>
         <para>Data - new sources</para>
         <itemizedlist>
-          <listitem><para>Added Drosophila whole genome amplimer tiling path (Genetics Department, Cambridge, UK)</para></listitem>
+          <listitem><para>Added <emphasis>D. melanogaster</emphasis> whole genome amplimer tiling path (Genetics Department, Cambridge, UK)</para></listitem>
         </itemizedlist>
       </listitem>
 
       <listitem>
-        <para>Data - bug fixes</para>
+        <para>Data - fixes</para>
          <itemizedlist>
           <listitem><para>Fixed an off by one error with chromsome locations of FlyReg binding sites</para></listitem>
           <listitem><para>GBrowse images now appear on Transcript details page</para></listitem>
           <listitem><para>Removed duplicate GO (Gene Ontology) Ontology object</para></listitem>
           <listitem><para>Sequences are no longer a mix of upper and lower case - now all lower case</para></listitem>
-          <listitem><para>Added CDS and Translation objects for each Anopheles gambiae Transcript</para></listitem>
-          <listitem><para>INDAC oligos - Transcripts now correctly merged with other Drosophila annotation</para></listitem>
+          <listitem><para>Added CDS and Translation objects for each <emphasis>A. gambiae</emphasis> Transcript</para></listitem>
+          <listitem><para>INDAC oligos - Transcripts now correctly merged with other <emphasis>D. melanogaster</emphasis> annotation</para></listitem>
           <listitem><para>All genome annotation features now have a chromosomeLocation field</para></listitem>
         </itemizedlist>
       </listitem>
@@ -29,7 +99,7 @@
       <listitem>
         <para>Data - known issues</para>
          <itemizedlist>
-          <listitem><para>Information from FlyBase missing for some Drosophila melanogaster genes due to problems reading FlyBase gff3 (fixed in FlyBase release 4.1)</para></listitem>
+          <listitem><para>Information from FlyBase missing for some <emphasis>D. melanogaster</emphasis> genes due to problems reading FlyBase gff3 (fixed in FlyBase release 4.1)</para></listitem>
           <listitem><para>INDAC, FlyReg and Genetics Dept (Cambridge) InfoSource objects are duplicated</para></listitem>
         </itemizedlist>
       </listitem>
@@ -47,7 +117,7 @@
       </listitem>
 
       <listitem>
-        <para>Interface - bug fixes</para>
+        <para>Interface - fixes</para>
         <itemizedlist>
           <listitem><para>Users with javascript disabled can now run queries</para></listitem>
           <listitem><para>Fixed bug that stopped the user from creating certain loop-queries</para></listitem> 

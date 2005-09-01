@@ -4,57 +4,57 @@
 <intermine-sources>
   <sources version="1.0">
     <source>
-      <name>D. melanogaster genome annotation.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for D. melanogaster from &lt;a
+        Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 3.1</version>
     </source>
     <source>
-      <name>A. gambiae genome annotation.</name>
+      <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for A. gambiae from &lt;a
+        Genome Annotation for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 2b</version>
     </source>
     <source>
-      <name>D. melanogaster : A. gambiae orthologues.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; : &lt;i&gt;A. gambiae&lt;/i&gt; orthologues.</name>
       <description>
-        Orthologues between D. melanogaster and A. gambiae from &lt;a
+        Orthologues between &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster : C. elegans orthologues and paralogues.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; : &lt;i&gt;C. elegans&lt;/i&gt; orthologues and paralogues.</name>
       <description> 
-        Orthologues and Paralogues between D. melanogaster and C. elegans
+        Orthologues and Paralogues between &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;
         from &lt;a href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version>3.0</version>
     </source>
     <source>
-      <name>D. melanogaster protein-protein interactions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein-protein interactions.</name>
       <description>
-        2-hybrid protein-protein interactions for D. melanogaster:
+        2-hybrid protein-protein interactions for &lt;i&gt;D. melanogaster&lt;/i&gt;:
         Curagen set (Giot et al (2003) Science 302 1727-1736). 
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans protein-protein interactions.</name> 
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; protein-protein interactions.</name> 
       <description>
-        2-hybrid protein-protein interactions for C. elegans (Li et al
+        2-hybrid protein-protein interactions for &lt;i&gt;C. elegans&lt;/i&gt; (Li et al
         (2004) Science 303 540-543)
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans RNAi phenotypes.</name>
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes.</name>
       <description>
-        RNAi phenotypes for C. elegans from
+        RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
       </description>
       <version></version>
@@ -79,17 +79,17 @@
 
   <sources version="1.1">
     <source>
-      <name>D. melanogaster genome annotation.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for D. melanogaster from &lt;a
+        Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 3.1</version>
     </source>
     <source>
-      <name>A. gambiae genome annotation.</name>
+      <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for A. gambiae from &lt;a
+        Genome Annotation for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 2b</version>
@@ -97,56 +97,56 @@
     <source>
       <name>Uniprot proteins</name>
       <description>
-        Proteins for D. melanogaster, A. gambiae and C. elegans from
+        Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.ebi.uniprot.org/index.shtml">Uniprot
         (trembl and Swissprot)&lt;/a> 
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster : A. gambiae orthologues.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; : &lt;i&gt;A. gambiae&lt;/i&gt; orthologues.</name>
       <description>
-        Orthologues between D. melanogaster and A. gambiae from &lt;a
+        Orthologues between &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster : C. elegans orthologues and paralogues.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; : &lt;i&gt;C. elegans&lt;/i&gt; orthologues and paralogues.</name>
       <description> 
-        Orthologues and Paralogues between D. melanogaster and C. elegans
+        Orthologues and Paralogues between &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;
         from &lt;a href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version>3.0</version>
     </source>
     <source>
-      <name>D. melanogaster protein-protein interactions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein-protein interactions.</name>
       <description>
-        2-hybrid protein-protein interactions for D. melanogaster:
+        2-hybrid protein-protein interactions for &lt;i&gt;D. melanogaster&lt;/i&gt;:
         Curagen set (Giot et al (2003) Science 302 1727-1736). 
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans protein-protein interactions.</name> 
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; protein-protein interactions.</name> 
       <description>
-        2-hybrid protein-protein interactions for C. elegans (Li et al
+        2-hybrid protein-protein interactions for &lt;i&gt;C. elegans&lt;/i&gt; (Li et al
         (2004) Science 303 540-543)
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster protein domain 3-D structure predictions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions.</name>
       <description>
-        D. melanogaster protein domain 3-D structure predictions from
+        &lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions from
         &lt;a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans RNAi phenotypes.</name>
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes.</name>
       <description>
-        RNAi phenotypes for C. elegans from
+        RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
       </description>
       <version></version>
@@ -171,17 +171,17 @@
 
   <sources version="2.0">
     <source>
-      <name>D. melanogaster genome annotation.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for D. melanogaster from &lt;a
+        Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
         href="http://www.flybase.org/">FlyBase&lt;/a>
       </description>
       <version>Release 4.0</version>
     </source>
     <source>
-      <name>A. gambiae genome annotation.</name>
+      <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for A. gambiae from &lt;a
+        Genome Annotation for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 2b</version>
@@ -189,7 +189,7 @@
     <source>
       <name>Uniprot proteins</name>
       <description>
-        Proteins for D. melanogaster, A. gambiae and C. elegans from
+        Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.ebi.uniprot.org/index.shtml">Uniprot
         (trembl and swissprot)&lt;/a> 
       </description>
@@ -197,42 +197,42 @@
     </source>
     <source>
       <name>orthologues and paralogues.</name> <description>
-        Orthologues and Paralogues between D. melanogaster and
-        C. elegans, D. melanogaster and A. gambiae and C. elegans and
-        A. gambiae from &lt;a
+        Orthologues and Paralogues between &lt;i&gt;D. melanogaster&lt;/i&gt; and
+        &lt;i&gt;C. elegans&lt;/i&gt;, &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; and
+        &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster protein-protein interactions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein-protein interactions.</name>
       <description>
-        2-hybrid protein-protein interactions for D. melanogaster:
+        2-hybrid protein-protein interactions for &lt;i&gt;D. melanogaster&lt;/i&gt;:
         Curagen set (Giot et al (2003) Science 302 1727-1736); Stanyon
         set (Stanyon et al (2004) Genome Biology 5: R96
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans protein-protein interactions.</name> 
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; protein-protein interactions.</name> 
       <description>
-        2-hybrid protein-protein interactions for C. elegans (Li et al
+        2-hybrid protein-protein interactions for &lt;i&gt;C. elegans&lt;/i&gt; (Li et al
         (2004) Science 303 540-543)
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster protein domain 3-D structure predictions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions.</name>
       <description>
-        D. melanogaster protein domain 3-D structure predictions from
+        &lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions from
         &lt;a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans RNAi phenotypes.</name>
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes.</name>
       <description>
-        RNAi phenotypes for C. elegans from
+        RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
       </description>
       <version></version>
@@ -249,7 +249,7 @@
       <description>
         &lt;a
         href="http://www.geneontology.org/GO.current.annotations.shtml/">Uniprot
-        Gene Ontology assignments&lt;/a> for D. melanogaster, A. Gambiae and C. elegans.
+        Gene Ontology assignments&lt;/a> for &lt;i&gt;D. melanogaster&lt;/i&gt;, A. Gambiae and &lt;i&gt;C. elegans&lt;/i&gt;.
       </description>
       <version>March 16th  2005</version>
     </source>
@@ -265,7 +265,7 @@
       <name>flyreg DNase I footprints</name>
       <description>DNase I footprints from
         &lt;a
-        href="http://www.flyreg.org/">Drosophila DNase I Footprint Database&lt;/a> 
+        href="http://www.flyreg.org/">&lt;i&gt;Drosophila&lt;/i&gt; DNase I Footprint Database&lt;/a> 
       </description>
       <version>2.0</version>
     </source>
@@ -273,17 +273,17 @@
 
   <sources version="2.1">
     <source>
-      <name>D. melanogaster genome annotation.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for D. melanogaster from &lt;a
+        Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
         href="http://www.flybase.org/">FlyBase&lt;/a>
       </description>
       <version>Release 4.0</version>
     </source>
     <source>
-      <name>A. gambiae genome annotation.</name>
+      <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for A. gambiae from &lt;a
+        Genome Annotation for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 2b</version>
@@ -291,7 +291,7 @@
     <source>
       <name>Uniprot proteins</name>
       <description>
-        Proteins for D. melanogaster, A. gambiae and C. elegans from
+        Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.ebi.uniprot.org/index.shtml">Uniprot
         (trembl and swissprot)&lt;/a> 
       </description>
@@ -299,42 +299,42 @@
     </source>
     <source>
       <name>orthologues and paralogues.</name> <description>
-        Orthologues and Paralogues between D. melanogaster and
-        C. elegans, D. melanogaster and A. gambiae and C. elegans and
-        A. gambiae from &lt;a
+        Orthologues and Paralogues between &lt;i&gt;D. melanogaster&lt;/i&gt; and
+        &lt;i&gt;C. elegans&lt;/i&gt;, &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; and
+        &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster protein-protein interactions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein-protein interactions.</name>
       <description>
-        2-hybrid protein-protein interactions for D. melanogaster:
+        2-hybrid protein-protein interactions for &lt;i&gt;D. melanogaster&lt;/i&gt;:
         Curagen set (Giot et al (2003) Science 302 1727-1736); Stanyon
         set (Stanyon et al (2004) Genome Biology 5: R96
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans protein-protein interactions.</name> 
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; protein-protein interactions.</name> 
       <description>
-        2-hybrid protein-protein interactions for C. elegans (Li et al
+        2-hybrid protein-protein interactions for &lt;i&gt;C. elegans&lt;/i&gt; (Li et al
         (2004) Science 303 540-543)
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster protein domain 3-D structure predictions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions.</name>
       <description>
-        D. melanogaster protein domain 3-D structure predictions from
+        &lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions from
         &lt;a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans RNAi phenotypes.</name>
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes.</name>
       <description>
-        RNAi phenotypes for C. elegans from
+        RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
       </description>
       <version></version>
@@ -351,7 +351,7 @@
       <description>
         &lt;a
         href="http://www.geneontology.org/GO.current.annotations.shtml/">Uniprot
-        Gene Ontology assignments&lt;/a> for D. melanogaster, A. Gambiae and C. elegans.
+        Gene Ontology assignments&lt;/a> for &lt;i&gt;D. melanogaster&lt;/i&gt;, A. Gambiae and &lt;i&gt;C. elegans&lt;/i&gt;.
       </description>
       <version>March 16th  2005</version>
     </source>
@@ -367,7 +367,7 @@
       <name>flyreg DNase I footprints</name>
       <description>DNase I footprints from
         &lt;a
-        href="http://www.flyreg.org/">Drosophila DNase I Footprint Database&lt;/a> 
+        href="http://www.flyreg.org/">&lt;i&gt;Drosophila&lt;/i&gt; DNase I Footprint Database&lt;/a> 
       </description>
       <version>2.0</version>
     </source>
@@ -378,21 +378,20 @@
       <version>4.0</version>
     </source>
   </sources>
-</intermine-sources>
 
   <sources version="3.0">
     <source>
-      <name>D. melanogaster genome annotation.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for D. melanogaster from &lt;a
+        Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
         href="http://www.flybase.org/">FlyBase&lt;/a>
       </description>
       <version>Release 4.2</version>
     </source>
     <source>
-      <name>A. gambiae genome annotation.</name>
+      <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation.</name>
       <description>
-        Genome Annotation for A. gambiae from &lt;a
+        Genome Annotation for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 2b</version>
@@ -400,7 +399,7 @@
     <source>
       <name>Uniprot proteins</name>
       <description>
-        Proteins for D. melanogaster, A. gambiae and C. elegans from
+        Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.ebi.uniprot.org/index.shtml">Uniprot
         (trembl and swissprot)&lt;/a> 
       </description>
@@ -408,42 +407,42 @@
     </source>
     <source>
       <name>orthologues and paralogues.</name> <description>
-        Orthologues and Paralogues between D. melanogaster and
-        C. elegans, D. melanogaster and A. gambiae and C. elegans and
-        A. gambiae from &lt;a
+        Orthologues and Paralogues between &lt;i&gt;D. melanogaster&lt;/i&gt; and
+        &lt;i&gt;C. elegans&lt;/i&gt;, &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; and
+        &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version>16th April 2005</version>
     </source>
     <source>
-      <name>D. melanogaster protein-protein interactions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein-protein interactions.</name>
       <description>
-        2-hybrid protein-protein interactions for D. melanogaster:
+        2-hybrid protein-protein interactions for &lt;i&gt;D. melanogaster&lt;/i&gt;:
         Curagen set (Giot et al (2003) Science 302 1727-1736); Stanyon
         set (Stanyon et al (2004) Genome Biology 5: R96
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans protein-protein interactions.</name> 
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; protein-protein interactions.</name> 
       <description>
-        2-hybrid protein-protein interactions for C. elegans (Li et al
+        2-hybrid protein-protein interactions for &lt;i&gt;C. elegans&lt;/i&gt; (Li et al
         (2004) Science 303 540-543)
       </description>
       <version></version>
     </source>
     <source>
-      <name>D. melanogaster protein domain 3-D structure predictions.</name>
+      <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions.</name>
       <description>
-        D. melanogaster protein domain 3-D structure predictions from
+        &lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions from
         &lt;a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <name>C. elegans RNAi phenotypes.</name>
+      <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes.</name>
       <description>
-        RNAi phenotypes for C. elegans from
+        RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
         &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
       </description>
       <version></version>
@@ -456,29 +455,29 @@
       <version></version>
     </source>
     <source>
-      <name>GO annotations for A. gambiae</name>
+      <name>GO annotations for &lt;i&gt;A. gambiae&lt;/i&gt;</name>
       <description>
-        Gene Ontology assignemnts for A. gambiae from &lt;a
+        Gene Ontology assignemnts for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
         href="http://www.geneontology.org/GO.current.annotations.shtml/">Uniprot
         GOA&lt;/a>
       </description>
       <version>8th August 2005</version>
     </source>
     <source>
-      <name>GO annotations for D. melanogaster and C. elegans</name>
+      <name>GO annotations for &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;</name>
       <description>
-        Gene Ontology assignments for D. melanogaster and C. elegans
-        from the&lt;a
+        Gene Ontology assignments for &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;
+        from the &lt;a
         href="http://www.geneontology.org/GO.current.annotations.shtml/">Gene
         Ontology Site&lt;/a>
       </description>
-      <version>August 23 rd 2005 (Dm); April 5th 2005 (Ce)</version>
+      <version>August 23rd 2005 (Dm); April 5th 2005 (Ce)</version>
     </source>
     <source>
       <name>INDAC microarray oligo set</name>
       <description>
         &lt;a
-        href="http://www.indac.net/">INDAC&lt;/a> microarray long oligo set for D. melanogaster. 
+        href="http://www.indac.net/">INDAC&lt;/a> microarray long oligo set for &lt;i&gt;D. melanogaster&lt;/i&gt;. 
       </description>
       <version>1.0</version>
     </source>
@@ -492,28 +491,28 @@
     </source>
     <source>
       <name>Whole genome tiling path</name> <description>Locations of
-      primers and amplimers tiled across whole D. melanogaster
+      primers and amplimers tiled across whole &lt;i&gt;D. melanogaster&lt;/i&gt;
       genome.
       </description>
       <version>4.0</version>
     </source>
     <source>
       <name>Interpro protein family and domain data</name>
-      <description>Protein Family and Domain data for D. melanogaster, A. gambiae and C. elegans from &lt;a
+      <description>Protein Family and Domain data for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from &lt;a
         href="http://www.ebi.ac.uk/interpro/">Interpro&lt;/a>
       </description>
       <version>10.0</version>
     </source>
    <source>
       <name>Microarray gene expression data</name>
-      <description>Five D. melanogaster microarray gene expression experiments from &lt;a
+      <description>Five &lt;i&gt;D. melanogaster&lt;/i&gt; microarray gene expression experiments from &lt;a
         href="http://www.ebi.ac.uk/arrayexpress/">ArrayExpress&lt;/a>
       </description>
       <version></version>
     </source>
    <source>
       <name>DrosDel</name>
-      <description>D. melanogaster P-element insertion and deletion locations from &lt;a
+      <description>&lt;i&gt;D. melanogaster&lt;/i&gt; P-element insertion and deletion locations from &lt;a
         href="http://www.drosdel.org.uk/">DrosDel&lt;/a>
       </description>
       <version></version>
