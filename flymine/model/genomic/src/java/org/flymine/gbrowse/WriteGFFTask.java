@@ -160,7 +160,7 @@ public class WriteGFFTask extends Task
                     writeFeature(gffWriter, currentChr, currentChr, null,
                                  chromosomeFileNamePrefix(currentChr),
                                  new Integer(0), "chromosome",
-                                 "Chromosome", null, synonymMap, feature.getId());
+                                 "Chromosome", null, synonymMap, currentChr.getId());
 
                     objectCounts = new HashMap();
                     currentChrId = resultChrId;
@@ -177,7 +177,7 @@ public class WriteGFFTask extends Task
             }
 
             if (!currentChr.getIdentifier().endsWith("_random")
-                    && !currentChr.getIdentifier().equals("M")) {
+                && !currentChr.getIdentifier().equals("M")) {
                 String identifier = feature.getIdentifier();
 
                 String featureType = getFeatureName(feature);
@@ -411,7 +411,7 @@ public class WriteGFFTask extends Task
             attributes.put("promoter", promoterFlagList);
         }
 
-        lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
+        lineBuffer.append(stringifyAttributes(attributes));
         gffWriter.println(lineBuffer.toString());
     }
 
