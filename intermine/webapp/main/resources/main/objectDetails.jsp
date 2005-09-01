@@ -320,22 +320,29 @@
   </table>
 
 </c:if>
+
+<div class="body">
+            <c:if test="${!empty PROFILE.savedBags}">
+              <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
+                <fmt:message key="objectDetails.addToBag"/>
+                <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+                <select name="bag">
+                  <c:forEach items="${PROFILE.savedBags}" var="entry">
+                    <option name="${entry.key}">${entry.key}</option>
+                  </c:forEach>
+                </select>
+                <input type="hidden" name="object" value="${object.id}"/>
+                <input type="submit" value="<fmt:message key="button.add"/>"/>
+              </form>
+            </c:if>
+</div>
+
 <c:if test="${empty object}">
   <%-- Display message if object not found --%>
   <div class="altmessage">
     <fmt:message key="objectDetails.noSuchObject"/>
   </div>
 </c:if>
-
-<%--
-<div class="body">
-  <c:if test="${RESULTS_TABLE != null && RESULTS_TABLE.size > 0}">
-    <html:link action="/changeResults?method=reset">
-      <fmt:message key="results.return"/>
-    </html:link>
-  </c:if>
-</div>
---%>
 
 </im:box>
 

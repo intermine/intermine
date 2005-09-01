@@ -58,7 +58,7 @@ public interface Constants
     /**
      * ServletContext attribute maps category name to List of class names.
      */
-    public static final String CATEGORY_CLASSES = "CATEGORY_CLASSES";
+    //public static final String CATEGORY_CLASSES = "CATEGORY_CLASSES";
     
     /**
      * ServletContext attribute, List of category names.

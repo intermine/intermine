@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -41,7 +39,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.dataset.DataSetBinding;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionServlet;

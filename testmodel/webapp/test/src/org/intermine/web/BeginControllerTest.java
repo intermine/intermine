@@ -10,9 +10,7 @@ package org.intermine.web;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.struts.tiles.ComponentContext;
@@ -41,19 +39,14 @@ public class BeginControllerTest extends MockStrutsTestCase
         verifyNoActionErrors();
         
         Set cats = (Set) getActionServlet().getServletContext().getAttribute(Constants.CATEGORIES);
-        Map subcats = (Map) getActionServlet().getServletContext().getAttribute(Constants.CATEGORY_CLASSES);
         
         assertNotNull(cats);
-        assertNotNull(subcats);
         
         Set expecting = new HashSet();
         expecting.add("People");
         expecting.add("Entities");
         
         assertEquals(2, cats.size());
-        assertEquals(3, subcats.keySet().size());
         assertEquals(expecting, cats);
-        assertEquals(Arrays.asList(new Object[]
-                    {"Employee","Manager","CEO","Contractor","Secretary"}), subcats.get("People"));
     }
 }
