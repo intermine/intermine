@@ -8,7 +8,7 @@
     Microarray gene expression data formatted in mage-ml format can be loaded into FlyMine.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
-    <starting-points>MicroArrayExperiment Clone Gene</starting-points>
+    <starting-points>MicroArrayExperiment CDNAClone Gene</starting-points>
     </data-set>
 
   <data-set name="Protein Interactions">
