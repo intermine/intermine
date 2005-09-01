@@ -171,4 +171,5 @@ public class ProteinStructureDataTranslator extends DataTranslator
       return paths;
   }
 
+  
 }
