@@ -22,11 +22,11 @@
   <target name="-init-test" depends="tests.-init-test, -copy-intermine-properties"/>
 
   <target name="do-test" depends="-init-macrodef-junit">
-     <imtestsproj:junit fork="yes" includes="org/intermine/util/CacheMapTest.class">
+     <!--<imtestsproj:junit fork="yes" includes="org/intermine/util/CacheMapTest.class">
       <customize>
         <jvmarg value="-Xmx50M"/>
       </customize>
-    </imtestsproj:junit>
+    </imtestsproj:junit>-->
     <imtestsproj:junit excludes="org/intermine/objectstore/webservice/**,org/intermine/util/CacheMapTest.class"/>
   </target>
   
