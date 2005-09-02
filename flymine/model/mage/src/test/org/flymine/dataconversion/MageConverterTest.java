@@ -189,8 +189,8 @@ public class MageConverterTest extends TestCase
     public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         MageConverter mc = new MageConverter(itemWriter);
-        mc.setQuantitationTypes("col1, col3");
-
+        mc.setParam1("col1, col3");  
+  	    mc.setQTypes();
 
         DerivedBioAssayData dbad=new DerivedBioAssayData();
         BioDataCube bdc=new BioDataCube();
@@ -327,14 +327,6 @@ public class MageConverterTest extends TestCase
         }
         assertEquals(expSet, results);
 
-    }
-
-
-    public void testAddDerivedBioAssays() throws Exception {
-        Reader reader = new InputStreamReader(getClass().getClassLoader().
-                              getResourceAsStream("test/MageConverterDerivedBioAssays_src.xml"));
-
-        converter.processDerivedBioAssays(reader, new File("mage_tmp.xml"), "_normalised");
     }
 
 
