@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
@@ -30,6 +31,8 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Action to handle links on main tile
@@ -253,6 +256,17 @@ public class MainChange extends DispatchAction
 
         path = toPath(prefix, path);
         
+        // Figure out which path to delete if user cancels operation
+        String bits[] = StringUtils.split(path, '.');
+        String partialPath = bits[0], deletePath = "";
+        for (int i = 1 ; i < bits.length ; i++) {
+            partialPath += "." + bits[i];
+            if (query.getNodes().get(partialPath) == null) {
+                deletePath = partialPath;
+                break;
+            }
+        }
+        
         Node node = (Node) query.getNodes().get(path);
         if (node == null) {
             node = query.addNode(path);
@@ -269,7 +283,8 @@ public class MainChange extends DispatchAction
         }
         
         return new ForwardParameters(mapping.findForward("query"))
-                                .addAnchor("constraint-editor").forward();
+            .addParameter("deletePath", deletePath)
+            .addAnchor("constraint-editor").forward();
     }
 
     /**

@@ -550,7 +550,14 @@
         <div style="text-align:right">
           <script language="JavaScript">
           <!--
-            document.write('<input type="submit" onclick="window.location.href=\'<html:rewrite action="/query"/>?cancel\'" value="<fmt:message key="query.cancelConstraint"/>"/>');
+            <c:choose>
+              <c:when test="${!empty param.deletePath}">
+                document.write('<input type="submit" onclick="window.location.href=\'<html:rewrite action="/mainChange?method=removeNode&amp;path=${param.deletePath}"/>\'" value="<fmt:message key="query.cancelConstraint"/>"/>');
+              </c:when>
+              <c:otherwise>
+                document.write('<input type="submit" onclick="window.location.href=\'<html:rewrite action="/query"/>?cancel\'" value="<fmt:message key="query.cancelConstraint"/>"/>');
+              </c:otherwise>
+            </c:choose>
           //-->
           </script>
         </div>
