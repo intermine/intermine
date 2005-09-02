@@ -85,7 +85,7 @@ public class ImageCloneConverter extends CDNACloneConverter
             Item gene = createGene("Gene", geneId, organism.getIdentifier());
             writer.store(ItemHelper.convert(gene));
 
-            String cloneId = array[4];
+            String cloneId = array[5];
 
             Item clone = createBioEntity("CDNAClone", cloneId, organism.getIdentifier());
             clone.setReference("gene", gene.getIdentifier());
