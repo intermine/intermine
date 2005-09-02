@@ -284,7 +284,7 @@
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="/begin.do" redirect="true"/>
       <!-- problem running query -->
-      <forward name="failure" path="template.page"/>
+      <forward name="failure" path="/query.do" redirect="true"/>
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="/query.do" redirect="true"/>
       <!-- forward to results page -->
