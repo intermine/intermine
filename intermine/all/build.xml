@@ -26,9 +26,6 @@
       <fileset dir="../.." includes="intermine/web/test/build.xml"/>
       <fileset dir="../.." includes="testmodel/webapp/test/build.xml"/>
     </subant>
-    <ant antfile="../../flymine/build.xml" target="fulltest" inheritAll="false">
-      <property name="results.junit" value="${test.results.dir}"/>
-    </ant>
   </target>
   
   <target name="test-report" depends="init">
