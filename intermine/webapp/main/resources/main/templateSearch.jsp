@@ -37,7 +37,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       <fmt:formatNumber value="${entry.value*10}" maxFractionDigits="0" var="heat"/>
       <img class="searchHeatImg" src="images/heat${heat}.gif" width="${heat*2}" height="10"
            style="margin-right:${24-(heat*2)}px"/>
-      <im:templateLine type="${templateTypes[entry.key]}" templateQuery="${entry.key}"/>
+      <im:templateLine type="${templateTypes[entry.key]}" templateQuery="${entry.key}" desc="${highlighted[entry.key]}"/>
       <c:if test="${!status.last}">
         <hr class="tmplSeperator"/>
       </c:if>

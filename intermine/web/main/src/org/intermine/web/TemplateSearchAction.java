@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringReader;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,16 +22,24 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searchable;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.store.Directory;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -42,6 +52,15 @@ import org.apache.struts.action.ActionMapping;
 public class TemplateSearchAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(TemplateSearchAction.class);
+
+    private Formatter formatter = new Formatter() {
+        public String highlightTerm(String term, TokenGroup group) {
+            if (group.getTotalScore() > 0) {
+                return "<span style=\"background: yellow\">" + term + "</span>";
+            }
+            return term;
+        }
+    };
     
     /** 
      * Method called when user has submitted search form.
@@ -83,16 +102,21 @@ public class TemplateSearchAction extends InterMineAction
             }
             MultiSearcher searcher = new MultiSearcher(searchables);
             
-            Query query = QueryParser.parse(queryString, "content",
-                    new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS));
+            Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
+            Query query = QueryParser.parse(queryString, "content", analyzer);
+            query = query.rewrite(IndexReader.open(dir)); // required to expand search terms
             Hits hits = searcher.search(query);
             
             time = System.currentTimeMillis() - time;
             Map hitMap = new LinkedHashMap();
             Map typeMap = new LinkedHashMap();
+            Map highlightedMap = new HashMap();
             
             LOG.info("Found " + hits.length() + " document(s) that matched query '"
                     + queryString + "' in " + time + " milliseconds:");
+            
+            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
+            
             for (int i = 0; i < hits.length(); i++) {
                 TemplateQuery template = null;
                 Document doc = hits.doc(i);
@@ -107,10 +131,17 @@ public class TemplateSearchAction extends InterMineAction
                 
                 hitMap.put(template, new Float(hits.score(i)));
                 typeMap.put(template, type);
+                
+                TokenStream tokenStream
+                    = analyzer.tokenStream("", new StringReader(template.getDescription()));
+                
+                highlightedMap.put(template,
+                        highlighter.getBestFragment(tokenStream, template.getDescription()));
             }
             
             request.setAttribute("results", hitMap);
             request.setAttribute("templateTypes", typeMap);
+            request.setAttribute("highlighted", highlightedMap);
             request.setAttribute("querySeconds", new Float(time / 1000f));
             request.setAttribute("queryString", queryString);
             request.setAttribute("resultCount", new Integer(hitMap.size()));
@@ -119,4 +150,5 @@ public class TemplateSearchAction extends InterMineAction
         return mapping.findForward("templateSearch");
     }
 
+    
 }
