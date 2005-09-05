@@ -9,9 +9,9 @@
 <!-- dataSetIcons -->
 
 <div class="dataSetIcons">
-  <table border="0" width="100">
-    <tr valign="top">
-      <td class="dsIconsElement" width="50%">
+  <table border="0" width="100" cellspacing="0" cellpadding="0">
+    <tr>
+      <td width="33%" valign="top">
         <c:forEach var="entry" items="${DATASETS}" varStatus="status">
           <c:set var="set" value="${entry.value}"/>
           
@@ -31,9 +31,10 @@
              </div>
              <div class="dsIconDetail">
                ${set.subTitle}
-               <c:if test="${status.count % 3 != 0}">
+               <%--<c:if test="${status.count % 3 != 0}">
                  <im:hspacer width="82"/>
-               </c:if>
+               </c:if>--%>
+               <im:hspacer width="82"/>
              </div>
           
              </td>
@@ -46,7 +47,7 @@
               <tr/>
               <tr valign="top">
             </c:if>
-            <td class="dsIconsElement">
+            <td valign="top" width="33%" >
           </c:if>
         </c:forEach>
       </td>

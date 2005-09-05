@@ -153,10 +153,6 @@ form {
   border-bottom: 1px solid #c0c0c0;
   border-right: 1px solid #c0c0c0;
 }
-#templateSearch input {
-  padding: 2px;
-  border: 1px solid #909090;
-}
 #feedbackForm {
   white-space: nowrap;
 }
@@ -482,16 +478,10 @@ img.searchHeatImg {
 
 /* data set hompage styles */
 
-.dsIconsElement {
-  background: white;
-  padding-top: 5px;
-  margin: 4px;
-  font-size: 14px;
-}
-
 .dsIconLabel {
   margin-top: -3px;
   margin-left: 3px;
+  font-size: 13px;
 }
 
 .dsIconDetail {
