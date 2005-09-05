@@ -115,6 +115,12 @@ public interface Constants
     public static final String EDITING_TEMPLATE = "EDITING_TEMPLATE";
     
     /**
+     * Session attribute set to Boolean.TRUE when query builder is in
+     * template building/editing mode.
+     */
+    public static final String TEMPLATE_MODE = "TEMPLATE_MODE";
+    
+    /**
      * Session attribute used to store the results of running the current query
      */
     //public static final String QUERY_RESULTS = "QUERY_RESULTS";

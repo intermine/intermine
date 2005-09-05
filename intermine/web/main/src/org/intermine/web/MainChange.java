@@ -312,6 +312,45 @@ public class MainChange extends DispatchAction
         
         return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
     }
+    
+    /**
+     * Put query builder in template building mode.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward startTemplateBuild(ActionMapping mapping,
+                                            ActionForm form,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        session.setAttribute(Constants.TEMPLATE_MODE, Boolean.TRUE);
+        return mapping.findForward("query");
+    }
+    
+    /**
+     * Being the query builder out of template building mode and discard
+     * any unfinished template building.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward stopTemplateBuild(ActionMapping mapping,
+                                           ActionForm form,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        session.removeAttribute(Constants.TEMPLATE_MODE);
+        return mapping.findForward("query");
+    }
 
     /**
      * Add a Node to the results view
