@@ -4,6 +4,7 @@
 <%@ attribute name="templateQuery" required="true" type="org.intermine.web.TemplateQuery" %>
 <%@ attribute name="className" required="false" type="java.lang.String" %>
 <%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
+<%@ attribute name="desc" required="false" type="java.lang.String" %>
 
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -17,7 +18,7 @@
       </html:link>
     </c:if>
     <c:if test="${templateQuery.valid}">
-      <span class="templateDesc"><c:out value="${templateQuery.description}"/></span>
+      <span class="templateDesc">${!empty desc ? desc : templateQuery.description}</span>
       <fmt:message var="linkTitle" key="templateList.run">
         <fmt:param value="${templateQuery.name}"/>
       </fmt:message>
