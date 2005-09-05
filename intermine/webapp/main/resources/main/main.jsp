@@ -568,18 +568,4 @@
 
 
 </table>
-
-<c:choose>
-  <c:when test="${!TEMPLATE_MODE}">
-    <html:link action="/mainChange?method=startTemplateBuild">
-      Create a template query
-    </html:link>
-  </c:when>
-  <c:otherwise>
-    <html:link action="/mainChange?method=stopTemplateBuild">
-      Cancel template building
-    </html:link>
-  </c:otherwise>
-</c:choose>
-
 <!-- /main.jsp -->
