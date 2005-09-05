@@ -3,7 +3,6 @@
 
 <!-- query.jsp -->
 <im:viewablejs idPrefixes="nav,browser,query,showing"/>
-<tiles:insert page="templateSettings.jsp"/>
 <tiles:get name="main"/>
 <br/>
 <tiles:get name="view"/>
