@@ -56,7 +56,7 @@ public class PrecomputedTableManager
         }
 
         synchroniseWithDatabase(conn);
-        
+
         this.conn = conn;
     }
 
@@ -131,7 +131,7 @@ public class PrecomputedTableManager
     public void add(PrecomputedTable pt) throws SQLException {
         add(pt, null);
     }
-      
+
     /**
      * Add a precomputed table to the underlying database.
      *
@@ -347,7 +347,8 @@ public class PrecomputedTableManager
     protected void addIndex(String table, String field, Connection con,
             boolean nulls) throws SQLException {
         String sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
-            .replace(' ', '_') + " ON " + table + " (" + field + ")";
+            .replace(' ', '_').replace('(', '_').replace(')', '_') + " ON "
+            + table + " (" + field + ")";
         try {
             Statement stmt = con.createStatement();
             stmt.execute(sql);
@@ -361,7 +362,8 @@ public class PrecomputedTableManager
         }
         if (nulls) {
             sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
-                .replace(' ', '_') + "_nulls" + " ON " + table + " ((" + field + " IS NULL))";
+                .replace(' ', '_').replace('(', '_').replace(')', '_') + "_nulls"
+                + " ON " + table + " ((" + field + " IS NULL))";
             try {
                 Statement stmt = con.createStatement();
                 stmt.execute(sql);
@@ -375,7 +377,7 @@ public class PrecomputedTableManager
             }
         }
     }
-    
+
     /**
      * Synchronise with the underlying database
      *

@@ -42,6 +42,7 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -1193,7 +1194,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     "precomputed_table_" + tableNumber, c);
-            Set stringIndexes = null;
+            Set stringIndexes = new HashSet();
             if (indexes != null) {
                 Map aliases = q.getAliases();
                 stringIndexes = new HashSet();
@@ -1204,6 +1205,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     String alias = DatabaseUtil.generateSqlCompatibleName((String) aliases.get(qn));
                     if (qn instanceof QueryClass) {
                         alias += "id";
+                    } else if (qn instanceof QueryField) {
+                        if (String.class.equals(((QueryField) qn).getType())) {
+                            alias = "lower(" + alias + ")";
+                        }
                     }
                     if (all == null) {
                         all = alias;
@@ -1221,11 +1226,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             return pt.getName();
         } catch (NullPointerException e) {
             throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not present in"
-                    + " the SELECT list of query " + q, e);
+                                           + " the SELECT list of query " + q, e);
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
         }
     }
+
 
     /**
      * Return a unique integer from a SEQUENCE in the database.
