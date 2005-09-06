@@ -288,11 +288,11 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         }
         Map expectedIndexMap = new HashMap();
         expectedIndexMap.put("index" + tableName + "_field_orderby_field", "CREATE INDEX index" + tableName + "_field_orderby_field ON " + tableName + " USING btree (orderby_field)");
-        expectedIndexMap.put("index" + tableName + "_field_a1_id__a3___a4_", "CREATE INDEX index" + tableName + "_field_a1_id__a3___a4_ ON " + tableName + " USING btree (a1_id, a3_, a4_)");
-        expectedIndexMap.put("index" + tableName + "_field_a3_", "CREATE INDEX index" + tableName + "_field_a3_ ON " + tableName + " USING btree (a3_)");
-        expectedIndexMap.put("index" + tableName + "_field_a3__nulls", "CREATE INDEX index" + tableName + "_field_a3__nulls ON " + tableName + " USING btree (((a3_ IS NULL)))");
-        expectedIndexMap.put("index" + tableName + "_field_a4_", "CREATE INDEX index" + tableName + "_field_a4_ ON " + tableName + " USING btree (a4_)");
-        expectedIndexMap.put("index" + tableName + "_field_a4__nulls", "CREATE INDEX index" + tableName + "_field_a4__nulls ON " + tableName + " USING btree (((a4_ IS NULL)))");
+        expectedIndexMap.put("index" + tableName + "_field_a1_id__lower_a3____lower_a4__", "CREATE INDEX index" + tableName + "_field_a1_id__lower_a3____lower_a4__ ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
+        expectedIndexMap.put("index" + tableName + "_field_lower_a3__", "CREATE INDEX index" + tableName + "_field_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
+        expectedIndexMap.put("index" + tableName + "_field_lower_a3___nulls", "CREATE INDEX index" + tableName + "_field_lower_a3___nulls ON " + tableName + " USING btree (((lower(a3_) IS NULL)))");
+        expectedIndexMap.put("index" + tableName + "_field_lower_a4__", "CREATE INDEX index" + tableName + "_field_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
+        expectedIndexMap.put("index" + tableName + "_field_lower_a4___nulls", "CREATE INDEX index" + tableName + "_field_lower_a4___nulls ON " + tableName + " USING btree (((lower(a4_) IS NULL)))");
         assertEquals(expectedIndexMap, indexMap);
     }
 
@@ -307,7 +307,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         t2.setLongObjType(null);
         t2.setName("fred");
         storeDataWriter.store(t2);
-        
+
         Query q = new Query();
         QueryClass qc = new QueryClass(Types.class);
         QueryField into = new QueryField(qc, "intObjType");
@@ -322,7 +322,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         Results r = os.execute(q);
         r.setBatchSize(1);
         SqlGenerator.registerOffset(q, 1, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, new Integer(100000), new HashMap());
-        
+
         ResultsRow row = (ResultsRow) r.get(1);
         InterMineObject o = (InterMineObject) row.get(2);
         assertEquals("Expected " + t2.toString() + " but got " + o.toString(), t2.getId(), o.getId());
@@ -334,7 +334,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q = QueryCloner.cloneQuery(q);
         r = os.execute(q);
         r.setBatchSize(10);
-        
+
         row = (ResultsRow) r.get(0);
         o = (InterMineObject) row.get(2);
         assertEquals("Expected " + t2.toString() + " but got " + o.toString(), t2.getId(), o.getId());
@@ -365,7 +365,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         Results r = os.execute(q);
         r.setBatchSize(1);
         SqlGenerator.registerOffset(q, 1, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, new Integer(278651), new HashMap());
-        
+
         ResultsRow row = (ResultsRow) r.get(1);
         InterMineObject o = (InterMineObject) row.get(2);
         assertEquals("Expected " + t1.toString() + " but got " + o.toString(), t1.getId(), o.getId());
@@ -593,7 +593,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
     public void testCreateTempBagTables() throws Exception {
         Query q = ObjectStoreQueriesTestCase.bagConstraint();
-        
+
         Map bagTableNames = ((ObjectStoreInterMineImpl) os).bagConstraintTables;
         bagTableNames.clear();
 
