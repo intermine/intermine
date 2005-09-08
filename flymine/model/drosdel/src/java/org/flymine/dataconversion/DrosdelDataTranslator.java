@@ -40,12 +40,13 @@ import org.apache.log4j.Logger;
 public class DrosdelDataTranslator extends DataTranslator
 {
     private Item drosdelDb;
+    private Item drosdelDataSource;
+    private Reference drosdelDataSourceRef;
     private Item organism;
     private Reference organismRef;
     private Map chromosomes = new HashMap();
 
     protected static final Logger LOG = Logger.getLogger(DrosdelDataTranslator.class);
-    private Reference drosdelRef;
 
     /**
      * @see DataTranslator#DataTranslator
@@ -58,9 +59,12 @@ public class DrosdelDataTranslator extends DataTranslator
         organism.addAttribute(new Attribute("abbreviation", "DM"));
         organismRef = new Reference("organism", organism.getIdentifier());
 
-        drosdelDb = createItem("Database");
-        drosdelDb.addAttribute(new Attribute("title", "DrosDel"));
-        drosdelRef = new Reference("source", drosdelDb.getIdentifier());
+        drosdelDb = createItem("DataSet");
+        drosdelDb.addAttribute(new Attribute("title", "DrosDel data set"));
+
+        drosdelDataSource = createItem("DataSource");
+        drosdelDataSource.addAttribute(new Attribute("name", "DrosDel"));
+        drosdelDataSourceRef= new Reference("source", drosdelDataSource.getIdentifier());
     }
 
     /**
@@ -111,7 +115,7 @@ public class DrosdelDataTranslator extends DataTranslator
 
                     Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
                                                  tgtItem.getAttribute("identifier").getValue(),
-                                                 drosdelRef);
+                                                 drosdelDataSourceRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     result.add(synonym);
 
@@ -128,7 +132,7 @@ public class DrosdelDataTranslator extends DataTranslator
 
                     Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
                                                  tgtItem.getAttribute("identifier").getValue(),
-                                                 drosdelRef);
+                                                 drosdelDataSourceRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     result.add(synonym);
 

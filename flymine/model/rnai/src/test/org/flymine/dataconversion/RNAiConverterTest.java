@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.HashSet;
 
 import org.intermine.xml.full.FullParser;
+import org.intermine.dataconversion.DataTranslatorTest;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.FileConverter;
 
@@ -35,10 +37,17 @@ public class RNAiConverterTest extends TestCase
         input = input.replaceAll(",", "\t"); //just used commas for readibility
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new RNAiConverter(itemWriter);
+        RNAiConverter converter = new RNAiConverter(itemWriter);
+        converter.setDataSetTitle("RNAi data set");
         converter.process(new StringReader(input));
         converter.close();
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/RNAiConverterTest.xml")));
+
+        if (!expected.equals(itemWriter.getItems())) {
+            System.err.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(expected),
+                                                                           itemWriter.getItems()));
+        }
+
         assertEquals(expected, itemWriter.getItems());
     }
 }

@@ -232,7 +232,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         result.add(transRelation);
                     }
                     storeTgtItem = false;
-                // stable_ids become syonyms, need ensembl Database as source
+                // stable_ids become syonyms, need ensembl DataSource as source
                 } else if (className.endsWith("_stable_id")) {
                     if (className.endsWith("translation_stable_id")) {
                         storeTgtItem = false;
@@ -865,8 +865,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getEnsemblDb() {
         if (ensemblDb == null) {
-            ensemblDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "ensembl");
+            ensemblDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "ensembl");
             Attribute url = new Attribute("url", "http://www.ensembl.org");
             ensemblDb.addAttribute(title);
             ensemblDb.addAttribute(url);
@@ -887,11 +887,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     /**
      * set database object
      * @return db item
-     */
+    */
     private Item getEmblDb() {
         if (emblDb == null) {
-            emblDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "embl");
+            emblDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "embl");
             Attribute url = new Attribute("url", "http://www.ebi.ac.uk/embl");
             emblDb.addAttribute(title);
             emblDb.addAttribute(url);
@@ -916,8 +916,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getUniprotDb() {
         if (uniprotDb == null) {
-            uniprotDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "UniProt");
+            uniprotDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "UniProt");
             Attribute url = new Attribute("url", "http://www.uniprot.org/");
             uniprotDb.addAttribute(title);
             uniprotDb.addAttribute(url);
@@ -941,8 +941,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getRefSeqDb() {
         if (refSeqDb == null) {
-            refSeqDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "RefSeq");
+            refSeqDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "RefSeq");
             Attribute url = new Attribute("url", "http://www.ncbi.nlm.nih.gov/RefSeq/");
             refSeqDb.addAttribute(title);
             refSeqDb.addAttribute(url);
@@ -966,8 +966,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getHugoDb() {
         if (hugoDb == null) {
-            hugoDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "HUGO");
+            hugoDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "HUGO");
             Attribute url = new Attribute("url", "http://www.hugo-international.org/");
             hugoDb.addAttribute(title);
             hugoDb.addAttribute(url);
@@ -1001,8 +1001,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getGenbankDb() {
         if (genbankDb == null) {
-            genbankDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "GenBank");
+            genbankDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "GenBank");
             Attribute url = new Attribute("url", "http://www.ncbi.nlm.nih.gov/genbank");
             genbankDb.addAttribute(title);
             genbankDb.addAttribute(url);
@@ -1026,8 +1026,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getGdbDb() {
         if (gdbDb == null) {
-            gdbDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "GDB");
+            gdbDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "GDB");
             Attribute url = new Attribute("url", "http://gdbwww.gdb.org/");
             gdbDb.addAttribute(title);
             gdbDb.addAttribute(url);
@@ -1051,8 +1051,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     private Item getUnistsDb() {
         if (unistsDb == null) {
-            unistsDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "UniSTS");
+            unistsDb = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", "UniSTS");
             Attribute url = new Attribute("url",
                         "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=unists");
             unistsDb.addAttribute(title);

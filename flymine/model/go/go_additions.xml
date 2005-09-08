@@ -9,6 +9,7 @@
   <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="evidenceCode" type="java.lang.String"/>
   <attribute name="withText" type="java.lang.String"/>
+  <reference name="assignedBy" referenced-type="org.flymine.model.genomic.DataSource"/>
   <collection name="with" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">

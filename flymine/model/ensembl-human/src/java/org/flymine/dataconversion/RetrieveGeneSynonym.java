@@ -55,7 +55,7 @@ public class RetrieveGeneSynonym extends FileConverter
     public RetrieveGeneSynonym(ItemWriter writer) throws ObjectStoreException {
         super(writer);
 
-        db = createItem("Database");
+        db = createItem("DataSource");
         db.addAttribute(new Attribute("title", "ensembl"));
         writer.store(ItemHelper.convert(db));
 

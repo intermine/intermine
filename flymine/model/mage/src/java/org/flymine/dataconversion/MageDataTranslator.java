@@ -283,7 +283,7 @@ public class MageDataTranslator extends DataTranslator
 //                     ReferenceList authorsRef = new ReferenceList("authors", authorIds);
 //                     tgtItem.addCollection(authorsRef);
 //                 } else
-                    if (className.equals("Database")) {
+                if (className.equals("DataSource")) {
                     Attribute attr = srcItem.getAttribute("name");
                     if (attr != null) {
                         getDb(attr.getValue());
@@ -1147,8 +1147,8 @@ public class MageDataTranslator extends DataTranslator
     private Item getDb(String dbName) {
         Item db = (Item) dbs.get(dbName);
         if (db == null) {
-            db = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", dbName);
+            db = createItem(tgtNs + "DataSource", "");
+            Attribute title = new Attribute("name", dbName);
             db.addAttribute(title);
             dbs.put(dbName, db);
         }

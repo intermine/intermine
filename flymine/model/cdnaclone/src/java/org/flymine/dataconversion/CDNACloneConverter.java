@@ -36,7 +36,8 @@ public abstract class CDNACloneConverter extends FileConverter
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final Logger LOG = Logger.getLogger(CDNACloneConverter.class);
 
-    protected Item db;
+    protected Item dataSource;
+    protected Item dataSet;
     protected Item organism;
     protected ItemFactory itemFactory;
 

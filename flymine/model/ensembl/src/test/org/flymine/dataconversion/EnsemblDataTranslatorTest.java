@@ -49,9 +49,10 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
-        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                              mapping, srcModel,
-                                                              getTargetModel(tgtNs), "WB");
+        DataTranslator translator =
+            new EnsemblDataTranslator(new MockItemReader(itemMap),
+                                      mapping, srcModel,
+                                      getTargetModel(tgtNs), "WB");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -68,6 +69,8 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
             System.out.println(actualNotExpected);
         }
 
+        DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
+        
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 

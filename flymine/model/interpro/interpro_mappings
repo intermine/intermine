@@ -22,8 +22,8 @@ ProteinFeatureRelation.subject       = entry2entry.entry,entry2comp.entry2,entry
 Organism                    = taxonomy
 Organism.taxonId            = taxonomy.taxa_id
 
-Database                    = cv_database
-Database.title              = cv_database.dbname
+DataSource                  = cv_database
+DataSource.name             = cv_database.dbname
 
 # TODO: Also need to get matches where status is '?' - for unknown, as well as the 'T' - for true that we get now.
 Location                    = supermatch,matches[status = T]

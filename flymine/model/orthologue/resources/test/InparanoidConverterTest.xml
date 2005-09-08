@@ -42,8 +42,8 @@
       <reference ref_id="5_3"/>
     </collection>
   </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Database">
-    <attribute name="title" value="INPARANOID"/>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="InParanoid data set"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="confidence" value="1.000"/>

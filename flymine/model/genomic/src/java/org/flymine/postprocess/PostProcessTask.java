@@ -168,18 +168,18 @@ public class PostProcessTask extends Task
                 LOG.info("Starting add-licences");
                 new AddLicences(getObjectStoreWriter()).execute();
             } else if ("update-orthologues".equals(operation)) {
-                UpdateOrthologues uo = new UpdateOrthologues(getObjectStoreWriter());
-                LOG.info("Starting UpdateOrthologues.process()");
-                uo.process();
-                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-                LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
-                cr.populateOrthologuesCollection();
+//                UpdateOrthologues uo = new UpdateOrthologues(getObjectStoreWriter());
+//                LOG.info("Starting UpdateOrthologues.process()");
+//                uo.process();
+//                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
+//                LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
+//                cr.populateOrthologuesCollection();
             } else if ("homophila-post-process".equals(operation)) {
-                HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
-                hpp.connectDrosophilaGenesToHumanDiseases();
+//                 HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
+//                 hpp.connectDrosophilaGenesToHumanDiseases();
             } else if ("update-equivalent-interpro-features".equals(operation)) {
-                UpdateEquivalentInterproFeatures ueid = new UpdateEquivalentInterproFeatures(getObjectStoreWriter());
-                ueid.updateEquivalentFeatures();
+//                 UpdateEquivalentInterproFeatures ueid = new UpdateEquivalentInterproFeatures(getObjectStoreWriter());
+//                 ueid.updateEquivalentFeatures();
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();

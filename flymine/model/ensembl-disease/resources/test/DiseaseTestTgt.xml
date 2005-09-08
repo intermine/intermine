@@ -1,10 +1,10 @@
 <items>
 
-<item id="0_0" class="http://www.flymine.org/model/genomic#Database">
+<item id="0_0" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="title" value="ensembl"/>
 <attribute name="url" value="http://www.ensembl.org"/>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#Database">
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="title" value="OMIM"/>
 <attribute name="url" value="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM"/>
 </item>

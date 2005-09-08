@@ -85,7 +85,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         //FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
         //fw.write(FullRenderer.render(tgtIw.getItems()));
         //fw.close();
-        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
+        assertEquals(new LinkedHashSet(getExpectedItems()), tgtIw.getItems());
     }
 
 

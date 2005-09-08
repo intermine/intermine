@@ -41,9 +41,11 @@ public class GFF3ConverterTask extends Task
     protected static final Logger LOG = Logger.getLogger(GFF3ConverterTask.class);
 
     protected FileSet fileSet;
-    protected String converter, targetAlias,
-        seqClsName, orgAbbrev, infoSourceTitle, model, handlerClassName;
+    protected String converter, targetAlias, seqClsName, orgAbbrev, model, handlerClassName;
     protected GFF3Parser parser;
+
+    private String dataSourceName;
+    private String dataSetTitle;
 
      /**
      * Set the data fileset
@@ -87,13 +89,21 @@ public class GFF3ConverterTask extends Task
     public void setOrgAbbrev(String orgAbbrev) {
         this.orgAbbrev = orgAbbrev;
     }
+    
+    /**
+     * Set the dataSourceName
+     * @param dataSourceName the dataSourceName
+     */
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
 
     /**
-     * Set the infoSourceTitle
-     * @param infoSourceTitle the infoSourceTitle
+     * Set the dataSetTitle
+     * @param dataSetTitle the DataSet title
      */
-    public void setInfoSourceTitle(String infoSourceTitle) {
-        this.infoSourceTitle = infoSourceTitle;
+    public void setDataSetTitle(String dataSetTitle) {
+        this.dataSetTitle = dataSetTitle;
     }
 
     /**
@@ -132,8 +142,11 @@ public class GFF3ConverterTask extends Task
         if (orgAbbrev == null) {
             throw new BuildException("orgAbbrev attribute not set");
         }
-        if (infoSourceTitle == null) {
-            throw new BuildException("infoSourceTitle attribute not set");
+        if (dataSourceName == null) {
+            throw new BuildException("dataSourceName attribute not set");
+        }
+        if (dataSetTitle == null) {
+            throw new BuildException("dataSetTitle attribute not set");
         }
         if (model == null) {
             throw new BuildException("model attribute not set");
@@ -161,7 +174,7 @@ public class GFF3ConverterTask extends Task
                 handler = (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
             }
             GFF3Converter gff3converter =
-                new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle,
+                new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle,
                                   tgtModel, handler);
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());

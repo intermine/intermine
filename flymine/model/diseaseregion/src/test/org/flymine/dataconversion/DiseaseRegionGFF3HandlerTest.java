@@ -43,12 +43,14 @@ public class DiseaseRegionGFF3HandlerTest extends TestCase
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
-    String infoSourceTitle = "T1DBase";
+    String dataSourceName = "T1DBase";
+    String dataSetTitle = "T1DBase disease regions";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new DiseaseRegionGFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel, handler);
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle,
+                                      tgtModel, handler);
     }
 
     public void tearDown() throws Exception {

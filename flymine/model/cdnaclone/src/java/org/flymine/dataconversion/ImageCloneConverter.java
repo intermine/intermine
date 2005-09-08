@@ -37,7 +37,8 @@ public class ImageCloneConverter extends CDNACloneConverter
 
     protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
 
-    protected Item db;
+    protected Item dataSource;
+    protected Item dataSet;
     protected Item organism;
     protected ItemFactory itemFactory;
 
@@ -53,10 +54,14 @@ public class ImageCloneConverter extends CDNACloneConverter
 
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
-        db = createItem("Database");
-        db.setAttribute("title", "RZPD");
-        writer.store(ItemHelper.convert(db));
+        dataSource = createItem("DataSource");
+        dataSource.setAttribute("name", "RZPD");
+        writer.store(ItemHelper.convert(dataSource));
 
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "RZPD uniprot data set");
+        writer.store(ItemHelper.convert(dataSet));
+ 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "HS");
         writer.store(ItemHelper.convert(organism));
@@ -93,12 +98,12 @@ public class ImageCloneConverter extends CDNACloneConverter
             Item synonym = createItem("Synonym");
             synonym.setAttribute("type", "identifier");
             synonym.setAttribute("value", cloneId);
-            synonym.setReference("source", db.getIdentifier());
+            synonym.setReference("source", dataSource.getIdentifier());
             synonym.setReference("subject", clone.getIdentifier());
             writer.store(ItemHelper.convert(synonym));
 
             clone.addCollection(new ReferenceList("evidence",
-                    new ArrayList(Collections.singleton(db.getIdentifier()))));
+                    new ArrayList(Collections.singleton(dataSet.getIdentifier()))));
             writer.store(ItemHelper.convert(clone));
         }
     }

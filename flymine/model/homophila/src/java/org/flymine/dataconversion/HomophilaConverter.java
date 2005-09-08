@@ -84,8 +84,8 @@ public class HomophilaConverter extends FileConverter
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
         
-        homophilaDb = newItem("Database");
-        homophilaDb.addAttribute(new Attribute("title", "Homophila"));
+        homophilaDb = newItem("DataSet");
+        homophilaDb.addAttribute(new Attribute("title", "Homophila data set"));
         store(homophilaDb);
         
         pub1 = newItem("Publication");

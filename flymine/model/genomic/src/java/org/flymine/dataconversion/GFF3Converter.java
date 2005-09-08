@@ -52,7 +52,8 @@ public class GFF3Converter
     private ItemWriter writer;
     private String seqClsName;
     private String orgAbbrev;
-    private Item infoSource;
+    private Item dataSet;
+    private Item dataSource;
     private Model tgtModel;
     private int itemid = 0;
     private Map analyses = new HashMap();
@@ -66,13 +67,15 @@ public class GFF3Converter
      * @param writer ItemWriter
      * @param seqClsName sequenceClassName
      * @param orgAbbrev organismAbbreviation. HS this case
-     * @param infoSourceTitle title for infoSource
+     * @param dataSourceName name for dataSource
+     * @param dataSetTitle title for dataSet
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      */
 
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgAbbrev,
-                         String infoSourceTitle, Model tgtModel, GFF3RecordHandler handler) {
+                         String dataSourceName, String dataSetTitle, Model tgtModel, 
+                         GFF3RecordHandler handler) {
 
         this.writer = writer;
         this.seqClsName = seqClsName;
@@ -82,14 +85,18 @@ public class GFF3Converter
         this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         this.organism = getOrganism();
-        this.infoSource = createItem("Database");
-        infoSource.addAttribute(new Attribute("title", infoSourceTitle));
+        
+        this.dataSet = createItem("DataSet");
+        dataSet.addAttribute(new Attribute("title", dataSetTitle));
+        
+        this.dataSource = createItem("DataSource");
+        dataSource.addAttribute(new Attribute("name", dataSourceName));
 
         handler.setItemFactory(itemFactory);
         handler.setIdentifierMap(identifierMap);
-        handler.setInfoSource(infoSource);
+        handler.setDataSource(dataSource);
+        handler.setDataSet(dataSet);
         handler.setOrganism(organism);
-
     }
 
     /**
@@ -124,7 +131,8 @@ public class GFF3Converter
     public void store() throws ObjectStoreException {
         // TODO should probably not store if an empty file
         writer.store(ItemHelper.convert(organism));
-        writer.store(ItemHelper.convert(infoSource));
+        writer.store(ItemHelper.convert(dataSet));
+        writer.store(ItemHelper.convert(dataSource));
 
         // write ComputationalAnalysis items
         Iterator iter = analyses.values().iterator();
@@ -190,7 +198,7 @@ public class GFF3Converter
                     synonym.addReference(new Reference("subject", feature.getIdentifier()));
                     synonym.addAttribute(new Attribute("value", recordName));
                     synonym.addAttribute(new Attribute("type", "name"));
-                    synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+                    synonym.addReference(new Reference("source", dataSource.getIdentifier()));
                     handler.addItem(synonym);
                 }
             } else {
@@ -201,7 +209,7 @@ public class GFF3Converter
                     synonym.addReference(new Reference("subject", feature.getIdentifier()));
                     synonym.addAttribute(new Attribute("value", recordName));
                     synonym.addAttribute(new Attribute("type", "symbol"));
-                    synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+                    synonym.addReference(new Reference("source", dataSource.getIdentifier()));
                     handler.addItem(synonym);
                 }
             }
@@ -237,11 +245,11 @@ public class GFF3Converter
         location.addReference(new Reference("object", seq.getIdentifier()));
         location.addReference(new Reference("subject", feature.getIdentifier()));
         location.addCollection(new ReferenceList("evidence",
-                            Arrays.asList(new Object[] {infoSource.getIdentifier()})));
+                            Arrays.asList(new Object[] {dataSet.getIdentifier()})));
         handler.setLocation(location);
 
         ReferenceList evidence = new ReferenceList("evidence");
-        evidence.addRefId(infoSource.getIdentifier());
+        evidence.addRefId(dataSet.getIdentifier());
 
         if (record.getScore() != null) {
             Item computationalResult = createItem("ComputationalResult");
@@ -287,7 +295,7 @@ public class GFF3Converter
             String value = feature.getAttribute("identifier").getValue();
             synonym.addAttribute(new Attribute("value", value));
             synonym.addAttribute(new Attribute("type", "identifier"));
-            synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+            synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
 
@@ -322,12 +330,21 @@ public class GFF3Converter
     }
 
     /**
-     * Return the InfoSource Item created for this GFF3Converter from the info source name passed
+     * Return the DataSet Item created for this GFF3Converter from the data set title passed
      * to the constructor.
-     * @return the InfoSource item
+     * @return the DataSet item
      */
-    public Item getInfoSource() {
-        return infoSource;
+    public Item getDataSet() {
+        return dataSet;
+    }
+
+    /**
+     * Return the DataSource Item created for this GFF3Converter from the data source name passed
+     * to the constructor.
+     * @return the DataSource item
+     */
+    public Item getDataSource() {
+        return dataSource;
     }
 
     /**

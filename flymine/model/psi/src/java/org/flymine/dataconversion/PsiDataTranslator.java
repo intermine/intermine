@@ -60,11 +60,11 @@ public class PsiDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
-        swissProt = createItem("Database");
-        swissProt.addAttribute(new Attribute("title", "Swiss-Prot"));
+        swissProt = createItem("DataSource");
+        swissProt.addAttribute(new Attribute("name", "Swiss-Prot"));
         tgtItemWriter.store(ItemHelper.convert(swissProt));
 
-        db = createItem("Database");
+        db = createItem("DataSet");
 
         super.translate(tgtItemWriter);
     }

@@ -33,7 +33,7 @@ import org.intermine.util.DynamicUtil;
 
 import org.flymine.model.genomic.ProteinInteraction;
 import org.flymine.model.genomic.ExperimentalResult;
-import org.flymine.model.genomic.Database;
+import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.Comment;
 
 import org.apache.log4j.Logger;
@@ -108,7 +108,7 @@ public class AddLicences
         ContainsConstraint cc = new ContainsConstraint(new QueryCollectionReference(qc, "evidence"),
                                                        ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc);
-        QueryClass qc3 = new QueryClass(Database.class);
+        QueryClass qc3 = new QueryClass(DataSet.class);
         q.addFrom(qc3);
         ContainsConstraint cc2 = new ContainsConstraint(new QueryObjectReference(qc2, "source"),
                                                         ConstraintOp.CONTAINS, qc3);
@@ -143,8 +143,8 @@ public class AddLicences
     public static void main(String[] args) throws Exception {
         ObjectStoreWriter osw =
             ObjectStoreWriterFactory.getObjectStoreWriter("osw.production");
-        Database database = (Database)
-            DynamicUtil.createObject(Collections.singleton(Database.class));
+        DataSet database = (DataSet)
+            DynamicUtil.createObject(Collections.singleton(DataSet.class));
         database.setTitle(HGX_DATABASE);
         ProteinInteraction interaction = (ProteinInteraction)
             DynamicUtil.createObject(Collections.singleton(ProteinInteraction.class));

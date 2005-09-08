@@ -1,8 +1,15 @@
 <?xml version="1.0"?>
 <model name="genomic" namespace="http://www.flymine.org/model/genomic#">
-  <class name="org.flymine.model.genomic.Database" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
+  <class name="org.flymine.model.genomic.DataSource" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.DataSet" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
+    <attribute name="url" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="version" type="java.lang.String"/>
+    <reference name="dataSource" referenced-type="org.flymine.model.genomic.DataSource"/>
   </class>
   <class name="org.flymine.model.genomic.Ontology" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
@@ -98,7 +105,8 @@
     <attribute name="value" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
     <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="synonyms"/>
-    <reference name="source" referenced-type="org.flymine.model.genomic.InfoSource"/>
+    <reference name="source" referenced-type="org.flymine.model.genomic.DataSource"/>
+    <collection name="evidence" referenced-type="org.flymine.model.genomic.InfoSource"/>
   </class>
   <class name="org.flymine.model.genomic.Author" is-interface="true">
     <attribute name="name" type="java.lang.String"/>

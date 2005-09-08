@@ -442,6 +442,7 @@
   </target>
 
 
+
   <!-- SEQUENCE ONTOLOGY MODEL GENERATION -->
 
   <!-- merge so model additions with current genomic model -->
@@ -942,7 +943,8 @@
                   target="osw.chado-tgt-items"
                   seqClsName="Chromosome"
                   orgAbbrev="DM"
-                  infoSourceTitle="FlyBase"
+                  dataSourceName="FlyBase"
+                  dataSetTitle="FlyBase Drosophila melanogaster data set"
                   model="genomic"
                   handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
       <fileset dir="${build.tmp}">
@@ -996,7 +998,7 @@
     </taskdef>
 
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
-                  osName="osw.inparanoid-orthologue-tgt-items" 
+                  osName="osw.inparanoid-orthologue-tgt-items"
                   model="genomic">
       <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
     </convert-file>
@@ -1019,9 +1021,9 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-orthologue integrationWriter="integration.production" 
+    <load-orthologue integrationWriter="integration.production"
                      source="os.inparanoid-orthologue-translated"
-                     sourceName="orthologue-inparanoid" 
+                     sourceName="orthologue-inparanoid"
                      ignoreDuplicates="true"/>
   </target>
 
@@ -1047,7 +1049,8 @@
       <classpath refid="rnai.class.path"/>
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.RNAiConverter"
-                  osName="osw.rnai-tgt-items" model="rnai">
+                  osName="osw.rnai-tgt-items"
+                  model="rnai">
       <fileset dir="${shared.data}/rnai" includes="*Set.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1137,8 +1140,8 @@
     <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-cdnaclone integrationWriter="integration.production" 
-                    source="os.cdnaclone-translated" 
+    <load-cdnaclone integrationWriter="integration.production"
+                    source="os.cdnaclone-translated"
                     sourceName="cdnaclone"/>
   </target>
 
@@ -1618,7 +1621,8 @@
                    target="osw.flyreg-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="DM"
-                   infoSourceTitle="FlyReg"
+                   dataSourceName="FlyReg"
+                   dataSetTitle="FlyReg data set"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FlyRegGFF3RecordHandler">
       <fileset dir="${shared.data}/flyreg">
@@ -1671,7 +1675,8 @@
                    target="osw.long_oligo-tgt-items"
                    seqClsName="Transcript"
                    orgAbbrev="DM"
-                   infoSourceTitle="INDAC"
+                   dataSourceName="INDAC"
+                   dataSetTitle="INDAC long oligo data set"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
       <fileset dir="${shared.data}/long_oligo">
@@ -1724,7 +1729,8 @@
                    target="osw.tiling_path-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="DM"
-                   infoSourceTitle="Genetics"
+                   dataSourceName="Genetics"
+                   dataSetTitle="Department of Genetics tiling path"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TilingPathGFF3RecordHandler">
       <fileset dir="${shared.data}/tiling">
@@ -1825,10 +1831,14 @@
 
     <property name="flymine.data" value="model/genomic/data/flymine"/>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/databases.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/rnai-codes.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="${flymine.data}/ontologies.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${flymine.data}/datasets.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${flymine.data}/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${flymine.data}/rnai-codes.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${flymine.data}/ontologies.xml" sourceName="static"/>
   </target>
 
   <target name="filter-uniprot" depends="prepare-build-model, compile-uniprot-java">
@@ -2241,7 +2251,7 @@
     <fb-uniprot-refs linkFile="${flybase.uniprot.link.file}"
                      objectStoreWriter="osw.production"/>
   </target>
-  
+
   <target name="homophila-post-process" depends="compile-genomic-java-from-db">
     <taskdef name="homophila-post-process" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
@@ -3593,7 +3603,7 @@
   <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
  
     <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
-  
+
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3606,7 +3616,7 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" 
+                  clsName="org.flymine.dataconversion.GoConverter"
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/human">
@@ -3648,7 +3658,7 @@
     </taskdef>
 
     <convert-file osName="osw.go-annotation-tgt-items"
-                  clsName="org.flymine.dataconversion.GoConverter" 
+                  clsName="org.flymine.dataconversion.GoConverter"
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/mouse">
@@ -4061,11 +4071,12 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="UCSC"
+                   dataSourceName="UCSC"
+                   dataSetTitle="UCSC mouse chain"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
-      <fileset dir ="${shared.data}/human/comparativeGenomics">
-        <include name ="mouseChain.gff3"/>
+      <fileset dir="${shared.data}/human/comparativeGenomics">
+        <include name="mouseChain.gff3"/>
       </fileset>
     </retrieve-file>
 
@@ -4312,7 +4323,7 @@
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
                   osName="osw.inparanoid-orthologue-tgt-items"
                   model="genomic">
-      <fileset dir="${shared.data}/human/orthologues/2005-04-16/" 
+      <fileset dir="${shared.data}/human/orthologues/2005-04-16/"
           includes="sqltable.*"/>
     </convert-file>
 
@@ -4328,7 +4339,7 @@
     </ant>
   </target>
 
-  <target name="build-orthologues-production-mouse" 
+  <target name="build-orthologues-production-mouse"
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
 
  <!--mage data for stem cell-->
@@ -4336,7 +4347,7 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <fileset dir="${shared.data}/mage/t1dmine/E-EMBL-1"/>     
+      <fileset dir="${shared.data}/mage/t1dmine/E-EMBL-1"/>
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
@@ -4387,7 +4398,7 @@
       <property name="os.alias" value="os.cdnaclone-tgt-items-std"/>
     </ant>
   </target>
- 
+
   <!-- load CDNAclone image data into production -->
   <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone"/>
 
@@ -4431,7 +4442,7 @@
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
 
-  <!-- insert the testmodel data into the database 
+  <!-- insert the testmodel data into the database
   <target name="insert-data-unittest"
           depends="build-db-genomic-test, create-indexes-genomic-test, copy-t1dmine-config, ensembl-human-test">
     <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">

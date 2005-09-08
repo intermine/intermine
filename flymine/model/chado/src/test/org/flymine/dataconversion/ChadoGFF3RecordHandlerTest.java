@@ -50,7 +50,8 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "DM";
-    String infoSourceTitle = "FlyBase";
+    String dataSourceName = "FlyBase";
+    String dateSetTitle = "FlyBase Drosophila melanogaster data set";
     GFF3Converter converter;
     String tgtNs;
     ItemFactory itemFactory;
@@ -58,8 +59,8 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
         handler = new ChadoGFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel,
-                                      handler);
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dateSetTitle,
+                                      tgtModel, handler);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
     }
@@ -220,7 +221,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                         expectedGene1.setAttribute("symbol", "yellow-h-duplicate-symbol-1");
                         expectedGene1.setReference("organism", handler.getOrganism());
                         List evidence = new ArrayList();
-                        evidence.add(handler.getInfoSource().getIdentifier());
+                        evidence.add(handler.getDataSet().getIdentifier());
                         expectedGene1.setCollection("evidence", evidence);
                     } else {
                         fail("found a gene twice: CG1629");
@@ -236,7 +237,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                             expectedGene2.setAttribute("symbol", "yellow-h-duplicate-symbol-2");
                             expectedGene2.setReference("organism", handler.getOrganism());
                             List evidence = new ArrayList();
-                            evidence.add(handler.getInfoSource().getIdentifier());
+                            evidence.add(handler.getDataSet().getIdentifier());
                             expectedGene2.setCollection("evidence", evidence);
                         } else {
                             fail("found a gene twice: CG1629-test");
@@ -321,9 +322,9 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         feature.setAttribute("identifier", "CG11023-PA");
         handler.setFeature(feature);
 
-        Item infoSource = itemFactory.makeItem(null, tgtNs + "InfoSource", "");
+        Item infoSource = itemFactory.makeItem(null, tgtNs + "DataSource", "");
         infoSource.setAttribute("title", "FlyBase");
-        handler.setInfoSource(infoSource);
+        handler.setDataSource(infoSource);
 
         handler.process(record);
 
@@ -332,7 +333,8 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedTrans.setAttribute("organismDbId", "FBpp0088316");
         expectedTrans.setReference("organism", handler.getOrganism().getIdentifier());
         expectedTrans.addCollection(new ReferenceList("evidence",
-                                                    Arrays.asList(new Object[] {handler.getSourceIdentifier("FlyBase")})));
+                                                    Arrays.asList(new Object[] {
+                                                            handler.getDataSet()})));
         assertEquals(4, handler.getItems().size());
 
         Item actualTrans = null;

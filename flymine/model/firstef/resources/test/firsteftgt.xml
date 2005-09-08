@@ -1,123 +1,124 @@
 <items>
-<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="abbreviation" value="HS"/>
-</item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#Database">
-<attribute name="title" value="UCSC"/>
-</item>
-<item id="0_2" class="http://www.flymine.org/model/genomic#Chromosome">
-<attribute name="identifier" value="2"/>
-<reference name="organism" ref_id="0_0"/>
-</item>
-<item id="0_3" class="http://www.flymine.org/model/genomic#Promoter">
-<attribute name="identifier" value="promoter(2179-):chr1:2096850..2097419"/>
-<attribute name="name" value="promoter(2179-)"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="evidence">
-<reference ref_id="0_1"/>
-<reference ref_id="0_6"/>
-</collection>
-</item>
-<item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
-<attribute name="value" value="promoter(2179-)"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_3"/>
-</item>
-<item id="0_5" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="2097419"/>
-<attribute name="start" value="2096850"/>
-<attribute name="strand" value="-1"/>
-<reference name="object" ref_id="0_2"/>
-<reference name="subject" ref_id="0_3"/>
-<collection name="evidence">
-<reference ref_id="0_1"/>
-</collection>
-</item>
-<item id="0_6" class="http://www.flymine.org/model/genomic#ComputationalResult">
-<attribute name="score" value="1000.0"/>
-<attribute name="type" value="score"/>
-<reference name="analysis" ref_id="0_7"/>
-</item>
-<item id="0_7" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
-<attribute name="algorithm" value="firstEF"/>
-</item>
-<item id="0_8" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="promoter(2179-):chr1:2096850..2097419"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_3"/>
-</item>
-
-<item id="0_9" class="http://www.flymine.org/model/genomic#Chromosome">
-<attribute name="identifier" value="1"/>
-<reference name="organism" ref_id="0_0"/>
-</item>
-<item id="0_10" class="http://www.flymine.org/model/genomic#Exon">
-<attribute name="identifier" value="exon(2179-)#2:chr1:2097064..2097289"/>
-<attribute name="symbol" value="exon(2179-)#2"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="evidence">
-<reference ref_id="0_1"/>
-</collection>
-</item>
-<item id="0_11" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="exon(2179-)#2"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_10"/>
-</item>
-<item id="0_12" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="2097289"/>
-<attribute name="start" value="2097064"/>
-<attribute name="strand" value="-1"/>
-<reference name="object" ref_id="0_9"/>
-<reference name="subject" ref_id="0_10"/>
-<collection name="evidence">
-<reference ref_id="0_1"/>
-</collection>
-</item>
-<item id="0_13" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="exon(2179-)#2:chr1:2097064..2097289"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_10"/>
-</item>
-
-<item id="0_14" class="http://www.flymine.org/model/genomic#CpGIsland">
-<attribute name="identifier" value="CpGWindow(14+):chr1:917400..917601"/>
-<attribute name="name" value="CpGWindow(14+)"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="evidence">
-<reference ref_id="0_1"/>
-<reference ref_id="0_17"/>
-</collection>
-</item>
-<item id="0_15" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
-<attribute name="value" value="CpGWindow(14+)"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_14"/>
-</item>
-<item id="0_16" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="917601"/>
-<attribute name="start" value="917400"/>
-<attribute name="strand" value="1"/>
-<reference name="object" ref_id="0_9"/>
-<reference name="subject" ref_id="0_14"/>
-<collection name="evidence">
-<reference ref_id="0_1"/>
-</collection>
-</item>
-<item id="0_17" class="http://www.flymine.org/model/genomic#ComputationalResult">
-<attribute name="score" value="1000.0"/>
-<attribute name="type" value="score"/>
-<reference name="analysis" ref_id="0_7"/>
-</item>
-<item id="0_18" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="CpGWindow(14+):chr1:917400..917601"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_14"/>
-</item>
+  <item id="0_16" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CpGWindow(14 )"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_15"/>
+  </item>
+  <item id="0_15" class="http://www.flymine.org/model/genomic#CpGIsland">
+    <attribute name="identifier" value="CpGWindow(14 ):chr1:917400..917601"/>
+    <attribute name="name" value="CpGWindow(14 )"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+      <reference ref_id="0_18"/>
+    </collection>
+  </item>
+  <item id="0_19" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="CpGWindow(14 ):chr1:917400..917601"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_15"/>
+  </item>
+  <item id="0_4" class="http://www.flymine.org/model/genomic#Promoter">
+    <attribute name="identifier" value="promoter(2179-):chr1:2096850..2097419"/>
+    <attribute name="name" value="promoter(2179-)"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+      <reference ref_id="0_7"/>
+    </collection>
+  </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="2097419"/>
+    <attribute name="start" value="2096850"/>
+    <attribute name="strand" value="-1"/>
+    <reference name="object" ref_id="0_3"/>
+    <reference name="subject" ref_id="0_4"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_3" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="2"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="0_12" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="exon(2179-)#2"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_11"/>
+  </item>
+  <item id="0_7" class="http://www.flymine.org/model/genomic#ComputationalResult">
+    <attribute name="score" value="1000.0"/>
+    <attribute name="type" value="score"/>
+    <reference name="analysis" ref_id="0_8"/>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="UCSC"/>
+  </item>
+  <item id="0_9" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="promoter(2179-):chr1:2096850..2097419"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_4"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="UCSC FirstEF data set"/>
+  </item>
+  <item id="0_5" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="promoter(2179-)"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_4"/>
+  </item>
+  <item id="0_8" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+    <attribute name="algorithm" value="firstEF"/>
+  </item>
+  <item id="0_17" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="917601"/>
+    <attribute name="start" value="917400"/>
+    <attribute name="strand" value="1"/>
+    <reference name="object" ref_id="0_10"/>
+    <reference name="subject" ref_id="0_15"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_18" class="http://www.flymine.org/model/genomic#ComputationalResult">
+    <attribute name="score" value="1000.0"/>
+    <attribute name="type" value="score"/>
+    <reference name="analysis" ref_id="0_8"/>
+  </item>
+  <item id="0_14" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="exon(2179-)#2:chr1:2097064..2097289"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_11"/>
+  </item>
+  <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="HS"/>
+  </item>
+  <item id="0_11" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="identifier" value="exon(2179-)#2:chr1:2097064..2097289"/>
+    <attribute name="symbol" value="exon(2179-)#2"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_13" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="2097289"/>
+    <attribute name="start" value="2097064"/>
+    <attribute name="strand" value="-1"/>
+    <reference name="object" ref_id="0_10"/>
+    <reference name="subject" ref_id="0_11"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_10" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="1"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
 </items>

@@ -68,6 +68,10 @@ public class UniprotDataTranslator extends DataTranslator
     private FileWriter fw = null;
     private boolean outputIdentifiers = false;
     private Map identifierToOrganismDbId = new HashMap();
+    
+    private Item uniprotDataSet;
+    private Reference uniprotDataSetRef;
+
     private Set geneIdentifiers = new HashSet();
 
     private static final String SRC_NS = "http://www.flymine.org/model/uniprot#";
@@ -80,6 +84,11 @@ public class UniprotDataTranslator extends DataTranslator
         super(srcItemReader, mapping, srcModel, tgtModel);
         this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
+        
+        uniprotDataSet = createItem("DataSet");
+        // TODO: the dataset name shouldn't be hard coded:
+        uniprotDataSet.addAttribute(new Attribute("title", "UniProt data set"));
+        uniprotDataSetRef = new Reference("source", uniprotDataSet.getIdentifier());
     }
 
     /**
@@ -106,6 +115,8 @@ public class UniprotDataTranslator extends DataTranslator
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
         try {
+            tgtItemWriter.store(ItemHelper.convert(uniprotDataSet));
+
             if (outputIdentifiers) {
                 fw = new FileWriter(new File("uniprot_gene_identifiers"));
             }
@@ -183,7 +194,7 @@ public class UniprotDataTranslator extends DataTranslator
             protein.addAttribute(new Attribute("identifier", proteinName));
             protein.addReference(organismReference);
             retval.add(createSynonym(protein.getIdentifier(), "identifier",
-                                     proteinName, getDbId("UniProt")));
+                                     proteinName, getDataSourceId("UniProt")));
 
             // find primary accession and set others as synonyms <entry><accession>*
             List srcAccessions = getItemsInCollection(srcItem.getCollection("accessions"));
@@ -202,12 +213,12 @@ public class UniprotDataTranslator extends DataTranslator
                     Item srcAccession = (Item) srcAccIter.next();
                     String srcAccessionString = getAttributeValue(srcAccession, "accession");
                     retval.add(createSynonym(protein.getIdentifier(), "accession",
-                                             srcAccessionString, getDbId("UniProt")));
+                                             srcAccessionString, getDataSourceId("UniProt")));
                 }
             }
             // add UniProt Database to evidence collection
             ReferenceList evidence = new ReferenceList("evidence", new ArrayList());
-            evidence.addRefId(getDbId("UniProt"));
+            evidence.addRefId(getDataSourceId("UniProt"));
             protein.addCollection(evidence);
 
 
@@ -232,7 +243,7 @@ public class UniprotDataTranslator extends DataTranslator
                         srcProteinNameStr += " (Evidence " + srcProteinNameEvidence + ")";
                     }
                     retval.add(createSynonym(protein.getIdentifier(), "symbol",
-                                             srcProteinNameStr, getDbId("UniProt")));
+                                             srcProteinNameStr, getDataSourceId("UniProt")));
                 }
             }
 
@@ -249,7 +260,7 @@ public class UniprotDataTranslator extends DataTranslator
                     Item comment = createItem(tgtNs + "Comment", "");
                     comment.addAttribute(new Attribute("type", srcCommentType));
                     comment.addAttribute(new Attribute("text", srcCommentText));
-                    comment.addReference(new Reference("source", getDbId("UniProt")));
+                    comment.addReference(uniprotDataSetRef);
                     comments.addRefId(comment.getIdentifier());
                     retval.add(comment);
                 }
@@ -358,16 +369,16 @@ public class UniprotDataTranslator extends DataTranslator
                     // do not set CG numbers from Uniprot - there are conflicting combinations of
                     // FBgn/CG identifiers with ensembl
                     geneIdentifier = null;
-                    geneOrganismDbId = getDbReferenceValue(srcItem, "FlyBase", geneNames);
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "FlyBase", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
-                        dbId = getDbId("FlyBase");
+                        dbId = getDataSourceId("FlyBase");
                     }
                 } else if (taxonId == 6239) { // C. elegans
-                    geneOrganismDbId = getDbReferenceValue(srcItem, "WormBase", geneNames);
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
-                        dbId = getDbId("WormBase");
+                        dbId = getDataSourceId("WormBase");
                     }
                 } else if (taxonId == 180454) { // A. gambiae str. PEST
                     // no organismDbId and no specific dbxref to enembl - assume that geneIdentifier
@@ -375,7 +386,7 @@ public class UniprotDataTranslator extends DataTranslator
                     if (geneIdentifier != null) {
                         createGene = true;
                         geneOrganismDbId = geneIdentifier;
-                        dbId = getDbId("ensembl");
+                        dbId = getDataSourceId("ensembl");
                     }
                 }
 
@@ -442,7 +453,7 @@ public class UniprotDataTranslator extends DataTranslator
 
                         // add UniProt Database to evidence collection
                         ReferenceList evidence1 = new ReferenceList("evidence", new ArrayList());
-                        evidence1.addRefId(getDbId("UniProt"));
+                        evidence1.addRefId(getDataSourceId("UniProt"));
                         gene.addCollection(evidence1);
 
                         // everything in <entry><gene><name>* becomes a Synonym
@@ -456,7 +467,7 @@ public class UniprotDataTranslator extends DataTranslator
                                 Item synonym = createSynonym(gene.getIdentifier(),
                                     (type.equals("primary") || type.equals("synonym"))
                                                              ? "symbol" : type,
-                                                             symbol, getDbId("UniProt"));
+                                                             symbol, getDataSourceId("UniProt"));
                                 geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }
@@ -494,15 +505,15 @@ public class UniprotDataTranslator extends DataTranslator
         return synonym;
     }
 
-    private String getDbId(String title) {
-        return getDb(title).getIdentifier();
+    private String getDataSourceId(String title) {
+        return getDataSource(title).getIdentifier();
     }
 
-    private Item getDb(String title) {
+    private Item getDataSource(String title) {
         Item database = (Item) databases.get(title);
         if (database == null) {
-            database = createItem(tgtNs + "Database", "");
-            database.addAttribute(new Attribute("title", title));
+            database = createItem(tgtNs + "DataSource", "");
+            database.addAttribute(new Attribute("name", title));
             databases.put(title, database);
         }
         return database;
@@ -532,7 +543,7 @@ public class UniprotDataTranslator extends DataTranslator
      * @return the DBReference value or null of none found
      * @throws ObjectStoreException if problem reading database
      */
-    protected String getDbReferenceValue(Item srcItem, String dbName, Set geneNames)
+    protected String getDataSourceReferenceValue(Item srcItem, String dbName, Set geneNames)
         throws ObjectStoreException {
         String geneIdentifier = null;
         List srcDbRefs = getItemsInCollection(srcItem.getCollection("dbReferences"),
