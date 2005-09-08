@@ -244,7 +244,7 @@ public class ExportAction extends InterMineAction
 
         response.setContentType("text/tab-separated-values");
         response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", "inline; filename=\"results-table.txt\"");
+        response.setHeader("Content-Disposition", "inline; filename=\"results-table.tsv\"");
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
