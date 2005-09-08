@@ -1,0 +1,26 @@
+INTERMINE: OBJECT BASED DATA INTEGRATION AND WAREHOUSING
+
+F. Guillier(1), W. Ji(1), P. McLaren(1), R. Lyne(1), T. Riley(1), K. Rutherford(1), M. Wakeling(1), K. Lilley(2), K. Mizuguchi(2), S. Russell(1), M. Ashburner(1), G. Micklem(1). 1) Department of Genetics, University of Cambridge, Cambridge, U.K; 2) Department of Biochemistry, University of Cambridge, Cambridge, U.K.
+
+
+
+short abstract (max 50 words)
+----------------------------
+InterMine (www.intermine.org) is a general purpose open source data warehouse system developed as part of the FlyMine project (www.flymine.org).  It enables simple, configurable integration of data and storage in a query-optimised data warehouse.  Users are able to create complex queries using an intuitive web application or an object query language.
+
+
+long abstract (max 1000 words)
+------------------------------
+
+
+InterMine (www.intermine.org) is a general purpose, object-oriented data warehouse system developed as part of the FlyMine project (www.flymine.org).  It enables simple, configurable integration of data from multiple sources and storage in a query-optimised data warehouse.  Users are able to create powerful, arbitrary queries using an intuitive web application or an object based query language.
+
+InterMine is model independent, all model specific components are automatically generated from a single XML file.  The system enables integration of multiple data models in various formats (UML, XML Schema and DAG) and can incorporate data from relational databases, XML and flat files.  
+
+A generic query optimisation system means that InterMine can turn any model into a query optimised data warehouse.  Incoming queries are automatically analysed and re-written to use pre-computed tables in the underlying database.  Generation of pre-computed tables is configurable, thus the system can be optimised for any user query and performance can adapt to actual usage. 
+
+The model independent web application is designed to be a powerful query tool giving users the ability to build complex queries and not be constrained by fill-in-the-blanks forms.  Queries and collections of results can be saved between sessions.  It is also simple to create and publish templates to make common queries easy to run.
+
+FlyMine defines a biological data model for InterMine and code/configuration to integrate a number of standard data formats - for example Ensembl, MAGE (microarrays), PSI (protein interactions), UniProt and GO assignments.  FlyMine is aimed at Drosophila and Anopheles research but has many generic components that can be re-used for other biological data warehouses.  T1DMine is currently in beta stage, integrating genomic and genetic information relevant to Type 1 diabetes.
+
+InterMine is freely available under LGPL.  See www.intermine.org
