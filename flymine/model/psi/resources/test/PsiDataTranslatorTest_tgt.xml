@@ -34,8 +34,8 @@
       <reference ref_id="-1_3"/>
     </collection>
   </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
-    <attribute name="title" value="Swiss-Prot"/>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Swiss-Prot"/>
   </item>
   <item id="-1_6" class="http://www.flymine.org/model/genomic#ProteinRegion">
     <reference name="protein" ref_id="0_32"/>
@@ -114,7 +114,7 @@
       <reference ref_id="-1_15"/>
     </collection>
   </item>
-  <item id="-1_2" class="http://www.flymine.org/model/genomic#Database">
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="IntAct"/>
   </item>
   <item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">

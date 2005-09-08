@@ -188,8 +188,8 @@ public class InparanoidConverter extends FileConverter
         analysis.setAttribute("algorithm", "INPARANOID");
         analysis.setReference("publication", pub.getIdentifier());
 
-        db = createItem("Database");
-        db.setAttribute("title", "INPARANOID");
+        db = createItem("DataSet");
+        db.setAttribute("title", "InParanoid data set");
 
         List toStore = Arrays.asList(new Object[] {db, analysis, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {

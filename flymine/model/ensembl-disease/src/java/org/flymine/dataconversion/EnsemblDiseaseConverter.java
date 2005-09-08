@@ -197,7 +197,7 @@ public class EnsemblDiseaseConverter extends FileConverter
      */
     private Item getEnsemblDb() {
         if (ensemblDb == null) {
-            ensemblDb = createItem("Database");
+            ensemblDb = createItem("DataSource");
             Attribute title = new Attribute("title", "ensembl");
             Attribute url = new Attribute("url", "http://www.ensembl.org");
             ensemblDb.addAttribute(title);
@@ -213,7 +213,7 @@ public class EnsemblDiseaseConverter extends FileConverter
      */
     private Item getOmimDb() {
         if (omimDb == null) {
-            omimDb = createItem("Database");
+            omimDb = createItem("DataSource");
             Attribute title = new Attribute("title", "OMIM");
             Attribute url = new Attribute("url",
                       "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM");

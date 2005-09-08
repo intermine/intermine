@@ -37,7 +37,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     private static final String SRC_NS = "http://www.flymine.org/model/protein_structure#";
     protected static final String ENDL = System.getProperty("line.separator");
     protected String dataLocation;
-    protected Item db;
+    protected Item dataSet;
     protected Map proteinFeatures = new HashMap();
 
     /**
@@ -55,9 +55,9 @@ public class ProteinStructureDataTranslator extends DataTranslator
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
 
-        db = createItem(tgtNs + "Database", "");
-        db.addAttribute(new Attribute("title", "Pfam"));
-        tgtItemWriter.store(ItemHelper.convert(db));
+        dataSet = createItem(tgtNs + "DataSet", "");
+        dataSet.addAttribute(new Attribute("title", "Mizuguchi protein structure predictions"));
+        tgtItemWriter.store(ItemHelper.convert(dataSet));
 
         super.translate(tgtItemWriter);
     }
@@ -89,7 +89,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             location.addReference(new Reference("subject", proteinRegion.getIdentifier()));
 
             location.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                {db.getIdentifier()})));
+                {dataSet.getIdentifier()})));
 
             // model -> modelledProteinStructure
             Item model = getReference(srcItem, "model");

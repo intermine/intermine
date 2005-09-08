@@ -13,9 +13,9 @@
   <div style="margin-left: 20px">
     <table cellpadding="4">
       <c:forEach items="${object.synonyms}" var="thisSynonym">
-        <c:set var="sourceTitle" value="${thisSynonym.source.title}"/>
+        <c:set var="sourceName" value="${thisSynonym.source.name}"/>
         <c:set var="linkProperty"
-            value="${sourceTitle}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
+            value="${sourceName}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
         <c:set var="searchString" value="-:${thisSynonym.value}:-"/>
         <c:if test="${!empty WEB_PROPERTIES[linkProperty] 
                       && (thisSynonym.type == 'identifier' || thisSynonym.type == 'accession'
@@ -27,12 +27,12 @@
               <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"
                          title="${sourceTitle}: ${thisSynonym.value}"
                          target="view_window">
-                <html:img src="model/${sourceTitle}_logo_small.png"/>
+                <html:img src="model/${sourceName}_logo_small.png"/>
               </html:link>
             </td>
             <td>
               <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"
-                         title="${sourceTitle}: ${thisSynonym.value}"
+                         title="${sourceName}: ${thisSynonym.value}"
                          target="view_window">
                 ${thisSynonym.value}
               </html:link>

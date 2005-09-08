@@ -45,7 +45,8 @@ public class FlyRegGFF3RecordHandlerTest extends TestCase
     private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     private String seqClsName = "Chromosome";
     private String orgAbbrev = "DM";
-    private String infoSourceTitle = "FlyBase";
+    private String dataSourceName = "FlyReg";
+    private String dataSetTitle = "FlyReg data set";
     private String tgtNs;
     private ItemFactory itemFactory;
     private List featureIdentifiers;
@@ -56,8 +57,8 @@ public class FlyRegGFF3RecordHandlerTest extends TestCase
         tgtModel = Model.getInstanceByName("genomic");
         handler = new FlyRegGFF3RecordHandler(tgtModel);
         tgtNs = tgtModel.getNameSpace().toString();
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel,
-                                      handler);
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
+                                      dataSetTitle, tgtModel, handler);
         itemFactory = handler.getItemFactory();
         organism = itemFactory.makeItem("0_0", tgtNs + "Organism", "");
     }

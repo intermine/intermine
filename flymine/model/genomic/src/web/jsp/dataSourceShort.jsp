@@ -3,6 +3,6 @@
 <!-- databaseShort.jsp -->
 <html:xhtml/>
 <html:link action="${linkAction}">
-  <html:img src="model/${object.title}_logo_small.png"/>
+  <html:img src="model/${object.name}_logo_small.png"/>
 </html:link>
 <!-- /databaseShort.jsp -->

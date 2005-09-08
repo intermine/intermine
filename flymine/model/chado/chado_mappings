@@ -12,10 +12,6 @@
 
 # ignore cv and cvterm
 
-#Database = db
-#Database.title = db.name
-#Database.url = db.url
-
 LocatedSequenceFeature = feature
 LocatedSequenceFeature.identifer = feature.uniquename
 LocatedSequenceFeature.organism = feature.organism

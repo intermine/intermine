@@ -37,11 +37,11 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Database">
+  <class className="org.flymine.model.genomic.DataSource">
     <longdisplayers>
-      <displayer src="/model/databaseLong.jsp"/>
+      <displayer src="/model/dataSourceLong.jsp"/>
     </longdisplayers>
-    <tabledisplayer src="/model/databaseShort.jsp"/>
+    <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.Organism">

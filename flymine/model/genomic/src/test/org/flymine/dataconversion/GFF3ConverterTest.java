@@ -45,11 +45,13 @@ public class GFF3ConverterTest extends TestCase {
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
-    String infoSourceTitle = "UCSC";
+    String dataSourceName = "UCSC";
+    String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel,
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle,
+                                      tgtModel,
                                       new GFF3RecordHandler(tgtModel));
     }
 

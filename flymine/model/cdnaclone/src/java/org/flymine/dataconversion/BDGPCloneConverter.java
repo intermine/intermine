@@ -47,10 +47,13 @@ public class BDGPCloneConverter extends CDNACloneConverter
         super(writer);
 
 
+        dataSource = createItem("DataSource");
+        dataSource.setAttribute("name", "BDGP");
+        writer.store(ItemHelper.convert(dataSource));
 
-        db = createItem("Database");
-        db.setAttribute("title", "BDGP");
-        writer.store(ItemHelper.convert(db));
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "BDGP cDNA clone data set");
+        writer.store(ItemHelper.convert(dataSet));
 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "DM");
@@ -88,12 +91,12 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 Item synonym = createItem("Synonym");
                 synonym.setAttribute("type", "identifier");
                 synonym.setAttribute("value", cloneIds[i]);
-                synonym.setReference("source", db.getIdentifier());
+                synonym.setReference("source", dataSource.getIdentifier());
                 synonym.setReference("subject", clone.getIdentifier());
                 writer.store(ItemHelper.convert(synonym));
 
                 clone.addCollection(new ReferenceList("evidence",
-                    new ArrayList(Collections.singleton(db.getIdentifier()))));
+                    new ArrayList(Collections.singleton(dataSet.getIdentifier()))));
                 writer.store(ItemHelper.convert(clone));
             }
         }

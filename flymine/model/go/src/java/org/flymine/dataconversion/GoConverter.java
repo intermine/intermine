@@ -34,6 +34,8 @@ import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 
+import org.apache.tools.ant.BuildException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -82,6 +84,9 @@ public class GoConverter extends FileConverter
      * @see FileConverter#process
      */
     public void process(Reader reader) throws ObjectStoreException, IOException {
+        if (ontology == null) {
+            throw new BuildException("ontology must be specified");
+        }
         try {
             if (ontology.getName().endsWith(".ontology") || ontology.getName().endsWith(".dag")) {
                 termIdNameMap = new DagParser().getTermIdNameMap(new FileReader(ontology));
@@ -112,13 +117,13 @@ public class GoConverter extends FileConverter
             Item annotation = (Item) annotations.get(key);
             if (!annotations.containsKey(key)) {
                 annotation = newAnnotation(qualifier,
-                                                newDatabase(array[14]),
-                                                newPublication(array[5]),
-                                                goEvidence,
-                                                newProduct(productId, array[11],
-                                                           newOrganism(array[12])),
-                                                newGoTerm(goId),
-                                                array[7]);
+                                           newDatabase(array[14]),
+                                           newPublication(array[5]),
+                                           goEvidence,
+                                           newProduct(productId, array[11],
+                                                      newOrganism(array[12])),
+                                           newGoTerm(goId),
+                                           array[7]);
                 annotations.put(key, annotation);
             } else {
                 Item pub = newPublication(array[5]);
@@ -144,7 +149,7 @@ public class GoConverter extends FileConverter
      * Create a new annotation item linking a product with a term, with evidence code, database and
      * publication
      * @param qualifier qualifier (eg NOT) or null
-     * @param database the database
+     * @param dataSource the dataSource
      * @param publication the publication
      * @param goEvidence the goEvidence
      * @param product the product
@@ -153,7 +158,7 @@ public class GoConverter extends FileConverter
      * @return the annotation
      * @throws ObjectStoreException if problem storing 'with' BioEntities
      */
-    protected Item newAnnotation(String qualifier, Item database, Item publication,
+    protected Item newAnnotation(String qualifier, Item dataSource, Item publication,
                                  String goEvidence, Item product, Item goTerm,
                                  String withText) throws ObjectStoreException {
         Item item = createItem("GOAnnotation");
@@ -183,13 +188,14 @@ public class GoConverter extends FileConverter
             }
         }
 
-        ReferenceList references = new ReferenceList();
-        references.setName("evidence");
-        references.addRefId(database.getIdentifier());
+        item.setReference("assignedBy", dataSource.getIdentifier());
+
         if (publication != null) {
+            ReferenceList references = new ReferenceList();
+            references.setName("evidence");
             references.addRefId(publication.getIdentifier());
+            item.addCollection(references);
         }
-        item.addCollection(references);
         return item;
     }
 
@@ -292,14 +298,14 @@ public class GoConverter extends FileConverter
     }
 
     /**
-     * Create a new database given a database code
+     * Create a new DataSource item given a database code
      * @param code the code
      * @return the database
      */
     protected Item newDatabase(String code) {
         Item item = (Item) databases.get(code);
         if (item == null) {
-            item = createItem("Database");
+            item = createItem("DataSource");
             String title = null;
             if ("UniProt".equals(code) || "UniProtKB".equals(code)) {
                 title = "UniProt";
@@ -308,7 +314,8 @@ public class GoConverter extends FileConverter
             } else if ("WB".equals(code)) {
                 title = "WormBase";
             } else if ("SP".equals(code)) {
-                title = "Swiss-Prot";
+                // special case for Swiss-Prot
+                title = "UniProt";
             } else if ("MGI".equals(code)) {
                 title = "MGI";
             } else if ("SGD".equals(code)) {
@@ -323,7 +330,7 @@ public class GoConverter extends FileConverter
                 throw new IllegalArgumentException("Database with code '" + code
                                                    + "' not recognised");
             }
-            item.addAttribute(new Attribute("title", title));
+            item.addAttribute(new Attribute("name", title));
             databases.put(code, item);
         }
         return item;

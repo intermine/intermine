@@ -29,6 +29,7 @@ import org.intermine.dataconversion.ItemWriter;
 /**
  * DataConverter to parse an RNAi data file into Items
  * @author Andrew Varley
+ * @author Kim Rutherford
  */
 public class RNAiConverter extends FileConverter
 {
@@ -44,8 +45,9 @@ public class RNAiConverter extends FileConverter
     protected Map geneAnnotation = new HashMap();
     protected Map phenotypeAnnotation = new HashMap();
 
-    protected Item db;
+    protected Item dataSource, dataSet;
     protected int id = 0;
+    protected String dataSetTitle;
 
     /**
      * Constructor
@@ -54,17 +56,40 @@ public class RNAiConverter extends FileConverter
      */
     public RNAiConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
-
-        db = newItem("Database");
-        db.addAttribute(new Attribute("title", "WormBase"));
-        writer.store(ItemHelper.convert(db));
     }
 
+    /**
+     * Set the name for the DataSet object for this load.
+     * @param dataSetTitle
+     */
+    public void setDataSetTitle(String dataSetTitle) {
+        this.dataSetTitle = dataSetTitle;
+    }
+    
     /**
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
+//        if (dataSetTitle == null) {
+//            throw new  IllegalArgumentException("dataSetTitle must be set");
+//        }
+
         BufferedReader br = new BufferedReader(reader);
+        
+        if (dataSet == null) {
+            dataSet = newItem("DataSet");
+
+            // TODO: the data set title should not be hard coded
+            dataSet.addAttribute(new Attribute("title", "RNAi data set"));
+            writer.store(ItemHelper.convert(dataSet));
+        }
+        
+        if (dataSource == null) {
+            dataSource = newItem("DataSource");
+            dataSource.addAttribute(new Attribute("name", "WormBase"));
+            writer.store(ItemHelper.convert(dataSource));
+        }
+        
         //intentionally throw away first line
         String line = br.readLine();
 
@@ -208,7 +233,8 @@ public class RNAiConverter extends FileConverter
         item.addAttribute(new Attribute("value", synonym));
         item.addAttribute(new Attribute("type", "accession"));
         item.addReference(new Reference("subject", subject.getIdentifier()));
-        item.addReference(new Reference("source", db.getIdentifier()));
+        item.addReference(new Reference("source", dataSource.getIdentifier()));
+        item.addToCollection("evidence", dataSet.getIdentifier());
         writer.store(ItemHelper.convert(item));
         synonyms.put(synonym, item);
         return item;

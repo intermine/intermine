@@ -224,77 +224,6 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(new
             MockItemReader(itemMap), mapping, srcModel, getTargetModel(tgtNs), "HS");
 
-        Item protein = createTgtItem(tgtNs + "Protein", "-1_11", "");
-        //protein.addAttribute(new Attribute("idenitifer", "Q1001"));
-        protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
-        protein.addReference(new Reference("organism", "-1_1"));
-        protein.addReference(new Reference("transcript", "2_1"));
-        protein.addCollection(new ReferenceList("subjects", new ArrayList(Arrays.asList(new Object[] {"-1_13","-1_19"}))));
-        protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_12"))));
-        protein.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));
-        Item synonym0 = createTgtItem(tgtNs + "Synonym", "-1_12", "");
-        synonym0.addAttribute(new Attribute("type", "accession"));
-        synonym0.addAttribute(new Attribute("value", "Q1001"));
-        synonym0.addReference(new Reference("subject", "-1_11"));
-        synonym0.addReference(new Reference("source", "-1_4"));
-
-        Item synonym1 = createTgtItem(tgtNs + "Synonym", "1_6", "");
-        synonym1.addAttribute(new Attribute("type", "identifier"));
-        synonym1.addAttribute(new Attribute("value", "TRANScript1"));
-        synonym1.addReference(new Reference("subject", "1_1"));
-        synonym1.addReference(new Reference("source", "-1_2"));
-
-        Item synonym2 = createTgtItem(tgtNs + "Synonym", "2_6", "");
-        synonym2.addAttribute(new Attribute("type", "identifier"));
-        synonym2.addAttribute(new Attribute("value", "TRANScript2"));
-        synonym2.addReference(new Reference("subject", "2_1"));
-        synonym2.addReference(new Reference("source", "-1_2"));
-
-        Item trans1 = createTgtItem(tgtNs + "Transcript", "1_1", "");
-        trans1.addAttribute(new Attribute("identifier", "TRANScript1"));
-        trans1.addReference(new Reference("organism", "-1_1"));
-        trans1.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_15","-1_16"}))));
-        trans1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));
-        //trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
-
-        Item trans2 = createTgtItem(tgtNs + "Transcript", "2_1", "");
-        trans2.addAttribute(new Attribute("identifier", "TRANScript2"));
-        trans2.addReference(new Reference("organism", "-1_1"));
-        trans2.addCollection(new ReferenceList("objects", new ArrayList(Arrays.asList(new Object[] {"-1_20","-1_21"}))));
-        trans2.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_2"}))));
-        //trans2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_13"))));
-
-        Item loca1 = createTgtItem(tgtNs + "Location", "-1_16", "");
-        loca1.addAttribute(new Attribute("start", "100"));
-        loca1.addAttribute(new Attribute("end", "900"));
-        loca1.addAttribute(new Attribute("strand", "1"));
-        loca1.addAttribute(new Attribute("endIsPartial", "false"));
-        loca1.addAttribute(new Attribute("startIsPartial", "false"));
-        loca1.addReference(new Reference("subject", "1_1"));
-        loca1.addReference(new Reference("object", "-1_10"));
-
-        Item loca2 = createTgtItem(tgtNs + "Location", "-1_21", "");
-        loca2.addAttribute(new Attribute("start", "1001"));
-        loca2.addAttribute(new Attribute("end", "9001"));
-        loca2.addAttribute(new Attribute("strand", "1"));
-        loca2.addAttribute(new Attribute("endIsPartial", "false"));
-        loca2.addAttribute(new Attribute("startIsPartial", "false"));
-        loca2.addReference(new Reference("subject", "2_1"));
-        loca2.addReference(new Reference("object", "-1_14"));
-
-        Item chr1 = createTgtItem(tgtNs +"Chromosome", "-1_10", "");
-        chr1.addAttribute(new Attribute("identifier", "1"));
-        chr1.addAttribute(new Attribute("length", "2461200"));
-        chr1.addReference(new Reference("organism", "-1_1"));
-        chr1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{ "-1_2"}))));
-
-        Item chr2 = createTgtItem(tgtNs +"Chromosome", "-1_14", "");
-        chr2.addAttribute(new Attribute("identifier", "1"));
-        chr2.addAttribute(new Attribute("length", "1124612"));
-        chr2.addReference(new Reference("organism", "-1_1"));
-        chr2.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{ "-1_2"}))));
-
-        Set expected = new HashSet(Arrays.asList(new Object[] {protein, trans1, trans2, synonym0, synonym1, synonym2, loca1, loca2, chr1, chr2}));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -302,12 +231,16 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         Iterator resIter = tgtIw.getItems().iterator();
         while (resIter.hasNext()) {
             Item item = (Item) resIter.next();
-            if (!(item.getClassName().equals(tgtNs + "Database")
+            if (!(item.getClassName().equals(tgtNs + "DataSet")
                  || item.getClassName().equals(tgtNs + "SimpleRelation")
                  || item.getClassName().equals(tgtNs + "Organism"))) {
                 result.add(item);
             }
         }
+
+        Collection expected =
+            new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblHumanDataTranslatorMergeProteins_test_tgt.xml")));
+
         assertEquals(expected, result);
     }
 

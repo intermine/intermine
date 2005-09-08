@@ -28,7 +28,7 @@
   <item id="-1_7" class="http://www.flymine.org/model/genomic#ProteinFeature">
     <attribute name="identifier" value="PF00013"/>
   </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
-    <attribute name="title" value="Pfam"/>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="Mizuguchi protein structure predictions"/>
   </item>
 </items>

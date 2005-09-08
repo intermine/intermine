@@ -25,6 +25,7 @@ import java.util.Arrays;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.util.XmlUtil;
 
@@ -45,6 +46,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     private String tgtNs;
     private Map sources = new HashMap();
     private Set pseudogeneIds = new HashSet();
+    private Item flybaseDataSource;
 
     // items that need extra processing that can only be done after all other GFF features have
     // been read
@@ -56,6 +58,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
      */
     public ChadoGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
+        tgtNs = tgtModel.getNameSpace().toString();
 
         // create a map of classname to reference name for parent references
         // this will add the parents of any SimpleRelations from getParents() to the
@@ -81,8 +84,6 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         references.put("FivePrimeUTR", "MRNAs");
         references.put("ThreePrimeUTR", "MRNAs");
         references.put("CDS", "MRNAs");
-
-        tgtNs = tgtModel.getNameSpace().toString();
     }
 
     /**
@@ -103,14 +104,14 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                 if (!feature.hasAttribute("organismDbId")) {
                     feature.setAttribute("organismDbId", organismDbId);
                 }
-                addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
+                addItem(createSynonym(feature, "identifier", organismDbId));
             }
 
             // if no name set for gene then use CGxx (FlyBase symbol rules)
             if (feature.getAttribute("symbol") == null) {
                 feature.setAttribute("symbol", feature.getAttribute("identifier").getValue());
-                addItem(createSynonym(feature, "symbol", feature.getAttribute("symbol").getValue(),
-                                      "FlyBase"));
+                addItem(createSynonym(feature, "symbol", 
+                                      feature.getAttribute("symbol").getValue()));
             }
         }
 
@@ -137,7 +138,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                 if (!feature.hasAttribute("organismDbId")) {
                     feature.setAttribute("organismDbId", organismDbId);
                 }
-                addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
+                addItem(createSynonym(feature, "identifier", organismDbId));
             }
         }
 
@@ -149,7 +150,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                 if (!feature.hasAttribute("organismDbId")) {
                     feature.setAttribute("organismDbId", organismDbId);
                 }
-                addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
+                addItem(createSynonym(feature, "identifier", organismDbId));
             }
         }
 
@@ -165,10 +166,10 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
             translation.addCollection(new ReferenceList("evidence",
-                    Arrays.asList(new Object[] {getSourceIdentifier("FlyBase")})));
+                    Arrays.asList(new Object[] {})));
 
             addItem(translation);
-            addItem(createSynonym(translation, "identifier", identifier, "FlyBase"));
+            addItem(createSynonym(translation, "identifier", identifier));
 
             feature.addCollection(new ReferenceList("polypeptides",
                 new ArrayList(Collections.singleton(translation.getIdentifier()))));
@@ -179,7 +180,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                 if (!translation.hasAttribute("organismDbId")) {
                     translation.setAttribute("organismDbId", organismDbId);
                 }
-                addItem(createSynonym(translation, "identifier", organismDbId, "FlyBase"));
+                addItem(createSynonym(translation, "identifier", organismDbId));
             }
             // TODO add GenBank protein identifier as synonym
 
@@ -221,9 +222,9 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             if (!synonyms.contains(synonym)) {
                 if (synonym.startsWith("CG") || synonym.startsWith("CR")
                     || synonym.startsWith("FB")) {
-                    addItem(createSynonym(feature, "identifier", synonym, "FlyBase"));
+                    addItem(createSynonym(feature, "identifier", synonym));
                 } else {
-                    addItem(createSynonym(feature, "symbol", synonym, "FlyBase"));
+                    addItem(createSynonym(feature, "symbol", synonym));
                 }
                 synonyms.add(synonym);
             }
@@ -347,39 +348,14 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     /**
      * Create a synonym Item from the given information.
      */
-    private Item createSynonym(Item subject, String type, String value, String sourceName) {
+    private Item createSynonym(Item subject, String type, String value) {
         Item synonym = getItemFactory().makeItem(null, tgtNs + "Synonym", "");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());
-        synonym.setReference("source", getSourceIdentifier(sourceName));
+        synonym.setReference("source", getDataSource().getIdentifier());
         return synonym;
     }
-
-
-    /**
-     * Get identifier of InfoSource of given name.
-     * @param sourceName title of InfoSource
-     * @return the identifier
-     */
-    protected String getSourceIdentifier(String sourceName) {
-        String sourceId = null;
-        if (sourceName.equals("FlyBase")) {
-            sourceId = getInfoSource().getIdentifier();
-        } else {
-            sourceId = (String) sources.get(sourceName);
-            if (sourceId == null) {
-                Item infoSource = getItemFactory().makeItem(null, tgtNs + "InfoSource", "");
-                infoSource.setAttribute("title", sourceName);
-                // store once
-                addItem(infoSource);
-                sources.put(sourceName, infoSource.getIdentifier());
-                sourceId = infoSource.getIdentifier();
-            }
-        }
-        return sourceId;
-    }
-
 
     /**
      * Given a list of dbxrefs parse for a single FlyBase identifier with the given
@@ -401,4 +377,5 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         }
         return fbs;
     }
+
 }

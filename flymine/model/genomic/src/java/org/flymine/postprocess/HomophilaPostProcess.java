@@ -18,7 +18,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Annotation;
 import org.flymine.model.genomic.BlastMatch;
-import org.flymine.model.genomic.Database;
+import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.Disease;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Protein;
@@ -51,7 +51,7 @@ public class HomophilaPostProcess
 {
     private static final Logger LOG = Logger.getLogger(HomophilaPostProcess.class);
     protected ObjectStoreWriter osw;
-    private Database homophilaDb;
+    private DataSet homophilaDataSet;
     private Publication pub1, pub2;
     
     /**
@@ -81,13 +81,13 @@ public class HomophilaPostProcess
         pub2.setPubMedId("11752278");
         pub2 = (Publication) osw.getObjectByExample(pub2, Collections.singleton("pubMedId"));
         
-        homophilaDb = (Database) DynamicUtil.createObject(Collections.singleton(Database.class));
-        homophilaDb.setTitle("Homophila");
-        homophilaDb =
-            (Database) osw.getObjectByExample(homophilaDb, Collections.singleton("title"));
+        homophilaDataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        homophilaDataSet.setTitle("Homophila data set");
+        homophilaDataSet =
+            (DataSet) osw.getObjectByExample(homophilaDataSet, Collections.singleton("title"));
         
-        if (homophilaDb == null) {
-            LOG.error("Failed to find homophila Database object");
+        if (homophilaDataSet == null) {
+            LOG.error("Failed to find homophila DataSet object");
         }
         if (pub1 == null) {
             LOG.error("Failed to find publication with id 11381037");
@@ -120,7 +120,7 @@ public class HomophilaPostProcess
                     (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
                 annotation.setSubject(gene);
                 annotation.setProperty(disease);
-                annotation.addEvidence(homophilaDb);
+                annotation.addEvidence(homophilaDataSet);
                 annotation.addEvidence(pub1);
                 annotation.addEvidence(pub2);
                 osw.store(annotation);

@@ -44,8 +44,8 @@
 <reference name="source" ref_id="-1_3"/>
 <reference name="subject" ref_id="-1_14"/>
 </item>
-<item id="-1_7" class="http://www.flymine.org/model/genomic#Database">
-<attribute name="title" value="FlyBase"/>
+<item id="-1_7" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="FlyBase"/>
 </item>
 <item id="-1_4" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -72,8 +72,8 @@
 <reference ref_id="-1_3"/>
 </collection>
 </item>
-<item id="-1_11" class="http://www.flymine.org/model/genomic#Database">
-<attribute name="title" value="Uniprot"/>
+<item id="-1_11" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="Uniprot"/>
 </item>
 <item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -81,8 +81,8 @@
 <reference name="source" ref_id="-1_7"/>
 <reference name="subject" ref_id="-1_8"/>
 </item>
-<item id="-1_3" class="http://www.flymine.org/model/genomic#Database">
-<attribute name="title" value="UniProt"/>
+<item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="UniProt"/>
 </item>
 <item id="-1_13" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="ORF"/>

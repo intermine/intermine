@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="build/resources/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
+	<classpathentry kind="src" path="model/cdnaclone/src/java"/>
+	<classpathentry kind="src" path="model/cdnaclone/src/test"/>
+	<classpathentry kind="src" path="model/opposumchain/src/java"/>
+	<classpathentry kind="src" path="model/opposumchain/src/test"/>
+	<classpathentry kind="src" path="model/tfbs/src/java"/>
+	<classpathentry kind="src" path="model/tfbs/src/test"/>
+	<classpathentry kind="src" path="model/tfbscluster/src/java"/>
+	<classpathentry kind="src" path="model/tfbscluster/src/test"/>
+	<classpathentry kind="src" path="model/genomic/resources/flymine"/>
+	<classpathentry excluding="flymine/" kind="src" path="model/genomic/resources"/>
+	<classpathentry excluding="resources/|src/java/|src/test/" kind="src" path="model/mage"/>
+	<classpathentry kind="src" path="model/mage/resources"/>
+	<classpathentry kind="src" path="build/model/uniprot/resources"/>
+	<classpathentry kind="src" path="build/model/ensembl/resources"/>
+	<classpathentry kind="src" path="build/model/psi/resources"/>
+	<classpathentry kind="src" path="build/model/rnai/resources"/>
+	<classpathentry kind="src" path="model/protein_structure/src/java"/>
+	<classpathentry kind="src" path="model/protein_structure/src/test"/>
+	<classpathentry kind="src" path="model/flyreg/src/test"/>
 	<classpathentry kind="src" path="model/genomic/src/web/java"/>
 	<classpathentry kind="src" path="model/drosdel/src/test"/>
 	<classpathentry kind="src" path="model/drosdel/src/java"/>
@@ -31,24 +49,22 @@
 	<classpathentry kind="src" path="model/rnai/src/test"/>
 	<classpathentry kind="src" path="model/taxonomy/src/java"/>
 	<classpathentry kind="src" path="model/taxonomy/src/test"/>
-	<classpathentry kind="src" path="model/tfbs/src/java"/>
-	<classpathentry kind="src" path="model/tfbs/src/test"/>
 	<classpathentry kind="src" path="model/tiling_path/src/java"/>
 	<classpathentry kind="src" path="model/uniprot/src/java"/>
 	<classpathentry kind="src" path="model/uniprot/src/test"/>
 	<classpathentry kind="src" path="build/model/drosdel"/>
 	<classpathentry kind="src" path="build/model/chado"/>
-	<classpathentry kind="src" path="build/model/ensembl"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/ensembl"/>
 	<classpathentry kind="src" path="build/model/fulldata"/>
 	<classpathentry kind="src" path="build/model/genomic"/>
 	<classpathentry kind="src" path="build/model/go"/>
 	<classpathentry kind="src" path="build/model/mage"/>
 	<classpathentry kind="src" path="build/model/orthologue"/>
 	<classpathentry kind="src" path="build/model/protein_structure"/>
-	<classpathentry kind="src" path="build/model/psi"/>
-	<classpathentry kind="src" path="build/model/rnai"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/psi"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/rnai"/>
 	<classpathentry kind="src" path="build/model/taxonomy"/>
-	<classpathentry kind="src" path="build/model/uniprot"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/uniprot"/>
 	<classpathentry kind="src" path="build/java"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
@@ -57,6 +73,7 @@
 	<classpathentry kind="src" path="model/psi/src/java"/>
 	<classpathentry kind="src" path="model/psi/src/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/test"/>
+	<classpathentry kind="lib" path="build/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/fulldata"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>

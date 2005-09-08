@@ -41,10 +41,8 @@ public class GFF3RecordHandler
     protected Map items = new HashMap();
     private Item sequence;
     protected Item analysis;
-    private Item infoSource;
     private Model tgtModel;
     private ItemFactory itemFactory;
-    private Map identifierMap;
     private Item organism;
 
     protected Map tgtSeqs = new HashMap();
@@ -52,6 +50,8 @@ public class GFF3RecordHandler
     private Reference tgtOrgRef;
     protected Item tgtSequence;
     private int itemid = 0;
+    private Item dataSource;
+    private Item dataSet;
 
     /**
      * Construct with the model to create items in (for type checking).
@@ -79,7 +79,6 @@ public class GFF3RecordHandler
      * @param identifierMap map from GFF ID to item identifier for all features
      */
     public void setIdentifierMap(Map identifierMap) {
-        this.identifierMap = identifierMap;
     }
 
     /**
@@ -211,22 +210,6 @@ public class GFF3RecordHandler
             return relations;
         }
         return null;
-    }
-
-    /**
-     * Get the InfoSource item to use in this handler
-     * @param infoSource the infoSource item
-     */
-    public void setInfoSource(Item infoSource) {
-        this.infoSource = infoSource;
-    }
-
-    /**
-     * Return the InfoSource Item set by setInfoSource()
-     * @return the infoSource Item
-     */
-    protected Item getInfoSource() {
-        return this.infoSource;
     }
 
      /**
@@ -503,5 +486,21 @@ public class GFF3RecordHandler
      */
     private String createIdentifier() {
         return "1_" + itemid++;
+    }
+
+    public Item getDataSource() {
+        return dataSource;
+    }
+    
+    public void setDataSource(Item dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public Item getDataSet() {
+        return dataSet;
+    }
+    
+    public void setDataSet(Item dataSet) {
+        this.dataSet = dataSet;
     }
 }

@@ -43,12 +43,14 @@ public class RegionGFF3HandlerTest extends TestCase
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
-    String infoSourceTitle = "UCSC";
+    String dataSourceName = "UCSC";
+    String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new RegionGFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel, handler);
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle,
+                                      tgtModel, handler);
     }
 
     public void tearDown() throws Exception {
@@ -60,7 +62,7 @@ public class RegionGFF3HandlerTest extends TestCase
 
     public void testParse() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/region.gff")));
+             InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/region.gff")));
         converter.parse(srcReader);
         converter.store();
 
@@ -69,8 +71,10 @@ public class RegionGFF3HandlerTest extends TestCase
         writerSrc.close();
 
         Set expected = new HashSet(getExpectedItems());
-        String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, writer.getItems());
-        String actualNotExpected = "in actual, not expected: " + compareItemSets(writer.getItems(), expected);
+        String expectedNotActual = "in expected, not actual: " 
+            + compareItemSets(expected, writer.getItems());
+        String actualNotExpected = "in actual, not expected: " 
+            + compareItemSets(writer.getItems(), expected);
         if (expectedNotActual.length() > 25) {
             System.out.println(expectedNotActual);
             System.out.println(actualNotExpected);

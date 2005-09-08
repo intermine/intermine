@@ -30,7 +30,7 @@
   <item id="10_3" class="http://www.flymine.org/model/genomic#InterproEvidence">
     <attribute name="infotext" value="Computed by hmmsearch"/>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Database">
+  <item id="4_2" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="Superfamily"/>
   </item>
   <item id="9_1" class="http://www.flymine.org/model/genomic#ProteinFamily">
@@ -69,7 +69,7 @@
     <reference name="object" ref_id="6_1002"/>
     <reference name="subject" ref_id="9_1002"/>
   </item>
-  <item id="4_1001" class="http://www.flymine.org/model/genomic#Database">
+  <item id="4_1001" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="PETE_TEST_DB"/>
   </item>
   <item id="10_2" class="http://www.flymine.org/model/genomic#InterproEvidence">
@@ -149,10 +149,10 @@
       <reference ref_id="9_1001"/>
     </collection>
   </item>
-  <item id="4_5" class="http://www.flymine.org/model/genomic#Database">
+  <item id="4_5" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="PROSITE profiles"/>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#Database">
+  <item id="4_4" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="Pfam"/>
   </item>
   <item id="10_6" class="http://www.flymine.org/model/genomic#InterproEvidence">
@@ -173,7 +173,7 @@
       <reference ref_id="6_1003"/>
     </collection>
   </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="InterPro"/>
   </item>
   <item id="11_3" class="http://www.flymine.org/model/genomic#Location">
@@ -186,7 +186,7 @@
       <reference ref_id="10_2"/>
     </collection>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Database">
+  <item id="4_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="TrEMBL"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Location">
@@ -292,7 +292,7 @@
       <reference ref_id="10_1"/>
     </collection>
   </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#Database">
+  <item id="4_3" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="title" value="PRINTS"/>
   </item>
   <item id="14_1" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">

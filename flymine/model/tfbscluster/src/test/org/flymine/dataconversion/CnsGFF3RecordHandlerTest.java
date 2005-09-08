@@ -43,12 +43,14 @@ public class CnsGFF3RecordHandlerTest extends TestCase
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
-    String infoSourceTitle = "TFBSSearch";
-
+    String dataSourceName = "HSCL";
+    String dataSetTitle = "HSCL conserved non-coding sites";
+    
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new CnsGFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel, handler);
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
+                                      dataSetTitle, tgtModel, handler);
     }
 
     public void tearDown() throws Exception {
