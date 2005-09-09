@@ -16,13 +16,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 
 import org.apache.log4j.Logger;
@@ -42,10 +39,10 @@ public class BDGPCloneConverter extends CDNACloneConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public BDGPCloneConverter(ItemWriter writer) throws ObjectStoreException,
-                                                        MetaDataException {
+    public BDGPCloneConverter(ItemWriter writer)
+        throws ObjectStoreException,
+               MetaDataException {
         super(writer);
-
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "BDGP");
@@ -85,7 +82,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
             String[] cloneIds = array[3].split(";");
 
             for (int i = 0; i < cloneIds.length; i++) {
-                Item clone = createBioEntity("CDNAClone", cloneIds[i],organism.getIdentifier());
+                Item clone = createBioEntity("CDNAClone", cloneIds[i], organism.getIdentifier());
                 clone.setReference("gene", gene.getIdentifier());
 
                 Item synonym = createItem("Synonym");

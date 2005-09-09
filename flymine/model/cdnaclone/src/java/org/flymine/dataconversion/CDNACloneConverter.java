@@ -11,16 +11,11 @@ package org.flymine.dataconversion;
  */
 
 import java.io.Reader;
-import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -47,8 +42,9 @@ public abstract class CDNACloneConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public CDNACloneConverter(ItemWriter writer) throws ObjectStoreException,
-                                                        MetaDataException {
+    public CDNACloneConverter(ItemWriter writer)
+        throws ObjectStoreException,
+               MetaDataException {
         super(writer);
 
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
@@ -63,7 +59,12 @@ public abstract class CDNACloneConverter extends FileConverter
      */
     public abstract void process(Reader reader) throws Exception;
 
-
+    /**
+     * @param clsName = target class name
+     * @param id = identifier
+     * @param orgId = ref id for organism
+     * @return item
+     */
     protected Item createBioEntity(String clsName, String id, String orgId) {
         Item bioEntity = createItem(clsName);
         bioEntity.setAttribute("identifier", id);
@@ -71,6 +72,10 @@ public abstract class CDNACloneConverter extends FileConverter
         return bioEntity;
     }
 
+    /**
+     * @param clsName = target class name
+     * @return item created by itemFactory
+     */
     protected Item createItem(String clsName) {
         return itemFactory.makeItemForClass(GENOMIC_NS + clsName);
     }
