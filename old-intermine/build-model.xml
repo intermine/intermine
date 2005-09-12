@@ -42,6 +42,7 @@
   </path>
 
   <path id="test.class.path">
+    <pathelement location="${build.model.dir.resources}/test"/>
     <path refid="compile.class.path"/>
     <pathelement location="${build.model.dir.tmp}"/>
     <pathelement location="${build.model.dir.resources}"/>
