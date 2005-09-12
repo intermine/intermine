@@ -108,11 +108,68 @@ public class FeedbackForm extends ValidatorForm
             if (errors == null) {
                 errors = new ActionErrors();
             }
-            
             errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getEmail()));
         }
         
+        StringBuffer buffer = new StringBuffer();
+        boolean badMessage = false;
+        
+        if (containsHeaders(getMessage(), buffer)) {
+            message = buffer.toString();
+            badMessage = true;
+        }
+        
+        buffer = new StringBuffer();
+        if (containsHeaders(getEmail(), buffer)) {
+            email = buffer.toString();
+            badMessage = true;
+        }
+        
+        buffer = new StringBuffer();
+        if (containsHeaders(getSubject(), buffer)) {
+            subject = buffer.toString();
+            badMessage = true;
+        }
+        
+        buffer = new StringBuffer();
+        if (containsHeaders(getName(), buffer)) {
+            name = buffer.toString();
+            badMessage = true;
+        }
+        
+        if (badMessage) {
+            if (errors == null) {
+                errors = new ActionErrors();
+            }
+            errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("errors.feedback.invalidmessage"));
+        }
+        
         return errors;
+    }
+    
+    protected boolean containsHeaders(String message, StringBuffer buffer) {
+        String lines[] = message.split("\n");
+        boolean found = false;
+        for (int i = 0; i < lines.length; i++) {
+            if (isEmailHeader(lines[i], "to") ||
+                isEmailHeader(lines[i], "from") ||
+                isEmailHeader(lines[i], "bcc") ||
+                isEmailHeader(lines[i], "cc")) {
+                found = true;
+            } else {
+                buffer.append(lines[i]);
+                if (i < lines.length - 1) {
+                    buffer.append("\n");
+                }
+            }
+        }
+        return found;
+    }
+    
+    private boolean isEmailHeader(String line, String header) {
+        return (line.toLowerCase().startsWith(header + ":") &&
+                line.indexOf("@") >= 0);
     }
 
     /**
