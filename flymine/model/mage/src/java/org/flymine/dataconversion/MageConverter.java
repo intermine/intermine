@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -97,11 +98,12 @@ public class MageConverter extends FileConverter
         start = time;
         File f = new File(new File(System.getProperty("java.io.tmpdir")), "mageconvert.xml");
         File dtd = new File(new File(System.getProperty("java.io.tmpdir")), "MAGE-ML.dtd");
+        System.out.println(f.getAbsolutePath());
         BufferedReader dtdReader =  new BufferedReader(new
                 InputStreamReader(getClass().getClassLoader().getResourceAsStream("MAGE-ML.dtd")));
         try {
             // write temporary file, MAGEreader wants write access for some reason
-            Writer fileWriter = new FileWriter(f);
+            Writer fileWriter = new BufferedWriter(new FileWriter(f));
             int c;
             while ((c = reader.read()) > 0) {
                 fileWriter.write(c);
@@ -109,13 +111,13 @@ public class MageConverter extends FileConverter
             fileWriter.close();
 
             // copy MAGE-ML.dtd to the same place
-            fileWriter = new FileWriter(dtd);
+            fileWriter = new BufferedWriter(new FileWriter(dtd));
             while ((c = dtdReader.read()) > 0) {
                 fileWriter.write(c);
             }
             fileWriter.close();
 
-            MAGEReader mageReader = new MAGEReader(f.getPath());
+            MAGEReader mageReader = new MAGEReader(f.getAbsolutePath());
             createItem(mageReader.getMAGEobj());
         } finally {
             f.delete();

@@ -120,7 +120,7 @@ public class MageDataTranslator extends DataTranslator
                               Model tgtModel) throws Exception {
         super(srcItemReader, mapping, srcModel, tgtModel);
 
-
+        System.out.println("trying to find xml class");
             ClassLoader cl = getClass().getClassLoader();
             Class c = cl.loadClass("com.bea.xml.stream.XMLOutputFactoryBase");
             System.out.println("found class: " + c.getName());

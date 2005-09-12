@@ -10,36 +10,29 @@ package org.flymine.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
-import java.util.Collection;
-import java.util.Arrays;
-import java.util.Collections;
-import java.io.InputStreamReader;
-import java.io.FileWriter;
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * Test for translating MAGE data in fulldata Item format conforming to a source OWL definition
@@ -54,7 +47,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     private String srcNs = "http://www.flymine.org/model/mage#";
     private ItemFactory srcItemFactory;
     private ItemFactory tgtItemFactory;
-    private File file;
+    //private File file;
 
     public MageDataTranslatorTest(String arg) {
         super(arg);
@@ -65,7 +58,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItemFactory = new ItemFactory(Model.getInstanceByName("mage"));
         tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
 
-        String ENDL = System.getProperty("line.separator");
+        /*String ENDL = System.getProperty("line.separator");
         file = new File("build/model/genomic/mage_config.properties");
         String propertiesFile="P10005.experimentName=Experiment 1" + ENDL
             + "P10005.primaryCharacteristic=colour" + ENDL
@@ -73,13 +66,13 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         FileWriter fw = new FileWriter(file);
         fw.write(propertiesFile);
-        fw.close();
+        fw.close();*/
     }
 
 
     public void tearDown() throws Exception {
         super.tearDown();
-        file.delete();
+        //file.delete();
     }
 
     public void testTranslate() throws Exception {
@@ -89,7 +82,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         //writerSrc.close();
 
 
-        Map itemMap = writeItems(srcItems);
+        Map itemMap = writeItems(srcItems); 
         DataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
                                                            mapping, srcModel, getTargetModel(tgtNs));
 
