@@ -80,8 +80,16 @@ public class TemplateController extends TilesAction
             queryName = request.getParameter("templateName");
         }
         
-        // Look for session attribute "previewTemplate" which is set while building a template
+        // look for request attribute "previewTemplate" which is set while building a template
         template = (TemplateQuery) request.getAttribute("previewTemplate");
+        
+        if (context.getAttribute("builder") != null) {
+            PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+            PathQuery queryClone = (PathQuery) query.clone();
+            TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+            template = TemplateHelper.buildTemplateQuery(tbs, query);
+            request.setAttribute("previewTemplate", template);
+        }
         
         if (queryName == null && template != null) {
             queryName = template.getName();

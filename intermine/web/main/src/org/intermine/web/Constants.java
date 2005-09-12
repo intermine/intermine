@@ -14,6 +14,7 @@ package org.intermine.web;
  * Container for ServletContext and Session attribute names used by the webapp
  *
  * @author Kim Rutherford
+ * @author Thomas Riley
  */
 public interface Constants
 {
@@ -103,27 +104,10 @@ public interface Constants
     public static final String QUERY = "QUERY";
     
     /**
-     * Session attribute used to store the copy of the query that the user is
-     * building a template with.
+     * Session attribute set of type TemplateBuildState present when query
+     * builder is in template building mode.
      */
-    public static final String TEMPLATE_PATHQUERY = "TEMPLATE_PATHQUERY";
-    
-    /**
-     * Session attribute used to store the original of the template being edited
-     * in the query builder.
-     */
-    public static final String EDITING_TEMPLATE = "EDITING_TEMPLATE";
-    
-    /**
-     * Session attribute set to Boolean.TRUE when query builder is in
-     * template building/editing mode.
-     */
-    public static final String TEMPLATE_MODE = "TEMPLATE_MODE";
-    
-    /**
-     * Session attribute used to store the results of running the current query
-     */
-    //public static final String QUERY_RESULTS = "QUERY_RESULTS";
+    public static final String TEMPLATE_BUILD_STATE = "TEMPLATE_BUILD_STATE";
     
     /**
      * Session attribute storing a bean exposing the user's trail through the object details

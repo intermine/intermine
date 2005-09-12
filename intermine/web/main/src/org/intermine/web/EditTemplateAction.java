@@ -55,10 +55,9 @@ public class EditTemplateAction extends InterMineAction
         TemplateQuery template = (TemplateQuery) profile.getSavedTemplates()
                                                         .get(request.getParameter("name"));
         
-        
         PathQuery queryClone = (PathQuery) template.query.clone();
-        session.setAttribute(Constants.TEMPLATE_PATHQUERY, queryClone);
-        session.setAttribute(Constants.EDITING_TEMPLATE, template);
-        return mapping.findForward("templateBuilder");
+        SessionMethods.loadQuery(queryClone, session);
+        session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
+        return mapping.findForward("query");
     }
 }

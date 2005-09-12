@@ -210,7 +210,8 @@ public class PathQuery
         }
         for (Iterator i = node.getConstraints().iterator(); i.hasNext();) {
             Constraint constraint = (Constraint) i.next();
-            newNode.getConstraints().add(new Constraint(constraint.getOp(), constraint.getValue()));
+            newNode.getConstraints().add(new Constraint(constraint.getOp(), constraint.getValue(),
+                    constraint.isEditable(), constraint.getDescription(), constraint.getIdentifier()));
         }
         return newNode;
     }

@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <tiles:importAttribute/>
 
@@ -253,7 +253,7 @@
                     </html:link>
                   </c:if>
                   <c:if test="${lockedPaths[node.path]}">
-                    <img border="0" src="images/discross.gif" width="13" height="13" 
+                    <img border="0" src="images/discross.gif" width="13" height="13"
                          alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
                   </c:if>
                 </div>
@@ -286,7 +286,60 @@
                                title="${editConstraintTitle}">
                       <img border="0" src="images/edit.gif" width="13" height="13" alt="x"/>
                     </html:link>
+                    <c:if test="${TEMPLATE_BUILD_STATE != null}">
+                      <c:choose>
+                        <c:when test="${constraint.editableInTemplate && node.attribute}">
+                          <html:link action="/mainChange?method=editTemplateConstraint&amp;path=${node.path}&amp;index=${status.index}"
+                                     titleKey="templateBuilder.editTemplateConstraint.linktitle">
+                            <c:choose>
+                              <c:when test="${constraint.editable}">
+                                <img border="0" src="images/unlocked.gif" width="13" height="13" alt="unlocked"/>
+                              </c:when>
+                              <c:otherwise>
+                                <img border="0" src="images/locked.gif" width="13" height="13" alt="locked"/>
+                              </c:otherwise>
+                            </c:choose>
+                          </html:link>
+                        </c:when>
+                        <c:otherwise>
+                          <img border="0" src="images/locked-disabled.gif" width="13" height="13" alt="locked"
+                            title="<fmt:message key="templateBuilder.constraintNotEditable"/>"/>
+                        </c:otherwise>
+                      </c:choose>
+                    </c:if>
                   </div>
+                  <c:if test="${TEMPLATE_BUILD_STATE != null && constraint.editable && node.attribute}">
+                    <div>
+                      <c:forEach begin="0" end="${node.indentation+1}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      </c:forEach>
+                      <html:link action="/mainChange?method=editTemplateConstraint&amp;path=${node.path}&amp;index=${status.index}"
+                                 titleKey="templateBuilder.editTemplateConstraint.linktitle" styleClass="constraintDesc">
+                        <c:choose>
+                          <c:when test="${empty constraint.description}">
+                            &lt;no label&gt;
+                          </c:when>
+                          <c:when test="${fn:length(constraint.description) > 30}">
+                            ${fn:substring(constraint.description, 0, 30)}...
+                          </c:when>
+                          <c:otherwise>
+                            ${constraint.description}
+                          </c:otherwise>
+                        </c:choose>
+                      </html:link>
+                    </div>
+                    <c:if test="${IS_SUPERUSER && !empty constraint.identifier}">
+                      <div>
+                        <c:forEach begin="0" end="${node.indentation+1}">
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </c:forEach>
+                        <html:link action="/mainChange?method=editTemplateConstraint&amp;path=${node.path}&amp;index=${status.index}"
+                                 titleKey="templateBuilder.editTemplateConstraint.linktitle" styleClass="constraintId">
+                          ${constraint.identifier}
+                        </html:link>
+                      </div>
+                    </c:if>
+                  </c:if>
                 </c:forEach>
               </div>
             </div>
@@ -304,6 +357,22 @@
   <c:if test="${editingNode != null}">
     <tr>
       <td valign="top">
+      	
+        <html:form action="/mainAction">
+      	
+        <html:hidden property="path" value="${editingNode.path}"/>
+      	
+        <c:if test="${editingConstraintIndex != null}">
+          <html:hidden property="cindex" value="${editingConstraintIndex}"/>
+        </c:if>
+      	
+        <c:if test="${TEMPLATE_BUILD_STATE != null && (editingTemplateConstraint)}"> <%-- || param.deletePath != null)}"> --%>
+          <c:set var="constraint" value="${editingNode.constraints[editingConstraintIndex]}" scope="request"/>
+          <tiles:insert page="constraintSettings.jsp"/>
+        </c:if>
+        
+        <c:if test="${!editingTemplateConstraint}">
+        
         <div class="heading"><fmt:message key="query.constrain"/><im:helplink key="query.help.constrain"/></div>
         <div class="body">
           <c:choose>
@@ -391,11 +460,8 @@
         //-->
         </script>
         
-        <html:form action="/mainAction">
-          <html:hidden property="path" value="${editingNode.path}"/>
-          <c:if test="${editingConstraintIndex != null}">
-            <html:hidden property="cindex" value="${editingConstraintIndex}"/>
-          </c:if>
+        
+          
           <c:choose>
             <c:when test="${editingNode.attribute}">
               <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" height="65">
@@ -538,7 +604,9 @@
               </html:submit>
             </p>
           </c:if>
-        </html:form>
+          
+        </div>
+        
         
         
         <script type="text/javascript">
@@ -561,11 +629,16 @@
           //-->
           </script>
         </div>
+          
+        </c:if>
+      
+        </html:form>
+                
       </td>
     </tr>
     
   </c:if>
 
-
 </table>
+
 <!-- /main.jsp -->

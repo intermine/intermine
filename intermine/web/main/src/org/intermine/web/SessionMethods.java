@@ -216,6 +216,7 @@ public class SessionMethods
         }
         session.setAttribute("path", path);
         session.removeAttribute("prefix");
+        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
     }
     
     /**

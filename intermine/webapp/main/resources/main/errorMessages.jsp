@@ -42,7 +42,7 @@
 <c:if test="${!empty MESSAGES}">
   <div class="topBar messages">
     <c:forEach items="${MESSAGES}" var="message">
-      <c:out value="${message}"/><br/>
+      <c:out value="${message}" escapeXml="false"/><br/>
     </c:forEach>
   </div>
   <br/>
