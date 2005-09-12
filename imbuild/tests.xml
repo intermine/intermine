@@ -8,7 +8,7 @@
   
   <target name="-pre-init" depends="library.-pre-init">
     <!-- emma properties -->
-    <property name="emma.enabled" value="true"/>
+    <property name="emma.enabled" value="false"/>
     <property name="build.coverage.dir" location="${build.dir}/coverage"/>
     <property name="build.coverage.results.dir" location="${build.coverage.dir}"/>
     <property name="build.instrumented.dir" location="${build.dir}/instrumented"/>
