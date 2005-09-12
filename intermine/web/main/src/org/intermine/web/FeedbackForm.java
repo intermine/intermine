@@ -94,7 +94,8 @@ public class FeedbackForm extends ValidatorForm
     }
 
     /**
-     * When there are no other errors, check email address is valid.
+     * When there are no other errors, check email address is valid. Check for headers
+     * being injected into the message or subject.
      *
      * @param mapping ActionMapping of current action
      * @param request current servlet request
@@ -148,6 +149,12 @@ public class FeedbackForm extends ValidatorForm
         return errors;
     }
     
+    /**
+     * Check part of the message for injected headers.
+     * @param message some part of the message
+     * @param buffer output buffer with bad lines stripped
+     * @return true if message contains headers, false if not
+     */
     protected boolean containsHeaders(String message, StringBuffer buffer) {
         String lines[] = message.split("\n");
         boolean found = false;
