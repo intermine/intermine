@@ -576,3 +576,15 @@ dd {
   padding-bottom: 1px;
   font-size: 10px;
 }
+
+a.constraintDesc {
+  font-size: 11px;
+  font-style: italic;
+  color: #333;
+}
+
+a.constraintId {
+  font-size: 10px;
+  color: green;
+}
+

@@ -10,28 +10,29 @@ package org.intermine.web;
  *
  */
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import java.util.Date;
-import java.util.Locale;
-import java.text.DateFormat;
-import java.text.ParseException;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.util.TypeUtil;
 
 import org.apache.struts.Globals;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-
-import org.intermine.util.TypeUtil;
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * The main form, using for editing constraints
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class MainForm extends ActionForm
 {
@@ -43,6 +44,12 @@ public class MainForm extends ActionForm
     protected String path;
     protected String nullConstraint;
     protected Object parsedAttributeValue;
+    
+    // template builder elements
+    
+    protected boolean editable;
+    protected String templateLabel;
+    protected String templateId;
 
     /**
      * Gets the value of loopQueryOp
@@ -217,6 +224,38 @@ public class MainForm extends ActionForm
         return parsedAttributeValue;
     }
 
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
+
+    public String getTemplateLabel() {
+        return templateLabel;
+    }
+
+    public void setTemplateLabel(String templateLabel) {
+        this.templateLabel = templateLabel;
+    }
+    
+    /**
+     * Get the editable flag (when building a template).
+     * @return whether this constraint is editable
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+
+    /**
+     * Set the editable flag (when building a template).
+     * @param editable whether or not this constraint should be editable
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
     /**
      * Sets the value of parsedAttributeValue
      *
@@ -311,5 +350,26 @@ public class MainForm extends ActionForm
         subclassValue = null;
         path = null;
         nullConstraint = "NULL";
+        templateLabel = "";
+        templateId = "";
+        editable = false;
+        /*
+        HttpSession session = request.getSession();
+        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        
+        if (tbs != null) {
+            PathNode node = (PathNode) session.getAttribute("editingNode");
+            if (node != null) {
+                Integer index = (Integer) session.getAttribute("editingConstraintIndex");
+                Constraint c = (Constraint) node.getConstraints().get(index.intValue());
+                editable = tbs.isUnlocked(c);
+                System.out.println("reset 2");
+                if (editable) {
+                    System.out.println("reset 3");
+                    templateLabel = (String) tbs.getConstraintLabels().get(c);
+                    templateId = (String) tbs.getConstraintIds().get(c);
+                }
+            }
+        }*/
     }
 }

@@ -71,7 +71,7 @@
 
 <div class="body">
   <html:form action="/templateAction">
-    <c:out value="${templateQuery.description}"/><br/><br/>
+    <p><c:out value="${templateQuery.description}"/></p>
     <table border="0" class="templateForm">
       <c:set var="index" value="${0}"/>
       <c:forEach items="${templateQuery.nodes}" var="node">

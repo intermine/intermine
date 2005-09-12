@@ -57,9 +57,6 @@
     
     <form-bean name="feedbackForm"
                type="org.intermine.web.FeedbackForm"/>
-
-    <form-bean name="buildTemplateForm"
-               type="org.intermine.web.BuildTemplateForm"/>
     
     <form-bean name="importTemplatesForm"
                type="org.intermine.web.TemplatesImportForm"/>
@@ -69,7 +66,10 @@
     
     <form-bean name="importQueryForm"
                type="org.intermine.web.ImportQueryForm"/>
-               
+    
+    <form-bean name="templateSettingsForm"
+               type="org.intermine.web.TemplateSettingsForm"/>
+    
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -250,7 +250,7 @@
     
     <action path="/editTemplate"
             type="org.intermine.web.EditTemplateAction">
-      <forward name="templateBuilder" path="templateBuilder.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <action path="/collapseElement"
@@ -319,8 +319,8 @@
     <!-- Actions invoked using buttons - not validating form -->
     <action path="/createTemplate"
             type="org.intermine.web.CreateTemplateAction">
-      <forward name="templateBuilder" path="templateBuilder.page"/>
-      <forward name="query" path="query.page"/>
+      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <action path="/changeTableSize"
@@ -420,14 +420,6 @@
       <forward name="buildBag" path="bagBuild.page"/>
     </action>
 
-    <action path="/buildTemplate"
-            type="org.intermine.web.BuildTemplateAction"
-            name="buildTemplateForm"
-            input="templateBuilder">
-      <forward name="templateBuilder" path="templateBuilder.page"/>
-      <forward name="finish" path="/history.do" redirect="true"/>
-    </action>
-
     <action path="/templateSearch"
             type="org.intermine.web.TemplateSearchAction"
             name="templateSearchForm"
@@ -477,6 +469,13 @@
             parameter="action">
       <forward name="login" path="login.page"/>
       <forward name="history" path="history.page"/>
+    </action>
+    
+    <action path="/templateSettingsAction"
+            type="org.intermine.web.TemplateSettingsAction"
+            name="templateSettingsForm"
+            scope="request">
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <!-- Other actions -->
@@ -536,11 +535,6 @@
             type="org.intermine.web.TemplateController"
             validate="false"
             name="templateForm"/>
-        
-    <action path="/initTemplateBuilder"
-            validate="false"
-            name="buildTemplateForm"
-            type="org.intermine.web.BuildTemplateController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

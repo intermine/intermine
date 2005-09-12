@@ -10,33 +10,34 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
+
 /**
- * Action to handle links on main tile
+ * Action to handle links on main tile.
+ * 
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class MainChange extends DispatchAction
 {
@@ -223,6 +224,7 @@ public class MainChange extends DispatchAction
         PathNode pn = (PathNode) query.getNodes().get(path);
         Constraint c = (Constraint) pn.getConstraints().get(index);
         ConstraintOp op = c.getOp();
+        
         if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL &&
                 op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
             session.setAttribute("editingConstraintValue", c.getValue());
@@ -233,8 +235,34 @@ public class MainChange extends DispatchAction
         }
         
         return mapping.findForward("query");
-    }                               
+    }
+    
+    /**
+     * Edit a constraint's template settings (identified by index) from a Node
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward editTemplateConstraint(ActionMapping mapping,
+                                        ActionForm form,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String path = request.getParameter("path");
+        int index = Integer.parseInt(request.getParameter("index"));
 
+        session.setAttribute("editingNode", query.getNodes().get(path));
+        session.setAttribute("editingConstraintIndex", new Integer(index));
+        session.setAttribute("editingTemplateConstraint", Boolean.TRUE);
+        
+        return mapping.findForward("query");
+    }
+    
     /**
      * Add a Node to the query
      * @param mapping The ActionMapping used to select this instance
@@ -328,7 +356,7 @@ public class MainChange extends DispatchAction
                                             HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        session.setAttribute(Constants.TEMPLATE_MODE, Boolean.TRUE);
+        session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState());
         return mapping.findForward("query");
     }
     
@@ -348,7 +376,7 @@ public class MainChange extends DispatchAction
                                            HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        session.removeAttribute(Constants.TEMPLATE_MODE);
+        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         return mapping.findForward("query");
     }
 

@@ -63,12 +63,16 @@ public class MainController extends TilesAction
         // set up the metadata
         context.putAttribute("nodes",
                              MainHelper.makeNodes((String) session.getAttribute("path"), model));
-
+        
         //set up the node on which we are editing constraints
         if (session.getAttribute("editingNode") != null) {
-            PathNode node = (PathNode) session.getAttribute("editingNode");
-            session.removeAttribute("editingNode");
-            request.setAttribute("editingNode", node);
+            moveToRequest("editingNode", request);
+            moveToRequest("editingConstraintIndex", request);
+            moveToRequest("editingTemplateConstraint", request);
+            moveToRequest("editingConstraintValue", request);
+            moveToRequest("editingConstraintOperand", request);
+            
+            PathNode node = (PathNode) request.getAttribute("editingNode");
             if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
                 request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss));
             } else {
@@ -122,6 +126,12 @@ public class MainController extends TilesAction
         return null;
     }
 
+    private void moveToRequest(String attributeName, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        request.setAttribute(attributeName, session.getAttribute(attributeName));
+        session.removeAttribute(attributeName);
+    }
+    
     /**
      * Given a input List, return a Map from list element value to list index.
      * 

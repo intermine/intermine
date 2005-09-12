@@ -18,7 +18,7 @@
   <table class="box" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
     <tr>
       <th class="title" align="left">
-        <c:if test="${!empty topLeftTile}">
+        <c:if test="${empty title && !empty topLeftTile}">
           <tiles:insert name="${topLeftTile}"/>
         </c:if>
         ${title}

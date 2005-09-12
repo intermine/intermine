@@ -14,13 +14,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -116,45 +114,6 @@ public class TemplateHelper
     }
     
     /**
-     * Create a TemplateQuery with input submitted by user contained within
-     * a BuildTemplateForm.
-     *
-     * @param tf     the BuildTemplateForm bean
-     * @param query  the query that will end up as part of the template (clone first)
-     * @return       the constructed template query
-     */
-    public static TemplateQuery buildTemplateQuery(BuildTemplateForm tf, PathQuery query) {
-        int j = 0;
-        Iterator niter = query.getNodes().entrySet().iterator();
-        
-        while (niter.hasNext()) {
-            Map.Entry entry = (Map.Entry) niter.next();
-            PathNode node = (PathNode) entry.getValue();
-            
-            if (node.isAttribute()) {
-                ListIterator citer = node.getConstraints().listIterator();
-                while (citer.hasNext()) {
-                    Constraint c = (Constraint) citer.next();
-                    String key = "" + (j + 1);
-                    String desc = (String) tf.getConstraintLabel(key);
-                    boolean editable = tf.getConstraintEditable(key);
-                    String id = (String) tf.getConstraintIdentifier(key);
-                    c = new Constraint(c.getOp(), c.getValue(), editable, desc, id);
-                    citer.set(c);
-                    
-                    j++;
-                }
-            }
-        }
-        
-        TemplateQuery template = new TemplateQuery(tf.getShortName(),
-                                                   tf.getDescription(),
-                                                   query, tf.isImportant(),
-                                                   tf.getKeywords());
-        return template;
-    }
-    
-    /**
      * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
      * return a string containing each template seriaised as XML. The root element
      * will be a <code>template-list</code> element.
@@ -194,5 +153,20 @@ public class TemplateHelper
     public static Map xmlToTemplateMap(String xml) throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
         return new TemplateQueryBinding().unmarshal(templateQueriesReader);
+    }
+
+    /**
+     * Build a template query given a TemplateBuildState and a PathQuery
+     * 
+     * @param tbs the template build state
+     * @param query the path query
+     * @return a template query
+     */
+    public static TemplateQuery buildTemplateQuery(TemplateBuildState tbs, PathQuery query) {
+        TemplateQuery template = new TemplateQuery(tbs.getName(),
+                                                   tbs.getDescription(),
+                                                   (PathQuery) query.clone(), tbs.isImportant(),
+                                                   tbs.getKeywords());
+        return template;
     }
 }

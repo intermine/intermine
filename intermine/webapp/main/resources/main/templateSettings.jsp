@@ -7,26 +7,33 @@
 
 <html:xhtml/>
 
-<im:heading id="templateSettings">
+<c:if test="${TEMPLATE_BUILD_STATE != null}">
+    
+  <im:heading>
   <c:choose>
-    <c:when test="${!empty EDITING_TEMPLATE}">
+    <c:when test="${TEMPLATE_BUILD_STATE.updatingTemplate != null}">
       <fmt:message key="templateBuilder.editingTemplate">
-        <fmt:param value="${EDITING_TEMPLATE.name}"/>
+        <fmt:param value="${TEMPLATE_BUILD_STATE.updatingTemplate.name}"/>
       </fmt:message>
     </c:when>
     <c:otherwise>
       Building a new template query
     </c:otherwise>
   </c:choose>
-</im:heading>
+  </im:heading>
 
-<im:body id="templateSettings">
-  <html:form action="/buildTemplate">
-    <table border="0" width="100%">
+  <im:body>
+  <html:form action="/templateSettingsAction">
+    <div align="center">
+    <p>
+    <table border="0" width="10%">
       <tr>
-        <td width="1%" align="right"><fmt:message key="templateBuilder.shortName"/></td>
-        <td colspan="2">
-          <html:text property="shortName" size="32"/>
+        <td width="1%" align="right" nowrap><fmt:message key="templateBuilder.shortName"/></td>
+        <td nowrap>
+          <html:text property="name" size="32"/>
+          <c:if test="${empty TEMPLATE_BUILD_STATE.name}">
+            <span class="errors">(Required)</span>
+          </c:if>
           <c:if test="${IS_SUPERUSER}">
             &nbsp;&nbsp;
             <fmt:message key="templateBuilder.important"/><html:checkbox property="important"/>
@@ -35,19 +42,28 @@
       </tr>
       <tr>
         <td align="right"><fmt:message key="templateBuilder.templateDescription"/></td>
-        <td><html:text property="description" size="55"/></td>
-        <td>&nbsp;</td>
+        <td nowrap>
+          <html:text property="description" size="55"/>
+          <c:if test="${empty TEMPLATE_BUILD_STATE.description}">
+            <span class="errors">(Required)</span>
+          </c:if>
+        </td>
       </tr>
       <tr>
         <td align="right"><fmt:message key="templateBuilder.keywords"/></td>
-        <td><html:text property="description" size="45"/></td>
-        <td width="99%">
-          <html:reset/>
-          <html:submit>Update</html:submit>
+        <td><html:text property="keywords" size="45"/></td>
+      </tr>
+      <tr>
+        <td align="center" colspan="2">
+          <html:submit>Update settings</html:submit>
         </td>
       </tr>
     </table>
+    </p>
+    </div>
   </html:form>
-</im:body>
+  </im:body>
+
+</c:if>
 
 <!-- /templateSettings.jsp -->

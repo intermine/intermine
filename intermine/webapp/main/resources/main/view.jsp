@@ -19,12 +19,12 @@
 <c:choose>
   <c:when test="${empty QUERY.view}">
     <div class="body">
-      <fmt:message key="view.empty.description"/>
+      <p><fmt:message key="view.empty.description"/></p>
     </div>
   </c:when>
   <c:otherwise>
     <div class="view">
-      <div class="body">
+     <div class="body">
       <c:if test="${fn:length(QUERY.view) > 1}">
         <div>
           <fmt:message key="view.columnOrderingTip"/>
@@ -104,29 +104,24 @@
           </html:submit>
         </html:form>
       </div>
+      
     </div>
-    </div>
-    <div class="heading">
-      <fmt:message key="view.actions"/><im:helplink key="view.help.actions"/>
-    </div>
-    <div class="body">
-      <div style="width: 100%"> <%-- IE table width bug workaround --%>
-      <table width="100%">
-        <tr>
-          <td align="left" valign="top">
-            <tiles:get name="saveQuery"/>
-          </td>
-          <c:if test="${!empty PROFILE.username}">
-            <td align="right" valign="top">
-              <tiles:get name="createTemplate"/>
-            </td>
-          </c:if>
-        </tr>
-      </table>
-      </div>
-    </div>
+   </div>
+    
+    
   </c:otherwise>
 </c:choose>
+
+<c:if test="${!empty PROFILE.username && TEMPLATE_BUILD_STATE == null}">
+  <div align="center">
+    <p>
+      <form action="<html:rewrite action="/mainChange"/>" method="post">
+        <input type="hidden" name="method" value="startTemplateBuild"/>
+        <input type="submit" value="Start building a template query" />
+      </form>
+    </p>
+  </div>
+</c:if>
 
 
 <!-- /view.jsp -->

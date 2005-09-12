@@ -10,15 +10,15 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.objectstore.query.ConstraintOp;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Action to handle button presses on the main tile
@@ -46,22 +46,43 @@ public class MainAction extends InterMineAction
         MainForm mf = (MainForm) form;
 
         PathNode node = (PathNode) query.getNodes().get(mf.getPath());
-
+        
         Integer cindex = (request.getParameter("cindex") != null) ?
                 new Integer(request.getParameter("cindex")) : null;
+
+        String label = null, id = null;
+        boolean editable = false;
+        
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
-            node.removeConstraint((Constraint) node.getConstraints().get(cindex.intValue()));
-            session.removeAttribute("editingConstraintIndex");
-            session.removeAttribute("editingConstraintValue");
-            session.removeAttribute("editingConstraintOperand");
+            Constraint c = (Constraint) node.getConstraints().get(cindex.intValue());
+            node.removeConstraint(c);
+            label = c.getDescription();
+            id = c.getIdentifier();
+            editable = c.isEditable();
+            
+            if (request.getParameter("template") != null) {
+                // We're just updating template settings
+                node.getConstraints().add(new Constraint(c.getOp(), c.getValue(), mf.isEditable(),
+                        mf.getTemplateLabel(), mf.getTemplateId()));
+                mf.reset(mapping, request);
+                return mapping.findForward("query");
+            }
+        }
+        
+        if (request.getParameter("attribute") != null && cindex == null) {
+            // New constraint
+            label = mf.getTemplateLabel();
+            id = mf.getTemplateId();
+            editable = mf.isEditable();
         }
         
         if (request.getParameter("attribute") != null) {
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getAttributeOp()));
             Object constraintValue = mf.getParsedAttributeValue();
-            node.getConstraints().add(new Constraint(constraintOp, constraintValue));
+            Constraint c = new Constraint(constraintOp, constraintValue, editable, label, id);
+            node.getConstraints().add(c);
         }
 
         if (request.getParameter("bag") != null) {
@@ -85,12 +106,16 @@ public class MainAction extends InterMineAction
         
         if (request.getParameter("nullnotnull") != null) {
             if (mf.getNullConstraint().equals("NotNULL")) {
-                node.getConstraints().add(new Constraint(ConstraintOp.IS_NOT_NULL, null));
+                node.getConstraints()
+                    .add(new Constraint(ConstraintOp.IS_NOT_NULL, null));
             } else {
-                node.getConstraints().add(new Constraint(ConstraintOp.IS_NULL, null));
+                node.getConstraints()
+                    .add(new Constraint(ConstraintOp.IS_NULL, null));
             }
         }
-
+        
+        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        
         mf.reset(mapping, request);
 
         return mapping.findForward("query");

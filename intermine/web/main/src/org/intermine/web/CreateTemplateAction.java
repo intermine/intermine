@@ -17,12 +17,14 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,11 +39,8 @@ public class CreateTemplateAction extends InterMineAction
     protected static final Logger LOG = Logger.getLogger(CreateTemplateAction.class);
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
+     * Take the current query and TemplateBuildState from the session and create a
+     * TemplateQuery. Put the query in the user's profile.
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -62,49 +61,95 @@ public class CreateTemplateAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-
+        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        
         boolean seenProblem = false;
 
-        // Make sure this attribute is cleared
-        session.setAttribute(Constants.EDITING_TEMPLATE, null);
-        
         // Check whether query has at least one constraint and at least one output
         if (query.getView().size() == 0) {
             recordError(new ActionMessage("errors.createtemplate.nooutputs"), request);
             seenProblem = true;
         }
         Iterator iter = query.getNodes().values().iterator();
-        boolean foundConstraint = false;
+        boolean foundEditableConstraint = false;
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
             if (node.isAttribute()) {
-                if (node.getConstraints().size() > 0) {
-                    foundConstraint = true;
-                    break;
+                Iterator citer = node.getConstraints().iterator();
+                while (citer.hasNext()) {
+                    Constraint c = (Constraint) citer.next();
+                    if (c.isEditable()) {
+                        foundEditableConstraint = true;
+                        break;
+                    }
                 }
             }
         }
-        if (!foundConstraint) {
+        if (!foundEditableConstraint) {
             recordError(new ActionMessage("errors.createtemplate.noconstraints"), request);
             seenProblem = true;
         }
-
-        // Ensure that we can actually execute the query
-        try {
-            if (query.getInfo() == null) {
-                query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
-            }
-        } catch (ObjectStoreException e) {
-            recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+        
+        // Check whether there is a template name clash
+        if (profile.getSavedTemplates().containsKey(tbs.getName()) &&
+           (tbs.getUpdatingTemplate() == null
+                    || !tbs.getUpdatingTemplate().getName().equals(tbs.getName()))) {
+            recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()), request);
+            seenProblem = true;
+        }
+        
+        if (StringUtils.isEmpty(tbs.getName())) {
+            recordError(new ActionMessage("errors.required", "Template name"), request);
             seenProblem = true;
         }
 
+        if (StringUtils.isEmpty(tbs.getDescription())) {
+            recordError(new ActionMessage("errors.required", "Template description", tbs.getName()), request);
+            seenProblem = true;
+        }
+        
+        // Ensure that we can actually execute the query
+        if (!seenProblem) {
+            try {
+                if (query.getInfo() == null) {
+                    query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
+                }
+            } catch (ObjectStoreException e) {
+                recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+                seenProblem = true;
+            }
+        }
+        
         if (seenProblem) {
             return mapping.findForward("query");
         }
-
-        PathQuery queryClone = (PathQuery) query.clone();
-        session.setAttribute(Constants.TEMPLATE_PATHQUERY, queryClone);
-        return mapping.findForward("templateBuilder");
+        
+        TemplateQuery template = TemplateHelper.buildTemplateQuery(tbs, query);
+        TemplateQuery editing = tbs.getUpdatingTemplate();
+        
+        String key = (editing == null) ? "templateBuilder.templateCreated"
+                                       : "templateBuilder.templateUpdated";
+        
+        recordMessage(new ActionMessage(key, template.getName()), request);
+        
+        // Replace template if needed
+        if (editing != null) {
+            profile.deleteTemplate(editing.getName());
+        }
+        profile.saveTemplate(template.getName(), template);
+        // If superuser then rebuild shared templates
+        if (profile.getUsername() != null && profile.getUsername().equals
+                (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
+            TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+            if (editing != null) {
+                tr.globalTemplateUpdated(template);
+            } else {
+                tr.globalTemplateAdded(template);
+            }
+        }
+        
+        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        
+        return mapping.findForward("history");
     }
 }

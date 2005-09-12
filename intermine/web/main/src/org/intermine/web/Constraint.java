@@ -64,7 +64,7 @@ public class Constraint
     public ConstraintOp getOp()  {
         return op;
     }
-
+    
     /**
      * Gets the value of value
      *
@@ -113,6 +113,19 @@ public class Constraint
         } else {
             return "" + getValue();
         }
+    }
+    
+    /**
+     * Return true if this constraint can be presented as editable in a
+     * template query. This method assumes that the constraint is applied to an
+     * attribute.
+     * @return true if constraint can be edited in a template query
+     */
+    public boolean isEditableInTemplate() {
+        return (op != ConstraintOp.IS_NOT_NULL &&
+                op != ConstraintOp.IS_NULL &&
+                op != ConstraintOp.IN &&
+                op != ConstraintOp.NOT_IN);
     }
 
     /**
