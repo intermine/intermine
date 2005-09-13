@@ -270,7 +270,7 @@ public class MainHelper
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 if (node.isReference() && c.getOp() != ConstraintOp.IS_NOT_NULL
-                    && c.getOp() != ConstraintOp.IS_NULL) {
+                    && c.getOp() != ConstraintOp.IS_NULL && !BagConstraint.VALID_OPS.contains(c.getOp())) {
                     QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
                         cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
                 }
