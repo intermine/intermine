@@ -91,5 +91,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
 	<classpathentry kind="lib" path="resources"/>
+	<classpathentry kind="lib" path="model/mage/resources"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
