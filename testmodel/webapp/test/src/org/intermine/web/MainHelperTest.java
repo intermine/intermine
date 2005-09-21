@@ -10,8 +10,12 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
+
 import junit.framework.TestCase;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 
 /**
  * Tests for the MainHelper class
@@ -125,7 +129,34 @@ public class MainHelperTest extends TestCase {
         } catch (IllegalArgumentException e) {
             // expected
         }
-
-
+    }
+    
+    public void testMakeConstraintSets() {
+        HashMap map = new HashMap();
+        LogicExpression expr = new LogicExpression("a and b");
+        ConstraintSet set = MainHelper.makeConstraintSets(expr, map);
+        
+        assertEquals(2, map.size());
+        assertEquals(ConstraintOp.AND, set.getOp());
+        
+        HashMap expecting = new HashMap();
+        expecting.put("a", set);
+        expecting.put("b", set);
+        assertEquals(expecting, map);
+        
+        expr = new LogicExpression("a and (b or c)");
+        set = MainHelper.makeConstraintSets(expr, map);
+        
+        assertEquals(3, map.size());
+        assertEquals(ConstraintOp.AND, set.getOp());
+        assertEquals(1, set.getConstraints().size());
+        assertEquals(ConstraintOp.OR, ((ConstraintSet) set.getConstraints().iterator().next()).getOp());
+        
+        expecting = new HashMap();
+        expecting.put("a", set);
+        expecting.put("b", (ConstraintSet) set.getConstraints().iterator().next());
+        expecting.put("c", (ConstraintSet) set.getConstraints().iterator().next());
+        assertEquals(expecting, map);
+        
     }
 }
