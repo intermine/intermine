@@ -71,7 +71,7 @@ public abstract class TableHelper
         // call this so that if an exception occurs we notice now rather than in the JSP code
         try {
             results.get(0);
-        } catch (IndexOutOfBoundsException _) {
+        } catch (IndexOutOfBoundsException err) {
             // no results - ignore
             // we don't call size() first to avoid this exception because that could be very slow
             // on a large results set

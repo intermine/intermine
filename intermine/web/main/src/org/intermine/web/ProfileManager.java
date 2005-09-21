@@ -165,17 +165,18 @@ public class ProfileManager
         for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
             SavedBag bag = (SavedBag) i.next();
             try {
-                savedBags.putAll(InterMineBagBinding.unmarshal(new StringReader(bag.getBag()), os,
-                			new IdUpgrader() {
+                savedBags.putAll(InterMineBagBinding.unmarshal(
+                        new StringReader(bag.getBag()), os, new IdUpgrader() {
 
-								public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
-									throw new RuntimeException("Shouldn't call getNewIds() in a"
-											+ " running webapp");
-								}
-                	
-                	
-                }));
-            } catch (Exception _) {
+                            public Set getNewIds(InterMineObject oldObject,
+                                    ObjectStore os) {
+                                throw new RuntimeException(
+                                        "Shouldn't call getNewIds() in a"
+                                                + " running webapp");
+                            }
+
+                        }));
+            } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
                 LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
@@ -191,13 +192,13 @@ public class ProfileManager
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
-                        savedQueries.put(name,
-                            new org.intermine.web.SavedQuery(name, null, (PathQuery) entry.getValue()));
+                        savedQueries.put(name, new org.intermine.web.SavedQuery(name, null,
+                                (PathQuery) entry.getValue()));
                     }
                 } else {
                     savedQueries.putAll(queries);
                 }
-            } catch (Exception _) {
+            } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
                 LOG.warn("Failed to unmarshal saved query: " + query.getQuery());
@@ -209,7 +210,7 @@ public class ProfileManager
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
                 savedTemplates.putAll(templateBinding.unmarshal(sr));
-            } catch (Exception _) {
+            } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
                 LOG.warn("Failed to unmarshal saved template query: "

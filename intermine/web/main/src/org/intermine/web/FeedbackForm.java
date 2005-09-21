@@ -159,10 +159,10 @@ public class FeedbackForm extends ValidatorForm
         String lines[] = message.split("\n");
         boolean found = false;
         for (int i = 0; i < lines.length; i++) {
-            if (isEmailHeader(lines[i], "to") ||
-                isEmailHeader(lines[i], "from") ||
-                isEmailHeader(lines[i], "bcc") ||
-                isEmailHeader(lines[i], "cc")) {
+            if (isEmailHeader(lines[i], "to")
+                || isEmailHeader(lines[i], "from")
+                || isEmailHeader(lines[i], "bcc")
+                || isEmailHeader(lines[i], "cc")) {
                 found = true;
             } else {
                 buffer.append(lines[i]);
@@ -175,8 +175,7 @@ public class FeedbackForm extends ValidatorForm
     }
     
     private boolean isEmailHeader(String line, String header) {
-        return (line.toLowerCase().startsWith(header + ":") &&
-                line.indexOf("@") >= 0);
+        return (line.toLowerCase().startsWith(header + ":") && line.indexOf("@") >= 0);
     }
 
     /**

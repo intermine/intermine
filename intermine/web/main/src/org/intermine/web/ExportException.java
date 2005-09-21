@@ -15,7 +15,8 @@ package org.intermine.web;
  *
  * @author Kim Rutherford
  */
-public class ExportException extends Exception {
+public class ExportException extends Exception
+{
     /**
      * Create a new ExportException.
      * @param message the Exception description

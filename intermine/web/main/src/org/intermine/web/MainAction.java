@@ -47,11 +47,12 @@ public class MainAction extends InterMineAction
 
         PathNode node = (PathNode) query.getNodes().get(mf.getPath());
         
-        Integer cindex = (request.getParameter("cindex") != null) ?
-                new Integer(request.getParameter("cindex")) : null;
+        Integer cindex = (request.getParameter("cindex") != null)
+                ? new Integer(request.getParameter("cindex")) : null;
 
-        String label = null, id = null;
+        String label = null, id = null, code = query.getUnusedConstraintCode();
         boolean editable = false;
+        int previousConstraintCount = query.getAllConstraints().size();
         
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
@@ -60,11 +61,12 @@ public class MainAction extends InterMineAction
             label = c.getDescription();
             id = c.getIdentifier();
             editable = c.isEditable();
+            code = c.getCode();
             
             if (request.getParameter("template") != null) {
                 // We're just updating template settings
                 node.getConstraints().add(new Constraint(c.getOp(), c.getValue(), mf.isEditable(),
-                        mf.getTemplateLabel(), mf.getTemplateId()));
+                        mf.getTemplateLabel(), c.getCode(), mf.getTemplateId()));
                 mf.reset(mapping, request);
                 return mapping.findForward("query");
             }
@@ -81,7 +83,7 @@ public class MainAction extends InterMineAction
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getAttributeOp()));
             Object constraintValue = mf.getParsedAttributeValue();
-            Constraint c = new Constraint(constraintOp, constraintValue, editable, label, id);
+            Constraint c = new Constraint(constraintOp, constraintValue, editable, label, code, id);
             node.getConstraints().add(c);
         }
 
@@ -114,7 +116,18 @@ public class MainAction extends InterMineAction
             }
         }
         
-        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        if (request.getParameter("expression") != null) {
+            query.setConstraintLogic(request.getParameter("expr"));
+            query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
+        }
+        
+        if (request.getParameter("defaultOperator") != null) {
+            session.setAttribute(Constants.DEFAULT_OPERATOR, request.getParameter("operator"));
+        }
+        
+        if (query.getAllConstraints().size() == previousConstraintCount + 1) {
+            query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
+        }
         
         mf.reset(mapping, request);
 

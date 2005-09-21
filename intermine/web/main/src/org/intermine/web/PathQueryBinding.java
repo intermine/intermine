@@ -68,6 +68,9 @@ public class PathQueryBinding
             writer.writeAttribute("name", queryName);
             writer.writeAttribute("model", modelName);
             writer.writeAttribute("view", StringUtil.join(query.getView(), " "));
+            if (query.getConstraintLogic() != null) {
+                writer.writeAttribute("constraintLogic", query.getConstraintLogic());
+            }
             for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
                 PathNode node = (PathNode) j.next();
                 writer.writeStartElement("node");
@@ -88,6 +91,9 @@ public class PathQueryBinding
                     }
                     if (c.isEditable()) {
                         writer.writeAttribute("editable", "true");
+                    }
+                    if (c.getCode() != null) {
+                        writer.writeAttribute("code", c.getCode());
                     }
                     writer.writeEndElement();
                 }

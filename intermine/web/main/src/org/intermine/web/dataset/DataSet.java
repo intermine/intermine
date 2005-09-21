@@ -26,21 +26,21 @@ import org.apache.commons.lang.StringUtils;
 public class DataSet
 {
     /** Name of the DataSet. */
-    public String name;
+    private String name;
     /** Subtitle. */
-    public String subTitle;
+    private String subTitle;
     /** Name of the tile to insert. */
-    public String tileName;
+    private String tileName;
     /** Introduction text. */
-    public String introText;
+    private String introText;
     /** Path to icon image. */
-    public String iconImage;
+    private String iconImage;
     /** Path to large image. */
-    public String largeImage;
+    private String largeImage;
     /** List of DataSetSources. */
-    public List dataSetSources = new ArrayList();
+    private List dataSetSources = new ArrayList();
     /** Comma seperated list of starting-point class names. */
-    public List startingPoints = new ArrayList();
+    private List startingPoints = new ArrayList();
     
     /**
      * Get the name of the data set.

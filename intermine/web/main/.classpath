@@ -18,5 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
 	<classpathentry kind="lib" path="lib/highlighter-dev.jar"/>
+	<classpathentry kind="src" path="build/gen/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

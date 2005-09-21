@@ -183,6 +183,21 @@
       </div>
       <div class="body">
       <div>
+        <div style="float: right; margin-left:5px;background: #f5f5f5;padding: 3px;border:1px solid #888; font-size: 10px;">
+          <html:form action="/mainAction">
+          <span style="white-space: nowrap">
+          <i>Default logic:</i>
+            <select name="operator" side="1" style="font-size: 10px;" onchange="this.form.submit()">
+              <option value="and" ${DEFAULT_OPERATOR == 'and' ? 'selected' : ''} >and</option>
+              <option value="or" ${DEFAULT_OPERATOR == 'or' ? 'selected' : ''} >or</option>
+            </select>
+            <input type="hidden" name="defaultOperator" value="1"/>
+            <noscript>
+              <input type="submit" value="Change" style="font-size: 10px;"/>
+            </noscript>
+          </span>
+          </html:form>
+        </div>
         <fmt:message key="query.currentquery.detail"/>
       </div>
       <br/>
@@ -275,6 +290,7 @@
                           <c:out value=" ${constraintDisplayValues[constraint]}"/>
                         </c:otherwise>
                       </c:choose>
+                      (<b>${constraint.code}</b>)
                     </span>
                     <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
                     <html:link action="/mainChange?method=removeConstraint&amp;path=${node.path}&amp;index=${status.index}"
@@ -347,6 +363,48 @@
         </c:otherwise>
       </c:choose>
       </div>
+      <br/>
+      <div class="heading">
+        Current expression
+      </div>
+      <div class="body">
+        <c:choose>
+          <c:when test="${param.editExpression != null}">
+            <html:form action="/mainAction">
+              <input type="test" name="expr" size="30" value="${QUERY.constraintLogic}"/>
+              <html:submit property="expression" style="font-size: 11px">
+                Update
+              </html:submit>
+            </html:form>
+          </c:when>
+          <c:otherwise>
+            <c:forEach items="${fn:split(QUERY.constraintLogic, ' ')}" var="item">
+              <c:choose>
+                <c:when test="${item == 'and' || item == 'or'}">
+                  <span class="and">${item}</span>
+                </c:when>
+                <c:otherwise>
+                  <span class="constraint" style="font-size: 13px;"><b>${item}</b></span>
+                </c:otherwise>
+              </c:choose>
+            </c:forEach>
+            <c:choose>
+              <c:when test="${fn:length(QUERY.allConstraints) == 1}">
+                <div class="smallnote altmessage">one constraint</div>
+              </c:when>
+              <c:when test="${fn:length(QUERY.allConstraints) == 0}">
+                <div class="smallnote altmessage">no constraints</div>
+              </c:when>
+              <c:otherwise>
+                &nbsp;
+                <html:link action="/query?editExpression" style="font-size: 11px">
+                  edit...
+                </html:link>
+              </c:otherwise>
+            </c:choose>
+          </c:otherwise>
+        </c:choose>
+      </div>
     </td>
   </tr>
 
@@ -358,7 +416,7 @@
     <tr>
       <td valign="top">
       	
-        <html:form action="/mainAction">
+        <html:form action="/mainAction" styleId="mainForm">
       	
         <html:hidden property="path" value="${editingNode.path}"/>
       	
@@ -611,7 +669,9 @@
         
         <script type="text/javascript">
         <!--
-        initConstraintForm(0, document.mainForm.attributeOp, document.mainForm.attributeOptions, document.mainForm.attributeValue);
+        initConstraintForm(0, document.getElementById('mainForm').attributeOp,
+            document.getElementById('mainForm').attributeOptions,
+            document.getElementById('mainForm').attributeValue);
         //-->
         </script>
         </div>

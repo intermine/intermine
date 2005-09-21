@@ -69,6 +69,18 @@ public class SavedQuery
             return false;
         }
         SavedQuery sq = (SavedQuery) obj;
-        return (sq.name.equals(name) && sq.dateCreated.equals(dateCreated) && sq.query.equals(query));
+        return (sq.name.equals(name)
+                && sq.dateCreated.equals(dateCreated)
+                && sq.query.equals(query));
     }
+
+    /**
+     * Hash code.
+     * @see Object#hashCode()
+     */
+    public int hashCode() {
+        return (name.hashCode() + 3 * dateCreated.hashCode() + 5 * query.hashCode());
+    }
+    
+    
 }

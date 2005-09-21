@@ -87,7 +87,7 @@ public class SessionMethods
      * @param resources message resources
      * @param saveQuery if true, query will be saved automatically
      * @param monitor   object that will receive a periodic call while the query runs
-     * @param quid      the query id
+     * @param qid      the query id
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */
@@ -509,5 +509,18 @@ public class SessionMethods
         if (tables != null) {
             tables.remove("bag." + name);
         }
+    }
+
+    /**
+     * Get the default operator to apply to new constraints.
+     * @param session the session
+     * @return operator name ("and" or "or")
+     */
+    public static String getDefaultOperator(HttpSession session) {
+        String op = (String) session.getAttribute(Constants.DEFAULT_OPERATOR);
+        if (op == null) {
+            op = "and";
+        }
+        return op;
     }
 }

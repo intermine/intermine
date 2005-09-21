@@ -170,6 +170,9 @@ public class MainHelper
         Map qNodes = query.getNodes();
         List view = query.getView();
         Model model = query.getModel();
+        Map codeToCS = new HashMap();
+        ConstraintSet rootcs = (query.getLogic() == null) ? null
+            : makeConstraintSets(query.getLogic(), codeToCS);
 
         //first merge the query and the view
         for (Iterator i = view.iterator(); i.hasNext();) {
@@ -181,8 +184,11 @@ public class MainHelper
 
         //create the real query
         Query q = new Query();
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        q.setConstraint(cs);
+        ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
+        q.setConstraint(andcs);
+        if (rootcs != null) {
+            andcs.addConstraint(rootcs);
+        }
 
         Map queryBits = new HashMap();
 
@@ -210,7 +216,7 @@ public class MainHelper
                         qr = new QueryCollectionReference(parentQc, fieldName);
                     }
                     QueryClass qc = new QueryClass(getClass(node.getType(), model));
-                    cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                    andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
                     q.addFrom(qc);
                     queryBits.put(path, qc);
                 }
@@ -219,6 +225,12 @@ public class MainHelper
             QueryNode qn = (QueryNode) queryBits.get(path);
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
+                String code = c.getCode();
+                ConstraintSet cs = (ConstraintSet) codeToCS.get(code);
+                if (cs == null) {
+                    // Only one constraint
+                    cs = andcs;
+                }
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
                     Collection bag = (Collection) savedBags.get(c.getValue());
                     if (bag instanceof InterMineIdBag) {
@@ -269,8 +281,10 @@ public class MainHelper
             
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
+                ConstraintSet cs = (ConstraintSet) codeToCS.get(c.getCode());
                 if (node.isReference() && c.getOp() != ConstraintOp.IS_NOT_NULL
-                    && c.getOp() != ConstraintOp.IS_NULL && !BagConstraint.VALID_OPS.contains(c.getOp())) {
+                    && c.getOp() != ConstraintOp.IS_NULL
+                    && !BagConstraint.VALID_OPS.contains(c.getOp())) {
                     QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
                         cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
                 }
@@ -288,6 +302,52 @@ public class MainHelper
         }
 
         return q;
+    }
+
+    /**
+     * Given a LogicExpression, generate a tree of ConstraintSets that reflects the
+     * expression and add entries to the codeToConstraintSet Map from map from
+     * constraint code to ConstraintSet.
+     * 
+     * @param logic the parsed logic expression
+     * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
+     * @return root ConstraintSet
+     */
+    protected static ConstraintSet makeConstraintSets(LogicExpression logic,
+            Map codeToConstraintSet) {
+        LogicExpression.Node node = logic.getRootNode();
+        ConstraintSet root;
+        if (node instanceof LogicExpression.And) {
+            root = new ConstraintSet(ConstraintOp.AND);
+            makeConstraintSets(node, root, codeToConstraintSet);
+        } else if (node instanceof LogicExpression.Or) {
+            root = new ConstraintSet(ConstraintOp.OR);
+            makeConstraintSets(node, root, codeToConstraintSet);
+        } else {
+            throw new IllegalArgumentException("logic expression must contain a root operator");
+        }
+        
+        return root;
+    }
+    
+    private static void makeConstraintSets(LogicExpression.Node node, ConstraintSet set,
+            Map codeToConstraintSet) {
+        Iterator iter = node.getChildren().iterator();
+        while (iter.hasNext()) {
+            LogicExpression.Node child = (LogicExpression.Node) iter.next();
+            if (child instanceof LogicExpression.And) {
+                ConstraintSet childSet = new ConstraintSet(ConstraintOp.AND);
+                set.addConstraint(childSet);
+                makeConstraintSets(child, childSet, codeToConstraintSet);
+            } else if (child instanceof LogicExpression.Or) {
+                ConstraintSet childSet = new ConstraintSet(ConstraintOp.OR);
+                set.addConstraint(childSet);
+                makeConstraintSets(child, childSet, codeToConstraintSet);
+            } else {
+                // variable
+                codeToConstraintSet.put(((LogicExpression.Variable) child).getName(), set);
+            }
+        }
     }
 
     /**

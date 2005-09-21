@@ -25,6 +25,7 @@ public class Constraint
     protected boolean editable;
     protected String description = null;
     protected String identifier = null;
+    protected String code = null;
 
     /**
      * Make a new Constraint with no description or identifier, and which has the editable flag set
@@ -44,16 +45,18 @@ public class Constraint
      * @param value the value for this constraint
      * @param editable set if this constraint should be editable in a template
      * @param description the description of this constraint
+     * @param code the constraint code
      * @param identifier a label for this Constraint used for refering to this it in a
      * template. null means that this Constraint has no identifier. 
      */
     public Constraint(ConstraintOp op, Object value,
-                      boolean editable, String description, String identifier) {
+                      boolean editable, String description, String code, String identifier) {
         this.op = op;
         this.value = value;
         this.editable = editable;
         this.description = description;
         this.identifier = identifier;
+        this.code = code;
     }
 
     /**
@@ -91,6 +94,14 @@ public class Constraint
     }
 
     /**
+     * Get the code for this constraint.
+     * @return code for this constraint
+     */
+    public String getCode() {
+        return code;
+    }
+    
+    /**
      * Return the identifier that was passed to the constructor.
      * @return the identifier or null if unset
      */
@@ -122,10 +133,10 @@ public class Constraint
      * @return true if constraint can be edited in a template query
      */
     public boolean isEditableInTemplate() {
-        return (op != ConstraintOp.IS_NOT_NULL &&
-                op != ConstraintOp.IS_NULL &&
-                op != ConstraintOp.IN &&
-                op != ConstraintOp.NOT_IN);
+        return (op != ConstraintOp.IS_NOT_NULL
+                && op != ConstraintOp.IS_NULL
+                && op != ConstraintOp.IN
+                && op != ConstraintOp.NOT_IN);
     }
 
     /**

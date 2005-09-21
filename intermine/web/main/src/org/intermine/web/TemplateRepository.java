@@ -160,7 +160,8 @@ public class TemplateRepository
             Object osObject = servletContext.getAttribute(Constants.OBJECTSTORE);
             ObjectStore os = (ObjectStore) osObject;
             
-            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateExprs, servletContext);
+            setClassesForTemplate(os, template, classCategoryTemplates,
+                    classTemplateExprs, servletContext);
         }
         
         categoryTemplates.put(MISC, new ArrayList(leftover));
@@ -313,7 +314,8 @@ public class TemplateRepository
             
             Document doc = new Document();
             doc.add(Field.Text("name", template.getName()));
-            doc.add(Field.UnStored("content", template.getDescription() + " " + template.getKeywords()));
+            doc.add(Field.UnStored("content", template.getDescription() 
+                    + " " + template.getKeywords()));
             doc.add(Field.UnIndexed("type", type));
             
             try {

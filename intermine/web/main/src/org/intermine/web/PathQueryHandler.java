@@ -28,11 +28,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * Extension of DefaultHandler to handle parsing PathQuery objects
  * @author Mark Woodbridge
  * @author Kim Rutherford
+ * @author Thomas Riley
  */
 class PathQueryHandler extends DefaultHandler
 {
     Map queries;
     String queryName;
+    char gencode;
     PathQuery query;
     PathNode node;
 
@@ -51,6 +53,8 @@ class PathQueryHandler extends DefaultHandler
         throws SAXException {
         if (qName.equals("query")) {
             queryName = attrs.getValue("name");
+            // reset generated codes
+            gencode = 'A';
             Model model;
             try {
                 model = Model.getInstanceByName(attrs.getValue("model"));
@@ -60,6 +64,9 @@ class PathQueryHandler extends DefaultHandler
             query = new PathQuery(model);
             if (attrs.getValue("view") != null) {
                 query.setView(StringUtil.tokenize(attrs.getValue("view")));
+            }
+            if (attrs.getValue("constraintLogic") != null) {
+                query.setConstraintLogic(attrs.getValue("constraintLogic"));
             }
         }
         if (qName.equals("node")) {
@@ -88,8 +95,13 @@ class PathQueryHandler extends DefaultHandler
             }
             String description = attrs.getValue("description");
             String identifier = attrs.getValue("identifier");
+            String code = attrs.getValue("code");
+            if (code == null) {
+                code = "" + gencode;
+                gencode++;
+            }
             node.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                                                     editableFlag, description, identifier));
+                                                     editableFlag, description, code, identifier));
         }
     }
     

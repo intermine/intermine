@@ -179,18 +179,34 @@ public class TemplateForm extends ActionForm
         return parsedAttributeValues.get(key);
     }
     
+    /**
+     * Get the template name.
+     * @return the template name
+     */
     public String getTemplateName() {
         return templateName;
     }
 
+    /**
+     * Set the template name.
+     * @param templateName the template name
+     */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
 
+    /**
+     * Get the template type.
+     * @return the template type
+     */
     public String getTemplateType() {
         return templateType;
     }
 
+    /**
+     * Set the template type.
+     * @param templateType the template type
+     */
     public void setTemplateType(String templateType) {
         this.templateType = templateType;
     }

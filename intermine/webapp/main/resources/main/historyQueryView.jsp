@@ -127,6 +127,11 @@
                 </c:forEach>
               </td>
               <td align="center" nowrap>
+                <html:link action="/modifyQueryChange?method=execute&amp;name=${savedQuery.key}&amp;type=${type}"
+                           titleKey="history.action.execute.hover">
+                  <fmt:message key="history.action.execute"/>
+                </html:link>
+                |
                 <c:if test="${type == 'history'}">
                   <c:if test="${!empty PROFILE.username}">
                     <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
