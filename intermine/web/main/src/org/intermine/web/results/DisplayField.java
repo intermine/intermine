@@ -91,9 +91,9 @@ public class DisplayField
                         // see also ticket #267
                         lazyCollection.iterator().next();
                         size = lazyCollection.getInfo().getRows();
-                    } catch (IndexOutOfBoundsException _) {
+                    } catch (IndexOutOfBoundsException err) {
                         size = 0;
-                    } catch (NoSuchElementException _) {
+                    } catch (NoSuchElementException err) {
                         size = 0;
                     }
                 } catch (ObjectStoreException e) {

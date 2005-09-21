@@ -95,7 +95,7 @@ public class Displayer
 
     /**
      * Return an XML String of this Type object
-     *
+     * @param elementName the element name
      * @return a String version of this WebConfig object
      */
     public String toString(String elementName) {

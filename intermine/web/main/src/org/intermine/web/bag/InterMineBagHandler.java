@@ -21,37 +21,49 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * A handler for turning XML bags data into an InterMineBag.
- *
+ * 
  * @author Mark Woodbridge
  * @author Kim Rutherford
  */
 public class InterMineBagHandler extends DefaultHandler
 {
-    private static final Logger LOG = Logger.getLogger(InterMineBagHandler.class);
+    private static final Logger LOG = Logger
+            .getLogger(InterMineBagHandler.class);
 
     private ObjectStore os;
+
     private Map bags;
+
     private String bagName;
+
     private InterMineBag bag;
+
     private Map idToObjectMap;
+
     private Model model;
 
-	private IdUpgrader idUpgrader;
+    private IdUpgrader idUpgrader;
 
     /**
      * Create a new InterMineBagHandler object.
-     * @param os ObjectStore used to resolve object ids
-     * @param bags Map from bag name to InterMineBag - results are added to this Map
-     * @param idToObjectMap a Map from id to InterMineObject.  This is used to create template
-     * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
+     * 
+     * @param os
+     *            ObjectStore used to resolve object ids
+     * @param bags
+     *            Map from bag name to InterMineBag - results are added to this
+     *            Map
+     * @param idUpgrader bag object id upgrader
+     * @param idToObjectMap
+     *            a Map from id to InterMineObject. This is used to create
+     *            template objects to pass to createPKQuery() so that old bags
+     *            can be used with new ObjectStores.
      */
     public InterMineBagHandler(ObjectStore os, Map bags, Map idToObjectMap, IdUpgrader idUpgrader) {
         this.os = os;
         this.bags = bags;
-		this.idUpgrader = idUpgrader;
+        this.idUpgrader = idUpgrader;
         this.model = os.getModel();
         this.idToObjectMap = idToObjectMap;
     }
@@ -59,8 +71,8 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * @see DefaultHandler#startElement
      */
-    public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+    public void startElement(String uri, String localName, String qName,
+            Attributes attrs) throws SAXException {
         try {
             if (qName.equals("bag")) {
                 bagName = attrs.getValue("name");
@@ -72,13 +84,14 @@ public class InterMineBagHandler extends DefaultHandler
                     if (bag == null) {
                         bag = new InterMineIdBag();
                     } else if (bag instanceof InterMinePrimitiveBag) {
-                        LOG.error("InterMineObject id " + value + " in bag of primitives");
+                        LOG.error("InterMineObject id " + value
+                                + " in bag of primitives");
                         return;
                     }
 
-
                     if (idToObjectMap.containsKey(value)) {
-                        InterMineObject oldObject = (InterMineObject) idToObjectMap.get(value);
+                        InterMineObject oldObject = (InterMineObject) idToObjectMap
+                                .get(value);
 
                         bag.addAll(idUpgrader.getNewIds(oldObject, os));
                     } else {
@@ -87,11 +100,14 @@ public class InterMineBagHandler extends DefaultHandler
                 } else {
                     if (bag == null) {
                         bag = new InterMinePrimitiveBag();
-                    }  else if (bag instanceof InterMineIdBag) {
-                        LOG.error("primitive " + value + " in bag of InterMineObjects");
+                    } else if (bag instanceof InterMineIdBag) {
+                        LOG.error("primitive " + value
+                                + " in bag of InterMineObjects");
                         return;
                     }
-                    bag.add(TypeUtil.stringToObject(Class.forName(type), value));
+                    bag
+                            .add(TypeUtil.stringToObject(Class.forName(type),
+                                    value));
                 }
             }
         } catch (Exception e) {

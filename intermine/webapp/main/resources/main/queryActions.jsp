@@ -12,5 +12,4 @@
         <p>
           <tiles:insert page="saveQuery.jsp"/>
         </p>
-      </div>
     </div>

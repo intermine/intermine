@@ -4,5 +4,15 @@
   <description>build, test, package intermine-web</description>
   <import file="../../../imbuild/library.xml"/>
   
+  <property name="generating.code" value="true"/>
+  
+  <target name="do-generate">
+    <mkdir dir="${gen.src.dir}/org/intermine/web"/>
+    <antlr target="${src.dir}/org/intermine/web/logic.g"
+           outputdirectory="${gen.src.dir}/org/intermine/web">
+      <classpath refid="main.class.path"/>
+    </antlr>
+  </target>
+  
 </project>
 

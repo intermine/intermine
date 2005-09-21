@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 /**
- * Action to handle links on main tile.
+ * Action to handle links on main query builder tile.
  * 
  * @author Mark Woodbridge
  * @author Thomas Riley
@@ -62,6 +62,7 @@ public class MainChange extends DispatchAction
         String path = request.getParameter("path");
 
         removeNode(pathQuery, path);
+        pathQuery.syncLogicExpression(SessionMethods.getDefaultOperator(session));
 
         String prefix;
         if (path.indexOf(".") == -1) {
@@ -195,6 +196,7 @@ public class MainChange extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
 
         ((PathNode) query.getNodes().get(path)).getConstraints().remove(index);
+        query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
 
         return mapping.findForward("query");
     }
@@ -225,8 +227,8 @@ public class MainChange extends DispatchAction
         Constraint c = (Constraint) pn.getConstraints().get(index);
         ConstraintOp op = c.getOp();
         
-        if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL &&
-                op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
+        if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL
+                && op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
             session.setAttribute("editingConstraintValue", c.getValue());
             session.setAttribute("editingConstraintOperand", c.getOp().getIndex());
         } else {
@@ -287,7 +289,7 @@ public class MainChange extends DispatchAction
         // Figure out which path to delete if user cancels operation
         String bits[] = StringUtils.split(path, '.');
         String partialPath = bits[0], deletePath = "";
-        for (int i = 1 ; i < bits.length ; i++) {
+        for (int i = 1; i < bits.length; i++) {
             partialPath += "." + bits[i];
             if (query.getNodes().get(partialPath) == null) {
                 deletePath = partialPath;

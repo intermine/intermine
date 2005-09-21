@@ -183,6 +183,10 @@ public class DisplayObject
         return fieldExprs;
     }
 
+    /**
+     * Get map from field expr to FieldConfig.
+     * @return map from field expr to FieldConfig
+     */
     public Map getFieldConfigMap() {
         if (fieldConfigMap == null) {
             fieldConfigMap = new LinkedHashMap();

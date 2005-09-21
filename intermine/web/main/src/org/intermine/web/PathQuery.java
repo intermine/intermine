@@ -11,29 +11,39 @@ package org.intermine.web;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.util.CollectionUtil;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 /**
- * Class to represent a path-based query
+ * Class to represent a path-based query.
+ * 
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class PathQuery
 {
+    private static final Logger LOG = Logger.getLogger(PathQuery.class);
+    
     protected Model model;
     protected LinkedHashMap nodes = new LinkedHashMap();
     protected List view = new ArrayList();
     protected ResultsInfo info;
     protected ArrayList problems = new ArrayList();
-   
+    protected LogicExpression constraintLogic = null;
+    
     /**
      * Constructor
      * @param model the Model on which to base this query
@@ -42,6 +52,68 @@ public class PathQuery
         this.model = model;
     }
 
+    /**
+     * Get the constraint logic expression.
+     * @return the constraint logic expression
+     */
+    public String getConstraintLogic() {
+        if (constraintLogic == null) {
+            return null;
+        } else {
+            return constraintLogic.toString();
+        }
+    }
+
+    /**
+     * Set the constraint logic expression. This expresses the AND and OR
+     * relation between constraints.
+     * @param constraintLogic the constraint logic expression
+     */
+    public void setConstraintLogic(String constraintLogic) {
+        if (constraintLogic == null) {
+            this.constraintLogic = null;
+            return;
+        }
+        try {
+            this.constraintLogic = new LogicExpression(constraintLogic);
+        } catch (IllegalArgumentException err) {
+            LOG.error("Failed to parse constraintLogic: " + constraintLogic, err);
+        }
+    }
+    
+    /**
+     * Make sure that the logic expression is valid for the current query. Remove
+     * any unknown constraint codes and add any constraints that aren't included
+     * (using the default operator).
+     * @param defaultOperator the default logical operator
+     */
+    public void syncLogicExpression(String defaultOperator) {
+        if (getAllConstraints().size() <= 1) {
+            setConstraintLogic(null);
+        } else {
+            Set codes = getConstraintCodes();            
+            if (constraintLogic != null) {
+                // limit to the actual variables
+                constraintLogic.removeAllVariablesExcept(getConstraintCodes());
+                // add anything that isn't there
+                codes.removeAll(constraintLogic.getVariableNames());
+            }
+            addCodesToLogic(codes, defaultOperator);
+        }
+    }
+    
+    /**
+     * Get all constraint codes.
+     * @return all present constraint codes
+     */
+    private Set getConstraintCodes() {
+        Set codes = new HashSet();
+        for (Iterator iter = getAllConstraints().iterator(); iter.hasNext(); ) {
+            codes.add(((Constraint) iter.next()).getCode());
+        }
+        return codes;
+    }
+    
     /**
      * Gets the value of model
      * @return the value of model
@@ -56,6 +128,19 @@ public class PathQuery
      */
     public Map getNodes() {
         return nodes;
+    }
+    
+    /**
+     * Get all constraints.
+     * @return all constraints
+     */
+    public List getAllConstraints() {
+        ArrayList list = new ArrayList();
+        for (Iterator iter = nodes.values().iterator(); iter.hasNext(); ) {
+            PathNode node = (PathNode) iter.next();
+            list.addAll(node.getConstraints());
+        }
+        return list;
     }
 
     /**
@@ -185,6 +270,10 @@ public class PathQuery
             query.getNodes().put(entry.getKey(), clone(query, (PathNode) entry.getValue()));
         }
         query.getView().addAll(view);
+        if (problems != null) {
+            query.problems = new ArrayList(problems);
+        }
+        query.setConstraintLogic(getConstraintLogic());
         return query;
     }
 
@@ -211,7 +300,8 @@ public class PathQuery
         for (Iterator i = node.getConstraints().iterator(); i.hasNext();) {
             Constraint constraint = (Constraint) i.next();
             newNode.getConstraints().add(new Constraint(constraint.getOp(), constraint.getValue(),
-                    constraint.isEditable(), constraint.getDescription(), constraint.getIdentifier()));
+                    constraint.isEditable(), constraint.getDescription(), constraint.getCode(),
+                    constraint.getIdentifier()));
         }
         return newNode;
     }
@@ -252,5 +342,72 @@ public class PathQuery
         } catch (Exception err) {
             problems.add(err);
         }
+    }
+
+    /**
+     * Get a constraint code that hasn't been used yet.
+     * @return a constraint code that hasn't been used yet
+     */
+    public String getUnusedConstraintCode() {
+        char c = 'A';
+        while (getConstraintByCode("" + c) != null) {
+            c++;
+        }
+        return "" + c;
+    }
+
+    /**
+     * Get a Constraint involved in this query by code. Returns null if no
+     * constraint with the given code was found.
+     * @param string the constraint code
+     * @return the Constraint with matching code or null
+     */
+    private Constraint getConstraintByCode(String string) {
+        Iterator iter = getAllConstraints().iterator();
+        while (iter.hasNext()) {
+            Constraint c = (Constraint) iter.next();
+            if (string.equals(c.getCode())) {
+                return c;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Add a set of codes to the logical expression using the given operator.
+     * @param codes Set of codes (Strings)
+     * @param operator operator to add with
+     */
+    protected void addCodesToLogic(Set codes, String operator) {
+        String logic = getConstraintLogic();
+        if (logic == null) {
+            logic = "";
+        } else {
+            logic = "(" + logic + ")";
+        }
+        for (Iterator iter = codes.iterator(); iter.hasNext(); ) {
+            if (!StringUtils.isEmpty(logic)) {
+                logic += " " + operator + " ";
+            }
+            logic += (String) iter.next();
+        }
+        setConstraintLogic(logic);
+    }
+
+    /**
+     * Remove some constraint code from the logic expression.
+     * @param code the code to remove
+     */
+    public void removeCodeFromLogic(String code) {
+        constraintLogic.removeVariable(code);
+    }
+
+    /**
+     * Get the LogicExpression. If there are one or zero constraints then
+     * this method will return null.
+     * @return the current LogicExpression or null
+     */
+    public LogicExpression getLogic() {
+        return constraintLogic;
     }
 }

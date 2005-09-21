@@ -137,8 +137,8 @@ public class FieldConfig
         if (otherObject instanceof FieldConfig) {
             FieldConfig otherFc = (FieldConfig) otherObject;
 
-            if (otherFc.fieldExporter == null && fieldExporter != null ||
-                otherFc.fieldExporter != null && fieldExporter == null) {
+            if (otherFc.fieldExporter == null && fieldExporter != null
+                || otherFc.fieldExporter != null && fieldExporter == null) {
                 return false;
             }
 
@@ -174,26 +174,54 @@ public class FieldConfig
             + "\"" + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
     }
 
+    /**
+     * Get whether this field should be uncollapsed if
+     * sectionOnRight is true.
+     * @return true if field should be uncollapsed by default
+     */
     public boolean isOpenByDefault() {
         return openByDefault;
     }
 
+    /**
+     * Set whether this field should be uncollapsed if
+     * sectionOnRight is true.
+     * @param openByDefault true if field should be uncollapsed by default
+     */
     public void setOpenByDefault(boolean openByDefault) {
         this.openByDefault = openByDefault;
     }
 
+    /**
+     * Whether this field should be rendered in its own section on the right side
+     * of the page.
+     * @return true if field should be rendered in its own section
+     */
     public boolean isSectionOnRight() {
         return sectionOnRight;
     }
 
+    /**
+     * Set whether this field should be rendered in its own section on
+     * the right side of the page.
+     * @param sectionOnRight whether or not field should be rendered in its own section
+     */
     public void setSectionOnRight(boolean sectionOnRight) {
         this.sectionOnRight = sectionOnRight;
     }
 
+    /**
+     * Get the section title (if sectionOnRight == true).
+     * @return section title
+     */
     public String getSectionTitle() {
         return sectionTitle;
     }
 
+    /**
+     * Set the section title (if sectionOnRight == true).
+     * @param sectionTitle section title
+     */
     public void setSectionTitle(String sectionTitle) {
         this.sectionTitle = sectionTitle;
     }

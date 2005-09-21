@@ -53,7 +53,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of loopQueryOp
-     *
      * @return the value of loopQueryOp
      */
     public String getLoopQueryOp()  {
@@ -62,7 +61,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of loopQueryOp
-     *
      * @param loopOp Value to assign to loopQueryOp
      */
     public void setLoopQueryOp(String loopOp) {
@@ -71,7 +69,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of loopQueryValue
-     *
      * @return the value of loopQueryValue
      */
     public String getLoopQueryValue()  {
@@ -80,7 +77,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of loopQueryValue
-     *
      * @param loopQuery value to assign to loopQueryValue
      */
     public void setLoopQueryValue(String loopQuery) {
@@ -89,7 +85,6 @@ public class MainForm extends ActionForm
     
     /**
      * Gets the value of bagOp
-     *
      * @return the value of bagOp
      */
     public String getBagOp()  {
@@ -98,7 +93,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of bagOp
-     *
      * @param bagOp Value to assign to bagOp
      */
     public void setBagOp(String bagOp) {
@@ -107,7 +101,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of bagValue
-     *
      * @return the value of bagValue
      */
     public String getBagValue()  {
@@ -116,7 +109,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of bagValue
-     *
      * @param bagValue value to assign to bagValue
      */
     public void setBagValue(String bagValue) {
@@ -125,7 +117,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of attributeOp
-     *
      * @return the value of attributeOp
      */
     public String getAttributeOp()  {
@@ -134,7 +125,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of attributeOp
-     *
      * @param attributeOp value to assign to attributeOp
      */
     public void setAttributeOp(String attributeOp) {
@@ -143,7 +133,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of attributeValue
-     *
      * @return the value of attributeValue
      */
     public String getAttributeValue()  {
@@ -152,7 +141,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of attributeValue
-     *
      * @param attributeValue value to assign to attributeValue
      */
     public void setAttributeValue(String attributeValue) {
@@ -161,7 +149,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of subclassValue
-     *
      * @return the value of subclassValue
      */
     public String getSubclassValue()  {
@@ -170,7 +157,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of subclassValue
-     *
      * @param subclassValue value to assign to subclassValue
      */
     public void setSubclassValue(String subclassValue) {
@@ -179,7 +165,6 @@ public class MainForm extends ActionForm
 
     /**
      * Gets the value of path
-     *
      * @return the value of path
      */
     public String getPath()  {
@@ -188,7 +173,6 @@ public class MainForm extends ActionForm
 
     /**
      * Sets the value of path
-     *
      * @param path value to assign to path
      */
     public void setPath(String path) {
@@ -198,7 +182,6 @@ public class MainForm extends ActionForm
     /**
      * Get the null/not null constraint value. Returned value will be
      * either "NULL" or "NotNULL".
-     *
      * @return null/not null constraint value
      */
     public String getNullConstraint() {
@@ -208,7 +191,6 @@ public class MainForm extends ActionForm
     /**
      * Set the null/not null constraint. Parameter should be
      * either "NULL" or "NotNULL".
-     *
      * @param nullConstraint null/not null constraint
      */
     public void setNullConstraint(String nullConstraint) {
@@ -217,25 +199,40 @@ public class MainForm extends ActionForm
     
     /**
      * Gets the value of parsedAttributeValue
-     *
      * @return the value of parsedAttributeValue
      */
     public Object getParsedAttributeValue()  {
         return parsedAttributeValue;
     }
 
+    /**
+     * Get the template identifier.
+     * @return the template identifier
+     */
     public String getTemplateId() {
         return templateId;
     }
 
+    /**
+     * Set the templat identifier.
+     * @param templateId the template identifier
+     */
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
     }
 
+    /**
+     * Get the template label.
+     * @return the template label
+     */
     public String getTemplateLabel() {
         return templateLabel;
     }
 
+    /**
+     * Set the template label.
+     * @param templateLabel the template label
+     */
     public void setTemplateLabel(String templateLabel) {
         this.templateLabel = templateLabel;
     }
@@ -353,23 +350,5 @@ public class MainForm extends ActionForm
         templateLabel = "";
         templateId = "";
         editable = false;
-        /*
-        HttpSession session = request.getSession();
-        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
-        
-        if (tbs != null) {
-            PathNode node = (PathNode) session.getAttribute("editingNode");
-            if (node != null) {
-                Integer index = (Integer) session.getAttribute("editingConstraintIndex");
-                Constraint c = (Constraint) node.getConstraints().get(index.intValue());
-                editable = tbs.isUnlocked(c);
-                System.out.println("reset 2");
-                if (editable) {
-                    System.out.println("reset 3");
-                    templateLabel = (String) tbs.getConstraintLabels().get(c);
-                    templateId = (String) tbs.getConstraintIds().get(c);
-                }
-            }
-        }*/
     }
 }

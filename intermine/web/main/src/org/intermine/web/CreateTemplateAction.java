@@ -13,9 +13,12 @@ package org.intermine.web;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -24,10 +27,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Action to create a new TemplateQuery from current query.
@@ -61,7 +60,8 @@ public class CreateTemplateAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        TemplateBuildState tbs =
+            (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
         
         boolean seenProblem = false;
 
@@ -91,10 +91,11 @@ public class CreateTemplateAction extends InterMineAction
         }
         
         // Check whether there is a template name clash
-        if (profile.getSavedTemplates().containsKey(tbs.getName()) &&
-           (tbs.getUpdatingTemplate() == null
+        if (profile.getSavedTemplates().containsKey(tbs.getName())
+                && (tbs.getUpdatingTemplate() == null
                     || !tbs.getUpdatingTemplate().getName().equals(tbs.getName()))) {
-            recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()), request);
+            recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()),
+                    request);
             seenProblem = true;
         }
         
@@ -104,7 +105,8 @@ public class CreateTemplateAction extends InterMineAction
         }
 
         if (StringUtils.isEmpty(tbs.getDescription())) {
-            recordError(new ActionMessage("errors.required", "Template description", tbs.getName()), request);
+            recordError(new ActionMessage("errors.required", "Template description", tbs.getName()),
+                    request);
             seenProblem = true;
         }
         

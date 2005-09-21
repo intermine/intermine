@@ -168,6 +168,11 @@ public class Profile
         queryHistory.remove(name);
     }
     
+    /**
+     * Rename an item in the history.
+     * @param oldName the name of the old item
+     * @param newName the new name
+     */
     public void renameHistory(String oldName, String newName) {
         Map newMap = new ListOrderedMap();
         Iterator iter = queryHistory.keySet().iterator();
@@ -247,29 +252,9 @@ public class Profile
      * Create a map from category name to a list of templates contained
      * within that category.
      */
-    private void buildTemplateCategories() {
-        /*categoryTemplates = new LinkedHashMap();
-        Iterator iter = savedTemplates.values().iterator();
-        while (iter.hasNext()) {
-            TemplateQuery template = (TemplateQuery) iter.next();
-            List list = (List) categoryTemplates.get(template.getCategory());
-            if (list == null) {
-                list = new ArrayList();
-                categoryTemplates.put(template.getCategory(), list);
-            }
-            list.add(template);
-        }*/
-        
+    private void buildTemplateCategories() {        
         // We also take this opportunity to index the user's template queries
         templateIndex = TemplateRepository.indexTemplates(savedTemplates, "user");
-    }
-    
-    /**
-     * Get a Map from category name to list of templates.
-     * @return Map from category name to List of templates
-     */
-    public Map getCategoryTemplates() {
-        return new java.util.HashMap();//categoryTemplates;
     }
     
     /**

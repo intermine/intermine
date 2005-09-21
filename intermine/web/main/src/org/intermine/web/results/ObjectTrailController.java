@@ -76,7 +76,8 @@ public class ObjectTrailController extends TilesAction
             elementTrail += "_" + ids[i];
             // we also check that the results table actually exists. If the user bookmarked
             // the URL then it probably won't exist in their session
-            if (ids[i].startsWith("results") && SessionMethods.getResultsTable(session, ids[i]) != null) {
+            if (ids[i].startsWith("results")
+                && SessionMethods.getResultsTable(session, ids[i]) != null) {
                 elements.add(new TrailElement(ids[i]));
             } else {
                 InterMineObject o = null;

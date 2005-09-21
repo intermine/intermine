@@ -5,7 +5,7 @@
 
 <style>
 
-pre.wiki, pre.literal-block {
+pre.stacktrace {
  background: #f7f7f7;
  border: 1px solid #d7d7d7;
  padding: .25em;
@@ -22,7 +22,7 @@ pre.wiki, pre.literal-block {
 <div class="body"><b><fmt:message key="error.stacktrace"/></b></div>
 
 <div class="body">
-<pre class="wiki">
+<pre class="stacktrace">
   <c:out value="${stacktrace}"/>
  </pre>
 </div>

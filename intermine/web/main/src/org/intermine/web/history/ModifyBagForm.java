@@ -105,8 +105,10 @@ public class ModifyBagForm extends ActionForm
         } else if (request.getParameter("delete") != null) {
             for (int i = 0; i < getSelectedBags().length; i++) {
                 Set queries = new HashSet();
-                queries.addAll(queriesThatMentionBag(profile.getSavedQueries(), getSelectedBags()[i]));
-                queries.addAll(queriesThatMentionBag(profile.getHistory(), getSelectedBags()[i]));
+                queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
+                        getSelectedBags()[i]));
+                queries.addAll(queriesThatMentionBag(profile.getHistory(),
+                        getSelectedBags()[i]));
                 if (queries.size() > 0) {
                     ActionMessage actionMessage =
                         new ActionMessage("history.baginuse", getSelectedBags()[i], queries);
@@ -115,8 +117,9 @@ public class ModifyBagForm extends ActionForm
             }
         }
         
-        if (request.getParameter("newName") == null &&
-            (request.getParameter("union") != null || request.getParameter("intersect") != null)) {
+        if (request.getParameter("newName") == null
+            && (request.getParameter("union") != null
+                    || request.getParameter("intersect") != null)) {
             if (StringUtils.isEmpty(getNewBagName())) {
                 ActionMessage actionMessage =
                     new ActionMessage("errors.required", "New bag name");

@@ -1,5 +1,15 @@
 package org.intermine.web.history;
 
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,6 +30,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
+/**
+ * Actions for links on the history page. There are bag and query specific
+ * subclasses.
+ * 
+ * @author Thomas Riley
+ */
 public abstract class ModifyHistoryAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyHistoryAction.class);
@@ -111,11 +127,12 @@ public abstract class ModifyHistoryAction extends InterMineAction
     }
     
     /**
-     * 
-     * @param history
-     * @param type
-     * @param name
-     * @return
+     * Construct an ActionForward that redirects the user to edit particular item
+     * on the history page.
+     * @param history basic ActionForward to history page
+     * @param type type of thing to rename (save/history/bag)
+     * @param name name of thing to rename
+     * @return ActionForward to name edit
      */
     protected ActionForward editForward(ActionForward history, String type, String name) {
         return new ForwardParameters(history).addParameter("action", "rename")

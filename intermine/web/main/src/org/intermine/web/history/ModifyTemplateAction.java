@@ -87,7 +87,8 @@ public class ModifyTemplateAction extends ModifyHistoryAction
         }
         
         if (profile.getUsername() != null
-            && profile.getUsername().equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
+            && profile.getUsername()
+            .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
             TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
             tr.globalTemplatesChanged();
         }

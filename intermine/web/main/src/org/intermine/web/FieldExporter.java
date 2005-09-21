@@ -1,10 +1,5 @@
 package org.intermine.web;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -14,6 +9,11 @@ import org.intermine.objectstore.ObjectStore;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * An interface implemented by objects that can export the value of a particular. 

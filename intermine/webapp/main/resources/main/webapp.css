@@ -347,6 +347,9 @@ table.results tr.even {
 .constraint {
   color: purple;
 }
+.and {
+  font-size: 10px;
+}
 
 /* classes for the object details page */
 table.refSummary {

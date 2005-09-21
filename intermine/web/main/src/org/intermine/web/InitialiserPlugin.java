@@ -115,7 +115,8 @@ public class InitialiserPlugin implements PlugIn
         } else {
             Map sets = DataSetBinding.unmarhsal(is);
             servletContext.setAttribute(Constants.DATASETS, sets);
-            servletContext.setAttribute(Constants.CATEGORIES, Collections.unmodifiableSet(sets.keySet()));
+            servletContext.setAttribute(Constants.CATEGORIES,
+                    Collections.unmodifiableSet(sets.keySet()));
         }
     }
 
@@ -143,7 +144,8 @@ public class InitialiserPlugin implements PlugIn
         throws ServletException {
         Properties classDescriptions = new Properties();
         try {
-            classDescriptions.load(servletContext.getResourceAsStream("/WEB-INF/classDescriptions.properties"));
+            classDescriptions.load(servletContext
+                    .getResourceAsStream("/WEB-INF/classDescriptions.properties"));
         } catch (Exception e) {
             throw new ServletException("Error loading class descriptions", e);
         }

@@ -19,12 +19,14 @@ import java.util.Map;
  */
 public class BagHelper
 {
+    /** When generating new bag names, this is used as a prefix. */
     public static final String BAG_NAME_PREFIX = "bag";
 
     /**
      * Return a bag name that isn't currently in use.
      *
      * @param savedBags the Map of current saved bags
+     * @param nameWanted the desired name
      * @return the new bag name
      */
     public static String findNewBagName(Map savedBags, String nameWanted) {

@@ -43,7 +43,8 @@ public class TemplateSettingsAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
-        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        TemplateBuildState tbs
+            = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
         
         tbs.setDescription(tsf.getDescription());
         tbs.setName(tsf.getName());

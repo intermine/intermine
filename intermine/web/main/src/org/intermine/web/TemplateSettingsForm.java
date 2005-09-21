@@ -87,7 +87,7 @@ public class TemplateSettingsForm extends ActionForm
     /**
      * Reset the form bean taking initial state from current TemplateBuildState session
      * attribute.
-     * @see ActionForm#reset(org.apache.struts.action.ActionMapping, javax.servlet.http.HttpServletRequest)
+     * @see ActionForm#reset
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         TemplateBuildState tbs =

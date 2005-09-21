@@ -164,6 +164,11 @@ public interface Constants
     public static final String INLINE_TABLE_SIZE = "inline.table.size";
     
     /**
+     * Session attribut containing the default operator name, either 'and' or 'or'.
+     */
+    public static final String DEFAULT_OPERATOR = "DEFAULT_OPERATOR";
+    
+    /**
      * Servlet context attribute that is a reference to a lucene Directory object containing
      * the template query index.
      */
