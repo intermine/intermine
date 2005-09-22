@@ -25,7 +25,7 @@ public class LogicExpressionTest extends TestCase
     }
     
     public void testNestedBrackets() {
-        roundtrip("A or (B and C or D)");
+        roundtrip("A or B and C or D");
         roundtrip("A or B and (C or D)");
         roundtrip("(A or B) and (C or D)");
     }
