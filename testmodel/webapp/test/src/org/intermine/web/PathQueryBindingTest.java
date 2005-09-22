@@ -29,19 +29,14 @@ import org.intermine.objectstore.query.ConstraintOp;
  */
 public class PathQueryBindingTest extends TestCase
 {
-    PathQueryBinding queryBinding;
 
     public PathQueryBindingTest(String arg) {
         super(arg);
     }
 
-    public void setUp() {
-        queryBinding = new PathQueryBinding();
-    }
-
     public void testProcess() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
-        Map savedQueries = queryBinding.unmarshal(new InputStreamReader(is));
+        Map savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is));
 
         Map expected = new LinkedHashMap();
 
@@ -68,7 +63,7 @@ public class PathQueryBindingTest extends TestCase
         employeesWithOldManagers.setView(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
-                                                true, "age is greater than 10", "age_gt_10"));
+                                                true, "age is greater than 10", null, "age_gt_10"));
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
 
         //vatNumberInBag
