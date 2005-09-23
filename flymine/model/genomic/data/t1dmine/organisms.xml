@@ -24,4 +24,12 @@
     <attribute name="genus" value="Rattus"/>
     <attribute name="species" value="norvegicus"/>
   </item> 
+  <item id="0_4" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Monodelphis domestica"/>
+    <attribute name="shortName" value="M. domestica"/>
+    <attribute name="taxonId" value="13616"/>
+    <attribute name="abbreviation" value="MD"/>
+    <attribute name="genus" value="Monodelphis"/>
+    <attribute name="species" value="domestica"/>
+  </item> 
 </items>
