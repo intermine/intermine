@@ -11,6 +11,7 @@ package org.intermine.ontology;
  */
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,9 +50,9 @@ public class OboParser
      * 
      * @param in text in OBO format
      * @return a set of DagTerms - will contain only toplevel terms
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public Set processForLabellingOntology(Reader in) throws Exception {
+    public Set processForLabellingOntology(Reader in) throws IOException {
         readTerms(new BufferedReader(in));
         return new HashSet(rootTerms.values());
     }
@@ -61,9 +62,9 @@ public class OboParser
      * 
      * @param in text in OBO format
      * @return a map from ontology term identifier to name
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public Map getTermIdNameMap(Reader in) throws Exception {
+    public Map getTermIdNameMap(Reader in) throws IOException {
         readTerms(new BufferedReader(in));
         Map idNames = new HashMap();
         for (Iterator iter = terms.values().iterator(); iter.hasNext(); ) {
@@ -77,9 +78,9 @@ public class OboParser
      * Read DAG input line by line to generate hierarchy of DagTerms.
      * 
      * @param in text in DAG format
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public void readTerms(BufferedReader in) throws Exception {
+    public void readTerms(BufferedReader in) throws IOException {
         String line;
         Map tagValues = new MultiHashMap();
         List tagValuesList = new ArrayList();
@@ -255,6 +256,7 @@ public class OboParser
      * 
      * @param term the DagTerm
      * @param synonyms List of synonyms (Strings)
+     * @param type synonym type
      */
     protected void addSynonyms(DagTerm term, List synonyms, String type) {
         for (Iterator iter = synonyms.iterator(); iter.hasNext(); ) {

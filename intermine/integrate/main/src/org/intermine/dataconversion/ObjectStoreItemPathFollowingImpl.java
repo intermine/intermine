@@ -205,7 +205,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 pw.close();
                 sw.close();
                 String stackTrace = sw.toString();
-                if (! stackTraces.contains(stackTrace)) {
+                if (!stackTraces.contains(stackTrace)) {
                     stackTraces.add(stackTrace);
                     LOG.warn(stackTrace);
                 }

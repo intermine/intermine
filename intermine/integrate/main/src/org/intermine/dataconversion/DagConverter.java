@@ -12,12 +12,11 @@ package org.intermine.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.ontology.DagParser;
@@ -86,11 +85,11 @@ public class DagConverter extends DataConverter
     /**
      * Parse root DagTerms from the input ontology.
      * 
-     * @param inputFile 
-     * @return
-     * @throws Exception
+     * @param inputFile input dag file
+     * @return collection of root DagTerms
+     * @throws IOException if something goes 
      */
-    protected Collection findRootTerms(File inputFile) throws Exception {
+    protected Collection findRootTerms(File inputFile) throws IOException {
         return new DagParser().processForLabellingOntology(new FileReader(inputFile));
     }
 

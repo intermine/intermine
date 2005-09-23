@@ -186,8 +186,7 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
      * @param name the attribute name
      * @param value the attribute value
      */
-    public void setDynamicAttribute(String name, String value)
-        throws BuildException {
+    public void setDynamicAttribute(String name, String value) {
         dynamicAttrs.put(name, value);
     }
 }

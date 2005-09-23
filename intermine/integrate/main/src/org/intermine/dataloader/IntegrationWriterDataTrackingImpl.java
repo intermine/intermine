@@ -232,8 +232,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                         + "\", object from database (read earlier in this run): \""
                                         + obj
                                         + "\"; noticed problem while merging field \""
-                                        + field.getName() + "\" originally read from source: " +
-                                        fieldSource;
+                                        + field.getName() + "\" originally read from source: "
+                                        + fieldSource;
                                 } else {
                                     errMessage = "There is already an equivalent "
                                         + "in the database from this source (" + source
@@ -241,8 +241,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                         + "object from source in this run: \""
                                         + o + "\", object from database: \"" + obj
                                         + "\"; noticed problem while merging field \""
-                                        + field.getName() + "\" originally read from source: " +
-                                        fieldSource;
+                                        + field.getName() + "\" originally read from source: "
+                                        + fieldSource;
                                 }
                                 
                                 if (!ignoreDuplicates) {

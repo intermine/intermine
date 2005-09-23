@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.StringReader;
@@ -48,9 +49,9 @@ public class DagParser
      * Parse a DAG file to produce a set of toplevel DagTerms.
      * @param in text in DAG format
      * @return a set of DagTerms - will contain only toplevel (domain) terms
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public Set processForLabellingOntology(Reader in) throws Exception {
+    public Set processForLabellingOntology(Reader in) throws IOException {
         readTerms(new BufferedReader(replaceRelationStrings(in)));
         return rootTerms;
     }
@@ -87,9 +88,9 @@ public class DagParser
     /**
      * Read DAG input line by line to generate hierarchy of DagTerms.
      * @param in text in DAG format
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public void readTerms(BufferedReader in) throws Exception {
+    public void readTerms(BufferedReader in) throws IOException {
         String line;
         int prevspaces = -1;
         int currspaces;
@@ -134,9 +135,9 @@ public class DagParser
      * Keeps track of indentation to manage hierachical relationships.
      * @param line a line of DAG text
      * @return a DagTerm create from line of text
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    protected DagTerm makeDagTerm(String line) throws Exception {
+    protected DagTerm makeDagTerm(String line) throws IOException {
         line = line.trim();
         String token = line.substring(0, 1);
         line = line.substring(1);
@@ -180,14 +181,14 @@ public class DagParser
      * Create (or get from already seen terms) a DagTerm given a string defining the term.
      * @param details string representing a DAG term
      * @return the generated DagTerm
-     * @throws Exception if cannot find a name and id in string
+     * @throws IOException if cannot find a name and id in string
      */
-    public DagTerm dagTermFromString(String details) throws Exception {
+    public DagTerm dagTermFromString(String details) throws IOException {
         details = details.trim();
         String[] elements = details.split(DELIMITER);
         String name = stripEscaped(elements[0]);
         if (elements.length < 2) {
-            throw new Exception("term does not have an id: " + details);
+            throw new IllegalArgumentException("term does not have an id: " + details);
         }
         String id = stripList(elements[1]);
 
@@ -203,7 +204,8 @@ public class DagParser
         // zero or more synonyms follow name and id
         for (int i = 2; i < elements.length; i++) {
             if (elements[i].startsWith("synonym:")) {
-                term.addSynonym(new DagTermSynonym(elements[i].substring(elements[i].indexOf(":") + 1)));
+                term.addSynonym(new DagTermSynonym(
+                        elements[i].substring(elements[i].indexOf(":") + 1)));
             }
         }
         return term;
@@ -261,9 +263,9 @@ public class DagParser
      * Replace common alternative isa and partof strings with tokens (% and &lt;).
      * @param in a reader for the DAG text
      * @return a reader for the altered DAG text
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    protected Reader replaceRelationStrings(Reader in) throws Exception {
+    protected Reader replaceRelationStrings(Reader in) throws IOException {
         StringWriter writer = new StringWriter();
         BufferedReader buf = new BufferedReader(in);
         String line;
