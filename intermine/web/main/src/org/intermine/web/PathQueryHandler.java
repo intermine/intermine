@@ -111,6 +111,7 @@ class PathQueryHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
             query.checkValidity();
+            query.syncLogicExpression("and"); // always and for old queries
             queries.put(queryName, query);
         }
     }
