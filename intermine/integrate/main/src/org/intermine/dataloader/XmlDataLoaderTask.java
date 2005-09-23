@@ -50,6 +50,10 @@ public class XmlDataLoaderTask extends Task
         this.xmlFile = xmlFile;
     }
 
+    /**
+     * Set XML resource name (to load data from classloader).
+     * @param resName classloader resource name
+     */
     public void setXmlResource(String resName) {
         this.xmlRes = resName;
     }

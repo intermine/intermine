@@ -12,6 +12,7 @@ package org.intermine.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collection;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,7 +33,8 @@ import org.intermine.xml.full.Item;
 public class OboConverter extends DagConverter
 {
     /**
-     * @inheritDoc
+     * Construct a new instance of OboConverter.
+     * @see DagConverter#DagConverter(ItemWriter, String, String, String)
      */
     public OboConverter(ItemWriter writer, String dagFilename, String dagName,
             String termClass) {
@@ -66,9 +68,12 @@ public class OboConverter extends DagConverter
     }
     
     /**
-     * 
+     * Get all root terms for an OBO format file.
+     * @param oboFile the OBO file
+     * @return Collection of root OboTerms
+     * @throws IOException if something goes wrong
      */
-    protected Collection findRootTerms(File dagFile) throws Exception {
-        return new OboParser().processForLabellingOntology(new FileReader(dagFile));
+    protected Collection findRootTerms(File oboFile) throws IOException {
+        return new OboParser().processForLabellingOntology(new FileReader(oboFile));
     }
 }

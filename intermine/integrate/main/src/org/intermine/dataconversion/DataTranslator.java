@@ -452,6 +452,7 @@ public class DataTranslator
      * @param item the Item
      * @param refListName the name of the collection
      * @return the Iterator
+     * @throws ObjectStoreException if an object store error occurs
      */
     protected Iterator getCollection(Item item, String refListName) throws ObjectStoreException {
         ReferenceList refList = item.getCollection(refListName);

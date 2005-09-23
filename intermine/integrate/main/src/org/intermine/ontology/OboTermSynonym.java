@@ -1,7 +1,5 @@
 package org.intermine.ontology;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -11,6 +9,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Object representing aa OboTerm synonym.
@@ -23,7 +23,8 @@ public class OboTermSynonym extends DagTermSynonym
     
     /**
      * Create a new instance of DagTermSynonym.
-     * @param name the synoym name
+     * @param name the synonym name
+     * @param type synonym type
      */
     public OboTermSynonym(String name, String type) {
         super(name);

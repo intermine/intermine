@@ -1,7 +1,5 @@
 package org.intermine.ontology;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -11,6 +9,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Object representing a DagTerm synonym.

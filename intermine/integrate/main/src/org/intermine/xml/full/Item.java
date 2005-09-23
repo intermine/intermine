@@ -291,9 +291,9 @@ public class Item
 
     
     /**
-     * em
-     * @param collectionName
-     * @param refIds
+     * Set a colletion.
+     * @param collectionName collection name
+     * @param refIds ids to reference
      */
     public void setCollection(String collectionName, List refIds) {
         addCollection(new ReferenceList(collectionName, refIds));
@@ -318,9 +318,9 @@ public class Item
     }
     
     /**
-     * Add a reference to this item
+     * Add a reference that points to a particular item.
      * @param name the name of the attribute
-     * @param refId the value of the attribute
+     * @param item the item to refer to
      */
     public void setReference(String name, Item item) {
         addReference(new Reference(name, item.getIdentifier()));
