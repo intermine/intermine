@@ -127,7 +127,7 @@
                 </c:forEach>
               </td>
               <td align="center" nowrap>
-                <html:link action="/modifyQueryChange?method=execute&amp;name=${savedQuery.key}&amp;type=${type}"
+                <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}"
                            titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>
                 </html:link>
