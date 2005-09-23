@@ -7,7 +7,7 @@
   <attribute name="sample2" type="java.lang.String"/>
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="assays"/> 
   <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"  reverse-reference="assay"/>
-  <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" reverse-reference="assay"/>
+  <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" reverse-reference="assays"/>
 </class>
 <class name="org.flymine.model.genomic.SampleCharacteristic" is-interface="true">
   <attribute name="type" type="java.lang.String"/>
@@ -52,7 +52,7 @@
   <attribute name="description" type="java.lang.String"/>
   <attribute name="primaryCharacteristic" type="java.lang.String"/>
   <attribute name="primaryCharacteristicType" type="java.lang.String"/>
-  <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="samples"/>
+  <collection name="assays" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="samples"/>
   <collection name="characteristics" referenced-type="org.flymine.model.genomic.SampleCharacteristic" ordered="true"/>
   <collection name="treatments" referenced-type="org.flymine.model.genomic.Treatment" ordered="true"/>
 </class>

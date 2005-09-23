@@ -13,7 +13,6 @@ package org.flymine.dataconversion;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
@@ -92,24 +91,23 @@ public class MageDataTranslator extends DataTranslator
     protected Map resultToFeature = new HashMap();
     protected Map resultToReporter = new HashMap();
     protected Map featureToReporter = new HashMap();
-    protected Map resultToBioAssayData = new HashMap();
-    protected Map bioAssayDataToAssay = new HashMap();
-    protected Map measuredBioAssayToMicroArrayAssay = new HashMap();
+    protected Map resultToBioAssay = new HashMap();
     protected Map assayToSamples = new HashMap();
 
     // geneomic:MicroArrayAssay -> experiment name
     protected Map assayToExpName = new HashMap();
 
-    // geneomic:MicroArrayAssay -> genomic:MicroArraayExperiment
+    // geneomic:MicroArrayAssay -> genomic:MicroArrayExperiment
     protected Map assayToExperiment = new HashMap();
 
     // genomic:Sample -> genomic:SampleCharacteristics
     protected Map sampleToChars = new HashMap();
     protected Set assays = new HashSet();
 
-    protected Map clones = new HashMap();
+    protected Map clones = new HashMap(); //cloneItem identifier, cloneItem
+    protected Map cloneMap = new HashMap();//cloneIdentifier, cloneItem
     protected Map reporterToMaterial = new HashMap();
-    protected Map cloneIds = new HashMap();
+    protected Map cloneIds = new HashMap();//cloneItem identifier, alternative identifier
     protected Set materialIdTypes = new HashSet();
     protected Map expIdNames = new HashMap();
 
@@ -121,10 +119,9 @@ public class MageDataTranslator extends DataTranslator
         super(srcItemReader, mapping, srcModel, tgtModel);
 
         System.out.println("trying to find xml class");
-            ClassLoader cl = getClass().getClassLoader();
-            Class c = cl.loadClass("com.bea.xml.stream.XMLOutputFactoryBase");
-            System.out.println("found class: " + c.getName());
-            LOG.error("found class: " + c.getName());
+        ClassLoader cl = getClass().getClassLoader();
+        Class c = cl.loadClass("com.bea.xml.stream.XMLOutputFactoryBase");
+        LOG.info("found class: " + c.getName());
         srcNs = srcModel.getNameSpace().toString();
         tgtNs = tgtModel.getNameSpace().toString();
 
@@ -164,7 +161,7 @@ public class MageDataTranslator extends DataTranslator
 
             addToMap(config, exptName, propName, value);
 
-            // also set up a map of any expt.materialIdType confif values found,
+            // also set up a map of any expt.materialIdType config values found,
             // these need to be kept as possible alternative material ids
             if (propName.equals("materialIdType")) {
                 materialIdTypes.add(value);
@@ -187,9 +184,9 @@ public class MageDataTranslator extends DataTranslator
         Map exptConfig = (Map) config.get(exptName);
         if (exptConfig != null) {
             value = (String) exptConfig.get(propName);
-            if (value == null) {
-                LOG.warn("No config found for experiment: " + exptName + ", property: " + propName);
-            }
+            //  if (value == null) {
+//                  LOG.warn("No config found for experiment: " + exptName + ", property: " + propName);
+//              }
         } else {
             LOG.warn("No config details found for experiment: " + exptName);
         }
@@ -205,9 +202,9 @@ public class MageDataTranslator extends DataTranslator
 
         super.translate(tgtItemWriter);
 
-        LOG.error("materialToIdTypes: " + materialIdTypes);
-        LOG.error("expIdNames: " + expIdNames);
-        LOG.error("cloneIds: " + cloneIds);
+        //LOG.error("materialToIdTypes: " + materialIdTypes);
+        //LOG.error("expIdNames: " + expIdNames);
+        //LOG.error("cloneIds: " + cloneIds);
 
         Iterator i;
 
@@ -291,7 +288,8 @@ public class MageDataTranslator extends DataTranslator
                     storeTgtItem = false;
                 } else if (className.equals("Experiment")) {
                     translateMicroArrayExperiment(srcItem, tgtItem);
-                } else if (className.equals("DerivedBioAssay")) {
+                } else if (className.equals("MeasuredBioAssay")) {
+                    setLabeledExtractToMeasuredBioAssay(srcItem);
                     translateMicroArrayAssay(srcItem, tgtItem);
                     storeTgtItem = false;
                 } else if (className.equals("BioAssayDatum")) {
@@ -313,11 +311,8 @@ public class MageDataTranslator extends DataTranslator
                     result.add(tgtItem);
                 }
             }
-
         } else if (className.equals("LabeledExtract")) {
             translateLabeledExtract(srcItem);
-        } else if (className.equals("MeasuredBioAssay")) {
-            setLabeledExtractToMeasuredBioAssay(srcItem);
         }
         return result;
     }
@@ -348,7 +343,6 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @param srcItem = mage:Experiment
      * @param tgtItem = flymine: MicroArrayExperiment
-     * @param srcNs = mage: src namespace
      * @return experiment Item
      * @throws ObjectStoreException if problem occured during translating
      */
@@ -418,7 +412,7 @@ public class MageDataTranslator extends DataTranslator
             Iterator assayIter = getCollection(srcItem, "bioAssays");
             while (assayIter.hasNext()) {
                 Item bioAssayItem = (Item) assayIter.next();
-                if (bioAssayItem.getClassName().equals(srcNs + "DerivedBioAssay")) {
+                if (bioAssayItem.getClassName().equals(srcNs + "MeasuredBioAssay")) {
                     assayToExperiment.put(bioAssayItem.getIdentifier(), tgtItem.getIdentifier());
                     assayToExpName.put(bioAssayItem.getIdentifier(), exptName);
                 }
@@ -430,54 +424,25 @@ public class MageDataTranslator extends DataTranslator
 
 
     /**
-     * @param srcItem = mage: DerivedBioAssay
+     * @param srcItem = mage: MeasuredBioAssay
      * @param tgtItem = genomic:MicroArrayAssay
      * @throws ObjectStoreException if problem occured during translating
      */
      protected void translateMicroArrayAssay(Item srcItem, Item tgtItem)
          throws ObjectStoreException {
 
-         // TODO link assay to experiment??
-
-         // create map from mage:MeasuredBioAssay to genomic:MicroArrayAssay
-         // (mage:DerivedBioAssay)
-
-         // PATH DerivedBioAssay.derivedBioAssayMap.sourceBioAssays
-         Item mbaItem = null;
-         if (srcItem.hasCollection("derivedBioAssayMap")) {
-             // TODO check is single element collection
-             Iterator mapIter = getCollection(srcItem, "derivedBioAssayMap");
-             while (mapIter.hasNext()) {
-                 Item mapItem = (Item) mapIter.next();
-                 if (mapItem.hasCollection("sourceBioAssays")) {
-                     Iterator sourceIter = getCollection(mapItem, "sourceBioAssays");
-                     while (sourceIter.hasNext()) {
-                         mbaItem = (Item) sourceIter.next();
-                         if (mbaItem.getClassName().equals(srcNs + "MeasuredBioAssay")) {
-                             measuredBioAssayToMicroArrayAssay.put(mbaItem.getIdentifier(),
-                                                                   tgtItem.getIdentifier());
-                         }
-                     }
-                 }
-             }
-         }
-
-         // set up map from mage:BioAssayDatum identifier to genomic:MicroArrayAssay
-
-         if (mbaItem != null) {
-             if (srcItem.hasCollection("derivedBioAssayData")) {
-                 Iterator iter = srcItem.getCollection("derivedBioAssayData").getRefIds()
-                     .iterator();
-                 while (iter.hasNext()) {
-                     bioAssayDataToAssay.put((String) iter.next(), tgtItem.getIdentifier());
-                 }
-             }
+         if (srcItem.hasAttribute("identifier")) {
+             tgtItem.addAttribute(new Attribute("name",
+                     srcItem.getAttribute("identifier").getValue()));
          }
          assays.add(tgtItem);
      }
 
 
-    // srcItem = mage:MeasuredBioAssay
+    /**
+     * @param srcItem = mage:MeasuredBioAssay
+     * @throws ObjectStoreException if anything goes wrong
+     */
     protected void setLabeledExtractToMeasuredBioAssay(Item srcItem)
         throws ObjectStoreException {
 
@@ -494,7 +459,7 @@ public class MageDataTranslator extends DataTranslator
         if (srcItem.hasReference("featureExtraction")) {
             Item feItem = getReference(srcItem, "featureExtraction");
             if (feItem.hasReference("physicalBioAssaySource")) {
-                pbaItem = getReference(feItem, "physicalBioAssaySource");;
+                pbaItem = getReference(feItem, "physicalBioAssaySource");
             }
         }
 
@@ -508,9 +473,11 @@ public class MageDataTranslator extends DataTranslator
                      Item bmItem = (Item) iter.next();
                      if (bmItem.hasReference("bioMaterial")) {
                          labeledExtracts.add(bmItem.getReference("bioMaterial").getRefId());
-                         // map from mage:LabeledExtract identifier to genomic:MicroArrayAssay identifier
-                         labeledExtractToMeasuredBioAssay.put(bmItem.getReference("bioMaterial").getRefId(),
-                                                              srcItem.getIdentifier());
+                         // map from mage:LabeledExtract identifier to
+                         // genomic:MicroArrayAssay identifier
+                         labeledExtractToMeasuredBioAssay.put(
+                                 bmItem.getReference("bioMaterial").getRefId(),
+                                 srcItem.getIdentifier());
                      }
                  }
              }
@@ -563,12 +530,14 @@ public class MageDataTranslator extends DataTranslator
             Item qtItem = getReference(srcItem, "quantitationType");
 
             if (qtItem.hasAttribute("name")) {
-                tgtItem.setAttribute("type", "(Normalised) " + qtItem.getAttribute("name").getValue());
+                tgtItem.setAttribute("type", "(Normalised) "
+                                  + qtItem.getAttribute("name").getValue());
             } else {
                 LOG.warn("QuantitationType ( " + qtItem.getIdentifier()
                           + " ) does not have name attribute");
             }
             if (qtItem.getClassName().endsWith("MeasuredSignal")
+                || qtItem.getClassName().endsWith("DerivedSignal")
                 || qtItem.getClassName().endsWith("Ratio")
                 || qtItem.getClassName().endsWith("SpecializedQuantitationType")) {
                 if (qtItem.hasReference("scale")) {
@@ -598,13 +567,17 @@ public class MageDataTranslator extends DataTranslator
         // map from mage:MeasuredBioAssayData identifier to genomic:MicroArrayResult identifier
         // duplicates collection available in MeasureBioAssayData but is much better for
         // prefetch and memory useage
-        if (srcItem.hasReference("bioAssayData")) {
-            String bioAssayDataId = srcItem.getReference("bioAssayData").getRefId();
-            resultToBioAssayData.put(tgtItem.getIdentifier(), bioAssayDataId);
+        if (srcItem.hasReference("bioAssay")) {
+            String bioAssayId = srcItem.getReference("bioAssay").getRefId();
+            resultToBioAssay.put(tgtItem.getIdentifier(), bioAssayId);
         }
     }
 
-
+    /**
+     * @param srcItem = mage:Reporter
+     * @param tgtItem = flymine:Reporter
+     * @throws ObjectStoreException if problem occured during translating
+     */
     protected void translateReporter(Item srcItem, Item tgtItem) throws ObjectStoreException {
 
         // PATH Reporter.featureReporterMaps.featureInformationSources.feature
@@ -648,39 +621,38 @@ public class MageDataTranslator extends DataTranslator
                 while (bioIter.hasNext() && material == null) {
                     Item bioSequence = (Item) bioIter.next();
                     if (bioSequence.hasReference("type")) {
-                        String type = getReference(bioSequence, "type").getAttribute("value").getValue();
+                        String type = getReference(bioSequence, "type").getAttribute("value")
+                                      .getValue();
                         if (type.toLowerCase().equals("cdna_clone")) {
                             String cloneId = srcItem.getAttribute("name").getValue();
-                            material = (Item) clones.get(cloneId);
+                            material = (Item) cloneMap.get(cloneId);
                             if (material == null) {
                                 material = createItem(tgtNs + "CDNAClone", "");
                                 material.setAttribute("identifier", cloneId);
-                                //LOG.error("clones.put(" + material.getIdentifier() + ", " +  material + ")");
-                                clones.put(cloneId, material);
+                                cloneMap.put(cloneId, material);
+                                clones.put(material.getIdentifier(), material);
                             }
                             tgtItem.setReference("material", material.getIdentifier());
-                                //LOG.error("reporterToMaterial.put(" + tgtItem.getIdentifier() + ", " + material.getIdentifier()+ ")");
-                            reporterToMaterial.put(tgtItem.getIdentifier(), material.getIdentifier());
+                            reporterToMaterial.put(tgtItem.getIdentifier(),
+                                               material.getIdentifier());
                         } else {
                             throw new ObjectStoreException("Unknown BioSequence type: " + type);
                         }
                     }
-                    if (!materialIdTypes.isEmpty() && bioSequence.hasCollection("sequenceDatabases")) {
+                    if (!materialIdTypes.isEmpty()
+                        && bioSequence.hasCollection("sequenceDatabases")) {
                         Iterator dbIter = getCollection(bioSequence, "sequenceDatabases");
                         while (dbIter.hasNext()) {
                             Item dbRef = (Item) dbIter.next();
                             if (dbRef.hasReference("database")) {
                                 Item db = getReference(dbRef, "database");
                                 String dbName = db.getAttribute("name").getValue();
-                                //LOG.error("dbName: " + dbName);
                                 if (materialIdTypes.contains(dbName)) {
                                     Map altIds = (Map) cloneIds.get(material.getIdentifier());
                                     if (altIds == null) {
                                         altIds = new HashMap();
-                                        //LOG.error("cloneIds.put(" + material.getIdentifier() + ", " + altIds + ")");
                                         cloneIds.put(material.getIdentifier(), altIds);
                                     }
-                                    //LOG.error("altIds.put(" + dbName + ", " + dbRef.getAttribute("accession").getValue() + ")");
                                     altIds.put(dbName, dbRef.getAttribute("accession").getValue());
                                 }
                             }
@@ -689,7 +661,6 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
         }
-
 
 
         // if Reporter.failTypes exists then set failure type
@@ -727,7 +698,6 @@ public class MageDataTranslator extends DataTranslator
 
     /**
      * @param srcItem = mage:LabeledExtract
-     * @param tgtItem = flymine:LabeledExtract
      * @throws ObjectStoreException if problem occured during translating
      * LabeledExtract -> {treatments} -> {sourceBioMaterialMeasurements} ->
      *(BioSample)extract -> {treatments} -> {sourceBioMaterialMeasurements} ->
@@ -745,7 +715,7 @@ public class MageDataTranslator extends DataTranslator
                 extracts = new HashSet();
                 sampleToLabeledExtracts.put(sampleId, extracts);
             }
-            extracts.add( srcItem.getIdentifier());
+            extracts.add(srcItem.getIdentifier());
         }
     }
 
@@ -753,8 +723,13 @@ public class MageDataTranslator extends DataTranslator
     /**
      * For a given BioMaterial iterate through treatments applied and add to a collection.
      * Recurse into source BioMaterials and add their treatments.
+     * @param bioMaterial = item bioMaterial
+     * @param treatments = list treatments
+     * @return string of treatments
+     * @throws ObjectStoreException if anything goes wrong
      */
-    protected String searchTreatments(Item bioMaterial, List treatments)  throws ObjectStoreException {
+    protected String searchTreatments(Item bioMaterial, List treatments)
+        throws ObjectStoreException {
         // TODO check if BioSource (genomic:Sample) and create map from sample to top
         // level LabeledExtract.  Sample needs collection of treatments.
 
@@ -798,6 +773,7 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @param srcItem = mage:BioSource
      * @param tgtItem = genomic:Sample
+     * @return set of SampleCharacteristic
      * extra genomic:Organism item is created and saved in  organismMap
      * @throws ObjectStoreException if problem occured during translating
      */
@@ -862,6 +838,7 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @param srcItem = mage:Treatment
      * @param tgtItem = flymine:Treatment
+     * @return set of target TreatmentParameter
      * @throws ObjectStoreException if problem occured during translating
      */
     public Set translateTreatment(Item srcItem, Item tgtItem)
@@ -888,12 +865,14 @@ public class MageDataTranslator extends DataTranslator
             while (protIter.hasNext()) {
                 Item appItem = (Item) protIter.next();
                 if (tgtItem.hasReference("protocol")) {
-                    throw new IllegalArgumentException("Treatment has more than one ProtocolApplication: "
-                                                       + srcItem.getAttribute("name").getValue()
-                                                       + ", " + srcItem.getIdentifier());
+                    throw new IllegalArgumentException(
+                          "Treatment has more than one ProtocolApplication: "
+                          + srcItem.getAttribute("name").getValue()
+                          + ", " + srcItem.getIdentifier());
                 }
                 if (appItem.hasReference("protocol")) {
-                    tgtItem.setReference("protocol", appItem.getReference("protocol").getRefId());
+                    tgtItem.setReference("protocol",
+                            appItem.getReference("protocol").getRefId());
                 }
 
                 if (appItem.hasCollection("parameterValues")) {
@@ -903,12 +882,14 @@ public class MageDataTranslator extends DataTranslator
                         Item tgtParam = createItem(tgtNs + "TreatmentParameter", "");
                         tgtParam.setReference("treatment", tgtItem.getIdentifier());
                         if (valueItem.hasAttribute("value")) {
-                            tgtParam.setAttribute("value", valueItem.getAttribute("value").getValue());
+                            tgtParam.setAttribute("value",
+                                     valueItem.getAttribute("value").getValue());
                         }
 
                         Item srcParam = getReference(valueItem, "parameterType");
                         if (srcParam.hasAttribute("name")) {
-                            tgtParam.setAttribute("type", srcParam.getAttribute("name").getValue());
+                            tgtParam.setAttribute("type",
+                                     srcParam.getAttribute("name").getValue());
                         }
 
 
@@ -950,7 +931,13 @@ public class MageDataTranslator extends DataTranslator
         return results;
     }
 
+   /**
+     * got map fo assays
+     * add experiment reference and sample1, sample2 attribute
+     * @return assay only once for the same item
+     */
     protected Set processMicroArrayAssays() {
+        //        LOG.error ("assayToSamples " + assayToSamples);
         Iterator assayIter = assays.iterator();
         while (assayIter.hasNext()) {
             Item assay = (Item) assayIter.next();
@@ -958,8 +945,11 @@ public class MageDataTranslator extends DataTranslator
             if (assayToExperiment.containsKey(assayId)) {
                 assay.setReference("experiment", (String) assayToExperiment.get(assayId));
             }
+
             if (assayToSamples.containsKey(assayId)) {
                 List sampleIds = (List) assayToSamples.get(assayId);
+                assay.addCollection(new ReferenceList("samples", sampleIds));
+
                 if (sampleIds.size() > 0) {
                     String summary =  getSampleSummary((String) sampleIds.get(0));
                     if (summary != null) {
@@ -977,7 +967,10 @@ public class MageDataTranslator extends DataTranslator
         return assays;
     }
 
-
+    /**
+     * @param id sample id
+     * @return sample attributes as summary
+     */
     private String getSampleSummary(String id) {
         Item sample = (Item) samplesById.get(id);
         String summary = "";
@@ -990,8 +983,11 @@ public class MageDataTranslator extends DataTranslator
         return null;
     }
 
-    // set MicroArrayResult.assay
-    // call processSamples first to set MicroArrayResult.sample
+    /**
+     * set MicroArrayResult.assay
+     * call processSamples first to set MicroArrayResult.sample
+     * @return micorArrayResult
+     */
     protected Set processMicroArrayResults() {
         Iterator resultIter = microArrayResults.iterator();
         while (resultIter.hasNext()) {
@@ -1002,20 +998,19 @@ public class MageDataTranslator extends DataTranslator
 
             // MicroArrayResult.assay
             // MicroArrayResult.samples
-            if (resultToBioAssayData.containsKey(maResultId)) {
-                String bioAssayDataId = (String) resultToBioAssayData.get(maResultId);
-                if (bioAssayDataToAssay.containsKey(bioAssayDataId)) {
-                    String assayId = (String) bioAssayDataToAssay.get(bioAssayDataId);
-                    maResult.setReference("assay", assayId);
-                    if (assayToSamples.containsKey(assayId)) {
-                        maResult.addCollection(new ReferenceList("samples",
+
+            //should be result2bioassay
+            if (resultToBioAssay.containsKey(maResultId)) {
+                String assayId = (String) resultToBioAssay.get(maResultId);
+                maResult.setReference("assay", assayId);
+                if (assayToSamples.containsKey(assayId)) {
+                    maResult.addCollection(new ReferenceList("samples",
                             (List) assayToSamples.get(assayId)));
-                    }
-                    if (assayToExperiment.containsKey(assayId)) {
-                        experimentId = (String) assayToExperiment.get(assayId);
-                        LOG.error("experimentId: " + experimentId);
-                        maResult.setReference("experiment", experimentId);
-                    }
+                }
+                if (assayToExperiment.containsKey(assayId)) {
+                    experimentId = (String) assayToExperiment.get(assayId);
+                    //LOG.error("experimentId: " + experimentId);
+                    maResult.setReference("experiment", experimentId);
                 }
             }
 
@@ -1030,7 +1025,7 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
 
-            LOG.error("reportedId: " + reporterId);
+            //LOG.error("reportedId: " + reporterId);
             if (reporterId != null) {
                 maResult.setReference("reporter", reporterId);
                 if (controls.contains(reporterId)) {
@@ -1049,17 +1044,16 @@ public class MageDataTranslator extends DataTranslator
                     // are in cloneIds map - material->alternative id
                     String expName = (String) expIdNames.get(experimentId);
                     String materialIdType = getConfig(expName, "materialIdType");
-                    LOG.error("materialId, expName: " + materialId + ", " + expName);
+                    //LOG.info("materialId, expName: " + materialId + ", " + expName);
 
                     if (materialIdType != null && cloneIds.containsKey(materialId)) {
                         Map typeMap = (Map) cloneIds.get(materialId);
-                        LOG.error("typeMap: " + typeMap);
                         if (typeMap != null) {
                             if (typeMap.containsKey(materialIdType)) {
                                 Item clone = (Item) clones.get(materialId);
                                 if (clone != null) {
-                                    LOG.error("clone.setAttribute(\"identifier\", " + (String) typeMap.get(materialIdType) + ")");
-                                    clone.setAttribute("identifier", (String) typeMap.get(materialIdType));
+                                    clone.setAttribute("identifier",
+                                          (String) typeMap.get(materialIdType));
                                 }
                             }
                         }
@@ -1070,17 +1064,22 @@ public class MageDataTranslator extends DataTranslator
         return microArrayResults;
     }
 
-
-    // set Sample.assay
-    // set Sample.treatments
+    /**
+     * set Sample.assay
+     * set Sample.treatments
+     * @return sample
+     */
     protected Set processSamples() {
+        //LOG.error("sampleToLabeledExtracts " + sampleToLabeledExtracts);
+        //LOG.error("labeledExtractToMeasuredBioAssay " + labeledExtractToMeasuredBioAssay);
         Iterator sampleIter = samples.iterator();
         while (sampleIter.hasNext()) {
             Item sample = (Item) sampleIter.next();
             String sampleId = sample.getIdentifier();
 
             if (sampleToTreatments.containsKey(sampleId)) {
-                sample.addCollection(new ReferenceList("treatments", (List) sampleToTreatments.get(sampleId)));
+                sample.addCollection(new ReferenceList("treatments",
+                       (List) sampleToTreatments.get(sampleId)));
             }
 
             if (sampleToLabeledExtracts.containsKey(sampleId)) {
@@ -1089,28 +1088,26 @@ public class MageDataTranslator extends DataTranslator
                     String extractId = (String) extractIter.next();
                     if (labeledExtractToMeasuredBioAssay.containsKey(extractId)) {
                         String mbaId = (String) labeledExtractToMeasuredBioAssay.get(extractId);
-                        if (measuredBioAssayToMicroArrayAssay.containsKey(mbaId)) {
-                            String assayId = (String) measuredBioAssayToMicroArrayAssay.get(mbaId);
-                            sample.setReference("assay", assayId);
-                            List sampleIds = (List) assayToSamples.get(assayId);
-                            if (sampleIds == null) {
-                                sampleIds = new ArrayList();
-                                assayToSamples.put(assayId, sampleIds);
-                            }
-                            sampleIds.add(sampleId);
+                        List sampleIds = (List) assayToSamples.get(mbaId);
+                        if (sampleIds == null) {
+                            sampleIds = new ArrayList();
+                            assayToSamples.put(mbaId, sampleIds);
+                        }
+                        sampleIds.add(sampleId);
 
-                            String expName = (String) assayToExpName.get(assayId);
-                            String primaryCharacteristic = getConfig(expName, "primaryCharacteristic");
+                        String expName = (String) assayToExpName.get(mbaId);
+                        String primaryCharacteristic = getConfig(expName, "primaryCharacteristic");
 
-                            Map chars = (Map) sampleToChars.get(sampleId);
-                            if (chars != null) {
-                                Iterator charIter = chars.entrySet().iterator();
-                                while (charIter.hasNext()) {
-                                    Map.Entry entry = (Map.Entry) charIter.next();
-                                    if (entry.getKey().equals(primaryCharacteristic)) {
-                                        sample.setAttribute("primaryCharacteristicType", primaryCharacteristic);
-                                        sample.setAttribute("primaryCharacteristic", (String) entry.getValue());
-                                    }
+                        Map chars = (Map) sampleToChars.get(sampleId);
+                        if (chars != null) {
+                            Iterator charIter = chars.entrySet().iterator();
+                            while (charIter.hasNext()) {
+                                Map.Entry entry = (Map.Entry) charIter.next();
+                                if (entry.getKey().equals(primaryCharacteristic)) {
+                                    sample.setAttribute("primaryCharacteristicType",
+                                           primaryCharacteristic);
+                                    sample.setAttribute("primaryCharacteristic",
+                                           (String) entry.getValue());
                                 }
                             }
                         }
@@ -1180,26 +1177,48 @@ public class MageDataTranslator extends DataTranslator
         return exp.getIdentifier();
     }
 
-    // get an item by path and deal with conversion to/from fulldata items
-    private Item getItemByPath(ItemPath path, Item startItem) throws ObjectStoreException {
-        return ItemHelper.convert(srcItemReader.getItemByPath(path, ItemHelper.convert(startItem)));
+    /**
+     * get an item by path and deal with conversion to/from fulldata items
+     * @param path = ItemPath
+     * @param startItem = Item
+     * @return item
+     * @throws ObjectStoreException if anything goes wrong with finding item
+     */
+    private Item getItemByPath(ItemPath path, Item startItem)
+        throws ObjectStoreException {
+        return ItemHelper.convert(srcItemReader.getItemByPath(path,
+               ItemHelper.convert(startItem)));
     }
 
-    public Iterator getItemsByPath(ItemPath path, Item start) throws ObjectStoreException {
+    /**
+     * get an item by path and deal with conversion to/from fulldata items
+     * @param path = ItemPath
+     * @param start = Item
+     * @return item
+     * @throws ObjectStoreException if anything goes wrong with finding item
+     */
+    public Iterator getItemsByPath(ItemPath path, Item start)
+        throws ObjectStoreException {
         List items = new ArrayList();
-        Iterator iter = srcItemReader.getItemsByPath(path, ItemHelper.convert(start)).iterator();
+        Iterator iter = srcItemReader.getItemsByPath(path,
+                   ItemHelper.convert(start)).iterator();
         while (iter.hasNext()) {
-            items.add(ItemHelper.convert((org.intermine.model.fulldata.Item) iter.next()));
+            items.add(ItemHelper.convert(
+                  (org.intermine.model.fulldata.Item) iter.next()));
         }
         return items.iterator();
     }
 
+    /**
+     * static method
+     * @return map of prefetchDescriptors
+     */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
         Set descSet;
         ItemPath path;
         String srcNs = "http://www.flymine.org/model/mage#";
-        System.out.println("srcNs: " + srcNs);
+        LOG.info("srcNs: " + srcNs);
 
         descSet = new HashSet();
         path = new ItemPath("Experiment.descriptions", srcNs);
@@ -1219,17 +1238,17 @@ public class MageDataTranslator extends DataTranslator
         paths.put(srcNs + "DerivedBioAssay", descSet);
 
 
-
-
         descSet = new HashSet();
         path = new ItemPath("BioAssayDatum.quantitationType.scale", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("BioAssayDatum.quantitationType.targetQuantitationType.scale", srcNs);
+        path = new ItemPath("BioAssayDatum.quantitationType.targetQuantitationType.scale",
+                            srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "BioAssayDatum", descSet);
-
+        //prefetch cache miss?
         descSet = new HashSet();
-        path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
+        path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial"
+                            , srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial.treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1247,8 +1266,11 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("Treatment.protocolApplications.protocol", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("Treatment.protocolApplications.parameterValues.parameterType", srcNs);
+        path = new ItemPath(
+               "Treatment.protocolApplications.parameterValues.parameterType.defaultValue.measurement.unit",
+               srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
+
         paths.put(srcNs + "Treatment", descSet);
 
 
@@ -1272,11 +1294,13 @@ public class MageDataTranslator extends DataTranslator
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("type",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
-        desc3 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type.sequenceDatabases");
+        desc3 = new ItemPrefetchDescriptor(
+                    "Reporter.immobilizedCharacteristics.type.sequenceDatabases");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("sequenceDatabases",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc2.addPath(desc3);
-        desc4 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type.sequenceDatabases.database");
+        desc4 = new ItemPrefetchDescriptor(
+                "Reporter.immobilizedCharacteristics.type.sequenceDatabases.database");
         desc4.addConstraint(new ItemPrefetchConstraintDynamic("database",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc3.addPath(desc4);
@@ -1285,13 +1309,15 @@ public class MageDataTranslator extends DataTranslator
         paths.put(srcNs + "Reporter", descSet);
 
         //path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
-//         path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
+//         path = new ItemPath(
+//               "Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
 //         descSet.add(path.getItemPrefetchDescriptor());
 //         path = new ItemPath("Reporter.controlType", srcNs);
 //         descSet.add(path.getItemPrefetchDescriptor());
 //         path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
 //         descSet.add(path.getItemPrefetchDescriptor());
-//         path = new ItemPath("Reporter.immobilizedCharacteristics.type.sequenceDatabases.database", srcNs);
+//         path = new ItemPath(
+//               "Reporter.immobilizedCharacteristics.type.sequenceDatabases.database", srcNs);
 //         descSet.add(path.getItemPrefetchDescriptor());
 //         paths.put(srcNs + "Reporter", descSet);
 
