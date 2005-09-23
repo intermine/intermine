@@ -86,7 +86,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
+    public ActionForward run(ActionMapping mapping,
                               ActionForm form,
                               HttpServletRequest request,
                               HttpServletResponse response)

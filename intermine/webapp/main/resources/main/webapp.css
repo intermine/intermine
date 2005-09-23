@@ -224,6 +224,9 @@ table td {
 .heading {
   line-height: 1.4em;
 }
+.heading2, .heading {
+  background: url(images/heading-bg.gif) top center repeat;
+}
 .heading sub, .heading sup {
   line-height: 0;
 }

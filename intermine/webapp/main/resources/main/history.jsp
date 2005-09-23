@@ -27,13 +27,7 @@
   <fmt:message key="history.intro"/>
 </div>
 <br/>
-<c:choose>
-  <c:when test="${empty PROFILE.savedBags && empty PROFILE.savedQueries && empty PROFILE.history}">
-    <div class="body altmessage">
-      <fmt:message key="history.nohistory"/>
-    </div>
-  </c:when>
-  <c:otherwise>
+
     <tiles:get name="historyBagView"/>
     <c:if test="${!empty PROFILE.username}">
       <tiles:insert name="historyQueryView">
@@ -43,9 +37,7 @@
     <tiles:insert name="historyQueryView">
       <tiles:put name="type" value="history"/>
     </tiles:insert>
-  </c:otherwise>
-</c:choose>
-
+    
 <tiles:get name="historyTemplateView.jsp"/>
   
 <!-- /history.jsp -->
