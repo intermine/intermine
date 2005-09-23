@@ -1,5 +1,5 @@
 BioEntity = BioSequence
-MicroArrayAssay = DerivedBioAssay
+MicroArrayAssay = MeasuredBioAssay
 MicroArrayExperiment = Experiment
 MicroArrayResult = BioAssayDatum
 #Publication = BibliographicReference
