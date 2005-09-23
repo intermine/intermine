@@ -97,7 +97,8 @@ public class ImageCloneConverter extends CDNACloneConverter
                 String cloneId = array[5].trim();
                 if (StringUtil.allDigits(cloneId)) {
                     Item clone = createClone("CDNAClone", cloneId, organism.getIdentifier(),
-                    gene.getIdentifier(), dataSource.getIdentifier(),dataSet.getIdentifier(), writer);
+                                 gene.getIdentifier(), dataSource.getIdentifier(),
+                                 dataSet.getIdentifier(), writer);
                  }
             }
         }
@@ -135,8 +136,9 @@ public class ImageCloneConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createClone(String clsName, String id, String orgId, String geneId, String datasourceId,
-                  String datasetId, ItemWriter writer)  throws Exception {
+     private Item createClone(String clsName, String id, String orgId, String geneId,
+                              String datasourceId, String datasetId, ItemWriter writer)
+        throws Exception {
         Item clone = (Item) cloneMap.get(id);
         if (clone == null) {
             clone = createItem(clsName);
@@ -144,7 +146,7 @@ public class ImageCloneConverter extends CDNACloneConverter
             clone.setReference("organism", orgId);
             clone.setReference("gene", geneId);
             clone.addCollection(new ReferenceList("evidence",
-                                        new ArrayList(Collections.singleton(datasetId))));
+                                new ArrayList(Collections.singleton(datasetId))));
             cloneMap.put(id, clone);
             writer.store(ItemHelper.convert(clone));
 
