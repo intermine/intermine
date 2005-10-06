@@ -148,9 +148,10 @@ public class CreateReferences
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-        LOG.info("insertReferences stage 13");
+        LOG.info("insertReferences stage 13 - now deprecated - "
+                + "this function is now performed by the GoConverter !!!");
         // Gene.goAnnotations
-        createGOAnnotationCollection();
+        //createGOAnnotationCollection();
 
         LOG.info("insertReferences stage 14");
         // Gene.phenotypes
@@ -173,8 +174,9 @@ public class CreateReferences
     public void insertSymmetricalRelationReferences() throws Exception {
         LOG.info("insertReferences stage 1");
         // Transcript.exons / Exon.transcripts
-        insertSymmetricalRelationReferences(LocatedSequenceFeature.class, OverlapRelation.class,
-                                            "overlappingFeatures");
+        insertSymmetricalRelationReferences(
+                LocatedSequenceFeature.class, OverlapRelation.class, "overlappingFeatures"
+        );
     }
 
 
@@ -520,11 +522,11 @@ public class CreateReferences
      * @param objectClass the class of the objects to which the collection will be added and which
      * should be in the bioEntities collection of the relationClass
      * @param relationClass the class that relates objectClass objects togeather
-     * @param collectionFieldName the name of the collection to set
+     * @param collectionFieldName if there is a collection other than bioEntities which is available
      * @throws Exception if anything goes wrong
      */
-    protected void insertSymmetricalRelationReferences(Class objectClass, Class relationClass,
-                                                       String collectionFieldName)
+    protected void insertSymmetricalRelationReferences(
+            Class objectClass, Class relationClass, String collectionFieldName)
         throws Exception {
         LOG.info("Beginning insertSymmetricalReferences(" + objectClass.getName() + ", "
                  + relationClass.getName() + ", "
@@ -534,8 +536,8 @@ public class CreateReferences
         Set newCollection = new HashSet();
         // results will be:  object1, relation, object2  (ordered by object1)
         Iterator resIter =
-            PostProcessUtil.findSymmetricalRelation(osw.getObjectStore(), objectClass,
-                                                    relationClass);
+            PostProcessUtil.findSymmetricalRelation(
+                    osw.getObjectStore(), objectClass, relationClass);
 
         osw.beginTransaction();
 
@@ -598,7 +600,7 @@ public class CreateReferences
 
         osw.beginTransaction();
 
-        Iterator resIter = findProteinProperties();
+        Iterator resIter = findProteinProperties(true);
 
         int count = 0;
 
@@ -631,6 +633,7 @@ public class CreateReferences
     /**
      * Creates a collection of GOAnnotation objects on Genes.
      * @throws Exception if anything goes wrong
+     * @deprecated no longer needed as this is done in the GoConverter now ???
      */
     protected void createGOAnnotationCollection() throws Exception {
         Query q = new Query();
@@ -799,10 +802,13 @@ public class CreateReferences
 
 
     /**
-     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene, Protein and
-     * GOTerm.
+     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
+     *  Protein and GOTerm.
+     *
+     * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
+     *  and the go term.
      */
-    private Iterator findProteinProperties() throws Exception {
+    private Iterator findProteinProperties(boolean restrictToPrimaryGoTermsOnly) throws Exception {
         Query q = new Query();
 
         q.setDistinct(false);
@@ -815,9 +821,17 @@ public class CreateReferences
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
 
-        QueryClass qcAnnotation = new QueryClass(Annotation.class);
-        q.addFrom(qcAnnotation);
-        q.addToSelect(qcAnnotation);
+        QueryClass qcAnnotation = null;
+
+        if (restrictToPrimaryGoTermsOnly) {
+            qcAnnotation = new QueryClass(GOAnnotation.class);
+            q.addFrom(qcAnnotation);
+            q.addToSelect(qcAnnotation);
+        } else {
+            qcAnnotation = new QueryClass(Annotation.class);
+            q.addFrom(qcAnnotation);
+            q.addToSelect(qcAnnotation);
+        }
 
         QueryClass qcGOTerm = new QueryClass(GOTerm.class);
         q.addFrom(qcGOTerm);
@@ -840,6 +854,15 @@ public class CreateReferences
         ContainsConstraint annPropertyConstraint =
             new ContainsConstraint(annPropertyRef, ConstraintOp.CONTAINS, qcGOTerm);
         cs.addConstraint(annPropertyConstraint);
+
+        if (restrictToPrimaryGoTermsOnly) {
+            QueryField isPrimaryTermQueryField =
+                    new QueryField(qcAnnotation, "isPrimaryAssignment");
+            QueryValue trueValue = new QueryValue(Boolean.TRUE);
+            SimpleConstraint primeConst =
+                    new SimpleConstraint(isPrimaryTermQueryField, ConstraintOp.EQUALS, trueValue);
+            cs.addConstraint(primeConst);
+        }
 
         q.setConstraint(cs);
 
