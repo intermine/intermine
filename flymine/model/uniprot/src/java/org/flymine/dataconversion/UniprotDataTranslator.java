@@ -609,6 +609,10 @@ public class UniprotDataTranslator extends DataTranslator
         if ((col == null) || col.getRefIds().isEmpty()) {
             return Collections.EMPTY_LIST;
         }
+
+     LOG.warn("UDT.getItemsInCollection()...col.getName() = " + col.getName()
+             + (attributeName != null ? attributeName : " attrname=null "));
+
         StringBuffer refIds = new StringBuffer();
         boolean needComma = false;
         Iterator refIdIter = col.getRefIds().iterator();
@@ -642,6 +646,9 @@ public class UniprotDataTranslator extends DataTranslator
         while (refIdIter.hasNext()) {
             Item tmpItem = (Item) itemMap.get(refIdIter.next());
             if (tmpItem != null) {
+
+              LOG.warn("UDT.getItemsInCollection()...tmpItem.getClassName() = "
+                      + tmpItem.getClassName());
                 retval.add(tmpItem);
             }
         }
