@@ -152,7 +152,7 @@ public class CreateReferencesTest extends TestCase {
     public void testGeneGOAnnotationCollection() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
         cr.insertGeneAnnotationReferences();
-        cr.createGOAnnotationCollection();
+        //cr.createGOAnnotationCollection();
         compareGeneGOAnnotationToExpected();
     }
 
