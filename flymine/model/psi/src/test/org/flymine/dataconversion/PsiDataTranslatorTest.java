@@ -16,8 +16,11 @@ import java.util.LinkedHashMap;
 import java.util.Collection;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.File;
+import java.io.FileWriter;
 
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
@@ -31,19 +34,27 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     public PsiDataTranslatorTest(String arg) {
         super(arg);
     }
-
+                         
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
 
         // print out source items XML - result of running XmlConverter on PSI XML
-//         FileWriter writer = new FileWriter(new File("src.xml"));
-//         writer.write(FullRenderer.render(srcItems));
-//         writer.close();
+         FileWriter writer = new FileWriter(new File("src.xml"));
+         writer.write(FullRenderer.render(srcItems));
+         writer.write(FullRenderer.render(srcItems));
+         writer.close();
 
         DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
                                                           mapping, srcModel, getTargetModel(tgtNs));
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
+
+        //FileWriter fw = new FileWriter(new File("/home/pmclaren/svn/dev/flymine/psi_tgts.xml"));
+        //fw.write("<items>");
+        //fw.write(tgtIw.getItems().toString());
+        //fw.write("</items>");
+        //fw.flush();
+        //fw.close();
 
         System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
 
@@ -60,14 +71,17 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/PsiDataTranslatorTest_tgt.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream(
+                "test/PsiDataTranslatorTest_tgt.xml"));
     }
 
     protected Collection getSrcItems() throws Exception {
         Model psiModel = Model.getInstanceByName("psi");
-        Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/PsiDataTranslatorTest_src.xml")));
+        Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream(
+                "test/PsiDataTranslatorTest_src.xml")));
         MockItemWriter mockIw = new MockItemWriter(new HashMap());
-        Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("psi.xsd"));
+        Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(
+                "psi.xsd"));
 
         XmlConverter converter = new XmlConverter(psiModel, xsdReader, mockIw);
         converter.process(srcReader);
