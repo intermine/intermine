@@ -9,7 +9,6 @@ package org.flymine.postprocess;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStore;
@@ -19,25 +18,32 @@ import org.flymine.model.genomic.ProteinFeature;
 
 import java.util.*;
 
-
 /**
  * Sets equivalent Interpro Features to point to one another after dataloading has occured.
  *
  * @author Peter Mclaren
  */
-public class UpdateEquivalentInterproFeatures {
+public class UpdateEquivalentInterproFeatures
+{
 
     private static final Logger LOG = Logger.getLogger(UpdateEquivalentInterproFeatures.class);
 
     protected ObjectStoreWriter osw;
     protected ObjectStore os;
 
+    /**
+     * Constructor
+     *
+     * @param osw - the object store writer
+     * */
     public UpdateEquivalentInterproFeatures(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
     }
 
-    /***/
+    /**
+     * @throws ObjectStoreException if there is a problem
+     * */
     public void updateEquivalentFeatures() throws ObjectStoreException {
 
         Query pdq = new Query();
@@ -56,35 +62,38 @@ public class UpdateEquivalentInterproFeatures {
 
         QueryField pd1InterproIdQF = new QueryField(pd1QC, "interproId");
         QueryField pd2InterproIdQF = new QueryField(pd2QC, "interproId");
-        SimpleConstraint equalIproIdSC = new SimpleConstraint(pd1InterproIdQF, ConstraintOp.EQUALS, pd2InterproIdQF);
+        SimpleConstraint equalIproIdSC =
+                new SimpleConstraint(pd1InterproIdQF, ConstraintOp.EQUALS, pd2InterproIdQF);
         cs.addConstraint(equalIproIdSC);
 
         QueryField pd1IdQF = new QueryField(pd1QC, "id");
         QueryField pd2IdQF = new QueryField(pd2QC, "id");
-        SimpleConstraint notEqualIntermineIdSC = new SimpleConstraint(pd1IdQF, ConstraintOp.NOT_EQUALS, pd2IdQF);
+        SimpleConstraint notEqualIntermineIdSC =
+                new SimpleConstraint(pd1IdQF, ConstraintOp.NOT_EQUALS, pd2IdQF);
         cs.addConstraint(notEqualIntermineIdSC);
 
         pdq.setConstraint(cs);
 
         //keep a map of interpro id's to sets of their child ProteinFeature objects...
         LOG.info("UpdateEquivalentInterproFeatures - BUILDING FEATURE PAIRS");
-        Map ProteinFeaturePairsMappedByInterproId = null;
+        Map proteinFeaturePairsMappedByInterproId = null;
         try {
-            ProteinFeaturePairsMappedByInterproId = buildInterproIdIndexedMapFromQuery(pdq);
+            proteinFeaturePairsMappedByInterproId = buildInterproIdIndexedMapFromQuery(pdq);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
         }
 
         //ok, now we need to map the domains to each other - but NOT to themselves!!!
         LOG.info("UpdateEquivalentInterproFeatures - SETTING EQUIVALENT FEATURE MAPPINGS");
-        setEquivalentProteinFeatureMappings(ProteinFeaturePairsMappedByInterproId);
+        setEquivalentProteinFeatureMappings(proteinFeaturePairsMappedByInterproId);
 
         //ok, now we should store any data...
         LOG.info("UpdateEquivalentInterproFeatures - STORING RESULTS");
-        storeEquivalentFeatures(ProteinFeaturePairsMappedByInterproId);
+        storeEquivalentFeatures(proteinFeaturePairsMappedByInterproId);
     }
 
-    private Map buildInterproIdIndexedMapFromQuery(Query pdq) throws ObjectStoreException, IllegalAccessException {
+    private Map buildInterproIdIndexedMapFromQuery(Query pdq)
+            throws ObjectStoreException, IllegalAccessException {
 
         Results results = os.execute(pdq);
         Iterator resIter = results.iterator();
@@ -108,46 +117,53 @@ public class UpdateEquivalentInterproFeatures {
                     mappedFeaturePairs = (Collection) pdMap.get(currentInterproId);
 
                     if (mappedFeaturePairs.contains(pd2)) {
-                        LOG.warn("SKIPPING A ProteinFeature ALREADY MAPPED TO INTERPROID:" + pd1.getInterproId());
+                        LOG.warn("SKIPPING A ProteinFeature ALREADY MAPPED TO INTERPROID:"
+                                + pd1.getInterproId());
                     } else {
-                        LOG.info("MAPPING* INTERPRO_ID:" + pd1.getInterproId() + " ID1:" + pd1.getId() + " TO ID2:" + pd2.getId());
+                        LOG.info("MAPPING* INTERPRO_ID:" + pd1.getInterproId() + " ID1:"
+                                + pd1.getId() + " TO ID2:" + pd2.getId());
 
-                        mappedFeaturePairs.add(new ProteinFeaturePair((ProteinFeature) PostProcessUtil.cloneInterMineObject(pd1),
+                        mappedFeaturePairs.add(new ProteinFeaturePair(
+                                (ProteinFeature) PostProcessUtil.cloneInterMineObject(pd1),
                                 (ProteinFeature) PostProcessUtil.cloneInterMineObject(pd2)));
 
                         //mappedFeaturePairs.add(new ProteinFeaturePair(pd1,pd2));
                     }
                 } else {
                     Collection newFeaturePairs = new ArrayList();
-                    LOG.info("MAPPING@ INTERPRO_ID:" + pd1.getInterproId() + " ID1:" + pd1.getId() + " TO ID2:" + pd2.getId());
+                    LOG.info("MAPPING@ INTERPRO_ID:" + pd1.getInterproId() + " ID1:"
+                            + pd1.getId() + " TO ID2:" + pd2.getId());
 
-                    newFeaturePairs.add(new ProteinFeaturePair((ProteinFeature) PostProcessUtil.cloneInterMineObject(pd1),
+                    newFeaturePairs.add(new ProteinFeaturePair(
+                            (ProteinFeature) PostProcessUtil.cloneInterMineObject(pd1),
                             (ProteinFeature) PostProcessUtil.cloneInterMineObject(pd2)));
 
                     //newFeaturePairs.add(new ProteinFeaturePair(pd1,pd2));
                     pdMap.put(currentInterproId, newFeaturePairs);
                 }
             } else {
-                throw new ObjectStoreException("UEIM - CANT PROCESS PAIRS WITH MISMATCHING INTERPROIDS!");
+                throw new ObjectStoreException(
+                        "UEIM - CANT PROCESS PAIRS WITH MISMATCHING INTERPROIDS!");
             }
         }
 
         for (Iterator ipidit = pdMap.keySet().iterator(); ipidit.hasNext();) {
 
             Object nextIpId = ipidit.next();
-            LOG.info("INTERPROID:" + nextIpId.toString() + " HAS THIS MANY FEATURE PAIRS:" + ((Collection) pdMap.get(nextIpId)).size());
+            LOG.info("INTERPROID:" + nextIpId.toString() + " HAS THIS MANY FEATURE PAIRS:"
+                    + ((Collection) pdMap.get(nextIpId)).size());
         }
 
         return pdMap;
     }
 
-    private void setEquivalentProteinFeatureMappings(Map interproIdIndexedMapOfProtenFeatures) {
+    private void setEquivalentProteinFeatureMappings(Map iproIdToFeatureMap) {
 
         //Iterate over each collection of FeaturePairs that relate to a given interproid.
-        for (Iterator ipidit = interproIdIndexedMapOfProtenFeatures.keySet().iterator(); ipidit.hasNext();) {
+        for (Iterator ipidit = iproIdToFeatureMap.keySet().iterator(); ipidit.hasNext();) {
 
             Object nextIpId = ipidit.next();
-            Collection nextFeaturePairCollection = (Collection) interproIdIndexedMapOfProtenFeatures.get(nextIpId);
+            Collection nextFeaturePairCollection = (Collection) iproIdToFeatureMap.get(nextIpId);
 
             Map a2bSetMap = new HashMap();
 
@@ -155,12 +171,13 @@ public class UpdateEquivalentInterproFeatures {
             ProteinFeature nextFeatureA = null;
             ProteinFeature nextFeatureB = null;
 
-            //Loop over all the pairs and build up complete sets for each feature of its related equivalent features.
+            //Loop over all the pairs and build up complete sets for each
+            // feature of its related equivalent features.
             for (Iterator nmpcit = nextFeaturePairCollection.iterator(); nmpcit.hasNext();) {
 
                 nextFeaturePair = (ProteinFeaturePair) nmpcit.next();
-                nextFeatureA = nextFeaturePair.getProteinFeatureA();
-                nextFeatureB = nextFeaturePair.getProteinFeatureB();
+                nextFeatureA = nextFeaturePair.getProteinFeatureOne();
+                nextFeatureB = nextFeaturePair.getProteinFeatureTwo();
 
                 if (nextFeatureA.getId() != nextFeatureB.getId()) {
 
@@ -175,7 +192,7 @@ public class UpdateEquivalentInterproFeatures {
                     }
 
                 } else {
-                    LOG.info("SKIPPING SETTING A SELF REFERENCE IN PROTEINFEATURE.EQUIVALENTFEATURES!");
+                    LOG.info("SKIPPING A SELF REFERENCE IN PROTEINFEATURE.EQUIVALENTFEATURES!");
                 }
             }
 
@@ -183,17 +200,17 @@ public class UpdateEquivalentInterproFeatures {
             // - since the add feature one by one approach is buggy - for now at least...
             for (Iterator a2bMapIt = a2bSetMap.keySet().iterator(); a2bMapIt.hasNext();) {
 
-                ProteinFeature theKey = (ProteinFeature)a2bMapIt.next();
-                Set theSet = (Set)a2bSetMap.get(theKey);
+                ProteinFeature theKey = (ProteinFeature) a2bMapIt.next();
+                Set theSet = (Set) a2bSetMap.get(theKey);
                 theKey.setEquivalentFeatures(theSet);
             }
         }
     }
 
 
-    private void storeEquivalentFeatures(Map domainsWithEquivalentsSet) throws ObjectStoreException {
+    private void storeEquivalentFeatures(Map domainsWithEquivalents) throws ObjectStoreException {
 
-        Collection domainPairCollectionsToStore = domainsWithEquivalentsSet.values();
+        Collection domPairsToStore = domainsWithEquivalents.values();
         Collection nextBunchOfPairs = null;
 
         ProteinFeaturePair nextProteinFeaturePair = null;
@@ -203,15 +220,15 @@ public class UpdateEquivalentInterproFeatures {
         //need to store the results...
         osw.beginTransaction();
 
-        for (Iterator nextCollectionIt = domainPairCollectionsToStore.iterator(); nextCollectionIt.hasNext();) {
+        for (Iterator nextCollectionIt = domPairsToStore.iterator(); nextCollectionIt.hasNext();) {
 
             nextBunchOfPairs = (Collection) nextCollectionIt.next();
 
             for (Iterator pairIt = nextBunchOfPairs.iterator(); pairIt.hasNext();) {
 
                 nextProteinFeaturePair = (ProteinFeaturePair) pairIt.next();
-                nextProteinFeatureA = nextProteinFeaturePair.getProteinFeatureA();
-                nextProteinFeatureB = nextProteinFeaturePair.getProteinFeatureB();
+                nextProteinFeatureA = nextProteinFeaturePair.getProteinFeatureOne();
+                nextProteinFeatureB = nextProteinFeaturePair.getProteinFeatureTwo();
 
                 osw.store(nextProteinFeatureA);
                 osw.store(nextProteinFeatureB);
@@ -222,26 +239,28 @@ public class UpdateEquivalentInterproFeatures {
 
 
     //Simple little bean to make my life easier...
-    private class ProteinFeaturePair {
+    private class ProteinFeaturePair
+    {
 
-        private ProteinFeature ProteinFeatureA = null;
-        private ProteinFeature ProteinFeatureB = null;
+        private ProteinFeature proteinFeatureOne = null;
+        private ProteinFeature proteinFeatureTwo = null;
 
         private ProteinFeaturePair() {
         }
 
-        public ProteinFeaturePair(ProteinFeature ProteinFeatureA, ProteinFeature ProteinFeatureB) {
+        public ProteinFeaturePair(
+                ProteinFeature proteinFeatureOne, ProteinFeature proteinFeatureTwo) {
             this();
-            this.ProteinFeatureA = ProteinFeatureA;
-            this.ProteinFeatureB = ProteinFeatureB;
+            this.proteinFeatureOne = proteinFeatureOne;
+            this.proteinFeatureTwo = proteinFeatureTwo;
         }
 
-        public ProteinFeature getProteinFeatureA() {
-            return ProteinFeatureA;
+        public ProteinFeature getProteinFeatureOne() {
+            return proteinFeatureOne;
         }
 
-        public ProteinFeature getProteinFeatureB() {
-            return ProteinFeatureB;
+        public ProteinFeature getProteinFeatureTwo() {
+            return proteinFeatureTwo;
         }
     }
 
