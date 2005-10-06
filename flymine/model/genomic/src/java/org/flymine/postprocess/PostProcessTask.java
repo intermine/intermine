@@ -178,8 +178,14 @@ public class PostProcessTask extends Task
 //                 HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
 //                 hpp.connectDrosophilaGenesToHumanDiseases();
             } else if ("update-equivalent-interpro-features".equals(operation)) {
-//                 UpdateEquivalentInterproFeatures ueid = new UpdateEquivalentInterproFeatures(getObjectStoreWriter());
-//                 ueid.updateEquivalentFeatures();
+                UpdateEquivalentInterproFeatures ueid =
+                        new UpdateEquivalentInterproFeatures(getObjectStoreWriter());
+                ueid.updateEquivalentFeatures();
+            } else if ("update-protein-interactions".equals(operation)) {
+                LOG.info("PostProcessTask.update-protein-interactions called!");
+                UpdateProteinInteractions upi =
+                        new UpdateProteinInteractions(getObjectStoreWriter());
+                upi.updateProteinInteractions();
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();
