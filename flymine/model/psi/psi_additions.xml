@@ -1,27 +1,36 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.ProteinInteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
-  <attribute name="name" type="java.lang.String"/>
-  <reference name="featureDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
-  <reference name="interactionDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
-  <reference name="hostOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
-  <reference name="participantDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
-  <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
-</class>
-<class name="org.flymine.model.genomic.ProteinInteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
-<class name="org.flymine.model.genomic.ProteinInteraction" extends="org.flymine.model.genomic.Relation" is-interface="true">
-  <attribute name="preyIsOverexpressed" type="java.lang.Boolean"/>
-  <attribute name="preyIsTagged" type="java.lang.Boolean"/>
-  <attribute name="baitIsTagged" type="java.lang.Boolean"/>
-  <attribute name="baitIsOverexpressed" type="java.lang.Boolean"/>
-  <reference name="prey" referenced-type="org.flymine.model.genomic.Protein"/>
-  <reference name="bait" referenced-type="org.flymine.model.genomic.Protein"/>
-  <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
-</class>
-<class name="org.flymine.model.genomic.Sequence" is-interface="true">
-  <attribute name="residues" type="java.lang.String"/>
-</class>
-<class name="org.flymine.model.genomic.Protein" is-interface="true">
-  <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true"/>
-</class>
+    <class name="org.flymine.model.genomic.ProteinInteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <reference name="featureDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
+        <reference name="interactionDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
+        <reference name="hostOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
+        <reference name="participantDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
+        <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinInteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
+
+    <class name="org.flymine.model.genomic.ProteinInteraction" extends="org.flymine.model.genomic.Relation" is-interface="true">
+        <attribute name="shortName" type="java.lang.String"/>
+        <reference name="bait" referenced-type="org.flymine.model.genomic.Protein"/>
+        <reference name="prey" referenced-type="org.flymine.model.genomic.Protein"/>
+        <collection name="complex" referenced-type="org.flymine.model.genomic.Protein" ordered="true"/>
+        <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.Sequence" is-interface="true">
+        <attribute name="residues" type="java.lang.String"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.Protein" is-interface="true">
+        <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.AnalysisResult" extends="org.flymine.model.genomic.Evidence" is-interface="true">
+        <attribute name="confidenceDesc" type="java.lang.String"/>
+    </class>
+
 </classes>
+
+
