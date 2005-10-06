@@ -165,6 +165,7 @@
     <fields>
       <fieldconfig fieldExpr="bait.primaryAccession" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="prey.primaryAccession" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
   </class>
 
@@ -192,6 +193,7 @@
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="confidenceDesc" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="source.title" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
   </class>
