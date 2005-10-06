@@ -25,16 +25,9 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.apache.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * DataTranslator specific to Protein Interaction data in PSI XML format.
@@ -46,6 +39,8 @@ public class PsiDataTranslator extends DataTranslator
 {
     private Item db, swissProt;
     private Map pubs = new HashMap();
+
+    protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
 
     /**
      * @see DataTranslator#DataTranslator
@@ -68,74 +63,6 @@ public class PsiDataTranslator extends DataTranslator
 
         super.translate(tgtItemWriter);
     }
-
-    /**
-     * @see DataTranslator#getItemIterator
-     *
-    public Iterator getItemIterator() throws ObjectStoreException {
-        ObjectStoreItemPathFollowingImpl os = ((ObjectStoreItemReader) srcItemReader)
-            .getObjectStore();
-        List iters = new ArrayList();
-
-        Query q = new Query();
-        QueryClass qc = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"), ConstraintOp.EQUALS,
-                    new QueryValue("http://www.flymine.org/model/psi#ExperimentType")));
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
-        res.setBatchSize(1000);
-        res.setNoExplain();
-        res.setNoOptimise();
-        iters.add(res.iterator());
-
-        q = new Query();
-        qc = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"), ConstraintOp.EQUALS,
-                    new QueryValue("http://www.flymine.org/model/psi#InteractionElementType")));
-        res = new SingletonResults(q, os, os.getSequence());
-        res.setBatchSize(1000);
-        res.setNoExplain();
-        res.setNoOptimise();
-
-        q = new Query();
-        qc = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"), ConstraintOp.EQUALS,
-                    new QueryValue("http://www.flymine.org/model/psi#ProteinInteratorType")));
-        res = new SingletonResults(q, os, os.getSequence());
-        res.setBatchSize(1000);
-        res.setNoExplain();
-        res.setNoOptimise();
-
-        q = new Query();
-        qc = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"), ConstraintOp.EQUALS,
-                    new QueryValue("http://www.flymine.org/model/psi#Source_Entry_EntrySet")));
-        res = new SingletonResults(q, os, os.getSequence());
-        res.setBatchSize(1000);
-        res.setNoExplain();
-        res.setNoOptimise();
-
-        q = new Query();
-        qc = new QueryClass(org.intermine.model.fulldata.Item.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new SimpleConstraint(new QueryField(qc, "className"), ConstraintOp.EQUALS,
-                    new QueryValue("http://www.flymine.org/model/psi#CvType")));
-        res = new SingletonResults(q, os, os.getSequence());
-        res.setBatchSize(1000);
-        res.setNoExplain();
-        res.setNoOptimise();
-        iters.add(res.iterator());
-
-        return new CombinedIterator(iters);
-    }/*
 
     /**
      * @see DataTranslator#translateItem
@@ -188,6 +115,9 @@ public class PsiDataTranslator extends DataTranslator
                             if (Character.isDigit(value.charAt(0))
                                 && name.equals("author-confidence")) {
                                 tgtItem.addAttribute(new Attribute("confidence", value));
+                            } else if (name.equals("author-confidence")) {
+                                //If we have some text instead of a numerical value...
+                                tgtItem.addAttribute(new Attribute("confidenceDesc", value));
                             }
                         }
                     }
@@ -237,31 +167,59 @@ public class PsiDataTranslator extends DataTranslator
         throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
         Item participants = getReference(intElType, "participantList");
+
+        ArrayList preyRefIdsList = new ArrayList();
+
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             Item participant = (Item) i.next();
             if (getReference(participant, "featureList") != null) {
                 createProteinRegion(participant, result);
             }
             String role = participant.getAttribute("role").getValue();
-            interaction.addReference(new Reference(role, participant
-                                                   .getReference("proteinInteractorRef")
-                                                   .getRefId()));
-            if (participant.getAttribute("isTaggedProtein") != null) {
-                interaction.addAttribute(new Attribute(role + "IsTagged", participant
-                                                       .getAttribute("isTaggedProtein")
-                                                       .getValue()));
-            }
-            if (participant.getAttribute("isOverexpressedProtein") != null) {
-                interaction.addAttribute(new Attribute(role + "IsOverexpressed", participant
-                                                       .getAttribute("isOverexpressedProtein")
-                                                       .getValue()));
+
+            if (role.equalsIgnoreCase("prey")) {
+                preyRefIdsList.add(participant.getReference("proteinInteractorRef").getRefId());
+            } else {
+                interaction.addReference(
+                        new Reference(role,
+                                participant.getReference("proteinInteractorRef").getRefId()));
             }
         }
-        // object = prey, subject = bait
-        interaction.addReference(new Reference("object",
-                                               interaction.getReference("prey").getRefId()));
-        interaction.addReference(new Reference("subject",
-                                               interaction.getReference("bait").getRefId()));
+
+        Reference namesRef = intElType.getReference("names");
+        org.intermine.model.fulldata.Item namesItem =
+                this.srcItemReader.getItemById(namesRef.getRefId());
+
+        boolean shortLabelFound = false;
+
+        for (Iterator nameIt = namesItem.getAttributes().iterator();
+            nameIt.hasNext() && !shortLabelFound;) {
+
+            org.intermine.model.fulldata.Attribute nextNameAttr
+                    = (org.intermine.model.fulldata.Attribute) nameIt.next();
+            if ("shortLabel".equalsIgnoreCase(nextNameAttr.getName())) {
+                interaction.setAttribute("shortName", nextNameAttr.getValue());
+                LOG.info("INTERACTION.SHORTNAME WAS SET AS:" + nextNameAttr.getValue());
+                shortLabelFound = true;
+            }
+        }
+
+        if (preyRefIdsList.size() == 1) {
+            Object nextPrey = preyRefIdsList.iterator().next();
+
+            LOG.info("PREY ITEM:" + nextPrey.toString());
+            interaction.addReference(new Reference("prey", nextPrey.toString()));
+
+            //If there are only 2 items - bait/prey -
+            // don't create a complex as this is only a pairwise interaction
+            //interaction.setCollection("complex", new ArrayList());
+        } else if (preyRefIdsList.size() > 1) {
+            interaction.addToCollection("complex", interaction.getReference("bait").getRefId());
+        } else {
+            LOG.warn("SKIPPING PREY/COMPLEX REFERENCE CREATION IN A PROTEININTERACTION ITEM!");
+        }
+
+
         return interaction;
     }
 
@@ -339,7 +297,7 @@ public class PsiDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslatorTask#execute
+     * @see org.flymine.task.DataTranslatorTask#execute
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
@@ -474,5 +432,5 @@ public class PsiDataTranslator extends DataTranslator
         paths.put("http://www.flymine.org/model/psi#CvType", Collections.singleton(desc));
 
         return paths;
-    }
+    }    
 }
