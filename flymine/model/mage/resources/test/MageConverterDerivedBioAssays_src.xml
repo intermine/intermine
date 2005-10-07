@@ -55,6 +55,12 @@
 
   </BioAssayData_package>
 
+  <QuantitationType_package>
+    <QuantitationType_assnlist>
+    </QuantitationType_assnlist>
+  </QuantitationType_package>
+
+
   <Experiment_package>
     <Experiment_assnlist>
       <Experiment identifier="E-FLYC-1" name="P10005">

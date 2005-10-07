@@ -36,6 +36,8 @@ import org.biomage.QuantitationType.MeasuredSignal;
 import org.biomage.BioAssayData.QuantitationTypeDimension;
 import org.biomage.BioAssayData.MeasuredBioAssayData;
 import org.biomage.BioAssayData.DerivedBioAssayData;
+import org.biomage.BioAssay.MeasuredBioAssay;
+import org.biomage.BioAssayData.BioAssayDimension;
 import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.DataExternal;
 import org.biomage.Common.MAGEJava;
@@ -96,10 +98,8 @@ public class MageConverterTest extends TestCase
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
         expected.setIdentifier("0_0");
-        Attribute attr = new Attribute();
-        attr.setName("sequence");
-        attr.setValue("GATTACA");
-        expected.addAttribute(attr);
+        expected.setAttribute("sequence", "GATTACA");
+        expected.setAttribute("identifier", "bio_identifier");
 
         assertEquals(expected, converter.createItem(bio));
     }
@@ -189,14 +189,21 @@ public class MageConverterTest extends TestCase
     public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         MageConverter mc = new MageConverter(itemWriter);
-        mc.setParam1("col1, col3");  
-  	    mc.setQTypes();
+        // only take two types should skip middle column of file
+        mc.setQuantitationtypes("col1, col3");
 
-        DerivedBioAssayData dbad=new DerivedBioAssayData();
+        MeasuredBioAssay mba = new MeasuredBioAssay();
+        BioAssayDimension dbaDim = new BioAssayDimension();
+        dbaDim.addToBioAssays(mba);
+
+        DerivedBioAssayData dbad = new DerivedBioAssayData();
         BioDataCube bdc=new BioDataCube();
+
+        bdc.setValueOrder(2);  // DBQ
         DataExternal df=new DataExternal();
         bdc.setDataExternal(df);
         df.setFilenameURI("test/mage_example_data");
+        dbad.setBioAssayDimension(dbaDim);
         dbad.setBioDataValues(bdc);
 
 
@@ -241,41 +248,42 @@ public class MageConverterTest extends TestCase
         Item expected = new Item();
         expected.setClassName(ns + "DerivedBioAssayData");
         expected.setIdentifier("0_0");
-        expected.addReference(createReference("bioDataValues","9_15"));
-        expected.addReference(createReference("quantitationTypeDimension", "6_8"));
-        expected.addReference(createReference("designElementDimension", "1_1"));
+        expected.addReference(createReference("bioDataValues","11_17"));
+        expected.addReference(createReference("quantitationTypeDimension", "8_10"));
+        expected.addReference(createReference("bioAssayDimension", "1_1"));
+        expected.addReference(createReference("designElementDimension", "3_3"));
         mc.seenMap = new LinkedHashMap();
         assertEquals(expected, mc.createItem(dbad));
 
-        Item d=createItems(ns+"BioDataTuples","9_15", "");
+        Item d=createItems(ns+"BioDataTuples","11_17", "");
         ReferenceList rl=new ReferenceList();
         rl.setName("bioAssayTupleData");
 
-        Item d1=createItems(ns+"BioAssayDatum", "10_16","" );
-        d1.addReference(createReference("designElement", "3_3"));
-        d1.addReference(createReference("quantitationType", "7_9"));
-        d1.addReference(createReference("bioAssayData", "0_0"));
+        Item d1=createItems(ns+"BioAssayDatum", "12_18","" );
+        d1.addReference(createReference("designElement", "5_5"));
+        d1.addReference(createReference("quantitationType", "9_11"));
+        d1.addReference(createReference("bioAssay", "2_2"));
         d1.addAttribute(createAttribute("value", "1.006"));
         rl.addRefId(d1.getIdentifier());
 
-        Item d2=createItems(ns+"BioAssayDatum", "10_17","" );
-        d2.addReference(createReference("designElement", "3_3"));
-        d2.addReference(createReference("quantitationType", "7_13"));
-        d2.addReference(createReference("bioAssayData", "0_0"));
+        Item d2=createItems(ns+"BioAssayDatum", "12_19","" );
+        d2.addReference(createReference("designElement", "5_5"));
+        d2.addReference(createReference("quantitationType", "9_15"));
+        d2.addReference(createReference("bioAssay", "2_2"));
         d2.addAttribute(createAttribute("value", "234"));
         rl.addRefId(d2.getIdentifier());
 
-        Item d3=createItems(ns+"BioAssayDatum", "10_18","" );
-        d3.addReference(createReference("designElement", "3_5"));
-        d3.addReference(createReference("quantitationType", "7_9"));
-        d3.addReference(createReference("bioAssayData", "0_0"));
+        Item d3=createItems(ns+"BioAssayDatum", "12_20","" );
+        d3.addReference(createReference("designElement", "5_7"));
+        d3.addReference(createReference("quantitationType", "9_11"));
+        d3.addReference(createReference("bioAssay", "2_2"));
         d3.addAttribute(createAttribute("value", "435.223"));
         rl.addRefId(d3.getIdentifier());
 
-        Item d4=createItems(ns+"BioAssayDatum", "10_19","" );
-        d4.addReference(createReference("designElement", "3_5"));
-        d4.addReference(createReference("quantitationType", "7_13"));
-        d4.addReference(createReference("bioAssayData", "0_0"));
+        Item d4=createItems(ns+"BioAssayDatum", "12_21","" );
+        d4.addReference(createReference("designElement", "5_7"));
+        d4.addReference(createReference("quantitationType", "9_15"));
+        d4.addReference(createReference("bioAssay", "2_2"));
         d4.addAttribute(createAttribute("value", "523"));
         rl.addRefId(d4.getIdentifier());
         d.addCollection(rl);

@@ -115,10 +115,10 @@ public class MageConverter extends FileConverter
         createItem(readMage(reader));
     }
 
-    private MAGEJava readMage(Reader reader) throws IOException {
+    private MAGEJava readMage(Reader reader) throws IOException, Exception {
         File f = new File(new File(System.getProperty("java.io.tmpdir")), "mageconvert.xml");
         File dtd = new File(new File(System.getProperty("java.io.tmpdir")), "MAGE-ML.dtd");
-        System.out.println(f.getAbsolutePath());
+        System .out.println(f.getAbsolutePath());
         BufferedReader dtdReader =  new BufferedReader(new
                 InputStreamReader(getClass().getClassLoader().getResourceAsStream("MAGE-ML.dtd")));
         MAGEReader mageReader = null;
@@ -311,8 +311,16 @@ public class MageConverter extends FileConverter
             String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                 .getFilenameURI();
 
-//          BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
-//          Order order = bdc.getOrder(); //DBQ
+            // TODO throw an exception if all dimensions are > 1
+            BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
+            BioDataCube.Order order = bdc.getOrder(); //DBQ
+            // Order 2 = DBQ, if anyhting different this code *may* not work so throw
+            // an exception just in case.
+            if (order.getValue() != 2) {
+                throw new IllegalArgumentException("BioDataCube has order other than DBQ "
+                                                   + "(was: " + order.getValue() + ")."
+                                                   + " Current code may not work.");
+            }
             List rowNames = null; //D
             DesignElementDimension ddimension =
                   (DesignElementDimension) bad.getDesignElementDimension();
@@ -336,15 +344,25 @@ public class MageConverter extends FileConverter
             Item bdt = makeItem("BioDataTuples");
             ReferenceList dataList = new ReferenceList("bioAssayTupleData");
             boolean storeTuple = false;
+
+            // if all three dimensions are greater than 1 then this code will not work,
+            // need to look into re-writing with better access to contents of BioDataCube.
+            if (rowNames.size() > 1 && colTypes.size() > 1 && qtList.size() > 1) {
+                throw new IllegalArgumentException("All dimensions of BioDataCube were > 1 "
+                                                   + "is unlikely that the current code will "
+                                                   + "work.");
+            }
+
             for (Iterator i = rowNames.iterator(); i.hasNext();) {
                 DesignElement feature = (DesignElement) i.next();
                 String s = br.readLine();
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
                     MeasuredBioAssay mba = (MeasuredBioAssay) j.next();
-                    String value = st.nextToken();
                     for (Iterator k = qtList.iterator(); k.hasNext();) {
                         QuantitationType qt = (QuantitationType) k.next();
+                        String value = st.nextToken();
+
                         if (qTypes.contains(qt.getName())) {
                             storeTuple = true;
                             Item datum = makeItem("BioAssayDatum");
@@ -357,8 +375,6 @@ public class MageConverter extends FileConverter
                                 datum.setReference("reporter", createItem(feature).getIdentifier());
                             }
                             datum.setAttribute("value", value);
-                            // reference to BioAssayData is not in model but adding it makes
-                            //translation easier, avoids enormous amount of prefetch
                             datum.setReference("bioAssay", createItem(mba).getIdentifier());
                             storeItem(datum);
                         }
