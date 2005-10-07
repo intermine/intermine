@@ -118,10 +118,6 @@ public class MageDataTranslator extends DataTranslator
                               Model tgtModel) throws Exception {
         super(srcItemReader, mapping, srcModel, tgtModel);
 
-        System.out.println("trying to find xml class");
-        ClassLoader cl = getClass().getClassLoader();
-        Class c = cl.loadClass("com.bea.xml.stream.XMLOutputFactoryBase");
-        LOG.info("found class: " + c.getName());
         srcNs = srcModel.getNameSpace().toString();
         tgtNs = tgtModel.getNameSpace().toString();
 
@@ -184,9 +180,6 @@ public class MageDataTranslator extends DataTranslator
         Map exptConfig = (Map) config.get(exptName);
         if (exptConfig != null) {
             value = (String) exptConfig.get(propName);
-            //  if (value == null) {
-//                  LOG.warn("No config found for experiment: " + exptName + ", property: " + propName);
-//              }
         } else {
             LOG.warn("No config details found for experiment: " + exptName);
         }
@@ -511,6 +504,9 @@ public class MageDataTranslator extends DataTranslator
 
 
         // PATH BioAssayDatum.quatitationType.scale
+        if (srcItem.hasReference("bioAssay")) {
+            tgtItem.setReference("assay", srcItem.getReference("bioAssay").getRefId());
+        }
 
         if (srcItem.hasReference("designElement")) {
             // map from genomic:MicroArrayResult identifier to mage:Feature identifier
@@ -733,8 +729,10 @@ public class MageDataTranslator extends DataTranslator
         // TODO check if BioSource (genomic:Sample) and create map from sample to top
         // level LabeledExtract.  Sample needs collection of treatments.
 
-        // LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial.treatments.sourceBioMaterialMeasurements.bioMaterial.
-        //               [Treatment]    [BioMaterialMeasurement]   [BioSample] [Treatment]  [BioMaterialMeasurement]    [BioSample]
+        // LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
+        //.treatments.sourceBioMaterialMeasurements.bioMaterial.
+        //               [Treatment]    [BioMaterialMeasurement]   [BioSample]
+        //[Treatment]  [BioMaterialMeasurement]    [BioSample]
 
         // PATH is recursive - duplicate a number of times?  Refactor easier prefetch
         // PATH LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
@@ -1002,7 +1000,8 @@ public class MageDataTranslator extends DataTranslator
             //should be result2bioassay
             if (resultToBioAssay.containsKey(maResultId)) {
                 String assayId = (String) resultToBioAssay.get(maResultId);
-                maResult.setReference("assay", assayId);
+                // assay reference should already be set
+                // maResult.setReference("assay", assayId);
                 if (assayToSamples.containsKey(assayId)) {
                     maResult.addCollection(new ReferenceList("samples",
                             (List) assayToSamples.get(assayId)));
@@ -1228,7 +1227,9 @@ public class MageDataTranslator extends DataTranslator
         paths.put(srcNs + "Experiment", descSet);
 
         descSet = new HashSet();
-        path = new ItemPath("MeasuredBioAssay.featureExtraction.physicalBioAssaySource.bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial", srcNs);
+        path = new ItemPath("MeasuredBioAssay.featureExtraction.physicalBioAssaySource."
+                            + "bioAssayCreation.sourceBioMaterialMeasurements.bioMaterial",
+                            srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "MeasuredBioAssay", descSet);
 
@@ -1250,7 +1251,8 @@ public class MageDataTranslator extends DataTranslator
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial"
                             , srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial.treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
+        path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial."
+                            + "treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "LabeledExtract", descSet);
 
@@ -1267,7 +1269,8 @@ public class MageDataTranslator extends DataTranslator
         path = new ItemPath("Treatment.protocolApplications.protocol", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath(
-               "Treatment.protocolApplications.parameterValues.parameterType.defaultValue.measurement.unit",
+               "Treatment.protocolApplications.parameterValues.parameterType.defaultValue"
+               + ".measurement.unit",
                srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
 
