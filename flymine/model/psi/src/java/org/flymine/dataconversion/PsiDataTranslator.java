@@ -34,11 +34,17 @@ import java.util.*;
  *
  * @author Richard Smith
  * @author Andrew Varley
+ * @author Peter Mclaren - Modifications to cater for complex interactions
+ *
+ * TODO: Test with NULL Prey or Bait items (interactions with nothing specific about them...)
  */
 public class PsiDataTranslator extends DataTranslator
 {
     private Item db, swissProt;
     private Map pubs = new HashMap();
+
+    //private Map experimentIdToFeatureDescriptionSets = new HashMap();
+    //private Map experimentIdToExperiment = new HashMap();
 
     protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
 
@@ -62,6 +68,8 @@ public class PsiDataTranslator extends DataTranslator
         db = createItem("DataSet");
 
         super.translate(tgtItemWriter);
+
+        //setExperimentToFeatureDescripionMappings();
     }
 
     /**
@@ -99,12 +107,16 @@ public class PsiDataTranslator extends DataTranslator
                             addToCollection(tgtItem, "comments", comment);
                         }
                     }
+
+                    //experimentIdToExperiment.put(srcItem.getIdentifier(), tgtItem);
+
                 } else if ("InteractionElementType".equals(className)) {
                     addReferencedItem(tgtItem, db, "source", false, "", false);
 
                     Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
                                                          "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
+
                     // set confidence from attributeList
                     if (srcItem.getReference("attributeList") != null) {
                         for (Iterator j = getCollection(getReference(srcItem, "attributeList"),
@@ -163,17 +175,17 @@ public class PsiDataTranslator extends DataTranslator
         return result;
     }
 
-    private Item createProteinInteraction(Item intElType, Collection result)
+    private Item createProteinInteraction(Item srcInteractionElementItem, Collection result)
         throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
-        Item participants = getReference(intElType, "participantList");
+        Item participants = getReference(srcInteractionElementItem, "participantList");
 
         ArrayList preyRefIdsList = new ArrayList();
 
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             Item participant = (Item) i.next();
             if (getReference(participant, "featureList") != null) {
-                createProteinRegion(participant, result);
+                createProteinRegion(interaction, participant, result);
             }
             String role = participant.getAttribute("role").getValue();
 
@@ -186,7 +198,7 @@ public class PsiDataTranslator extends DataTranslator
             }
         }
 
-        Reference namesRef = intElType.getReference("names");
+        Reference namesRef = srcInteractionElementItem.getReference("names");
         org.intermine.model.fulldata.Item namesItem =
                 this.srcItemReader.getItemById(namesRef.getRefId());
 
@@ -206,15 +218,13 @@ public class PsiDataTranslator extends DataTranslator
 
         if (preyRefIdsList.size() == 1) {
             Object nextPrey = preyRefIdsList.iterator().next();
-
             LOG.info("PREY ITEM:" + nextPrey.toString());
             interaction.addReference(new Reference("prey", nextPrey.toString()));
 
-            //If there are only 2 items - bait/prey -
-            // don't create a complex as this is only a pairwise interaction
-            //interaction.setCollection("complex", new ArrayList());
         } else if (preyRefIdsList.size() > 1) {
             interaction.addToCollection("complex", interaction.getReference("bait").getRefId());
+            LOG.info("ADDING BAIT ITEM TO A COMPLEX:"
+                    + interaction.getReference("bait").getRefId());
         } else {
             LOG.warn("SKIPPING PREY/COMPLEX REFERENCE CREATION IN A PROTEININTERACTION ITEM!");
         }
@@ -223,13 +233,15 @@ public class PsiDataTranslator extends DataTranslator
         return interaction;
     }
 
-    private void createProteinRegion(Item participant, Collection result)
+    private void createProteinRegion(Item interaction, Item participant, Collection result)
         throws ObjectStoreException {
         Item featureList = getReference(participant, "featureList");
         Item feature = (Item) getCollection(featureList, "features").next();
         Item featureDescription = getReference(feature, "featureDescription");
         Item xref = getReference(featureDescription, "xref");
         Item primaryRef = getReference(xref, "primaryRef");
+
+        //MI:0117 = 'Binding Site'
         if ("MI:0117".equals(primaryRef.getAttribute("id").getValue())) {
             Item location = getReference(feature, "location");
             Item tgtProteinRegion = createItem("ProteinRegion");
@@ -258,12 +270,105 @@ public class PsiDataTranslator extends DataTranslator
             tgtAnnotation.addReference(new Reference("subject", tgtProteinRegion.getIdentifier()));
             tgtAnnotation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier()})));
+
+            //Item tgtFeatureDesc = createItem("FeatureDescription");
+            Item tgtProteinInteractionRegion = createItem("ProteinInteractionRegion");
+
+            tgtProteinInteractionRegion.addAttribute(
+                    new Attribute("name",
+                            getReference(featureDescription,
+                                    "names").getAttribute("shortLabel").getValue()));
+
+            Item psiDagTerm = createItem("OntologyTerm");
+            psiDagTerm.setAttribute("identifier", "MI:0117");
+
+            tgtProteinInteractionRegion.addReference(
+                    new Reference("ontologyTerm", psiDagTerm.getIdentifier()));
+
+            tgtProteinInteractionRegion.addReference(
+                    new Reference("protein",
+                            participant.getReference("proteinInteractorRef").getRefId()));
+
+            tgtProteinInteractionRegion.addReference(
+                    new Reference("location", tgtLocation.getIdentifier()));
+
+            tgtProteinInteractionRegion.addReference(
+                    new Reference("interaction", interaction.getIdentifier()));
+
+            //NOTE: This is done automatically on loading due to the reverse references...
+            //interaction.addToCollection("interactingRegions",
+            //        tgtProteinInteractionRegion.getIdentifier());
+
             result.add(tgtProteinRegion);
             result.add(tgtLocation);
             result.add(tgtTerm);
             result.add(tgtAnnotation);
+            result.add(tgtProteinInteractionRegion);
+            result.add(psiDagTerm);
+        } else {
+            LOG.info("Skipping creating a ProteinRegion as the psi term MI:0117 was not found!");
         }
     }
+
+    /**
+     * Helper method to fetch the relevant feature descriptor set for the given experiment id.
+     * If this is a new experiment then return a new set and keep a reference of it.
+     *
+     * @ param experimentIdRef PSI internal Id string of the experiment we want.
+     * @ return a Set - which may be empty - of feature descriptors for the given experiment id.
+     * *  /
+    private Set getFeatureDescSetByExpId(String experimentIdRef){
+
+        LOG.info("getFeatureDescSetByExpId called!");
+
+        if (! experimentIdToFeatureDescriptionSets.containsKey(experimentIdRef)){
+
+            experimentIdToFeatureDescriptionSets.put(experimentIdRef, new HashSet());
+        }
+
+        return (Set) experimentIdToFeatureDescriptionSets.get(experimentIdRef);
+    }
+
+    private void setExperimentToFeatureDescripionMappings(){
+
+        if (experimentIdToExperiment.keySet().size()
+                != experimentIdToFeatureDescriptionSets.keySet().size()){
+            LOG.warn("POSSIBLE DISCREPANCY IN SOURCE FILE FOR EXPERIMENT INFORMATION!");
+        }
+
+        for (Iterator exKeyIt = experimentIdToExperiment.keySet().iterator(); exKeyIt.hasNext();){
+
+            Object nextExpKey = exKeyIt.next();
+
+            Item expTgtItem = (Item) experimentIdToExperiment.get(nextExpKey);
+            Set featDescSet = (Set) experimentIdToFeatureDescriptionSets.get(nextExpKey);
+
+            if(featDescSet == null){
+                LOG.warn("NOTE: featureDescriptions not set for:" + expTgtItem.getClassName()
+                        + " id:" + expTgtItem.getIdentifier());
+            }
+            else{
+                expTgtItem.setCollection("featureDescriptions", new ArrayList(featDescSet));
+            }
+        }
+
+
+        logNamedCollection("exIdToEx keys", experimentIdToExperiment.keySet());
+        logNamedCollection("exIdToEx vals", experimentIdToExperiment.values());
+        logNamedCollection("exIdToFD keys", experimentIdToFeatureDescriptionSets.keySet());
+        logNamedCollection("exIdToFD vals", experimentIdToFeatureDescriptionSets.values());
+    }
+
+    private void logNamedCollection(String name, Collection values){
+
+        LOG.info("NAME:" + name + " COLLECTION SIZE:" + values.size());
+
+        for(Iterator valIt = values.iterator(); valIt.hasNext();){
+
+            LOG.info(" NEXT_VAL:" + valIt.next().toString());
+        }
+    }
+    */
 
     // Return the publication for a given experiment, creating it if necessary
     // Note that experiments known not to have a publication are stored in the map with a null pub
@@ -284,7 +389,6 @@ public class PsiDataTranslator extends DataTranslator
                             Attribute idAttr = dbReferenceType.getAttribute("id");
                             if (idAttr != null) {
                                 pub = createItem("Publication");
-                                String pubmedId = idAttr.getValue();
                                 pub.addAttribute(new Attribute("pubMedId", idAttr.getValue()));
                             }
                         }
