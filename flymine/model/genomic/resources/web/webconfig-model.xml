@@ -336,6 +336,11 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.ProteinInteractionRegion">
+    <fields>
+      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+    </fields>
+  </class>
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
