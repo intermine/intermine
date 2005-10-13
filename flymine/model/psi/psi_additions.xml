@@ -17,6 +17,7 @@
         <reference name="prey" referenced-type="org.flymine.model.genomic.Protein"/>
         <collection name="complex" referenced-type="org.flymine.model.genomic.Protein" ordered="true"/>
         <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+        <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.ProteinInteractionRegion" ordered="true" reverse-reference="interaction"/>
     </class>
 
     <class name="org.flymine.model.genomic.Sequence" is-interface="true">
@@ -31,6 +32,11 @@
         <attribute name="confidenceDesc" type="java.lang.String"/>
     </class>
 
+    <class name="org.flymine.model.genomic.ProteinInteractionRegion" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <reference name="ontologyTerm" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
+        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
+        <reference name="location" referenced-type="org.flymine.model.genomic.Location"/>
+        <reference name="interaction" referenced-type="org.flymine.model.genomic.ProteinInteraction" reverse-reference="interactingRegions"/>
+    </class>
 </classes>
-
-
