@@ -1,4 +1,3 @@
-DataSet = Source_Entry_EntrySet
 ExperimentalResult = InteractionElementType
 Organism = HostOrganism_ExperimentType, Organism_ProteinInteractorType
 Organism.taxonId = Organism_ProteinInteractorType.ncbiTaxId, HostOrganism_ExperimentType.ncbiTaxId
