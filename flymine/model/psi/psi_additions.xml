@@ -29,6 +29,8 @@
     </class>
 
     <class name="org.flymine.model.genomic.AnalysisResult" extends="org.flymine.model.genomic.Evidence" is-interface="true">
+        <attribute name="confidenceUnit" type="java.lang.String"/>
+        <attribute name="confidenceValue" type="java.lang.String"/>
         <attribute name="confidenceDesc" type="java.lang.String"/>
     </class>
 
