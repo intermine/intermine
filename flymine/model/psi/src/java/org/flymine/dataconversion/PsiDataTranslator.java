@@ -25,9 +25,21 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.apache.log4j.Logger;
 
-import java.util.*;
+import org.flymine.model.genomic.DataSet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * DataTranslator specific to Protein Interaction data in PSI XML format.
@@ -40,8 +52,9 @@ import java.util.*;
  */
 public class PsiDataTranslator extends DataTranslator
 {
-    private Item db, swissProt;
+    private Item dataSource;
     private Map pubs = new HashMap();
+    private Map dataSetMap = new HashMap();
 
     //private Map experimentIdToFeatureDescriptionSets = new HashMap();
     //private Map experimentIdToExperiment = new HashMap();
@@ -61,15 +74,37 @@ public class PsiDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
-        swissProt = createItem("DataSource");
-        swissProt.addAttribute(new Attribute("name", "Swiss-Prot"));
-        tgtItemWriter.store(ItemHelper.convert(swissProt));
-
-        db = createItem("DataSet");
+        dataSource = createItem("DataSource");
+        dataSource.addAttribute(new Attribute("name", "IntAct"));
+        tgtItemWriter.store(ItemHelper.convert(dataSource));
 
         super.translate(tgtItemWriter);
 
-        //setExperimentToFeatureDescripionMappings();
+        Iterator iter = dataSetMap.values().iterator();
+        
+        while (iter.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) iter.next()));
+        }
+    }
+
+    private Item getDataSetFromNamesType(Item namesTypeItem) {
+        String shortName = namesTypeItem.getAttribute("shortLabel").getValue();
+        String fullName = namesTypeItem.getAttribute("fullName").getValue();
+                    
+        Item dataSetItem;
+                    
+        if (dataSetMap.containsKey(shortName)) {
+            dataSetItem = (Item) dataSetMap.get(shortName);
+        } else {
+            dataSetItem = createItem("DataSet");
+            dataSetItem.addAttribute(new Attribute("title", shortName));
+            dataSetItem.addAttribute(new Attribute("description", fullName));
+            dataSetItem.setReference("dataSource", dataSource);
+                   
+            dataSetMap.put(shortName, dataSetItem);
+        }
+
+        return dataSetItem;
     }
 
     /**
@@ -84,6 +119,8 @@ public class PsiDataTranslator extends DataTranslator
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 Item tgtItem = (Item) i.next();
                 if ("ExperimentType".equals(className)) {
+                    Item dataSetItem =
+                        getDataSetFromNamesType(getReference(srcItem, "names"));
                     Item pub = getPub(srcItem);
                     if (pub != null) {
                         tgtItem.addReference(new Reference("publication", pub.getIdentifier()));
@@ -102,7 +139,7 @@ public class PsiDataTranslator extends DataTranslator
                                                                attribute.getAttribute("attribute")
                                                                .getValue()));
                             comment.addReference(new Reference("source",
-                                                               db.getIdentifier()));
+                                                               dataSetItem.getIdentifier()));
                             result.add(comment);
                             addToCollection(tgtItem, "comments", comment);
                         }
@@ -111,11 +148,20 @@ public class PsiDataTranslator extends DataTranslator
                     //experimentIdToExperiment.put(srcItem.getIdentifier(), tgtItem);
 
                 } else if ("InteractionElementType".equals(className)) {
-                    addReferencedItem(tgtItem, db, "source", false, "", false);
-
                     Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
                                                          "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
+
+
+                    // get: tgt.experimentList.experimentRefs[0].names.shortLabel
+                    // and  tgt.experimentList.experimentRefs[0].names.fullName
+                    Iterator experimentRefsIter =
+                        getCollection(getReference(srcItem, "experimentList"), "experimentRefs");
+                    Item namesType = getReference((Item) experimentRefsIter.next(), "names");
+
+                    Item dataSet = getDataSetFromNamesType(namesType);
+                    
+                    tgtItem.setReference("source", dataSet);
 
                     // set confidence from attributeList
                     if (srcItem.getReference("attributeList") != null) {
@@ -133,7 +179,7 @@ public class PsiDataTranslator extends DataTranslator
                             }
                         }
                     }
-                    Item interaction = createProteinInteraction(srcItem, result);
+                    Item interaction = createProteinInteraction(srcItem, result, dataSet);
                     addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
@@ -143,7 +189,7 @@ public class PsiDataTranslator extends DataTranslator
                         String value = dbXref.getAttribute("id").getValue();
                         tgtItem.addAttribute(new Attribute("primaryAccession", value));
                         Item synonym = createItem("Synonym");
-                        addReferencedItem(synonym, swissProt, "source", false, "", false);
+                        addReferencedItem(synonym, dataSource, "source", false, "", false);
                         synonym.addAttribute(new Attribute("value", value));
                         synonym.addAttribute(new Attribute("type", "accession"));
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
@@ -156,10 +202,6 @@ public class PsiDataTranslator extends DataTranslator
                         tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
                         result.add(seq);
                     }
-                } else if ("Source_Entry_EntrySet".equals(className)) {
-                    tgtItem.setIdentifier(db.getIdentifier());
-                    tgtItem.addAttribute(new Attribute("title", getReference(srcItem, "names")
-                                                       .getAttribute("shortLabel").getValue()));
                 } else if ("CvType".equals(className)) {
                     Item xref = getReference(srcItem, "xref");
                     Item primaryRef = getReference(xref, "primaryRef");
@@ -175,7 +217,8 @@ public class PsiDataTranslator extends DataTranslator
         return result;
     }
 
-    private Item createProteinInteraction(Item srcInteractionElementItem, Collection result)
+    private Item createProteinInteraction(Item srcInteractionElementItem, Collection result,
+                                          Item dataSetItem)
         throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
         Item participants = getReference(srcInteractionElementItem, "participantList");
@@ -185,7 +228,7 @@ public class PsiDataTranslator extends DataTranslator
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             Item participant = (Item) i.next();
             if (getReference(participant, "featureList") != null) {
-                createProteinRegion(interaction, participant, result);
+                createProteinRegion(interaction, participant, result, dataSetItem);
             }
             String role = participant.getAttribute("role").getValue();
 
@@ -233,7 +276,8 @@ public class PsiDataTranslator extends DataTranslator
         return interaction;
     }
 
-    private void createProteinRegion(Item interaction, Item participant, Collection result)
+    private void createProteinRegion(Item interaction, Item participant, Collection result,
+                                     Item dataSetItem)
         throws ObjectStoreException {
         Item featureList = getReference(participant, "featureList");
         Item feature = (Item) getCollection(featureList, "features").next();
@@ -260,7 +304,7 @@ public class PsiDataTranslator extends DataTranslator
             tgtLocation.addReference(new Reference("subject", tgtProteinRegion.getIdentifier()));
 
             tgtLocation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                {db.getIdentifier()})));
+                {dataSetItem.getIdentifier()})));
             Item tgtTerm = createItem("ProteinInteractionTerm");
             tgtTerm.addAttribute(new Attribute("identifier",
                                                primaryRef.getAttribute("id")
@@ -269,7 +313,7 @@ public class PsiDataTranslator extends DataTranslator
             tgtAnnotation.addReference(new Reference("property", tgtTerm.getIdentifier()));
             tgtAnnotation.addReference(new Reference("subject", tgtProteinRegion.getIdentifier()));
             tgtAnnotation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                {db.getIdentifier()})));
+                {dataSetItem.getIdentifier()})));
 
             //Item tgtFeatureDesc = createItem("FeatureDescription");
             Item tgtProteinInteractionRegion = createItem("ProteinInteractionRegion");
