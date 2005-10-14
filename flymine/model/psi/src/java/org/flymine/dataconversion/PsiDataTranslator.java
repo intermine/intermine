@@ -26,8 +26,6 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
-import org.flymine.model.genomic.DataSet;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -167,19 +165,27 @@ public class PsiDataTranslator extends DataTranslator
                     if (srcItem.getReference("attributeList") != null) {
                         for (Iterator j = getCollection(getReference(srcItem, "attributeList"),
                                                         "attributes"); j.hasNext();) {
-                            Item attribute = (Item) j.next();
-                            String value = attribute.getAttribute("attribute").getValue().trim();
-                            String name = attribute.getAttribute("name").getValue().trim();
-                            if (Character.isDigit(value.charAt(0))
-                                && name.equals("author-confidence")) {
-                                tgtItem.addAttribute(new Attribute("confidence", value));
-                            } else if (name.equals("author-confidence")) {
-                                //If we have some text instead of a numerical value...
-                                tgtItem.addAttribute(new Attribute("confidenceDesc", value));
+                            Item attrItem = (Item) j.next();
+                            Attribute valueAttr = attrItem.getAttribute("attribute");
+                            Attribute nameAttr = attrItem.getAttribute("name");
+                            if (valueAttr != null && nameAttr != null) {
+
+                                String value = valueAttr.getValue().trim();
+                                String name = nameAttr.getValue().trim();
+                                if (Character.isDigit(value.charAt(0))
+                                    && name.equals("author-confidence")) {
+                                    tgtItem.addAttribute(new Attribute("confidence", value));
+                                } else if (name.equals("author-confidence")) {
+                                    //If we have some text instead of a numerical value...
+                                    tgtItem.addAttribute(new Attribute("confidenceDesc", value));
+                                }
+                            }
+                            else{
+                                LOG.info("Skipped an Attribute - looking for 'author-confidence'");
                             }
                         }
                     }
-                    Item interaction = createProteinInteraction(srcItem, result, dataSet);
+                    Item interaction = createProteinInteraction(srcItem, tgtItem, result, dataSet);
                     addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
@@ -217,8 +223,9 @@ public class PsiDataTranslator extends DataTranslator
         return result;
     }
 
-    private Item createProteinInteraction(Item srcInteractionElementItem, Collection result,
-                                          Item dataSetItem)
+    private Item createProteinInteraction(
+            Item srcInteractionElementItem, Item tgtExperimentalResult, Collection result,
+            Item dataSetItem)
         throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
         Item participants = getReference(srcInteractionElementItem, "participantList");
@@ -232,12 +239,22 @@ public class PsiDataTranslator extends DataTranslator
             }
             String role = participant.getAttribute("role").getValue();
 
-            if (role.equalsIgnoreCase("prey")) {
+            if ("prey".equalsIgnoreCase(role)
+                    || "neutral".equalsIgnoreCase(role)
+                    || "unspecified".equalsIgnoreCase(role)) {
                 preyRefIdsList.add(participant.getReference("proteinInteractorRef").getRefId());
             } else {
-                interaction.addReference(
-                        new Reference(role,
-                                participant.getReference("proteinInteractorRef").getRefId()));
+                Reference interactorRef = participant.getReference("proteinInteractorRef");
+                if (interactorRef != null ){
+                    LOG.info("proteinInteractorRef:" + interactorRef.getRefId()
+                            + ", participant role:" + role);
+
+                    interaction.addReference(new Reference(role, interactorRef.getRefId()));
+                }
+                else{
+                    LOG.warn("PROTEIN PARTICIPANT WITHOUT A proteinInteractorRef FOUND! "
+                            + participant.getIdentifier());
+                }
             }
         }
 
@@ -246,6 +263,7 @@ public class PsiDataTranslator extends DataTranslator
                 this.srcItemReader.getItemById(namesRef.getRefId());
 
         boolean shortLabelFound = false;
+        String iShortName = null;
 
         for (Iterator nameIt = namesItem.getAttributes().iterator();
             nameIt.hasNext() && !shortLabelFound;) {
@@ -253,8 +271,9 @@ public class PsiDataTranslator extends DataTranslator
             org.intermine.model.fulldata.Attribute nextNameAttr
                     = (org.intermine.model.fulldata.Attribute) nameIt.next();
             if ("shortLabel".equalsIgnoreCase(nextNameAttr.getName())) {
-                interaction.setAttribute("shortName", nextNameAttr.getValue());
-                LOG.info("INTERACTION.SHORTNAME WAS SET AS:" + nextNameAttr.getValue());
+                iShortName = nextNameAttr.getValue();
+                interaction.setAttribute("shortName", iShortName);
+                LOG.info("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
                 shortLabelFound = true;
             }
         }
@@ -265,13 +284,34 @@ public class PsiDataTranslator extends DataTranslator
             interaction.addReference(new Reference("prey", nextPrey.toString()));
 
         } else if (preyRefIdsList.size() > 1) {
-            interaction.addToCollection("complex", interaction.getReference("bait").getRefId());
-            LOG.info("ADDING BAIT ITEM TO A COMPLEX:"
-                    + interaction.getReference("bait").getRefId());
+            Reference bait = interaction.getReference("bait");
+            if(bait != null){
+                interaction.addToCollection("complex", bait.getRefId());
+                LOG.info("BAIT ITEM ADDED TO COMPLEX:"
+                        + interaction.getReference("bait").getRefId());
+            }
         } else {
             LOG.warn("SKIPPING PREY/COMPLEX REFERENCE CREATION IN A PROTEININTERACTION ITEM!");
         }
 
+        //<confidence unit="author-confidence" value="D"/>
+        Item conf = getReference(srcInteractionElementItem, "confidence");
+
+        if (conf != null){
+
+            LOG.info("CONFIDENCE TAG FOUND IN INTERACTION:"
+                    + (iShortName != null ? iShortName : interaction.getIdentifier()));
+
+            tgtExperimentalResult.addAttribute(
+                    new Attribute("confidenceUnit", conf.getAttribute("unit").getValue()));
+
+            tgtExperimentalResult.addAttribute(
+                    new Attribute("confidenceValue", conf.getAttribute("value").getValue()));
+        }
+        else{
+            LOG.info("NO CONFIDENCE TAG FOUND IN INTERACTION:"
+                    + (iShortName != null ? iShortName : interaction.getIdentifier()));
+        }
 
         return interaction;
     }
@@ -353,66 +393,6 @@ public class PsiDataTranslator extends DataTranslator
             LOG.info("Skipping creating a ProteinRegion as the psi term MI:0117 was not found!");
         }
     }
-
-    /**
-     * Helper method to fetch the relevant feature descriptor set for the given experiment id.
-     * If this is a new experiment then return a new set and keep a reference of it.
-     *
-     * @ param experimentIdRef PSI internal Id string of the experiment we want.
-     * @ return a Set - which may be empty - of feature descriptors for the given experiment id.
-     * *  /
-    private Set getFeatureDescSetByExpId(String experimentIdRef){
-
-        LOG.info("getFeatureDescSetByExpId called!");
-
-        if (! experimentIdToFeatureDescriptionSets.containsKey(experimentIdRef)){
-
-            experimentIdToFeatureDescriptionSets.put(experimentIdRef, new HashSet());
-        }
-
-        return (Set) experimentIdToFeatureDescriptionSets.get(experimentIdRef);
-    }
-
-    private void setExperimentToFeatureDescripionMappings(){
-
-        if (experimentIdToExperiment.keySet().size()
-                != experimentIdToFeatureDescriptionSets.keySet().size()){
-            LOG.warn("POSSIBLE DISCREPANCY IN SOURCE FILE FOR EXPERIMENT INFORMATION!");
-        }
-
-        for (Iterator exKeyIt = experimentIdToExperiment.keySet().iterator(); exKeyIt.hasNext();){
-
-            Object nextExpKey = exKeyIt.next();
-
-            Item expTgtItem = (Item) experimentIdToExperiment.get(nextExpKey);
-            Set featDescSet = (Set) experimentIdToFeatureDescriptionSets.get(nextExpKey);
-
-            if(featDescSet == null){
-                LOG.warn("NOTE: featureDescriptions not set for:" + expTgtItem.getClassName()
-                        + " id:" + expTgtItem.getIdentifier());
-            }
-            else{
-                expTgtItem.setCollection("featureDescriptions", new ArrayList(featDescSet));
-            }
-        }
-
-
-        logNamedCollection("exIdToEx keys", experimentIdToExperiment.keySet());
-        logNamedCollection("exIdToEx vals", experimentIdToExperiment.values());
-        logNamedCollection("exIdToFD keys", experimentIdToFeatureDescriptionSets.keySet());
-        logNamedCollection("exIdToFD vals", experimentIdToFeatureDescriptionSets.values());
-    }
-
-    private void logNamedCollection(String name, Collection values){
-
-        LOG.info("NAME:" + name + " COLLECTION SIZE:" + values.size());
-
-        for(Iterator valIt = values.iterator(); valIt.hasNext();){
-
-            LOG.info(" NEXT_VAL:" + valIt.next().toString());
-        }
-    }
-    */
 
     // Return the publication for a given experiment, creating it if necessary
     // Note that experiments known not to have a publication are stored in the map with a null pub
