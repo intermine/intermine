@@ -4,7 +4,6 @@ Organism.taxonId = Organism_ProteinInteractorType.ncbiTaxId, HostOrganism_Experi
 Protein = ProteinInteractorType
 Protein.organism = ProteinInteractorType.organism
 ProteinInteractionExperiment = ExperimentType
-ProteinInteractionExperiment.confidence = ExperimentType.confidence
 ProteinInteractionExperiment.featureDetection = ExperimentType.featureDetection
 ProteinInteractionExperiment.hostOrganism = ExperimentType.hostOrganism
 ProteinInteractionExperiment.interactionDetection = ExperimentType.interactionDetection
