@@ -88,9 +88,23 @@
   </item>
 
   <item id="42" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="RNAi data set"/>
-    <attribute name="description" value="The Caenorhabditis elegans RNAi data set from WormBase"/>
+    <attribute name="title" value="Fraser RNAi data set"/>
+    <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Fraser et al Nature 408:325-330 (2000)"/>
+    <attribute name="version" value="2000"/>
+    <attribute name="url" value="http://www.wormbase.org"/>
+    <reference name="dataSource" ref_id="40"/>
+  </item>
+  <item id="42" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="Kamath RNAi data set"/>
+    <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Kamath et al. Nature 421:231-237 (2003)"/>
     <attribute name="version" value="?????"/>
+    <attribute name="url" value="http://www.wormbase.org"/>
+    <reference name="dataSource" ref_id="40"/>
+  </item>
+  <item id="42" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="Simmer RNAi data set"/>
+    <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Simmer et al., PLoS Biol. 1(1):077-084 (2003)"/>
+    <attribute name="version" value="2003"/>
     <attribute name="url" value="http://www.wormbase.org"/>
     <reference name="dataSource" ref_id="40"/>
   </item>
@@ -139,7 +153,7 @@
     <attribute name="url" value="http://www.indac.net/"/>
   </item>
   <item id="101" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="INDAC long oligos"/>
+    <attribute name="title" value="INDAC long oligo data set"/>
     <attribute name="description"
                value="International Drosophila Array Consortium long oligo data set"/>
     <attribute name="version" value="1.0"/>
@@ -203,7 +217,23 @@
     <attribute name="title" value="Mizuguchi protein structure predictions"/>
     <attribute name="description"
                value="Prediction of structure and function for the Drosophila genome sequences"/>
+    <attribute name="version" value="???"/>
     <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/research.htm"/>
     <reference name="dataSource" ref_id="150"/>
+  </item>
+
+  <item id="160" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="EBI"/>
+    <attribute name="description"
+               value="The European Bioinformatics Institute"/>
+    <attribute name="url" value="http://www.ebi.ac.uk"/>
+  </item>
+  <item id="161" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="InterPro data set"/>
+    <attribute name="description"
+               value="A database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences."/>
+    <attribute name="version" value="11.0"/>
+    <attribute name="url" value="http://www.ebi.ac.uk/interpro"/>
+    <reference name="dataSource" ref_id="160"/>
   </item>
 </items>
