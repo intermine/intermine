@@ -30,9 +30,6 @@
   <item id="10_3" class="http://www.flymine.org/model/genomic#InterproEvidence">
     <attribute name="infotext" value="Computed by hmmsearch"/>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="Superfamily"/>
-  </item>
   <item id="9_1" class="http://www.flymine.org/model/genomic#ProteinFamily">
     <attribute name="identifier" value="PF03098"/>
     <attribute name="interproId" value="IPR002007"/>
@@ -44,6 +41,9 @@
     <collection name="proteins">
       <reference ref_id="3_1"/>
     </collection>
+  </item>
+  <item id="4_1001" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="PETE_TEST_DB"/>
   </item>
   <item id="9_1001" class="http://www.flymine.org/model/genomic#ProteinDomain">
     <attribute name="identifier" value="PETE_TM1"/>
@@ -69,15 +69,8 @@
     <reference name="object" ref_id="6_1002"/>
     <reference name="subject" ref_id="9_1002"/>
   </item>
-  <item id="4_1001" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="PETE_TEST_DB"/>
-  </item>
   <item id="10_2" class="http://www.flymine.org/model/genomic#InterproEvidence">
     <attribute name="infotext" value="Computed by FingerprintScan"/>
-  </item>
-  <item id="16_1001" class="http://www.flymine.org/model/genomic#Comment">
-    <attribute name="text" value="PETE TEST BLAH BLAH BLAH"/>
-    <attribute name="type" value="PETE_TEST_COMMON_ANNOTATION"/>
   </item>
   <item id="6_3" class="http://www.flymine.org/model/genomic#ProteinFamily">
     <attribute name="identifier" value="IPR002016"/>
@@ -149,11 +142,11 @@
       <reference ref_id="9_1001"/>
     </collection>
   </item>
-  <item id="4_5" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="PROSITE profiles"/>
+  <item id="4_3" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="PRINTS"/>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="Pfam"/>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="TrEMBL"/>
   </item>
   <item id="10_6" class="http://www.flymine.org/model/genomic#InterproEvidence">
     <attribute name="infotext" value="Prints entries to be excluded from SPTR xrefs"/>
@@ -173,8 +166,8 @@
       <reference ref_id="6_1003"/>
     </collection>
   </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="InterPro"/>
+  <item id="4_4" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Pfam"/>
   </item>
   <item id="11_3" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="43"/>
@@ -186,18 +179,23 @@
       <reference ref_id="10_2"/>
     </collection>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="TrEMBL"/>
-  </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="43"/>
     <attribute name="start" value="1"/>
     <reference name="object" ref_id="3_1"/>
     <reference name="subject" ref_id="6_2"/>
   </item>
+  <item id="16_1001" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="PETE TEST BLAH BLAH BLAH"/>
+    <attribute name="type" value="PETE_TEST_COMMON_ANNOTATION"/>
+    <reference name="source" ref_id="-1_1"/>
+  </item>
   <item id="12_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
     <reference name="object" ref_id="6_1001"/>
     <reference name="subject" ref_id="9_1001"/>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Superfamily"/>
   </item>
   <item id="10_1" class="http://www.flymine.org/model/genomic#InterproEvidence">
     <attribute name="infotext" value="Computed by pfsearch"/>
@@ -205,6 +203,9 @@
   <item id="14_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
     <reference name="object" ref_id="6_1001"/>
     <reference name="subject" ref_id="6_1002"/>
+  </item>
+  <item id="4_5" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="PROSITE profiles"/>
   </item>
   <item id="11_5" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="43"/>
@@ -292,9 +293,6 @@
       <reference ref_id="10_1"/>
     </collection>
   </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="title" value="PRINTS"/>
-  </item>
   <item id="14_1" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
     <reference name="object" ref_id="6_2"/>
     <reference name="subject" ref_id="6_1"/>
@@ -302,6 +300,9 @@
   <item id="12_4" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
     <reference name="object" ref_id="6_2"/>
     <reference name="subject" ref_id="9_4"/>
+  </item>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="InterPro data set"/>
   </item>
   <item id="6_1002" class="http://www.flymine.org/model/genomic#ProteinDomain">
     <attribute name="identifier" value="IPRPETE02"/>
