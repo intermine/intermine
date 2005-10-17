@@ -563,13 +563,14 @@ public class InterproDataTranslator extends DataTranslator
 
 
   /**
-   * @return Creates a Database item with the description set to Interpro - used as an evidence tag.
+   * @return Creates a DataSet item with the description set to InterPro - used for evidence
+   * tagging
    */
   private Item getInterproEvidenceItem() {
 
     if (interproEvidenceItem == null) {
-      interproEvidenceItem = createItem("Database");
-      interproEvidenceItem.setAttribute("title", "InterPro");
+      interproEvidenceItem = createItem("DataSet");
+      interproEvidenceItem.setAttribute("title", "InterPro data set");
     }
 
     return interproEvidenceItem;
