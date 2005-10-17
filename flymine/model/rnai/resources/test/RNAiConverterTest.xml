@@ -71,7 +71,7 @@
     <reference name="analysis" ref_id="6_17"/>
   </item>
   <item id="0_0" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="RNAi data set"/>
+    <attribute name="title" value="RNAiConverterTest RNAi data set"/>
   </item>
   <item id="7_7" class="http://www.flymine.org/model/genomic#ExperimentalResult">
     <reference name="analysis" ref_id="6_6"/>
