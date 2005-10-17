@@ -12,6 +12,7 @@ package org.flymine.dataconversion;
 
 import junit.framework.TestCase;
 
+import java.io.File;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
@@ -38,7 +39,7 @@ public class RNAiConverterTest extends TestCase
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         RNAiConverter converter = new RNAiConverter(itemWriter);
-        converter.setDataSetTitle("RNAi data set");
+        converter.setCurrentFile(new File("RNAiConverterTestSet.txt"));
         converter.process(new StringReader(input));
         converter.close();
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/RNAiConverterTest.xml")));

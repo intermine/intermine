@@ -10,12 +10,15 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.File;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.tools.ant.BuildException;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -47,7 +50,6 @@ public class RNAiConverter extends FileConverter
 
     protected Item dataSource, dataSet;
     protected int id = 0;
-    protected String dataSetTitle;
 
     /**
      * Constructor
@@ -59,37 +61,28 @@ public class RNAiConverter extends FileConverter
     }
 
     /**
-     * Set the name for the DataSet object for this load.
-     * @param dataSetTitle
-     */
-    public void setDataSetTitle(String dataSetTitle) {
-        this.dataSetTitle = dataSetTitle;
-    }
-    
-    /**
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-//        if (dataSetTitle == null) {
-//            throw new  IllegalArgumentException("dataSetTitle must be set");
-//        }
-
         BufferedReader br = new BufferedReader(reader);
-        
-        if (dataSet == null) {
-            dataSet = newItem("DataSet");
 
-            // TODO: the data set title should not be hard coded
-            dataSet.addAttribute(new Attribute("title", "RNAi data set"));
-            writer.store(ItemHelper.convert(dataSet));
+        dataSet = newItem("DataSet");
+        String fileName = getCurrentFile().getName();
+        int setStart = fileName.indexOf("Set.txt");
+        if (setStart == -1) {
+            throw new BuildException("filename \"" + fileName + "\" for RNAi dataset must " +
+                                     "end with \"Set.txt\"");
         }
-        
+        String authorName = fileName.substring(0, setStart);
+        dataSet.addAttribute(new Attribute("title", authorName + " RNAi data set"));
+        writer.store(ItemHelper.convert(dataSet));
+
         if (dataSource == null) {
             dataSource = newItem("DataSource");
             dataSource.addAttribute(new Attribute("name", "WormBase"));
             writer.store(ItemHelper.convert(dataSource));
         }
-        
+
         //intentionally throw away first line
         String line = br.readLine();
 
