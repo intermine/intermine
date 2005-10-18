@@ -5,11 +5,12 @@ package org.intermine.dataconversion;
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
+ * be distributed with the code.  See the LICENSE currentFile for more
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
 
+import java.io.File;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.Collection;
@@ -26,6 +27,7 @@ public abstract class FileConverter extends DataConverter
 {
     protected String param1;
     protected String param2;
+    private File currentFile;
 
     /**
      * Constructor
@@ -36,7 +38,7 @@ public abstract class FileConverter extends DataConverter
     }
     
     /**
-     * Perform the file conversion
+     * Perform the currentFile conversion
      * @param reader BufferedReader used as input
      * @throws Exception if an error occurs during processing
      */
@@ -49,6 +51,22 @@ public abstract class FileConverter extends DataConverter
     public void close() throws Exception {
     }
 
+    /**
+     * Set the current File that is being processed.  Called by FileConverterTask.execute().
+     * @param currentFile
+     */
+    public void setCurrentFile(File currentFile) {
+        this.currentFile = currentFile;
+    }
+    
+    /**
+     * Return the File that is currently being converted.
+     * @return the current File
+     */
+    public File getCurrentFile() {
+        return currentFile;
+    }
+    
     /**
      * Set some param1 to some String value.
      * @param param1 value for param1
