@@ -13,11 +13,15 @@
 
     <class name="org.flymine.model.genomic.ProteinInteraction" extends="org.flymine.model.genomic.Relation" is-interface="true">
         <attribute name="shortName" type="java.lang.String"/>
-        <reference name="bait" referenced-type="org.flymine.model.genomic.Protein"/>
-        <reference name="prey" referenced-type="org.flymine.model.genomic.Protein"/>
-        <collection name="complex" referenced-type="org.flymine.model.genomic.Protein" ordered="true"/>
         <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+        <collection name="interactors" referenced-type="org.flymine.model.genomic.ProteinInteractor" ordered="true" reverse-reference="interaction"/>
         <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.ProteinInteractionRegion" ordered="true" reverse-reference="interaction"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinInteractor" is-interface="true">
+        <attribute name="role" type="java.lang.String"/>
+        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
+        <reference name="interaction" referenced-type="org.flymine.model.genomic.ProteinInteraction"/>
     </class>
 
     <class name="org.flymine.model.genomic.Sequence" is-interface="true">
@@ -25,7 +29,7 @@
     </class>
 
     <class name="org.flymine.model.genomic.Protein" is-interface="true">
-        <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true"/>
+        <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteractor" ordered="true" reverse-reference="protein"/>
     </class>
 
     <class name="org.flymine.model.genomic.AnalysisResult" extends="org.flymine.model.genomic.Evidence" is-interface="true">
