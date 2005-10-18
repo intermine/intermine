@@ -27,7 +27,7 @@ public class PrimaryKey
 
     /**
      * Constructor
-     *
+     * @param name the name to use for the primary key
      * @param fields a comma-delimited list of field names
      */
     public PrimaryKey(String name, String fields) {
