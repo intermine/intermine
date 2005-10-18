@@ -26,7 +26,6 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -223,40 +222,44 @@ public class PsiDataTranslator extends DataTranslator
         return result;
     }
 
+
+
     private Item createProteinInteraction(
             Item srcInteractionElementItem, Item tgtExperimentalResult, Collection result,
             Item dataSetItem)
         throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
-        Item participants = getReference(srcInteractionElementItem, "participantList");
 
-        ArrayList preyRefIdsList = new ArrayList();
+        Item participants = getReference(srcInteractionElementItem, "participantList");
 
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             Item participant = (Item) i.next();
+
+            Reference proteinRef =
+                    new Reference("protein",
+                            participant.getReference("proteinInteractorRef").getRefId());
+
             if (getReference(participant, "featureList") != null) {
                 createProteinRegion(interaction, participant, result, dataSetItem);
             }
-            String role = participant.getAttribute("role").getValue();
 
-            if ("prey".equalsIgnoreCase(role)
-                    || "neutral".equalsIgnoreCase(role)
-                    || "unspecified".equalsIgnoreCase(role)) {
-                preyRefIdsList.add(participant.getReference("proteinInteractorRef").getRefId());
+            Attribute itemRole = participant.getAttribute("role");
+            String role;
+
+            if (itemRole != null ) {
+                role = itemRole.getValue();
             } else {
-                Reference interactorRef = participant.getReference("proteinInteractorRef");
-                if (interactorRef != null ){
-                    LOG.info("proteinInteractorRef:" + interactorRef.getRefId()
-                            + ", participant role:" + role);
-
-                    interaction.addReference(new Reference(role, interactorRef.getRefId()));
-                }
-                else{
-                    LOG.warn("PROTEIN PARTICIPANT WITHOUT A proteinInteractorRef FOUND! "
-                            + participant.getIdentifier());
-                }
+                role = "unspecifed";
             }
+
+            Item interactor = createItem("ProteinInteractor");
+            interactor.setAttribute("role", role);
+            interactor.setReference("protein", proteinRef.getRefId());
+            interactor.setReference("interaction", interaction.getIdentifier());
+
+            result.add(interactor);
         }
+
 
         Reference namesRef = srcInteractionElementItem.getReference("names");
         org.intermine.model.fulldata.Item namesItem =
@@ -276,22 +279,6 @@ public class PsiDataTranslator extends DataTranslator
                 LOG.info("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
                 shortLabelFound = true;
             }
-        }
-
-        if (preyRefIdsList.size() == 1) {
-            Object nextPrey = preyRefIdsList.iterator().next();
-            LOG.info("PREY ITEM:" + nextPrey.toString());
-            interaction.addReference(new Reference("prey", nextPrey.toString()));
-
-        } else if (preyRefIdsList.size() > 1) {
-            Reference bait = interaction.getReference("bait");
-            if(bait != null){
-                interaction.addToCollection("complex", bait.getRefId());
-                LOG.info("BAIT ITEM ADDED TO COMPLEX:"
-                        + interaction.getReference("bait").getRefId());
-            }
-        } else {
-            LOG.warn("SKIPPING PREY/COMPLEX REFERENCE CREATION IN A PROTEININTERACTION ITEM!");
         }
 
         //<confidence unit="author-confidence" value="D"/>
@@ -355,7 +342,6 @@ public class PsiDataTranslator extends DataTranslator
             tgtAnnotation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {dataSetItem.getIdentifier()})));
 
-            //Item tgtFeatureDesc = createItem("FeatureDescription");
             Item tgtProteinInteractionRegion = createItem("ProteinInteractionRegion");
 
             tgtProteinInteractionRegion.addAttribute(
@@ -379,10 +365,6 @@ public class PsiDataTranslator extends DataTranslator
             tgtProteinInteractionRegion.addReference(
                     new Reference("interaction", interaction.getIdentifier()));
 
-            //NOTE: This is done automatically on loading due to the reverse references...
-            //interaction.addToCollection("interactingRegions",
-            //        tgtProteinInteractionRegion.getIdentifier());
-
             result.add(tgtProteinRegion);
             result.add(tgtLocation);
             result.add(tgtTerm);
@@ -393,6 +375,7 @@ public class PsiDataTranslator extends DataTranslator
             LOG.info("Skipping creating a ProteinRegion as the psi term MI:0117 was not found!");
         }
     }
+
 
     // Return the publication for a given experiment, creating it if necessary
     // Note that experiments known not to have a publication are stored in the map with a null pub
