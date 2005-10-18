@@ -94,14 +94,14 @@
     <attribute name="url" value="http://www.wormbase.org"/>
     <reference name="dataSource" ref_id="40"/>
   </item>
-  <item id="42" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+  <item id="43" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="Kamath RNAi data set"/>
     <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Kamath et al. Nature 421:231-237 (2003)"/>
     <attribute name="version" value="?????"/>
     <attribute name="url" value="http://www.wormbase.org"/>
     <reference name="dataSource" ref_id="40"/>
   </item>
-  <item id="42" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+  <item id="44" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="Simmer RNAi data set"/>
     <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Simmer et al., PLoS Biol. 1(1):077-084 (2003)"/>
     <attribute name="version" value="2003"/>
