@@ -133,6 +133,7 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
                 System.err .println("Processing file: " + f.getPath());
+                converter.setCurrentFile(f);
                 converter.process(new BufferedReader(new FileReader(f)));
             }
             converter.close();
