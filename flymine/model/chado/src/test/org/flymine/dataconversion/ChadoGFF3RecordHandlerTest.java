@@ -10,37 +10,26 @@ package org.flymine.dataconversion;
  *
  */
 
-import junit.framework.*;
-
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.BufferedReader;
-import java.io.FileWriter;
-
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.metadata.Model;
+
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
-import org.flymine.dataconversion.GFF3Converter;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import junit.framework.TestCase;
 
 public class ChadoGFF3RecordHandlerTest extends TestCase
 {
@@ -117,9 +106,9 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Iterator iter = GFF3Parser.parse(srcReader);
 
         List featureIdentifiers = new ArrayList();
-        
+
         List allItems = new ArrayList();
-        
+
         while (iter.hasNext()) {
 
             GFF3Record record = (GFF3Record) iter.next();
@@ -137,12 +126,12 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                     feature.setAttribute("identifier", "CR32011:7");
                 }
             }
-            
+
             handler.setFeature(feature);
             handler.process(record);
-            
+
             featureIdentifiers.add(feature.getIdentifier());
-            
+
             allItems.addAll(handler.getItems());
             handler.clear();
         }
@@ -157,12 +146,12 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                                                        tgtNs + "Transcript", "");
         expectedTranscript.setAttribute("identifier", "CR32011-RA");
 
-        Item expectedExon = itemFactory.makeItem((String) featureIdentifiers.get(2), 
+        Item expectedExon = itemFactory.makeItem((String) featureIdentifiers.get(2),
                                                  tgtNs + "Exon", "");
         expectedExon.setAttribute("identifier", "CR32011:7");
 
         allItems.addAll(handler.getFinalItems());
-        
+
         assertEquals(8, allItems.size());
 
         Item actualGene = null;
@@ -183,13 +172,13 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                 actualExon = item;
             }
         }
-        
+
         assertEquals(expectedGene, actualGene);
         assertEquals(expectedTranscript, actualTranscript);
         assertEquals(expectedExon, actualExon);
     }
 
-    // test that Gene->Pseudogene->Exon get changed to Pseudogene->Transcript->Exon
+
     public void testHandleDuplicateSymbol() throws Exception {
         String gff =
             "4\t.\tgene\t248174\t250682\t.\t+\t.\tID=CG1629;Name=yellow-h;Dbxref=FlyBase:FBan0001629,FlyBase:FBgn0039896;cyto_range=102B1-102B2;gbunit=AE003844;synonym=yellow-h\n"
@@ -198,10 +187,11 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
         converter.parse(srcReader);
-
+        converter.store();
+        
         Item expectedGene1 = null;
         Item expectedGene2 = null;
-            
+
         Item actualGene1 = null;
         Item actualGene2 = null;
 
@@ -248,7 +238,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                 }
             }
         }
-        
+
         assertNotNull(expectedGene1);
         assertNotNull(expectedGene2);
         assertEquals(expectedGene1, actualGene1);
@@ -269,7 +259,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         handler.process(record);
 
         Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
-     
+
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
 
@@ -321,10 +311,10 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item feature = itemFactory.makeItem(null, tgtNs + "CDS", "");
         feature.setAttribute("identifier", "CG11023-PA");
         handler.setFeature(feature);
-
-        Item infoSource = itemFactory.makeItem(null, tgtNs + "DataSource", "");
-        infoSource.setAttribute("title", "FlyBase");
-        handler.setDataSource(infoSource);
+      
+        Item dataSet = itemFactory.makeItem(null, tgtNs + "DataSet", "");
+        dataSet.setAttribute("title", "FlyBase Drosophila melanogaster data set");
+        handler.setDataSet(dataSet);
 
         handler.process(record);
 
@@ -332,9 +322,8 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedTrans.setAttribute("identifier", "CG11023-PA");
         expectedTrans.setAttribute("organismDbId", "FBpp0088316");
         expectedTrans.setReference("organism", handler.getOrganism().getIdentifier());
-        expectedTrans.addCollection(new ReferenceList("evidence",
-                                                    Arrays.asList(new Object[] {
-                                                            handler.getDataSet()})));
+        expectedTrans.setCollection("evidence",
+                                    Arrays.asList(new Object[] { dataSet.getIdentifier() }));
         assertEquals(4, handler.getItems().size());
 
         Item actualTrans = null;
@@ -351,7 +340,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item expectedCDS = itemFactory.makeItem(null, tgtNs + "CDS", "");
         expectedCDS.setAttribute("identifier", "CG11023-PA_CDS");
         expectedCDS.addCollection(new ReferenceList("polypeptides",
-                                                    new ArrayList(Collections.singleton(actualTrans.getIdentifier()))));
+                        new ArrayList(Collections.singleton(actualTrans.getIdentifier()))));
 
         Item actualCDS = null;
         iter = handler.getItems().iterator();
@@ -363,5 +352,57 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
             }
         }
         assertEquals(expectedCDS, actualCDS);
+    }
+
+    public void testHandleSequenceVariant() throws Exception {
+        String gff = "2L\t.\tsequence_variant\t13563\t22471\t.\t-\t.\tID=l(2)gl[275];Parent=CG2671";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        Iterator iter = GFF3Parser.parse(srcReader);
+        GFF3Record record = (GFF3Record) iter.next();
+
+        Item feature = itemFactory.makeItem(null, tgtNs + "SequenceVariant", "");
+        feature.setAttribute("identifier", "l(2)gl[275]");
+        handler.setFeature(feature);
+     
+        Item gene = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        
+       
+        Item simpleRelation = itemFactory.makeItem(null, tgtModel.getNameSpace() + "SimpleRelation", "");
+        simpleRelation.setReference("object", gene.getIdentifier());
+        simpleRelation.setReference("subject", feature.getIdentifier());
+        handler.addParentRelation(simpleRelation);
+        
+        
+        Item dataSet = itemFactory.makeItem(null, tgtNs + "DataSet", "");
+        dataSet.setAttribute("title", "FlyBase Drosophila melanogaster data set");
+        handler.setDataSet(dataSet);
+
+        handler.process(record);
+        
+        handler.setReferences(handler.references);
+
+        Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        expectedGene.setAttribute("identifier", "CG2671");
+        expectedGene.setReference("organism", handler.getOrganism().getIdentifier());
+        expectedGene.setCollection("evidence",
+                                   Arrays.asList(new Object[] { dataSet.getIdentifier()}));
+        assertEquals(2, handler.getItems().size());
+
+        Item expectedSequenceVariant = itemFactory.makeItem(null, tgtNs + "SequenceVariant", "");
+        expectedSequenceVariant.setAttribute("identifier", "l(2)gl[275]");
+        expectedSequenceVariant.addCollection(new ReferenceList("genes",
+                            new ArrayList(Collections.singleton(gene.getIdentifier()))));
+
+        Item actualSequenceVariant = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "SequenceVariant")) {
+                actualSequenceVariant = item;
+                expectedSequenceVariant.setIdentifier(actualSequenceVariant.getIdentifier());
+            }
+        }
+        assertEquals(expectedSequenceVariant, actualSequenceVariant);
     }
 }
