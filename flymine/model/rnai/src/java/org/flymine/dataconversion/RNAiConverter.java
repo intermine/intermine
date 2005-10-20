@@ -10,7 +10,6 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.io.File;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.HashMap;
@@ -70,8 +69,8 @@ public class RNAiConverter extends FileConverter
         String fileName = getCurrentFile().getName();
         int setStart = fileName.indexOf("Set.txt");
         if (setStart == -1) {
-            throw new BuildException("filename \"" + fileName + "\" for RNAi dataset must " +
-                                     "end with \"Set.txt\"");
+            throw new BuildException("filename \"" + fileName + "\" for RNAi dataset must "
+                                     + "end with \"Set.txt\"");
         }
         String authorName = fileName.substring(0, setStart);
         dataSet.addAttribute(new Attribute("title", authorName + " RNAi data set"));
