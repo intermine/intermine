@@ -106,7 +106,7 @@ public class FilterChadoTask extends Task
                     record.getAttributes().put("ID", record.getNames());
                     record.getAttributes().remove("Name");
                 }
-                out.write(record.toGFF3());
+                out.write(record.toGFF3() + "\n");
             }
         }
         out.flush();
