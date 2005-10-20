@@ -178,8 +178,7 @@ public class PsiDataTranslator extends DataTranslator
                                     //If we have some text instead of a numerical value...
                                     tgtItem.addAttribute(new Attribute("confidenceDesc", value));
                                 }
-                            }
-                            else{
+                            } else {
                                 LOG.info("Skipped an Attribute - looking for 'author-confidence'");
                             }
                         }
@@ -246,7 +245,7 @@ public class PsiDataTranslator extends DataTranslator
             Attribute itemRole = participant.getAttribute("role");
             String role;
 
-            if (itemRole != null ) {
+            if (itemRole != null) {
                 role = itemRole.getValue();
             } else {
                 role = "unspecifed";
@@ -284,7 +283,7 @@ public class PsiDataTranslator extends DataTranslator
         //<confidence unit="author-confidence" value="D"/>
         Item conf = getReference(srcInteractionElementItem, "confidence");
 
-        if (conf != null){
+        if (conf != null) {
 
             LOG.info("CONFIDENCE TAG FOUND IN INTERACTION:"
                     + (iShortName != null ? iShortName : interaction.getIdentifier()));
@@ -294,8 +293,7 @@ public class PsiDataTranslator extends DataTranslator
 
             tgtExperimentalResult.addAttribute(
                     new Attribute("confidenceValue", conf.getAttribute("value").getValue()));
-        }
-        else{
+        } else {
             LOG.info("NO CONFIDENCE TAG FOUND IN INTERACTION:"
                     + (iShortName != null ? iShortName : interaction.getIdentifier()));
         }

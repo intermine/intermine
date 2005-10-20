@@ -28,7 +28,6 @@ import java.io.IOException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import org.biojava.bio.program.gff.SimpleGFFRecord;
 import org.biojava.bio.symbol.IllegalSymbolException;
 
 import org.intermine.objectstore.query.*;
@@ -416,7 +415,10 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * Taken from BioJava's SimpleGFFRecord.java
+     * Return a String representation of the attributes Map. Taken from BioJava's
+     * SimpleGFFRecord.java
+     * @param attMap the Map of attributes
+     * @return a String representation of the attributes 
      */
     static String stringifyAttributes(Map attMap) {
         StringBuffer sBuff = new StringBuffer();

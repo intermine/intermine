@@ -200,8 +200,8 @@ public abstract class OverlapUtil
          * Create a new OverlappingFeaturesIterator.
          * @param locationsByLengthMap A Map from LocatedSequenceFeature lengths to Location
          * @param locationsByStartPos A Map from Location start position to Location
-         * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
-         * same class.
+         * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of
+         * the same class.
          */
         private OverlappingFeaturesIterator(TreeMap locationsByLengthMap,
                                             TreeMap locationsByStartPos,
@@ -218,11 +218,7 @@ public abstract class OverlapUtil
         public boolean hasNext() {
             nextReturnValue = getNextReturnValue();
             
-            if (nextReturnValue == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return nextReturnValue != null;
         }
 
         

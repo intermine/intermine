@@ -20,14 +20,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * DataConverter to parse homophila data file into Items.
@@ -149,7 +147,8 @@ public class HomophilaConverter extends FileConverter
             if (fields.length == 2) {
                 proteinToGene.put(fields[0], fields[1]);
             } else {
-                LOG.warn("line " + done + " in protein_gene.txt contained " + fields.length + " columns");
+                LOG.warn("line " + done + " in protein_gene.txt contained " + fields.length
+                         + " columns");
             }
             done++;
         }
@@ -179,12 +178,11 @@ public class HomophilaConverter extends FileConverter
     
     /**
      * Reads disease description file first, then reads homophila matches file.
-     * 
+     * @param reader the Reader
      * @see DataConverter#process
      * @throws Exception if something goes wrong
      */
     public void process(Reader reader) throws Exception {
-       
         if (diseaseFile == null) {
             throw new NullPointerException("diseaseFile property not set");
         } else if (proteinGeneFile == null) {
@@ -305,8 +303,9 @@ public class HomophilaConverter extends FileConverter
      * Create new Annotation item. Adds the Homophila database and the two publications
      * as evidence. The subject is the gene and the property is the disease.
      * 
-     * @param array line of homophila matches file
-     * @return Gene Item
+     * @param gene the Gene Item
+     * @param disease the disease Item
+     * @return the Annotation Item
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item newAnnotation(Item gene, Item disease) throws ObjectStoreException {
