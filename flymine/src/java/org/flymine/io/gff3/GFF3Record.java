@@ -382,7 +382,7 @@ public class GFF3Record
             + ((score == null) ? "." : score.toString()) + "\t"
             + ((strand == null) ? "." : strand) + "\t"
             + ((phase == null) ? "." : phase) + "\t"
-            + writeAttributes(attributes) + System.getProperty("line.separator");
+            + writeAttributes(attributes);
     }
 
     private String writeAttributes(Map attributes) {
@@ -395,7 +395,13 @@ public class GFF3Record
                 sb.append(";");
             }
             first = false;
-            sb.append(entry.getKey() + "=" + StringUtil.join((List) entry.getValue(), ","));
+            String listValue;
+            if (entry.getValue() instanceof List) {
+                listValue = StringUtil.join((List) entry.getValue(), ",");
+            } else {
+                listValue = "" + entry.getValue();
+            }
+            sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
     }

@@ -139,7 +139,7 @@ public class GFF3ParserTest extends TestCase
         StringBuffer sb = new StringBuffer();
         Iterator iter = GFF3Parser.parse(new BufferedReader(new StringReader(original)));
         while (iter.hasNext()) {
-            sb.append(((GFF3Record) iter.next()).toGFF3());
+            sb.append(((GFF3Record) iter.next()).toGFF3()).append("\n");
         }
         assertEquals(original, sb.toString());
     }
