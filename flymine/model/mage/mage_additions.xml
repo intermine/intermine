@@ -64,7 +64,6 @@
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="results"/>
   <reference name="assay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
   <reference name="reporter" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
-  <reference name="material" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="results"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="microArrayResults"/>
   <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" ordered="true"/>
 </class>
