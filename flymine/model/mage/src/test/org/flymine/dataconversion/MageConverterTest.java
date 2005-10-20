@@ -337,6 +337,14 @@ public class MageConverterTest extends TestCase
 
     }
 
+    // TODO: No proper test created for this yet
+//     public void testAddDerivedBioAssays() throws Exception {
+//         Reader reader = new InputStreamReader(getClass().getClassLoader().
+//                                               getResourceAsStream("test/MageConverterDerivedBioAssays_src.xml"));
+
+//         MageConverter.processDerivedBioAssays(reader, new File("mage_tmp.xml"), "_normalised");
+//     }
+
 
     private Reference createReference(String name, String refId){
         Reference ref=new Reference();

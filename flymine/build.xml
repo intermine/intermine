@@ -1375,10 +1375,29 @@
     </ant>
   </target>
 
+  <target name="retrieve-mage-timecourse" depends="prepare, prepare-build-model, compile-mage-java, convert-mage">
+    <!-- MAGEstk toolkit wants write access to source files (?) -->
+    <copy todir="${build.tmp}/mage">
+      <fileset dir="${shared.data}/mage/E-FLYC-6"/>
+    </copy>
+
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
+
+    <taskdef name="add-derived-data" classname="org.flymine.dataconversion.AddDerivedDataTask">
+      <classpath refid="mage.class.path"/>
+    </taskdef>
+
+    <add-derived-data srcFile="${build}/tmp/mage/yale.xml" tgtFile="${build}/tmp/mage/yale.xml" extension="_normalised"/>
+  </target>
+
 
   <target name="retrieve-mage" depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
+
+    <!-- Timecourse data is a special case it needs normalised data to be added to files first -->
+    <antcall target="retrieve-mage-timecourse"/>
+
     <copy todir="${build.tmp}/mage">
       <fileset dir="${shared.data}/mage/E-FLYC-1"/>
       <fileset dir="${shared.data}/mage/E-FLYC-2"/>
@@ -1394,7 +1413,7 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Signal med ratio">
+                  clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationtypes="Signal med ratio">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -2241,7 +2260,7 @@
     <taskdef name="link-ins" classname="org.flymine.util.LinkInTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <link-ins objectStore="os.production" outputFile="FlyBaseToFlyMine" database="flybase"/>
+    <link-ins objectStore="os.production" outputFile="${build.model}/genomic/FlyBaseToFlyMine" database="flybase"/>
   </target>
 
   <target name="create-flybase-to-uniprot-refs" depends="compile-genomic-java-from-db">

@@ -12,6 +12,7 @@ package org.flymine.dataconversion;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.Writer;
@@ -30,8 +32,11 @@ import java.io.Reader;
 import java.io.IOException;
 
 import org.biomage.tools.xmlutils.MAGEReader;
+import org.biomage.QuantitationType.QuantitationType_package;
 import org.biomage.QuantitationType.QuantitationType;
 import org.biomage.QuantitationType.Ratio;
+import org.biomage.Experiment.Experiment;
+import org.biomage.Experiment.Experiment_package;
 import org.biomage.DesignElement.Feature;
 import org.biomage.DesignElement.Reporter;
 import org.biomage.Description.OntologyEntry;
@@ -96,10 +101,6 @@ public class MageConverter extends FileConverter
     public MageConverter(ItemWriter writer) throws Exception {
         super(writer);
         this.itemFactory = new ItemFactory(Model.getInstanceByName("mage"));
-
-        ClassLoader cl = getClass().getClassLoader();
-        Class c = cl.loadClass("com.bea.xml.stream.XMLOutputFactoryBase");
-        LOG.info("found class: " + c.getName());
     }
 
     /**
@@ -112,15 +113,21 @@ public class MageConverter extends FileConverter
         time = System.currentTimeMillis();
         start = time;
 
-        createItem(readMage(reader));
+        createItem(MageConverter.readMage(reader));
     }
 
-    private MAGEJava readMage(Reader reader) throws IOException, Exception {
+    /**
+     * Build MAGE java objects from a given XML file
+     * @param reader access to MAGE-ML file
+     * @return MAGE Java representation
+     * @throws IOException if problems reading file
+     */
+    protected static MAGEJava readMage(Reader reader) throws IOException {
         File f = new File(new File(System.getProperty("java.io.tmpdir")), "mageconvert.xml");
         File dtd = new File(new File(System.getProperty("java.io.tmpdir")), "MAGE-ML.dtd");
         System .out.println(f.getAbsolutePath());
-        BufferedReader dtdReader =  new BufferedReader(new
-                InputStreamReader(getClass().getClassLoader().getResourceAsStream("MAGE-ML.dtd")));
+        BufferedReader dtdReader =  new BufferedReader(new InputStreamReader(
+            MageConverter.class.getClassLoader().getResourceAsStream("MAGE-ML.dtd")));
         MAGEReader mageReader = null;
         try {
             // write temporary file, MAGEreader wants write access for some reason
@@ -139,7 +146,7 @@ public class MageConverter extends FileConverter
             fileWriter.close();
 
             mageReader = new MAGEReader(f.getAbsolutePath());
-            createItem(mageReader.getMAGEobj());
+            //createItem(mageReader.getMAGEobj());
 
         } finally {
             f.delete();
@@ -339,21 +346,28 @@ public class MageConverter extends FileConverter
                      (QuantitationTypeDimension) bad.getQuantitationTypeDimension();
             List qtList = qdimension.getQuantitationTypes();
 
-            BufferedReader br = new BufferedReader(new
-                InputStreamReader(getClass().getClassLoader().getResourceAsStream(fileName)));
+            boolean emptyFile = false;
+            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
+            if (is.available() == 0) {
+                emptyFile = true;
+                LOG.warn("Ignoring empty data file: " + fileName);
+            }
+            System.err .println("Reading data from: " + fileName);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
             Item bdt = makeItem("BioDataTuples");
             ReferenceList dataList = new ReferenceList("bioAssayTupleData");
             boolean storeTuple = false;
 
             // if all three dimensions are greater than 1 then this code will not work,
             // need to look into re-writing with better access to contents of BioDataCube.
-            if (rowNames.size() > 1 && colTypes.size() > 1 && qtList.size() > 1) {
+            if ((rowNames.size() > 1) && (colTypes.size() > 1) && (qtList.size() > 1)) {
                 throw new IllegalArgumentException("All dimensions of BioDataCube were > 1 "
                                                    + "is unlikely that the current code will "
                                                    + "work.");
             }
 
-            for (Iterator i = rowNames.iterator(); i.hasNext();) {
+            for (Iterator i = rowNames.iterator(); i.hasNext() && !emptyFile;) {
                 DesignElement feature = (DesignElement) i.next();
                 String s = br.readLine();
                 StringTokenizer st = new StringTokenizer(s, "\t");
@@ -399,16 +413,16 @@ public class MageConverter extends FileConverter
      * data, create DerivedBioAssay and associated objects and set links to data files.
      * Files should have same names as existing data files plus some extension (defined
      * by parameter).  Identifiers are created for the new objects of the form:
-     * classname:FlyMine:x.y
+     * classname:FlyMine:x
      * @param reader access to original MAGE ML files
      * @param newMageFile file to write altered MAGE ML to
      * @param extension added to the end of normalised filenames
      * @throws Exception of anything goes wrong
      */
-    public void processDerivedBioAssays(Reader reader, File newMageFile, String extension)
+    public static void processDerivedBioAssays(Reader reader, File newMageFile, String extension)
         throws Exception {
-        MAGEJava mage = readMage(reader);
-        addDerivedBioAssays(mage, extension);
+        MAGEJava mage = MageConverter.readMage(reader);
+        MageConverter.addDerivedBioAssays(mage, extension);
         FileWriter fw = new FileWriter(newMageFile);
         mage.writeMAGEML(fw);
         fw.flush();
@@ -417,24 +431,39 @@ public class MageConverter extends FileConverter
 
 
     // will alter MAGEJava object in place
-    private void addDerivedBioAssays(MAGEJava mage, String extension) {
+    private static void addDerivedBioAssays(MAGEJava mage, String extension) {
 
+        Map mageIds = new HashMap();
         Set dbas = new HashSet();
         BioAssayData_package badPkg = mage.getBioAssayData_package();
 
+        Ratio ratio = new Ratio();
+        ratio.setIdentifier(nextMageIdentifier(mageIds, "QuantitationType"));
+        ratio.setName("Signal med ratio");
+        OntologyEntry dataType = new OntologyEntry();
+        dataType.setValue("Signal med ratio");
+        ratio.setDataType(dataType);
+        OntologyEntry scale = new OntologyEntry();
+        scale.setValue("linar_scale");
+        ratio.setScale(scale);
+        QuantitationType_package qtp = mage.getQuantitationType_package();
+        qtp.addToQuantitationType_list(ratio);
+        QuantitationTypeDimension qtDimension = new QuantitationTypeDimension();
+        qtDimension.setIdentifier(nextMageIdentifier(mageIds, "QuantitationTypeDimension"));
+        qtDimension.addToQuantitationTypes(ratio);
+
+
         BioAssay_package baPkg = mage.getBioAssay_package();
         Iterator bioAssayIter = baPkg.getBioAssay_list().iterator();
-        int i = 1;
         while (bioAssayIter.hasNext()) {
             BioAssay bioAssay = (BioAssay) bioAssayIter.next();
             if (bioAssay instanceof MeasuredBioAssay) {
                 DerivedBioAssay dba = new DerivedBioAssay();
-                dba.setIdentifier("DerivedBioAssay:FlyMine:" + i);
+                dba.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssay"));
 
                 Iterator dataIter = ((MeasuredBioAssay) bioAssay)
                     .getMeasuredBioAssayData().iterator();
                 while (dataIter.hasNext()) {
-                    int j = 1;
                     MeasuredBioAssayData mbad = (MeasuredBioAssayData) dataIter.next();
                     String fileName = ((BioDataCube) mbad.getBioDataValues()).getDataExternal()
                         .getFilenameURI() + extension;
@@ -451,11 +480,12 @@ public class MageConverter extends FileConverter
                     // only seems to reference MeasuredBioAssay?
 
                     DerivedBioAssayData dbad = new DerivedBioAssayData();
-                    dbad.setIdentifier("DerivedBioAssayData:FlyMine:" + i + "." + j);
+                    dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));
 
                     // dbad.BioDataValues
                     //BioDataCube
                     BioDataCube bdc = new BioDataCube();
+                    bdc.setValueOrder(2);
                     DataExternal data = new DataExternal();
                     data.setFilenameURI(fileName);
                     bdc.setDataExternal(data);
@@ -466,15 +496,10 @@ public class MageConverter extends FileConverter
 
                     // dbad.QuantitationTypeDimension
                     // TODO look at what is done with this in Translator
-                    Ratio ratio = new Ratio();
-                    ratio.setIdentifier("QuantitationType:FlyMine:" + i + "." + j);
-                    OntologyEntry dataType = new OntologyEntry();
-                    dataType.setValue("Signal med ratio");
-                    ratio.setDataType(dataType);
-                    QuantitationTypeDimension qtDimension = new QuantitationTypeDimension();
-                    qtDimension.setIdentifier("QuantitationTypeDimension:FlyMine:" + i + "." + j);
-                    qtDimension.addToQuantitationTypes(ratio);
                     dbad.setQuantitationTypeDimension(qtDimension);
+
+                    // dbad.BioAssayDimension
+                    dbad.setBioAssayDimension(mbad.getBioAssayDimension());
 
                     dba.addToDerivedBioAssayData(dbad);
                     badPkg.addToBioAssayData_list(dbad);
@@ -485,12 +510,30 @@ public class MageConverter extends FileConverter
                 }
             }
         }
+        Experiment_package expPkg = mage.getExperiment_package();
+
         Iterator dbaIter = dbas.iterator();
         while (dbaIter.hasNext()) {
-            baPkg.addToBioAssay_list((DerivedBioAssay) dbaIter.next());
+            DerivedBioAssay bioAssay = (DerivedBioAssay) dbaIter.next();
+            baPkg.addToBioAssay_list(bioAssay);
+            Iterator expIter = expPkg.getExperiment_list().iterator();
+            while (expIter.hasNext()) {
+                Experiment exp = (Experiment) expIter.next();
+                exp.addToBioAssays(bioAssay);
+            }
         }
     }
 
+
+    private static String nextMageIdentifier(Map mageIds, String clsName) {
+        Integer nextId = (Integer) mageIds.get(clsName);
+        if (nextId == null) {
+            nextId = new Integer(0);
+        }
+        nextId = new Integer(nextId.intValue() + 1);
+        mageIds.put(clsName, nextId);
+        return clsName + ":FlyMine:" + nextId.intValue();
+    }
 
     private Item makeItem(String className) {
         return new Item(alias(className) + "_" + id++, MAGE_NS + className, "");
