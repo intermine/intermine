@@ -498,7 +498,7 @@ public class GFF3RecordHandler
     
     /**
      * Set the DataSource to use while processing.  The converter will store() the DataSource.
-     * @param dataSource
+     * @param dataSource the DataSource
      */
     public void setDataSource(Item dataSource) {
         this.dataSource = dataSource;
@@ -514,7 +514,7 @@ public class GFF3RecordHandler
     
     /**
      * Set the DataSet to use while processing.  Called by the converter.
-     * @param dataSet
+     * @param dataSet the DataSet
      */
     public void setDataSet(Item dataSet) {
         this.dataSet = dataSet;
