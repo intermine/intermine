@@ -51,16 +51,16 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
 
         //Use to write out the translated file if you want to make a new tgts file for testing
-        FileWriter fw = new FileWriter(new File("/home/pmclaren/svn/dev/flymine/psi_tgts.xml"));
+        /*
+        FileWriter fw = new FileWriter(new File("put_your_file_name_here"));
         fw.write("<items>");
         fw.write(tgtIw.getItems().toString());
         fw.write("</items>");
         fw.flush();
         fw.close();
-
+        */
         System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
 
-        
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
