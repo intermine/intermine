@@ -1058,8 +1058,6 @@ public class MageDataTranslator extends DataTranslator
             // MicroArrayResult.material
             if (reporterToMaterial.containsKey(reporterId)) {
                 String materialId = (String) reporterToMaterial.get(reporterId);
-                maResult.setReference("material", materialId);
-
 
                 // for some experiments we want to change the material identifier for
                 // an alternative database reference defined in the config.  Alternatives
