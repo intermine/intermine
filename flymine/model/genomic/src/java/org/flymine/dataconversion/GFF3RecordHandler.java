@@ -488,18 +488,34 @@ public class GFF3RecordHandler
         return "1_" + itemid++;
     }
 
+    /**
+     * Get the DataSource to use while processing.
+     * @return the DataSource
+     */
     public Item getDataSource() {
         return dataSource;
     }
     
+    /**
+     * Set the DataSource to use while processing.  The converter will store() the DataSource.
+     * @param dataSource
+     */
     public void setDataSource(Item dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Get the DataSet to use while processing.  The converter will store() the DataSet.
+     * @return the DataSet
+     */
     public Item getDataSet() {
         return dataSet;
     }
     
+    /**
+     * Set the DataSet to use while processing.  Called by the converter.
+     * @param dataSet
+     */
     public void setDataSet(Item dataSet) {
         this.dataSet = dataSet;
     }
