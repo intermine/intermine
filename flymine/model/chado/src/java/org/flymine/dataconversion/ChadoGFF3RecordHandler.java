@@ -25,7 +25,6 @@ import java.util.Arrays;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.util.XmlUtil;
 
@@ -41,7 +40,7 @@ import org.apache.log4j.Logger;
 
 public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 {
-    private Map references;
+    Map references;
     private static final Logger LOG = Logger.getLogger(ChadoGFF3RecordHandler.class);
     private String tgtNs;
     private Map sources = new HashMap();
@@ -75,12 +74,12 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         references.put("SnRNA", "gene");
         references.put("SnoRNA", "gene");
         references.put("TRNA", "gene");
-        references.put("PointMutation", "gene");
+        references.put("PointMutation", "genes");
         references.put("PolyASite", "processedTranscripts");
         // Region is inherited by loads of things, causes conflicts
         //references.put("Region", "gene");
         references.put("RegulatoryRegion", "gene");
-        references.put("SequenceVariant", "gene");
+        references.put("SequenceVariant", "genes");
         references.put("FivePrimeUTR", "MRNAs");
         references.put("ThreePrimeUTR", "MRNAs");
         references.put("CDS", "MRNAs");
@@ -166,7 +165,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
             translation.addCollection(new ReferenceList("evidence",
-                    Arrays.asList(new Object[] {})));
+                    Arrays.asList(new Object[] {getDataSet().getIdentifier()})));
 
             addItem(translation);
             addItem(createSynonym(translation, "identifier", identifier));

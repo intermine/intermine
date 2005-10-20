@@ -51,9 +51,9 @@
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">    	   	 
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>   	  	 
-  </class>  
+  <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
+  </class>
   <class name="org.flymine.model.genomic.ProteinBindingSite" extends="org.flymine.model.genomic.BindingSite" is-interface="true">
   </class>
   <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.Gene" is-interface="true">
