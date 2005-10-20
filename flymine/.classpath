@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
+	<classpathentry kind="src" path="model/interpro/src/java"/>
+	<classpathentry kind="src" path="model/interpro/src/test"/>
 	<classpathentry kind="src" path="model/cdnaclone/src/java"/>
 	<classpathentry kind="src" path="model/cdnaclone/src/test"/>
 	<classpathentry kind="src" path="model/opposumchain/src/java"/>
