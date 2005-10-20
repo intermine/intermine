@@ -15,7 +15,7 @@
 </class>
 <class name="org.flymine.model.genomic.Treatment" is-interface="true">
   <attribute name="action" type="java.lang.String"/>
-  <reference name="protocol" referenced-type="org.flymine.model.genomic.Protocol"/>
+  <collection name="protocols" referenced-type="org.flymine.model.genomic.Protocol"/>
   <collection name="parameters" referenced-type="org.flymine.model.genomic.TreatmentParameter" reverse-reference="treatment"/>
 </class>
 <class name="org.flymine.model.genomic.TreatmentParameter" is-interface="true">
