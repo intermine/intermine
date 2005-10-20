@@ -193,7 +193,7 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Return the SimpleRelation Item set by setParentRelation()
+     * Return the SimpleRelation Item set by addParentRelation()
      * @return the location Item
      */
     protected Set getParentRelations() {
