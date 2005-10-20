@@ -1402,7 +1402,6 @@
       <fileset dir="${shared.data}/mage/E-FLYC-1"/>
       <fileset dir="${shared.data}/mage/E-FLYC-2"/>
       <fileset dir="${shared.data}/mage/E-FLYC-3"/>
-      <fileset dir="${shared.data}/mage/E-FLYC-4"/>
       <fileset dir="${shared.data}/mage/E-FLYC-5"/>
     </copy>
 
