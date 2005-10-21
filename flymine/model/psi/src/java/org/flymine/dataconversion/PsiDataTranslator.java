@@ -44,8 +44,6 @@ import org.apache.log4j.Logger;
  * @author Richard Smith
  * @author Andrew Varley
  * @author Peter Mclaren - Modifications to cater for complex interactions
- *
- * TODO: Test with NULL Prey or Bait items (interactions with nothing specific about them...)
  */
 public class PsiDataTranslator extends DataTranslator
 {
@@ -53,7 +51,6 @@ public class PsiDataTranslator extends DataTranslator
     private Map pubs = new HashMap();
     private Map dataSetMap = new HashMap();
 
-    //private Map experimentIdToFeatureDescriptionSets = new HashMap();
     //private Map experimentIdToExperiment = new HashMap();
 
     protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
@@ -145,8 +142,10 @@ public class PsiDataTranslator extends DataTranslator
                     //experimentIdToExperiment.put(srcItem.getIdentifier(), tgtItem);
 
                 } else if ("InteractionElementType".equals(className)) {
+
                     Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
-                                                         "experimentRefs").next();
+
+                                                        "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
 
 
@@ -184,6 +183,11 @@ public class PsiDataTranslator extends DataTranslator
                         }
                     }
                     Item interaction = createProteinInteraction(srcItem, tgtItem, result, dataSet);
+
+                    interaction.addReference(new Reference("experiment", exptType.getIdentifier()));
+
+
+
                     addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
