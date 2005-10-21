@@ -94,6 +94,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map cloneIds = new HashMap();//cloneItem identifier, alternative identifier
     protected Set materialIdTypes = new HashSet();
     protected Map expIdNames = new HashMap();
+    protected Map cloneToResults = new HashMap();
 
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
@@ -229,10 +230,13 @@ public class MageDataTranslator extends DataTranslator
 
         i = clones.values().iterator();
         while (i.hasNext()) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+            Item clone = (Item) i.next();
+            // set collection of MicroArrayResults
+            if (cloneToResults.containsKey(clone.getIdentifier())) {
+                clone.setCollection("results", (List) cloneToResults.get(clone.getIdentifier()));
+            }
+            tgtItemWriter.store(ItemHelper.convert((Item) clone));
         }
-
-
     }
 
 
@@ -722,6 +726,9 @@ public class MageDataTranslator extends DataTranslator
     public void translateLabeledExtract(Item srcItem)
         throws ObjectStoreException {
 
+        // From LabeledExtract decending through treatments will eventually
+        // find the BioSource that was used.  This is what we create a Sample
+        // from and has details attached to it as OntlogyTerms
         String sampleId = searchTreatments(srcItem, new ArrayList());
         // map from sample to top level LabeledExtract
         if (sampleId != null) {
@@ -731,6 +738,9 @@ public class MageDataTranslator extends DataTranslator
                 sampleToLabeledExtracts.put(sampleId, extracts);
             }
             extracts.add(srcItem.getIdentifier());
+
+            // Find and record the label used for this Sample
+
         }
     }
 
@@ -765,6 +775,13 @@ public class MageDataTranslator extends DataTranslator
         }
 
         if (bioMaterial.hasCollection("treatments")) {
+            // first see if this is the labelling step
+//             if (bioMaterial.hasCollection("actions")) {
+//                 Iterator actionIter = getCollection(bioMaterial, "actions");
+//                 while (actionIter.hasNext()) {
+
+//                 }
+//             }
             Iterator treatmentIter = getCollection(bioMaterial, "treatments");
             while (treatmentIter.hasNext()) {
                 Item treatment = (Item) treatmentIter.next();
@@ -835,6 +852,7 @@ public class MageDataTranslator extends DataTranslator
                 tgtItem.addCollection(tgtChar);
             }
         }
+
 
         // PATH BioSource.materialType
         if (srcItem.hasReference("materialType")) {
@@ -1077,6 +1095,14 @@ public class MageDataTranslator extends DataTranslator
                         }
                     }
                 }
+
+                // CDNAClone needs to have a collection of MicroArrayResults
+                List results = (List) cloneToResults.get(materialId);
+                if (results == null) {
+                    results = new ArrayList();
+                    cloneToResults.put(materialId, results);
+                }
+                results.add(maResult.getIdentifier());
             }
         }
         return maResult;

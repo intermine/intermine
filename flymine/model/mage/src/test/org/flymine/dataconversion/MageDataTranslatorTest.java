@@ -582,8 +582,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expResult.setReference("experiment", "6_1");
         expResult.addCollection(new ReferenceList("samples", new ArrayList(Collections.singleton("6_1"))));
 
-        translator.processMicroArrayResult(rh);
         assertEquals(expResult, translator.processMicroArrayResult(rh));
+
+        Map expCloneToResults = new HashMap();
+        expCloneToResults.put("7_1", new ArrayList(Collections.singleton("0_1")));
+        assertEquals(expCloneToResults, translator.cloneToResults);
     }
 
 
@@ -617,7 +620,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map typeMap = new HashMap();
         typeMap.put("image", "5678");
         translator.cloneIds.put("7_1", typeMap);
-
 
         Item expClone = createTgtItem("Clone", "7_1", "");
         expClone.setAttribute("identifier", "5678");
