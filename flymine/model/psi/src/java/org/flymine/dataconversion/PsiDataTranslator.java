@@ -51,8 +51,6 @@ public class PsiDataTranslator extends DataTranslator
     private Map pubs = new HashMap();
     private Map dataSetMap = new HashMap();
 
-    //private Map experimentIdToExperiment = new HashMap();
-
     protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
 
     /**
