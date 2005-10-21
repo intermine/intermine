@@ -7,12 +7,14 @@
         <reference name="hostOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
         <reference name="participantDetection" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
         <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+        <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true" reverse-reference="experiment"/>
     </class>
 
     <class name="org.flymine.model.genomic.ProteinInteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
 
     <class name="org.flymine.model.genomic.ProteinInteraction" extends="org.flymine.model.genomic.Relation" is-interface="true">
         <attribute name="shortName" type="java.lang.String"/>
+        <reference name="experiment" referenced-type="org.flymine.model.genomic.ProteinInteractionExperiment" reverse-reference="interactions"/>
         <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
         <collection name="interactors" referenced-type="org.flymine.model.genomic.ProteinInteractor" ordered="true" reverse-reference="interaction"/>
         <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.ProteinInteractionRegion" ordered="true" reverse-reference="interaction"/>
