@@ -45,10 +45,6 @@ public class DrosdelDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        PrintWriter pw = new PrintWriter(new FileWriter("/tmp/items.xml"));
-        pw.println(tgtIw.getItems());
-        pw.close();
-        
         if (getExpectedItems() == null) {
             throw new RuntimeException();
         }
