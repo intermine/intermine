@@ -64,7 +64,7 @@ public class FileReadTask extends Task
     }
     
     /**
-     * Return the oswAlias set by setOsAlias()
+     * Return the oswAlias set by setOswAlias()
      * @return the object store alias
      */
     public String getOswAlias() {
