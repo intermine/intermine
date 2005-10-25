@@ -6,18 +6,7 @@
 <!-- locatedSequenceFeatureImage.jsp -->
 <fmt:setBundle basename="model"/>
 
-<%-- hacky fix: some things aren't located yet (eg. genes from Uniprot) so we
-     check that the object has a location before linking --%>
-<c:forEach items="${object.objects}" var="thisRelation">
-  
-  <c:if test="${fn:startsWith(thisRelation.class.name, 'org.flymine.model.genomic.Location')}">
-    <c:set var="hasLocation" value="true"/>
-  </c:if>
-</c:forEach>
-
-<%-- This should be changed to check chromosomeLocation --%>
-
-<c:if test="${!empty hasLocation || cld.unqualifiedName == 'Chromosome'}">
+<c:if test="${!empty object.chromosomeLocation || cld.unqualifiedName == 'Chromosome'}">
   <c:set var="type" value="${cld.unqualifiedName}s"/>
   
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript' 
@@ -51,9 +40,11 @@
     <div>
       <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
     </div>
-    <div>
-      <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=400"/>
-    </div>
+    <c:if test="${cld.unqualifiedName != 'Chromosome'}">
+      <div>
+        <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=400"/>
+      </div>
+    </c:if>
   </html:link>
 </c:if>
 <!-- /locatedSequenceFeatureImage.jsp -->
