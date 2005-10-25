@@ -2773,7 +2773,7 @@
   <!-- WEBAPP TARGETS -->
 
   <target name="build-production-webapp"
-          depends="prepare-build-model, compile-flymine-java">
+          depends="prepare-build-model, compile-flymine-java, create-so-name-to-classname-map">
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
     <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
@@ -2838,6 +2838,7 @@
       <include name="objectstoresummary.properties"/>
       <include name="classDescriptions.properties"/>
       <include name="datasets.xml"/>
+      <include name="soClassName.properties"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
@@ -4423,6 +4424,16 @@
   <!-- load CDNAclone image data into production -->
   <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone"/>
 
+  
+  <target name="create-so-name-to-classname-map" depends="compile-genomic-java">
+    <taskdef name="create-so-name-to-classname-map" 
+             classname="org.flymine.task.SOClassNameMapMakerTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <create-so-name-to-classname-map soFile="${model}/so/sofa.obo"
+                                     outputFile="${build.tmp}/soClassName.properties"/>
+  </target>
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">

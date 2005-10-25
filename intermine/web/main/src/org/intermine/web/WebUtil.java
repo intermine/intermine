@@ -10,6 +10,10 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.objectstore.query.Results;
+
+import org.intermine.objectstore.ObjectStoreException;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -149,5 +153,16 @@ public abstract class WebUtil
         }
         
         return sb.toString();
+    }
+
+    /**
+     * Make a copy of a Results object, but with a different batch size.
+     * @throws ObjectStoreException 
+     */
+    public static Results changeResultBatchSize(Results oldResults, int newBatchSize)
+        throws ObjectStoreException {
+        Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery());
+        newResults.setBatchSize(newBatchSize);
+        return newResults;
     }
 }
