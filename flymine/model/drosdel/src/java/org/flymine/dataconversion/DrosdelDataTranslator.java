@@ -64,7 +64,7 @@ public class DrosdelDataTranslator extends DataTranslator
 
         drosdelDataSource = createItem("DataSource");
         drosdelDataSource.addAttribute(new Attribute("name", "DrosDel"));
-        drosdelDataSourceRef= new Reference("source", drosdelDataSource.getIdentifier());
+        drosdelDataSourceRef = new Reference("source", drosdelDataSource.getIdentifier());
     }
 
     /**
