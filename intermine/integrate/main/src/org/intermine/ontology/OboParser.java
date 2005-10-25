@@ -166,6 +166,11 @@ public class OboParser
             for (Iterator iter = isas.iterator(); iter.hasNext(); ) {
                 String isa = (String) iter.next();
                 DagTerm pt = (DagTerm) terms.get(isa);
+                if (pt == null) {
+                    LOG.warn("child term (" + term + ") in OBO file refers to a non-existant "
+                             + "parent (" + isa + ")");
+                    continue;
+                }
                 LOG.debug(term + " isa " + pt);
                 pt.addChild(term);
                 rootTerms.remove(term.getId());
@@ -180,6 +185,11 @@ public class OboParser
                 if (bits[0].equals("part_of")) {
                     DagTerm pt = (DagTerm) terms.get(bits[1]);
                     LOG.debug(term + " part_of " + pt);
+                    if (pt == null) {
+                        LOG.warn("child term (" + term + ") in OBO file refers to a non-existant "
+                                 + "parent (" + bits[1] + ")");
+                        continue;
+                    }
                     pt.addComponent(term);
                     rootTerms.remove(term.getId());
                 } else {
