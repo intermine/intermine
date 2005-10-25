@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.objectstore.query.Results;
+
 import java.util.List;
 import java.util.Date;
 
@@ -89,6 +91,11 @@ public class ExportAction extends InterMineAction
     }
     
     /**
+     * The batch size to use when we need to iterate through the whole result set.
+     */
+    public static final int BIG_BATCH_SIZE = 5000;
+
+    /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      *
      * @param mapping The ActionMapping used to select this instance
@@ -131,6 +138,10 @@ public class ExportAction extends InterMineAction
         try {
             List columns = pt.getColumns();
             List rowList = pt.getAllRows();
+
+            if (rowList instanceof Results) {
+                rowList = WebUtil.changeResultBatchSize((Results) rowList, BIG_BATCH_SIZE);
+            }
 
             for (int rowIndex = 0;
                  rowIndex < rowList.size() && rowIndex <= pt.getMaxRetrievableIndex();
@@ -217,6 +228,11 @@ public class ExportAction extends InterMineAction
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
+        List allRows = pt.getAllRows();
+        
+        if (allRows instanceof Results) {
+            allRows = WebUtil.changeResultBatchSize((Results) allRows, BIG_BATCH_SIZE);
+        }
 
         TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
                                    getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1);
@@ -248,7 +264,13 @@ public class ExportAction extends InterMineAction
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
-        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getAllRows(),
+        List allRows = pt.getAllRows();
+        
+        if (allRows instanceof Results) {
+            allRows = WebUtil.changeResultBatchSize((Results) allRows, BIG_BATCH_SIZE);
+        }
+
+        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), allRows,
                                             getOrder(pt), getVisible(pt),
                                             pt.getMaxRetrievableIndex() + 1);
 

@@ -149,16 +149,12 @@ public class SaveBagAction extends InterMineAction
                 // store doesn't need to do lots of queries
                 // we copy because setBatchSize() throws an exception if size() has already
                 // been called
-                Results newResults = results.getObjectStore().execute(results.getQuery());
+                Results newResults;
 
-                if (maxBagSize > results.getObjectStore().getMaxLimit()) {
-                    newResults.setBatchSize(results.getObjectStore().getMaxLimit());
+                if (maxBagSize < BIG_BATCH_SIZE) {
+                    newResults = WebUtil.changeResultBatchSize(results, maxBagSize);
                 } else {
-                    if (maxBagSize < BIG_BATCH_SIZE) {
-                        newResults.setBatchSize(maxBagSize);
-                    } else {
-                        newResults.setBatchSize(BIG_BATCH_SIZE);
-                    }
+                    newResults = WebUtil.changeResultBatchSize(results, BIG_BATCH_SIZE);
                 }
 
                 // make sure we can get the first batch

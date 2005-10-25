@@ -350,4 +350,6 @@
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
+  <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
+                     className="org.flymine.web.GFF3Exporter"/>
 </webconfig>
