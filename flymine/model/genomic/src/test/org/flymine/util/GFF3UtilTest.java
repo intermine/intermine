@@ -67,13 +67,16 @@ public class GFF3UtilTest extends TestCase
         valList.add("4");
         extraAttributes.put("name3", valList);
 
-        Map soClassNameMap = new HashMap();
+        Map soClassNameMap = new LinkedHashMap();
         
         soClassNameMap.put("Gene", "gene");
         soClassNameMap.put("Exon", "exon");
         soClassNameMap.put("Chromosome", "chromosome");
         
         GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, extraAttributes);
+
+        Map exonAttributes = new LinkedHashMap();
+
         GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, new HashMap());
         GFF3Record gff3Chromosome =
             GFF3Util.makeGFF3Record(chromosome, soClassNameMap, new HashMap());
@@ -86,11 +89,11 @@ public class GFF3UtilTest extends TestCase
         System.err.println (gff3Exon.toGFF3());
         System.err.println (gff3Chromosome.toGFF3());
 
-        assertEquals("4	FlyMine	Gene	100	800	.	.	.	name1=value1;name2=2;name3=3,4",
+        assertEquals("4	FlyMine	gene	100	800	.	.	.	name1=value1;name2=2;name3=3,4;ID=gene1",
                      gff3Gene.toGFF3());
-        assertEquals("4	FlyMine	Exon	200	300	.	.	.	",
+        assertEquals("4	FlyMine	exon	200	300	.	.	.	ID=exon1",
                      gff3Exon.toGFF3());
-        assertEquals("4	FlyMine	chromosome	1	1000	.	.	.	",
+        assertEquals("4	FlyMine	chromosome	1	1000	.	.	.	ID=4",
                      gff3Chromosome.toGFF3());
     }
 }
