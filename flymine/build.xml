@@ -3822,7 +3822,7 @@
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FirstEFGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/firstEF">
-        <include name ="firstEF3new.gff"/>
+        <include name ="firstEF.gff3"/>
       </fileset>
     </retrieve-file>
 
