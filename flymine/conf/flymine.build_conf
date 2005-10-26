@@ -28,6 +28,7 @@ dump: load-stage-2
 
 run: build-flyreg-production
 run: build-long_oligo-production
+run: analyse-db-production
 run: build-tiling_path-production
 
 dump: load-stage-3
