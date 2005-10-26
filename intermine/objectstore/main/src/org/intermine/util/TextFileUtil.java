@@ -43,7 +43,7 @@ public abstract class TextFileUtil
     public static void writeTabDelimitedTable(OutputStream os, List listOfLists,
                                               int [] columnOrder, boolean [] columnVisible,
                                               int maxRows) {
-        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, '\t');
+        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, '\t', false);
     }
 
     /**
@@ -59,7 +59,7 @@ public abstract class TextFileUtil
     public static void writeCSVTable(OutputStream os, List listOfLists,
                                      int [] columnOrder, boolean [] columnVisible,
                                      int maxRows) {
-        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, ',');
+        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, ',', true);
     }
 
     /**
@@ -71,11 +71,12 @@ public abstract class TextFileUtil
      * @param columnVisible an array mapping from columns in listOfLists to their visibility
      * @param delimiter the character to use to separate the fields in the output
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
+     * @param quote quote things
      * listOfLists
      */
     public static void writeDelimitedTable(OutputStream os, List listOfLists,
                                            int [] columnOrder, boolean [] columnVisible,
-                                           int maxRows, char delimiter) {
+                                           int maxRows, char delimiter, boolean quote) {
         PrintStream printStream = new PrintStream(os);
 
         String delimiters = "" + delimiter;
@@ -118,7 +119,7 @@ public abstract class TextFileUtil
             for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
                 Object o = realRow.get(columnIndex);
 
-                if (o instanceof Number) {
+                if (!quote || o instanceof Number) {
                     writeUnQuoted(printStream, o);
                 } else {
                     writeQuoted(printStream, o);
