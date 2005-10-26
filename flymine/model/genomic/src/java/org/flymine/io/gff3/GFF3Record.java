@@ -140,7 +140,7 @@ public class GFF3Record
             List valList = new ArrayList();
             int spaceIndx = attVal.indexOf("=");
             if (spaceIndx == -1) {
-                attName = attVal;
+                throw new IOException("the attributes section must contain name=value pairs");
             } else {
                 attName = attVal.substring(0, spaceIndx);
                 attributeString = attVal.substring(spaceIndx + 1).trim();
@@ -232,7 +232,8 @@ public class GFF3Record
 
     /**
      * Return the strand field of this record.
-     * @return the strand field of this record
+     * @return returns null if the strand is unset (ie. with an empty field or contained "." in the 
+     * original GFF3 file)
      */
     public String getStrand () {
         return strand;
@@ -240,7 +241,8 @@ public class GFF3Record
 
     /**
      * Return the phase field of this record.
-     * @return the phase field of this record
+     * @return returns null if the phase is unset (ie. with an empty field or contained "." in the 
+     * original GFF3 file)
      */
     public String getPhase () {
         return phase;
