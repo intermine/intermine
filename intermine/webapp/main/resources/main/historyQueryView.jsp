@@ -73,7 +73,7 @@
               </td>
               <c:choose>
                 <c:when test="${!savedQuery.value.pathQuery.valid}">
-                  <td align="left" colspan="2" nowrap">
+                  <td align="left" colspan="2" nowrap>
                     <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
                     <strike>${savedQuery.value.name}</strike>
                     </html:link>
