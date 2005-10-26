@@ -10,8 +10,8 @@
     <attribute name="title" value="Ensembl Homo sapiens"/>
     <attribute name="description"
                value="The Ensembl eukaryotic genome annotation database"/>
-    <attribute name="version" value="32.2g"/>
-    <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
+    <attribute name="version" value="31"/>
+    <attribute name="url" value="http://www.ensembl.org/Homo_sapiens"/>
     <reference name="dataSource" ref_id="0"/>
   </item>
 
@@ -157,7 +157,7 @@
     <attribute name="url" value="http://hscl.cimr.cam.ac.uk/"/>
     <reference name="dataSource" ref_id="260"/>
   </item>
-  <item id="261" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+  <item id="262" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="HSCL conserved non-coding sites"/>
     <attribute name="description" value="Conserved non-coding sites data set from HSCL"/>
     <attribute name="version" value="???"/>
@@ -165,25 +165,25 @@
     <reference name="dataSource" ref_id="260"/>
   </item>
 
-  <item id="260" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+  <item id="270" class="" implements="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="RZPD"/>
     <attribute name="description" value="Deutsches Ressourcenzentrum für Genomforschung"/>
     <attribute name="url" value="http://www.rzpd.de"/>
   </item>
-  <item id="261" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+  <item id="271" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="RZPD uniprot data set"/>
     <attribute name="description" value="???"/>
     <attribute name="version" value="???"/>
     <attribute name="url" value="http://www.rzpd.de/products/clones"/>
-    <reference name="dataSource" ref_id="260"/>
+    <reference name="dataSource" ref_id="270"/>
   </item>
 
-  <item id="270" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+  <item id="280" class="" implements="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="BDGP"/>
     <attribute name="description" value="Berkeley Drosophila Genome Project"/>
     <attribute name="url" value="http://www.fruitfly.org"/>
   </item>
-  <item id="271" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+  <item id="281" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="BDGP cDNA clone data set"/>
     <attribute name="description" value="Berkeley Drosophila Genome Project cDNA clone data set"/>
     <attribute name="version" value="???"/>
