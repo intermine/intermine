@@ -1,13 +1,13 @@
 <items>
   <item id="0_16" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="name"/>
-    <attribute name="value" value="CpGWindow(14 )"/>
+    <attribute name="value" value="CpGWindow(14+)"/>
     <reference name="source" ref_id="0_2"/>
     <reference name="subject" ref_id="0_15"/>
   </item>
   <item id="0_15" class="http://www.flymine.org/model/genomic#CpGIsland">
-    <attribute name="identifier" value="CpGWindow(14 ):chr1:917400..917601"/>
-    <attribute name="name" value="CpGWindow(14 )"/>
+    <attribute name="identifier" value="CpGWindow(14+):chr1:917400..917601"/>
+    <attribute name="name" value="CpGWindow(14+)"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
@@ -16,7 +16,7 @@
   </item>
   <item id="0_19" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
-    <attribute name="value" value="CpGWindow(14 ):chr1:917400..917601"/>
+    <attribute name="value" value="CpGWindow(14+):chr1:917400..917601"/>
     <reference name="source" ref_id="0_2"/>
     <reference name="subject" ref_id="0_15"/>
   </item>
