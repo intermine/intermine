@@ -225,6 +225,7 @@ public class Model
         if (obj instanceof Model) {
             Model model = (Model) obj;
             return modelName.equals(model.modelName)
+                && nameSpace.equals(model.nameSpace)
                 && cldMap.equals(model.cldMap);
         }
         return false;
