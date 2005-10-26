@@ -18,6 +18,7 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.io.gff3.GFF3Record;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -93,7 +94,7 @@ public abstract class GFF3Util
             end = lsf.getChromosomeLocation().getEnd().intValue();
         }
 
-        Map recordAttribute = new HashMap(extraAttributes);
+        Map recordAttribute = new LinkedHashMap(extraAttributes);
 
         if (lsf.getIdentifier() != null) {
             recordAttribute.put("ID", lsf.getIdentifier());
