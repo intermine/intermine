@@ -91,14 +91,16 @@ public class MainAction extends InterMineAction
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getBagOp()));
             Object constraintValue = mf.getBagValue();
-            node.getConstraints().add(new Constraint(constraintOp, constraintValue));
+            Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id);
+            node.getConstraints().add(c);
         }
 
         if (request.getParameter ("loop") != null) {
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getLoopQueryOp()));
             Object constraintValue = mf.getLoopQueryValue();
-            node.getConstraints().add(new Constraint(constraintOp, constraintValue));
+            Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id);
+            node.getConstraints().add(c);
         }
         
         if (request.getParameter("subclass") != null) {
@@ -109,10 +111,10 @@ public class MainAction extends InterMineAction
         if (request.getParameter("nullnotnull") != null) {
             if (mf.getNullConstraint().equals("NotNULL")) {
                 node.getConstraints()
-                    .add(new Constraint(ConstraintOp.IS_NOT_NULL, null));
+                    .add(new Constraint(ConstraintOp.IS_NOT_NULL, null, false, label, code, id));
             } else {
                 node.getConstraints()
-                    .add(new Constraint(ConstraintOp.IS_NULL, null));
+                    .add(new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id));
             }
         }
         
