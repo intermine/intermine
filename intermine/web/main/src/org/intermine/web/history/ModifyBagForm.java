@@ -119,7 +119,8 @@ public class ModifyBagForm extends ActionForm
         
         if (request.getParameter("newName") == null
             && (request.getParameter("union") != null
-                    || request.getParameter("intersect") != null)) {
+                || request.getParameter("intersect") != null
+                || request.getParameter("subtract") != null)) {
             if (StringUtils.isEmpty(getNewBagName())) {
                 ActionMessage actionMessage =
                     new ActionMessage("errors.required", "New bag name");

@@ -10,14 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
@@ -25,6 +17,16 @@ import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.BagHelper;
 import org.intermine.web.bag.InterMineBag;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -60,6 +62,8 @@ public class ModifyBagAction extends ModifyHistoryAction
             union(mapping, form, request, response);
         } else if (request.getParameter("intersect") != null) {
             intersect(mapping, form, request, response);
+        } else if (request.getParameter("subtract") != null) {
+            subtract(mapping, form, request, response);
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request, response);
         }
@@ -176,6 +180,70 @@ public class ModifyBagAction extends ModifyHistoryAction
         }
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         profile.saveBag(name, combined);
+        
+        return mapping.findForward("history");
+    }
+
+    /**
+     * Compute the set of objects that are in only one of the selected bags.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward subtract(ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ModifyBagForm mbf = (ModifyBagForm) form;
+
+        Map savedBags = profile.getSavedBags();
+        String[] selectedBags = mbf.getSelectedBags();
+        
+        if (!typesMatch(savedBags, selectedBags)) {
+            recordError(new ActionMessage("bag.typesDontMatch"), request);
+            return mapping.findForward("history");
+        }
+        
+        Class type = savedBags.get(selectedBags[0]).getClass();
+
+        // A map from objects to the number of occurrences of that object
+        Map countMap = new HashMap();
+
+        for (int i = 0; i < selectedBags.length; i++) {
+            Iterator iter = ((Collection) savedBags.get(selectedBags[i])).iterator();
+            while (iter.hasNext()) {
+                Object thisObj = iter.next();
+                if (countMap.containsKey(thisObj)) {
+                    int newVal = ((Integer) countMap.get(thisObj)).intValue() + 1;
+                    countMap.put(thisObj, new Integer (newVal));
+                } else {
+                    countMap.put(thisObj, new Integer(1));
+                }
+            }
+        }
+        
+        InterMineBag resultBag = (InterMineBag) type.newInstance();
+        
+        Iterator iter = countMap.keySet().iterator();
+
+        while (iter.hasNext()) {
+            Object thisObj = iter.next();
+            if (countMap.get(thisObj).equals(new Integer(1))) {
+                resultBag.add(thisObj);
+            }
+        }
+
+        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+        profile.saveBag(name, resultBag);
         
         return mapping.findForward("history");
     }
