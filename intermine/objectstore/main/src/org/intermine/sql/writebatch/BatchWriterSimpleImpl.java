@@ -54,7 +54,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
     public void setThreshold(int deleteTempTableSize) {
         this.deleteTempTableSize = deleteTempTableSize;
     }
-    
+
     /**
      * @see BatchWriter#write
      */
@@ -375,7 +375,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     return iter.hasNext();
                 }
             }
-            
+
             public Object next() {
                 if (state && (!iter.hasNext())) {
                     iter = setB.iterator();
@@ -466,30 +466,32 @@ public class BatchWriterSimpleImpl implements BatchWriter
     private static class Statistic
     {
         private String name;
-        private int tableSize, activity;
+        private int tableSize, totalActivity;
 
         public Statistic(String name, int tableSize, int activity) {
             this.name = name;
             this.tableSize = tableSize - activity; // Yes, this is a hack. It works.
-            this.activity = 0;
+            this.totalActivity = 0;
             LOG.debug("Statistics: " + name + " created: tableSize = " + tableSize
                     + " (hacked down to " + this.tableSize + " for unaccounted-for activity)");
         }
 
+        // Return true (i.e. do analyse) if total number of rows written is greater than some
+        // threshold.  Currently if aprrox 50% of original table size.
         public boolean addActivity(int activity) {
             LOG.debug("Statistics: " + name + ", tableSize = " + tableSize + ", activity "
-                    + this.activity + " --> tableSize = " + tableSize + ", activity = "
-                    + (this.activity + activity) + "    - Activity of " + activity + " rows");
-            this.activity += activity;
-            return this.activity > tableSize + 1000;
+                    + this.totalActivity + " --> tableSize = " + tableSize + ", activity = "
+                    + (this.totalActivity + activity) + "    - Activity of " + activity + " rows");
+            this.totalActivity += activity;
+            return this.totalActivity > (tableSize / 2) + 1000;
         }
 
         public void setTableSize(int tableSize) {
             LOG.debug("Statistics: " + name + ", tableSize = " + this.tableSize + ", activity "
-                    + this.activity + " --> tableSize = " + tableSize
+                    + this.totalActivity + " --> tableSize = " + tableSize
                     + ", activity = 0   - New table size");
             this.tableSize = tableSize;
-            this.activity = 0;
+            this.totalActivity = 0;
         }
     }
 }
