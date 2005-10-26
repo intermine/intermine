@@ -48,9 +48,8 @@ public class CreateReferences
     /**
      * Construct with an ObjectStoreWriter, read and write from same ObjectStore
      * @param osw an ObjectStore to write to
-     * @throws MetaDataException if problem getting genomic Model
      */
-    public CreateReferences(ObjectStoreWriter osw) throws MetaDataException {
+    public CreateReferences(ObjectStoreWriter osw) {
         this.osw = osw;
         this.model = Model.getInstanceByName("genomic");
     }
@@ -216,8 +215,6 @@ public class CreateReferences
                                         Class connectingClass, String connectingClassFieldName,
                                         Class destinationClass, String createFieldName)
         throws Exception {
-        InterMineObject lastObject = null;
-
         LOG.info("Beginning insertReferences("
                  + sourceClass.getName() + ", "
                  + sourceClassFieldName + ", "
@@ -247,6 +244,11 @@ public class CreateReferences
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisDestObject);
                 TypeUtil.setFieldValue(tempObject, createFieldName, thisSourceObject);
                 count++;
+                if (count % 10000 == 0) {
+                    LOG.info("Created " + count + " references in " + destinationClass.getName() 
+                             + " to " + sourceClass.getName()
+                             + " via " + connectingClass.getName());
+                }
                 osw.store(tempObject);
             } catch (IllegalAccessException e) {
                 LOG.error("Object with ID: " + thisDestObject.getId()
@@ -254,8 +256,8 @@ public class CreateReferences
             }
         }
 
-        LOG.info("Created " + count + " references in " + destinationClass.getName() + " to "
-                 + sourceClass.getName() + " via " + connectingClass.getName());
+        LOG.info("Finished: created " + count + " references in " + destinationClass.getName()
+                 + " to " + sourceClass.getName() + " via " + connectingClass.getName());
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
