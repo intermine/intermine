@@ -62,7 +62,7 @@
                         &nbsp
                       </c:when>
                       <c:otherwise>
-                        <span class="value"><b>${outVal}</b></span>
+                        <b><im:value>${outVal}</im:value></b>
                       </c:otherwise>
                     </c:choose>
                   </td>
@@ -82,9 +82,9 @@
                       <c:when test="${entry.value.class.name ==
                                     'java.lang.String' && fn:length(entry.value) > maxLength
                                     && ! object.fieldConfigMap[entry.key].doNotTruncate}">
-                        <span class="value">
+                        <im:value>
                           ${fn:substring(entry.value, 0, maxLength/2)}
-                        </span>
+                        </im:value>
                         <span class="value" style="white-space:nowrap">
                           ${fn:substring(entry.value, maxLength/2, maxLength)}
                           <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">

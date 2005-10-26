@@ -51,7 +51,7 @@
             </c:if>
             <div style="${style}">
               <span class="attributeField">${expr}</span>
-              <span>${outVal}</span>
+              <im:value>${outVal}</im:value>
             </div>
           </c:if>
         </c:forEach>
