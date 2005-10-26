@@ -171,8 +171,15 @@ public class MainHelper
         List view = query.getView();
         Model model = query.getModel();
         Map codeToCS = new HashMap();
-        ConstraintSet rootcs = (query.getLogic() == null) ? null
-            : makeConstraintSets(query.getLogic(), codeToCS);
+        ConstraintSet rootcs = null;
+        ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
+        
+        if (query.getAllConstraints().size() == 1) {
+            Constraint c = (Constraint) query.getAllConstraints().get(0);
+            codeToCS.put(c.getCode(), andcs);
+        } else if (query.getAllConstraints().size() > 1) {
+            rootcs = makeConstraintSets(query.getLogic(), codeToCS);
+        }
 
         //first merge the query and the view
         for (Iterator i = view.iterator(); i.hasNext();) {
@@ -184,7 +191,6 @@ public class MainHelper
 
         //create the real query
         Query q = new Query();
-        ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(andcs);
         if (rootcs != null) {
             andcs.addConstraint(rootcs);
