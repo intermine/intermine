@@ -39,7 +39,7 @@
               <fmt:message key="query.savedbags.countcolumnheader"/>
             </th>
           </tr>
-          <c:forEach items="${PROFILE.savedBags}" var="savedBag">
+          <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
             <tr>
               <td>
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
@@ -71,6 +71,9 @@
           </html:submit>
           <html:submit property="intersect">
             <fmt:message key="history.intersect"/>
+          </html:submit>
+          <html:submit property="subtract">
+            <fmt:message key="history.subtract"/>
           </html:submit>
         </c:if>
         <html:submit property="delete">
