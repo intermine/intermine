@@ -139,8 +139,9 @@ public class PostProcessUtil
 
         Query q = new Query();
 
-
-        q.setDistinct(true);
+        // we know that all rows will be distinct because there shouldn't be more than one relation
+        // connecting the two objects
+        q.setDistinct(false);
         QueryClass qcSource = new QueryClass(sourceClass);
         q.addFrom(qcSource);
         q.addToSelect(qcSource);
