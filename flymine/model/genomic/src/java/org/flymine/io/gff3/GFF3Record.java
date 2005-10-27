@@ -10,6 +10,8 @@ package org.flymine.io.gff3;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -261,6 +263,14 @@ public class GFF3Record
             return null;
         }
     }
+    
+    /**
+     * Set the Id of this GFF3Record.
+     * @param id the new id
+     */
+    public void setId(String id) {
+        attributes.put("ID", Collections.singletonList(id));
+    }
 
     /**
      * Return the list of the Name field from the attributes of this record.
@@ -495,7 +505,9 @@ public class GFF3Record
         
         for (Iterator iter = replacements.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
-            value = value.replaceAll("&" + entry.getKey() + ";", "&" + entry.getValue() + ";");
+            if (value.indexOf('&') != -1) {
+                value = value.replaceAll("&" + entry.getKey() + ";", "&" + entry.getValue() + ";");
+            }
         }
         
         return value;

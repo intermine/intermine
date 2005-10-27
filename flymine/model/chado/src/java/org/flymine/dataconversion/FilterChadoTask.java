@@ -15,6 +15,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.io.File;
@@ -36,9 +38,9 @@ import org.flymine.io.gff3.GFF3Record;
  */
 public class FilterChadoTask extends Task
 {
-    protected FileSet fileSet;
-    protected File tgtDir;
-    protected Set organisms = new HashSet();
+    private FileSet fileSet;
+    private File tgtDir; 
+    private Map seenIds = new HashMap();
 
     /**
      * Set the source fileset.
@@ -77,7 +79,7 @@ public class FilterChadoTask extends Task
                 String outName = toRead.getName();
                 File out = new File(tgtDir, outName);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(out));
-                FilterChadoTask.filterGFF3(new BufferedReader(new FileReader(toRead)), writer);
+                filterGFF3(new BufferedReader(new FileReader(toRead)), writer);
                 writer.flush();
                 writer.close();
             }
@@ -92,7 +94,7 @@ public class FilterChadoTask extends Task
      * @param out GFF3 file to write
      * @throws IOException if problems reading/writing
      */
-    public static void filterGFF3(BufferedReader in, BufferedWriter out) throws IOException {
+    private void filterGFF3(BufferedReader in, BufferedWriter out) throws IOException {
         Iterator iter = GFF3Parser.parse(in);
         while (iter.hasNext()) {
             GFF3Record record = (GFF3Record) iter.next();
@@ -106,13 +108,23 @@ public class FilterChadoTask extends Task
                     record.getAttributes().put("ID", record.getNames());
                     record.getAttributes().remove("Name");
                 }
+                if (seenIds.containsKey(record.getId())) {
+                    // add -duplicate-2, -duplicate-3, etc. to any duplicated IDs
+                    String oldId = record.getId();
+                    int oldCount = ((Integer) seenIds.get(record.getId())).intValue();
+                    record.setId(oldId + "-duplicate-" + oldCount);
+                    seenIds.put(record.getId(), new Integer(oldCount + 1));
+                   
+                } else {
+                    seenIds.put(record.getId(), new Integer(1));
+                }
                 out.write(record.toGFF3() + "\n");
             }
         }
         out.flush();
     }
 
-    private static boolean typeToKeep(String type) {
+    private boolean typeToKeep(String type) {
         if (type.startsWith("match") || type.equals("aberration_junction")
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
             || type.equals("scaffold") || type.equals("chromosome_arm")
