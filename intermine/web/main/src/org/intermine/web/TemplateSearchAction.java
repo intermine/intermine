@@ -28,6 +28,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
@@ -43,6 +44,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * Action handles template search.
@@ -103,7 +105,14 @@ public class TemplateSearchAction extends InterMineAction
             MultiSearcher searcher = new MultiSearcher(searchables);
             
             Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
-            Query query = QueryParser.parse(queryString, "content", analyzer);
+            Query query;
+            try {
+                query = QueryParser.parse(queryString, "content", analyzer);
+            } catch (ParseException err) {
+                recordError(new ActionMessage("errors.templatesearch.badinput", err.getMessage()),
+                        request);
+                return mapping.findForward("templateSearch");
+            }
             query = query.rewrite(IndexReader.open(dir)); // required to expand search terms
             Hits hits = searcher.search(query);
             
