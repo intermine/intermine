@@ -718,9 +718,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     tgtItem.addAttribute(new Attribute("accession", accession));
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
-                } else if (dbname.equals("Uniprot/SWISSPROT") || dbname.equals("Uniprot/SPTREMBL")
-                    || dbname.equals("RefSeq_peptide")
-                    || dbname.equals("RefSeq_peptide_predicted")) {
+                } else if (dbname.equals("Uniprot/SWISSPROT") ||(dbname.equals("Uniprot/SWISSPROT_predicted")
+                    || dbname.equals("Uniprot/SPTREMBL") || dbname.equals("Uniprot/SPTREMBL_predicted")
+                    || dbname.equals("RefSeq_peptide") || dbname.equals("RefSeq_peptide_predicted")) {
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
 
                 }
@@ -1209,7 +1209,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         //marker
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("marker.display_marker_synonym");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("display_marker_synonym", identifier));
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("marker_synonym", identifier));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("marker <- marker_feature.marker");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "marker"));
@@ -1229,13 +1229,13 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         //assembly
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("assembly.asm_seq_region");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("asm_seq_region", identifier));
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
         desc2 = new ItemPrefetchDescriptor("assembly.asm_seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         desc.addPath(desc2);
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("assembly.cmp_seq_region");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("cmp_seq_region", identifier));
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
         desc2 = new ItemPrefetchDescriptor("assembly.cmp_seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         desc.addPath(desc2);
