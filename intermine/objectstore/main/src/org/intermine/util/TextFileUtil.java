@@ -71,7 +71,7 @@ public abstract class TextFileUtil
      * @param columnVisible an array mapping from columns in listOfLists to their visibility
      * @param delimiter the character to use to separate the fields in the output
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
-     * @param quote quote things
+     * @param quote quote all strings
      * listOfLists
      */
     public static void writeDelimitedTable(OutputStream os, List listOfLists,
@@ -119,7 +119,7 @@ public abstract class TextFileUtil
             for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
                 Object o = realRow.get(columnIndex);
 
-                if (!quote || o instanceof Number) {
+                if (o instanceof Number || (!quote && o.toString().indexOf('\t') < 0)) {
                     writeUnQuoted(printStream, o);
                 } else {
                     writeQuoted(printStream, o);

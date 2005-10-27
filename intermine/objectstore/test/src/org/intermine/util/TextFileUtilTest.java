@@ -50,8 +50,8 @@ public class TextFileUtilTest extends TestCase
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {true, true, true, true},
                                             100);
-        expected = "101\t102\t\"string 103\"\t\"string 104, with comma\"\n"
-            + "201\t202\t\"string 203\"\t\"string 204\t with tab\"\n";
+        expected = "101\t102\tstring 103\tstring 104, with comma\n"
+            + "201\t202\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -61,8 +61,8 @@ public class TextFileUtilTest extends TestCase
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {false, true, true, true},
                                             100);
-        expected = "102\t\"string 103\"\t\"string 104, with comma\"\n"
-            + "202\t\"string 203\"\t\"string 204\t with tab\"\n";
+        expected = "102\tstring 103\tstring 104, with comma\n"
+            + "202\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -72,8 +72,8 @@ public class TextFileUtilTest extends TestCase
                                             new int[] {3, 1, 2, 0},
                                             new boolean[] {true, true, true, true},
                                             100);
-        expected = "\"string 104, with comma\"\t102\t\"string 103\"\t101\n"
-            + "\"string 204\t with tab\"\t202\t\"string 203\"\t201\n";
+        expected = "string 104, with comma\t102\tstring 103\t101\n"
+            + "\"string 204\t with tab\"\t202\tstring 203\t201\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -83,7 +83,7 @@ public class TextFileUtilTest extends TestCase
                                             new int[] {3, 2, 1, 0},
                                             new boolean[] {false, true, true, false},
                                             100);
-        expected = "\"string 103\"\t102\n\"string 203\"\t202\n";
+        expected = "string 103\t102\nstring 203\t202\n";
         results = baos.toString();
         assertEquals(expected, results);
 
