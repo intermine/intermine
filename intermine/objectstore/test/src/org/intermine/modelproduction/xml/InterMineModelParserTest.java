@@ -34,7 +34,8 @@ public class InterMineModelParserTest extends TestCase
 
     public void testProcess() throws Exception {
         Model model = parser.process(new StringReader(getModelXml()));
-        Model expected = new Model("testmodel", "testmodel", getExpectedClds());
+        Model expected = new Model("testmodel", "http://www.intermine.org/model/testmodel",
+                                   getExpectedClds());
         assertEquals(expected, model);
     }
 
