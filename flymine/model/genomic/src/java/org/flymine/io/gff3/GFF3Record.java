@@ -27,7 +27,8 @@ import java.net.URLEncoder;
 import org.intermine.util.StringUtil;
 
 /**
- * A class that represents one line of a GFF3 file.
+ * A class that represents one line of a GFF3 file.  Some of this code is
+ * derived from BioJava.
  *
  * @author Kim Rutherford
  */
@@ -44,7 +45,7 @@ public class GFF3Record
     private String phase;
     private Map    attributes   = new LinkedHashMap();
     private static Map replacements;
-    
+
     /**
      * Create a GFF3Record from a line of a GFF3 file
      * @param line the String to parse
@@ -58,7 +59,7 @@ public class GFF3Record
         }
 
         sequenceID = fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8"));
-        
+
         source = st.nextToken();
 
         if (source.equals("") || source.equals(".")) {
@@ -144,7 +145,8 @@ public class GFF3Record
             List valList = new ArrayList();
             int spaceIndx = attVal.indexOf("=");
             if (spaceIndx == -1) {
-                throw new IOException("the attributes section must contain name=value pairs");
+                throw new IOException("the attributes section must contain name=value pairs, "
+                                      + "while parsing: " + line);
             } else {
                 attName = attVal.substring(0, spaceIndx);
                 attributeString = attVal.substring(spaceIndx + 1).trim();
@@ -236,7 +238,7 @@ public class GFF3Record
 
     /**
      * Return the strand field of this record.
-     * @return returns null if the strand is unset (ie. with an empty field or contained "." in the 
+     * @return returns null if the strand is unset (ie. with an empty field or contained "." in the
      * original GFF3 file)
      */
     public String getStrand () {
@@ -245,7 +247,7 @@ public class GFF3Record
 
     /**
      * Return the phase field of this record.
-     * @return returns null if the phase is unset (ie. with an empty field or contained "." in the 
+     * @return returns null if the phase is unset (ie. with an empty field or contained "." in the
      * original GFF3 file)
      */
     public String getPhase () {
@@ -263,7 +265,7 @@ public class GFF3Record
             return null;
         }
     }
-    
+
     /**
      * Set the Id of this GFF3Record.
      * @param id the new id
@@ -436,12 +438,12 @@ public class GFF3Record
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("error while encoding: " + entry.getValue(), e);
                 }
-            }            
+            }
             sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
     }
-    
+
     /**
      * Replace greek character entity names with entity names that work in HTML.
      * @param value input string
@@ -502,14 +504,14 @@ public class GFF3Record
                 replacements.put("OHgr", "Omega");
             }
         }
-        
+
         for (Iterator iter = replacements.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             if (value.indexOf('&') != -1) {
                 value = value.replaceAll("&" + entry.getKey() + ";", "&" + entry.getValue() + ";");
             }
         }
-        
+
         return value;
     }
 }
